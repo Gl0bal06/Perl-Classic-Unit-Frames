@@ -1,0 +1,38 @@
+Target Replacement
+     by Perl
+          v. 0.5  22.2.5
+
+
+Description
+     This addon is designed to replace the default targetting frame with a movable, 
+more interesting one.
+
+- Target's name, colored to match the friendly and pvp status of the target.
+- Target's level, colored based on the target's level in relation to the player,
+  with a "+" to denote elites.
+- For player characters, a class icon will appear by the name to display the 
+  player's class.  The icons used are from the character creation screen.
+- Status bars, of both health and mana, show as numbers if known, otherwise percents.
+- Dragable to wherever you want it.
+- Smooth healthbar color with Perl_Common.
+- Replacement bar textures with Perl_Common.
+- PVP Icon.
+- Mana bar colored to skill type or hidden if a mob with none.
+
+Usage
+    There are three commands to be aware of:  '/perltarget lock' and '/perltarget 
+unlock' lock and unlock the frame so it cannot be dragged; '/perltarget combopoints'
+toggles the display of combo points.  The window may be dragged by dragging the name 
+area.
+
+
+Version History
+- 0.5 (24.3.5)	-Added combo points display.
+		-Fixed unknown mob level display.
+- 0.4 (3.3.5)	-Added a "tapping" indicator.  The target's name will now turn grey 
+		if someone else will get the xp.
+		-The "mana" bar now changes colors to reflect the power type of the
+		target.
+- 0.31 (25.2.5)	-Fixed the UI_DropDown menu bug that gets annoying.
+- 0.3 (22.2.5) 	-Added tons of features.  It is now fully functional!
+- 0.2 (14.2.5) 	-First version of this readme.

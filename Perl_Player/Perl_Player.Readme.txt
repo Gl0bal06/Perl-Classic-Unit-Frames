@@ -1,0 +1,40 @@
+Player Frame
+	by Perl
+		v. 0.41  7.3.5
+
+---   Description   ---
+This addon creates a replacement for the default Player Frame.  It should have all the functionality of the original, and then some.
+
+---   Usage   ---
+The addon can be dragged by moving the name portion of the frame.
+There are the following commands:
+	lock - Lock the frame in place.
+	unlock - Unlock the frame so it can be moved.
+	buffs - Toggle the built in buff monitor on the player frame.
+	alerts - Toggle warning messages for buffs (at 30 seconds left).
+	hideart - Hide most of the art on the bottom bar (cosmetic).
+
+
+---   Installation   ---
+Simply unzip and place the resulting folder in your Interface\AddOns\ diretory 
+inside the main World of Warcraft directory.
+
+---   Version History   ---
+0.41 (17.4.5)	- Fixed the bug that causes monetary amounts in tooltips to
+		  disappear.
+
+0.4 (24.3.5)	- Rearranged much of the frame.
+		- Added buff alerts.
+		- Added more options, including the hiding-art one. (I like it).
+		
+0.3 (7.3.5)	- Fixed the bug that caused the pet frame to be drawn off screen.
+		  It is now given an absolute position and can be moved from there.
+		- Added a resting and in-combat indicator that shows up at the end
+		  of the name area.
+		- Added buff timers and flashing for low-duration buffs.  Variables
+		  for the flashing can be edited in the .lua file.
+		  
+0.2 (6.3.5)	- Added a pet frame.
+		- Added buffs.
+
+0.1 (18.2.5)	- First version of this readme.

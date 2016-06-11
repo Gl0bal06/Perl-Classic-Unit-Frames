@@ -1,0 +1,7 @@
+## Interface: 1700
+## Title: Perl Player Frame
+## Notes: Displays a movable player frame to replace the default.
+## Author: Perl
+## SavedVariables: Perl_Player_Config,
+Perl_Player_Pet.xml
+Perl_Player.xml
