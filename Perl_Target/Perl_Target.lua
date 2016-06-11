@@ -3,8 +3,8 @@
 ---------------
 Perl_Target_Config = {};
 
-
 -- Defaults
+local Initialized = nil;
 local transparency = 1; --0.8 default
 local Perl_Target_State = 1;
 local buffmapping = 0;
@@ -13,8 +13,6 @@ local showcp = 1;
 local numbuffsshown = 20
 local numdebuffsshown = 16
 local BlizzardTargetFrame_Update = TargetFrame_Update;
-
-
 
 
 -- Variables for position of the class icon texture.
@@ -78,6 +76,7 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("PLAYER_COMBO_POINTS");
+	this:RegisterEvent("ADDON_LOADED");
 		
 	-- Slash Commands
 	SlashCmdList["PERL_TARGET"] = Perl_Target_SlashHandler;
@@ -85,14 +84,27 @@ function Perl_Target_OnLoad()
 	SLASH_PERL_TARGET2 = "/PT";
 	
 	table.insert(UnitPopupFrames,"Perl_Target_DropDown");
+
+	if( DEFAULT_CHAT_FRAME ) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame by Perl loaded successfully.");
+	end
+	UIErrorsFrame:AddMessage("|cffffff00Target Frame by Perl loaded successfully.", 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME);
 end
 
 -------------------
 -- Event Handler --
 -------------------
 function Perl_Target_OnEvent(event)
-	if (event == "PLAYER_ENTERING_WORLD") then
-		Perl_Target_VarInit();
+	--if (event == "PLAYER_ENTERING_WORLD") then
+		--Perl_Target_Initialize();
+	--elseif (event == "ADDON_LOADED") then
+		--Perl_Target_Initialize();
+	if (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
+		Perl_Target_Initialize();
+		return;
+	--end
+	elseif (event == "ADDON_LOADED" and arg1 == "Perl_Target") then
+		Perl_Target_myAddOns_Support();
 	else
 		Perl_Target_UpdateDisplay();
 	end
@@ -141,8 +153,19 @@ end
 -------------------------------
 -- Loading Settings Function --
 -------------------------------
-function Perl_Target_VarInit() 
-  
+function Perl_Target_Initialize()
+	
+	if (Initialized) then
+		return;
+	end
+	
+	-- Check if a previous exists, if not, enable by default.
+	if (type(Perl_Target_Config[UnitName("player")]) == "table") then
+		Perl_Target_GetVars();
+	else
+		Perl_Target_UpdateVars();
+	end
+
 	-- Major config options.
 	Perl_Target_StatsFrame:SetBackdropColor(0, 0, 0, transparency);
 	Perl_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
@@ -172,12 +195,7 @@ function Perl_Target_VarInit()
 --	  Perl_Target_State = Perl_Target_Config[UnitName("player")]["State"];  -- Move value to internal variable.
 --	end
 
-	-- Check if a previous exists, if not, enable by default.
-	if (type(Perl_Target_Config[UnitName("player")]) == "table") then
-		Perl_Target_GetVars();
-	else
-		Perl_Target_UpdateVars();
-	end
+	
 
 --	if (type(Perl_Target_Config[UnitName("player")]["Locked"]) == "table") then
 --		Perl_Target_Config[UnitName("player")]["Locked"] = 0;
@@ -193,9 +211,9 @@ function Perl_Target_VarInit()
 
 	
 		-- Load Variables
-	local strcombo;
-	local strlocked;
-	local strstate;
+--	local strcombo;
+--	local strlocked;
+--	local strstate;
 	
 	-- Set locked state and strings.
 	--if (Perl_Target_State > 1) then
@@ -205,25 +223,25 @@ function Perl_Target_VarInit()
 	--else
 		--strlocked = "|cffffffffunlocked|cffffff00";
 	--end
-	if (Perl_Target_State == 1) then
-		strstate = "|cffffffffEnabled|cffffff00";
-	else
-		strstate = "|cffffffffDisabled|cffffff00";
-	end
+--	if (Perl_Target_State == 1) then
+--		strstate = "|cffffffffEnabled|cffffff00";
+--	else
+--		strstate = "|cffffffffDisabled|cffffff00";
+--	end
+--	
+--	if (locked == 1) then
+--	  strlocked = "|cffffffffLocked|cffffff00";
+--	else
+--		strlocked = "|cffffffffUnlocked|cffffff00";
+--	end
+--	
+--	if (showcp == 1) then
+--		strcombo = "|cffffffffShown|cffffff00";
+--	else
+--		strcombo = "|cffffffffHidden|cffffff00";
+--	end
 	
-	if (locked == 1) then
-	  strlocked = "|cffffffffLocked|cffffff00";
-	else
-		strlocked = "|cffffffffUnlocked|cffffff00";
-	end
-	
-	if (showcp == 1) then
-		strcombo = "|cffffffffShown|cffffff00";
-	else
-		strcombo = "|cffffffffHidden|cffffff00";
-	end
-	
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame by Perl loaded successfully. "..strstate..", "..strlocked..", and CP "..strcombo..".");
+	--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame by Perl loaded successfully. "..strstate..", "..strlocked..", and CP "..strcombo..".");
 
 	--if (getglobal('PERL_COMMON')) then
 		--Perl_Target_HealthBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
@@ -239,15 +257,34 @@ function Perl_Target_VarInit()
 	  Perl_Target_Frame:Hide();
 		TargetFrame_Update = BlizzardTargetFrame_Update;
 	end
-	
-	
+
+	Initialized = 1;
 end
+
+function Perl_Target_myAddOns_Support()
+	-- Register the addon in myAddOns
+	if(myAddOnsFrame_Register) then
+		local Perl_Target_myAddOns_Details = {
+			name = "Perl_Target",
+			version = "v0.02",
+			releaseDate = "September 28, 2005",
+			author = "Perl; Maintained by Global",
+			email = "global@g-ball.com",
+			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+			category = MYADDONS_CATEGORY_OTHERS
+		};
+		Perl_Target_myAddOns_Help = {};
+		Perl_Target_myAddOns_Help[1] = "/perltarget\n/pt\n";
+		myAddOnsFrame_Register(Perl_Target_myAddOns_Details, Perl_Target_myAddOns_Help);
+	end	
+end
+
 
 -------------------------
 -- The Update Function --
 -------------------------
 function Perl_Target_UpdateDisplay()
-  if (Perl_Target_State == 0) then
+	if (Perl_Target_State == 0) then
 		Perl_Target_Frame:Hide();
 		TargetFrame_Update = BlizzardTargetFrame_Update;
 	else

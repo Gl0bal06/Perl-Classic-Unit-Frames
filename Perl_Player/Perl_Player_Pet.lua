@@ -1,4 +1,4 @@
-local Locked = 0;
+local locked = 0;
 
 local transparency = 0.8;
 
@@ -16,6 +16,10 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 		
 	-- Slash Commands
+	SlashCmdList["PERL_PLAYER_PET"] = Perl_Player_Pet_SlashHandler;
+	SLASH_PERL_TARGET1 = "/PerlPlayerPet";
+	SLASH_PERL_TARGET2 = "/PPP";
+
 	table.insert(UnitPopupFrames,"Perl_Player_Pet_DropDown");
 end
 
@@ -24,6 +28,33 @@ end
 -------------------
 function Perl_Player_Pet_OnEvent(event)
 	Perl_Player_Pet_UpdateDisplay();
+end
+
+-------------------
+-- Slash Handler --
+-------------------
+function Perl_Player_Pet_SlashHandler(msg)
+	if (string.find(msg, "unlock")) then
+		Perl_Player_Pet_Lock();
+	elseif (string.find(msg, "lock")) then
+		Perl_Player_Pet_Unlock();
+	elseif (string.find(msg, "status")) then
+		Perl_Player_Pet_Status();
+	--elseif (string.find(msg, "hideart")) then
+		--Perl_Player_ToggleHideBarArt();
+	--elseif (string.find(msg, "buff")) then
+		--Perl_Player_ToggleBuffs();
+	--elseif (string.find(msg, "alert")) then
+		--Perl_Player_ToggleBuffAlerts();
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Player Pet Frame ---");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs |cffffff00- Toggle the built in buff monitor on the player frame.");
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffffff alerts |cffffff00- Toggle warning messages for buffs (at 30 seconds left).");
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffffff hideart |cffffff00- Hide most of the art on the bottom bar (cosmetic).");
+	end
 end
 
 -------------------------
@@ -63,10 +94,10 @@ function Perl_Player_Pet_UpdateDisplay ()
 	Perl_Player_Pet_HealthBar:SetValue(pethealth);
 	Perl_Player_Pet_ManaBar:SetValue(petmana);
 	
-	if (getglobal('PERL_COMMON')) then
-		Perl_SetSmoothBarColor(Perl_Player_Pet_HealthBar);
-		Perl_SetSmoothBarColor(Perl_Player_Pet_HealthBarBG, Perl_Player_Pet_HealthBar, 0.25);
-	end
+	--if (getglobal('PERL_COMMON')) then
+		--Perl_SetSmoothBarColor(Perl_Player_Pet_HealthBar);
+		--Perl_SetSmoothBarColor(Perl_Player_Pet_HealthBarBG, Perl_Player_Pet_HealthBar, 0.25);
+	--end
 	
 	-- Set Level
 	Perl_Player_Pet_LevelBarText:SetText(petlevel);
@@ -83,16 +114,24 @@ end
 ----------------------
 -- Config functions --
 ----------------------
-function Perl_Player_Pet_Lock ()
-	Locked = 1;
+function Perl_Player_Pet_Lock()
+	locked = 1;
 	Perl_Player_Pet_UpdateVars();
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now |cfffffffflocked|cffffff00.");
 end
 
-function Perl_Player_Pet_Unlock ()
-	Locked = 0;
+function Perl_Player_Pet_Unlock()
+	locked = 0;
 	Perl_Player_Pet_UpdateVars();
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now |cffffffffunlocked|cffffff00.");
+end
+
+function Perl_Player_Pet_Status()
+	if (locked == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffUnlocked|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffLocked|cffffff00.");
+	end
 end
 
 -------------------------------
@@ -227,6 +266,13 @@ function Perl_Player_Pet_DropDown_Initialize ()
 	else
 		UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, "PET", "pet");
 	end
+--	local menu = nil
+--	if ( UnitIsUnit("target", "pet") ) then
+--		menu = "PET";
+--	end
+--	if ( menu ) then
+--		UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, menu, "pet");
+--	end
 end
 
 function Perl_Player_Pet_MouseUp(button)

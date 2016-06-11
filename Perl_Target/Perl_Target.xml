@@ -89,11 +89,11 @@
 				Perl_Target_MouseUp(arg1);
 			</OnMouseUp>
 			<OnEnter>
-			  		Perl_Target_Tooltip_OnEnter();
-					</OnEnter>
-					<OnLeave>
-						GameTooltip:Hide();
-					</OnLeave>
+			  	Perl_Target_Tooltip_OnEnter();
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
 		</Scripts>
 		
 		<Frames>

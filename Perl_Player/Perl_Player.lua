@@ -1,7 +1,9 @@
 ---------------
 -- Variables --
 ---------------
+Perl_Player_Config = {};
 
+-- Defaults
 local Perl_Player_State = 1;
 local locked = 0;
 local InCombat = nil;
@@ -10,14 +12,10 @@ local framefade = 0;
 --local showbuffs = 0;
 --local buffalerts = 0;
 local BlizzardPlayerFrame_Update = PlayerFrame_UpdateStatus;
-
 local transparency = 1;  -- general transparency for frames relative to bars/text  default is 0.8
 local idletransparency = 0.5; -- mouseout transparency.
-
-Perl_Player_Config = {};
-
 local Initialized = nil;
-local VariablesLoaded = nil;
+--local VariablesLoaded = nil;
 
 -- Buff constants
 -- Play with these if you'd like.  It's simply a sine wave of magnitude
@@ -99,11 +97,9 @@ local Perl_Target_ClassPosBottom = {
 ----------------------
 -- Loading Function --
 ----------------------
-
 function Perl_Player_OnLoad()
 
 	-- Events
-	
 	this:RegisterEvent("UNIT_COMBAT");
 	this:RegisterEvent("UNIT_MAXMANA");
 	this:RegisterEvent("PLAYER_UPDATE_RESTING");
@@ -125,18 +121,21 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("PLAYER_REGEN_DISABLED");
 		
 	-- Slash Commands
-	
 	SlashCmdList["PERL_PLAYER"] = Perl_Player_SlashHandler;
 	SLASH_PERL_PLAYER1 = "/PerlPlayer";
 	SLASH_PERL_PLAYER2 = "/PP";
 	
 	table.insert(UnitPopupFrames,"Perl_Player_DropDown");
+
+	if( DEFAULT_CHAT_FRAME ) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame by Perl loaded successfully.");
+	end
+	UIErrorsFrame:AddMessage("|cffffff00Player Frame by Perl loaded successfully.", 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME);
 end
 
 -------------------
 -- Event Handler --
 -------------------
-
 function Perl_Player_OnEvent(event)
 	if (event == "UNIT_NAME_UPDATE") then
 		if (UnitName("pet") and not (UnitName("pet") == "Unknown Entity")) then
@@ -145,15 +144,24 @@ function Perl_Player_OnEvent(event)
 		if (UnitName("player") == "Unknown Entity") then
 			return;
 		else 
-			Perl_Player_VarInit();
+			Perl_Player_Initialize();
 		end
-	elseif (event == "PLAYER_ENTERING_WORLD") then
-		Perl_Player_VarInit();
+	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
+		Perl_Player_Initialize();
+		--VariablesLoaded = 1;
 		if (UnitName("pet") and not (UnitName("pet") == "Unknown Entity")) then
 			Perl_Player_Pet_VarInit();
 		end
-	elseif (event == "VARIABLES_LOADED") then
-		VariablesLoaded = 1;
+	elseif (event == "ADDON_LOADED" and arg1 == "Perl_Player") then
+		Perl_Player_myAddOns_Support();
+
+--	elseif (event == "PLAYER_ENTERING_WORLD") then
+--		Perl_Player_Initialize();
+--		if (UnitName("pet") and not (UnitName("pet") == "Unknown Entity")) then
+--			Perl_Player_Pet_VarInit();
+--		end
+--	elseif (event == "VARIABLES_LOADED") then
+--		VariablesLoaded = 1;
 	elseif (event == "PLAYER_REGEN_ENABLED") then
 		InCombat = nil;
 		Perl_Player_UpdateDisplay();
@@ -168,14 +176,15 @@ end
 -------------------
 -- Slash Handler --
 -------------------
-
-function Perl_Player_SlashHandler (msg)
+function Perl_Player_SlashHandler(msg)
 	if (string.find(msg, "unlock")) then
 		Perl_Player_Unlock();
 	elseif (string.find(msg, "lock")) then
 		Perl_Player_Lock();
 	elseif (string.find(msg, "toggle")) then
 		Perl_Player_TogglePlayer();
+	elseif (string.find(msg, "status")) then
+		Perl_Player_Status();
 	--elseif (string.find(msg, "hideart")) then
 		--Perl_Player_ToggleHideBarArt();
 	--elseif (string.find(msg, "buff")) then
@@ -187,17 +196,127 @@ function Perl_Player_SlashHandler (msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the player frame on and off.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 		--DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs |cffffff00- Toggle the built in buff monitor on the player frame.");
 		--DEFAULT_CHAT_FRAME:AddMessage("|cffffffff alerts |cffffff00- Toggle warning messages for buffs (at 30 seconds left).");
 		--DEFAULT_CHAT_FRAME:AddMessage("|cffffffff hideart |cffffff00- Hide most of the art on the bottom bar (cosmetic).");
 	end
 end
 
+-------------------------------
+-- Loading Settings Function --
+-------------------------------
+function Perl_Player_Initialize() 
+
+	--if (Initialized or (not VariablesLoaded)) then
+	if (Initialized) then
+		return;
+	end
+
+	-- Major config options.
+	Perl_Player_StatsFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Player_LevelFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Player_NameFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Player_Frame:Hide();
+	
+	Perl_Player_HealthBarText:SetTextColor(1,1,1,1);
+	Perl_Player_ManaBarText:SetTextColor(1,1,1,1);
+	
+	-- Set Name
+	Perl_Player_NameBarText:SetText(UnitName("player"));
+	
+	-- Set Class
+	local PlayerClass = UnitClass("player");
+	Perl_Player_ClassTexture:SetTexCoord(Perl_Target_ClassPosRight[PlayerClass], Perl_Target_ClassPosLeft[PlayerClass], Perl_Target_ClassPosTop[PlayerClass], Perl_Target_ClassPosBottom[PlayerClass]);
+	
+	-- Check if a previous exists, if not, enable by default.
+	if (type(Perl_Player_Config[UnitName("player")]) == "table") then
+		Perl_Player_GetVars();
+	else
+		Perl_Player_Config[UnitName("player")] = {
+							["Locked"] = locked
+							--["buffs"] = showbuffs,
+							--["hidebarart"] = hidebarart,
+							--["alerts"] = buffalerts
+							};
+	end
+
+	-- Load Variables
+--	local strlocked;
+--	local strstate;
+--
+--	if (Perl_Player_State == 1) then
+--		strstate = "|cffffffffEnabled|cffffff00";
+--	else
+--		strstate = "|cffffffffDisabled|cffffff00";
+--	end
+--	
+--	if (locked == 1) then
+--		strlocked = "|cffffffffLocked|cffffff00";
+--	else
+--		strlocked = "|cffffffffUnlocked|cffffff00";
+--	end
+--	
+--	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame by Perl loaded successfully. "..strstate..", and "..strlocked..".");
+
+--	if (getglobal('PERL_COMMON')) then
+--		Perl_Player_HealthBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
+--		Perl_Player_ManaBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
+--		Perl_Player_XPBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
+--		Perl_Player_XPRestBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
+--	end
+
+	
+	
+--	if (framefade == 1) then
+--		Perl_Player_Frame:SetAlpha(idletransparency);
+--	end
+	
+
+	-- Bar Art hiding stuff.	
+--	ExhaustionTick_Update_Backup = ExhaustionTick_Update;  -- store old function.
+--	Perl_Player_HideBarArt();
+		
+	
+
+	
+	if (Perl_Player_State == 1) then
+		PlayerFrame_UpdateStatus = Perl_Player_UpdateDisplay;
+		Perl_Player_Frame:Show();
+		Perl_Player_UpdateDisplay();
+	else
+		Perl_Player_Frame:Hide();
+		PlayerFrame_UpdateStatus = BlizzardPlayerFrame_Update;
+	end
+
+	Initialized = 1;
+end
+
+function Perl_Player_myAddOns_Support()
+	-- Register the addon in myAddOns
+	if(myAddOnsFrame_Register) then
+		local Perl_Player_myAddOns_Details = {
+			name = "Perl_Player",
+			version = "v0.02",
+			releaseDate = "September 28, 2005",
+			author = "Perl; Maintained by Global",
+			email = "global@g-ball.com",
+			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+			category = MYADDONS_CATEGORY_OTHERS
+		};
+		Perl_Player_myAddOns_Help = {};
+		Perl_Player_myAddOns_Help[1] = "/perlplayer\n/pp\n";
+		myAddOnsFrame_Register(Perl_Player_myAddOns_Details, Perl_Player_myAddOns_Help);
+	end
+end
+
 -------------------------
 -- The Update Function --
 -------------------------
-
-function Perl_Player_UpdateDisplay ()
+function Perl_Player_UpdateDisplay()
   if (Perl_Player_State == 0) then
 		Perl_Player_Frame:Hide();
 		PlayerFrame_UpdateStatus = BlizzardPlayerFrame_Update;
@@ -335,356 +454,40 @@ end
 function Perl_Player_Lock ()
 	locked = 1;
 	Perl_Player_UpdateVars();
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player frame is now |cfffffffflocked|cffffff00.");
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffLocked|cffffff00.");
 end
 
 function Perl_Player_Unlock ()
 	locked = 0;
 	Perl_Player_UpdateVars();
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player frame is now |cffffffffunlocked|cffffff00.");
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffUnlocked|cffffff00.");
 end
 
---function Perl_Player_ToggleBuffAlerts ()
---	if (buffalerts == 1) then
---		buffalerts = 0;
---		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Buff alerts |cffffffffoff|cffffff00.");
---	else
---		buffalerts = 1;
---		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Buff alerts |cffffffffon|cffffff00.");
---	end
---	Perl_Player_UpdateVars();
---end
---
---function Perl_Player_ToggleBuffs ()
---	if (showbuffs == 1) then
---		showbuffs = 0;
---		Perl_Player_UseBuffs(0);
---		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player frame buffs are |cffffffffoff|cffffff00.");
---	else
---		showbuffs = 1;
---		Perl_Player_UseBuffs(1);
---		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player frame buffs are |cffffffffon|cffffff00.");
---	end
---	Perl_Player_UpdateVars();
---end
---
---function Perl_Player_UseBuffs (which)
---	if (which == 1) then
---		BuffFrame:Hide();
---	else
---		BuffFrame:Show();
---	end
---end
---
---function Perl_Player_ToggleHideBarArt ()
---	if (hidebarart == 1) then
---		hidebarart = 0;
---		Perl_Player_HideBarArt ();
---		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Bottom Bar art now |cffffffffshown|cffffff00.");
---	else
---		hidebarart = 1;
---		Perl_Player_HideBarArt ();
---		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Bottom Bar art now |cffffffffhidden|cffffff00.");
---	end
---	Perl_Player_UpdateVars();
---end
---
---function Perl_Player_HideBarArt ()
---	if ((hidebarart == 1) and (MainMenuExpBar:GetAlpha() > 0 or ExhaustionTick:GetAlpha() > 0)) then
---		MainMenuBarTexture0:Hide();
---		MainMenuBarTexture1:Hide();
---		MainMenuBarTexture2:Hide();
---		MainMenuBarTexture3:Hide();
---		MainMenuBarLeftEndCap:Hide();
---		MainMenuBarRightEndCap:Hide();
---		ExhaustionTick:Hide();
---		ExhaustionLevelFillBar:Hide();
---		MainMenuExpBar:SetStatusBarColor(0, 0, 0, 0);
---		ExhaustionLevelFillBar:SetVertexColor(0, 0, 0, 0);
---		MainMenuBarOverlayFrame:SetAlpha(1);
---
---		
---		ExhaustionTick_Update = Perl_Player_HideBarArt;
---	elseif (hidebarart == 0) then
---		MainMenuBarTexture0:Show();
---		MainMenuBarTexture1:Show();
---		MainMenuBarTexture2:Show();
---		MainMenuBarTexture3:Show();
---		MainMenuBarLeftEndCap:Show();
---		MainMenuBarRightEndCap:Show();
---		ExhaustionLevelFillBar:Show();
---		MainMenuBarOverlayFrame:SetAlpha(0);
---		
---		MainMenuExpBar_Update();
---		
---		-- Setup the bar again
---		local exhaustionStateID = GetRestState();
---		if (exhaustionStateID == 1) then
---			MainMenuExpBar:SetStatusBarColor(0.0, 0.39, 0.88, 1.0);
---			ExhaustionLevelFillBar:SetVertexColor(0.0, 0.39, 0.88, 0.15);
---			ExhaustionTickHighlight:SetVertexColor(0.0, 0.39, 0.88);
---		elseif (exhaustionStateID == 2) then
---			MainMenuExpBar:SetStatusBarColor(0.58, 0.0, 0.55, 1.0);
---			ExhaustionLevelFillBar:SetVertexColor(0.58, 0.0, 0.55, 0.15);
---			ExhaustionTickHighlight:SetVertexColor(0.58, 0.0, 0.55);
---		end
---		
---		ExhaustionTick_Update = ExhaustionTick_Update_Backup;
---		
---		ExhaustionTick_Update();
---	end
---end
+function Perl_Player_Status()
+  if (Perl_Player_State == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisabled|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffEnabled|cffffff00.");
+	end
+	
+	if (locked == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffUnlocked|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffLocked|cffffff00.");
+	end
+end
 
 function Perl_Player_UpdateVars()
 	Perl_Player_Config[UnitName("player")] = {
-						["Locked"] = locked
-						--["buffs"] = showbuffs,
-						--["hidebarart"] = hidebarart,
-						--["alerts"] = buffalerts
-						};
-end
-
--------------------------------
--- Loading Settings Function --
--------------------------------
-function Perl_Player_VarInit () 
-
-	if (Initialized or (not VariablesLoaded)) then
-		return;
-	end
-
-	-- Major config options.
-
-	Perl_Player_StatsFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Player_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	Perl_Player_LevelFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Player_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	Perl_Player_NameFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Player_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	--Perl_Player_BuffFrame:SetBackdropColor(0, 0, 0, transparency);
-	--Perl_Player_BuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	Perl_Player_Frame:Hide();
-	
-	
-	Perl_Player_HealthBarText:SetTextColor(1,1,1,1);
-	Perl_Player_ManaBarText:SetTextColor(1,1,1,1);
-	
-	-- Set name
-	Perl_Player_NameBarText:SetText(UnitName("player"));
-	
-	-- Set Class
-	local PlayerClass = UnitClass("player");
-	Perl_Player_ClassTexture:SetTexCoord(Perl_Target_ClassPosRight[PlayerClass], Perl_Target_ClassPosLeft[PlayerClass], Perl_Target_ClassPosTop[PlayerClass], Perl_Target_ClassPosBottom[PlayerClass]);
-	
-	
-	-- Load Variables
-	local strlocked;
-	local strstate;
-	
-	-- Check if a previous exists, if not, enable by default.
-	if (type(Perl_Player_Config[UnitName("player")]) == "table") then
-		Perl_Player_GetVars();
-	else
-		Perl_Player_Config[UnitName("player")] = {
-							["Locked"] = locked
-							--["buffs"] = showbuffs,
-							--["hidebarart"] = hidebarart,
-							--["alerts"] = buffalerts
-							};
-	end
-	
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame by Perl loaded successfully. ");
-
---	if (getglobal('PERL_COMMON')) then
---		Perl_Player_HealthBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
---		Perl_Player_ManaBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
---		Perl_Player_XPBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
---		Perl_Player_XPRestBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
---	end
-
-	Perl_Player_Frame:Show();
-	
-	if (framefade == 1) then
-		Perl_Player_Frame:SetAlpha(idletransparency);
-	end
-	
-	--Perl_Player_UseBuffs(showbuffs);
-
-	-- Bar Art hiding stuff.	
---	ExhaustionTick_Update_Backup = ExhaustionTick_Update;  -- store old function.
---	Perl_Player_HideBarArt();
-		
-	Initialized = 1;
-
-	
-	if (Perl_Player_State == 1) then
-		PlayerFrame_UpdateStatus = Perl_Player_UpdateDisplay;
-		Perl_Player_UpdateDisplay();
-	else
-	  Perl_Player_Frame:Hide();
-		PlayerFrame_UpdateStatus = BlizzardPlayerFrame_Update;
-	end
-	
+		["Locked"] = locked
+		--["buffs"] = showbuffs,
+		--["hidebarart"] = hidebarart,
+		--["alerts"] = buffalerts
+	};
 end
 
 function Perl_Player_GetVars()
 	locked = Perl_Player_Config[UnitName("player")]["Locked"];
-	--showbuffs = Perl_Player_Config[UnitName("player")]["buffs"];
-	--hidebarart = Perl_Player_Config[UnitName("player")]["hidebarart"];
-	--buffalerts = Perl_Player_Config[UnitName("player")]["alerts"];
-end
-
---------------------
--- Buff Functions --
---------------------
-
-function Perl_Player_Buff_UpdateAll ()
-	if (UnitName("player") and (showbuffs == 1)) then
-		Perl_Player_BuffFrame:Show();
-		local buffmax = 0;
-		for buffnum=1,24 do
-			local button = getglobal("Perl_Player_Buff"..buffnum);
-			local buffIndex, untilCancelled = GetPlayerBuff((buffnum-1), "HELPFUL|HARMFUL|PASSIVE");
-			if (buffIndex > -1) then
-				local icon = getglobal(button:GetName().."Icon");
-				local debuff = getglobal(button:GetName().."DebuffBorder");
-				local timetext = getglobal(button:GetName().."DurationText");
-				local buffname = Perl_Player_GetBuffName (buffIndex);
-			
-				icon:SetTexture(GetPlayerBuffTexture(buffIndex));
-				
-				if (Perl_Player_BuffIsDebuff(buffIndex) == 1) then
-					debuff:Show();
-					button.isdebuff = 1;
-				else
-					debuff:Hide();
-					button.isdebuff = 0;
-				end
-				
-				if (untilCancelled == 0) then
-					local timeleft = GetPlayerBuffTimeLeft(buffIndex);
-					timetext:SetText(Perl_Player_GetStringTime(timeleft));
-					timetext:Show();
-					
-					if (timeleft < BuffWarnTime) then
-						local BuffAlpha;
-						if (timeleft > 0) then
-							BuffAlpha = BuffAlphaMin + 0.5*(BuffAlphaMax-BuffAlphaMin)*(1 + math.sin(2*math.pi*timeleft));
-						else
-							BuffAlpha = 0;
-						end
-						
-						if (BuffAlpha > 1) then
-							BuffAlpha = 1;
-						elseif (BuffAlpha < 0) then
-							BuffAlpha = 0;
-						end
-						
-						button:SetAlpha(BuffAlpha);
-						
-						if ((button.isdebuff == 0) and (button.notwarned == 1) and (button.name == buffname) and (buffalerts == 1)) then
-							UIErrorsFrame:AddMessage(buffname.." will expire in 30 seconds", 1.0, 1.0, 0.0, 1.0, UIERRORS_HOLD_TIME);
-							DEFAULT_CHAT_FRAME:AddMessage("|cffffffff<"..buffname..">|cffffff00 will expire in 30 seconds");
-							button.notwarned = 0;
-						else
-							button.notwarned = 0;
-						end
-					else
-						button:SetAlpha(1);
-						if (button.notwarned ~= 1) then
-							button.notwarned = 1;
-						end
-					end
-				else
-					timetext:Hide();
-					button:SetAlpha(1);
-					button.notwarned = 0;
-				end
-				
-				if ((buffname ~= nil) and (button.name ~= buffname)) then
-					button.name = buffname;
-					button.notwarned = 0;
-				end
-				button:Show();
-			else
-				button:Hide();
-				button.notwarned = 0;
-			end
-		end
-	else
-		Perl_Player_BuffFrame:Hide();
-	end
-end
-
-function Perl_Player_BuffIsDebuff(id)
-	for z=0, 23, 1 do
-		local debuffIndex, debuffTemp = GetPlayerBuff(z, "HARMFUL");
-		if (debuffIndex == -1) then 
-			return 0; 
-		end
-		if (debuffIndex == id) then
-			return 1;
-		end
-	end
-	return 0;
-end
-
-function Perl_Player_GetStringTime (timenum)
-	local minutes = math.floor(timenum/60);
-	local seconds = math.floor(timenum - 60*minutes);
-	local timestring;
-	
-	if (string.len(seconds) == 1) then
-		seconds = "0"..seconds;
-	end
-	
-	if (minutes > 60) then
-		local hours = math.floor(minutes/60);
-		minutes = minutes - 60*hours;
-		if (string.len(minutes) == 1) then
-			minutes = "0"..minutes;
-		end
-		timestring = hours..":"..minutes..":"..seconds;
-	else
-		timestring = minutes..":"..seconds;
-	end
-	return timestring;
-end
-
-
-
-function Perl_Player_SetBuffTooltip ()
-	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
-	GameTooltip:SetPlayerBuff(this:GetID()-1);
-end
-
-function Perl_Player_GetBuffName(id)
-	
-	local buffIndex, untilCancelled = GetPlayerBuff(id);
-	
-	if ((buffIndex < 24) and (buffIndex > -1)) then
-		local tooltip = Perl_Player_Tooltip;
-		if ( tooltip ) then
-			Perl_Player_MoneyToggle();
-			tooltip:SetPlayerBuff(buffIndex);
-			Perl_Player_MoneyToggle();
-		end
-		
-		local toolTipText = getglobal("Perl_Player_TooltipTextLeft1");
-		
-		if (toolTipText) then
-			local name = toolTipText:GetText();
-			if ( name ~= nil ) then
-				return name;
-			end
-		end
-	end
-	return nil;
-end
-
-function Perl_Player_BuffClicked ()
-	CancelPlayerBuff(this:GetID()-1);
-	this.notwarned = 0;
 end
 
 --------------------
@@ -746,20 +549,11 @@ function Perl_Player_XPTooltip()
 	local playerxprest = GetXPExhaustion();
 	local xptext = playerxp.."/"..playerxpmax;
 
-  if (playerxprest) then
+	if (playerxprest) then
 		xptext = xptext .."(+"..(playerxprest)..")";
-		--Perl_Player_XPBar:SetStatusBarColor(0.3, 0.3, 1, 1);
-		--Perl_Player_XPRestBar:SetStatusBarColor(0.3, 0.3, 1, 0.5);
-		--Perl_Player_XPBarBG:SetStatusBarColor(0.3, 0.3, 1, 0.25);
-		--Perl_Player_XPRestBar:SetValue(playerxp + playerxprest);
-	else
-		--Perl_Player_XPBar:SetStatusBarColor(0.6, 0, 0.6, 1);
-		--Perl_Player_XPRestBar:SetStatusBarColor(0.6, 0, 0.6, 0.5);
-		--Perl_Player_XPBarBG:SetStatusBarColor(0.6, 0, 0.6, 0.25);
-		--Perl_Player_XPRestBar:SetValue(playerxp);
 	end
-  
-  GameTooltip_SetDefaultAnchor(GameTooltip, this);
+
+	GameTooltip_SetDefaultAnchor(GameTooltip, this);
 	GameTooltip:SetText(xptext, 255/255, 209/255, 0/255);
 	GameTooltip:Show();
 end
