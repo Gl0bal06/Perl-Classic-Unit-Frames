@@ -1,3 +1,8 @@
+5.07 - June 6, 2013
+ - All: Updated TOC Interface version to 50300
+ - Party: Role icons now appear on top of the PvP status icons
+ - PartyPet: Frames now correctly hide in raids
+
 5.06 - March 31, 2013
  - All: Updated TOC Interface version to 50200
  - All: Fixed taint issues regarding CombatFeedback, FACTION_BAR_COLORS, RAID_CLASS_COLORS, DebuffTypeColor, CooldownFrame_SetTimer, SetRaidTargetIconTexture, and UIErrorsFrame

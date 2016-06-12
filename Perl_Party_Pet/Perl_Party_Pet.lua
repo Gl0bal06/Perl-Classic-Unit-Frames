@@ -56,12 +56,12 @@ function Perl_Party_Pet_Script_OnLoad(self)
 	self:RegisterEvent("PLAYER_ALIVE");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
-	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 	self:RegisterEvent("UNIT_PET");
 
 	-- Scripts
 	self:SetScript("OnEvent", 
 		function(self, event, ...)
+			--DEFAULT_CHAT_FRAME:AddMessage(event);
 			Perl_Party_Pet_Events[event](self, ...);
 		end
 	);
@@ -114,14 +114,11 @@ Perl_Party_Pet_Events.UNIT_PORTRAIT_UPDATE = Perl_Party_Pet_Events.UNIT_MODEL_CH
 
 function Perl_Party_Pet_Events:GROUP_ROSTER_UPDATE()
 	Perl_Party_Pet_Check_Hidden();
+	Perl_Party_Pet_Update();
 end
 
 function Perl_Party_Pet_Events:PLAYER_ALIVE()
 	Perl_Party_Pet_Check_Hidden();
-end
-
-function Perl_Party_Pet_Events:GROUP_ROSTER_UPDATE()
-	Perl_Party_Pet_Update();
 end
 
 function Perl_Party_Pet_Events:UNIT_PET(arg1)
@@ -161,6 +158,7 @@ function Perl_Party_Pet_Initialize()
 		Perl_Party_Pet2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition2, yposition2);
 		Perl_Party_Pet3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition3, yposition3);
 		Perl_Party_Pet4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition4, yposition4);
+		Perl_Party_Pet_Check_Hidden();
 		return;
 	end
 
@@ -580,12 +578,14 @@ function Perl_Party_Pet_Frame_Style()
 end
 
 function Perl_Party_Pet_Check_Hidden()
-	if (hiddeninraids == 1) then
-		if (UnitInRaid("player")) then
-			if (InCombatLockdown()) then
-				Perl_Config_Queue_Add(Perl_Party_Pet_Disable_All);
-			else
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_Party_Pet_Check_Hidden);
+	else
+		if (enabled == 1 and hiddeninraids == 1) then
+			if (UnitInRaid("player")) then
 				Perl_Party_Pet_Disable_All();
+			else
+				Perl_Party_Pet_Enable_All();
 			end
 		end
 	end

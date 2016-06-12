@@ -152,20 +152,6 @@
 							</Anchors>
 						</Texture>
 
-						<!-- Role Icon -->
-						<Texture name="$parent_RoleIcon" file="Interface\AddOns\Perl_Config\Perl_Role_Icon" hidden="true">
-							<Size>
-								<AbsDimension x="19" y="18"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT">
-									<Offset>
-										<AbsDimension x="3" y="-4"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</Texture>
-
 						<!-- Master Icon -->
 						<Texture name="$parent_MasterIcon" file="Interface\GroupFrame\UI-Group-MasterLooter" hidden="true">
 							<Size>
@@ -189,6 +175,20 @@
 								<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
 									<Offset>
 										<AbsDimension x="2" y="-3"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+
+						<!-- Role Icon -->
+						<Texture name="$parent_RoleIcon" file="Interface\AddOns\Perl_Config\Perl_Role_Icon" hidden="true">
+							<Size>
+								<AbsDimension x="19" y="18"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset>
+										<AbsDimension x="3" y="-4"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
