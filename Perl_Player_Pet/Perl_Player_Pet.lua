@@ -5,25 +5,27 @@ Perl_Player_Pet_Config = {};
 local Perl_Player_Pet_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Player_Pet_GetVars)
-local locked = 0;			-- unlocked by default
-local showxp = 0;			-- xp bar is hidden by default
-local scale = 0.9;			-- default scale for pet frame
-local targetscale = 0.9;		-- default scale for pet target frame
-local numpetbuffsshown = 16;		-- buff row is 16 long
-local numpetdebuffsshown = 16;		-- debuff row is 16 long
-local transparency = 1;			-- transparency for frames
-local bufflocation = 4;			-- default buff location
-local debufflocation = 5;		-- default debuff location
-local buffsize = 12;			-- default buff size is 12
-local debuffsize = 12;			-- default debuff size is 12
-local showportrait = 0;			-- portrait is hidden by default
-local threedportrait = 0;		-- 3d portraits are off by default
-local portraitcombattext = 0;		-- Combat text is disabled by default on the portrait frame
-local compactmode = 0;			-- compact mode is disabled by default
-local hidename = 0;			-- name and level frame is enabled by default
-local displaypettarget = 0;		-- pet's target is off by default
-local classcolorednames = 0;		-- names are colored based on pvp status by default
-local showfriendlyhealth = 0;		-- show numerical friendly health is disbaled by default
+local locked = 0;		-- unlocked by default
+local showxp = 0;		-- xp bar is hidden by default
+local scale = 0.9;		-- default scale for pet frame
+local targetscale = 0.9;	-- default scale for pet target frame
+local numpetbuffsshown = 16;	-- buff row is 16 long
+local numpetdebuffsshown = 16;	-- debuff row is 16 long
+local transparency = 1;		-- transparency for frames
+local bufflocation = 4;		-- default buff location
+local debufflocation = 5;	-- default debuff location
+local buffsize = 12;		-- default buff size is 12
+local debuffsize = 12;		-- default debuff size is 12
+local showportrait = 0;		-- portrait is hidden by default
+local threedportrait = 0;	-- 3d portraits are off by default
+local portraitcombattext = 0;	-- Combat text is disabled by default on the portrait frame
+local compactmode = 0;		-- compact mode is disabled by default
+local hidename = 0;		-- name and level frame is enabled by default
+local displaypettarget = 0;	-- pet's target is off by default
+local classcolorednames = 0;	-- names are colored based on pvp status by default
+local showfriendlyhealth = 0;	-- show numerical friendly health is disbaled by default
+local displaycastablebuffs = 0;	-- display all buffs by default
+local displaycurabledebuff = 0;	-- display all debuffs by default
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
@@ -43,7 +45,7 @@ local Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;		-- the color fading interv
 local Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext, r, g, b, reaction, pettargethealth, pettargethealthmax, pettargethealthpercent, pettargetmana, pettargetmanamax, pettargetpower, raidpettargetindex, englishclass;
+local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext, r, g, b, reaction, pettargethealth, pettargethealthmax, pettargethealthpercent, pettargetmana, pettargetmanamax, pettargetpower, raidpettargetindex, englishclass, bufffilter, debufffilter;
 
 
 ----------------------
@@ -1146,6 +1148,24 @@ function Perl_Player_Pet_Set_Debuff_Size(newvalue)
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
+function Perl_Player_Pet_Set_Class_Buffs(newvalue)
+	if (newvalue ~= nil) then
+		displaycastablebuffs = newvalue;
+	end
+	Perl_Player_Pet_UpdateVars();		-- Save the new setting
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
+	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+end
+
+function Perl_Player_Pet_Set_Curable_Debuffs(newvalue)
+	if (newvalue ~= nil) then
+		displaycurabledebuff = newvalue;
+	end
+	Perl_Player_Pet_UpdateVars();		-- Save the new setting
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
+	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+end
+
 function Perl_Player_Pet_Set_Compact_Mode(newvalue)
 	compactmode = newvalue;
 	Perl_Player_Pet_UpdateVars();
@@ -1275,6 +1295,8 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 	displaypettarget = Perl_Player_Pet_Config[name]["DisplayPetTarget"];
 	classcolorednames = Perl_Player_Pet_Config[name]["ClassColoredNames"];
 	showfriendlyhealth = Perl_Player_Pet_Config[name]["ShowFriendlyHealth"];
+	displaycastablebuffs = Perl_Player_Pet_Config[name]["DisplayCastableBuffs"];
+	displaycurabledebuff = Perl_Player_Pet_Config[name]["DisplayCurableDebuff"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1333,6 +1355,12 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 	if (showfriendlyhealth == nil) then
 		showfriendlyhealth = 0;
 	end
+	if (displaycastablebuffs == nil) then
+		displaycastablebuffs = 0;
+	end
+	if (displaycurabledebuff == nil) then
+		displaycurabledebuff = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1370,6 +1398,8 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 		["displaypettarget"] = displaypettarget,
 		["classcolorednames"] = classcolorednames,
 		["showfriendlyhealth"] = showfriendlyhealth,
+		["displaycastablebuffs"] = displaycastablebuffs,
+		["displaycurabledebuff"] = displaycurabledebuff,
 	}
 	return vars;
 end
@@ -1473,6 +1503,16 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			else
 				showfriendlyhealth = nil;
 			end
+			if (vartable["Global Settings"]["DisplayCastableBuffs"] ~= nil) then
+				displaycastablebuffs = vartable["Global Settings"]["DisplayCastableBuffs"];
+			else
+				displaycastablebuffs = nil;
+			end
+			if (vartable["Global Settings"]["DisplayCurableDebuff"] ~= nil) then
+				displaycurabledebuff = vartable["Global Settings"]["DisplayCurableDebuff"];
+			else
+				displaycurabledebuff = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1533,6 +1573,12 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		if (showfriendlyhealth == nil) then
 			showfriendlyhealth = 0;
 		end
+		if (displaycastablebuffs == nil) then
+			displaycastablebuffs = 0;
+		end
+		if (displaycurabledebuff == nil) then
+			displaycurabledebuff = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
@@ -1565,6 +1611,8 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		["DisplayPetTarget"] = displaypettarget,
 		["ClassColoredNames"] = classcolorednames,
 		["ShowFriendlyHealth"] = showfriendlyhealth,
+		["DisplayCastableBuffs"] = displaycastablebuffs,
+		["DisplayCurableDebuff"] = displaycurabledebuff,
 	};
 end
 
@@ -1578,7 +1626,12 @@ function Perl_Player_Pet_Buff_UpdateAll()
 		local curableDebuffFound = 0;
 
 		for buffnum=1,numpetbuffsshown do									-- Start main buff loop
-			_, _, buffTexture, buffApplications = UnitBuff("pet", buffnum);					-- Get the texture and buff stacking information if any
+			if (displaycastablebuffs == 0) then								-- Which buff filter mode are we in?
+				bufffilter = "HELPFUL";
+			else
+				bufffilter = "HELPFUL RAID";
+			end
+			_, _, buffTexture, buffApplications = UnitAura("pet", buffnum, bufffilter);			-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Player_Pet_Buff"..buffnum);						-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -1597,7 +1650,12 @@ function Perl_Player_Pet_Buff_UpdateAll()
 		end													-- End main buff loop
 
 		for debuffnum=1,numpetdebuffsshown do
-			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("pet", debuffnum);			-- Get the texture and debuff stacking information if any
+			if (displaycurabledebuff == 1) then								-- Are we targeting a friend or enemy and which filter do we need to apply?
+				debufffilter = "HARMFUL RAID";
+			else
+				debufffilter = "HARMFUL";
+			end
+			_, _, buffTexture, buffApplications, debuffType = UnitAura("pet", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Player_Pet_Debuff"..debuffnum);					-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture

@@ -110,6 +110,18 @@ function Perl_Config_Player_Pet_Set_Values()
 		Perl_Config_Player_Pet_Frame_CheckButton12:SetChecked(nil);
 	end
 
+	if (vartable["displaycastablebuffs"] == 1) then
+		Perl_Config_Player_Pet_Frame_CheckButton13:SetChecked(1);
+	else
+		Perl_Config_Player_Pet_Frame_CheckButton13:SetChecked(nil);
+	end
+
+	if (vartable["displaycurabledebuff"] == 1) then
+		Perl_Config_Player_Pet_Frame_CheckButton15:SetChecked(1);
+	else
+		Perl_Config_Player_Pet_Frame_CheckButton15:SetChecked(nil);
+	end
+
 	Perl_Config_Player_Pet_Frame_Slider9Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_Player_Pet_Frame_Slider9High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Player_Pet_Frame_Slider9:SetValue(floor(vartable["targetscale"]*100+0.5));
@@ -234,6 +246,22 @@ function Perl_Config_Player_Pet_Friendly_Health_Update()
 		Perl_Player_Pet_Set_Friendly_Health(1);
 	else
 		Perl_Player_Pet_Set_Friendly_Health(0);
+	end
+end
+
+function Perl_Config_Player_Pet_Class_Buffs_Update()
+	if (Perl_Config_Player_Pet_Frame_CheckButton13:GetChecked() == 1) then
+		Perl_Player_Pet_Set_Class_Buffs(1);
+	else
+		Perl_Player_Pet_Set_Class_Buffs(0);
+	end
+end
+
+function Perl_Config_Player_Pet_Curable_Debuffs_Update()
+	if (Perl_Config_Player_Pet_Frame_CheckButton15:GetChecked() == 1) then
+		Perl_Player_Pet_Set_Curable_Debuffs(1);
+	else
+		Perl_Player_Pet_Set_Curable_Debuffs(0);
 	end
 end
 

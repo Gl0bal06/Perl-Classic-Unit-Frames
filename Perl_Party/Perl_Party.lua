@@ -34,6 +34,7 @@ local showpvpicon = 1;		-- show the pvp icon
 local showbarvalues = 0;	-- healer mode will have the bar values hidden by default
 local displaycurabledebuff = 0;	-- display all debuffs by default
 local portraitbuffs = 1;	-- buffs will be pushed over to the portrait if it is displayed
+local displaybufftimers = 0;	-- buff/debuff timers are off by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -68,7 +69,7 @@ local Perl_Party_Four_PetHealthBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, partymanapercent, partypethealth, partypethealthmax, partypethealthpercent, englishclass;
+local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, partymanapercent, partypethealth, partypethealthmax, partypethealthpercent, englishclass, bufffilter, debufffilter;
 
 
 ----------------------
@@ -1778,6 +1779,15 @@ function Perl_Party_Set_Class_Debuffs(newvalue)
 	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
 end
 
+function Perl_Party_Set_Buff_Timers(newvalue)
+	if (newvalue ~= nil) then
+		displaybufftimers = newvalue;
+	end
+	Perl_Party_UpdateVars();		-- Save the new setting
+	Perl_Party_Reset_Buffs();		-- Reset the buff icons
+	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+end
+
 function Perl_Party_Set_Buff_Location(newvalue)
 	if (newvalue ~= nil) then
 		bufflocation = newvalue;
@@ -1928,6 +1938,7 @@ function Perl_Party_GetVars(name, updateflag)
 	showbarvalues = Perl_Party_Config[name]["ShowBarValues"];
 	displaycurabledebuff = Perl_Party_Config[name]["DisplayCurableDebuff"];
 	portraitbuffs = Perl_Party_Config[name]["PortraitBuffs"];
+	displaybufftimers = Perl_Party_Config[name]["DisplayBuffTimers"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -2013,6 +2024,9 @@ function Perl_Party_GetVars(name, updateflag)
 	if (portraitbuffs == nil) then
 		portraitbuffs = 1;
 	end
+	if (displaybufftimers == nil) then
+		displaybufftimers = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -2060,6 +2074,7 @@ function Perl_Party_GetVars(name, updateflag)
 		["showbarvalues"] = showbarvalues,
 		["displaycurabledebuff"] = displaycurabledebuff,
 		["portraitbuffs"] = portraitbuffs,
+		["displaybufftimers"] = displaybufftimers,
 	}
 	return vars;
 end
@@ -2208,6 +2223,11 @@ function Perl_Party_UpdateVars(vartable)
 			else
 				portraitbuffs = nil;
 			end
+			if (vartable["Global Settings"]["DisplayBuffTimers"] ~= nil) then
+				displaybufftimers = vartable["Global Settings"]["DisplayBuffTimers"];
+			else
+				displaybufftimers = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2295,6 +2315,9 @@ function Perl_Party_UpdateVars(vartable)
 		if (portraitbuffs == nil) then
 			portraitbuffs = 1;
 		end
+		if (displaybufftimers == nil) then
+			displaybufftimers = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Party_Check_Hidden();
@@ -2337,6 +2360,7 @@ function Perl_Party_UpdateVars(vartable)
 		["ShowBarValues"] = showbarvalues,
 		["DisplayCurableDebuff"] = displaycurabledebuff,
 		["PortraitBuffs"] = portraitbuffs,
+		["DisplayBuffTimers"] = displaybufftimers,
 	};
 end
 
@@ -2346,33 +2370,58 @@ end
 --------------------
 function Perl_Party_Buff_UpdateAll(self)
 	if (UnitName(self.unit)) then
-		local button, buffCount, buffTexture, buffApplications, color, debuffType;					-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		local button, buffCount, buffTexture, buffApplications, color, debuffType, cooldown, duration, timeLeft;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 		local curableDebuffFound = 0;
 
-		for buffnum=1,numbuffsshown do											-- Start main buff loop
-			_, _, buffTexture, buffApplications = UnitBuff(self.unit, buffnum, displaycastablebuffs);		-- Get the texture, buff stacking, and class specific information if any
-			button = getglobal("Perl_Party_MemberFrame"..self.id.."_BuffFrame_Buff"..buffnum);			-- Create the main icon for the buff
-			if (buffTexture) then											-- If there is a valid texture, proceed with buff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);					-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Hide();						-- Hide the debuff border
-				buffCount = getglobal(button:GetName().."Count");						-- Declare the buff counting text variable
-				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);							-- Set the text to the number of applications if greater than 0
-					buffCount:Show();									-- Show the text
-				else
-					buffCount:Hide();									-- Hide the text if equal to 0
-				end
-				button:Show();											-- Show the final buff icon
+		for buffnum=1,numbuffsshown do									-- Start main buff loop
+			if (displaycastablebuffs == 0) then							-- Which buff filter mode are we in?
+				bufffilter = "HELPFUL";
 			else
-				button:Hide();											-- Hide the icon since there isn't a buff in this position
+				bufffilter = "HELPFUL RAID";
 			end
-		end														-- End main buff loop
+			_, _, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura(self.unit, buffnum, bufffilter);	-- Get the texture and buff stacking information if any
+			button = getglobal("Perl_Party_MemberFrame"..self.id.."_BuffFrame_Buff"..buffnum);				-- Create the main icon for the buff
+			if (buffTexture) then												-- If there is a valid texture, proceed with buff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Hide();							-- Hide the debuff border
+				buffCount = getglobal(button:GetName().."Count");							-- Declare the buff counting text variable
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
+					buffCount:Show();										-- Show the text
+				else
+					buffCount:Hide();										-- Hide the text if equal to 0
+				end
+				if (displaybufftimers == 1) then
+					cooldown = getglobal(button:GetName().."Cooldown");				-- Handle cooldowns
+					if (duration) then
+						if (duration > 0) then
+							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
+							cooldown:Show();
+						else
+							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+							cooldown:Hide();
+						end
+					else
+						CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+						cooldown:Hide();
+					end
+				end
+				button:Show();												-- Show the final buff icon
+			else
+				button:Hide();												-- Hide the icon since there isn't a buff in this position
+			end
+		end															-- End main buff loop
 
-		for debuffnum=1,numdebuffsshown do										-- Start main debuff loop
-			_, _, buffTexture, buffApplications, debuffType = UnitDebuff(self.unit, debuffnum, displaycurabledebuff);	-- Get the texture, debuff stacking, and class specific information if any
-			button = getglobal("Perl_Party_MemberFrame"..self.id.."_BuffFrame_Debuff"..debuffnum);			-- Create the main icon for the debuff
-			if (buffTexture) then											-- If there is a valid texture, proceed with debuff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);					-- Set the texture
+		for debuffnum=1,numdebuffsshown do											-- Start main debuff loop
+			if (displaycurabledebuff == 1) then								-- Are we targeting a friend or enemy and which filter do we need to apply?
+				debufffilter = "HARMFUL RAID";
+			else
+				debufffilter = "HARMFUL";
+			end
+			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura(self.unit, debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
+			button = getglobal("Perl_Party_MemberFrame"..self.id.."_BuffFrame_Debuff"..debuffnum);				-- Create the main icon for the debuff
+			if (buffTexture) then												-- If there is a valid texture, proceed with debuff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
@@ -2397,6 +2446,21 @@ function Perl_Party_Buff_UpdateAll(self)
 					buffCount:Show();									-- Show the text
 				else
 					buffCount:Hide();									-- Hide the text if equal to 0
+				end
+				if (displaybufftimers == 1) then
+					cooldown = getglobal(button:GetName().."Cooldown");					-- Handle cooldowns
+					if (duration) then
+						if (duration > 0) then
+							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
+							cooldown:Show();
+						else
+							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+							cooldown:Hide();
+						end
+					else
+						CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+						cooldown:Hide();
+					end
 				end
 				button:Show();											-- Show the final debuff icon
 			else
@@ -2532,12 +2596,15 @@ function Perl_Party_Buff_Position_Update(id)
 end
 
 function Perl_Party_Reset_Buffs()
-	local button, debuff, icon;
+	local button, debuff, icon, cooldown;
 	for id=1,4 do
 		for buffnum=1,16 do
 			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..buffnum);
 			icon = getglobal(button:GetName().."Icon");
 			debuff = getglobal(button:GetName().."DebuffBorder");
+			cooldown = getglobal(button:GetName().."Cooldown");
+			CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+			cooldown:Hide();
 			button:SetHeight(buffsize);
 			button:SetWidth(buffsize);
 			icon:SetHeight(buffsize);
@@ -2551,6 +2618,9 @@ function Perl_Party_Reset_Buffs()
 			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..buffnum);
 			icon = getglobal(button:GetName().."Icon");
 			debuff = getglobal(button:GetName().."DebuffBorder");
+			cooldown = getglobal(button:GetName().."Cooldown");
+			CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+			cooldown:Hide();
 			button:SetHeight(debuffsize);
 			button:SetWidth(debuffsize);
 			icon:SetHeight(debuffsize);

@@ -657,12 +657,33 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton28" inherits="UICheckButtonTemplate" id="28">
+			<CheckButton name="$parent_CheckButton29" inherits="UICheckButtonTemplate" id="29">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton27">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_MY_DEBUFFS);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Focus_Only_Self_Debuffs_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton28" inherits="UICheckButtonTemplate" id="28">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton29">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>

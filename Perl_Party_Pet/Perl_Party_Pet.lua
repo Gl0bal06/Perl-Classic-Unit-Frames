@@ -5,23 +5,25 @@ Perl_Party_Pet_Config = {};
 local Perl_Party_Pet_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Party_Pet_GetVars)
-local locked = 0;			-- unlocked by default
-local showportrait = 0;			-- portrait is hidden by default
-local threedportrait = 0;		-- 3d portraits are off by default
-local scale = 0.9;			-- default scale
-local transparency = 1;			-- transparency for frames
-local numpetbuffsshown = 16;		-- buff row is 16 long
-local numpetdebuffsshown = 16;		-- debuff row is 16 long
-local buffsize = 12;			-- default buff size is 12
-local debuffsize = 12;			-- default debuff size is 12
-local bufflocation = 4;			-- default buff location
-local debufflocation = 5;		-- default debuff location
-local hiddeninraids = 0;		-- default is shown always
-local compactmode = 0;			-- compact mode is disabled by default
-local enabled = 0;			-- mod is disabled by default
+local locked = 0;		-- unlocked by default
+local showportrait = 0;		-- portrait is hidden by default
+local threedportrait = 0;	-- 3d portraits are off by default
+local scale = 0.9;		-- default scale
+local transparency = 1;		-- transparency for frames
+local numpetbuffsshown = 16;	-- buff row is 16 long
+local numpetdebuffsshown = 16;	-- debuff row is 16 long
+local buffsize = 12;		-- default buff size is 12
+local debuffsize = 12;		-- default debuff size is 12
+local bufflocation = 4;		-- default buff location
+local debufflocation = 5;	-- default debuff location
+local hiddeninraids = 0;	-- default is shown always
+local compactmode = 0;		-- compact mode is disabled by default
+local enabled = 0;		-- mod is disabled by default
+local displaycastablebuffs = 0;	-- display all buffs by default
+local displaycurabledebuff = 0;	-- display all debuffs by default
 
 -- Default Local Variables
-local Initialized = nil;		-- waiting to be initialized
+local Initialized = nil;	-- waiting to be initialized
 
 -- Fade Bar Variables
 local Perl_Party_Pet_One_HealthBar_Fade_Color = 1;		-- the color fading interval
@@ -42,7 +44,7 @@ local Perl_Party_Pet_Four_ManaBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Party_Pet_Four_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local partypethealth, partypethealthmax, partypetmana, partypetmanamax, partypetpower, englishclass;
+local partypethealth, partypethealthmax, partypetmana, partypetmanamax, partypetpower, englishclass, bufffilter, debufffilter;
 
 
 ----------------------
@@ -785,6 +787,32 @@ function Perl_Party_Pet_Set_Debuff_Location(newvalue)
 	Perl_Party_Pet_Buff_UpdateAll("partypet4");
 end
 
+function Perl_Party_Pet_Set_Class_Buffs(newvalue)
+	if (newvalue ~= nil) then
+		displaycastablebuffs = newvalue;
+	end
+	Perl_Party_Pet_UpdateVars();
+	Perl_Party_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Party_Pet_Buff_Position_Update();
+	Perl_Party_Pet_Buff_UpdateAll("partypet1");	-- Repopulate the buff icons
+	Perl_Party_Pet_Buff_UpdateAll("partypet2");
+	Perl_Party_Pet_Buff_UpdateAll("partypet3");
+	Perl_Party_Pet_Buff_UpdateAll("partypet4");
+end
+
+function Perl_Party_Pet_Set_Curable_Debuffs(newvalue)
+	if (newvalue ~= nil) then
+		displaycurabledebuff = newvalue;
+	end
+	Perl_Party_Pet_UpdateVars();
+	Perl_Party_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Party_Pet_Buff_Position_Update();
+	Perl_Party_Pet_Buff_UpdateAll("partypet1");	-- Repopulate the buff icons
+	Perl_Party_Pet_Buff_UpdateAll("partypet2");
+	Perl_Party_Pet_Buff_UpdateAll("partypet3");
+	Perl_Party_Pet_Buff_UpdateAll("partypet4");
+end
+
 function Perl_Party_Pet_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);
@@ -839,6 +867,8 @@ function Perl_Party_Pet_GetVars(name, updateflag)
 	debufflocation = Perl_Party_Pet_Config[name]["DebuffLocation"];
 	hiddeninraids = Perl_Party_Pet_Config[name]["HiddenInRaids"];
 	enabled = Perl_Party_Pet_Config[name]["Enabled"];
+	displaycastablebuffs = Perl_Party_Pet_Config[name]["DisplayCastableBuffs"];
+	displaycurabledebuff = Perl_Party_Pet_Config[name]["DisplayCurableDebuff"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -879,6 +909,12 @@ function Perl_Party_Pet_GetVars(name, updateflag)
 	if (enabled == nil) then
 		enabled = 0;
 	end
+	if (displaycastablebuffs == nil) then
+		displaycastablebuffs = 0;
+	end
+	if (displaycurabledebuff == nil) then
+		displaycurabledebuff = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -905,6 +941,8 @@ function Perl_Party_Pet_GetVars(name, updateflag)
 		["debufflocation"] = debufflocation,
 		["hiddeninraids"] = hiddeninraids,
 		["enabled"] = enabled,
+		["displaycastablebuffs"] = displaycastablebuffs,
+		["displaycurabledebuff"] = displaycurabledebuff,
 	}
 	return vars;
 end
@@ -978,6 +1016,16 @@ function Perl_Party_Pet_UpdateVars(vartable)
 			else
 				enabled = nil;
 			end
+			if (vartable["Global Settings"]["DisplayCastableBuffs"] ~= nil) then
+				displaycastablebuffs = vartable["Global Settings"]["DisplayCastableBuffs"];
+			else
+				displaycastablebuffs = nil;
+			end
+			if (vartable["Global Settings"]["DisplayCurableDebuff"] ~= nil) then
+				displaycurabledebuff = vartable["Global Settings"]["DisplayCurableDebuff"];
+			else
+				displaycurabledebuff = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1020,6 +1068,12 @@ function Perl_Party_Pet_UpdateVars(vartable)
 		if (enabled == nil) then
 			enabled = 0;
 		end
+		if (displaycastablebuffs == nil) then
+			displaycastablebuffs = 0;
+		end
+		if (displaycurabledebuff == nil) then
+			displaycurabledebuff = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Party_Pet_Set_Scale_Actual();
@@ -1041,6 +1095,8 @@ function Perl_Party_Pet_UpdateVars(vartable)
 		["DebuffLocation"] = debufflocation,
 		["HiddenInRaids"] = hiddeninraids,
 		["Enabled"] = enabled,
+		["DisplayCastableBuffs"] = displaycastablebuffs,
+		["DisplayCurableDebuff"] = displaycurabledebuff,
 	};
 end
 
@@ -1055,7 +1111,12 @@ function Perl_Party_Pet_Buff_UpdateAll(unit)
 		local curableDebuffFound = 0;
 
 		for buffnum=1,numpetbuffsshown do									-- Start main buff loop
-			_, _, buffTexture, buffApplications = UnitBuff(unit, buffnum);					-- Get the texture and buff stacking information if any
+			if (displaycastablebuffs == 0) then								-- Which buff filter mode are we in?
+				bufffilter = "HELPFUL";
+			else
+				bufffilter = "HELPFUL RAID";
+			end
+			_, _, buffTexture, buffApplications = UnitAura(unit, buffnum, bufffilter);			-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Party_Pet"..id.."_BuffFrame_Buff"..buffnum);				-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -1073,7 +1134,12 @@ function Perl_Party_Pet_Buff_UpdateAll(unit)
 		end													-- End main buff loop
 
 		for debuffnum=1,numpetdebuffsshown do									-- Start main debuff loop
-			_, _, buffTexture, buffApplications, debuffType = UnitDebuff(unit, debuffnum);			-- Get the texture and debuff stacking information if any
+			if (displaycurabledebuff == 1) then								-- Are we targeting a friend or enemy and which filter do we need to apply?
+				debufffilter = "HARMFUL RAID";
+			else
+				debufffilter = "HARMFUL";
+			end
+			_, _, buffTexture, buffApplications, debuffType = UnitAura(unit, debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Party_Pet"..id.."_BuffFrame_DeBuff"..debuffnum);			-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture

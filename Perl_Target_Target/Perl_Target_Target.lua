@@ -22,6 +22,7 @@ local displaycastablebuffs = 0;	-- display all buffs by default
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local showfriendlyhealth = 0;	-- show numerical friendly health is disbaled by default
 local displaycurabledebuff = 0;	-- display all debuffs by default
+local displayonlymydebuffs = 0;	-- display all debuffs by default
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
@@ -47,10 +48,10 @@ local Perl_Target_Target_Target_ManaBar_Fade_Time_Elapsed = 0;		-- set the updat
 
 -- Local variables to save memory
 -- ToT variables
-local targettargethealth, targettargethealthmax, targettargethealthpercent, targettargetmana, targettargetmanamax, targettargetpower, raidtargettargetindex;
+local targettargethealth, targettargethealthmax, targettargethealthpercent, targettargetmana, targettargetmanamax, targettargetpower, raidtargettargetindex, targettargetbufffilter, targettargetdebufffilter;
 
 -- ToToT variables
-local targettargettargethealth, targettargettargethealthmax, targettargettargethealthpercent, targettargettargetmana, targettargettargetmanamax, targettargettargetpower, raidtargettargettargetindex;
+local targettargettargethealth, targettargettargethealthmax, targettargettargethealthpercent, targettargettargetmana, targettargettargetmanamax, targettargettargetpower, raidtargettargettargetindex, targettargettargetbufffilter, targettargettargetdebufffilter;
 
 -- Shared
 local r, g, b, reaction, englishclass;
@@ -666,7 +667,12 @@ function Perl_Target_Target_Update_Buffs()
 	local numBuffs = 0;														-- Buff counter for correct layout
 	if (showtotbuffs == 1) then
 		for buffnum=1,16 do													-- Start main buff loop
-			_, _, buffTexture, buffApplications = UnitBuff("targettarget", buffnum, displaycastablebuffs);			-- Get the texture and buff stacking information if any
+			if (displaycastablebuffs == 0) then								-- Which buff filter mode are we in?
+				targettargetbufffilter = "HELPFUL";
+			else
+				targettargetbufffilter = "HELPFUL RAID";
+			end
+			_, _, buffTexture, buffApplications = UnitAura("targettarget", buffnum, targettargetbufffilter);	-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Target_Target_BuffFrame_Buff"..buffnum);						-- Create the main icon for the buff
 			if (buffTexture) then												-- If there is a valid texture, proceed with buff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
@@ -691,7 +697,8 @@ function Perl_Target_Target_Update_Buffs()
 	local numDebuffs = 0;														-- Debuff counter for correct layout
 	if (showtotdebuffs == 1) then
 		for debuffnum=1,16 do													-- Start main debuff loop
-			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("targettarget", debuffnum, displaycurabledebuff);	-- Get the texture and debuff stacking information if any
+			Perl_Target_Target_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
+			_, _, buffTexture, buffApplications, debuffType = UnitAura("targettarget", debuffnum, targettargetdebufffilter);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Target_Target_BuffFrame_Debuff"..debuffnum);						-- Create the main icon for the debuff
 			if (buffTexture) then												-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
@@ -775,7 +782,12 @@ function Perl_Target_Target_Target_Update_Buffs()
 	local numBuffs = 0;														-- Buff counter for correct layout
 	if (showtototbuffs == 1) then
 		for buffnum=1,16 do
-			_, _, buffTexture, buffApplications = UnitBuff("targettargettarget", buffnum, displaycastablebuffs);		-- Get the texture and buff stacking information if any
+			if (displaycastablebuffs == 0) then								-- Which buff filter mode are we in?
+				targettargettargetbufffilter = "HELPFUL";
+			else
+				targettargettargetbufffilter = "HELPFUL RAID";
+			end
+			_, _, buffTexture, buffApplications = UnitAura("targettargettarget", buffnum, targettargettargetbufffilter);	-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Target_Target_Target_BuffFrame_Buff"..buffnum);					-- Create the main icon for the buff
 			if (buffTexture) then
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
@@ -800,7 +812,8 @@ function Perl_Target_Target_Target_Update_Buffs()
 	local numDebuffs = 0;														-- Debuff counter for correct layout
 	if (showtototdebuffs == 1) then
 		for debuffnum=1,16 do
-			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("targettargettarget", debuffnum, displaycurabledebuff);	-- Get the texture and debuff stacking information if any
+			Perl_Target_Target_Target_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
+			_, _, buffTexture, buffApplications, debuffType = UnitAura("targettargettarget", debuffnum, targettargettargetdebufffilter);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum);					-- Create the main icon for the debuff
 			if (buffTexture) then
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
@@ -875,6 +888,36 @@ function Perl_Target_Target_Target_Update_Buffs()
 	else
 		Perl_Target_Target_Target_BuffFrame:Hide();										-- Hide the buff/debuff frame since it's disabled
 	end
+end
+
+function Perl_Target_Target_Debuff_Set_Filter()
+	if (UnitIsFriend("player", "targettarget")) then
+		if (displaycurabledebuff == 1) then
+			targettargetdebufffilter = "HARMFUL RAID";
+			return;
+		end
+	else
+		if (displayonlymydebuffs == 1) then
+			targettargetdebufffilter = "HARMFUL PLAYER";
+			return;
+		end
+	end
+	targettargetdebufffilter = "HARMFUL";
+end
+
+function Perl_Target_Target_Target_Debuff_Set_Filter()
+	if (UnitIsFriend("player", "targettargettarget")) then
+		if (displaycurabledebuff == 1) then
+			targettargettargetdebufffilter = "HARMFUL RAID";
+			return;
+		end
+	else
+		if (displayonlymydebuffs == 1) then
+			targettargettargetdebufffilter = "HARMFUL PLAYER";
+			return;
+		end
+	end
+	targettargettargetdebufffilter = "HARMFUL";
 end
 
 function Perl_Target_Target_Warn()
@@ -1482,6 +1525,13 @@ function Perl_Target_Target_Set_Class_Debuffs(newvalue)
 	Perl_Target_Target_Target_Reset_Buffs();
 end
 
+function Perl_Target_Target_Set_Only_Self_Debuffs(newvalue)
+	displayonlymydebuffs = newvalue;
+	Perl_Target_Target_UpdateVars();
+	Perl_Target_Target_Reset_Buffs();
+	Perl_Target_Target_Target_Reset_Buffs();
+end
+
 function Perl_Target_Target_Set_Show_Friendly_Health(newvalue)
 	showfriendlyhealth = newvalue;
 	Perl_Target_Target_UpdateVars();
@@ -1579,6 +1629,7 @@ function Perl_Target_Target_GetVars(name, updateflag)
 	classcolorednames = Perl_Target_Target_Config[name]["ClassColoredNames"];
 	showfriendlyhealth = Perl_Target_Target_Config[name]["ShowFriendlyHealth"];
 	displaycurabledebuff = Perl_Target_Target_Config[name]["DisplayCurableDebuff"];
+	displayonlymydebuffs = Perl_Target_Target_Config[name]["DisplayOnlyMyDebuffs"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1631,6 +1682,9 @@ function Perl_Target_Target_GetVars(name, updateflag)
 	if (displaycurabledebuff == nil) then
 		displaycurabledebuff = 0;
 	end
+	if (displayonlymydebuffs == nil) then
+		displayonlymydebuffs = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1661,6 +1715,7 @@ function Perl_Target_Target_GetVars(name, updateflag)
 		["classcolorednames"] = classcolorednames,
 		["showfriendlyhealth"] = showfriendlyhealth,
 		["displaycurabledebuff"] = displaycurabledebuff,
+		["displayonlymydebuffs"] = displayonlymydebuffs,
 	}
 	return vars;
 end
@@ -1754,6 +1809,11 @@ function Perl_Target_Target_UpdateVars(vartable)
 			else
 				displaycurabledebuff = nil;
 			end
+			if (vartable["Global Settings"]["DisplayOnlyMyDebuffs"] ~= nil) then
+				displayonlymydebuffs = vartable["Global Settings"]["DisplayOnlyMyDebuffs"];
+			else
+				displayonlymydebuffs = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1808,6 +1868,9 @@ function Perl_Target_Target_UpdateVars(vartable)
 		if (displaycurabledebuff == nil) then
 			displaycurabledebuff = 0;
 		end
+		if (displayonlymydebuffs == nil) then
+			displayonlymydebuffs = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Target_Frame_Style();
@@ -1833,6 +1896,7 @@ function Perl_Target_Target_UpdateVars(vartable)
 		["ClassColoredNames"] = classcolorednames,
 		["ShowFriendlyHealth"] = showfriendlyhealth,
 		["DisplayCurableDebuff"] = displaycurabledebuff,
+		["DisplayOnlyMyDebuffs"] = displayonlymydebuffs,
 	};
 end
 

@@ -1374,6 +1374,7 @@ function Perl_Config_Global_Save_Settings()
 			["InvertBuffs"] = vartable["invertbuffs"],
 			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
 			["DisplayBuffTimers"] = vartable["displaybufftimers"],
+			["DisplayOnlyMyDebuffs"] = vartable["displayonlymydebuffs"],
 		};
 	end
 
@@ -1410,6 +1411,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShowBarValues"] = vartable["showbarvalues"],
 			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
 			["PortraitBuffs"] = vartable["portraitbuffs"],
+			["DisplayBuffTimers"] = vartable["displaybufftimers"],
 		};
 	end
 
@@ -1437,6 +1439,8 @@ function Perl_Config_Global_Save_Settings()
 			["XPosition4"] = floor(Perl_Party_Pet4:GetLeft() + 0.5),
 			["YPosition4"] = floor(Perl_Party_Pet4:GetTop() - (UIParent:GetTop() / Perl_Party_Pet4:GetScale()) + 0.5),
 			["Enabled"] = vartable["enabled"],
+			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
+			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
 		};
 	end
 
@@ -1534,6 +1538,8 @@ function Perl_Config_Global_Save_Settings()
 			["DisplayPetTarget"] = vartable["displaypettarget"],
 			["ClassColoredNames"] = vartable["classcolorednames"],
 			["ShowFriendlyHealth"] = vartable["showfriendlyhealth"],
+			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
+			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
 		};
 	end
 
@@ -1574,6 +1580,7 @@ function Perl_Config_Global_Save_Settings()
 			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
 			["DisplayBuffTimers"] = vartable["displaybufftimers"],
 			["DisplayNumbericThreat"] = vartable["displaynumbericthreat"],
+			["DisplayOnlyMyDebuffs"] = vartable["displayonlymydebuffs"],
 		};
 	end
 
@@ -1601,6 +1608,7 @@ function Perl_Config_Global_Save_Settings()
 			["ClassColoredNames"] = vartable["classcolorednames"],
 			["ShowFriendlyHealth"] = vartable["showfriendlyhealth"],
 			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
+			["DisplayOnlyMyDebuffs"] = vartable["displayonlymydebuffs"],
 		};
 	end
 end

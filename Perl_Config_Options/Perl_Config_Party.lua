@@ -135,10 +135,17 @@ function Perl_Config_Party_Set_Values()
 	else
 		Perl_Config_Party_Frame_CheckButton22:SetChecked(nil);
 	end
+
 	if (vartable["portraitbuffs"] == 1) then
 		Perl_Config_Party_Frame_CheckButton23:SetChecked(1);
 	else
 		Perl_Config_Party_Frame_CheckButton23:SetChecked(nil);
+	end
+
+	if (vartable["displaybufftimers"] == 1) then
+		Perl_Config_Party_Frame_CheckButton24:SetChecked(1);
+	else
+		Perl_Config_Party_Frame_CheckButton24:SetChecked(nil);
 	end
 
 	Perl_Config_Party_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
@@ -364,6 +371,14 @@ function Perl_Config_Party_Portrait_Buffs_Update()
 		Perl_Party_Set_Portrait_Buffs(1);
 	else
 		Perl_Party_Set_Portrait_Buffs(0);
+	end
+end
+
+function Perl_Config_Party_Buff_Timers_Update()
+	if (Perl_Config_Party_Frame_CheckButton24:GetChecked() == 1) then
+		Perl_Party_Set_Buff_Timers(1);
+	else
+		Perl_Party_Set_Buff_Timers(0);
 	end
 end
 

@@ -384,12 +384,33 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton31" inherits="UICheckButtonTemplate" id="31">
+			<CheckButton name="$parent_CheckButton28" inherits="UICheckButtonTemplate" id="28">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton13">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_ELITE_RARE_GRAPHIC);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Elite_Rare_Graphic_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton31" inherits="UICheckButtonTemplate" id="31">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton28">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>
@@ -588,7 +609,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton13">
 						<Offset>
-							<AbsDimension x="190" y="0"/>
+							<AbsDimension x="190" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -765,12 +786,12 @@
 						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_DEBUFF);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Target_Class_Debuffs_Update();
+						Perl_Config_Target_Curable_Debuffs_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton28" inherits="UICheckButtonTemplate" id="28">
+			<CheckButton name="$parent_CheckButton32" inherits="UICheckButtonTemplate" id="32">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -783,20 +804,22 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_ELITE_RARE_GRAPHIC);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_MY_DEBUFFS);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Target_Elite_Rare_Graphic_Update();
+						Perl_Config_Target_Only_Self_Debuffs_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
+			
 
 			<CheckButton name="$parent_CheckButton30" inherits="UICheckButtonTemplate" id="30">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton28">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton32">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>

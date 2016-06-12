@@ -37,6 +37,7 @@ local eliteraregraphic = 0;	-- the blizzard elite/rare graphic is off by default
 local displaycurabledebuff = 0;	-- display all debuffs by default
 local displaybufftimers = 1;	-- buff/debuff timers are on by default
 local displaynumbericthreat = 1;-- threat is displayed numerically by default
+local displayonlymydebuffs = 0;	-- display all debuffs by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -50,7 +51,7 @@ local Perl_Target_ManaBar_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Target_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
 
 -- Local variables to save memory
-local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, englishclass, creatureType, r, g, b, guildName, targetonupdatemana;
+local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, englishclass, creatureType, r, g, b, guildName, targetonupdatemana, bufffilter, debufffilter;
 
 
 ----------------------
@@ -1424,9 +1425,18 @@ function Perl_Target_Set_Buff_Timers(newvalue)
 	Perl_Target_Buff_UpdateAll();		-- Repopulate the buff icons
 end
 
-function Perl_Target_Set_Class_Debuffs(newvalue)
+function Perl_Target_Set_Curable_Debuffs(newvalue)
 	if (newvalue ~= nil) then
 		displaycurabledebuff = newvalue;
+	end
+	Perl_Target_UpdateVars();		-- Save the new setting
+	Perl_Target_Reset_Buffs();		-- Reset the buff icons
+	Perl_Target_Buff_UpdateAll();		-- Repopulate the buff icons
+end
+
+function Perl_Target_Set_Only_Self_Debuffs(newvalue)
+	if (newvalue ~= nil) then
+		displayonlymydebuffs = newvalue;
 	end
 	Perl_Target_UpdateVars();		-- Save the new setting
 	Perl_Target_Reset_Buffs();		-- Reset the buff icons
@@ -1718,6 +1728,7 @@ function Perl_Target_GetVars(name, updateflag)
 	displaycurabledebuff = Perl_Target_Config[name]["DisplayCurableDebuff"];
 	displaybufftimers = Perl_Target_Config[name]["DisplayBuffTimers"];
 	displaynumbericthreat = Perl_Target_Config[name]["DisplayNumbericThreat"];
+	displayonlymydebuffs = Perl_Target_Config[name]["DisplayOnlyMyDebuffs"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1815,6 +1826,9 @@ function Perl_Target_GetVars(name, updateflag)
 	if (displaynumbericthreat == nil) then
 		displaynumbericthreat = 1;
 	end
+	if (displayonlymydebuffs == nil) then
+		displayonlymydebuffs = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1865,6 +1879,7 @@ function Perl_Target_GetVars(name, updateflag)
 		["displaycurabledebuff"] = displaycurabledebuff,
 		["displaybufftimers"] = displaybufftimers,
 		["displaynumbericthreat"] = displaynumbericthreat,
+		["displayonlymydebuffs"] = displayonlymydebuffs,
 	}
 	return vars;
 end
@@ -2033,6 +2048,11 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				displaynumbericthreat = nil;
 			end
+			if (vartable["Global Settings"]["DisplayOnlyMyDebuffs"] ~= nil) then
+				displayonlymydebuffs = vartable["Global Settings"]["DisplayOnlyMyDebuffs"];
+			else
+				displayonlymydebuffs = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2132,6 +2152,9 @@ function Perl_Target_UpdateVars(vartable)
 		if (displaynumbericthreat == nil) then
 			displaynumbericthreat = 1;
 		end
+		if (displayonlymydebuffs == nil) then
+			displayonlymydebuffs = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();		-- Reset the buff icons
@@ -2177,6 +2200,7 @@ function Perl_Target_UpdateVars(vartable)
 		["DisplayCurableDebuff"] = displaycurabledebuff,
 		["DisplayBuffTimers"] = displaybufftimers,
 		["DisplayNumbericThreat"] = displaynumbericthreat,
+		["DisplayOnlyMyDebuffs"] = displayonlymydebuffs,
 	};
 end
 
@@ -2196,7 +2220,12 @@ function Perl_Target_Buff_UpdateAll()
 
 		local numBuffs = 0;											-- Buff counter for correct layout
 		for buffnum=1,numbuffsshown do										-- Start main buff loop
-			_, _, buffTexture, buffApplications, _, duration, timeLeft, _ = UnitBuff("target", buffnum, displaycastablebuffs);	-- Get the texture and buff stacking information if any
+			if (displaycastablebuffs == 0) then								-- Which buff filter mode are we in?
+				bufffilter = "HELPFUL";
+			else
+				bufffilter = "HELPFUL RAID";
+			end
+			_, _, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura("target", buffnum, bufffilter);	-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Target_Buff"..buffnum);						-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -2232,7 +2261,8 @@ function Perl_Target_Buff_UpdateAll()
 
 		local numDebuffs = 0;											-- Debuff counter for correct layout
 		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
-			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft = UnitDebuff("target", debuffnum, displaycurabledebuff);	-- Get the texture and debuff stacking information if any
+			Perl_Target_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
+			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura("target", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Target_Debuff"..debuffnum);						-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -2414,6 +2444,21 @@ function Perl_Target_Buff_UpdateAll()
 			Perl_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 		end
 	end
+end
+
+function Perl_Target_Debuff_Set_Filter()
+	if (UnitIsFriend("player", "target")) then
+		if (displaycurabledebuff == 1) then
+			debufffilter = "HARMFUL RAID";
+			return;
+		end
+	else
+		if (displayonlymydebuffs == 1) then
+			debufffilter = "HARMFUL PLAYER";
+			return;
+		end
+	end
+	debufffilter = "HARMFUL";
 end
 
 function Perl_Target_Buff_UpdateCPMeter()

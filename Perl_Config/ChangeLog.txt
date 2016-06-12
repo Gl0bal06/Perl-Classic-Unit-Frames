@@ -1,3 +1,11 @@
+3.07 - April 20, 2009
+ - All: Can now filter debuffs for only those that you cast
+ - All: Curable Debuffs Only once again functions as intended
+ - All: Class Buffs Only once again functions as intended
+ - Focus: Fixed an issue with inconsistent default settings
+ - Party: Can now toggle the remaining time a buff or debuff has left
+ - PartyPet: Fixed an incorrectly named function
+
 3.06 - April 15, 2009
  - All: Updated TOC Interface version to 30100
  - All: Added a sanity check for UnitThreatSituation returning nil

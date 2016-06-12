@@ -126,6 +126,12 @@ function Perl_Config_Target_Target_Set_Values()
 		Perl_Config_Target_Target_Frame_CheckButton22:SetChecked(nil);
 	end
 
+	if (vartable["displayonlymydebuffs"] == 1) then
+		Perl_Config_Target_Target_Frame_CheckButton23:SetChecked(1);
+	else
+		Perl_Config_Target_Target_Frame_CheckButton23:SetChecked(nil);
+	end
+
 	Perl_Config_Target_Target_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_Target_Target_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Target_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -246,6 +252,14 @@ function Perl_Config_Target_Target_Class_Debuffs_Update()
 		Perl_Target_Target_Set_Class_Debuffs(1);
 	else
 		Perl_Target_Target_Set_Class_Debuffs(0);
+	end
+end
+
+function Perl_Config_Target_Target_Only_Self_Debuffs_Update()
+	if (Perl_Config_Target_Target_Frame_CheckButton23:GetChecked() == 1) then
+		Perl_Target_Target_Set_Only_Self_Debuffs(1);
+	else
+		Perl_Target_Target_Set_Only_Self_Debuffs(0);
 	end
 end
 

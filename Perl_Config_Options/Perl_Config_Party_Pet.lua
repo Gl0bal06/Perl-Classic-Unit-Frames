@@ -79,6 +79,18 @@ function Perl_Config_Party_Pet_Set_Values()
 	else
 		Perl_Config_Party_Pet_Frame_CheckButton6:SetChecked(nil);
 	end
+
+	if (vartable["displaycastablebuffs"] == 1) then
+		Perl_Config_Party_Pet_Frame_CheckButton7:SetChecked(1);
+	else
+		Perl_Config_Party_Pet_Frame_CheckButton7:SetChecked(nil);
+	end
+
+	if (vartable["displaycurabledebuff"] == 1) then
+		Perl_Config_Party_Pet_Frame_CheckButton8:SetChecked(1);
+	else
+		Perl_Config_Party_Pet_Frame_CheckButton8:SetChecked(nil);
+	end
 end
 
 function Perl_Config_Party_Pet_Portrait_Update()
@@ -113,11 +125,27 @@ function Perl_Config_Party_Pet_Hidden_Update()
 	end
 end
 
-function Perl_Config_Party_Enabled_Update()
+function Perl_Config_Party_Pet_Enabled_Update()
 	if (Perl_Config_Party_Pet_Frame_CheckButton6:GetChecked() == 1) then
 		Perl_Party_Set_Enabled(1);
 	else
 		Perl_Party_Set_Enabled(0);
+	end
+end
+
+function Perl_Config_Party_Pet_Class_Buffs_Update()
+	if (Perl_Config_Party_Pet_Frame_CheckButton7:GetChecked() == 1) then
+		Perl_Party_Pet_Set_Class_Buffs(1);
+	else
+		Perl_Party_Pet_Set_Class_Buffs(0);
+	end
+end
+
+function Perl_Config_Party_Pet_Curable_Debuffs_Update()
+	if (Perl_Config_Party_Pet_Frame_CheckButton8:GetChecked() == 1) then
+		Perl_Party_Pet_Set_Curable_Debuffs(1);
+	else
+		Perl_Party_Pet_Set_Curable_Debuffs(0);
 	end
 end
 

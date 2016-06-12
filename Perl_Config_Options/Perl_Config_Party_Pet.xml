@@ -339,7 +339,7 @@
 						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYPET_ENABLE);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Party_Enabled_Update();
+						Perl_Config_Party_Pet_Enabled_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -407,7 +407,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton4" inherits="UICheckButtonTemplate" id="4">
+			<CheckButton name="$parent_CheckButton7" inherits="UICheckButtonTemplate" id="7">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -415,6 +415,48 @@
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton3">
 						<Offset>
 							<AbsDimension x="-20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFF);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Pet_Class_Buffs_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton8" inherits="UICheckButtonTemplate" id="8">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton7">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_DEBUFF);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Pet_Curable_Debuffs_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton4" inherits="UICheckButtonTemplate" id="4">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton8">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

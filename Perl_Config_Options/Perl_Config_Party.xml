@@ -62,7 +62,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="200" y="-30"/>
+								<AbsDimension x="200" y="-10"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -373,6 +373,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Class_Debuffs_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton24" inherits="UICheckButtonTemplate" id="24">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton22">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_BUFF_DEBUFF_TIMERS);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Buff_Timers_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

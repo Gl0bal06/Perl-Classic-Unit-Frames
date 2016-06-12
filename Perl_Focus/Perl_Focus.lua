@@ -32,6 +32,7 @@ local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
 local invertbuffs = 0;		-- buffs and debuffs are below the Focus frame by default
 local displaycurabledebuff = 0;	-- display all debuffs by default
 local displaybufftimers = 1;	-- buff/debuff timers are on by default
+local displayonlymydebuffs = 0;	-- display all debuffs by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -40,10 +41,10 @@ local Initialized = nil;	-- waiting to be initialized
 local Perl_Focus_HealthBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Focus_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Focus_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Focus_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Focus_ManaBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
 
 -- Local variables to save memory
-local focushealth, focushealthmax, focushealthpercent, focusmana, focusmanamax, focusmanapercent, focuspower, focuslevel, focuslevelcolor, focusclassification, focusclassificationframetext, englishclass, creatureType, r, g, b;
+local focushealth, focushealthmax, focushealthpercent, focusmana, focusmanamax, focusmanapercent, focuspower, focuslevel, focuslevelcolor, focusclassification, focusclassificationframetext, englishclass, creatureType, r, g, b, bufffilter, debufffilter;
 
 
 ----------------------
@@ -1197,6 +1198,15 @@ function Perl_Focus_Set_Class_Debuffs(newvalue)
 	Perl_Focus_Buff_UpdateAll();		-- Repopulate the buff icons
 end
 
+function Perl_Focus_Set_Only_Self_Debuffs(newvalue)
+	if (newvalue ~= nil) then
+		displayonlymydebuffs = newvalue;
+	end
+	Perl_Focus_UpdateVars();		-- Save the new setting
+	Perl_Focus_Reset_Buffs();		-- Reset the buff icons
+	Perl_Focus_Buff_UpdateAll();		-- Repopulate the buff icons
+end
+
 function Perl_Focus_Set_Invert_Buffs(newvalue)
 	if (newvalue ~= nil) then
 		invertbuffs = newvalue;
@@ -1437,6 +1447,8 @@ function Perl_Focus_GetVars(name, updateflag)
 	invertbuffs = Perl_Focus_Config[name]["InvertBuffs"];
 	displaycurabledebuff = Perl_Focus_Config[name]["DisplayCurableDebuff"];
 	displaybufftimers = Perl_Focus_Config[name]["DisplayBuffTimers"];
+	displayonlymydebuffs = Perl_Focus_Config[name]["DisplayOnlyMyDebuffs"];
+
 
 	if (locked == nil) then
 		locked = 0;
@@ -1519,6 +1531,9 @@ function Perl_Focus_GetVars(name, updateflag)
 	if (displaybufftimers == nil) then
 		displaybufftimers = 1;
 	end
+	if (displayonlymydebuffs == nil) then
+		displayonlymydebuffs = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1564,6 +1579,7 @@ function Perl_Focus_GetVars(name, updateflag)
 		["invertbuffs"] = invertbuffs,
 		["displaycurabledebuff"] = displaycurabledebuff,
 		["displaybufftimers"] = displaybufftimers,
+		["displayonlymydebuffs"] = displayonlymydebuffs,
 	}
 	return vars;
 end
@@ -1707,6 +1723,11 @@ function Perl_Focus_UpdateVars(vartable)
 			else
 				displaybufftimers = nil;
 			end
+			if (vartable["Global Settings"]["DisplayOnlyMyDebuffs"] ~= nil) then
+				displayonlymydebuffs = vartable["Global Settings"]["DisplayOnlyMyDebuffs"];
+			else
+				displayonlymydebuffs = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1789,7 +1810,10 @@ function Perl_Focus_UpdateVars(vartable)
 			displaycurabledebuff = 0;
 		end
 		if (displaybufftimers == nil) then
-			displaybufftimers = 0;
+			displaybufftimers = 1;
+		end
+		if (displayonlymydebuffs == nil) then
+			displayonlymydebuffs = 0;
 		end
 
 		-- Call any code we need to activate them
@@ -1831,6 +1855,7 @@ function Perl_Focus_UpdateVars(vartable)
 		["InvertBuffs"] = invertbuffs,
 		["DisplayCurableDebuff"] = displaycurabledebuff,
 		["DisplayBuffTimers"] = displaybufftimers,
+		["DisplayOnlyMyDebuffs"] = displayonlymydebuffs,
 	};
 end
 
@@ -1850,7 +1875,12 @@ function Perl_Focus_Buff_UpdateAll()
 
 		local numBuffs = 0;											-- Buff counter for correct layout
 		for buffnum=1,numbuffsshown do										-- Start main buff loop
-			_, _, buffTexture, buffApplications, _, duration, timeLeft = UnitBuff("focus", buffnum, displaycastablebuffs);	-- Get the texture and buff stacking information if any
+			if (displaycastablebuffs == 0) then								-- Which buff filter mode are we in?
+				bufffilter = "HELPFUL";
+			else
+				bufffilter = "HELPFUL RAID";
+			end
+			_, _, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura("focus", buffnum, bufffilter);	-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Focus_Buff"..buffnum);						-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -1886,7 +1916,8 @@ function Perl_Focus_Buff_UpdateAll()
 
 		local numDebuffs = 0;											-- Debuff counter for correct layout
 		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
-			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft = UnitDebuff("focus", debuffnum, displaycurabledebuff);	-- Get the texture and debuff stacking information if any
+			Perl_Focus_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
+			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura("focus", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Focus_Debuff"..debuffnum);						-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -2050,6 +2081,21 @@ function Perl_Focus_Buff_UpdateAll()
 			Perl_Focus_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 		end
 	end
+end
+
+function Perl_Focus_Debuff_Set_Filter()
+	if (UnitIsFriend("player", "focus")) then
+		if (displaycurabledebuff == 1) then
+			debufffilter = "HARMFUL RAID";
+			return;
+		end
+	else
+		if (displayonlymydebuffs == 1) then
+			debufffilter = "HARMFUL PLAYER";
+			return;
+		end
+	end
+	debufffilter = "HARMFUL";
 end
 
 function Perl_Focus_Buff_UpdateCPMeter()
