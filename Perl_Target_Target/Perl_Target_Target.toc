@@ -1,4 +1,4 @@
-## Interface: 50001
+## Interface: 50100
 ## Title: Perl Target Target Frames
 ## Notes: Displays movable target of target frames.
 ## Dependencies: Perl_Config

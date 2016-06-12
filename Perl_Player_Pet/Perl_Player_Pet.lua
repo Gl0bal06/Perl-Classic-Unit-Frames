@@ -1088,6 +1088,7 @@ function Perl_Player_Pet_Allign()
 	end
 	Perl_Player_Pet_Target_Frame:ClearAllPoints();
 	Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", Perl_Player_Pet_Frame, "TOPRIGHT", -2, 0);
+	Perl_Player_Pet_Set_Frame_Position();
 end
 
 function Perl_Player_Pet_Set_Buffs(newbuffnumber)

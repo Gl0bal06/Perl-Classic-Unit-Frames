@@ -946,6 +946,10 @@ function Perl_Target_Frame_Set_Level()
 		Perl_Target_EliteRareGraphic:SetTexture("Interface\\AddOns\\Perl_Config\\Perl_Rare");
 		targetclassificationframetext = PERL_LOCALIZED_TARGET_RARE;
 		targetlevel = targetlevel.."r";
+	elseif (targetclassification == "minus") then
+		Perl_Target_EliteRareGraphic:SetTexture();
+		targetclassificationframetext = PERL_LOCALIZED_TARGET_TRIVIAL;
+		targetlevel = targetlevel.."-";
 	else
 		Perl_Target_EliteRareGraphic:SetTexture();
 	end
@@ -1371,6 +1375,12 @@ function Perl_Target_Main_Style()
 		Perl_Target_ClassNameBarText:SetWidth(Perl_Target_ClassNameFrame:GetWidth() - 10);
 		Perl_Target_ClassNameBarText:SetHeight(Perl_Target_ClassNameFrame:GetHeight() - 10);
 		Perl_Target_ClassNameBarText:SetNonSpaceWrap(false);
+
+		if (Perl_Target_Target_Script_Frame) then
+			Perl_Target_Target_Frame:SetUserPlaced(1);
+			Perl_Target_Target_Target_Frame:SetUserPlaced(1);
+			Perl_Target_Target_Set_Frame_Position();		-- Update the ToT frame position
+		end
 
 		if (Initialized) then
 			Perl_Target_ArcaneBar_Support();

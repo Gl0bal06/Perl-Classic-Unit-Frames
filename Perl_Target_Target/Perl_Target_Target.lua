@@ -1610,6 +1610,7 @@ function Perl_Target_Target_Allign(button)
 			end
 			Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", 1, 0);
 		end
+		Perl_Target_Target_Set_Frame_Position();
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("This feature is disabled due to Perl_Target not being installed/enabled.");
 	end

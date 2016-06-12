@@ -1,3 +1,11 @@
+5.04 - February 28, 2013
+ - All: Updated TOC Interface version to 50100
+ - ArcaneBar: Updated OnEvent code for Cataclysm
+ - ArcaneBar: Added some sanity checks for disabled frames
+ - Pet/ToT: Positions will now save when using the align buttons
+ - Target: Trivial NPCs are now supported
+ - Target: ToT positions will save properly now when changing Target options
+
 5.03 - September 12, 2012
  - All: No longer referencing global underscore variables
 

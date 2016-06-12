@@ -88,7 +88,7 @@ end
 ---------------------------
 -- Event/Update Handlers --
 ---------------------------
-function Perl_ArcaneBar_Loaded_Frame_OnEvent()
+function Perl_ArcaneBar_Loaded_Frame_OnEvent(self, event)
 	if (event == "PLAYER_LOGIN" or event == "PLAYER_ENTERING_WORLD") then
 		Perl_ArcaneBar_Initialize();
 	end
@@ -154,7 +154,9 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 					self.parentframe = Perl_Party_MemberFrame4;
 				end
 			end
-			self.nameframetext:SetText(text);
+			if (self.nameframetext ~= nil) then
+				self.nameframetext:SetText(text);
+			end
 		end
 
 		self:SetAlpha(0.8);
@@ -218,7 +220,9 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 						self.parentframe = Perl_Party_MemberFrame4;
 					end
 				end
-				self.nameframetext:SetText(self.unitname);
+				if (self.nameframetext ~= nil) then
+					self.nameframetext:SetText(self.unitname);
+				end
 			end
 		end
 	elseif (event == "UNIT_SPELLCAST_INTERRUPTED") then
@@ -554,7 +558,9 @@ function Perl_ArcaneBar_OnUpdate(self)
 					self.parentframe = Perl_Party_MemberFrame4;
 				end
 			end
-			self.nameframetext:SetText(self.unitname);
+			if (self.nameframetext ~= nil) then
+				self.nameframetext:SetText(self.unitname);
+			end
 			return;
 		end
 		self:SetValue(status);
