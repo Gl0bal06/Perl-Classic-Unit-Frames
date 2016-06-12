@@ -875,12 +875,11 @@ function Perl_Party_Update_PvP_Status()				-- Modeled after 1.9 code
 	end
 
 	if (not UnitPlayerControlled(partyid)) then											-- is it a player (added this check for charmed party members)
-		local reaction = UnitReaction(partyid, "player");
-		if (reaction) then
-			r = UnitReactionColor[reaction].r;
-			g = UnitReactionColor[reaction].g;
-			b = UnitReactionColor[reaction].b;
-			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(r, g, b);
+		if (UnitIsVisible(partyid)) then
+			local reaction = UnitReaction(partyid, "player");
+			if (reaction) then
+				getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(UnitReactionColor[reaction].r, UnitReactionColor[reaction].g, UnitReactionColor[reaction].b);
+			end
 		end
 	end
 
@@ -1103,7 +1102,7 @@ function Perl_Party_Update_Portrait(partymember)
 			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):Hide();					-- Hide the 3d graphic
 			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"):Show();					-- Show the 2d graphic
 		else
-			if UnitIsVisible(partyid) then
+			if (UnitIsVisible(partyid)) then
 				getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):SetUnit(partyid);			-- Load the correct 3d graphic
 				getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"):Hide();				-- Hide the 2d graphic
 				getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):Show();				-- Show the 3d graphic
@@ -1257,9 +1256,11 @@ function Perl_Party_Force_Update()
 		end
 
 		if (not UnitPlayerControlled(partyid)) then
-			local reaction = UnitReaction(partyid, "player");
-			if (reaction) then
-				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(UnitReactionColor[reaction].r, UnitReactionColor[reaction].g, UnitReactionColor[reaction].b);
+			if (UnitIsVisible(partyid)) then
+				local reaction = UnitReaction(partyid, "player");
+				if (reaction) then
+					getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(UnitReactionColor[reaction].r, UnitReactionColor[reaction].g, UnitReactionColor[reaction].b);
+				end
 			end
 		end
 
@@ -1311,7 +1312,7 @@ function Perl_Party_Force_Update()
 				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):Hide();					-- Hide the 3d graphic
 				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_Portrait"):Show();					-- Show the 2d graphic
 			else
-				if UnitIsVisible(partyid) then
+				if (UnitIsVisible(partyid)) then
 					getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):SetUnit(partyid);			-- Load the correct 3d graphic
 					getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_Portrait"):Hide();				-- Hide the 2d graphic
 					getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):Show();				-- Show the 3d graphic
@@ -2320,44 +2321,51 @@ function Perl_Party_Buff_UpdateAll(partymember)
 	end
 	
 	if (UnitName(partyid)) then
-		local button, buffCount, buffTexture, buffApplications;							-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
-		for buffnum=1,numbuffsshown do										-- Start main buff loop
-			buffTexture, buffApplications = UnitBuff(partyid, buffnum, displaycastablebuffs);		-- Get the texture, buff stacking, and class specific information if any
-			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..buffnum);			-- Create the main icon for the buff
-			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Hide();					-- Hide the debuff border
-				buffCount = getglobal(button:GetName().."Count");					-- Declare the buff counting text variable
-				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
-					buffCount:Show();								-- Show the text
-				else
-					buffCount:Hide();								-- Hide the text if equal to 0
-				end
-				button:Show();										-- Show the final buff icon
-			else
-				button:Hide();										-- Hide the icon since there isn't a buff in this position
-			end
-		end													-- End main buff loop
+		local button, buffCount, buffTexture, buffApplications, color, debuffType;					-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 
-		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
-			buffTexture, buffApplications = UnitDebuff(partyid, debuffnum, displaycastablebuffs);		-- Get the texture, debuff stacking, and class specific information if any
-			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..debuffnum);		-- Create the main icon for the debuff
-			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Hide();					-- Hide the debuff border
-				buffCount = getglobal(button:GetName().."Count");					-- Declare the debuff counting text variable
+		for buffnum=1,numbuffsshown do											-- Start main buff loop
+			buffTexture, buffApplications = UnitBuff(partyid, buffnum, displaycastablebuffs);			-- Get the texture, buff stacking, and class specific information if any
+			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..buffnum);				-- Create the main icon for the buff
+			if (buffTexture) then											-- If there is a valid texture, proceed with buff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);					-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Hide();						-- Hide the debuff border
+				buffCount = getglobal(button:GetName().."Count");						-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
-					buffCount:Show();								-- Show the text
+					buffCount:SetText(buffApplications);							-- Set the text to the number of applications if greater than 0
+					buffCount:Show();									-- Show the text
 				else
-					buffCount:Hide();								-- Hide the text if equal to 0
+					buffCount:Hide();									-- Hide the text if equal to 0
 				end
-				button:Show();										-- Show the final debuff icon
+				button:Show();											-- Show the final buff icon
 			else
-				button:Hide();										-- Hide the icon since there isn't a debuff in this position
+				button:Hide();											-- Hide the icon since there isn't a buff in this position
 			end
-		end													-- End main debuff loop
+		end														-- End main buff loop
+
+		for debuffnum=1,numdebuffsshown do										-- Start main debuff loop
+			buffTexture, buffApplications, debuffType = UnitDebuff(partyid, debuffnum, displaycastablebuffs);	-- Get the texture, debuff stacking, and class specific information if any
+			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..debuffnum);			-- Create the main icon for the debuff
+			if (buffTexture) then											-- If there is a valid texture, proceed with debuff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);					-- Set the texture
+				if (debuffType) then
+					color = DebuffTypeColor[debuffType];
+				else
+					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
+				end
+				getglobal(button:GetName().."DebuffBorder"):SetVertexColor(color.r, color.g, color.b);		-- Set the debuff border color
+				getglobal(button:GetName().."DebuffBorder"):Show();						-- Show the debuff border
+				buffCount = getglobal(button:GetName().."Count");						-- Declare the debuff counting text variable
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);							-- Set the text to the number of applications if greater than 0
+					buffCount:Show();									-- Show the text
+				else
+					buffCount:Hide();									-- Hide the text if equal to 0
+				end
+				button:Show();											-- Show the final debuff icon
+			else
+				button:Hide();											-- Hide the icon since there isn't a debuff in this position
+			end
+		end														-- End main debuff loop
 	end
 end
 
@@ -2673,8 +2681,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.71",
-			releaseDate = "June 13, 2006",
+			version = "Version 0.72",
+			releaseDate = "June 20, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

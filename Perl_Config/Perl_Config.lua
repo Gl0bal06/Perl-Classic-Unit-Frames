@@ -737,6 +737,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShowPortrait"] = vartable["showportrait"],
 			["ThreeDPortrait"] = vartable["threedportrait"],
 			["PortraitCombatText"] = vartable["portraitcombattext"],
+			["CompactMode"] = vartable["compactmode"],
 		};
 	end
 
@@ -1359,8 +1360,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.71",
-			releaseDate = "June 13, 2006",
+			version = "Version 0.72",
+			releaseDate = "June 20, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

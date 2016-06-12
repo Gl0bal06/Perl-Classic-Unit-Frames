@@ -1263,12 +1263,10 @@ function Perl_CombatDisplayTargetDropDown_OnLoad()
 end
 
 function Perl_CombatDisplayTargetDropDown_Initialize()
-	--local menu, name;
-	local menu;
+	local menu, name;
 	if (UnitIsEnemy("target", "player")) then
-		--menu = "RAID_TARGET_ICON";
-		--name = RAID_TARGET_ICON;
-		return;
+		menu = "RAID_TARGET_ICON";
+		name = RAID_TARGET_ICON;
 	end
 	if (UnitIsUnit("target", "player")) then
 		menu = "SELF";
@@ -1282,7 +1280,6 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 		end
 	end
 	if (menu) then
-		--UnitPopup_ShowMenu(Perl_CombatDisplay_Target_DropDown, menu, "target", name);
 		UnitPopup_ShowMenu(Perl_CombatDisplay_Target_DropDown, menu, "target", name);
 	end
 end
@@ -1375,8 +1372,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.71",
-			releaseDate = "June 13, 2006",
+			version = "Version 0.72",
+			releaseDate = "June 20, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

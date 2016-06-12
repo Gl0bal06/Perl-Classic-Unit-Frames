@@ -79,6 +79,12 @@ function Perl_Config_Player_Pet_Set_Values()
 	else
 		Perl_Config_Player_Pet_Frame_CheckButton7:SetChecked(nil);
 	end
+
+	if (vartable["compactmode"] == 1) then
+		Perl_Config_Player_Pet_Frame_CheckButton8:SetChecked(1);
+	else
+		Perl_Config_Player_Pet_Frame_CheckButton8:SetChecked(nil);
+	end
 end
 
 function Perl_Config_Player_Pet_Set_Buffs(value)
@@ -154,6 +160,14 @@ function Perl_Config_Player_Pet_Portrait_Combat_Text_Update()
 		Perl_Player_Pet_Set_Portrait_Combat_Text(1);
 	else
 		Perl_Player_Pet_Set_Portrait_Combat_Text(0);
+	end
+end
+
+function Perl_Config_Player_Pet_Compact_Mode_Update()
+	if (Perl_Config_Player_Pet_Frame_CheckButton8:GetChecked() == 1) then
+		Perl_Player_Pet_Set_Compact_Mode(1);
+	else
+		Perl_Player_Pet_Set_Compact_Mode(0);
 	end
 end
 

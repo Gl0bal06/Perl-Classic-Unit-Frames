@@ -132,8 +132,10 @@ function Perl_Target_Target_IFrameManager()
 		local right = 0;
 		local top = 0;
 		if (frame == Perl_Target_Target_Frame) then
-			if (showtotbuffs == 1) then
+			if (showtotbuffs == 1 and showtotdebuffs == 1) then
 				bottom = 88;
+			elseif ((showtotbuffs == 0 and showtotdebuffs == 1) or (showtotbuffs == 1 and showtotdebuffs == 0)) then
+				bottom = 58;
 			else
 				bottom = 38;
 			end
@@ -142,8 +144,10 @@ function Perl_Target_Target_IFrameManager()
 			end
 			return top, right, bottom, left;
 		else
-			if (showtototbuffs == 1) then
+			if (showtototbuffs == 1 and showtototdebuffs == 1) then
 				bottom = 88;
+			elseif ((showtototbuffs == 0 and showtototdebuffs == 1) or (showtototbuffs == 1 and showtototdebuffs == 0)) then
+				bottom = 58;
 			else
 				bottom = 38;
 			end
@@ -227,14 +231,45 @@ function Perl_Target_Target_OnUpdate(arg1)
 			elseif (UnitIsTapped("targettarget") and not UnitIsTappedByPlayer("targettarget")) then
 				Perl_Target_Target_NameBarText:SetTextColor(0.5,0.5,0.5);			-- not our tap
 			else
-				reaction = UnitReaction("targettarget", "player");
-				if (reaction) then
-					r = UnitReactionColor[reaction].r;
-					g = UnitReactionColor[reaction].g;
-					b = UnitReactionColor[reaction].b;
-					Perl_Target_Target_NameBarText:SetTextColor(r, g, b);
+				if (UnitIsVisible("targettarget")) then
+					reaction = UnitReaction("targettarget", "player");
+					if (reaction) then
+						r = UnitReactionColor[reaction].r;
+						g = UnitReactionColor[reaction].g;
+						b = UnitReactionColor[reaction].b;
+						Perl_Target_Target_NameBarText:SetTextColor(r, g, b);
+					else
+						Perl_Target_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+					end
 				else
-					Perl_Target_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+					if (UnitCanAttack("targettarget", "player")) then				-- are we in an enemy controlled zone
+						-- Hostile players are red
+						if (not UnitCanAttack("player", "targettarget")) then			-- enemy is not pvp enabled
+							r = 0.5;
+							g = 0.5;
+							b = 1.0;
+						else									-- enemy is pvp enabled
+							r = 1.0;
+							g = 0.0;
+							b = 0.0;
+						end
+					elseif (UnitCanAttack("player", "targettarget")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+						-- Players we can attack but which are not hostile are yellow
+						r = 1.0;
+						g = 1.0;
+						b = 0.0;
+					elseif (UnitIsPVP("targettarget")) then						-- friendly pvp enabled character
+						-- Players we can assist but are PvP flagged are green
+						r = 0.0;
+						g = 1.0;
+						b = 0.0;
+					else										-- friendly non pvp enabled character
+						-- All other players are blue (the usual state on the "blue" server)
+						r = 0.5;
+						g = 0.5;
+						b = 1.0;
+					end
+					Perl_Target_Target_NameBarText:SetTextColor(r, g, b);
 				end
 			end
 
@@ -470,15 +505,46 @@ function Perl_Target_Target_OnUpdate(arg1)
 			elseif (UnitIsTapped("targettargettarget") and not UnitIsTappedByPlayer("targettargettarget")) then
 				Perl_Target_Target_Target_NameBarText:SetTextColor(0.5,0.5,0.5);			-- not our tap
 			else
-				reaction = UnitReaction("targettargettarget", "player");
-				if (reaction) then
-					local r, g, b;
-					r = UnitReactionColor[reaction].r;
-					g = UnitReactionColor[reaction].g;
-					b = UnitReactionColor[reaction].b;
-					Perl_Target_Target_Target_NameBarText:SetTextColor(r, g, b);
+				if (UnitIsVisible("targettargettarget")) then
+					reaction = UnitReaction("targettargettarget", "player");
+					if (reaction) then
+						local r, g, b;
+						r = UnitReactionColor[reaction].r;
+						g = UnitReactionColor[reaction].g;
+						b = UnitReactionColor[reaction].b;
+						Perl_Target_Target_Target_NameBarText:SetTextColor(r, g, b);
+					else
+						Perl_Target_Target_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+					end
 				else
-					Perl_Target_Target_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+					if (UnitCanAttack("targettargettarget", "player")) then					-- are we in an enemy controlled zone
+						-- Hostile players are red
+						if (not UnitCanAttack("player", "targettargettarget")) then			-- enemy is not pvp enabled
+							r = 0.5;
+							g = 0.5;
+							b = 1.0;
+						else										-- enemy is pvp enabled
+							r = 1.0;
+							g = 0.0;
+							b = 0.0;
+						end
+					elseif (UnitCanAttack("player", "targettargettarget")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+						-- Players we can attack but which are not hostile are yellow
+						r = 1.0;
+						g = 1.0;
+						b = 0.0;
+					elseif (UnitIsPVP("targettargettarget")) then						-- friendly pvp enabled character
+						-- Players we can assist but are PvP flagged are green
+						r = 0.0;
+						g = 1.0;
+						b = 0.0;
+					else											-- friendly non pvp enabled character
+						-- All other players are blue (the usual state on the "blue" server)
+						r = 0.5;
+						g = 0.5;
+						b = 1.0;
+					end
+					Perl_Target_Target_Target_NameBarText:SetTextColor(r, g, b);
 				end
 			end
 
@@ -646,59 +712,65 @@ function Perl_Target_Target_OnUpdate(arg1)
 end
 
 function Perl_Target_Target_Update_Buffs()
-	local button, buffCount, buffTexture, buffApplications;									-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+	local button, buffCount, buffTexture, buffApplications, color, debuffType;							-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 
-	local numBuffs = 0;													-- Buff counter for correct layout
+	local numBuffs = 0;														-- Buff counter for correct layout
 	if (showtotbuffs == 1) then
-		for buffnum=1,16 do												-- Start main buff loop
-			buffTexture, buffApplications = UnitBuff("targettarget", buffnum, displaycastablebuffs);		-- Get the texture and buff stacking information if any
-			button = getglobal("Perl_Target_Target_BuffFrame_Buff"..buffnum);					-- Create the main icon for the buff
-			if (buffTexture) then											-- If there is a valid texture, proceed with buff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);					-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Hide();						-- Hide the debuff border
-				buffCount = getglobal(button:GetName().."Count");						-- Declare the buff counting text variable
+		for buffnum=1,16 do													-- Start main buff loop
+			buffTexture, buffApplications = UnitBuff("targettarget", buffnum, displaycastablebuffs);			-- Get the texture and buff stacking information if any
+			button = getglobal("Perl_Target_Target_BuffFrame_Buff"..buffnum);						-- Create the main icon for the buff
+			if (buffTexture) then												-- If there is a valid texture, proceed with buff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Hide();							-- Hide the debuff border
+				buffCount = getglobal(button:GetName().."Count");							-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);							-- Set the text to the number of applications if greater than 0
-					buffCount:Show();									-- Show the text
+					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
+					buffCount:Show();										-- Show the text
 				else
-					buffCount:Hide();									-- Hide the text if equal to 0
+					buffCount:Hide();										-- Hide the text if equal to 0
 				end
-				numBuffs = numBuffs + 1;									-- Increment the buff counter
-				button:Show();											-- Show the final buff icon
+				numBuffs = numBuffs + 1;										-- Increment the buff counter
+				button:Show();												-- Show the final buff icon
 			else
-				button:Hide();											-- Hide the icon since there isn't a buff in this position
+				button:Hide();												-- Hide the icon since there isn't a buff in this position
 			end
-		end														-- End main buff loop
+		end															-- End main buff loop
 	else
-		numBuffs = 0;													-- ToT Buffs are disabled
+		numBuffs = 0;														-- ToT Buffs are disabled
 	end
 
-	local numDebuffs = 0;													-- Debuff counter for correct layout
+	local numDebuffs = 0;														-- Debuff counter for correct layout
 	if (showtotdebuffs == 1) then
-		for debuffnum=1,16 do												-- Start main debuff loop
-			buffTexture, buffApplications = UnitDebuff("targettarget", debuffnum, displaycastablebuffs);		-- Get the texture and debuff stacking information if any
-			button = getglobal("Perl_Target_Target_BuffFrame_Debuff"..debuffnum);					-- Create the main icon for the debuff
-			if (buffTexture) then											-- If there is a valid texture, proceed with debuff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);					-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Show();						-- Show the debuff border
-				buffCount = getglobal(button:GetName().."Count");						-- Declare the debuff counting text variable
-				if (buffApplications > 1) then
-					buffCount:SetText(debuffApplications);							-- Set the text to the number of applications if greater than 0
-					buffCount:Show();									-- Show the text
+		for debuffnum=1,16 do													-- Start main debuff loop
+			buffTexture, buffApplications, debuffType = UnitDebuff("targettarget", debuffnum, displaycastablebuffs);	-- Get the texture and debuff stacking information if any
+			button = getglobal("Perl_Target_Target_BuffFrame_Debuff"..debuffnum);						-- Create the main icon for the debuff
+			if (buffTexture) then												-- If there is a valid texture, proceed with debuff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
+				if (debuffType) then
+					color = DebuffTypeColor[debuffType];
 				else
-					buffCount:Hide();									-- Hide the text if equal to 0
+					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
-				numDebuffs = numDebuffs + 1;									-- Increment the debuff counter
-				button:Show();											-- Show the final debuff icon
+				getglobal(button:GetName().."DebuffBorder"):SetVertexColor(color.r, color.g, color.b);			-- Set the debuff border color
+				getglobal(button:GetName().."DebuffBorder"):Show();							-- Show the debuff border
+				buffCount = getglobal(button:GetName().."Count");							-- Declare the debuff counting text variable
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
+					buffCount:Show();										-- Show the text
+				else
+					buffCount:Hide();										-- Hide the text if equal to 0
+				end
+				numDebuffs = numDebuffs + 1;										-- Increment the debuff counter
+				button:Show();												-- Show the final debuff icon
 			else
-				button:Hide();											-- Hide the icon since there isn't a debuff in this position
+				button:Hide();												-- Hide the icon since there isn't a debuff in this position
 			end
-		end														-- End main debuff loop
+		end															-- End main debuff loop
 	else
-		numDebuffs = 0;													-- ToT Debuffs are disabled
+		numDebuffs = 0;														-- ToT Debuffs are disabled
 	end
 
-	if (UnitIsFriend("player", "targettarget")) then									-- Position the buffs according to friendly or enemy status
+	if (UnitIsFriend("player", "targettarget")) then										-- Position the buffs according to friendly or enemy status
 		if (numBuffs < 9) then
 			if (showtotbuffs == 0) then
 				Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
@@ -725,65 +797,72 @@ function Perl_Target_Target_Update_Buffs()
 	end
 
 	if (showtotbuffs == 1 or showtotdebuffs == 1) then
-		Perl_Target_Target_BuffFrame:Show();										-- Show the final buff/debuff frame
+		Perl_Target_Target_BuffFrame:Show();											-- Show the final buff/debuff frame
 	else
-		Perl_Target_Target_BuffFrame:Hide();										-- Hide the buff/debuff frame since it's disabled
+		Perl_Target_Target_BuffFrame:Hide();											-- Hide the buff/debuff frame since it's disabled
 	end
 end
 
 function Perl_Target_Target_Target_Update_Buffs()
-	local numBuffs = 0;													-- Buff counter for correct layout
+	local button, buffCount, buffTexture, buffApplications, color, debuffType;							-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+
+	local numBuffs = 0;														-- Buff counter for correct layout
 	if (showtototbuffs == 1) then
-		local button, buffCount, buffTexture, buffApplications;								-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 		for buffnum=1,16 do
-			buffTexture, buffApplications = UnitBuff("targettargettarget", buffnum, displaycastablebuffs);		-- Get the texture and buff stacking information if any
-			button = getglobal("Perl_Target_Target_Target_BuffFrame_Buff"..buffnum);				-- Create the main icon for the buff
+			buffTexture, buffApplications = UnitBuff("targettargettarget", buffnum, displaycastablebuffs);			-- Get the texture and buff stacking information if any
+			button = getglobal("Perl_Target_Target_Target_BuffFrame_Buff"..buffnum);					-- Create the main icon for the buff
 			if (buffTexture) then
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);					-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Hide();						-- Hide the debuff border
-				buffCount = getglobal(button:GetName().."Count");						-- Declare the buff counting text variable
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Hide();							-- Hide the debuff border
+				buffCount = getglobal(button:GetName().."Count");							-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);							-- Set the text to the number of applications if greater than 0
-					buffCount:Show();									-- Show the text
+					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
+					buffCount:Show();										-- Show the text
 				else
-					buffCount:Hide();									-- Hide the text if equal to 0
+					buffCount:Hide();										-- Hide the text if equal to 0
 				end
-				numBuffs = numBuffs + 1;									-- Increment the buff counter
-				button:Show();											-- Show the final buff icon
+				numBuffs = numBuffs + 1;										-- Increment the buff counter
+				button:Show();												-- Show the final buff icon
 			else
-				button:Hide();											-- Hide the icon since there isn't a buff in this position
+				button:Hide();												-- Hide the icon since there isn't a buff in this position
 			end
 		end
 	else
-		numBuffs = 0;													-- ToToT Buffs are disabled
+		numBuffs = 0;														-- ToToT Buffs are disabled
 	end
 
-	local numDebuffs = 0;													-- Debuff counter for correct layout
+	local numDebuffs = 0;														-- Debuff counter for correct layout
 	if (showtototdebuffs == 1) then
 		for debuffnum=1,16 do
-			buffTexture, buffApplications = UnitDebuff("targettargettarget", debuffnum, displaycastablebuffs);	-- Get the texture and debuff stacking information if any
-			button = getglobal("Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum);				-- Create the main icon for the debuff
+			buffTexture, buffApplications, debuffType = UnitDebuff("targettargettarget", debuffnum, displaycastablebuffs);	-- Get the texture and debuff stacking information if any
+			button = getglobal("Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum);					-- Create the main icon for the debuff
 			if (buffTexture) then
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);					-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Show();						-- Show the debuff border
-				buffCount = getglobal(button:GetName().."Count");						-- Declare the debuff counting text variable
-				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);							-- Set the text to the number of applications if greater than 0
-					buffCount:Show();									-- Show the text
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
+				if (debuffType) then
+					color = DebuffTypeColor[debuffType];
 				else
-					buffCount:Hide();									-- Hide the text if equal to 0
+					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
-				numDebuffs = numDebuffs + 1;									-- Increment the debuff counter
-				button:Show();											-- Show the final debuff icon
+				getglobal(button:GetName().."DebuffBorder"):SetVertexColor(color.r, color.g, color.b);			-- Set the debuff border color
+				getglobal(button:GetName().."DebuffBorder"):Show();							-- Show the debuff border
+				buffCount = getglobal(button:GetName().."Count");							-- Declare the debuff counting text variable
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
+					buffCount:Show();										-- Show the text
+				else
+					buffCount:Hide();										-- Hide the text if equal to 0
+				end
+				numDebuffs = numDebuffs + 1;										-- Increment the debuff counter
+				button:Show();												-- Show the final debuff icon
 			else
-				button:Hide();											-- Hide the icon since there isn't a debuff in this position
+				button:Hide();												-- Hide the icon since there isn't a debuff in this position
 			end
 		end
 	else
-		numBuffs = 0;													-- ToToT Debuffs are disabled
+		numBuffs = 0;														-- ToToT Debuffs are disabled
 	end
 
-	if (UnitIsFriend("player", "targettargettarget")) then									-- Position the buffs according to friendly or enemy status
+	if (UnitIsFriend("player", "targettargettarget")) then										-- Position the buffs according to friendly or enemy status
 		if (numBuffs < 9) then
 			if (showtototbuffs == 0) then
 				Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
@@ -810,9 +889,9 @@ function Perl_Target_Target_Target_Update_Buffs()
 	end
 
 	if (showtototbuffs == 1 or showtototdebuffs == 1) then
-		Perl_Target_Target_Target_BuffFrame:Show();									-- Show the final buff/debuff frame
+		Perl_Target_Target_Target_BuffFrame:Show();										-- Show the final buff/debuff frame
 	else
-		Perl_Target_Target_Target_BuffFrame:Hide();									-- Hide the buff/debuff frame since it's disabled
+		Perl_Target_Target_Target_BuffFrame:Hide();										-- Hide the buff/debuff frame since it's disabled
 	end
 end
 
@@ -1610,12 +1689,10 @@ function Perl_TargetTargetDropDown_OnLoad()
 end
 
 function Perl_TargetTargetDropDown_Initialize()
-	--local menu, name;
-	local menu;
+	local menu, name;
 	if (UnitIsEnemy("targettarget", "player")) then
-		--menu = "RAID_TARGET_ICON";
-		--name = RAID_TARGET_ICON;
-		return;
+		menu = "RAID_TARGET_ICON";
+		name = RAID_TARGET_ICON;
 	end
 	if (UnitIsUnit("targettarget", "player")) then
 		menu = "SELF";
@@ -1629,8 +1706,7 @@ function Perl_TargetTargetDropDown_Initialize()
 		end
 	end
 	if (menu) then
-		--UnitPopup_ShowMenu(Perl_Target_Target_DropDown, menu, "targettarget", name);
-		UnitPopup_ShowMenu(Perl_Target_Target_DropDown, menu, "targettarget");
+		UnitPopup_ShowMenu(Perl_Target_Target_DropDown, menu, "targettarget", name);
 	end
 end
 
@@ -1726,12 +1802,10 @@ function Perl_TargetTargetTargetDropDown_OnLoad()
 end
 
 function Perl_TargetTargetTargetDropDown_Initialize()
-	--local menu, name;
-	local menu;
+	local menu, name;
 	if (UnitIsEnemy("targettargettarget", "player")) then
-		--menu = "RAID_TARGET_ICON";
-		--name = RAID_TARGET_ICON;
-		return;
+		menu = "RAID_TARGET_ICON";
+		name = RAID_TARGET_ICON;
 	end
 	if (UnitIsUnit("targettargettarget", "player")) then
 		menu = "SELF";
@@ -1745,8 +1819,7 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 		end
 	end
 	if (menu) then
-		--UnitPopup_ShowMenu(Perl_Target_Target_Target_DropDown, menu, "targettargettarget", name);
-		UnitPopup_ShowMenu(Perl_Target_Target_Target_DropDown, menu, "targettargettarget");
+		UnitPopup_ShowMenu(Perl_Target_Target_Target_DropDown, menu, "targettargettarget", name);
 	end
 end
 
@@ -1924,8 +1997,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "Version 0.71",
-			releaseDate = "June 13, 2006",
+			version = "Version 0.72",
+			releaseDate = "June 20, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

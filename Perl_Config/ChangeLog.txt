@@ -1,3 +1,18 @@
+0.72 - June 20, 2006
+ - All: Updated TOC Interface version to 11100
+ - CombatDisplay/Target/ToT: Added 1.11 raid target icon menu support
+ - Party: Debuff borders will now correctly display again
+ - Party/Pet/Target/ToT: Added colored debuff border support
+ - Party/Target/ToT: Characters will once again show correct PvP status
+ - Pet: Added a compact mode to fit against short bar mode
+ - Pet: Extended the pet frame to fit against compact mode better
+ - Player: Fixed an error when charmed by certain NPCs
+ - Target: Added 1.11 raid target icon support
+ - Target: Can now display names by their appropriate class color
+ - ToT: Updated IFrameManager support
+ - ToT: Debuff stacking now works for ToT debuffs
+ - ToT: Fixed a potential variable scope issue
+
 0.71 - June 13, 2006
  - All: Updated SmartHeal Enhanced support
  - All: Minor change to Genesis support

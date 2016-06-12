@@ -24,7 +24,7 @@
 				</Texture>
 			</Layer>
 			<Layer level="OVERLAY">
-				<Texture name="$parentDebuffBorder" file="Interface\Buttons\UI-Debuff-Border" hidden="true">
+				<Texture name="$parentDebuffBorder" file="Interface\Buttons\UI-Debuff-Overlays" hidden="true">
 					<Size>
 						<AbsDimension x="24" y="24"/>
 					</Size>
@@ -35,22 +35,8 @@
 							</Offset>
 						</Anchor>
 					</Anchors>
+					<TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>
 				</Texture>
-				<!--
-				<Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays">
-					<Size>
-						<AbsDimension x="19" y="19"/>
-					</Size>
-					<Anchors>
-						<Anchor point="CENTER">
-							<Offset>
-								<AbsDimension x="0" y="0"/>
-							</Offset>
-						</Anchor>
-					</Anchors>
-				<TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>
-				</Texture>
-				-->
 				<FontString name="$parentCount" inherits="NumberFontNormalSmall">
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT">
@@ -221,22 +207,38 @@
 								</Anchor>
 							</Anchors>
 						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
 
+
+			<!-- Raid Icon -->
+			<Frame name="Perl_Target_RaidIconFrame">
+				<Size>
+					<AbsDimension x="180" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
 						<!-- Raid Target Icon -->
-						<!--
 						<Texture name="Perl_Target_RaidTargetIcon" file="Interface\TargetingFrame\UI-RaidTargetingIcons" hidden="true">
 							<Size>
 								<AbsDimension x="26" y="26"/>
 							</Size>
 							<Anchors>
-								<Anchor point="CENTER" relativePoint="TOPRIGHT">
+								<Anchor point="CENTER" relativePoint="TOPRIGHT" relativeTo="Perl_Target_NameFrame">
 									<Offset>
 										<AbsDimension x="45" y="-10"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
 						</Texture>
-						-->
 					</Layer>
 				</Layers>
 			</Frame>

@@ -30,6 +30,7 @@ local shortbars = 0;		-- Health/Power/Experience bars are all normal length
 local healermode = 0;		-- nurfed unit frame style
 local soundtargetchange = 0;	-- sound when changing targets is off by default
 local displaycastablebuffs = 0;	-- display all buffs by default
+local classcolorednames = 0;	-- names are colored based on pvp status by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -59,7 +60,7 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("PLAYER_COMBO_POINTS");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("PLAYER_TARGET_CHANGED");
-	--this:RegisterEvent("RAID_TARGET_UPDATE");
+	this:RegisterEvent("RAID_TARGET_UPDATE");
 	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_COMBAT");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
@@ -92,6 +93,7 @@ function Perl_Target_OnLoad()
 	Perl_Target_CivilianFrame_CastClickOverlay:SetFrameLevel(Perl_Target_CivilianFrame:GetFrameLevel() + 1);
 	Perl_Target_CPFrame_CastClickOverlay:SetFrameLevel(Perl_Target_CPFrame:GetFrameLevel() + 1);
 	Perl_Target_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Target_StatsFrame:GetFrameLevel() + 1);
+	Perl_Target_RaidIconFrame:SetFrameLevel(Perl_Target_PortraitFrame_CastClickOverlay:GetFrameLevel() - 1);
 
 	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Target loaded successfully.");
@@ -152,9 +154,9 @@ function Perl_Target_OnEvent(event)
 	elseif (event == "PLAYER_COMBO_POINTS") then
 		Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
 		return;
---	elseif (event == "RAID_TARGET_UPDATE") then
---		Perl_Target_UpdateRaidTargetIcon();
---		return;
+	elseif (event == "RAID_TARGET_UPDATE") then
+		Perl_Target_UpdateRaidTargetIcon();
+		return;
 	elseif (event == "UNIT_LEVEL") then
 		if (arg1 == "target") then
 			Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
@@ -318,7 +320,7 @@ function Perl_Target_Update_Once()
 		Perl_Target_Update_PvP_Status_Icon();	-- Set pvp status icon
 		Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
 		Perl_Target_Buff_UpdateAll();		-- Update the buffs
-		--Perl_Target_UpdateRaidTargetIcon();	-- Display the raid target icon if needed
+		Perl_Target_UpdateRaidTargetIcon();	-- Display the raid target icon if needed
 
 		-- Begin: Set the target's name
 		targetname = UnitName("target");
@@ -839,46 +841,100 @@ function Perl_Target_Update_PvP_Status_Icon()
 end
 
 function Perl_Target_Update_Text_Color()
-	if (UnitPlayerControlled("target")) then					-- is it a player
-		if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
-			-- Hostile players are red
-			if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
+	if (classcolorednames == 0) then
+		if (UnitPlayerControlled("target")) then					-- is it a player
+			if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
+				-- Hostile players are red
+				if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
+					r = 0.5;
+					g = 0.5;
+					b = 1.0;
+				else								-- enemy is pvp enabled
+					r = 1.0;
+					g = 0.0;
+					b = 0.0;
+				end
+			elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+				-- Players we can attack but which are not hostile are yellow
+				r = 1.0;
+				g = 1.0;
+				b = 0.0;
+			elseif (UnitIsPVP("target")) then					-- friendly pvp enabled character
+				-- Players we can assist but are PvP flagged are green
+				r = 0.0;
+				g = 1.0;
+				b = 0.0;
+			else									-- friendly non pvp enabled character
+				-- All other players are blue (the usual state on the "blue" server)
 				r = 0.5;
 				g = 0.5;
 				b = 1.0;
-			else								-- enemy is pvp enabled
-				r = 1.0;
-				g = 0.0;
-				b = 0.0;
 			end
-		elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
-			-- Players we can attack but which are not hostile are yellow
-			r = 1.0;
-			g = 1.0;
-			b = 0.0;
-		elseif (UnitIsPVP("target")) then					-- friendly pvp enabled character
-			-- Players we can assist but are PvP flagged are green
-			r = 0.0;
-			g = 1.0;
-			b = 0.0;
-		else									-- friendly non pvp enabled character
-			-- All other players are blue (the usual state on the "blue" server)
-			r = 0.5;
-			g = 0.5;
-			b = 1.0;
-		end
-		Perl_Target_NameBarText:SetTextColor(r, g, b);
-	elseif (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
-		Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
-	else
-		local reaction = UnitReaction("target", "player");
-		if (reaction) then
-			r = UnitReactionColor[reaction].r;
-			g = UnitReactionColor[reaction].g;
-			b = UnitReactionColor[reaction].b;
 			Perl_Target_NameBarText:SetTextColor(r, g, b);
+		elseif (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
+			Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
 		else
-			Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+			if (UnitIsVisible("target")) then
+				local reaction = UnitReaction("target", "player");
+				if (reaction) then
+					r = UnitReactionColor[reaction].r;
+					g = UnitReactionColor[reaction].g;
+					b = UnitReactionColor[reaction].b;
+					Perl_Target_NameBarText:SetTextColor(r, g, b);
+				else
+					Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+				end
+			else
+				if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
+					-- Hostile players are red
+					if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
+						r = 0.5;
+						g = 0.5;
+						b = 1.0;
+					else								-- enemy is pvp enabled
+						r = 1.0;
+						g = 0.0;
+						b = 0.0;
+					end
+				elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+					-- Players we can attack but which are not hostile are yellow
+					r = 1.0;
+					g = 1.0;
+					b = 0.0;
+				elseif (UnitIsPVP("target")) then					-- friendly pvp enabled character
+					-- Players we can assist but are PvP flagged are green
+					r = 0.0;
+					g = 1.0;
+					b = 0.0;
+				else									-- friendly non pvp enabled character
+					-- All other players are blue (the usual state on the "blue" server)
+					r = 0.5;
+					g = 0.5;
+					b = 1.0;
+				end
+				Perl_Target_NameBarText:SetTextColor(r, g, b);
+			end
+			
+		end
+	else
+		if (UnitClass("target") == PERL_LOCALIZED_WARRIOR) then
+			Perl_Target_NameBarText:SetTextColor(0.78, 0.61, 0.43);
+		elseif (UnitClass("target") == PERL_LOCALIZED_MAGE) then
+			Perl_Target_NameBarText:SetTextColor(0.41, 0.8, 0.94);
+		elseif (UnitClass("target") == PERL_LOCALIZED_ROGUE) then
+			Perl_Target_NameBarText:SetTextColor(1, 0.96, 0.41);
+		elseif (UnitClass("target") == PERL_LOCALIZED_DRUID) then
+			Perl_Target_NameBarText:SetTextColor(1, 0.49, 0.04);
+		elseif (UnitClass("target") == PERL_LOCALIZED_HUNTER) then
+			Perl_Target_NameBarText:SetTextColor(0.67, 0.83, 0.45);
+		elseif (UnitClass("target") == PERL_LOCALIZED_SHAMAN) then
+			Perl_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+		elseif (UnitClass("target") == PERL_LOCALIZED_PRIEST) then
+			Perl_Target_NameBarText:SetTextColor(1, 1, 1);
+		elseif (UnitClass("target") == PERL_LOCALIZED_WARLOCK) then
+			Perl_Target_NameBarText:SetTextColor(0.58, 0.51, 0.79);
+		elseif (UnitClass("target") == PERL_LOCALIZED_PALADIN) then
+			Perl_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
 		end
 	end
 end
@@ -930,15 +986,15 @@ function Perl_Target_Frame_Set_Level()
 	end
 end
 
---function Perl_Target_UpdateRaidTargetIcon()
---	local index = GetRaidTargetIndex("target");
---	if (index) then
---		SetRaidTargetIconTexture(Perl_Target_RaidTargetIcon, index);
---		Perl_Target_RaidTargetIcon:Show();
---	else
---		Perl_Target_RaidTargetIcon:Hide();
---	end
---end
+function Perl_Target_UpdateRaidTargetIcon()
+	local index = GetRaidTargetIndex("target");
+	if (index) then
+		SetRaidTargetIconTexture(Perl_Target_RaidTargetIcon, index);
+		Perl_Target_RaidTargetIcon:Show();
+	else
+		Perl_Target_RaidTargetIcon:Hide();
+	end
+end
 
 function Perl_Target_Update_Portrait()
 	if (showportrait == 1) then
@@ -1299,6 +1355,12 @@ function Perl_Target_Set_Healer(newvalue)
 	Perl_Target_Update_Once();
 end
 
+function Perl_Target_Set_Class_Colored_Names(newvalue)
+	classcolorednames = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
 function Perl_Target_Set_Buff_Debuff_Background(newvalue)
 	hidebuffbackground = newvalue;
 	Perl_Target_UpdateVars();
@@ -1313,11 +1375,11 @@ end
 function Perl_Target_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
-		scale = (number / 100);					-- convert the user input to a wow acceptable value
+		scale = (number / 100);						-- convert the user input to a wow acceptable value
 	end
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;		-- run it through the scaling formula introduced in 1.9
 	Perl_Target_Frame:SetScale(unsavedscale);
-	Perl_Target_Set_BuffDebuff_Scale(buffdebuffscale*100);		-- maintain the buff/debuff scale
+	Perl_Target_Set_BuffDebuff_Scale(buffdebuffscale*100);			-- maintain the buff/debuff scale
 	Perl_Target_UpdateVars();
 end
 
@@ -1334,7 +1396,7 @@ end
 
 function Perl_Target_Set_Transparency(number)
 	if (number ~= nil) then
-		transparency = (number / 100);				-- convert the user input to a wow acceptable value
+		transparency = (number / 100);					-- convert the user input to a wow acceptable value
 	end
 	Perl_Target_Frame:SetAlpha(transparency);
 	Perl_Target_UpdateVars();
@@ -1371,6 +1433,7 @@ function Perl_Target_GetVars()
 	healermode = Perl_Target_Config[UnitName("player")]["HealerMode"];
 	soundtargetchange = Perl_Target_Config[UnitName("player")]["SoundTargetChange"];
 	displaycastablebuffs = Perl_Target_Config[UnitName("player")]["DisplayCastableBuffs"];
+	classcolorednames = Perl_Target_Config[UnitName("player")]["ClassColoredNames"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1450,6 +1513,9 @@ function Perl_Target_GetVars()
 	if (displaycastablebuffs == nil) then
 		displaycastablebuffs = 0;
 	end
+	if (classcolorednames == nil) then
+		classcolorednames = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1478,6 +1544,7 @@ function Perl_Target_GetVars()
 		["healermode"] = healermode,
 		["soundtargetchange"] = soundtargetchange,
 		["displaycastablebuffs"] = displaycastablebuffs,
+		["classcolorednames"] = classcolorednames,
 	}
 	return vars;
 end
@@ -1616,6 +1683,11 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				displaycastablebuffs = nil;
 			end
+			if (vartable["Global Settings"]["ClassColoredNames"] ~= nil) then
+				classcolorednames = vartable["Global Settings"]["ClassColoredNames"];
+			else
+				classcolorednames = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1697,6 +1769,9 @@ function Perl_Target_UpdateVars(vartable)
 		if (displaycastablebuffs == nil) then
 			displaycastablebuffs = 0;
 		end
+		if (classcolorednames == nil) then
+			classcolorednames = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();		-- Reset the buff icons
@@ -1739,6 +1814,7 @@ function Perl_Target_UpdateVars(vartable)
 		["HealerMode"] = healermode,
 		["SoundTargetChange"] = soundtargetchange,
 		["DisplayCastableBuffs"] = displaycastablebuffs,
+		["ClassColoredNames"] = classcolorednames,
 	};
 end
 
@@ -1753,8 +1829,9 @@ function Perl_Target_Buff_UpdateAll()
 			Perl_Target_Buff_UpdateCPMeter();
 		end
 
+		local button, buffCount, buffTexture, buffApplications, color, debuffType;				-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+
 		local numBuffs = 0;											-- Buff counter for correct layout
-		local button, buffCount, buffTexture, buffApplications;							-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 		for buffnum=1,numbuffsshown do										-- Start main buff loop
 			buffTexture, buffApplications = UnitBuff("target", buffnum, displaycastablebuffs);		-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Target_Buff"..buffnum);						-- Create the main icon for the buff
@@ -1777,10 +1854,16 @@ function Perl_Target_Buff_UpdateAll()
 
 		local numDebuffs = 0;											-- Debuff counter for correct layout
 		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
-			buffTexture, buffApplications = UnitDebuff("target", debuffnum, displaycastablebuffs);		-- Get the texture and debuff stacking information if any
+			buffTexture, buffApplications, debuffType = UnitDebuff("target", debuffnum, displaycastablebuffs);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Target_Debuff"..debuffnum);						-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
+				if (debuffType) then
+					color = DebuffTypeColor[debuffType];
+				else
+					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
+				end
+				getglobal(button:GetName().."DebuffBorder"):SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
 				getglobal(button:GetName().."DebuffBorder"):Show();					-- Show the debuff border
 				buffCount = getglobal(button:GetName().."Count");					-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
@@ -1958,12 +2041,10 @@ function Perl_TargetDropDown_OnLoad()
 end
 
 function Perl_TargetDropDown_Initialize()
-	--local menu, name;
-	local menu;
+	local menu, name;
 	if (UnitIsEnemy("target", "player")) then
-		--menu = "RAID_TARGET_ICON";
-		--name = RAID_TARGET_ICON;
-		return;
+		menu = "RAID_TARGET_ICON";
+		name = RAID_TARGET_ICON;
 	end
 	if (UnitIsUnit("target", "player")) then
 		menu = "SELF";
@@ -1977,8 +2058,7 @@ function Perl_TargetDropDown_Initialize()
 		end
 	end
 	if (menu) then
-		--UnitPopup_ShowMenu(Perl_Target_DropDown, menu, "target", name);
-		UnitPopup_ShowMenu(Perl_Target_DropDown, menu, "target");
+		UnitPopup_ShowMenu(Perl_Target_DropDown, menu, "target", name);
 	end
 end
 
@@ -2098,8 +2178,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.71",
-			releaseDate = "June 13, 2006",
+			version = "Version 0.72",
+			releaseDate = "June 20, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

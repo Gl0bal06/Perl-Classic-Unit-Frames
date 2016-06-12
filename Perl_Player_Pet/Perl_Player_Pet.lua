@@ -17,6 +17,7 @@ local debuffsize = 12;			-- default debuff size is 12
 local showportrait = 0;			-- portrait is hidden by default
 local threedportrait = 0;		-- 3d portraits are off by default
 local portraitcombattext = 0;		-- Combat text is disabled by default on the portrait frame
+local compactmode = 0;			-- compact mode is disabled by default
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -188,7 +189,7 @@ function Perl_Player_Pet_IFrameManager()
 		return "Perl Player Pet";
 	end
 	function iface:getBorder(frame)
-		local bottom, left;
+		local bottom, left, right;
 		if (showxp == 0) then
 			bottom = 30;
 		else
@@ -199,8 +200,13 @@ function Perl_Player_Pet_IFrameManager()
 		else
 			left = 48;
 		end
+		if (compactmode == 0) then
+			right = 0;
+		else
+			right = -35;
+		end
 		--return top, right, bottom, left;
-		return 0, 0, bottom, left;
+		return 0, right, bottom, left;
 	end
 	IFrameManager:Register(this, iface);
 end
@@ -414,25 +420,61 @@ end
 
 function Perl_Player_Pet_Set_Window_Layout()
 	if (UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
-		Perl_Player_Pet_LevelFrame:Hide();
-		Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 5);
-		Perl_Player_Pet_StatsFrame:SetWidth(165);
-		Perl_Player_Pet_HealthBar:SetWidth(153);
-		Perl_Player_Pet_HealthBarBG:SetWidth(153);
-		Perl_Player_Pet_ManaBar:SetWidth(153);
-		Perl_Player_Pet_ManaBarBG:SetWidth(153);
-		Perl_Player_Pet_XPBar:SetWidth(153);
-		Perl_Player_Pet_XPBarBG:SetWidth(153);
-	else
-		Perl_Player_Pet_LevelFrame:Show();
-		Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 25, 5);
-		Perl_Player_Pet_StatsFrame:SetWidth(140);
-		Perl_Player_Pet_HealthBar:SetWidth(128);
-		Perl_Player_Pet_HealthBarBG:SetWidth(128);
-		Perl_Player_Pet_ManaBar:SetWidth(128);
-		Perl_Player_Pet_ManaBarBG:SetWidth(128);
-		Perl_Player_Pet_XPBar:SetWidth(128);
-		Perl_Player_Pet_XPBarBG:SetWidth(128);
+		if (compactmode == 0) then
+			Perl_Player_Pet_LevelFrame:Hide();
+			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 5);
+			Perl_Player_Pet_NameFrame:SetWidth(170);
+			Perl_Player_Pet_NameFrame_CastClickOverlay:SetWidth(170);
+			Perl_Player_Pet_StatsFrame:SetWidth(170);
+			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(170);
+			Perl_Player_Pet_HealthBar:SetWidth(158);
+			Perl_Player_Pet_HealthBarBG:SetWidth(158);
+			Perl_Player_Pet_ManaBar:SetWidth(158);
+			Perl_Player_Pet_ManaBarBG:SetWidth(158);
+			Perl_Player_Pet_XPBar:SetWidth(158);
+			Perl_Player_Pet_XPBarBG:SetWidth(158);
+		else
+			Perl_Player_Pet_LevelFrame:Hide();
+			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 5);
+			Perl_Player_Pet_NameFrame:SetWidth(135);
+			Perl_Player_Pet_NameFrame_CastClickOverlay:SetWidth(135);
+			Perl_Player_Pet_StatsFrame:SetWidth(135);
+			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(135);
+			Perl_Player_Pet_HealthBar:SetWidth(123);
+			Perl_Player_Pet_HealthBarBG:SetWidth(123);
+			Perl_Player_Pet_ManaBar:SetWidth(123);
+			Perl_Player_Pet_ManaBarBG:SetWidth(123);
+			Perl_Player_Pet_XPBar:SetWidth(123);
+			Perl_Player_Pet_XPBarBG:SetWidth(123);
+		end
+	else	-- Hunter
+		if (compactmode == 0) then
+			Perl_Player_Pet_LevelFrame:Show();
+			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 25, 5);
+			Perl_Player_Pet_NameFrame:SetWidth(170);
+			Perl_Player_Pet_NameFrame_CastClickOverlay:SetWidth(170);
+			Perl_Player_Pet_StatsFrame:SetWidth(145);
+			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(145);
+			Perl_Player_Pet_HealthBar:SetWidth(133);
+			Perl_Player_Pet_HealthBarBG:SetWidth(133);
+			Perl_Player_Pet_ManaBar:SetWidth(133);
+			Perl_Player_Pet_ManaBarBG:SetWidth(133);
+			Perl_Player_Pet_XPBar:SetWidth(133);
+			Perl_Player_Pet_XPBarBG:SetWidth(133);
+		else
+			Perl_Player_Pet_LevelFrame:Show();
+			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 25, 5);
+			Perl_Player_Pet_NameFrame:SetWidth(135);
+			Perl_Player_Pet_NameFrame_CastClickOverlay:SetWidth(135);
+			Perl_Player_Pet_StatsFrame:SetWidth(110);
+			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(110);
+			Perl_Player_Pet_HealthBar:SetWidth(98);
+			Perl_Player_Pet_HealthBarBG:SetWidth(98);
+			Perl_Player_Pet_ManaBar:SetWidth(98);
+			Perl_Player_Pet_ManaBarBG:SetWidth(98);
+			Perl_Player_Pet_XPBar:SetWidth(98);
+			Perl_Player_Pet_XPBarBG:SetWidth(98);
+		end
 	end
 end
 
@@ -496,6 +538,14 @@ function Perl_Player_Pet_Set_Debuff_Size(newvalue)
 	Perl_Player_Pet_UpdateVars();
 	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+end
+
+function Perl_Player_Pet_Set_Compact_Mode(newvalue)
+	compactmode = newvalue;
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
+	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	Perl_Player_Pet_Set_Window_Layout();
 end
 
 function Perl_Player_Pet_Set_ShowXP(newvalue)
@@ -563,6 +613,7 @@ function Perl_Player_Pet_GetVars()
 	showportrait = Perl_Player_Pet_Config[UnitName("player")]["ShowPortrait"];
 	threedportrait = Perl_Player_Pet_Config[UnitName("player")]["ThreeDPortrait"];
 	portraitcombattext = Perl_Player_Pet_Config[UnitName("player")]["PortraitCombatText"];
+	compactmode = Perl_Player_Pet_Config[UnitName("player")]["CompactMode"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -603,6 +654,9 @@ function Perl_Player_Pet_GetVars()
 	if (portraitcombattext == nil) then
 		portraitcombattext = 0;
 	end
+	if (compactmode == nil) then
+		compactmode = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -618,6 +672,7 @@ function Perl_Player_Pet_GetVars()
 		["showportrait"] = showportrait,
 		["threedportrait"] = threedportrait,
 		["portraitcombattext"] = portraitcombattext,
+		["compactmode"] = compactmode,
 	}
 	return vars;
 end
@@ -691,6 +746,11 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			else
 				portraitcombattext = nil;
 			end
+			if (vartable["Global Settings"]["CompactMode"] ~= nil) then
+				compactmode = vartable["Global Settings"]["CompactMode"];
+			else
+				compactmode = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -733,6 +793,9 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		if (portraitcombattext == nil) then
 			portraitcombattext = 0;
 		end
+		if (compactmode == nil) then
+			compactmode = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
@@ -740,6 +803,7 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		Perl_Player_Pet_Update_Health();	-- Update the health in case progrssive health color was set
 		Perl_Player_Pet_Update_Portrait();
 		Perl_Player_Pet_Portrait_Combat_Text();
+		Perl_Player_Pet_Set_Window_Layout();
 		Perl_Player_Pet_Set_Scale();		-- Set the scale
 		Perl_Player_Pet_Set_Transparency();	-- Set the transparency
 	end
@@ -763,6 +827,7 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		["ShowPortrait"] = showportrait,
 		["ThreeDPortrait"] = threedportrait,
 		["PortraitCombatText"] = portraitcombattext,
+		["CompactMode"] = compactmode,
 	};
 end
 
@@ -772,44 +837,51 @@ end
 --------------------
 function Perl_Player_Pet_Buff_UpdateAll()
 	if (UnitName("pet")) then
-		local button, buffCount, buffTexture, buffApplications;					-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
-		for buffnum=1,numpetbuffsshown do							-- Start main buff loop
-			buffTexture, buffApplications = UnitBuff("pet", buffnum);			-- Get the texture and buff stacking information if any
-			button = getglobal("Perl_Player_Pet_Buff"..buffnum);				-- Create the main icon for the buff
-			if (buffTexture) then								-- If there is a valid texture, proceed with buff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Hide();			-- Hide the debuff border
-				buffCount = getglobal(button:GetName().."Count");			-- Declare the buff counting text variable
+		local button, buffCount, buffTexture, buffApplications, color, debuffType;				-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+
+		for buffnum=1,numpetbuffsshown do									-- Start main buff loop
+			buffTexture, buffApplications = UnitBuff("pet", buffnum);					-- Get the texture and buff stacking information if any
+			button = getglobal("Perl_Player_Pet_Buff"..buffnum);						-- Create the main icon for the buff
+			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Hide();					-- Hide the debuff border
+				buffCount = getglobal(button:GetName().."Count");					-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
-					buffCount:Show();						-- Show the text
+					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
+					buffCount:Show();								-- Show the text
 				else
-					buffCount:Hide();						-- Hide the text if equal to 0
+					buffCount:Hide();								-- Hide the text if equal to 0
 				end
-				button:Show();								-- Show the final buff icon
+				button:Show();										-- Show the final buff icon
 			else
-				button:Hide();								-- Hide the icon since there isn't a buff in this position
+				button:Hide();										-- Hide the icon since there isn't a buff in this position
 			end
-		end											-- End main buff loop
+		end													-- End main buff loop
 
 		for debuffnum=1,numpetdebuffsshown do
-			buffTexture, buffApplications = UnitDebuff("pet", debuffnum);			-- Get the texture and debuff stacking information if any
-			button = getglobal("Perl_Player_Pet_Debuff"..debuffnum);			-- Create the main icon for the debuff
-			if (buffTexture) then								-- If there is a valid texture, proceed with debuff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Show();			-- Show the debuff border
-				buffCount = getglobal(button:GetName().."Count");			-- Declare the debuff counting text variable
-				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
-					buffCount:Show();						-- Show the text
+			buffTexture, buffApplications, debuffType = UnitDebuff("pet", debuffnum);			-- Get the texture and debuff stacking information if any
+			button = getglobal("Perl_Player_Pet_Debuff"..debuffnum);					-- Create the main icon for the debuff
+			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
+				if (debuffType) then
+					color = DebuffTypeColor[debuffType];
 				else
-					buffCount:Hide();						-- Hide the text if equal to 0
+					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
-				button:Show();								-- Show the final debuff icon
+				getglobal(button:GetName().."DebuffBorder"):SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
+				getglobal(button:GetName().."DebuffBorder"):Show();					-- Show the debuff border
+				buffCount = getglobal(button:GetName().."Count");					-- Declare the debuff counting text variable
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
+					buffCount:Show();								-- Show the text
+				else
+					buffCount:Hide();								-- Hide the text if equal to 0
+				end
+				button:Show();										-- Show the final debuff icon
 			else
-				button:Hide();								-- Hide the icon since there isn't a debuff in this position
+				button:Hide();										-- Hide the icon since there isn't a debuff in this position
 			end
-		end											-- End main debuff loop
+		end													-- End main debuff loop
 	end
 end
 
@@ -999,8 +1071,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "Version 0.71",
-			releaseDate = "June 13, 2006",
+			version = "Version 0.72",
+			releaseDate = "June 20, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -723,11 +723,16 @@ end
 
 function Perl_Player_Update_PvP_Status()
 	if (UnitIsPVP("player")) then
-		Perl_Player_NameBarText:SetTextColor(0,1,0);
-		Perl_Player_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..UnitFactionGroup("player"));
-		Perl_Player_PVPStatus:Show();
+		if (UnitFactionGroup("player")) then
+			Perl_Player_NameBarText:SetTextColor(0, 1, 0);		-- Green if PvP flagged
+			Perl_Player_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..UnitFactionGroup("player"));
+			Perl_Player_PVPStatus:Show();
+		else
+			Perl_Player_NameBarText:SetTextColor(1, 0, 0);		-- Red if charmed
+			Perl_Player_PVPStatus:Hide();
+		end
 	else
-		Perl_Player_NameBarText:SetTextColor(0.5,0.5,1);
+		Perl_Player_NameBarText:SetTextColor(0.5, 0.5, 1);		-- Blue if not PvP flagged
 		Perl_Player_PVPStatus:Hide();
 	end
 
@@ -1682,8 +1687,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.71",
-			releaseDate = "June 13, 2006",
+			version = "Version 0.72",
+			releaseDate = "June 20, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
