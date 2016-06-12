@@ -230,7 +230,7 @@
 						</Anchors>
 						<Scripts>
 							<OnUpdate>
-								self:SetCamera(0);
+								self:SetPortraitZoom(1);
 							</OnUpdate>
 						</Scripts>
 					</PlayerModel>

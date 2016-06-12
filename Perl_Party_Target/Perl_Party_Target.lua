@@ -155,7 +155,7 @@ function Perl_Party_Target_Initialize()
 
 	-- IFrameManager Support (Deprecated)
 	for num=1,5 do
-		_G["Perl_Party_Target"..num]:SetUserPlaced(1);
+		_G["Perl_Party_Target"..num]:SetUserPlaced(true);
 	end
 
 	Initialized = 1;
@@ -816,11 +816,11 @@ end
 -- GUI Config Functions --
 --------------------------
 function Perl_Party_Target_Allign()
-	Perl_Party_Target1:SetUserPlaced(1);	-- This makes WoW remember the changes if the frames have never been moved before
-	Perl_Party_Target2:SetUserPlaced(1);
-	Perl_Party_Target3:SetUserPlaced(1);
-	Perl_Party_Target4:SetUserPlaced(1);
-	Perl_Party_Target5:SetUserPlaced(1);
+	Perl_Party_Target1:SetUserPlaced(true);	-- This makes WoW remember the changes if the frames have never been moved before
+	Perl_Party_Target2:SetUserPlaced(true);
+	Perl_Party_Target3:SetUserPlaced(true);
+	Perl_Party_Target4:SetUserPlaced(true);
+	Perl_Party_Target5:SetUserPlaced(true);
 
 	Perl_Party_Target1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 298, -214);
 	Perl_Party_Target2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 298, -309);
@@ -1293,7 +1293,7 @@ function Perl_Party_Target_DragStart(self, button)
 end
 
 function Perl_Party_Target_DragStop(self)
-	_G["Perl_Party_Target"..self:GetID()]:SetUserPlaced(1);
+	_G["Perl_Party_Target"..self:GetID()]:SetUserPlaced(true);
 	_G["Perl_Party_Target"..self:GetID()]:StopMovingOrSizing();
 	Perl_Party_Target_Set_Frame_Position();
 end

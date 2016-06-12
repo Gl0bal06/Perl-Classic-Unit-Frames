@@ -315,8 +315,8 @@ function Perl_CombatDisplay_Initialize()
 	Perl_CombatDisplay_Buff_UpdateAll("player", Perl_CombatDisplay_ManaFrame);	-- call this so the energy ticker doesn't show up prematurely
 
 	-- IFrameManager Support (Deprecated)
-	Perl_CombatDisplay_Frame:SetUserPlaced(1);
-	Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
+	Perl_CombatDisplay_Frame:SetUserPlaced(true);
+	Perl_CombatDisplay_Target_Frame:SetUserPlaced(true);
 
 	Initialized = 1;
 end
@@ -1198,15 +1198,15 @@ function Perl_CombatDisplay_Frame_Style()
 	end
 
 	if (clickthrough == 1) then
-		Perl_CombatDisplay_Frame:EnableMouse(0);
-		Perl_CombatDisplay_ManaFrame_CastClickOverlay:EnableMouse(0);
-		Perl_CombatDisplay_Target_Frame:EnableMouse(0);
-		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:EnableMouse(0);
+		Perl_CombatDisplay_Frame:EnableMouse(false);
+		Perl_CombatDisplay_ManaFrame_CastClickOverlay:EnableMouse(false);
+		Perl_CombatDisplay_Target_Frame:EnableMouse(false);
+		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:EnableMouse(false);
 	else
-		Perl_CombatDisplay_Frame:EnableMouse(1);
-		Perl_CombatDisplay_ManaFrame_CastClickOverlay:EnableMouse(1);
-		Perl_CombatDisplay_Target_Frame:EnableMouse(1);
-		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:EnableMouse(1);
+		Perl_CombatDisplay_Frame:EnableMouse(true);
+		Perl_CombatDisplay_ManaFrame_CastClickOverlay:EnableMouse(true);
+		Perl_CombatDisplay_Target_Frame:EnableMouse(true);
+		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:EnableMouse(true);
 	end
 
 	Perl_CombatDisplay_Update_Mana();
@@ -1220,8 +1220,8 @@ end
 -- GUI Config Functions --
 --------------------------
 function Perl_CombatDisplay_Align_Horizontally()
-	Perl_CombatDisplay_Frame:SetUserPlaced(1);
-	Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
+	Perl_CombatDisplay_Frame:SetUserPlaced(true);
+	Perl_CombatDisplay_Target_Frame:SetUserPlaced(true);
 	Perl_CombatDisplay_Frame:ClearAllPoints();
 	Perl_CombatDisplay_Target_Frame:ClearAllPoints();
 	Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", ((UIParent:GetWidth() / 2) / (1 - UIParent:GetEffectiveScale() + scale)) - (Perl_CombatDisplay_Frame:GetWidth() / 2), floor(Perl_CombatDisplay_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Frame:GetScale()) + 0.5))

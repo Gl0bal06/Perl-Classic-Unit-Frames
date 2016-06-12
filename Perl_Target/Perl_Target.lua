@@ -294,7 +294,7 @@ function Perl_Target_Initialize()
 	--TargetFrameSpellBar:UnregisterEvent("PLAYER_TARGET_CHANGED");
 
 	-- IFrameManager Support (Deprecated)
-	Perl_Target_Frame:SetUserPlaced(1);
+	Perl_Target_Frame:SetUserPlaced(true);
 
 	-- WoW 2.0 Secure API Stuff
 	RegisterUnitWatch(Perl_Target_Frame);
@@ -1021,7 +1021,7 @@ function Perl_Target_Update_Portrait()
 		else
 			if (UnitIsVisible("target")) then
 				Perl_Target_PortraitFrame_TargetModel:SetUnit("target");	-- Load the correct 3d graphic
-				Perl_Target_PortraitFrame_TargetModel:SetCamera(0);
+				Perl_Target_PortraitFrame_TargetModel:SetPortraitZoom(1);
 				Perl_Target_Portrait:Hide();								-- Hide the 2d graphic
 				Perl_Target_PortraitFrame_TargetModel:Show();				-- Show the 3d graphic
 			else

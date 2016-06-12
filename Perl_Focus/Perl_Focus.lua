@@ -259,7 +259,7 @@ function Perl_Focus_Initialize()
 	Perl_clearBlizzardFrameDisable(FocusFrameToT);
 
 	-- IFrameManager Support (Deprecated)
-	Perl_Focus_Frame:SetUserPlaced(1);
+	Perl_Focus_Frame:SetUserPlaced(true);
 
 	-- WoW 2.0 Secure API Stuff
 	RegisterUnitWatch(Perl_Focus_Frame);
@@ -814,7 +814,7 @@ function Perl_Focus_Update_Portrait()
 		else
 			if UnitIsVisible("focus") then
 				Perl_Focus_PortraitFrame_FocusModel:SetUnit("focus");	-- Load the correct 3d graphic
-				Perl_Focus_PortraitFrame_FocusModel:SetCamera(0);
+				Perl_Focus_PortraitFrame_FocusModel:SetPortraitZoom(1);
 				Perl_Focus_Portrait:Hide();								-- Hide the 2d graphic
 				Perl_Focus_PortraitFrame_FocusModel:Show();				-- Show the 3d graphic
 			else

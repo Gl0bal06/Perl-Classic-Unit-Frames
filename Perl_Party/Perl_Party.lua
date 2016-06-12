@@ -347,7 +347,7 @@ function Perl_Party_Initialize()
 	end
 
 	-- IFrameManager Support (Deprecated)
-	Perl_Party_Frame:SetUserPlaced(1);
+	Perl_Party_Frame:SetUserPlaced(true);
 
 	-- WoW 2.0 Secure API Stuff
 	Perl_Party_Register_All()
@@ -1129,7 +1129,7 @@ function Perl_Party_Update_Portrait(self)
 		else
 			if (UnitIsVisible(self.unit)) then
 				self.portrait3D:SetUnit(self.unit);				-- Load the correct 3d graphic
-				self.portrait3D:SetCamera(0);
+				self.portrait3D:SetPortraitZoom(1);
 				self.portrait2D:Hide();							-- Hide the 2d graphic
 				self.portrait3D:Show();							-- Show the 3d graphic
 			else

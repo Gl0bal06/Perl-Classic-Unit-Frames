@@ -189,7 +189,7 @@ function Perl_Party_Pet_Initialize()
 
 	-- IFrameManager Support (Deprecated)
 	for num=1,4 do
-		_G["Perl_Party_Pet"..num]:SetUserPlaced(1);
+		_G["Perl_Party_Pet"..num]:SetUserPlaced(true);
 	end
 
 	Initialized = 1;
@@ -366,7 +366,7 @@ function Perl_Party_Pet_Update_Portrait(unit)
 		else
 			if UnitIsVisible(unit) then
 				_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:SetUnit(unit);			-- Load the correct 3d graphic
-				_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:SetCamera(0);
+				_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:SetPortraitZoom(1);
 				_G["Perl_Party_Pet"..id.."_PortraitFrame_Portrait"]:Hide();						-- Hide the 2d graphic
 				_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:Show();					-- Show the 3d graphic
 			else
@@ -652,10 +652,10 @@ end
 function Perl_Party_Pet_Allign()
 	local vartable = Perl_Party_Pet_GetVars();	-- Get the party pet frame settings
 
-	Perl_Party_Pet1:SetUserPlaced(1);			-- This makes wow remember the changes if the frames have never been moved before
-	Perl_Party_Pet2:SetUserPlaced(1);
-	Perl_Party_Pet3:SetUserPlaced(1);
-	Perl_Party_Pet4:SetUserPlaced(1);
+	Perl_Party_Pet1:SetUserPlaced(true);			-- This makes wow remember the changes if the frames have never been moved before
+	Perl_Party_Pet2:SetUserPlaced(true);
+	Perl_Party_Pet3:SetUserPlaced(true);
+	Perl_Party_Pet4:SetUserPlaced(true);
 
 	if (vartable["showportrait"] == 1) then
 		Perl_Party_Pet1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Party_MemberFrame1_StatsFrame:GetRight() + 52), (-(Perl_Party_MemberFrame1_StatsFrame:GetTop()) + 454));
@@ -1444,7 +1444,7 @@ function Perl_Party_Pet_DragStart(self, button)
 end
 
 function Perl_Party_Pet_DragStop(self)
-	_G["Perl_Party_Pet"..self:GetID()]:SetUserPlaced(1);
+	_G["Perl_Party_Pet"..self:GetID()]:SetUserPlaced(true);
 	_G["Perl_Party_Pet"..self:GetID()]:StopMovingOrSizing();
 	Perl_Party_Pet_Set_Frame_Position();
 end

@@ -135,8 +135,8 @@ function Perl_Target_Target_Initialize()
 	Perl_Target_Target_Target_Reset_Buffs();
 
 	-- IFrameManager Support (Deprecated)
-	Perl_Target_Target_Frame:SetUserPlaced(1);
-	Perl_Target_Target_Target_Frame:SetUserPlaced(1);
+	Perl_Target_Target_Frame:SetUserPlaced(true);
+	Perl_Target_Target_Target_Frame:SetUserPlaced(true);
 
 	Initialized = 1;
 end
@@ -1584,8 +1584,8 @@ function Perl_Target_Target_Allign(button)
 	if (Perl_Target_Frame) then
 		local vartable = Perl_Target_GetVars();							-- Get the target frame settings
 
-		Perl_Target_Target_Frame:SetUserPlaced(1);						-- This makes wow remember the changes if the frames have never been moved before
-		Perl_Target_Target_Target_Frame:SetUserPlaced(1);
+		Perl_Target_Target_Frame:SetUserPlaced(true);						-- This makes wow remember the changes if the frames have never been moved before
+		Perl_Target_Target_Target_Frame:SetUserPlaced(true);
 
 		if (button == 1) then
 			if (vartable["showcp"] == 1) then

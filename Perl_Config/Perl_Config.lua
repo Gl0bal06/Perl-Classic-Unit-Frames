@@ -1563,8 +1563,8 @@ end
 -----------------------------------
 function Perl_Config_Frame_Reset_Positions()
 	if (Perl_CombatDisplay_Frame) then
-		Perl_CombatDisplay_Frame:SetUserPlaced(1);
-		Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
+		Perl_CombatDisplay_Frame:SetUserPlaced(true);
+		Perl_CombatDisplay_Target_Frame:SetUserPlaced(true);
 		Perl_CombatDisplay_Frame:ClearAllPoints();
 		Perl_CombatDisplay_Target_Frame:ClearAllPoints();
 		Perl_CombatDisplay_Frame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 300);
@@ -1573,14 +1573,14 @@ function Perl_Config_Frame_Reset_Positions()
 	end
 
 	if (Perl_Focus_Frame) then
-		Perl_Focus_Frame:SetUserPlaced(1);
+		Perl_Focus_Frame:SetUserPlaced(true);
 		Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 200, -650);
 		Perl_Focus_Set_Frame_Position();
 	end
 
 	if (Perl_Party_Frame) then
 		local vartable = Perl_Party_GetVars();
-		Perl_Party_Frame:SetUserPlaced(1);
+		Perl_Party_Frame:SetUserPlaced(true);
 		if (vartable["showportrait"] == 0) then
 			Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -7, -187);
 		else
@@ -1599,7 +1599,7 @@ function Perl_Config_Frame_Reset_Positions()
 
 	if (Perl_Player_Frame) then
 		local vartable = Perl_Player_GetVars();
-		Perl_Player_Frame:SetUserPlaced(1);
+		Perl_Player_Frame:SetUserPlaced(true);
 		if (vartable["showportrait"] == 0) then
 			Perl_Player_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2, -43);
 		else
@@ -1609,8 +1609,8 @@ function Perl_Config_Frame_Reset_Positions()
 	end
 
 	if (Perl_Player_Pet_Frame) then
-		Perl_Player_Pet_Frame:SetUserPlaced(1);
-		Perl_Player_Pet_Target_Frame:SetUserPlaced(1);
+		Perl_Player_Pet_Frame:SetUserPlaced(true);
+		Perl_Player_Pet_Target_Frame:SetUserPlaced(true);
 		if (Perl_Player_Frame) then
 			local vartableone = Perl_Player_GetVars();
 			local vartabletwo = Perl_Player_Pet_GetVars();
@@ -1627,7 +1627,7 @@ function Perl_Config_Frame_Reset_Positions()
 	end
 
 	if (Perl_Target_Frame) then
-		Perl_Target_Frame:SetUserPlaced(1);
+		Perl_Target_Frame:SetUserPlaced(true);
 		if (Perl_Player_Frame) then
 			Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Player_StatsFrame:GetRight() - 2), -43);
 		else
@@ -1637,8 +1637,8 @@ function Perl_Config_Frame_Reset_Positions()
 	end
 
 	if (Perl_Target_Target_Script_Frame) then
-		Perl_Target_Target_Frame:SetUserPlaced(1);
-		Perl_Target_Target_Target_Frame:SetUserPlaced(1);
+		Perl_Target_Target_Frame:SetUserPlaced(true);
+		Perl_Target_Target_Target_Frame:SetUserPlaced(true);
 		if (Perl_Target_Frame) then
 			local vartable = Perl_Target_GetVars();
 			if (vartable["showcp"] == 1) then

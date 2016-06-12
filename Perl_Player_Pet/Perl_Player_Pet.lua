@@ -250,8 +250,8 @@ function Perl_Player_Pet_Initialize()
 	Perl_clearBlizzardFrameDisable(PetFrame);
 
 	-- IFrameManager Support (Deprecated)
-	Perl_Player_Pet_Frame:SetUserPlaced(1);
-	Perl_Player_Pet_Target_Frame:SetUserPlaced(1);
+	Perl_Player_Pet_Frame:SetUserPlaced(true);
+	Perl_Player_Pet_Target_Frame:SetUserPlaced(true);
 
 	-- WoW 2.0 Secure API Stuff
 	RegisterUnitWatch(Perl_Player_Pet_Frame);
@@ -507,7 +507,7 @@ function Perl_Player_Pet_Update_Portrait()
 				Perl_Player_Pet_PortraitFrame_PetModel:SetUnit("pet");	-- Load the correct 3d graphic
 				Perl_Player_Pet_Portrait:Hide();						-- Hide the 2d graphic
 				Perl_Player_Pet_PortraitFrame_PetModel:Show();			-- Show the 3d graphic
-				Perl_Player_Pet_PortraitFrame_PetModel:SetCamera(0);
+				Perl_Player_Pet_PortraitFrame_PetModel:SetPortraitZoom(1);
 			else
 				SetPortraitTexture(Perl_Player_Pet_Portrait, "pet");	-- Load the correct 2d graphic
 				Perl_Player_Pet_PortraitFrame_PetModel:Hide();			-- Hide the 3d graphic
@@ -1074,8 +1074,8 @@ end
 -- GUI Config Functions --
 --------------------------
 function Perl_Player_Pet_Allign()
-	Perl_Player_Pet_Frame:SetUserPlaced(1);
-	Perl_Player_Pet_Target_Frame:SetUserPlaced(1);
+	Perl_Player_Pet_Frame:SetUserPlaced(true);
+	Perl_Player_Pet_Target_Frame:SetUserPlaced(true);
 
 	if (Perl_Player_Frame) then
 		local vartable = Perl_Player_GetVars();

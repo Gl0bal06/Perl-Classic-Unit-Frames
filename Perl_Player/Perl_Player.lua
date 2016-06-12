@@ -293,7 +293,7 @@ function Perl_Player_Initialize()
 	Perl_Player_Frame:SetScript("OnUpdate", Perl_CombatFeedback_OnUpdate);
 
 	-- IFrameManager Support (Deprecated)
-	Perl_Player_Frame:SetUserPlaced(1);
+	Perl_Player_Frame:SetUserPlaced(true);
 
 	Initialized = 1;
 end
@@ -1107,7 +1107,7 @@ function Perl_Player_Update_Portrait()
 			SetPortraitTexture(Perl_Player_Portrait, "player");			-- Load the correct 2d graphic
 		else
 			Perl_Player_PortraitFrame_PlayerModel:SetUnit("player");	-- Load the correct 3d graphic
-			Perl_Player_PortraitFrame_PlayerModel:SetCamera(0);
+			Perl_Player_PortraitFrame_PlayerModel:SetPortraitZoom(1);
 		end
 	end
 end

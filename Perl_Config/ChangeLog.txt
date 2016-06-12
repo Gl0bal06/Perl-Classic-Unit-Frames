@@ -1,3 +1,8 @@
+6.02 - November 22, 2014
+ - All: Changed more instances of 1/nil to true/false
+ - CombatDisplay: The Click Through Frames option now function correctly
+ - Focus/Party/PartyPet/Pet/Player/Target: Changed all 3D portraits from SetCamera to SetPortraitZoom
+
 6.01 - October 15, 2014
  - All: Updated TOC Interface version to 60000
  - Config: Converted many instances of 1/nil to true/false
