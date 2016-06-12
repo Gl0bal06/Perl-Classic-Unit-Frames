@@ -440,7 +440,7 @@ function Perl_CombatDisplay_Target_Update_Health()
 
 					if MobHealthDB[index] then
 						if (type(MobHealthDB[index]) ~= "string") then
-							Perl_Target_HealthBarText:SetText(targethealth.."%");
+							Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");
 						end
 						s, e, pts, pct = string.find(MobHealthDB[index], "^(%d+)/(%d+)$");
 					else
@@ -871,8 +871,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.41",
-			releaseDate = "February 5, 2006",
+			version = "v0.42",
+			releaseDate = "February 14, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

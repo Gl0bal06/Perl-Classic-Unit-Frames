@@ -210,12 +210,33 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
+			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton5">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Display Portrait Frame");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Portrait_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>

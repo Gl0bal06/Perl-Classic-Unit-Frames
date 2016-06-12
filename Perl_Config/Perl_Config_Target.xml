@@ -56,7 +56,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Buff_Text" inherits="GameFontNormal" text="Buffs">
+				<FontString name="$parent_Buff_Text" inherits="GameFontNormal" text="# of Buffs">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -66,7 +66,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Debuff_Text" inherits="GameFontNormal" text="Debuffs">
+				<FontString name="$parent_Debuff_Text" inherits="GameFontNormal" text="# of Debuffs">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -96,11 +96,11 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Decoration_Text" inherits="GameFontNormal" text="Decoration">
+				<FontString name="$parent_Misc2_Text" inherits="GameFontNormal" text="">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="260" y="-150"/>
+								<AbsDimension x="240" y="-150"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -134,7 +134,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Decoration_Text">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc2_Text">
 						<Offset>
 							<AbsDimension  x="20" y="-20"/>
 						</Offset>
@@ -412,6 +412,27 @@
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
+
+			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton3">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Display Portrait Frame");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Portrait_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
 		</Frames>
 
 	</Frame>

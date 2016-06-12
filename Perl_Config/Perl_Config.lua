@@ -307,6 +307,7 @@ function Perl_Config_Set_Background(newvalue)
 		if (Perl_Player_Frame) then
 			Perl_Player_NameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_LevelFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_PortraitFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_RaidGroupNumberFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_StatsFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_Initialize_Frame_Color();
@@ -325,6 +326,7 @@ function Perl_Config_Set_Background(newvalue)
 			Perl_Target_CPFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_LevelFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_NameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_PortraitFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_StatsFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_Initialize_Frame_Color();
 		end
@@ -355,6 +357,7 @@ function Perl_Config_Set_Background(newvalue)
 		if (Perl_Player_Frame) then
 			Perl_Player_NameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_LevelFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_PortraitFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_RaidGroupNumberFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_StatsFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_Initialize_Frame_Color();
@@ -373,6 +376,7 @@ function Perl_Config_Set_Background(newvalue)
 			Perl_Target_CPFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_LevelFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_NameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_PortraitFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_StatsFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_Initialize_Frame_Color();
 		end
@@ -430,6 +434,45 @@ function Perl_Config_Set_MiniMap_Position(newvalue)
 end
 
 
+-----------------------------------
+-- Reset Frame Position Function --
+-----------------------------------
+function Perl_Config_Frame_Reset_Positions()
+	-- Due to a terrible API, CombatDisplay resetting will not be a feature unless someone can unravel the mystery of screen resolution and scaling coordinates
+--	if (Perl_CombatDisplay_Frame) then
+--		Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 626, -574);
+--		Perl_CombatDisplay_Target_Frame:SetPoint("BOTTOMLEFT", Perl_CombatDisplay_Frame, "TOPLEFT", 0, 5);
+--	end
+
+	if (Perl_Party_Frame) then
+		Perl_Party_Frame:SetUserPlaced(1);		-- All the SetUserPlaced allows us to save the new location set by these functions even if the user has not moved the frames on their own yet.
+		Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -8, -187);
+	end
+
+	if (Perl_Player_Frame) then
+		Perl_Player_Frame:SetUserPlaced(1);
+		Perl_Player_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -3, -43);
+	end
+
+	if (Perl_Player_Pet_Frame) then
+		Perl_Player_Pet_Frame:SetUserPlaced(1);
+		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 27, -112);
+	end
+
+	if (Perl_Target_Frame) then
+		Perl_Target_Frame:SetUserPlaced(1);
+		Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 263, -43);
+	end
+
+	if (Perl_Target_Target_Script_Frame) then
+		Perl_Target_Target_Frame:SetUserPlaced(1);
+		Perl_Target_Target_Target_Frame:SetUserPlaced(1);
+		Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 501, -43);
+		Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 607, -43);
+	end
+end
+
+
 -------------------------------------
 -- Global Saved Variable Functions --
 -------------------------------------
@@ -456,6 +499,10 @@ function Perl_Config_Global_Save_Settings()
 			["Transparency"] = vartable["transparency"],
 			["ShowTarget"] = vartable["showtarget"],
 			["MobHealthSupport"] = vartable["mobhealthsupport"],
+			["XPositionCD"] = floor(Perl_CombatDisplay_Frame:GetLeft() + 0.5),
+			["YPositionCD"] = floor(Perl_CombatDisplay_Frame:GetTop() - UIParent:GetTop() + 0.5),
+			["XPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetLeft() + 0.5),
+			["YPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetTop() - UIParent:GetTop() + 0.5),
 		};
 	end
 
@@ -484,6 +531,8 @@ function Perl_Config_Global_Save_Settings()
 			["BuffLocation"] = vartable["bufflocation"],
 			["DebuffLocation"] = vartable["debufflocation"],
 			["VerticalAlign"] = vartable["verticalalign"],
+			["XPosition"] = floor(Perl_Party_Frame:GetLeft() + 0.5),
+			["YPosition"] = floor(Perl_Party_Frame:GetTop() - UIParent:GetTop() + 0.5),
 		};
 	end
 
@@ -498,6 +547,9 @@ function Perl_Config_Global_Save_Settings()
 			["ColorHealth"] = vartable["colorhealth"],
 			["HealerMode"] = vartable["healermode"],
 			["Transparency"] = vartable["transparency"],
+			["XPosition"] = floor(Perl_Player_Frame:GetLeft() + 0.5),
+			["YPosition"] = floor(Perl_Player_Frame:GetTop() - UIParent:GetTop() + 0.5),
+			["ShowPortrait"] = vartable["showportrait"],
 		};
 	end
 
@@ -522,6 +574,8 @@ function Perl_Config_Global_Save_Settings()
 			["Transparency"] = vartable["transparency"],
 			["BuffLocation"] = vartable["bufflocation"],
 			["DebuffLocation"] = vartable["debufflocation"],
+			["XPosition"] = floor(Perl_Player_Pet_Frame:GetLeft() + 0.5),
+			["YPosition"] = floor(Perl_Player_Pet_Frame:GetTop() - UIParent:GetTop() + 0.5),
 		};
 	end
 
@@ -541,6 +595,9 @@ function Perl_Config_Global_Save_Settings()
 			["ShowPvPRank"] = vartable["showpvprank"],
 			["Transparency"] = vartable["transparency"],
 			["BuffDebuffScale"] = vartable["buffdebuffscale"],
+			["XPosition"] = floor(Perl_Target_Frame:GetLeft() + 0.5),
+			["YPosition"] = floor(Perl_Target_Frame:GetTop() - UIParent:GetTop() + 0.5),
+			["ShowPortrait"] = vartable["showportrait"],
 		};
 	end
 
@@ -554,17 +611,29 @@ function Perl_Config_Global_Save_Settings()
 			["ToTSupport"] = vartable["totsupport"],
 			["ToToTSupport"] = vartable["tototsupport"],
 			["Transparency"] = vartable["transparency"],
+			["XPositionToT"] = floor(Perl_Target_Target_Frame:GetLeft() + 0.5),
+			["YPositionToT"] = floor(Perl_Target_Target_Frame:GetTop() - UIParent:GetTop() + 0.5),
+			["XPositionToToT"] = floor(Perl_Target_Target_Target_Frame:GetLeft() + 0.5),
+			["YPositionToToT"] = floor(Perl_Target_Target_Target_Frame:GetTop() - UIParent:GetTop() + 0.5),
 		};
 	end
 end
 
 function Perl_Config_Global_Load_Settings()
+	-- Load all global settings from last save and then do window positions in this mod since we aren't saving the positions in each individual mod (and to keep all position changes in one file instead of six).
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 		Perl_ArcaneBar_UpdateVars(Perl_Config_Global_ArcaneBar_Config);
 	end
 
 	if (Perl_CombatDisplay_Frame) then
 		Perl_CombatDisplay_UpdateVars(Perl_Config_Global_CombatDisplay_Config);
+
+		if ((Perl_Config_Global_CombatDisplay_Config["Global Settings"]["XPositionCD"] ~= nil) and (Perl_Config_Global_CombatDisplay_Config["Global Settings"]["YPositionCD"] ~= nil) and (Perl_Config_Global_CombatDisplay_Config["Global Settings"]["XPositionCDT"] ~= nil) and (Perl_Config_Global_CombatDisplay_Config["Global Settings"]["YPositionCDT"] ~= nil)) then
+			Perl_CombatDisplay_Frame:SetUserPlaced(1);
+			Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
+			Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_CombatDisplay_Config["Global Settings"]["XPositionCD"], Perl_Config_Global_CombatDisplay_Config["Global Settings"]["YPositionCD"]);
+			Perl_CombatDisplay_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_CombatDisplay_Config["Global Settings"]["XPositionCDT"], Perl_Config_Global_CombatDisplay_Config["Global Settings"]["YPositionCDT"]);
+		end
 	end
 
 	if (Perl_Config_Frame) then
@@ -573,10 +642,20 @@ function Perl_Config_Global_Load_Settings()
 
 	if (Perl_Party_Frame) then
 		Perl_Party_UpdateVars(Perl_Config_Global_Party_Config);
+
+		if ((Perl_Config_Global_Party_Config["Global Settings"]["XPosition"] ~= nil) and (Perl_Config_Global_Party_Config["Global Settings"]["YPosition"] ~= nil)) then
+			Perl_Party_Frame:SetUserPlaced(1);
+			Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Config["Global Settings"]["XPosition"], Perl_Config_Global_Party_Config["Global Settings"]["YPosition"]);
+		end
 	end
 
 	if (Perl_Player_Frame) then
 		Perl_Player_UpdateVars(Perl_Config_Global_Player_Config);
+
+		if ((Perl_Config_Global_Player_Config["Global Settings"]["XPosition"] ~= nil) and (Perl_Config_Global_Player_Config["Global Settings"]["YPosition"] ~= nil)) then
+			Perl_Player_Frame:SetUserPlaced(1);
+			Perl_Player_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Player_Config["Global Settings"]["XPosition"], Perl_Config_Global_Player_Config["Global Settings"]["YPosition"]);
+		end
 	end
 
 	if (Perl_Player_Buff_Script_Frame) then
@@ -585,14 +664,31 @@ function Perl_Config_Global_Load_Settings()
 
 	if (Perl_Player_Pet_Frame) then
 		Perl_Player_Pet_UpdateVars(Perl_Config_Global_Player_Pet_Config);
+
+		if ((Perl_Config_Global_Player_Pet_Config["Global Settings"]["XPosition"] ~= nil) and (Perl_Config_Global_Player_Pet_Config["Global Settings"]["YPosition"] ~= nil)) then
+			Perl_Player_Pet_Frame:SetUserPlaced(1);
+			Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Player_Pet_Config["Global Settings"]["XPosition"], Perl_Config_Global_Player_Pet_Config["Global Settings"]["YPosition"]);
+		end
 	end
 
 	if (Perl_Target_Frame) then
 		Perl_Target_UpdateVars(Perl_Config_Global_Target_Config);
+
+		if ((Perl_Config_Global_Target_Config["Global Settings"]["XPosition"] ~= nil) and (Perl_Config_Global_Target_Config["Global Settings"]["YPosition"] ~= nil)) then
+			Perl_Target_Frame:SetUserPlaced(1);
+			Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Target_Config["Global Settings"]["XPosition"], Perl_Config_Global_Target_Config["Global Settings"]["YPosition"]);
+		end
 	end
 
 	if (Perl_Target_Target_Script_Frame) then
 		Perl_Target_Target_UpdateVars(Perl_Config_Global_Target_Target_Config);
+
+		if ((Perl_Config_Global_Target_Target_Config["Global Settings"]["XPositionToT"] ~= nil) and (Perl_Config_Global_Target_Target_Config["Global Settings"]["YPositionToT"] ~= nil) and (Perl_Config_Global_Target_Target_Config["Global Settings"]["XPositionToToT"] ~= nil) and (Perl_Config_Global_Target_Target_Config["Global Settings"]["YPositionToToT"] ~= nil)) then
+			Perl_Target_Target_Frame:SetUserPlaced(1);
+			Perl_Target_Target_Target_Frame:SetUserPlaced(1);
+			Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Target_Target_Config["Global Settings"]["XPositionToT"], Perl_Config_Global_Target_Target_Config["Global Settings"]["YPositionToT"]);
+			Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Target_Target_Config["Global Settings"]["XPositionToToT"], Perl_Config_Global_Target_Target_Config["Global Settings"]["YPositionToToT"]);
+		end
 	end
 end
 
@@ -744,8 +840,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.41",
-			releaseDate = "February 5, 2006",
+			version = "v0.42",
+			releaseDate = "February 14, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

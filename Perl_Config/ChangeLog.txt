@@ -1,3 +1,11 @@
+0.42 - February 14, 2006
+ - CombatDisplay: Fixed a minor text bug regarding mobhealth support
+ - Config: Added a Reset Frame Position button
+ - Config: Global settings will now save window position
+ - Config: Made some minor text and allignment tweaks to some options
+ - Player/Target: Added a toggleable portrait frame and combat text display
+ - Target: Combo point frame now adjusts depending on the status of the portrait mode
+
 0.41 - February 5, 2006
  - All: Korean translations updated (Thanks gygabyte)
 

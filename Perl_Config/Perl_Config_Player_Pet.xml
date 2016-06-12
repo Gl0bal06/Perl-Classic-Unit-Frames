@@ -52,7 +52,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Buff_Text" inherits="GameFontNormal" text="Buffs">
+				<FontString name="$parent_Buff_Text" inherits="GameFontNormal" text="# of Buffs">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -62,7 +62,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Debuff_Text" inherits="GameFontNormal" text="Debuffs">
+				<FontString name="$parent_Debuff_Text" inherits="GameFontNormal" text="# of Debuffs">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>

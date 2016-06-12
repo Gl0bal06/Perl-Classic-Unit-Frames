@@ -17,6 +17,7 @@ local colorhealth = 0;		-- progressively colored health bars are off by default
 local showpvprank = 0;		-- hide the pvp rank by default
 local transparency = 1;		-- transparency for frames
 local buffdebuffscale = 1;	-- default scale for buffs and debuffs
+local showportrait = 0;		-- portrait is hidden by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -36,6 +37,7 @@ local Perl_Target_ClassPosBottom = {};
 ----------------------
 function Perl_Target_OnLoad()
 	-- Events
+	CombatFeedback_Initialize(Perl_Target_HitIndicator, 30);
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PARTY_LEADER_CHANGED");
 	this:RegisterEvent("PARTY_MEMBER_DISABLE");
@@ -45,6 +47,7 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("PLAYER_TARGET_CHANGED");
 	this:RegisterEvent("UNIT_AURA");
+	this:RegisterEvent("UNIT_COMBAT");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_DYNAMIC_FLAGS");
 	this:RegisterEvent("UNIT_ENERGY");
@@ -54,6 +57,7 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("UNIT_MANA");
 	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_RAGE");
+	this:RegisterEvent("UNIT_SPELLMISS");
 	this:RegisterEvent("VARIABLES_LOADED");
 
 	table.insert(UnitPopupFrames,"Perl_Target_DropDown");
@@ -93,6 +97,16 @@ function Perl_Target_OnEvent(event)
 	elseif (event == "UNIT_DYNAMIC_FLAGS") then
 		if (arg1 == "target") then
 			Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
+		end
+		return;
+	elseif (event == "UNIT_COMBAT") then
+		if (arg1 == "target") then
+			CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5);
+		end
+		return;
+	elseif (event == "UNIT_SPELLMISS") then
+		if (arg1 == "target") then
+			CombatFeedback_OnSpellMissEvent(arg2);
 		end
 		return;
 	elseif (event == "UNIT_PVP_UPDATE") then
@@ -175,6 +189,8 @@ function Perl_Target_Initialize_Frame_Color()
 	Perl_Target_DebuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Target_CPFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Target_CPFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_PortraitFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_PortraitFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 
 	Perl_Target_HealthBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Target_ManaBarText:SetTextColor(1, 1, 1, 1);
@@ -192,6 +208,7 @@ function Perl_Target_Update_Once()
 		Perl_Target_Set_Transparency();		-- Set the transparency (fix this method along with scale)
 		ComboFrame:Hide();			-- Hide default Combo Points
 		Perl_Target_Frame_Set_Name();		-- Set the target's name
+		Perl_Target_Update_Portrait();		-- Set the target's portrait and adjust the combo point frame
 		Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
 		Perl_Target_Update_Health();		-- Set the target's health
 		Perl_Target_Update_Mana_Bar();		-- What type of mana bar is it?
@@ -202,6 +219,18 @@ function Perl_Target_Update_Once()
 		Perl_Target_Set_Character_Class_Icon();	-- Draw the class icon?
 		Perl_Target_Set_Target_Class();		-- Set the target's class in the class frame
 		Perl_Target_Buff_UpdateAll();		-- Update the buffs
+
+--		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetTop(): "..UIParent:GetTop());
+--		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetBottom(): "..UIParent:GetBottom());
+--		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetLeft(): "..UIParent:GetLeft());
+--		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetRight(): "..UIParent:GetRight());
+--		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetWidth(): "..UIParent:GetWidth());
+--		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetHeight(): "..UIParent:GetHeight());
+--		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetCenter(): "..UIParent:GetCenter());
+--		Perl_CombatDisplay_Frame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 300);
+--		Perl_CombatDisplay_Frame:SetUserPlaced(1);
+--		Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 626, -574);
+--		Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 466, -574);
 	end
 end
 
@@ -508,7 +537,7 @@ function Perl_Target_Set_Character_Class_Icon()
 	if (showclassicon == 1) then
 		if (UnitIsPlayer("target")) then
 			local PlayerClass = UnitClass("target");
-			Perl_Target_ClassTexture:SetTexCoord(Perl_Target_ClassPosRight[PlayerClass], Perl_Target_ClassPosLeft[PlayerClass], Perl_Target_ClassPosTop[PlayerClass], Perl_Target_ClassPosBottom[PlayerClass]);							
+			Perl_Target_ClassTexture:SetTexCoord(Perl_Target_ClassPosRight[PlayerClass], Perl_Target_ClassPosLeft[PlayerClass], Perl_Target_ClassPosTop[PlayerClass], Perl_Target_ClassPosBottom[PlayerClass]);
 			Perl_Target_ClassTexture:Show();
 		else
 			Perl_Target_ClassTexture:Hide();
@@ -544,6 +573,17 @@ function Perl_Target_Set_Target_Class()
 	else
 		Perl_Target_ClassNameFrame:Hide();
 		Perl_Target_CivilianFrame:Hide();
+	end
+end
+
+function Perl_Target_Update_Portrait()
+	if (showportrait == 1) then
+		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -4, -31);
+		SetPortraitTexture(Perl_Target_Portrait, "target");
+		Perl_Target_PortraitFrame:Show();
+	else
+		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -4, 0);
+		Perl_Target_PortraitFrame:Hide();
 	end
 end
 
@@ -692,6 +732,12 @@ function Perl_Target_Set_Lock(newvalue)
 	Perl_Target_UpdateVars();
 end
 
+function Perl_Target_Set_Portrait(newvalue)
+	showportrait = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
 function Perl_Target_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -740,6 +786,7 @@ function Perl_Target_GetVars()
 	showpvprank = Perl_Target_Config[UnitName("player")]["ShowPvPRank"];
 	transparency = Perl_Target_Config[UnitName("player")]["Transparency"];
 	buffdebuffscale = Perl_Target_Config[UnitName("player")]["BuffDebuffScale"];
+	showportrait = Perl_Target_Config[UnitName("player")]["ShowPortrait"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -784,6 +831,9 @@ function Perl_Target_GetVars()
 	if (buffdebuffscale == nil) then
 		buffdebuffscale = 1;
 	end
+	if (showportrait == nil) then
+		showportrait = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -799,6 +849,7 @@ function Perl_Target_GetVars()
 		["showpvprank"] = showpvprank,
 		["transparency"] = transparency,
 		["buffdebuffscale"] = buffdebuffscale,
+		["showportrait"] = showportrait,
 	}
 	return vars;
 end
@@ -872,6 +923,11 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				buffdebuffscale = nil;
 			end
+			if (vartable["Global Settings"]["ShowPortrait"] ~= nil) then
+				showportrait = vartable["Global Settings"]["ShowPortrait"];
+			else
+				showportrait = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -914,6 +970,9 @@ function Perl_Target_UpdateVars(vartable)
 		if (buffdebuffscale == nil) then
 			buffdebuffscale = 1;
 		end
+		if (showportrait == nil) then
+			showportrait = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();	-- Reset the buff icons
@@ -934,6 +993,7 @@ function Perl_Target_UpdateVars(vartable)
 		["ShowPvPRank"] = showpvprank,
 		["Transparency"] = transparency,
 		["BuffDebuffScale"] = buffdebuffscale,
+		["ShowPortrait"] = showportrait,
 	};
 end
 
@@ -1143,8 +1203,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.41",
-			releaseDate = "February 5, 2006",
+			version = "v0.42",
+			releaseDate = "February 14, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -423,7 +423,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
 						<Offset>
-							<AbsDimension x="200" y="-20"/>
+							<AbsDimension x="240" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -451,6 +451,25 @@
 					<OnClick>
 						Perl_Config_Global_Save_Settings();
 						DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic Unit Frames: Global Settings Saved.");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parent_Button5" inherits="UIPanelButtonTemplate" text="Reset Frame Positions">
+				<Size>
+					<AbsDimension x="170" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
+						<Offset>
+							<AbsDimension x="110" y="-80"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Config_Frame_Reset_Positions();
+						DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic Unit Frames: Frame Positions have been reset.");
 					</OnClick>
 				</Scripts>
 			</Button>

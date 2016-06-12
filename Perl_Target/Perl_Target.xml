@@ -97,6 +97,9 @@
 			<OnLeave>
 				UnitFrame_OnLeave();
 			</OnLeave>
+			<OnUpdate>
+				CombatFeedback_OnUpdate(arg1);
+			</OnUpdate>
 		</Scripts>
 
 		<Frames>
@@ -247,6 +250,64 @@
 								<Anchor point="TOP">
 									<Offset>
 										<AbsDimension x="0" y="-5"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Fontstring>
+					</Layer>
+				</Layers>
+			</Frame>
+
+
+			<!-- Portrait Frame -->
+			<Frame name="Perl_Target_PortraitFrame">
+				<Size>
+					<AbsDimension x="60" y="61"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_LevelFrame">
+						<Offset>
+							<AbsDimension x="-5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Layers>
+					<!-- Portrait -->
+					<Layer level="ARTWORK">
+						<Texture name="Perl_Target_Portrait">
+							<Size>
+								<AbsDimension x="48" y="48"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Target_PortraitFrame">
+									<Offset>
+										<AbsDimension x="0" y="-6"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<Fontstring name="Perl_Target_HitIndicator" inherits="NumberFontNormalHuge" hidden="true" text="Error!">
+							<FontHeight>
+								<AbsValue val="30"/>
+							</FontHeight>
+							<Color r="1.0" g="1.0" b="1.0"/>
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="CENTER" relativeTo="Perl_Target_PortraitFrame">
+									<Offset>
+										<AbsDimension x="0" y="0"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
