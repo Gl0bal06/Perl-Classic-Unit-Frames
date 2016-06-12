@@ -1,3 +1,33 @@
+0.50 - March 28, 2006
+ - All: Updated TOC Interface version to 11000
+ - All: Changed a lot of XML regarding 1.10 click to cast functionality
+ - All: Can now only open the menu for a particular frame by right clicking
+ - All: New characters will now be welcomed by a much cleaner frame layout
+ - CombatDisplay: No longer calls double events due to the target portion
+ - CombatDisplay/Pet/ToT: Now behaves like the other mods in regards to left and right clicking
+ - CombatDisplay/Pet/Player/Target: Monitoring more events for more accurate information
+ - Config: Changed the minimap button to blend in a bit better
+ - Config: Expanded the width of the GUI to allow more options to be added later
+ - Party: Will now display 16 buffs and debuffs
+ - Party: Buffs in slots 9 through 16 will now correctly display their tooltip
+ - Party: Fixed an issue with the reset buff code
+ - Party: Added the option to toggle self castable and curable spells on party members (Thanks SteppinRazor)
+ - Party: Added 3D portraits as an option
+ - Party: Can now move the party frame by left clicking on any of its frames
+ - Party/Pet: Can now indepently size buffs and debuffs
+ - Pet: Experience bar will auto hide when a pet is the same level as the player
+ - Player: Can now track a selected faction in place of the experience bar
+ - Player: Removed a frame level setting from the XML for the experience bar
+ - Player: Made a small tweak to the portrait code
+ - Target: Added different layout style similar to the player and party frames
+ - Target: Can now toggle the background for buffs and debuffs
+ - Target: Can now display combo points in the name frame
+ - Target: Can now display debuff stacking in the name and combo point frame (Thanks Nymbia)
+ - Target: No longer displays the incorrect 3D portrait for targets who are out of range
+ - Target: Removed an old safety check regarding the number of buffs shown
+ - ToT: Extended the width of the alert frame
+ - ToT: Added 2 buttons in the GUI to allow preset window positions
+
 0.49 - March 10, 2006
  - Party: F Keys now show the correct key
  - Party: Fixed a bug regarding forceful updates of pets

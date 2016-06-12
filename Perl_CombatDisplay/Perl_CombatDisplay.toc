@@ -1,4 +1,4 @@
-## Interface: 10900
+## Interface: 11000
 ## Title: Perl Combat Display
 ## Notes: Displays a movable bar that displays health, rage/energy/mana, and combo points.
 ## Dependencies: Perl_Config

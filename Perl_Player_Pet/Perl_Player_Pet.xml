@@ -61,13 +61,13 @@
 	<!-- Pet Frame -->
 	<Frame name="Perl_Player_Pet_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Size>
-			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. -->
+			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. (This is no longer true in 0.48) -->
 			<AbsDimension x="165" y="24"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="100" y="-100"/>
+					<AbsDimension x="27" y="-112"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -80,12 +80,6 @@
 			<OnEvent>
 				Perl_Player_Pet_OnEvent(event);
 			</OnEvent>
-			<OnMouseDown>
-				Perl_Player_Pet_MouseDown(arg1);
-			</OnMouseDown>
-			<OnMouseUp>
-				Perl_Player_Pet_MouseUp(arg1);
-			</OnMouseUp>
 		</Scripts>
 
 		<Frames>
@@ -121,6 +115,34 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
+				<Frames>
+					<Button name="Perl_Player_Pet_NameFrame_CastClickOverlay">
+						<Size>
+							<AbsDimension x="110" y="24"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_Player_Pet_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_Pet_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_Pet_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+				</Frames>
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -196,11 +218,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnMouseUp>
-								Perl_Player_Pet_MouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<Layers>
 							<Layer level="BACKGROUND">
 								<Texture name="Perl_Player_PetHappinessTexture" file="Interface\PetPaperDollFrame\UI-PetHappiness" setAllPoints="true">
@@ -211,7 +228,22 @@
 								</Texture>
 							</Layer>
 						</Layers>
+					</Frame>
+					<Button name="Perl_Player_Pet_LevelFrame_CastClickOverlay">
+						<Size>
+							<AbsDimension x="30" y="34"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
 						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
 							<OnEnter>
 								if ( this.tooltip ) then
 									GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
@@ -228,8 +260,17 @@
 							<OnLeave>
 								GameTooltip:Hide();
 							</OnLeave>
+							<OnClick>
+								Perl_Player_Pet_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_Pet_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_Pet_MouseUp(arg1);
+							</OnMouseUp>
 						</Scripts>
-					</Frame>
+					</Button>
 				</Frames>
 			</Frame>
 
@@ -246,11 +287,6 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Scripts>
-					<OnMouseUp>
-						Perl_Player_Pet_MouseUp(arg1);
-					</OnMouseUp>
-				</Scripts>
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -263,6 +299,33 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
+					<Button name="Perl_Player_Pet_StatsFrame_CastClickOverlay">
+						<Size>
+							<AbsDimension x="140" y="34"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_Player_Pet_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_Pet_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_Pet_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+
 					<!-- Health Bar -->
 					<StatusBar name="Perl_Player_Pet_HealthBar" inherits="TextStatusBar">
 						<Size>
@@ -275,11 +338,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnMouseUp>
-								Perl_Player_Pet_MouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_Player_Pet_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0"/>
 						<Layers>
@@ -324,11 +382,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnMouseUp>
-								Perl_Player_Pet_MouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_Player_Pet_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0" b="1"/>
 						<Layers>
@@ -373,11 +426,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnMouseUp>
-								Perl_Player_Pet_MouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_Player_Pet_XPBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0.6" g="0" b="0.6"/>
 						<Layers>

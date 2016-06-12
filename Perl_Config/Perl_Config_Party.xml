@@ -5,7 +5,7 @@
 
 	<Frame name="Perl_Config_Party_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Size>
-			<AbsDimension x="450" y="380"/>
+			<AbsDimension x="600" y="380"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Config_Frame">
@@ -60,7 +60,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-30"/>
+								<AbsDimension x="20" y="-270"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -70,7 +70,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-80"/>
+								<AbsDimension x="20" y="-30"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -80,7 +80,17 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-160"/>
+								<AbsDimension x="20" y="-120"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Misc2_Text" inherits="GameFontNormal" text=" ">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="230" y="-120"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -90,7 +100,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="200" y="-80"/>
+								<AbsDimension x="350" y="-30"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -100,7 +110,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="250" y="-130"/>
+								<AbsDimension x="400" y="-90"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -110,7 +120,27 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="250" y="-190"/>
+								<AbsDimension x="400" y="-150"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Buff_Size_Text" inherits="GameFontNormal" text="Buff Size (16 is default)">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="400" y="-210"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Debuff_Size_Text" inherits="GameFontNormal" text="Debuff Size (16 is default)">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="400" y="-270"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -120,7 +150,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-290"/>
+								<AbsDimension x="20" y="-325"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -350,7 +380,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Space_Text">
 						<Offset>
-							<AbsDimension x="20" y="-20"/>
+							<AbsDimension x="20" y="-25"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -388,7 +418,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Buff_Location_Text">
 						<Offset>
-							<AbsDimension x="20" y="-20"/>
+							<AbsDimension x="20" y="-25"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -407,7 +437,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Debuff_Location_Text">
 						<Offset>
-							<AbsDimension x="20" y="-20"/>
+							<AbsDimension x="20" y="-25"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -419,14 +449,52 @@
 				</Scripts>
 			</Slider>
 
+			<Slider name="$parent_Slider6" inherits="OptionsSliderTemplate" minValue="1" maxValue="50" valueStep="1">
+				<Size>
+					<AbsDimension x="150" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Buff_Size_Text">
+						<Offset>
+							<AbsDimension x="20" y="-25"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Config_Party_Set_Buff_Size(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+
+			<Slider name="$parent_Slider7" inherits="OptionsSliderTemplate" minValue="1" maxValue="50" valueStep="1">
+				<Size>
+					<AbsDimension x="150" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Debuff_Size_Text">
+						<Offset>
+							<AbsDimension x="20" y="-25"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Config_Party_Set_Debuff_Size(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+
 			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Misc_Text">
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Misc2_Text">
 						<Offset>
-							<AbsDimension x="215" y="-70"/>
+							<AbsDimension x="20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -482,14 +550,35 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton13" inherits="UICheckButtonTemplate" id="13">
+			<CheckButton name="$parent_CheckButton15" inherits="UICheckButtonTemplate" id="15">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton12">
 						<Offset>
-							<AbsDimension x="0" y="-20"/>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("3D Portrait Frame");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_3D_Portrait_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton13" inherits="UICheckButtonTemplate" id="13">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton15">
+						<Offset>
+							<AbsDimension x="-20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -499,6 +588,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_FKeys_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton14" inherits="UICheckButtonTemplate" id="14">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton13">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Class Buffs/Debuffs");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Class_Buffs_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

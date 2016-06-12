@@ -5,7 +5,7 @@
 
 	<Frame name="Perl_Config_Player_Buff_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Size>
-			<AbsDimension x="450" y="380"/>
+			<AbsDimension x="600" y="380"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Config_Frame">
@@ -14,19 +14,6 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
-		<!--
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<TileSize>
-				<AbsValue val="32"/>
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="32"/>
-			</EdgeSize>
-			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11"/>
-			</BackgroundInsets>
-		</Backdrop>
-		-->
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="Perl_Config_Player_Buff_Header" file="Interface\DialogFrame\UI-DialogBox-Header">
@@ -65,7 +52,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-290"/>
+								<AbsDimension x="20" y="-325"/>
 							</Offset>
 						</Anchor>
 					</Anchors>

@@ -5,7 +5,7 @@
 
 	<Frame name="Perl_Config_CombatDisplay_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Size>
-			<AbsDimension x="450" y="380"/>
+			<AbsDimension x="600" y="380"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Config_Frame">
@@ -14,19 +14,6 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
-		<!--
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<TileSize>
-				<AbsValue val="32"/>
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="32"/>
-			</EdgeSize>
-			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11"/>
-			</BackgroundInsets>
-		</Backdrop>
-		-->
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="Perl_Config_CombatDisplay_Header" file="Interface\DialogFrame\UI-DialogBox-Header">
@@ -105,7 +92,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="200" y="-30"/>
+								<AbsDimension x="350" y="-30"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -115,7 +102,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-290"/>
+								<AbsDimension x="20" y="-325"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -262,7 +249,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton7" inherits="UICheckButtonTemplate" id="7">
+			<CheckButton name="$parent_CheckButton12" inherits="UICheckButtonTemplate" id="12">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -270,6 +257,27 @@
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
 						<Offset>
 							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Display Druid Bar");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_CombatDisplay_DruidBar_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton7" inherits="UICheckButtonTemplate" id="7">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton12">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -401,27 +409,6 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_MobHealth_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton12" inherits="UICheckButtonTemplate" id="12">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc2_Text">
-						<Offset>
-							<AbsDimension x="20" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Display Druid Bar");
-					</OnLoad>
-					<OnClick>
-						Perl_Config_CombatDisplay_DruidBar_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

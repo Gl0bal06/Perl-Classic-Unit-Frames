@@ -39,6 +39,16 @@ function Perl_Target_Target_OnLoad()
 	this:RegisterEvent("PLAYER_TARGET_CHANGED");
 	this:RegisterEvent("VARIABLES_LOADED");
 
+	-- New click style implemented for 1.10 (in order of occurrence in XML)
+	Perl_Target_Target_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Target_Target_NameFrame:GetFrameLevel() + 1);
+	Perl_Target_Target_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Target_Target_StatsFrame:GetFrameLevel() + 1);
+	Perl_Target_Target_HealthBar_CastClickOverlay:SetFrameLevel(Perl_Target_Target_StatsFrame:GetFrameLevel() + 2);
+	Perl_Target_Target_ManaBar_CastClickOverlay:SetFrameLevel(Perl_Target_Target_StatsFrame:GetFrameLevel() + 2);
+	Perl_Target_Target_Target_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Target_Target_Target_NameFrame:GetFrameLevel() + 1);
+	Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Target_Target_Target_StatsFrame:GetFrameLevel() + 1);
+	Perl_Target_Target_Target_HealthBar_CastClickOverlay:SetFrameLevel(Perl_Target_Target_Target_StatsFrame:GetFrameLevel() + 2);
+	Perl_Target_Target_Target_ManaBar_CastClickOverlay:SetFrameLevel(Perl_Target_Target_Target_StatsFrame:GetFrameLevel() + 2);
+
 	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Target_Target loaded successfully.");
 	end
@@ -243,31 +253,41 @@ function Perl_Target_Target_OnUpdate(arg1)
 			if (targettargetmanamax == 0) then
 				Perl_Target_Target_ManaBar:Hide();
 				Perl_Target_Target_ManaBarBG:Hide();
+				Perl_Target_Target_ManaBar_CastClickOverlay:Hide();
 				Perl_Target_Target_StatsFrame:SetHeight(30);
+				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
 			elseif (targettargetpower == 1) then
 				Perl_Target_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 				Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
 				Perl_Target_Target_ManaBar:Show();
 				Perl_Target_Target_ManaBarBG:Show();
+				Perl_Target_Target_ManaBar_CastClickOverlay:Show();
 				Perl_Target_Target_StatsFrame:SetHeight(42);
+				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 			elseif (targettargetpower == 2) then
 				Perl_Target_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 				Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 				Perl_Target_Target_ManaBar:Show();
 				Perl_Target_Target_ManaBarBG:Show();
+				Perl_Target_Target_ManaBar_CastClickOverlay:Show();
 				Perl_Target_Target_StatsFrame:SetHeight(42);
+				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 			elseif (targettargetpower == 3) then
 				Perl_Target_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 				Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 				Perl_Target_Target_ManaBar:Show();
 				Perl_Target_Target_ManaBarBG:Show();
+				Perl_Target_Target_ManaBar_CastClickOverlay:Show();
 				Perl_Target_Target_StatsFrame:SetHeight(42);
+				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 			else
 				Perl_Target_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 				Perl_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
 				Perl_Target_Target_ManaBar:Show();
 				Perl_Target_Target_ManaBarBG:Show();
+				Perl_Target_Target_ManaBar_CastClickOverlay:Show();
 				Perl_Target_Target_StatsFrame:SetHeight(42);
+				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 			end
 			-- End: Update the mana bar color
 		else
@@ -429,31 +449,41 @@ function Perl_Target_Target_OnUpdate(arg1)
 			if (targettargettargetmanamax == 0) then
 				Perl_Target_Target_Target_ManaBar:Hide();
 				Perl_Target_Target_Target_ManaBarBG:Hide();
+				Perl_Target_Target_Target_ManaBar_CastClickOverlay:Hide();
 				Perl_Target_Target_Target_StatsFrame:SetHeight(30);
+				Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
 			elseif (targettargettargetpower == 1) then
 				Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 				Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
 				Perl_Target_Target_Target_ManaBar:Show();
 				Perl_Target_Target_Target_ManaBarBG:Show();
+				Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
 				Perl_Target_Target_Target_StatsFrame:SetHeight(42);
+				Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 			elseif (targettargettargetpower == 2) then
 				Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 				Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 				Perl_Target_Target_Target_ManaBar:Show();
 				Perl_Target_Target_Target_ManaBarBG:Show();
+				Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
 				Perl_Target_Target_Target_StatsFrame:SetHeight(42);
+				Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 			elseif (targettargettargetpower == 3) then
 				Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 				Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 				Perl_Target_Target_Target_ManaBar:Show();
 				Perl_Target_Target_Target_ManaBarBG:Show();
+				Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
 				Perl_Target_Target_Target_StatsFrame:SetHeight(42);
+				Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 			else
 				Perl_Target_Target_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 				Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
 				Perl_Target_Target_Target_ManaBar:Show();
 				Perl_Target_Target_Target_ManaBarBG:Show();
+				Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
 				Perl_Target_Target_Target_StatsFrame:SetHeight(42);
+				Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 			end
 			-- End: Update the mana bar color
 		else
@@ -882,6 +912,45 @@ function Perl_Target_Target_Set_Transparency(number)
 	Perl_Target_Target_UpdateVars();
 end
 
+function Perl_Target_Target_Allign(button)
+	if (Perl_Target_Frame) then
+		local vartable = Perl_Target_GetVars();			-- Get the target frame settings
+
+		Perl_Target_Target_Frame:SetUserPlaced(1);		-- This makes wow remember the changes if the frames have never been moved before
+		Perl_Target_Target_Target_Frame:SetUserPlaced(1);
+
+		if (button == 1) then
+			if (vartable["showportrait"] == 1) then
+				if (vartable["showcp"] == 1 or vartable["comboframedebuffs"] == 1) then
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", 17, 0);
+					Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", -4, 0);
+				else
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -4, 0);
+					Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", -4, 0);
+				end
+			else
+				if (vartable["showcp"] == 1 or vartable["comboframedebuffs"] == 1) then
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_LevelFrame, "TOPRIGHT", 17, 0);
+					Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", -4, 0);
+				else
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_LevelFrame, "TOPRIGHT", -4, 0);
+					Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", -4, 0);
+				end
+			end
+		elseif (button == 2) then
+			if (vartable["showclassframe"] == 1 or vartable["showrareeliteframe"] == 1) then
+				Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_NameFrame, "TOPLEFT", 0, 77);
+				Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", 1, 0);
+			else
+				Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_NameFrame, "TOPLEFT", 0, 57);
+				Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", 1, 0);
+			end
+		end
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("This feature is disabled due to Perl_Target not being installed/enabled.");
+	end
+end
+
 
 ------------------------------
 -- Saved Variable Functions --
@@ -1081,11 +1150,12 @@ function Perl_TargetTargetDropDown_Initialize()
 	end
 end
 
-function Perl_Target_Target_MouseUp(button)
+function Perl_Target_Target_MouseClick(button)
 	if (SpellIsTargeting() and button == "RightButton") then
 		SpellStopTargeting();
 		return;
 	end
+
 	if (button == "LeftButton") then
 		if (SpellIsTargeting()) then
 			SpellTargetUnit("targettarget");
@@ -1094,17 +1164,21 @@ function Perl_Target_Target_MouseUp(button)
 		else
 			TargetUnit("targettarget");
 		end
-	else
-		ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
 	end
-
-	Perl_Target_Target_Frame:StopMovingOrSizing();
 end
 
 function Perl_Target_Target_MouseDown(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_Target_Target_Frame:StartMoving();
 	end
+end
+
+function Perl_Target_Target_MouseUp(button)
+	if (button == "RightButton") then
+		ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
+	end
+
+	Perl_Target_Target_Frame:StopMovingOrSizing();
 end
 -- Target of Target End
 
@@ -1134,11 +1208,12 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 	end
 end
 
-function Perl_Target_Target_Target_MouseUp(button)
+function Perl_Target_Target_Target_MouseClick(button)
 	if (SpellIsTargeting() and button == "RightButton") then
 		SpellStopTargeting();
 		return;
 	end
+
 	if (button == "LeftButton") then
 		if (SpellIsTargeting()) then
 			SpellTargetUnit("targettargettarget");
@@ -1147,17 +1222,21 @@ function Perl_Target_Target_Target_MouseUp(button)
 		else
 			TargetUnit("targettargettarget");
 		end
-	else
-		ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
 	end
-
-	Perl_Target_Target_Target_Frame:StopMovingOrSizing();
 end
 
 function Perl_Target_Target_Target_MouseDown(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_Target_Target_Target_Frame:StartMoving();
 	end
+end
+
+function Perl_Target_Target_Target_MouseUp(button)
+	if (button == "RightButton") then
+		ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
+	end
+
+	Perl_Target_Target_Target_Frame:StopMovingOrSizing();
 end
 -- Target of Target of Target End
 
@@ -1229,8 +1308,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.49",
-			releaseDate = "March 10, 2006",
+			version = "v0.50",
+			releaseDate = "March 28, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

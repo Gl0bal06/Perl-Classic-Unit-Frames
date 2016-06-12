@@ -5,7 +5,7 @@
 
 	<Frame name="Perl_Config_Target_Target_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Size>
-			<AbsDimension x="450" y="380"/>
+			<AbsDimension x="600" y="380"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Config_Frame">
@@ -14,20 +14,6 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
-		<!--
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<TileSize>
-				<AbsValue val="32"/>
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="32"/>
-			</EdgeSize>
-			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11"/>
-			</BackgroundInsets>
-		</Backdrop>
-		-->
-
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="Perl_Config_Target_Target_Header" file="Interface\DialogFrame\UI-DialogBox-Header">
@@ -62,7 +48,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_ToT_Text" inherits="GameFontNormal" text="Target of Target">
+				<FontString name="$parent_ToT_Text" inherits="GameFontNormal" text="Alert Mode">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -72,21 +58,11 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_ToToT_Text" inherits="GameFontNormal" text="">
-					<Anchors>
-						<Anchor point="LEFT" relativePoint="TOPLEFT">
-							<Offset>
-								<AbsDimension x="200" y="-100"/>
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-
 				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="Misc">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-180"/>
+								<AbsDimension x="20" y="-190"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -96,7 +72,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="240" y="-180"/>
+								<AbsDimension x="175" y="-100"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -106,7 +82,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="200" y="-30"/>
+								<AbsDimension x="350" y="-30"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -116,7 +92,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-290"/>
+								<AbsDimension x="20" y="-325"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -447,6 +423,44 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
+			<Button name="$parent_Button1" inherits="UIPanelButtonTemplate" text="Right of Target Frame">
+				<Size>
+					<AbsDimension x="170" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Transparency_Text">
+						<Offset>
+							<AbsDimension x="0" y="-100"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Target_Target_Allign(1);
+						DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic Unit Frames: Target of Target frames have been 'Right Aligned'.");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parent_Button2" inherits="UIPanelButtonTemplate" text="Top of Target Frame">
+				<Size>
+					<AbsDimension x="170" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Button1">
+						<Offset>
+							<AbsDimension x="0" y="-30"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Target_Target_Allign(2);
+						DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic Unit Frames: Target of Target frames have been 'Top Aligned'.");
+					</OnClick>
+				</Scripts>
+			</Button>
 		</Frames>
 
 	</Frame>

@@ -13,7 +13,7 @@
 			</OnLoad>
 		</Scripts>
 		<Size>
-			<AbsDimension x="450" y="500"/>
+			<AbsDimension x="600" y="500"/>
 		</Size>
 		<Anchors>
 			<Anchor point="CENTER"/>
@@ -29,7 +29,6 @@
 				<AbsInset left="11" right="12" top="12" bottom="11"/>
 			</BackgroundInsets>
 		</Backdrop>
-
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="Perl_Config_Header" file="Interface\DialogFrame\UI-DialogBox-Header">
@@ -54,11 +53,21 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Version_Text" inherits="GameFontNormal" text="Version 0.49">
+				<FontString name="$parent_Title_Text" inherits="GameFontNormal" text="Perl Classic Unit Frames">
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="55" y="-15"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Version_Text" inherits="GameFontNormal" text="Version 0.50">
 					<Anchors>
 						<Anchor point="TOPRIGHT">
 							<Offset>
-								<AbsDimension x="-60" y="-15"/>
+								<AbsDimension x="-90" y="-15"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -105,9 +114,9 @@
 					<AbsDimension x="100" y="22"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT">
+					<Anchor point="CENTER">
 						<Offset>
-							<AbsDimension x="175" y="-25"/>
+							<AbsDimension x="0" y="215"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -123,9 +132,9 @@
 					<AbsDimension x="100" y="22"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT">
+					<Anchor point="CENTER">
 						<Offset>
-							<AbsDimension x="18" y="-52"/>
+							<AbsDimension x="-155" y="185"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

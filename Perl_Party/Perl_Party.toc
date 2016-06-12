@@ -1,4 +1,4 @@
-## Interface: 10900
+## Interface: 11000
 ## Title: Perl Party Frame
 ## Notes: Displays a movable party frame to replace the default.
 ## Dependencies: Perl_Config

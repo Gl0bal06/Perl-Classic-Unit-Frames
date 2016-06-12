@@ -274,6 +274,7 @@ function Perl_Config_Set_Texture(newvalue)
 	if (Perl_Target_Frame) then
 		Perl_Target_HealthBarTex:SetTexture(texturename);
 		Perl_Target_ManaBarTex:SetTexture(texturename);
+		Perl_Target_NameFrame_CPMeterTex:SetTexture(texturename);
 	end
 
 	if (Perl_Target_Target_Script_Frame) then
@@ -543,6 +544,10 @@ function Perl_Config_Global_Save_Settings()
 			["CompactPercent"] = vartable["compactpercent"],
 			["ShowPortrait"] = vartable["showportrait"],
 			["ShowFKeys"] = vartable["showfkeys"],
+			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
+			["ThreeDPortrait"] = vartable["threedportrait"],
+			["BuffSize"] = vartable["buffsize"],
+			["DebuffSize"] = vartable["debuffsize"],
 		};
 	end
 
@@ -590,6 +595,8 @@ function Perl_Config_Global_Save_Settings()
 			["DebuffLocation"] = vartable["debufflocation"],
 			["XPosition"] = floor(Perl_Player_Pet_Frame:GetLeft() + 0.5),
 			["YPosition"] = floor(Perl_Player_Pet_Frame:GetTop() - (UIParent:GetTop() / Perl_Player_Pet_Frame:GetScale()) + 0.5),
+			["BuffSize"] = vartable["buffsize"],
+			["DebuffSize"] = vartable["debuffsize"],
 		};
 	end
 
@@ -615,6 +622,12 @@ function Perl_Config_Global_Save_Settings()
 			["ThreeDPortrait"] = vartable["threedportrait"],
 			["PortraitCombatText"] = vartable["portraitcombattext"],
 			["ShowRareEliteFrame"] = vartable["showrareeliteframe"],
+			["NameFrameComboPoints"] = vartable["nameframecombopoints"],
+			["ComboFrameDebuffs"] = vartable["comboframedebuffs"],
+			["FrameStyle"] = vartable["framestyle"],
+			["CompactMode"] = vartable["compactmode"],
+			["CompactPercent"] = vartable["compactpercent"],
+			["HideBuffBackground"] = vartable["hidebuffbackground"],
 		};
 	end
 
@@ -860,8 +873,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.49",
-			releaseDate = "March 10, 2006",
+			version = "v0.50",
+			releaseDate = "March 28, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -5,7 +5,7 @@
 
 	<Frame name="Perl_Config_Player_Pet_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Size>
-			<AbsDimension x="450" y="380"/>
+			<AbsDimension x="600" y="380"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Config_Frame">
@@ -14,20 +14,6 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
-		<!--
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<TileSize>
-				<AbsValue val="32"/>
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="32"/>
-			</EdgeSize>
-			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11"/>
-			</BackgroundInsets>
-		</Backdrop>
-		-->
-
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="Perl_Config_Player_Pet_Header" file="Interface\DialogFrame\UI-DialogBox-Header">
@@ -52,31 +38,11 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Buff_Text" inherits="GameFontNormal" text="# of Buffs">
-					<Anchors>
-						<Anchor point="LEFT" relativePoint="TOPLEFT">
-							<Offset>
-								<AbsDimension x="20" y="-30"/>
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-
-				<FontString name="$parent_Debuff_Text" inherits="GameFontNormal" text="# of Debuffs">
-					<Anchors>
-						<Anchor point="LEFT" relativePoint="TOPLEFT">
-							<Offset>
-								<AbsDimension x="20" y="-90"/>
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-
 				<FontString name="$parent_Buff_Location_Text" inherits="GameFontNormal" text="Buff Location">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="250" y="-90"/>
+								<AbsDimension x="400" y="-90"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -86,7 +52,47 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="250" y="-150"/>
+								<AbsDimension x="400" y="-150"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Buff_Size_Text" inherits="GameFontNormal" text="Buff Size (12 is default)">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="400" y="-210"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Debuff_Size_Text" inherits="GameFontNormal" text="Debuff Size (12 is default)">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="400" y="-270"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Buff_Text" inherits="GameFontNormal" text="# of Buffs">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="200" y="-210"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Debuff_Text" inherits="GameFontNormal" text="# of Debuffs">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="200" y="-270"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -96,7 +102,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-150"/>
+								<AbsDimension x="20" y="-30"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -106,7 +112,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="200" y="-30"/>
+								<AbsDimension x="350" y="-30"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -116,7 +122,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-290"/>
+								<AbsDimension x="20" y="-325"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -235,7 +241,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Buff_Text">
 						<Offset>
-							<AbsDimension x="20" y="-20"/>
+							<AbsDimension x="20" y="-25"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -254,7 +260,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Debuff_Text">
 						<Offset>
-							<AbsDimension x="20" y="-20"/>
+							<AbsDimension x="20" y="-25"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -292,7 +298,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Buff_Location_Text">
 						<Offset>
-							<AbsDimension x="20" y="-20"/>
+							<AbsDimension x="20" y="-25"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -311,7 +317,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Debuff_Location_Text">
 						<Offset>
-							<AbsDimension x="20" y="-20"/>
+							<AbsDimension x="20" y="-25"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -319,6 +325,44 @@
 					<OnValueChanged>
 						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
 						Perl_Config_Player_Pet_Set_Debuff_Location(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+
+			<Slider name="$parent_Slider7" inherits="OptionsSliderTemplate" minValue="1" maxValue="50" valueStep="1">
+				<Size>
+					<AbsDimension x="150" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Buff_Size_Text">
+						<Offset>
+							<AbsDimension x="20" y="-25"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Config_Player_Pet_Set_Buff_Size(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+
+			<Slider name="$parent_Slider8" inherits="OptionsSliderTemplate" minValue="1" maxValue="50" valueStep="1">
+				<Size>
+					<AbsDimension x="150" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Debuff_Size_Text">
+						<Offset>
+							<AbsDimension x="20" y="-25"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Config_Player_Pet_Set_Debuff_Size(getglobal(this:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>

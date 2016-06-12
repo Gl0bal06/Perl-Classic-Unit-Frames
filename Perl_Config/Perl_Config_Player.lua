@@ -15,18 +15,27 @@ function Perl_Config_Player_Set_Values()
 	if (vartable["xpbarstate"] == 1) then
 		Perl_Config_Player_Frame_CheckButton1:SetChecked(1);
 		Perl_Config_Player_Frame_CheckButton2:SetChecked(nil);
+		Perl_Config_Player_Frame_CheckButton15:SetChecked(nil);
 		Perl_Config_Player_Frame_CheckButton3:SetChecked(nil);
 	elseif (vartable["xpbarstate"] == 2) then
 		Perl_Config_Player_Frame_CheckButton1:SetChecked(nil);
 		Perl_Config_Player_Frame_CheckButton2:SetChecked(1);
+		Perl_Config_Player_Frame_CheckButton15:SetChecked(nil);
 		Perl_Config_Player_Frame_CheckButton3:SetChecked(nil);
 	elseif (vartable["xpbarstate"] == 3) then
 		Perl_Config_Player_Frame_CheckButton1:SetChecked(nil);
 		Perl_Config_Player_Frame_CheckButton2:SetChecked(nil);
+		Perl_Config_Player_Frame_CheckButton15:SetChecked(nil);
 		Perl_Config_Player_Frame_CheckButton3:SetChecked(1);
+	elseif (vartable["xpbarstate"] == 4) then
+		Perl_Config_Player_Frame_CheckButton1:SetChecked(nil);
+		Perl_Config_Player_Frame_CheckButton2:SetChecked(nil);
+		Perl_Config_Player_Frame_CheckButton15:SetChecked(1);
+		Perl_Config_Player_Frame_CheckButton3:SetChecked(nil);
 	else
 		Perl_Config_Player_Frame_CheckButton1:SetChecked(nil);
 		Perl_Config_Player_Frame_CheckButton2:SetChecked(nil);
+		Perl_Config_Player_Frame_CheckButton15:SetChecked(nil);
 		Perl_Config_Player_Frame_CheckButton3:SetChecked(1);
 	end
 
@@ -112,6 +121,8 @@ function Perl_Config_Player_XPMode_Update()
 		Perl_Player_XPBar_Display(2);
 	elseif (Perl_Config_Player_Frame_CheckButton3:GetChecked() == 1) then
 		Perl_Player_XPBar_Display(3);
+	elseif (Perl_Config_Player_Frame_CheckButton15:GetChecked() == 1) then
+		Perl_Player_XPBar_Display(4);
 	else
 		Perl_Config_Player_Frame_CheckButton3:SetChecked(1);
 		Perl_Player_XPBar_Display(3);

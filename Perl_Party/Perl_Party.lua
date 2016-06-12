@@ -19,13 +19,16 @@ local verticalalign = 1;	-- default alignment is vertically
 local compactpercent = 0;	-- percents are not shown in compact mode by default
 local showportrait = 1;		-- portrait is hidden by default
 local showfkeys = 0;		-- hide appropriate F key in the name frame by default
+local displaycastablebuffs = 0;	-- display all buffs by default
+local threedportrait = 0;	-- 3d portraits are off by default
+local buffsize = 16;		-- default buff size is 16
+local debuffsize = 16;		-- default debuff size is 16
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 local mouseoverpethealthflag = 0;	-- is the mouse over the pet health bar for healer mode?
-local threedportrait = 0;	-- 3d portraits are off by default
 
 -- Variables for position of the class icon texture.
 local Perl_Party_ClassPosRight = {};
@@ -46,6 +49,12 @@ function Perl_Party_Script_OnLoad()
 end
 
 function Perl_Party_OnLoad()
+	-- Menus
+	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame1_DropDown");
+	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame2_DropDown");
+	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame3_DropDown");
+	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame4_DropDown");
+
 	-- Events
 	this:RegisterEvent("ADDON_LOADED"); 
 	this:RegisterEvent("PARTY_LEADER_CHANGED");
@@ -66,18 +75,13 @@ function Perl_Party_OnLoad()
 	this:RegisterEvent("UNIT_MAXHEALTH");
 	this:RegisterEvent("UNIT_MAXMANA");
 	this:RegisterEvent("UNIT_MAXRAGE");
-	this:RegisterEvent("UNIT_MODEL_CHANGED");--
+	this:RegisterEvent("UNIT_MODEL_CHANGED");
 	this:RegisterEvent("UNIT_NAME_UPDATE");
 	this:RegisterEvent("UNIT_PET");
-	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");--
+	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
-
-	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame1_DropDown");
-	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame2_DropDown");
-	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame3_DropDown");
-	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame4_DropDown");
 
 	HidePartyFrame();
 	ShowPartyFrame = HidePartyFrame;	-- This is to fix the annoyance 1.9 introduced
@@ -199,9 +203,10 @@ function Perl_Party_Initialize()
 	end
 
 	-- Major config options.
-	Perl_Party_Initialize_Frame_Color();
-	Perl_Party_Set_Localized_ClassIcons();
-	Perl_Party_Set_Transparency();
+	Perl_Party_Initialize_Frame_Color();		-- Color the frame borders
+	Perl_Party_Set_Localized_ClassIcons();		-- Do localization stuff
+	Perl_Party_Set_Transparency();			-- Set the frame transparency
+	Perl_Party_Reset_Buffs();			-- Set the buff sizing
 
 	-- Unregister the Blizzard frames via the 1.8 function
 	for num = 1, 4 do
@@ -212,6 +217,17 @@ function Perl_Party_Initialize()
 		frame:UnregisterAllEvents();
 		HealthBar:UnregisterAllEvents();
 		ManaBar:UnregisterAllEvents();
+	end
+
+	-- New click style implemented for 1.10 (in order of occurrence in XML)
+	for num = 1, 4 do
+		getglobal("Perl_Party_MemberFrame"..num.."_NameFrame_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"):GetFrameLevel() + 1);
+		getglobal("Perl_Party_MemberFrame"..num.."_LevelFrame_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_LevelFrame"):GetFrameLevel() + 2);
+		getglobal("Perl_Party_MemberFrame"..num.."_PortraitFrame_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_PortraitFrame"):GetFrameLevel() + 2);
+		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):GetFrameLevel() + 1);
+		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):GetFrameLevel() + 2);
+		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):GetFrameLevel() + 2);
+		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):GetFrameLevel() + 2);
 	end
 
 	Initialized = 1;
@@ -283,7 +299,6 @@ function Perl_Party_MembersUpdate()
 	Perl_Party_Update_Loot_Method();
 	Perl_Party_Update_Portrait();
 	Perl_Party_Buff_UpdateAll();
-	HidePartyFrame();
 end
 
 function Perl_Party_Update_Health()
@@ -452,7 +467,9 @@ function Perl_Party_Update_Pet()
 		if (UnitIsConnected("party"..id) and UnitExists("partypet"..id)) then
 			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):Show();
 			getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):Show();
+			getglobal(this:GetName().."_StatsFrame_PetHealthBar_CastClickOverlay"):Show();
 			getglobal(this:GetName().."_StatsFrame"):SetHeight(54);
+			getglobal(this:GetName().."_StatsFrame_CastClickOverlay"):SetHeight(54);
 
 			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetMinMaxValues(0, 1);		-- Set health to zero in order to keep the bars sane
 			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetValue(0);			-- Info should be updated automatically anyway
@@ -521,7 +538,9 @@ function Perl_Party_Update_Pet()
 		else
 			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):Hide();
 			getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):Hide();
+			getglobal(this:GetName().."_StatsFrame_PetHealthBar_CastClickOverlay"):Hide();
 			getglobal(this:GetName().."_StatsFrame"):SetHeight(42);
+			getglobal(this:GetName().."_StatsFrame_CastClickOverlay"):SetHeight(42);
 
 			if (verticalalign == 1) then
 				if (id == 1) then
@@ -546,7 +565,9 @@ function Perl_Party_Update_Pet()
 	else
 		getglobal(this:GetName().."_StatsFrame_PetHealthBar"):Hide();
 		getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):Hide();
+		getglobal(this:GetName().."_StatsFrame_PetHealthBar_CastClickOverlay"):Hide();
 		getglobal(this:GetName().."_StatsFrame"):SetHeight(42);
+		getglobal(this:GetName().."_StatsFrame_CastClickOverlay"):SetHeight(42);
 		
 		if (verticalalign == 1) then
 			if (id == 1) then
@@ -868,23 +889,26 @@ function Perl_Party_Update_Portrait(partymember)
 	if (showportrait == 1) then
 		local partyid = "party"..id;
 
-		getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame"):Show();				-- Show the main portrait frame
+		getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame"):Show();							-- Show the main portrait frame
 
 		if (threedportrait == 0) then
 			SetPortraitTexture(getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"), partyid);		-- Load the correct 2d graphic
 			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):Hide();					-- Hide the 3d graphic
 			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"):Show();					-- Show the 2d graphic
 		else
-			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):SetUnit(partyid);				-- Load the correct 3d graphic
-			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"):Hide();					-- Hide the 2d graphic
-			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):Show();					-- Show the 3d graphic
-			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):SetSequence(30);				-- This needs to be in the OnLoad in the XML
-			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):SetCamera(0);				-- This needs to be in the OnUpdate in the XML
-			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):SetPosition(0, 0, 0);
+			if UnitIsVisible(partyid) then
+				getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):SetUnit(partyid);			-- Load the correct 3d graphic
+				getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"):Hide();				-- Hide the 2d graphic
+				getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):Show();				-- Show the 3d graphic
+				getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):SetCamera(0);
+			else
+				SetPortraitTexture(getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"), partyid);	-- Load the correct 2d graphic
+				getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):Hide();				-- Hide the 3d graphic
+				getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"):Show();				-- Show the 2d graphic
+			end
 		end
-
 	else
-		getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame"):Hide();				-- Hide the frame and 2d/3d portion
+		getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame"):Hide();							-- Hide the frame and 2d/3d portion
 	end
 end
 
@@ -964,7 +988,7 @@ function Perl_Party_Update_Health_Mana()
 end
 
 function Perl_Party_Force_Update()
-	for partynum=1,4 do
+	for partynum = 1, 4 do
 		local partyid = "party"..partynum;
 		local partyname = UnitName(partyid);
 
@@ -1041,23 +1065,27 @@ function Perl_Party_Force_Update()
 
 		-- Set portraits
 		if (showportrait == 1) then
-			getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame"):Show();				-- Show the main portrait frame
+			getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame"):Show();								-- Show the main portrait frame
 
 			if (threedportrait == 0) then
-				SetPortraitTexture(getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_Portrait"), partyid);		-- Load the correct 2d graphic
+				SetPortraitTexture(getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_Portrait"), partyid);			-- Load the correct 2d graphic
 				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):Hide();					-- Hide the 3d graphic
 				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_Portrait"):Show();					-- Show the 2d graphic
 			else
-				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):SetUnit(partyid);				-- Load the correct 3d graphic
-				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_Portrait"):Hide();					-- Hide the 2d graphic
-				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):Show();					-- Show the 3d graphic
-				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):SetSequence(30);				-- This needs to be in the OnLoad in the XML
-				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):SetCamera(0);				-- This needs to be in the OnUpdate in the XML
-				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):SetPosition(0, 0, 0);
+				if UnitIsVisible(partyid) then
+					getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):SetUnit(partyid);			-- Load the correct 3d graphic
+					getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_Portrait"):Hide();				-- Hide the 2d graphic
+					getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):Show();				-- Show the 3d graphic
+					getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):SetCamera(0);
+				else
+					SetPortraitTexture(getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_Portrait"), partyid);		-- Load the correct 2d graphic
+					getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):Hide();				-- Hide the 3d graphic
+					getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_Portrait"):Show();				-- Show the 2d graphic
+				end
 			end
 
 		else
-			getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame"):Hide();				-- Hide the frame and 2d/3d portion
+			getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame"):Hide();								-- Hide the frame and 2d/3d portion
 		end
 
 		-- Set pet bars
@@ -1066,7 +1094,9 @@ function Perl_Party_Force_Update()
 			if (UnitIsConnected("party"..id) and UnitExists("partypet"..id)) then
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):Show();
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBarBG"):Show();
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_CastClickOverlay"):Show();
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetHeight(54);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_CastClickOverlay"):SetHeight(54);
 
 				if (verticalalign == 1) then
 					if (id == 1 or id == 2 or id == 3) then
@@ -1093,7 +1123,9 @@ function Perl_Party_Force_Update()
 			else
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):Hide();
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBarBG"):Hide();
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_CastClickOverlay"):Hide();
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetHeight(42);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_CastClickOverlay"):SetHeight(42);
 
 				if (verticalalign == 1) then
 					if (id == 1) then
@@ -1118,7 +1150,9 @@ function Perl_Party_Force_Update()
 		else
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):Hide();
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBarBG"):Hide();
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_CastClickOverlay"):Hide();
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetHeight(42);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_CastClickOverlay"):SetHeight(42);
 			
 			if (verticalalign == 1) then
 				if (id == 1) then
@@ -1327,17 +1361,29 @@ function Perl_Party_Set_Compact(newvalue)
 		Perl_Party_MemberFrame2_StatsFrame:SetWidth(240);
 		Perl_Party_MemberFrame3_StatsFrame:SetWidth(240);
 		Perl_Party_MemberFrame4_StatsFrame:SetWidth(240);
+		Perl_Party_MemberFrame1_StatsFrame_CastClickOverlay:SetWidth(240);
+		Perl_Party_MemberFrame2_StatsFrame_CastClickOverlay:SetWidth(240);
+		Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetWidth(240);
+		Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetWidth(240);
 	else
 		if (compactpercent == 0) then
 			Perl_Party_MemberFrame1_StatsFrame:SetWidth(170);
 			Perl_Party_MemberFrame2_StatsFrame:SetWidth(170);
 			Perl_Party_MemberFrame3_StatsFrame:SetWidth(170);
 			Perl_Party_MemberFrame4_StatsFrame:SetWidth(170);
+			Perl_Party_MemberFrame1_StatsFrame_CastClickOverlay:SetWidth(170);
+			Perl_Party_MemberFrame2_StatsFrame_CastClickOverlay:SetWidth(170);
+			Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetWidth(170);
+			Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetWidth(170);
 		else
 			Perl_Party_MemberFrame1_StatsFrame:SetWidth(205);
 			Perl_Party_MemberFrame2_StatsFrame:SetWidth(205);
 			Perl_Party_MemberFrame3_StatsFrame:SetWidth(205);
 			Perl_Party_MemberFrame4_StatsFrame:SetWidth(205);
+			Perl_Party_MemberFrame1_StatsFrame_CastClickOverlay:SetWidth(205);
+			Perl_Party_MemberFrame2_StatsFrame_CastClickOverlay:SetWidth(205);
+			Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetWidth(205);
+			Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetWidth(205);
 		end
 	end
 	Perl_Party_Update_Health_Mana();
@@ -1360,16 +1406,24 @@ function Perl_Party_Set_Pets(newvalue)
 	if (showpets == 0) then			-- copied from below sort of, delete below when slash commands are removed
 		Perl_Party_MemberFrame1_StatsFrame_PetHealthBar:Hide();
 		Perl_Party_MemberFrame1_StatsFrame_PetHealthBarBG:Hide();
+		Perl_Party_MemberFrame1_StatsFrame_PetHealthBar_CastClickOverlay:Hide();
 		Perl_Party_MemberFrame1_StatsFrame:SetHeight(42);
+		Perl_Party_MemberFrame1_StatsFrame_CastClickOverlay:SetHeight(42);
 		Perl_Party_MemberFrame2_StatsFrame_PetHealthBar:Hide();
 		Perl_Party_MemberFrame2_StatsFrame_PetHealthBarBG:Hide();
+		Perl_Party_MemberFrame2_StatsFrame_PetHealthBar_CastClickOverlay:Hide();
 		Perl_Party_MemberFrame2_StatsFrame:SetHeight(42);
+		Perl_Party_MemberFrame2_StatsFrame_CastClickOverlay:SetHeight(42);
 		Perl_Party_MemberFrame3_StatsFrame_PetHealthBar:Hide();
 		Perl_Party_MemberFrame3_StatsFrame_PetHealthBarBG:Hide();
+		Perl_Party_MemberFrame3_StatsFrame_PetHealthBar_CastClickOverlay:Hide();
 		Perl_Party_MemberFrame3_StatsFrame:SetHeight(42);
+		Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetHeight(42);
 		Perl_Party_MemberFrame4_StatsFrame_PetHealthBar:Hide();
 		Perl_Party_MemberFrame4_StatsFrame_PetHealthBarBG:Hide();
+		Perl_Party_MemberFrame4_StatsFrame_PetHealthBar_CastClickOverlay:Hide();
 		Perl_Party_MemberFrame4_StatsFrame:SetHeight(42);
+		Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetHeight(42);
 		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffHiding Pets|cffffff00.");
 	else
 		local partypethealth, partypethealthmax, partypethealthpercent;
@@ -1384,7 +1438,9 @@ function Perl_Party_Set_Pets(newvalue)
 
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):Show();
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBarBG"):Show();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_CastClickOverlay"):Show();
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetHeight(54);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_CastClickOverlay"):SetHeight(54);
 
 					if (partynum == 1 or partynum == 2 or partynum == 3) then
 						local partynumspace = partynum + 1;
@@ -1444,10 +1500,28 @@ function Perl_Party_Set_Portrait(newvalue)
 	Perl_Party_Update_Portrait(4);
 end
 
+function Perl_Party_Set_3D_Portrait(newvalue)
+	threedportrait = newvalue;
+	Perl_Party_UpdateVars();
+	Perl_Party_Update_Portrait(1);
+	Perl_Party_Update_Portrait(2);
+	Perl_Party_Update_Portrait(3);
+	Perl_Party_Update_Portrait(4);
+end
+
 function Perl_Party_Set_FKeys(newvalue)
 	showfkeys = newvalue;
 	Perl_Party_UpdateVars();
 	Perl_Party_Force_Update();
+end
+
+function Perl_Party_Set_Class_Buffs(newvalue)
+	if (newvalue ~= nil) then
+		displaycastablebuffs = newvalue;
+	end
+	Perl_Party_UpdateVars();
+	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
+	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
 end
 
 function Perl_Party_Set_Buff_Location(newvalue)
@@ -1455,7 +1529,7 @@ function Perl_Party_Set_Buff_Location(newvalue)
 		bufflocation = newvalue;
 	end
 	Perl_Party_UpdateVars();
-	Perl_Party_Reset_Buffs();		-- Reset the buff icons
+	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
 	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
 end
 
@@ -1464,7 +1538,25 @@ function Perl_Party_Set_Debuff_Location(newvalue)
 		debufflocation = newvalue;
 	end
 	Perl_Party_UpdateVars();
-	Perl_Party_Reset_Buffs();		-- Reset the buff icons
+	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
+	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+end
+
+function Perl_Party_Set_Buff_Size(newvalue)
+	if (newvalue ~= nil) then
+		buffsize = newvalue;
+	end
+	Perl_Party_UpdateVars();
+	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
+	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+end
+
+function Perl_Party_Set_Debuff_Size(newvalue)
+	if (newvalue ~= nil) then
+		debuffsize = newvalue;
+	end
+	Perl_Party_UpdateVars();
+	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
 	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
 end
 
@@ -1512,6 +1604,10 @@ function Perl_Party_GetVars()
 	compactpercent = Perl_Party_Config[UnitName("player")]["CompactPercent"];
 	showportrait = Perl_Party_Config[UnitName("player")]["ShowPortrait"];
 	showfkeys = Perl_Party_Config[UnitName("player")]["ShowFKeys"];
+	displaycastablebuffs = Perl_Party_Config[UnitName("player")]["DisplayCastableBuffs"];
+	threedportrait = Perl_Party_Config[UnitName("player")]["ThreeDPortrait"];
+	buffsize = Perl_Party_Config[UnitName("player")]["BuffSize"];
+	debuffsize = Perl_Party_Config[UnitName("player")]["DebuffSize"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1558,6 +1654,18 @@ function Perl_Party_GetVars()
 	if (showfkeys == nil) then
 		showfkeys = 0;
 	end
+	if (displaycastablebuffs == nil) then
+		displaycastablebuffs = 0;
+	end
+	if (threedportrait == nil) then
+		threedportrait = 0;
+	end
+	if (buffsize == nil) then
+		buffsize = 16;
+	end
+	if (debuffsize == nil) then
+		debuffsize = 16;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1575,6 +1683,10 @@ function Perl_Party_GetVars()
 		["compactpercent"] = compactpercent,
 		["showportrait"] = showportrait,
 		["showfkeys"] = showfkeys,
+		["displaycastablebuffs"] = displaycastablebuffs,
+		["threedportrait"] = threedportrait,
+		["buffsize"] = buffsize,
+		["debuffsize"] = debuffsize,
 	}
 	return vars;
 end
@@ -1658,6 +1770,26 @@ function Perl_Party_UpdateVars(vartable)
 			else
 				showfkeys = nil;
 			end
+			if (vartable["Global Settings"]["DisplayCastableBuffs"] ~= nil) then
+				displaycastablebuffs = vartable["Global Settings"]["DisplayCastableBuffs"];
+			else
+				displaycastablebuffs = nil;
+			end
+			if (vartable["Global Settings"]["ThreeDPortrait"] ~= nil) then
+				threedportrait = vartable["Global Settings"]["ThreeDPortrait"];
+			else
+				threedportrait = nil;
+			end
+			if (vartable["Global Settings"]["BuffSize"] ~= nil) then
+				buffsize = vartable["Global Settings"]["BuffSize"];
+			else
+				buffsize = nil;
+			end
+			if (vartable["Global Settings"]["DebuffSize"] ~= nil) then
+				debuffsize = vartable["Global Settings"]["DebuffSize"];
+			else
+				debuffsize = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1706,6 +1838,18 @@ function Perl_Party_UpdateVars(vartable)
 		if (showfkeys == nil) then
 			showfkeys = 0;
 		end
+		if (displaycastablebuffs == nil) then
+			displaycastablebuffs = 0;
+		end
+		if (threedportrait == nil) then
+			threedportrait = 0;
+		end
+		if (buffsize == nil) then
+			buffsize = 16;
+		end
+		if (debuffsize == nil) then
+			debuffsize = 16;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Party_Set_Space();				-- This probably isn't needed, but one extra call for this won't matter
@@ -1713,7 +1857,7 @@ function Perl_Party_UpdateVars(vartable)
 		Perl_Party_Set_Compact(compactmode);
 		Perl_Party_Set_Healer(healermode);
 		Perl_Party_Set_Pets(showpets);
-		Perl_Party_Reset_Buffs();		-- Reset the buff icons
+		Perl_Party_Reset_Buffs();		-- Reset the buff icons and set sizes
 		Perl_Party_Update_Buffs();		-- Repopulate the buff icons
 		Perl_Party_Set_Scale();
 		Perl_Party_Set_Transparency();
@@ -1735,6 +1879,10 @@ function Perl_Party_UpdateVars(vartable)
 		["CompactPercent"] = compactpercent,
 		["ShowPortrait"] = showportrait,
 		["ShowFKeys"] = showfkeys,
+		["DisplayCastableBuffs"] = displaycastablebuffs,
+		["ThreeDPortrait"] = threedportrait,
+		["BuffSize"] = buffsize,
+		["DebuffSize"] = debuffsize,
 	};
 end
 
@@ -1753,13 +1901,13 @@ function Perl_Party_Buff_UpdateAll(partymember)
 	end
 	
 	if (UnitName(partyid)) then
-		for buffnum=1,12 do
+		for buffnum=1,16 do
 			local button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..buffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
 
-			if (UnitBuff(partyid, buffnum)) then
-				icon:SetTexture(UnitBuff(partyid, buffnum));
+			if (UnitBuff(partyid, buffnum, displaycastablebuffs)) then
+				icon:SetTexture(UnitBuff(partyid, buffnum, displaycastablebuffs));
 				debuff:Hide();
 				button:Show();
 			else
@@ -1768,14 +1916,14 @@ function Perl_Party_Buff_UpdateAll(partymember)
 		end
 
 		local debuffCount, debuffTexture, debuffApplications;
-		for buffnum=1,8 do
-			debuffTexture, debuffApplications = UnitDebuff(partyid, buffnum);
+		for buffnum=1,16 do
+			debuffTexture, debuffApplications = UnitDebuff(partyid, buffnum, displaycastablebuffs);
 			local button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..buffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
 
-			if (UnitDebuff(partyid, buffnum)) then
-				icon:SetTexture(UnitDebuff(partyid, buffnum));
+			if (UnitDebuff(partyid, buffnum, displaycastablebuffs)) then
+				icon:SetTexture(UnitDebuff(partyid, buffnum, displaycastablebuffs));
 				debuff:Show();
 				button:Show();
 				debuffCount = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..(buffnum).."Count");
@@ -1828,22 +1976,40 @@ function Perl_Party_Buff_Position_Update(id, partyid)
 end
 
 function Perl_Party_Reset_Buffs()
-	local button;
-	for buffnum=1,12 do
-		button = getglobal("Perl_Party_MemberFrame1_BuffFrame_Buff"..buffnum)
-		button:Hide();
-	end
-	for buffnum=1,8 do
-		button = getglobal("Perl_Party_MemberFrame1_BuffFrame_Debuff"..buffnum)
-		button:Hide();
+	local button, debuff, icon;
+	for id=1,4 do
+		for buffnum=1,16 do
+			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..buffnum);
+			icon = getglobal(button:GetName().."Icon");
+			debuff = getglobal(button:GetName().."DebuffBorder");
+			button:SetHeight(buffsize);
+			button:SetWidth(buffsize);
+			icon:SetHeight(buffsize);
+			icon:SetWidth(buffsize);
+			debuff:SetHeight(buffsize);
+			debuff:SetWidth(buffsize);
+			button:Hide();
+		end
+		for buffnum=1,16 do
+			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..buffnum);
+			icon = getglobal(button:GetName().."Icon");
+			debuff = getglobal(button:GetName().."DebuffBorder");
+			button:SetHeight(debuffsize);
+			button:SetWidth(debuffsize);
+			icon:SetHeight(debuffsize);
+			icon:SetWidth(debuffsize);
+			debuff:SetHeight(debuffsize);
+			debuff:SetWidth(debuffsize);
+			button:Hide();
+		end
 	end
 end
 
 function Perl_Party_SetBuffTooltip()
 	local partyid = "party"..this:GetParent():GetParent():GetID();
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
-	if (this:GetID() > 8) then
-		GameTooltip:SetUnitDebuff(partyid, this:GetID()-12);	-- 12 being the number of buffs before debuffs in the xml
+	if (this:GetID() > 16) then
+		GameTooltip:SetUnitDebuff(partyid, this:GetID()-16);	-- 16 being the number of buffs before debuffs in the xml
 	else
 		GameTooltip:SetUnitBuff(partyid, this:GetID());
 	end
@@ -1873,16 +2039,18 @@ function Perl_PartyDropDown_Initialize()
 	UnitPopup_ShowMenu(dropdown, "PARTY", "party"..id);
 end
 
-function Perl_Party_MouseUp(button)
+function Perl_Party_MouseClick(button)
+	if (SpellIsTargeting() and button == "RightButton") then
+		SpellStopTargeting();
+		return;
+	end
+
 	local id = this:GetID();
 	if (id == 0) then
 		local name = this:GetName();
 		id = string.sub(name, 23, 23);
 	end
-	if (SpellIsTargeting() and button == "RightButton") then
-		SpellStopTargeting();
-		return;
-	end
+
 	if (button == "LeftButton") then
 		if (SpellIsTargeting()) then
 			SpellTargetUnit("party"..id);
@@ -1891,22 +2059,39 @@ function Perl_Party_MouseUp(button)
 		else
 			TargetUnit("party"..id);
 		end
-	else
+	end
+end
+
+function Perl_Party_MouseDown(button)
+	if (button == "LeftButton" and locked == 0) then
+		Perl_Party_Frame:StartMoving();
+	end
+end
+
+function Perl_Party_MouseUp(button)
+	local id = this:GetID();
+	if (id == 0) then
+		local name = this:GetName();
+		id = string.sub(name, 23, 23);
+	end
+	if (button == "RightButton") then
 		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..id.."_DropDown"), "Perl_Party_MemberFrame"..id, 0, 0);
 	end
 	Perl_Party_Frame:StopMovingOrSizing();
 end
 
-function Perl_Party_Pet_MouseUp(button)
+function Perl_Party_Pet_MouseClick(button)
+	if (SpellIsTargeting() and button == "RightButton") then
+		SpellStopTargeting();
+		return;
+	end
+
 	local id = this:GetID();
 	if (id == 0) then
 		local name=this:GetName();
 		id = string.sub(name, 23, 23);
 	end
-	if (SpellIsTargeting() and button == "RightButton") then
-		SpellStopTargeting();
-		return;
-	end
+
 	if (button == "LeftButton") then
 		if (SpellIsTargeting()) then
 			SpellTargetUnit("partypet"..id);
@@ -1915,12 +2100,6 @@ function Perl_Party_Pet_MouseUp(button)
 		else
 			TargetUnit("partypet"..id);
 		end
-	end
-end
-
-function Perl_Party_MouseDown(button)
-	if (button == "LeftButton" and locked == 0 and this:GetID() == 1) then
-		Perl_Party_Frame:StartMoving();
 	end
 end
 
@@ -1945,8 +2124,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.49",
-			releaseDate = "March 10, 2006",
+			version = "v0.50",
+			releaseDate = "March 28, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

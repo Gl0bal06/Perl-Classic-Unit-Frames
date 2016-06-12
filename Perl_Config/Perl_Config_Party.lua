@@ -88,6 +88,18 @@ function Perl_Config_Party_Set_Values()
 		Perl_Config_Party_Frame_CheckButton13:SetChecked(nil);
 	end
 
+	if (vartable["displaycastablebuffs"] == 1) then
+		Perl_Config_Party_Frame_CheckButton14:SetChecked(1);
+	else
+		Perl_Config_Party_Frame_CheckButton14:SetChecked(nil);
+	end
+
+	if (vartable["threedportrait"] == 1) then
+		Perl_Config_Party_Frame_CheckButton15:SetChecked(1);
+	else
+		Perl_Config_Party_Frame_CheckButton15:SetChecked(nil);
+	end
+
 	Perl_Config_Party_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Party_Frame_Slider1High:SetText("Big");
 	Perl_Config_Party_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -109,6 +121,14 @@ function Perl_Config_Party_Set_Values()
 	Perl_Config_Party_Frame_Slider5Low:SetText("1");
 	Perl_Config_Party_Frame_Slider5High:SetText("5");
 	Perl_Config_Party_Frame_Slider5:SetValue(vartable["debufflocation"]);
+
+	Perl_Config_Party_Frame_Slider6Low:SetText("1");
+	Perl_Config_Party_Frame_Slider6High:SetText("50");
+	Perl_Config_Party_Frame_Slider6:SetValue(vartable["buffsize"]);
+
+	Perl_Config_Party_Frame_Slider7Low:SetText("1");
+	Perl_Config_Party_Frame_Slider7High:SetText("50");
+	Perl_Config_Party_Frame_Slider7:SetValue(vartable["debuffsize"]);
 end
 
 function Perl_Config_Party_Set_Space(value)
@@ -126,6 +146,18 @@ end
 function Perl_Config_Party_Set_Debuff_Location(value)
 	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
 		Perl_Party_Set_Debuff_Location(value);
+	end
+end
+
+function Perl_Config_Party_Set_Buff_Size(value)
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+		Perl_Party_Set_Buff_Size(value);
+	end
+end
+
+function Perl_Config_Party_Set_Debuff_Size(value)
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+		Perl_Party_Set_Debuff_Size(value);
 	end
 end
 
@@ -211,6 +243,22 @@ function Perl_Config_Party_FKeys_Update()
 		Perl_Party_Set_FKeys(1);
 	else
 		Perl_Party_Set_FKeys(0);
+	end
+end
+
+function Perl_Config_Party_Class_Buffs_Update()
+	if (Perl_Config_Party_Frame_CheckButton14:GetChecked() == 1) then
+		Perl_Party_Set_Class_Buffs(1);
+	else
+		Perl_Party_Set_Class_Buffs(0);
+	end
+end
+
+function Perl_Config_Party_3D_Portrait_Update()
+	if (Perl_Config_Party_Frame_CheckButton15:GetChecked() == 1) then
+		Perl_Party_Set_3D_Portrait(1);
+	else
+		Perl_Party_Set_3D_Portrait(0);
 	end
 end
 

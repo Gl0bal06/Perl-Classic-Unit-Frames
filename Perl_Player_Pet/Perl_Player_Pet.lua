@@ -13,6 +13,8 @@ local colorhealth = 0;			-- progressively colored health bars are off by default
 local transparency = 1;			-- transparency for frames
 local bufflocation = 1;			-- default buff location
 local debufflocation = 2;		-- default debuff location
+local buffsize = 12;			-- default buff size is 12
+local debuffsize = 12;			-- default debuff size is 12
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -25,6 +27,9 @@ local ppp_translate_warlock;
 -- Loading Function --
 ----------------------
 function Perl_Player_Pet_OnLoad()
+	-- Menus
+	table.insert(UnitPopupFrames,"Perl_Player_Pet_DropDown");
+
 	-- Events
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -36,12 +41,18 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_LEVEL");
 	this:RegisterEvent("UNIT_MANA");
+	this:RegisterEvent("UNIT_MAXFOCUS");
+	this:RegisterEvent("UNIT_MAXHEALTH");
+	this:RegisterEvent("UNIT_MAXMANA");
 	this:RegisterEvent("UNIT_NAME_UPDATE");
 	this:RegisterEvent("UNIT_PET");
 	this:RegisterEvent("UNIT_PET_EXPERIENCE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
-	table.insert(UnitPopupFrames,"Perl_Player_Pet_DropDown");
+	-- New click style implemented for 1.10 (in order of occurrence in XML)
+	Perl_Player_Pet_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_NameFrame:GetFrameLevel() + 1);
+	Perl_Player_Pet_LevelFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_LevelFrame:GetFrameLevel() + 2);
+	Perl_Player_Pet_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_StatsFrame:GetFrameLevel() + 2);
 
 	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Player_Pet loaded successfully.");
@@ -53,12 +64,12 @@ end
 -- Event Handler --
 -------------------
 function Perl_Player_Pet_OnEvent(event)
-	if (event == "UNIT_HEALTH") then
+	if (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH") then
 		if (arg1 == "pet") then
 			Perl_Player_Pet_Update_Health();	-- Update health values
 		end
 		return;
-	elseif (event == "UNIT_FOCUS" or event == "UNIT_MANA") then
+	elseif (event == "UNIT_FOCUS" or event == "UNIT_MANA" or event == "UNIT_MAXFOCUS" or event == "UNIT_MAXMANA") then
 		if (arg1 == "pet") then
 			Perl_Player_Pet_Update_Mana();		-- Update energy/mana/rage values
 		end
@@ -136,6 +147,7 @@ function Perl_Player_Pet_Initialize()
 	-- Major config options.
 	Perl_Player_Pet_Initialize_Frame_Color();
 	Perl_Player_Pet_Set_Localization();
+	Perl_Player_Pet_Reset_Buffs();			-- Set correct buff sizes
 
 	-- Unregister the Blizzard frames via the 1.8 function
 	PetFrame:UnregisterAllEvents();
@@ -285,11 +297,21 @@ function Perl_Player_Pet_ShowXP()
 		Perl_Player_Pet_XPBarBG:Hide();
 		Perl_Player_Pet_XPBarText:SetText();
 		Perl_Player_Pet_StatsFrame:SetHeight(34);
+		Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(34);
 	else
 		Perl_Player_Pet_XPBar:Show();
 		Perl_Player_Pet_XPBarBG:Show();
 		Perl_Player_Pet_StatsFrame:SetHeight(47);
-		Perl_Player_Pet_Update_Experience();
+		Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(47);
+		if (UnitLevel("pet") == UnitLevel("player")) then
+			Perl_Player_Pet_XPBar:Hide();
+			Perl_Player_Pet_XPBarBG:Hide();
+			Perl_Player_Pet_XPBarText:SetText();
+			Perl_Player_Pet_StatsFrame:SetHeight(34);
+			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(34);
+		else
+			Perl_Player_Pet_Update_Experience();
+		end
 	end
 end
 
@@ -349,7 +371,7 @@ function Perl_Player_Pet_Set_Buffs(newbuffnumber)
 	end
 	numpetbuffsshown = newbuffnumber;
 	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
@@ -359,7 +381,7 @@ function Perl_Player_Pet_Set_Debuffs(newdebuffnumber)
 	end
 	numpetdebuffsshown = newdebuffnumber;
 	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
@@ -368,7 +390,7 @@ function Perl_Player_Pet_Set_Buff_Location(newvalue)
 		bufflocation = newvalue;
 	end
 	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
@@ -377,7 +399,25 @@ function Perl_Player_Pet_Set_Debuff_Location(newvalue)
 		debufflocation = newvalue;
 	end
 	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
+	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+end
+
+function Perl_Player_Pet_Set_Buff_Size(newvalue)
+	if (newvalue ~= nil) then
+		buffsize = newvalue;
+	end
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
+	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+end
+
+function Perl_Player_Pet_Set_Debuff_Size(newvalue)
+	if (newvalue ~= nil) then
+		debuffsize = newvalue;
+	end
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
@@ -430,6 +470,8 @@ function Perl_Player_Pet_GetVars()
 	transparency = Perl_Player_Pet_Config[UnitName("player")]["Transparency"];
 	bufflocation = Perl_Player_Pet_Config[UnitName("player")]["BuffLocation"];
 	debufflocation = Perl_Player_Pet_Config[UnitName("player")]["DebuffLocation"];
+	buffsize = Perl_Player_Pet_Config[UnitName("player")]["BuffSize"];
+	debuffsize = Perl_Player_Pet_Config[UnitName("player")]["DebuffSize"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -458,6 +500,12 @@ function Perl_Player_Pet_GetVars()
 	if (debufflocation == nil) then
 		debufflocation = 2;
 	end
+	if (buffsize == nil) then
+		buffsize = 12;
+	end
+	if (debuffsize == nil) then
+		debuffsize = 12;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -469,6 +517,8 @@ function Perl_Player_Pet_GetVars()
 		["transparency"] = transparency,
 		["bufflocation"] = bufflocation,
 		["debufflocation"] = debufflocation,
+		["buffsize"] = buffsize,
+		["debuffsize"] = debuffsize,
 	}
 	return vars;
 end
@@ -522,6 +572,16 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			else
 				debufflocation = nil;
 			end
+			if (vartable["Global Settings"]["BuffSize"] ~= nil) then
+				buffsize = vartable["Global Settings"]["BuffSize"];
+			else
+				buffsize = nil;
+			end
+			if (vartable["Global Settings"]["DebuffSize"] ~= nil) then
+				debuffsize = vartable["Global Settings"]["DebuffSize"];
+			else
+				debuffsize = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -552,6 +612,12 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		if (debufflocation == nil) then
 			debufflocation = 2;
 		end
+		if (buffsize == nil) then
+			buffsize = 12;
+		end
+		if (debuffsize == nil) then
+			debuffsize = 12;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
@@ -571,6 +637,8 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		["Transparency"] = transparency,
 		["BuffLocation"] = bufflocation,
 		["DebuffLocation"] = debufflocation,
+		["BuffSize"] = buffsize,
+		["DebuffSize"] = debuffsize,
 	};
 end
 
@@ -660,11 +728,28 @@ function Perl_Player_Pet_Buff_UpdateAll()
 end
 
 function Perl_Player_Pet_Reset_Buffs()
-	local button;
+	local button, debuff, icon;
 	for buffnum=1,16 do
 		button = getglobal("Perl_Player_Pet_Buff"..buffnum);
+		icon = getglobal(button:GetName().."Icon");
+		debuff = getglobal(button:GetName().."DebuffBorder");
+		button:SetHeight(buffsize);
+		button:SetWidth(buffsize);
+		icon:SetHeight(buffsize);
+		icon:SetWidth(buffsize);
+		debuff:SetHeight(buffsize);
+		debuff:SetWidth(buffsize);
 		button:Hide();
+
 		button = getglobal("Perl_Player_Pet_Debuff"..buffnum);
+		icon = getglobal(button:GetName().."Icon");
+		debuff = getglobal(button:GetName().."DebuffBorder");
+		button:SetHeight(debuffsize);
+		button:SetWidth(debuffsize);
+		icon:SetHeight(debuffsize);
+		icon:SetWidth(debuffsize);
+		debuff:SetHeight(debuffsize);
+		debuff:SetWidth(debuffsize);
 		button:Hide();
 	end
 end
@@ -691,7 +776,7 @@ function Perl_Player_Pet_DropDown_Initialize()
 	UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, "PET", "pet");
 end
 
-function Perl_Player_Pet_MouseUp(button)
+function Perl_Player_Pet_MouseClick(button)
 	if (SpellIsTargeting() and button == "RightButton") then
 		SpellStopTargeting();
 		return;
@@ -703,21 +788,21 @@ function Perl_Player_Pet_MouseUp(button)
 		else
 			TargetUnit("pet");
 		end
-	else
-		if (this:GetName() == "Perl_Player_Pet_Frame") then
-			ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
-		else
-			return;
-		end
 	end
-
-	Perl_Player_Pet_Frame:StopMovingOrSizing();
 end
 
 function Perl_Player_Pet_MouseDown(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_Player_Pet_Frame:StartMoving();
 	end
+end
+
+function Perl_Player_Pet_MouseUp(button)
+	if (button == "RightButton") then
+		ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
+	end
+
+	Perl_Player_Pet_Frame:StopMovingOrSizing();
 end
 
 
@@ -729,8 +814,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.49",
-			releaseDate = "March 10, 2006",
+			version = "v0.50",
+			releaseDate = "March 28, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

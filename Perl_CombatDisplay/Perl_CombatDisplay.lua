@@ -30,6 +30,10 @@ local pcd_translate_druid;
 -- Loading Function --
 ----------------------
 function Perl_CombatDisplay_OnLoad()
+	-- Menus
+	table.insert(UnitPopupFrames,"Perl_CombatDisplay_DropDown");
+	table.insert(UnitPopupFrames,"Perl_CombatDisplay_Target_DropDown");
+
 	-- Events
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTER_COMBAT");
@@ -42,15 +46,24 @@ function Perl_CombatDisplay_OnLoad()
 	this:RegisterEvent("UNIT_ENERGY");
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_MANA");
+	this:RegisterEvent("UNIT_MAXENERGY");
+	this:RegisterEvent("UNIT_MAXHEALTH");
+	this:RegisterEvent("UNIT_MAXMANA");
+	this:RegisterEvent("UNIT_MAXRAGE");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
-	table.insert(UnitPopupFrames,"Perl_CombatDisplay_DropDown");
-	table.insert(UnitPopupFrames,"Perl_CombatDisplay_Target_DropDown");
+	-- New click style implemented for 1.10 (in order of occurrence in XML)
+	Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetFrameLevel(Perl_CombatDisplay_ManaFrame:GetFrameLevel() + 2);
 
 	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: CombatDisplay loaded successfully.");
 	end
+end
+
+function Perl_CombatDisplay_Target_OnLoad()
+	-- New click style implemented for 1.10 (in order of occurrence in XML)
+	Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetFrameLevel(Perl_CombatDisplay_Target_ManaFrame:GetFrameLevel() + 2);
 end
 
 
@@ -58,7 +71,7 @@ end
 -- Event Handler --
 -------------------
 function Perl_CombatDisplay_OnEvent(event)
-	if (event == "UNIT_HEALTH") then
+	if (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH") then
 		if (arg1 == "player") then
 			if (UnitHealth("player") == UnitHealthMax("player")) then
 				healthfull = 1;
@@ -74,7 +87,7 @@ function Perl_CombatDisplay_OnEvent(event)
 			Perl_CombatDisplay_Target_Update_Health();
 		end
 		return;
-	elseif (event == "UNIT_ENERGY") then
+	elseif (event == "UNIT_ENERGY" or event == "UNIT_MAXENERGY") then
 		if (arg1 == "player") then
 			if (UnitMana("player") == UnitManaMax("player")) then
 				manafull = 1;
@@ -90,7 +103,7 @@ function Perl_CombatDisplay_OnEvent(event)
 			Perl_CombatDisplay_Target_Update_Mana();
 		end
 		return;
-	elseif (event == "UNIT_MANA") then
+	elseif (event == "UNIT_MANA" or event == "UNIT_MAXMANA") then
 		if (arg1 == "player") then
 			if (UnitMana("player") == UnitManaMax("player")) then
 				manafull = 1;
@@ -106,7 +119,7 @@ function Perl_CombatDisplay_OnEvent(event)
 			Perl_CombatDisplay_Target_Update_Mana();
 		end
 		return;
-	elseif (event == "UNIT_RAGE") then
+	elseif (event == "UNIT_RAGE" or event == "UNIT_MAXRAGE") then
 		if (arg1 == "player") then
 			if (UnitMana("player") == 0) then
 				manafull = 1;
@@ -367,8 +380,10 @@ function Perl_CombatDisplay_Update_Mana()
 				Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_DruidBar", "BOTTOM", 0, -2);
 				if (playerpower == 3) then
 					Perl_CombatDisplay_ManaFrame:SetHeight(66);		-- Energy and Combo Points
+					Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(66);
 				else
 					Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Rage
+					Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
 				end
 
 				-- Display the needed text
@@ -381,8 +396,10 @@ function Perl_CombatDisplay_Update_Mana()
 				Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_HealthBar", "BOTTOM", 0, -2);
 				if (playerpower == 3) then
 					Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Energy and Combo Points
+					Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
 				else
 					Perl_CombatDisplay_ManaFrame:SetHeight(42);		-- Using mana or rage, use default height
+					Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
 				end
 			end
 		else
@@ -393,8 +410,10 @@ function Perl_CombatDisplay_Update_Mana()
 			Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_HealthBar", "BOTTOM", 0, -2);
 			if (playerpower == 3) then
 				Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Energy and Combo Points
+				Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
 			else
 				Perl_CombatDisplay_ManaFrame:SetHeight(42);		-- Using mana or rage, use default height
+				Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
 			end
 		end
 	else
@@ -405,8 +424,10 @@ function Perl_CombatDisplay_Update_Mana()
 		Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_HealthBar", "BOTTOM", 0, -2);
 		if (playerpower == 3) then
 			Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Energy and Combo Points
+			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
 		else
 			Perl_CombatDisplay_ManaFrame:SetHeight(42);		-- Using mana or rage, use default height
+			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
 		end
 	end
 end
@@ -428,6 +449,7 @@ function Perl_CombatDisplay_UpdateBars()
 		Perl_CombatDisplay_CPBarBG:Hide();
 		Perl_CombatDisplay_CPBarText:Hide();
 		Perl_CombatDisplay_ManaFrame:SetHeight(42);
+		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
 	elseif (playerpower == 1) then		-- rage
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 0, 0, 1);
@@ -437,6 +459,7 @@ function Perl_CombatDisplay_UpdateBars()
 		Perl_CombatDisplay_CPBarBG:Hide();
 		Perl_CombatDisplay_CPBarText:Hide();
 		Perl_CombatDisplay_ManaFrame:SetHeight(42);
+		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
 	elseif (playerpower == 3) then		-- energy
 		this:RegisterEvent("PLAYER_COMBO_POINTS");
@@ -448,6 +471,7 @@ function Perl_CombatDisplay_UpdateBars()
 		Perl_CombatDisplay_CPBarText:Show();
 		Perl_CombatDisplay_CPBarText:SetText('0/5');
 		Perl_CombatDisplay_ManaFrame:SetHeight(54);
+		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
 		Perl_CombatDisplay_CPBar:SetMinMaxValues(0,5);
 		Perl_CombatDisplay_CPBar:SetValue(GetComboPoints());
 		return;
@@ -582,12 +606,14 @@ function Perl_CombatDisplay_Target_UpdateBars()
 		Perl_CombatDisplay_Target_ManaBar:Hide();
 		Perl_CombatDisplay_Target_ManaBarBG:Hide();
 		Perl_CombatDisplay_Target_ManaFrame:SetHeight(30);
+		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(30);
 	elseif (targetpowertype == 0) then	-- mana
 		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
 		Perl_CombatDisplay_Target_ManaBar:Show();
 		Perl_CombatDisplay_Target_ManaBarBG:Show();
 		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
+		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
 	elseif (targetpowertype == 1) then	-- rage
 		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
@@ -595,6 +621,7 @@ function Perl_CombatDisplay_Target_UpdateBars()
 		Perl_CombatDisplay_Target_ManaBar:Show();
 		Perl_CombatDisplay_Target_ManaBarBG:Show();
 		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
+		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
 	elseif (targetpowertype == 1) then	-- focus
 		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
@@ -602,6 +629,7 @@ function Perl_CombatDisplay_Target_UpdateBars()
 		Perl_CombatDisplay_Target_ManaBar:Show();
 		Perl_CombatDisplay_Target_ManaBarBG:Show();
 		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
+		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
 	elseif (targetpowertype == 3) then	-- energy
 		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
@@ -609,6 +637,7 @@ function Perl_CombatDisplay_Target_UpdateBars()
 		Perl_CombatDisplay_Target_ManaBar:Show();
 		Perl_CombatDisplay_Target_ManaBarBG:Show();
 		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
+		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
 	end
 end
@@ -888,7 +917,7 @@ function Perl_CombatDisplayDropDown_Initialize()
 	UnitPopup_ShowMenu(Perl_CombatDisplay_DropDown, "SELF", "player");
 end
 
-function Perl_CombatDisplay_OnMouseDown(button)
+function Perl_CombatDisplay_MouseClick(button)
 	if (SpellIsTargeting() and button == "RightButton") then
 		SpellStopTargeting();
 		return;
@@ -902,16 +931,20 @@ function Perl_CombatDisplay_OnMouseDown(button)
 		else
 			TargetUnit("player");
 		end
-	else
-		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
 	end
+end
 
+function Perl_CombatDisplay_MouseDown(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_CombatDisplay_Frame:StartMoving();
 	end
 end
 
-function Perl_CombatDisplay_OnMouseUp(button)
+function Perl_CombatDisplay_MouseUp(button)
+	if (button == "RightButton") then
+		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
+	end
+
 	Perl_CombatDisplay_Frame:StopMovingOrSizing();
 end
 
@@ -941,7 +974,7 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 	end
 end
 
-function Perl_CombatDisplay_Target_OnMouseDown(button)
+function Perl_CombatDisplay_Target_MouseClick(button)
 	if (SpellIsTargeting() and button == "RightButton") then
 		SpellStopTargeting();
 		return;
@@ -955,16 +988,20 @@ function Perl_CombatDisplay_Target_OnMouseDown(button)
 		else
 			TargetUnit("player");
 		end
-	else
-		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
 	end
+end
 
+function Perl_CombatDisplay_Target_MouseDown(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_CombatDisplay_Target_Frame:StartMoving();
 	end
 end
 
-function Perl_CombatDisplay_Target_OnMouseUp(button)
+function Perl_CombatDisplay_Target_MouseUp(button)
+	if (button == "RightButton") then
+		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
+	end
+
 	Perl_CombatDisplay_Target_Frame:StopMovingOrSizing();
 end
 
@@ -977,8 +1014,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.49",
-			releaseDate = "March 10, 2006",
+			version = "v0.50",
+			releaseDate = "March 28, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

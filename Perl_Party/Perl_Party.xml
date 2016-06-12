@@ -3,18 +3,6 @@
 	<Script file="Perl_Party.lua"/>
 
 
-	<Frame name="Perl_Party_Script_Frame" movable="true" parent="UIParent" hidden="false" enableMouse="true">
-		<Scripts>
-			<OnEvent>
-				Perl_Party_Script_OnEvent(event);
-			</OnEvent>
-			<OnLoad>
-				Perl_Party_Script_OnLoad();
-			</OnLoad>
-		</Scripts>
-	</Frame>
-
-
 	<!-- Virtual buffs template -->
 	<Button name="Perl_Party_BuffTemplate" virtual="true">
 		<Size>
@@ -73,8 +61,8 @@
 	<!-- Frame to display Party's health -->
 	<Frame name="Perl_Party_FrameTemplate" virtual="true" frameStrata="LOW">
 		<Size>
-			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. -->
-			<AbsDimension x="200" y="24"/> <!-- 200, 24 -->
+			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. (This is no longer true in 0.48) -->
+			<AbsDimension x="200" y="24"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT">
@@ -104,7 +92,6 @@
 				UnitFrame_OnEnter();
 			</OnEnter>
 			<OnLeave>
-				<!-- GameTooltip:Hide(); -->
 				UnitFrame_OnLeave();
 			</OnLeave>
 		</Scripts>
@@ -142,6 +129,34 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
+				<Frames>
+					<Button name="$parent_CastClickOverlay">
+						<Size>
+							<AbsDimension x="200" y="24"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_Party_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Party_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Party_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+				</Frames>
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -268,6 +283,34 @@
 						Perl_Party_MouseUp(arg1);
 					</OnMouseUp>
 				</Scripts>
+				<Frames>
+					<Button name="$parent_CastClickOverlay">
+						<Size>
+							<AbsDimension x="34" y="42"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_Party_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Party_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Party_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+				</Frames>
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -351,17 +394,37 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
-							<OnLoad>
-								<!-- this:SetScale(1); -->
-								<!-- this.scale = this:GetScale(); -->
-								<!-- $parent_PortraitFrame_PartyModel:SetSequence(30); -->
-							</OnLoad>
 							<OnUpdate>
-								<!-- DEFAULT_CHAT_FRAME:AddMessage(this.GetName()); -->
-								<!-- $parent_PortraitFrame_PartyModel:SetCamera(0); -->
+								this:SetCamera(0);
 							</OnUpdate>
 						</Scripts>
 					</PlayerModel>
+					<Button name="$parent_CastClickOverlay">
+						<Size>
+							<AbsDimension x="60" y="61"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_Party_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Party_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Party_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
 				</Frames>
 				<Layers>
 					<!-- Portrait -->
@@ -412,6 +475,33 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
+					<Button name="$parent_CastClickOverlay">
+						<Size>
+							<AbsDimension x="240" y="42"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_Party_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Party_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Party_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+
 					<!-- Health Bar -->
 					<StatusBar name="$parent_HealthBar" inherits="TextStatusBar">
 						<Size>
@@ -424,17 +514,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnEnter>
-								Perl_Party_HealthShow();
-							</OnEnter>
-							<OnLeave>
-								Perl_Party_HealthHide();
-							</OnLeave>
-							<OnMouseUp>
-								Perl_Party_MouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="$parent_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0"/>
 						<Layers>
@@ -487,6 +566,38 @@
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
+					<Button name="$parent_HealthBar_CastClickOverlay">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="$parent_HealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnEnter>
+								Perl_Party_HealthShow();
+							</OnEnter>
+							<OnLeave>
+								Perl_Party_HealthHide();
+							</OnLeave>
+							<OnClick>
+								Perl_Party_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Party_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Party_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
 
 					<!-- Mana Bar -->
 					<StatusBar name="$parent_ManaBar" inherits="TextStatusBar">
@@ -500,17 +611,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnEnter>
-								Perl_Party_ManaShow();
-							</OnEnter>
-							<OnLeave>
-								Perl_Party_ManaHide();
-							</OnLeave>
-							<OnMouseUp>
-								Perl_Party_MouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="$parent_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0" b="1"/>
 						<Layers>
@@ -563,6 +663,38 @@
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
+					<Button name="$parent_ManaBar_CastClickOverlay">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="$parent_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnEnter>
+								Perl_Party_ManaShow();
+							</OnEnter>
+							<OnLeave>
+								Perl_Party_ManaHide();
+							</OnLeave>
+							<OnClick>
+								Perl_Party_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Party_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Party_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
 
 					<!-- Pet Health Bar -->
 					<StatusBar name="$parent_PetHealthBar" inherits="TextStatusBar">
@@ -576,17 +708,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnEnter>
-								Perl_Party_Pet_HealthShow();
-							</OnEnter>
-							<OnLeave>
-								Perl_Party_Pet_HealthHide();
-							</OnLeave>
-							<OnMouseUp>
-								Perl_Party_Pet_MouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="$parent_PetHealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0"/>
 						<Layers>
@@ -639,6 +760,39 @@
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
+					<Button name="$parent_PetHealthBar_CastClickOverlay">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="$parent_PetHealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnEnter>
+								Perl_Party_Pet_HealthShow();
+							</OnEnter>
+							<OnLeave>
+								Perl_Party_Pet_HealthHide();
+							</OnLeave>
+							<OnClick>
+								Perl_Party_Pet_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Party_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Party_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+
 				</Frames>
 			</Frame>
 
@@ -776,7 +930,47 @@
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff1" inherits="Perl_Party_BuffTemplate" id="13">
+					<Button name="$parent_Buff13" inherits="Perl_Party_BuffTemplate" id="13">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff12" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff14" inherits="Perl_Party_BuffTemplate" id="14">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff13" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff15" inherits="Perl_Party_BuffTemplate" id="15">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff14" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff16" inherits="Perl_Party_BuffTemplate" id="16">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff15" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff1" inherits="Perl_Party_BuffTemplate" id="17">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Buff1" relativePoint="BOTTOMLEFT">
 								<Offset>
@@ -786,7 +980,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff2" inherits="Perl_Party_BuffTemplate" id="14">
+					<Button name="$parent_Debuff2" inherits="Perl_Party_BuffTemplate" id="18">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff1" relativePoint="TOPRIGHT">
 								<Offset>
@@ -796,7 +990,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff3" inherits="Perl_Party_BuffTemplate" id="15">
+					<Button name="$parent_Debuff3" inherits="Perl_Party_BuffTemplate" id="19">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff2" relativePoint="TOPRIGHT">
 								<Offset>
@@ -806,7 +1000,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff4" inherits="Perl_Party_BuffTemplate" id="16">
+					<Button name="$parent_Debuff4" inherits="Perl_Party_BuffTemplate" id="20">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff3" relativePoint="TOPRIGHT">
 								<Offset>
@@ -816,7 +1010,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff5" inherits="Perl_Party_BuffTemplate" id="17">
+					<Button name="$parent_Debuff5" inherits="Perl_Party_BuffTemplate" id="21">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff4" relativePoint="TOPRIGHT">
 								<Offset>
@@ -826,7 +1020,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff6" inherits="Perl_Party_BuffTemplate" id="18">
+					<Button name="$parent_Debuff6" inherits="Perl_Party_BuffTemplate" id="22">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff5" relativePoint="TOPRIGHT">
 								<Offset>
@@ -836,7 +1030,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff7" inherits="Perl_Party_BuffTemplate" id="19">
+					<Button name="$parent_Debuff7" inherits="Perl_Party_BuffTemplate" id="23">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff6" relativePoint="TOPRIGHT">
 								<Offset>
@@ -846,9 +1040,89 @@
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff8" inherits="Perl_Party_BuffTemplate" id="20">
+					<Button name="$parent_Debuff8" inherits="Perl_Party_BuffTemplate" id="24">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff7" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff9" inherits="Perl_Party_BuffTemplate" id="25">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff8" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff10" inherits="Perl_Party_BuffTemplate" id="26">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff9" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff11" inherits="Perl_Party_BuffTemplate" id="27">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff10" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff12" inherits="Perl_Party_BuffTemplate" id="28">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff11" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff13" inherits="Perl_Party_BuffTemplate" id="29">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff12" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff14" inherits="Perl_Party_BuffTemplate" id="30">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff13" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff15" inherits="Perl_Party_BuffTemplate" id="31">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff14" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff16" inherits="Perl_Party_BuffTemplate" id="32">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff15" relativePoint="TOPRIGHT">
 								<Offset>
 									<AbsDimension x="5" y="0"/>
 								</Offset>
@@ -870,7 +1144,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="30" y="-300"/>
+					<AbsDimension x="-8" y="-187"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -937,5 +1211,17 @@
 				</Anchors>
 			</Frame>
 		</Frames>
+	</Frame>
+
+
+	<Frame name="Perl_Party_Script_Frame" movable="true" parent="UIParent" hidden="false" enableMouse="true">
+		<Scripts>
+			<OnEvent>
+				Perl_Party_Script_OnEvent(event);
+			</OnEvent>
+			<OnLoad>
+				Perl_Party_Script_OnLoad();
+			</OnLoad>
+		</Scripts>
 	</Frame>
 </Ui>

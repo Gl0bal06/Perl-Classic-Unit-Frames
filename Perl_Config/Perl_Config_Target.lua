@@ -92,6 +92,42 @@ function Perl_Config_Target_Set_Values()
 		Perl_Config_Target_Frame_CheckButton13:SetChecked(nil);
 	end
 
+	if (vartable["nameframecombopoints"] == 1) then
+		Perl_Config_Target_Frame_CheckButton14:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton14:SetChecked(nil);
+	end
+
+	if (vartable["comboframedebuffs"] == 1) then
+		Perl_Config_Target_Frame_CheckButton15:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton15:SetChecked(nil);
+	end
+
+	if (vartable["framestyle"] == 2) then
+		Perl_Config_Target_Frame_CheckButton16:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton16:SetChecked(nil);
+	end
+
+	if (vartable["compactmode"] == 1) then
+		Perl_Config_Target_Frame_CheckButton17:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton17:SetChecked(nil);
+	end
+
+	if (vartable["compactpercent"] == 1) then
+		Perl_Config_Target_Frame_CheckButton18:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton18:SetChecked(nil);
+	end
+
+	if (vartable["hidebuffbackground"] == 1) then
+		Perl_Config_Target_Frame_CheckButton19:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton19:SetChecked(nil);
+	end
+
 	Perl_Config_Target_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Target_Frame_Slider1High:SetText("Big");
 	Perl_Config_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -216,6 +252,54 @@ function Perl_Config_Target_Rare_Elite_Update()
 		Perl_Target_Set_Rare_Elite(1);
 	else
 		Perl_Target_Set_Rare_Elite(0);
+	end
+end
+
+function Perl_Config_Target_Combo_Name_Frame_Update()
+	if (Perl_Config_Target_Frame_CheckButton14:GetChecked() == 1) then
+		Perl_Target_Set_Combo_Name_Frame(1);
+	else
+		Perl_Target_Set_Combo_Name_Frame(0);
+	end
+end
+
+function Perl_Config_Target_Combo_Frame_Debuffs_Update()
+	if (Perl_Config_Target_Frame_CheckButton15:GetChecked() == 1) then
+		Perl_Target_Set_Combo_Frame_Debuffs(1);
+	else
+		Perl_Target_Set_Combo_Frame_Debuffs(0);
+	end
+end
+
+function Perl_Config_Target_Alternate_Frame_Style_Update()
+	if (Perl_Config_Target_Frame_CheckButton16:GetChecked() == 1) then
+		Perl_Target_Set_Frame_Style(2);
+	else
+		Perl_Target_Set_Frame_Style(1);
+	end
+end
+
+function Perl_Config_Target_Compact_Mode_Update()
+	if (Perl_Config_Target_Frame_CheckButton17:GetChecked() == 1) then
+		Perl_Target_Set_Compact_Mode(1);
+	else
+		Perl_Target_Set_Compact_Mode(0);
+	end
+end
+
+function Perl_Config_Target_Compact_Percents_Update()
+	if (Perl_Config_Target_Frame_CheckButton18:GetChecked() == 1) then
+		Perl_Target_Set_Compact_Percents(1);
+	else
+		Perl_Target_Set_Compact_Percents(0);
+	end
+end
+
+function Perl_Config_Target_Buff_Background_Update()
+	if (Perl_Config_Target_Frame_CheckButton19:GetChecked() == 1) then
+		Perl_Target_Set_Buff_Debuff_Background(1);
+	else
+		Perl_Target_Set_Buff_Debuff_Background(0);
 	end
 end
 

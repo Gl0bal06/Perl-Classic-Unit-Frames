@@ -5,7 +5,7 @@
 
 	<Frame name="Perl_Config_Player_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Size>
-			<AbsDimension x="450" y="380"/>
+			<AbsDimension x="600" y="380"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Config_Frame">
@@ -14,24 +14,6 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
-		<!--
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<TileSize>
-				<AbsValue val="32"/>
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="32"/>
-			</EdgeSize>
-			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11"/>
-			</BackgroundInsets>
-		</Backdrop>
-		
-		<Scripts>
-			<OnLoad>
-				Perl_Config_Player_Set_Values();
-			</OnLoad>
-		</Scripts>-->
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="Perl_Config_Player_Header" file="Interface\DialogFrame\UI-DialogBox-Header">
@@ -70,7 +52,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="200" y="-30"/>
+								<AbsDimension x="350" y="-30"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -80,17 +62,17 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-120"/>
+								<AbsDimension x="20" y="-140"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Misc2_Text" inherits="GameFontNormal" text="">
+				<FontString name="$parent_Misc2_Text" inherits="GameFontNormal" text=" ">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="240" y="-150"/>
+								<AbsDimension x="240" y="-140"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -100,7 +82,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-290"/>
+								<AbsDimension x="20" y="-325"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -126,6 +108,7 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
+						Perl_Config_Player_Frame_CheckButton15:SetChecked(nil)	<!-- We need to uncheck Button 15 -->
 						Perl_Config_Player_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
 						Perl_Config_Player_XPMode_Update();
 					</OnClick>
@@ -149,13 +132,14 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
+						Perl_Config_Player_Frame_CheckButton15:SetChecked(nil)	<!-- We need to uncheck Button 15 -->
 						Perl_Config_Player_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
 						Perl_Config_Player_XPMode_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton3" inherits="UICheckButtonTemplate" id="3">
+			<CheckButton name="$parent_CheckButton15" inherits="UICheckButtonTemplate" id="15">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -168,11 +152,36 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Reputation");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
+						Perl_Config_Player_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
+						Perl_Config_Player_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 15 -->
+						Perl_Config_Player_XPMode_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton3" inherits="UICheckButtonTemplate" id="3">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton15">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
 						getglobal(this:GetName().."Text"):SetText("Hidden");
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
 						Perl_Config_Player_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
+						Perl_Config_Player_Frame_CheckButton15:SetChecked(nil)	<!-- We need to uncheck Button 15 -->
 						Perl_Config_Player_XPMode_Update();
 					</OnClick>
 				</Scripts>
@@ -370,7 +379,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc2_Text">
 						<Offset>
-							<AbsDimension x="20" y="0"/>
+							<AbsDimension x="20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -431,15 +440,15 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton13">
 						<Offset>
-							<AbsDimension x="0" y="20"/>
+							<AbsDimension x="-20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Display Druid Bar");
+						getglobal(this:GetName().."Text"):SetText("Druid Bar Support");
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_DruidBar_Update();

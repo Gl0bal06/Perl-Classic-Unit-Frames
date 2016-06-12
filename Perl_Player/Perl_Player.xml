@@ -3,7 +3,7 @@
 	<Script file="Perl_Player.lua"/>
 
 
-	<!-- Real frames! -->
+	<!-- Real Frames -->
 	<Frame name="Perl_Player_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Size>
 			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. (This is no longer true in 0.48) -->
@@ -12,7 +12,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="0" y="-44"/>
+					<AbsDimension x="-3" y="-43"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -31,6 +31,8 @@
 			</OnUpdate>
 		</Scripts>
 
+
+		<!-- Main Frames -->
 		<Frames>
 			<!-- Frame for the drop down menu. -->
 			<Frame name="Perl_Player_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
@@ -64,7 +66,6 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -133,19 +134,6 @@
 								</Anchor>
 							</Anchors>
 						</Texture>
-
-						<!-- Name Text 
-						<Fontstring name="Perl_Player_NameBarText" inherits="GameFontNormal" text="Error!">
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="Perl_Player_ClassTexture" relativePoint="RIGHT">
-									<Offset>
-										<AbsDimension x="5" y="0"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-							<Color r="1" g="1" b="0"/>
-						</Fontstring>
-						-->
 					</Layer>
 				</Layers>
 			</Frame>
@@ -163,16 +151,37 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Scripts>
-					<OnMouseDown>
-						Perl_Player_MouseDown(arg1);
-					</OnMouseDown>
-					<OnMouseUp>
-						Perl_Player_MouseUp(arg1);
-					</OnMouseUp>
-				</Scripts>
+				<Frames>
+					<Button name="Perl_Player_Name_CastClickOverlay">
+						<Size>
+							<AbsDimension x="200" y="24"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_Player_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+				</Frames>
 				<Layers>
 					<Layer level="OVERLAY">
+						<!-- Name Text -->
 						<Fontstring name="Perl_Player_NameBarText" inherits="GameFontNormal" text="Error!">
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="Perl_Player_ClassTexture" relativePoint="RIGHT">
@@ -200,14 +209,34 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Scripts>
-					<OnMouseDown>
-						Perl_Player_MouseDown(arg1);
-					</OnMouseDown>
-					<OnMouseUp>
-						Perl_Player_MouseUp(arg1);
-					</OnMouseUp>
-				</Scripts>
+				<Frames>
+					<Button name="Perl_Player_RaidGroupNumberFrame_CastClickOverlay">
+						<Size>
+							<AbsDimension x="65" y="24"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_Player_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+				</Frames>
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -248,14 +277,34 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Scripts>
-					<OnMouseDown>
-						Perl_Player_MouseDown(arg1);
-					</OnMouseDown>
-					<OnMouseUp>
-						Perl_Player_MouseUp(arg1);
-					</OnMouseUp>
-				</Scripts>
+				<Frames>
+					<Button name="Perl_Player_LevelFrame_CastClickOverlay">
+						<Size>
+							<AbsDimension x="34" y="42"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_Player_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+				</Frames>
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -310,14 +359,6 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Scripts>
-					<OnMouseDown>
-						Perl_Player_MouseDown(arg1);
-					</OnMouseDown>
-					<OnMouseUp>
-						Perl_Player_MouseUp(arg1);
-					</OnMouseUp>
-				</Scripts>
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -330,6 +371,32 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
+					<Button name="Perl_Player_PortraitFrame_CastClickOverlay">
+						<Size>
+							<AbsDimension x="60" y="61"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_Player_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
 					<PlayerModel name="$parent_PlayerModel" hidden="true">
 						<Size>
 							<AbsDimension x="50" y="50"/>
@@ -342,13 +409,8 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
-							<OnLoad>
-								this:SetScale(1);
-								this.scale = this:GetScale();
-								Perl_Player_PortraitFrame_PlayerModel:SetSequence(30);
-							</OnLoad>
 							<OnUpdate>
-								Perl_Player_PortraitFrame_PlayerModel:SetCamera(0);
+								this:SetCamera(0);
 							</OnUpdate>
 						</Scripts>
 					</PlayerModel>
@@ -417,14 +479,6 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Scripts>
-					<OnMouseDown>
-						Perl_Player_MouseDown(arg1);
-					</OnMouseDown>
-					<OnMouseUp>
-						Perl_Player_MouseUp(arg1);
-					</OnMouseUp>
-				</Scripts>
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -437,6 +491,34 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
+					<!-- 1.10 Click Solution -->
+					<Button name="Perl_Player_StatsFrame_CastClickOverlay">
+						<Size>
+							<AbsDimension x="240" y="54"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_Player_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+
 					<!-- Health Bar -->
 					<StatusBar name="Perl_Player_HealthBar" inherits="TextStatusBar">
 						<Size>
@@ -449,20 +531,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnEnter>
-								Perl_Player_HealthShow();
-							</OnEnter>
-							<OnLeave>
-								Perl_Player_HealthHide();
-							</OnLeave>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_Player_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0"/>
 						<Layers>
@@ -515,6 +583,38 @@
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
+					<Button name="Perl_Player_HealthBar_CastClickOverlay">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_HealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnEnter>
+								Perl_Player_HealthShow();
+							</OnEnter>
+							<OnLeave>
+								Perl_Player_HealthHide();
+							</OnLeave>
+							<OnClick>
+								Perl_Player_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
 
 					<!-- Mana Bar -->
 					<StatusBar name="Perl_Player_ManaBar" inherits="TextStatusBar">
@@ -528,20 +628,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnEnter>
-								Perl_Player_ManaShow();
-							</OnEnter>
-							<OnLeave>
-								Perl_Player_ManaHide();
-							</OnLeave>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_Player_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0" b="1"/>
 						<Layers>
@@ -594,6 +680,38 @@
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
+					<Button name="Perl_Player_ManaBar_CastClickOverlay">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnEnter>
+								Perl_Player_ManaShow();
+							</OnEnter>
+							<OnLeave>
+								Perl_Player_ManaHide();
+							</OnLeave>
+							<OnClick>
+								Perl_Player_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
 
 					<!-- Druid Mana Bar -->
 					<StatusBar name="Perl_Player_DruidBar" inherits="TextStatusBar">
@@ -607,20 +725,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnEnter>
-								Perl_Player_DruidBarManaShow();
-							</OnEnter>
-							<OnLeave>
-								Perl_Player_DruidBarManaHide();
-							</OnLeave>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_Player_DruidBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0" b="1"/>
 						<Layers>
@@ -673,6 +777,38 @@
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
+					<Button name="Perl_Player_DruidBar_CastClickOverlay">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_DruidBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnEnter>
+								Perl_Player_DruidBarManaShow();
+							</OnEnter>
+							<OnLeave>
+								Perl_Player_DruidBarManaHide();
+							</OnLeave>
+							<OnClick>
+								Perl_Player_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
 
 					<!-- XP Bar -->
 					<StatusBar name="Perl_Player_XPBar" inherits="TextStatusBar">
@@ -686,17 +822,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnEnter>
-								Perl_Player_XPTooltip();
-							</OnEnter>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_Player_XPBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.6" b="0.6"/>
 						<Layers>
@@ -728,11 +853,6 @@
 						</Anchors>
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.6" b="0.6" a="0.25"/>
-						<Scripts>
-							<OnLoad>
-								this:SetFrameLevel(this:GetFrameLevel() - 1);
-							</OnLoad>
-						</Scripts>
 					</StatusBar>
 					<StatusBar name="Perl_Player_XPRestBar" inherits="TextStatusBar">
 						<Size>
@@ -748,6 +868,38 @@
 						<BarTexture  name="Perl_Player_XPRestBarTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.6" b="0.6" a="0.5"/>
 					</StatusBar>
+					<Button name="Perl_Player_XPBar_CastClickOverlay">
+						<Size>
+							<AbsDimension x="220" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_XPBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnEnter>
+								Perl_Player_XPTooltip();
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide();
+							</OnLeave>
+							<OnClick>
+								Perl_Player_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
 				</Frames>
 			</Frame>
 		</Frames>

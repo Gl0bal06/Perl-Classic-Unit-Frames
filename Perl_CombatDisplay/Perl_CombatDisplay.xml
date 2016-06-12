@@ -24,12 +24,6 @@
 			<OnEvent>
 				Perl_CombatDisplay_OnEvent(event);
 			</OnEvent>
-			<OnMouseDown>
-				Perl_CombatDisplay_OnMouseDown(arg1);
-			</OnMouseDown>
-			<OnMouseUp>
-				Perl_CombatDisplay_OnMouseUp(arg1);
-			</OnMouseUp>
 		</Scripts>
 
 		<Frames>
@@ -51,6 +45,7 @@
 					</OnLoad>
 				</Scripts>
 			</Frame>
+
 
 			<!-- Frame to display Mana/Energy/Rage/CPs. -->
 			<Frame name="Perl_CombatDisplay_ManaFrame">
@@ -76,6 +71,33 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
+					<Button name="Perl_CombatDisplay_ManaFrame_CastClickOverlay">
+						<Size>
+							<AbsDimension x="220" y="42"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_CombatDisplay_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_CombatDisplay_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_CombatDisplay_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+
 					<!-- Health Bar -->
 					<StatusBar name="Perl_CombatDisplay_HealthBar" inherits="TextStatusBar">
 						<Size>
@@ -88,14 +110,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnMouseDown>
-								Perl_CombatDisplay_OnMouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_CombatDisplay_OnMouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_CombatDisplay_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0"/>
 						<Layers>
@@ -140,14 +154,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnMouseDown>
-								Perl_CombatDisplay_OnMouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_CombatDisplay_OnMouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_CombatDisplay_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="1" b="0"/>
 						<Layers>
@@ -192,11 +198,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnMouseUp>
-								Perl_CombatDisplay_OnMouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_CombatDisplay_DruidBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0" b="1"/>
 						<Layers>
@@ -242,14 +243,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnMouseDown>
-								Perl_CombatDisplay_OnMouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_CombatDisplay_OnMouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_CombatDisplay_CPBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="1" g="0" b="0"/>
 						<Layers>
@@ -302,15 +295,9 @@
 
 		<!-- Script Events -->
 		<Scripts>
-			<OnEvent>
-				Perl_CombatDisplay_OnEvent(event);
-			</OnEvent>
-			<OnMouseDown>
-				Perl_CombatDisplay_Target_OnMouseDown(arg1);
-			</OnMouseDown>
-			<OnMouseUp>
-				Perl_CombatDisplay_Target_OnMouseUp(arg1);
-			</OnMouseUp>
+			<OnLoad>
+				Perl_CombatDisplay_Target_OnLoad();
+			</OnLoad>
 		</Scripts>
 
 		<Frames>
@@ -357,6 +344,33 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
+					<Button name="Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay">
+						<Size>
+							<AbsDimension x="220" y="42"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_CombatDisplay_Target_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_CombatDisplay_Target_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_CombatDisplay_Target_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+
 					<!-- Health Bar -->
 					<StatusBar name="Perl_CombatDisplay_Target_HealthBar" inherits="TextStatusBar">
 						<Size>
@@ -369,14 +383,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnMouseDown>
-								Perl_CombatDisplay_Target_OnMouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_CombatDisplay_Target_OnMouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_CombatDisplay_Target_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0"/>
 						<Layers>
@@ -421,14 +427,6 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
-							<OnMouseDown>
-								Perl_CombatDisplay_Target_OnMouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_CombatDisplay_Target_OnMouseUp(arg1);
-							</OnMouseUp>
-						</Scripts>
 						<BarTexture name="Perl_CombatDisplay_Target_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="1" b="0"/>
 						<Layers>

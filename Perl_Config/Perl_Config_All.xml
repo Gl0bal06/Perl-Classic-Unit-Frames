@@ -5,7 +5,7 @@
 
 	<Frame name="Perl_Config_All_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Size>
-			<AbsDimension x="450" y="380"/>
+			<AbsDimension x="600" y="380"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Config_Frame">
@@ -14,19 +14,6 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
-		<!--
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<TileSize>
-				<AbsValue val="32"/>
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="32"/>
-			</EdgeSize>
-			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11"/>
-			</BackgroundInsets>
-		</Backdrop>
-		-->
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="Perl_Config_All_Header" file="Interface\DialogFrame\UI-DialogBox-Header">
@@ -65,7 +52,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="200" y="-30"/>
+								<AbsDimension x="350" y="-30"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -75,13 +62,13 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="200" y="-90"/>
+								<AbsDimension x="350" y="-90"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="Misc">
+				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="Frames">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -95,7 +82,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-290"/>
+								<AbsDimension x="20" y="-325"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -262,12 +249,12 @@
 
 			<Button name="$parent_Button1" inherits="UIPanelButtonTemplate" text="Lock All Frames">
 				<Size>
-					<AbsDimension x="120" y="22"/>
+					<AbsDimension x="170" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
 						<Offset>
-							<AbsDimension x="20" y="-20"/>
+							<AbsDimension x="20" y="-45"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -280,7 +267,7 @@
 
 			<Button name="$parent_Button2" inherits="UIPanelButtonTemplate" text="Unlock All Frames">
 				<Size>
-					<AbsDimension x="120" y="22"/>
+					<AbsDimension x="170" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Button1">
@@ -362,7 +349,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_MiniMap_Text">
 						<Offset>
-							<AbsDimension x="-40" y="-30"/>
+							<AbsDimension x="-40" y="-25"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -381,7 +368,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_MiniMap_Text">
 						<Offset>
-							<AbsDimension  x="0" y="-50"/>
+							<AbsDimension  x="20" y="-50"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -400,9 +387,9 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton8">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
 						<Offset>
-							<AbsDimension  x="0" y="-30"/>
+							<AbsDimension  x="20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -421,9 +408,9 @@
 					<AbsDimension x="150" y="22"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Button1">
 						<Offset>
-							<AbsDimension x="240" y="-20"/>
+							<AbsDimension x="200" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -460,9 +447,9 @@
 					<AbsDimension x="170" y="22"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Button2">
 						<Offset>
-							<AbsDimension x="110" y="-80"/>
+							<AbsDimension x="0" y="-30"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

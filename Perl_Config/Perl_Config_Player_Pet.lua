@@ -59,6 +59,14 @@ function Perl_Config_Player_Pet_Set_Values()
 	Perl_Config_Player_Pet_Frame_Slider6Low:SetText("1");
 	Perl_Config_Player_Pet_Frame_Slider6High:SetText("4");
 	Perl_Config_Player_Pet_Frame_Slider6:SetValue(vartable["debufflocation"]);
+
+	Perl_Config_Player_Pet_Frame_Slider7Low:SetText("1");
+	Perl_Config_Player_Pet_Frame_Slider7High:SetText("50");
+	Perl_Config_Player_Pet_Frame_Slider7:SetValue(vartable["buffsize"]);
+
+	Perl_Config_Player_Pet_Frame_Slider8Low:SetText("1");
+	Perl_Config_Player_Pet_Frame_Slider8High:SetText("50");
+	Perl_Config_Player_Pet_Frame_Slider8:SetValue(vartable["debuffsize"]);
 end
 
 function Perl_Config_Player_Pet_Set_Buffs(value)
@@ -82,6 +90,18 @@ end
 function Perl_Config_Player_Pet_Set_Debuff_Location(value)
 	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
 		Perl_Player_Pet_Set_Debuff_Location(value);
+	end
+end
+
+function Perl_Config_Player_Pet_Set_Buff_Size(value)
+	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+		Perl_Player_Pet_Set_Buff_Size(value);
+	end
+end
+
+function Perl_Config_Player_Pet_Set_Debuff_Size(value)
+	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+		Perl_Player_Pet_Set_Debuff_Size(value);
 	end
 end
 
