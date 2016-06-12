@@ -256,7 +256,8 @@ function Perl_Target_Initialize()
 	end
 
 	-- Check if a previous exists, if not, enable by default.
-	if (type(Perl_Target_Config[UnitName("player")]) == "table") then
+	Perl_Config_Migrate_Vars_Old_To_New("Target");
+	if (type(Perl_Target_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
 		Perl_Target_GetVars();
 	else
 		Perl_Target_UpdateVars();
@@ -1371,7 +1372,7 @@ function Perl_Target_ArcaneBar_Support()
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 		Perl_ArcaneBar_target:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 5, -5);
 		Perl_ArcaneBar_target_CastTime:ClearAllPoints();
-		if (Perl_ArcaneBar_Config[UnitName("player")]["TargetLeftTimer"] == 0) then
+		if (Perl_ArcaneBar_Config[GetRealmName("player").."-"..UnitName("player")]["TargetLeftTimer"] == 0) then
 			if (showportrait == 1) then
 				Perl_ArcaneBar_target_CastTime:SetPoint("LEFT", "Perl_Target_PortraitFrame", "RIGHT", 0, 0);
 			else
@@ -1765,44 +1766,44 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Target_GetVars(name, updateflag)
-	if (name == nil) then
-		name = UnitName("player");
+function Perl_Target_GetVars(index, updateflag)
+	if (index == nil) then
+		index = GetRealmName("player").."-"..UnitName("player");
 	end
 
-	locked = Perl_Target_Config[name]["Locked"];
-	showcp = Perl_Target_Config[name]["ComboPoints"];
-	showclassicon = Perl_Target_Config[name]["ClassIcon"];
-	showclassframe = Perl_Target_Config[name]["ClassFrame"];
-	showpvpicon = Perl_Target_Config[name]["PvPIcon"]; 
-	numbuffsshown = Perl_Target_Config[name]["Buffs"];
-	numdebuffsshown = Perl_Target_Config[name]["Debuffs"];
-	scale = Perl_Target_Config[name]["Scale"];
-	transparency = Perl_Target_Config[name]["Transparency"];
-	buffdebuffscale = Perl_Target_Config[name]["BuffDebuffScale"];
-	showportrait = Perl_Target_Config[name]["ShowPortrait"];
-	threedportrait = Perl_Target_Config[name]["ThreeDPortrait"];
-	portraitcombattext = Perl_Target_Config[name]["PortraitCombatText"];
-	showrareeliteframe = Perl_Target_Config[name]["ShowRareEliteFrame"];
-	nameframecombopoints = Perl_Target_Config[name]["NameFrameComboPoints"];
-	comboframedebuffs = Perl_Target_Config[name]["ComboFrameDebuffs"];
-	framestyle = Perl_Target_Config[name]["FrameStyle"];
-	compactmode = Perl_Target_Config[name]["CompactMode"];
-	compactpercent = Perl_Target_Config[name]["CompactPercent"];
-	hidebuffbackground = Perl_Target_Config[name]["HideBuffBackground"];
-	shortbars = Perl_Target_Config[name]["ShortBars"];
-	healermode = Perl_Target_Config[name]["HealerMode"];
-	soundtargetchange = Perl_Target_Config[name]["SoundTargetChange"];
-	displaycastablebuffs = Perl_Target_Config[name]["DisplayCastableBuffs"];
-	classcolorednames = Perl_Target_Config[name]["ClassColoredNames"];
-	showmanadeficit = Perl_Target_Config[name]["ShowManaDeficit"];
-	invertbuffs = Perl_Target_Config[name]["InvertBuffs"];
-	showguildname = Perl_Target_Config[name]["ShowGuildName"];
-	eliteraregraphic = Perl_Target_Config[name]["EliteRareGraphic"];
-	displaycurabledebuff = Perl_Target_Config[name]["DisplayCurableDebuff"];
-	displaybufftimers = Perl_Target_Config[name]["DisplayBuffTimers"];
-	displaynumbericthreat = Perl_Target_Config[name]["DisplayNumbericThreat"];
-	displayonlymydebuffs = Perl_Target_Config[name]["DisplayOnlyMyDebuffs"];
+	locked = Perl_Target_Config[index]["Locked"];
+	showcp = Perl_Target_Config[index]["ComboPoints"];
+	showclassicon = Perl_Target_Config[index]["ClassIcon"];
+	showclassframe = Perl_Target_Config[index]["ClassFrame"];
+	showpvpicon = Perl_Target_Config[index]["PvPIcon"]; 
+	numbuffsshown = Perl_Target_Config[index]["Buffs"];
+	numdebuffsshown = Perl_Target_Config[index]["Debuffs"];
+	scale = Perl_Target_Config[index]["Scale"];
+	transparency = Perl_Target_Config[index]["Transparency"];
+	buffdebuffscale = Perl_Target_Config[index]["BuffDebuffScale"];
+	showportrait = Perl_Target_Config[index]["ShowPortrait"];
+	threedportrait = Perl_Target_Config[index]["ThreeDPortrait"];
+	portraitcombattext = Perl_Target_Config[index]["PortraitCombatText"];
+	showrareeliteframe = Perl_Target_Config[index]["ShowRareEliteFrame"];
+	nameframecombopoints = Perl_Target_Config[index]["NameFrameComboPoints"];
+	comboframedebuffs = Perl_Target_Config[index]["ComboFrameDebuffs"];
+	framestyle = Perl_Target_Config[index]["FrameStyle"];
+	compactmode = Perl_Target_Config[index]["CompactMode"];
+	compactpercent = Perl_Target_Config[index]["CompactPercent"];
+	hidebuffbackground = Perl_Target_Config[index]["HideBuffBackground"];
+	shortbars = Perl_Target_Config[index]["ShortBars"];
+	healermode = Perl_Target_Config[index]["HealerMode"];
+	soundtargetchange = Perl_Target_Config[index]["SoundTargetChange"];
+	displaycastablebuffs = Perl_Target_Config[index]["DisplayCastableBuffs"];
+	classcolorednames = Perl_Target_Config[index]["ClassColoredNames"];
+	showmanadeficit = Perl_Target_Config[index]["ShowManaDeficit"];
+	invertbuffs = Perl_Target_Config[index]["InvertBuffs"];
+	showguildname = Perl_Target_Config[index]["ShowGuildName"];
+	eliteraregraphic = Perl_Target_Config[index]["EliteRareGraphic"];
+	displaycurabledebuff = Perl_Target_Config[index]["DisplayCurableDebuff"];
+	displaybufftimers = Perl_Target_Config[index]["DisplayBuffTimers"];
+	displaynumbericthreat = Perl_Target_Config[index]["DisplayNumbericThreat"];
+	displayonlymydebuffs = Perl_Target_Config[index]["DisplayOnlyMyDebuffs"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -2241,7 +2242,7 @@ function Perl_Target_UpdateVars(vartable)
 		end
 	end
 
-	Perl_Target_Config[UnitName("player")] = {
+	Perl_Target_Config[GetRealmName("player").."-"..UnitName("player")] = {
 		["Locked"] = locked,
 		["ComboPoints"] = showcp,
 		["ClassIcon"] = showclassicon,

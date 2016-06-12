@@ -275,7 +275,8 @@ function Perl_Player_Initialize()
 	end
 
 	-- Check if a previous exists, if not, enable by default.
-	if (type(Perl_Player_Config[UnitName("player")]) == "table") then
+	Perl_Config_Migrate_Vars_Old_To_New("Player");
+	if (type(Perl_Player_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
 		Perl_Player_GetVars();
 	else
 		Perl_Player_UpdateVars();
@@ -1506,7 +1507,7 @@ function Perl_Player_Frame_Style()
 		if (Initialized) then
 			if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 				-- Make sure the ArcaneBar savedvariables are loaded (fix for Cataclysm)
-				-- if (type(Perl_ArcaneBar_Config[UnitName("player")]) == "table") then	-- Check if a previous exists, if not, enable by default.
+				-- if (type(Perl_ArcaneBar_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then	-- Check if a previous exists, if not, enable by default.
 					-- Perl_ArcaneBar_GetVars();
 				-- else
 					-- Perl_ArcaneBar_UpdateVars();
@@ -1515,7 +1516,7 @@ function Perl_Player_Frame_Style()
 
 				Perl_ArcaneBar_player:SetPoint("TOPLEFT", "Perl_Player_NameFrame", "TOPLEFT", 5, -5);
 				Perl_ArcaneBar_player_CastTime:ClearAllPoints();
-				if (Perl_ArcaneBar_Config[UnitName("player")]["PlayerLeftTimer"] == 0) then
+				if (Perl_ArcaneBar_Config[GetRealmName("player").."-"..UnitName("player")]["PlayerLeftTimer"] == 0) then
 					Perl_ArcaneBar_player_CastTime:SetPoint("LEFT", "Perl_Player_NameFrame", "RIGHT", 0, 0);
 				else
 					if (showportrait == 1) then
@@ -1748,40 +1749,40 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Player_GetVars(name, updateflag)
-	if (name == nil) then
-		name = UnitName("player");
+function Perl_Player_GetVars(index, updateflag)
+	if (index == nil) then
+		index = GetRealmName("player").."-"..UnitName("player");
 	end
 
-	locked = Perl_Player_Config[name]["Locked"];
-	xpbarstate = Perl_Player_Config[name]["XPBarState"];
-	compactmode = Perl_Player_Config[name]["CompactMode"];
-	showraidgroup = Perl_Player_Config[name]["ShowRaidGroup"];
-	scale = Perl_Player_Config[name]["Scale"];
-	healermode = Perl_Player_Config[name]["HealerMode"];
-	transparency = Perl_Player_Config[name]["Transparency"];
-	showportrait = Perl_Player_Config[name]["ShowPortrait"];
-	compactpercent = Perl_Player_Config[name]["CompactPercent"];
-	threedportrait = Perl_Player_Config[name]["ThreeDPortrait"];
-	portraitcombattext = Perl_Player_Config[name]["PortraitCombatText"];
-	showdruidbar = Perl_Player_Config[name]["ShowDruidBar"];
-	shortbars = Perl_Player_Config[name]["ShortBars"];
-	classcolorednames = Perl_Player_Config[name]["ClassColoredNames"];
-	hideclasslevelframe = Perl_Player_Config[name]["HideClassLevelFrame"];
-	showmanadeficit = Perl_Player_Config[name]["ShowManaDeficit"];
-	hiddeninraid = Perl_Player_Config[name]["HiddenInRaid"];
-	showpvpicon = Perl_Player_Config[name]["ShowPvPIcon"];
-	showbarvalues = Perl_Player_Config[name]["ShowBarValues"];
-	showraidgroupinname = Perl_Player_Config[name]["ShowRaidGroupInName"];
-	fivesecondrule = Perl_Player_Config[name]["FiveSecondRule"];
-	totemtimers = Perl_Player_Config[name]["TotemTimers"];
-	runeframe = Perl_Player_Config[name]["RuneFrame"];
-	pvptimer = Perl_Player_Config[name]["PvPTimer"];
-	paladinpowerbar = Perl_Player_Config[name]["PaladinPowerBar"];
-	shardbarframe = Perl_Player_Config[name]["ShardBarFrame"];
-	eclipsebarframe = Perl_Player_Config[name]["EclipseBarFrame"];
-	harmonybarframe = Perl_Player_Config[name]["HarmonyBarFrame"];
-	priestbarframe = Perl_Player_Config[name]["PriestBarFrame"];
+	locked = Perl_Player_Config[index]["Locked"];
+	xpbarstate = Perl_Player_Config[index]["XPBarState"];
+	compactmode = Perl_Player_Config[index]["CompactMode"];
+	showraidgroup = Perl_Player_Config[index]["ShowRaidGroup"];
+	scale = Perl_Player_Config[index]["Scale"];
+	healermode = Perl_Player_Config[index]["HealerMode"];
+	transparency = Perl_Player_Config[index]["Transparency"];
+	showportrait = Perl_Player_Config[index]["ShowPortrait"];
+	compactpercent = Perl_Player_Config[index]["CompactPercent"];
+	threedportrait = Perl_Player_Config[index]["ThreeDPortrait"];
+	portraitcombattext = Perl_Player_Config[index]["PortraitCombatText"];
+	showdruidbar = Perl_Player_Config[index]["ShowDruidBar"];
+	shortbars = Perl_Player_Config[index]["ShortBars"];
+	classcolorednames = Perl_Player_Config[index]["ClassColoredNames"];
+	hideclasslevelframe = Perl_Player_Config[index]["HideClassLevelFrame"];
+	showmanadeficit = Perl_Player_Config[index]["ShowManaDeficit"];
+	hiddeninraid = Perl_Player_Config[index]["HiddenInRaid"];
+	showpvpicon = Perl_Player_Config[index]["ShowPvPIcon"];
+	showbarvalues = Perl_Player_Config[index]["ShowBarValues"];
+	showraidgroupinname = Perl_Player_Config[index]["ShowRaidGroupInName"];
+	fivesecondrule = Perl_Player_Config[index]["FiveSecondRule"];
+	totemtimers = Perl_Player_Config[index]["TotemTimers"];
+	runeframe = Perl_Player_Config[index]["RuneFrame"];
+	pvptimer = Perl_Player_Config[index]["PvPTimer"];
+	paladinpowerbar = Perl_Player_Config[index]["PaladinPowerBar"];
+	shardbarframe = Perl_Player_Config[index]["ShardBarFrame"];
+	eclipsebarframe = Perl_Player_Config[index]["EclipseBarFrame"];
+	harmonybarframe = Perl_Player_Config[index]["HarmonyBarFrame"];
+	priestbarframe = Perl_Player_Config[index]["PriestBarFrame"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -2162,7 +2163,7 @@ function Perl_Player_UpdateVars(vartable)
 		Perl_Player_Set_Transparency();
 	end
 
-	Perl_Player_Config[UnitName("player")] = {
+	Perl_Player_Config[GetRealmName("player").."-"..UnitName("player")] = {
 		["Locked"] = locked,
 		["XPBarState"] = xpbarstate,
 		["CompactMode"] = compactmode,

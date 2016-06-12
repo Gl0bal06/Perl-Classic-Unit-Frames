@@ -153,7 +153,8 @@ function Perl_Party_Pet_Initialize()
 	end
 
 	-- Check if a previous exists, if not, enable by default.
-	if (type(Perl_Party_Pet_Config[UnitName("player")]) == "table") then
+	Perl_Config_Migrate_Vars_Old_To_New("Party_Pet");
+	if (type(Perl_Party_Pet_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
 		Perl_Party_Pet_GetVars();
 	else
 		Perl_Party_Pet_UpdateVars();
@@ -819,26 +820,26 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Party_Pet_GetVars(name, updateflag)
-	if (name == nil) then
-		name = UnitName("player");
+function Perl_Party_Pet_GetVars(index, updateflag)
+	if (index == nil) then
+		index = GetRealmName("player").."-"..UnitName("player");
 	end
 
-	locked = Perl_Party_Pet_Config[name]["Locked"];
-	showportrait = Perl_Party_Pet_Config[name]["ShowPortrait"];
-	threedportrait = Perl_Party_Pet_Config[name]["ThreeDPortrait"];
-	scale = Perl_Party_Pet_Config[name]["Scale"];
-	transparency = Perl_Party_Pet_Config[name]["Transparency"];
-	numpetbuffsshown = Perl_Party_Pet_Config[name]["Buffs"];
-	numpetdebuffsshown = Perl_Party_Pet_Config[name]["Debuffs"];
-	buffsize = Perl_Party_Pet_Config[name]["BuffSize"];
-	debuffsize = Perl_Party_Pet_Config[name]["DebuffSize"];
-	bufflocation = Perl_Party_Pet_Config[name]["BuffLocation"];
-	debufflocation = Perl_Party_Pet_Config[name]["DebuffLocation"];
-	hiddeninraids = Perl_Party_Pet_Config[name]["HiddenInRaids"];
-	enabled = Perl_Party_Pet_Config[name]["Enabled"];
-	displaycastablebuffs = Perl_Party_Pet_Config[name]["DisplayCastableBuffs"];
-	displaycurabledebuff = Perl_Party_Pet_Config[name]["DisplayCurableDebuff"];
+	locked = Perl_Party_Pet_Config[index]["Locked"];
+	showportrait = Perl_Party_Pet_Config[index]["ShowPortrait"];
+	threedportrait = Perl_Party_Pet_Config[index]["ThreeDPortrait"];
+	scale = Perl_Party_Pet_Config[index]["Scale"];
+	transparency = Perl_Party_Pet_Config[index]["Transparency"];
+	numpetbuffsshown = Perl_Party_Pet_Config[index]["Buffs"];
+	numpetdebuffsshown = Perl_Party_Pet_Config[index]["Debuffs"];
+	buffsize = Perl_Party_Pet_Config[index]["BuffSize"];
+	debuffsize = Perl_Party_Pet_Config[index]["DebuffSize"];
+	bufflocation = Perl_Party_Pet_Config[index]["BuffLocation"];
+	debufflocation = Perl_Party_Pet_Config[index]["DebuffLocation"];
+	hiddeninraids = Perl_Party_Pet_Config[index]["HiddenInRaids"];
+	enabled = Perl_Party_Pet_Config[index]["Enabled"];
+	displaycastablebuffs = Perl_Party_Pet_Config[index]["DisplayCastableBuffs"];
+	displaycurabledebuff = Perl_Party_Pet_Config[index]["DisplayCurableDebuff"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1051,7 +1052,7 @@ function Perl_Party_Pet_UpdateVars(vartable)
 		Perl_Party_Pet_Update();
 	end
 
-	Perl_Party_Pet_Config[UnitName("player")] = {
+	Perl_Party_Pet_Config[GetRealmName("player").."-"..UnitName("player")] = {
 		["Locked"] = locked,
 		["ShowPortrait"] = showportrait,
 		["ThreeDPortrait"] = threedportrait,

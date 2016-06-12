@@ -115,7 +115,8 @@ function Perl_Target_Target_Initialize()
 	end
 
 	-- Check if a previous exists, if not, enable by default.
-	if (type(Perl_Target_Target_Config[UnitName("player")]) == "table") then
+	Perl_Config_Migrate_Vars_Old_To_New("Target_Target");
+	if (type(Perl_Target_Target_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
 		Perl_Target_Target_GetVars();
 	else
 		Perl_Target_Target_UpdateVars();
@@ -1592,29 +1593,29 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Target_Target_GetVars(name, updateflag)
-	if (name == nil) then
-		name = UnitName("player");
+function Perl_Target_Target_GetVars(index, updateflag)
+	if (index == nil) then
+		index = GetRealmName("player").."-"..UnitName("player");
 	end
 
-	locked = Perl_Target_Target_Config[name]["Locked"];
-	scale = Perl_Target_Target_Config[name]["Scale"];
-	totsupport = Perl_Target_Target_Config[name]["ToTSupport"];
-	tototsupport = Perl_Target_Target_Config[name]["ToToTSupport"];
-	transparency = Perl_Target_Target_Config[name]["Transparency"];
-	alertsound = Perl_Target_Target_Config[name]["AlertSound"];
-	alertmode = Perl_Target_Target_Config[name]["AlertMode"];
-	alertsize = Perl_Target_Target_Config[name]["AlertSize"];
-	showtotbuffs = Perl_Target_Target_Config[name]["ShowToTBuffs"];
-	showtototbuffs = Perl_Target_Target_Config[name]["ShowToToTBuffs"];
-	hidepowerbars = Perl_Target_Target_Config[name]["HidePowerBars"];
-	showtotdebuffs = Perl_Target_Target_Config[name]["ShowToTDebuffs"];
-	showtototdebuffs = Perl_Target_Target_Config[name]["ShowToToTDebuffs"];
-	displaycastablebuffs = Perl_Target_Target_Config[name]["DisplayCastableBuffs"];
-	classcolorednames = Perl_Target_Target_Config[name]["ClassColoredNames"];
-	showfriendlyhealth = Perl_Target_Target_Config[name]["ShowFriendlyHealth"];
-	displaycurabledebuff = Perl_Target_Target_Config[name]["DisplayCurableDebuff"];
-	displayonlymydebuffs = Perl_Target_Target_Config[name]["DisplayOnlyMyDebuffs"];
+	locked = Perl_Target_Target_Config[index]["Locked"];
+	scale = Perl_Target_Target_Config[index]["Scale"];
+	totsupport = Perl_Target_Target_Config[index]["ToTSupport"];
+	tototsupport = Perl_Target_Target_Config[index]["ToToTSupport"];
+	transparency = Perl_Target_Target_Config[index]["Transparency"];
+	alertsound = Perl_Target_Target_Config[index]["AlertSound"];
+	alertmode = Perl_Target_Target_Config[index]["AlertMode"];
+	alertsize = Perl_Target_Target_Config[index]["AlertSize"];
+	showtotbuffs = Perl_Target_Target_Config[index]["ShowToTBuffs"];
+	showtototbuffs = Perl_Target_Target_Config[index]["ShowToToTBuffs"];
+	hidepowerbars = Perl_Target_Target_Config[index]["HidePowerBars"];
+	showtotdebuffs = Perl_Target_Target_Config[index]["ShowToTDebuffs"];
+	showtototdebuffs = Perl_Target_Target_Config[index]["ShowToToTDebuffs"];
+	displaycastablebuffs = Perl_Target_Target_Config[index]["DisplayCastableBuffs"];
+	classcolorednames = Perl_Target_Target_Config[index]["ClassColoredNames"];
+	showfriendlyhealth = Perl_Target_Target_Config[index]["ShowFriendlyHealth"];
+	displaycurabledebuff = Perl_Target_Target_Config[index]["DisplayCurableDebuff"];
+	displayonlymydebuffs = Perl_Target_Target_Config[index]["DisplayOnlyMyDebuffs"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1863,7 +1864,7 @@ function Perl_Target_Target_UpdateVars(vartable)
 		Perl_Target_Target_Set_Transparency();
 	end
 
-	Perl_Target_Target_Config[UnitName("player")] = {
+	Perl_Target_Target_Config[GetRealmName("player").."-"..UnitName("player")] = {
 		["Locked"] = locked,
 		["Scale"] = scale,
 		["ToTSupport"] = totsupport,

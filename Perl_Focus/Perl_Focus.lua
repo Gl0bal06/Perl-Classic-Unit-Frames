@@ -234,7 +234,8 @@ function Perl_Focus_Initialize()
 	end
 
 	-- Check if a previous exists, if not, enable by default.
-	if (type(Perl_Focus_Config[UnitName("player")]) == "table") then
+	Perl_Config_Migrate_Vars_Old_To_New("Focus");
+	if (type(Perl_Focus_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
 		Perl_Focus_GetVars();
 	else
 		Perl_Focus_UpdateVars();
@@ -1041,7 +1042,7 @@ function Perl_Focus_ArcaneBar_Support()
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 		Perl_ArcaneBar_focus:SetPoint("TOPLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 5, -5);
 		Perl_ArcaneBar_focus_CastTime:ClearAllPoints();
-		if (Perl_ArcaneBar_Config[UnitName("player")]["FocusLeftTimer"] == 0) then
+		if (Perl_ArcaneBar_Config[GetRealmName("player").."-"..UnitName("player")]["FocusLeftTimer"] == 0) then
 			if (showportrait == 1) then
 				Perl_ArcaneBar_focus_CastTime:SetPoint("LEFT", "Perl_Focus_PortraitFrame", "RIGHT", 0, 0);
 			else
@@ -1395,39 +1396,39 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Focus_GetVars(name, updateflag)
-	if (name == nil) then
-		name = UnitName("player");
+function Perl_Focus_GetVars(index, updateflag)
+	if (index == nil) then
+		index = GetRealmName("player").."-"..UnitName("player");
 	end
 
-	locked = Perl_Focus_Config[name]["Locked"];
-	showclassicon = Perl_Focus_Config[name]["ClassIcon"];
-	showclassframe = Perl_Focus_Config[name]["ClassFrame"];
-	showpvpicon = Perl_Focus_Config[name]["PvPIcon"]; 
-	numbuffsshown = Perl_Focus_Config[name]["Buffs"];
-	numdebuffsshown = Perl_Focus_Config[name]["Debuffs"];
-	scale = Perl_Focus_Config[name]["Scale"];
-	transparency = Perl_Focus_Config[name]["Transparency"];
-	buffdebuffscale = Perl_Focus_Config[name]["BuffDebuffScale"];
-	showportrait = Perl_Focus_Config[name]["ShowPortrait"];
-	threedportrait = Perl_Focus_Config[name]["ThreeDPortrait"];
-	portraitcombattext = Perl_Focus_Config[name]["PortraitCombatText"];
-	showrareeliteframe = Perl_Focus_Config[name]["ShowRareEliteFrame"];
-	nameframecombopoints = Perl_Focus_Config[name]["NameFrameComboPoints"];
-	comboframedebuffs = Perl_Focus_Config[name]["ComboFrameDebuffs"];
-	framestyle = Perl_Focus_Config[name]["FrameStyle"];
-	compactmode = Perl_Focus_Config[name]["CompactMode"];
-	compactpercent = Perl_Focus_Config[name]["CompactPercent"];
-	hidebuffbackground = Perl_Focus_Config[name]["HideBuffBackground"];
-	shortbars = Perl_Focus_Config[name]["ShortBars"];
-	healermode = Perl_Focus_Config[name]["HealerMode"];
-	displaycastablebuffs = Perl_Focus_Config[name]["DisplayCastableBuffs"];
-	classcolorednames = Perl_Focus_Config[name]["ClassColoredNames"];
-	showmanadeficit = Perl_Focus_Config[name]["ShowManaDeficit"];
-	invertbuffs = Perl_Focus_Config[name]["InvertBuffs"];
-	displaycurabledebuff = Perl_Focus_Config[name]["DisplayCurableDebuff"];
-	displaybufftimers = Perl_Focus_Config[name]["DisplayBuffTimers"];
-	displayonlymydebuffs = Perl_Focus_Config[name]["DisplayOnlyMyDebuffs"];
+	locked = Perl_Focus_Config[index]["Locked"];
+	showclassicon = Perl_Focus_Config[index]["ClassIcon"];
+	showclassframe = Perl_Focus_Config[index]["ClassFrame"];
+	showpvpicon = Perl_Focus_Config[index]["PvPIcon"]; 
+	numbuffsshown = Perl_Focus_Config[index]["Buffs"];
+	numdebuffsshown = Perl_Focus_Config[index]["Debuffs"];
+	scale = Perl_Focus_Config[index]["Scale"];
+	transparency = Perl_Focus_Config[index]["Transparency"];
+	buffdebuffscale = Perl_Focus_Config[index]["BuffDebuffScale"];
+	showportrait = Perl_Focus_Config[index]["ShowPortrait"];
+	threedportrait = Perl_Focus_Config[index]["ThreeDPortrait"];
+	portraitcombattext = Perl_Focus_Config[index]["PortraitCombatText"];
+	showrareeliteframe = Perl_Focus_Config[index]["ShowRareEliteFrame"];
+	nameframecombopoints = Perl_Focus_Config[index]["NameFrameComboPoints"];
+	comboframedebuffs = Perl_Focus_Config[index]["ComboFrameDebuffs"];
+	framestyle = Perl_Focus_Config[index]["FrameStyle"];
+	compactmode = Perl_Focus_Config[index]["CompactMode"];
+	compactpercent = Perl_Focus_Config[index]["CompactPercent"];
+	hidebuffbackground = Perl_Focus_Config[index]["HideBuffBackground"];
+	shortbars = Perl_Focus_Config[index]["ShortBars"];
+	healermode = Perl_Focus_Config[index]["HealerMode"];
+	displaycastablebuffs = Perl_Focus_Config[index]["DisplayCastableBuffs"];
+	classcolorednames = Perl_Focus_Config[index]["ClassColoredNames"];
+	showmanadeficit = Perl_Focus_Config[index]["ShowManaDeficit"];
+	invertbuffs = Perl_Focus_Config[index]["InvertBuffs"];
+	displaycurabledebuff = Perl_Focus_Config[index]["DisplayCurableDebuff"];
+	displaybufftimers = Perl_Focus_Config[index]["DisplayBuffTimers"];
+	displayonlymydebuffs = Perl_Focus_Config[index]["DisplayOnlyMyDebuffs"];
 
 
 	if (locked == nil) then
@@ -1807,7 +1808,7 @@ function Perl_Focus_UpdateVars(vartable)
 		end
 	end
 
-	Perl_Focus_Config[UnitName("player")] = {
+	Perl_Focus_Config[GetRealmName("player").."-"..UnitName("player")] = {
 		["Locked"] = locked,
 		["ClassIcon"] = showclassicon,
 		["ClassFrame"] = showclassframe,

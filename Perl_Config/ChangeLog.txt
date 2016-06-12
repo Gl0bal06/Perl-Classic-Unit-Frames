@@ -1,3 +1,8 @@
+5.01 Beta 6 - July 8, 2012
+ - All: Added server specific saved variable support
+ - Config: Fixed an issue that would prevent deleting profiles
+ - Config: After deleting a profile it will no longer remain displayed in the dropdown menu
+
 5.01 Beta 5 - July 7, 2012
  - Config: Changed some option names regarding the new power bars
  - Player: Added support for additional Warlock power bars

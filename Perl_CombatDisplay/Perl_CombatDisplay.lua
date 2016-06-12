@@ -291,7 +291,8 @@ function Perl_CombatDisplay_Initialize()
 	end
 
 	-- Check if a previous exists, if not, enable by default.
-	if (type(Perl_CombatDisplay_Config[UnitName("player")]) == "table") then
+	Perl_Config_Migrate_Vars_Old_To_New("CombatDisplay");
+	if (type(Perl_CombatDisplay_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
 		Perl_CombatDisplay_GetVars();
 	else
 		Perl_CombatDisplay_UpdateVars();
@@ -1318,24 +1319,24 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_CombatDisplay_GetVars(name, updateflag)
-	if (name == nil) then
-		name = UnitName("player");
+function Perl_CombatDisplay_GetVars(index, updateflag)
+	if (index == nil) then
+		index = GetRealmName("player").."-"..UnitName("player");
 	end
 
-	state = Perl_CombatDisplay_Config[name]["State"];
-	locked = Perl_CombatDisplay_Config[name]["Locked"];
-	healthpersist = Perl_CombatDisplay_Config[name]["HealthPersist"];
-	manapersist = Perl_CombatDisplay_Config[name]["ManaPersist"];
-	scale = Perl_CombatDisplay_Config[name]["Scale"];
-	transparency = Perl_CombatDisplay_Config[name]["Transparency"];
-	showtarget = Perl_CombatDisplay_Config[name]["ShowTarget"];
-	showdruidbar = Perl_CombatDisplay_Config[name]["ShowDruidBar"];
-	showpetbars = Perl_CombatDisplay_Config[name]["ShowPetBars"];
-	rightclickmenu = Perl_CombatDisplay_Config[name]["RightClickMenu"];
-	displaypercents = Perl_CombatDisplay_Config[name]["DisplayPercents"];
-	showcp = Perl_CombatDisplay_Config[name]["ShowCP"];
-	clickthrough = Perl_CombatDisplay_Config[name]["ClickThrough"];
+	state = Perl_CombatDisplay_Config[index]["State"];
+	locked = Perl_CombatDisplay_Config[index]["Locked"];
+	healthpersist = Perl_CombatDisplay_Config[index]["HealthPersist"];
+	manapersist = Perl_CombatDisplay_Config[index]["ManaPersist"];
+	scale = Perl_CombatDisplay_Config[index]["Scale"];
+	transparency = Perl_CombatDisplay_Config[index]["Transparency"];
+	showtarget = Perl_CombatDisplay_Config[index]["ShowTarget"];
+	showdruidbar = Perl_CombatDisplay_Config[index]["ShowDruidBar"];
+	showpetbars = Perl_CombatDisplay_Config[index]["ShowPetBars"];
+	rightclickmenu = Perl_CombatDisplay_Config[index]["RightClickMenu"];
+	displaypercents = Perl_CombatDisplay_Config[index]["DisplayPercents"];
+	showcp = Perl_CombatDisplay_Config[index]["ShowCP"];
+	clickthrough = Perl_CombatDisplay_Config[index]["ClickThrough"];
 
 	if (state == nil) then
 		state = 3;
@@ -1530,7 +1531,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		Perl_CombatDisplay_UpdateDisplay();
 	end
 
-	Perl_CombatDisplay_Config[UnitName("player")] = {
+	Perl_CombatDisplay_Config[GetRealmName("player").."-"..UnitName("player")] = {
 		["State"] = state,
 		["Locked"] = locked,
 		["HealthPersist"] = healthpersist,

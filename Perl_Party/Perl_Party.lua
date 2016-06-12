@@ -285,7 +285,8 @@ function Perl_Party_Initialize()
 	end
 
 	-- Check if a previous exists, if not, enable by default.
-	if (type(Perl_Party_Config[UnitName("player")]) == "table") then
+	Perl_Config_Migrate_Vars_Old_To_New("Party");
+	if (type(Perl_Party_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
 		Perl_Party_GetVars();
 	else
 		Perl_Party_UpdateVars();
@@ -1893,40 +1894,40 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Party_GetVars(name, updateflag)
-	if (name == nil) then
-		name = UnitName("player");
+function Perl_Party_GetVars(index, updateflag)
+	if (index == nil) then
+		index = GetRealmName("player").."-"..UnitName("player");
 	end
 
-	locked = Perl_Party_Config[name]["Locked"];
-	compactmode = Perl_Party_Config[name]["CompactMode"];
-	partyhidden = Perl_Party_Config[name]["PartyHidden"];
-	partyspacing = Perl_Party_Config[name]["PartySpacing"];
-	scale = Perl_Party_Config[name]["Scale"];
-	showpets = Perl_Party_Config[name]["ShowPets"];
-	healermode = Perl_Party_Config[name]["HealerMode"];
-	transparency = Perl_Party_Config[name]["Transparency"];
-	bufflocation = Perl_Party_Config[name]["BuffLocation"];
-	debufflocation = Perl_Party_Config[name]["DebuffLocation"];
-	verticalalign = Perl_Party_Config[name]["VerticalAlign"];
-	compactpercent = Perl_Party_Config[name]["CompactPercent"];
-	showportrait = Perl_Party_Config[name]["ShowPortrait"];
-	showfkeys = Perl_Party_Config[name]["ShowFKeys"];
-	displaycastablebuffs = Perl_Party_Config[name]["DisplayCastableBuffs"];
-	threedportrait = Perl_Party_Config[name]["ThreeDPortrait"];
-	buffsize = Perl_Party_Config[name]["BuffSize"];
-	debuffsize = Perl_Party_Config[name]["DebuffSize"];
-	numbuffsshown = Perl_Party_Config[name]["Buffs"];
-	numdebuffsshown = Perl_Party_Config[name]["Debuffs"];
-	classcolorednames = Perl_Party_Config[name]["ClassColoredNames"];
-	shortbars = Perl_Party_Config[name]["ShortBars"];
-	hideclasslevelframe = Perl_Party_Config[name]["HideClassLevelFrame"];
-	showmanadeficit = Perl_Party_Config[name]["ShowManaDeficit"];
-	showpvpicon = Perl_Party_Config[name]["ShowPvPIcon"];
-	showbarvalues = Perl_Party_Config[name]["ShowBarValues"];
-	displaycurabledebuff = Perl_Party_Config[name]["DisplayCurableDebuff"];
-	portraitbuffs = Perl_Party_Config[name]["PortraitBuffs"];
-	displaybufftimers = Perl_Party_Config[name]["DisplayBuffTimers"];
+	locked = Perl_Party_Config[index]["Locked"];
+	compactmode = Perl_Party_Config[index]["CompactMode"];
+	partyhidden = Perl_Party_Config[index]["PartyHidden"];
+	partyspacing = Perl_Party_Config[index]["PartySpacing"];
+	scale = Perl_Party_Config[index]["Scale"];
+	showpets = Perl_Party_Config[index]["ShowPets"];
+	healermode = Perl_Party_Config[index]["HealerMode"];
+	transparency = Perl_Party_Config[index]["Transparency"];
+	bufflocation = Perl_Party_Config[index]["BuffLocation"];
+	debufflocation = Perl_Party_Config[index]["DebuffLocation"];
+	verticalalign = Perl_Party_Config[index]["VerticalAlign"];
+	compactpercent = Perl_Party_Config[index]["CompactPercent"];
+	showportrait = Perl_Party_Config[index]["ShowPortrait"];
+	showfkeys = Perl_Party_Config[index]["ShowFKeys"];
+	displaycastablebuffs = Perl_Party_Config[index]["DisplayCastableBuffs"];
+	threedportrait = Perl_Party_Config[index]["ThreeDPortrait"];
+	buffsize = Perl_Party_Config[index]["BuffSize"];
+	debuffsize = Perl_Party_Config[index]["DebuffSize"];
+	numbuffsshown = Perl_Party_Config[index]["Buffs"];
+	numdebuffsshown = Perl_Party_Config[index]["Debuffs"];
+	classcolorednames = Perl_Party_Config[index]["ClassColoredNames"];
+	shortbars = Perl_Party_Config[index]["ShortBars"];
+	hideclasslevelframe = Perl_Party_Config[index]["HideClassLevelFrame"];
+	showmanadeficit = Perl_Party_Config[index]["ShowManaDeficit"];
+	showpvpicon = Perl_Party_Config[index]["ShowPvPIcon"];
+	showbarvalues = Perl_Party_Config[index]["ShowBarValues"];
+	displaycurabledebuff = Perl_Party_Config[index]["DisplayCurableDebuff"];
+	portraitbuffs = Perl_Party_Config[index]["PortraitBuffs"];
+	displaybufftimers = Perl_Party_Config[index]["DisplayBuffTimers"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -2319,7 +2320,7 @@ function Perl_Party_UpdateVars(vartable)
 		Perl_Party_Set_Transparency();
 	end
 
-	Perl_Party_Config[UnitName("player")] = {
+	Perl_Party_Config[GetRealmName("player").."-"..UnitName("player")] = {
 		["Locked"] = locked,
 		["CompactMode"] = compactmode,
 		["PartyHidden"] = partyhidden,

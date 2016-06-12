@@ -108,7 +108,8 @@ function Perl_Party_Target_Initialize()
 	end
 
 	-- Check if a previous exists, if not, enable by default.
-	if (type(Perl_Party_Target_Config[UnitName("player")]) == "table") then
+	Perl_Config_Migrate_Vars_Old_To_New("Party_Target");
+	if (type(Perl_Party_Target_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
 		Perl_Party_Target_GetVars();
 	else
 		Perl_Party_Target_UpdateVars();
@@ -898,21 +899,21 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Party_Target_GetVars(name, updateflag)
-	if (name == nil) then
-		name = UnitName("player");
+function Perl_Party_Target_GetVars(index, updateflag)
+	if (index == nil) then
+		index = GetRealmName("player").."-"..UnitName("player");
 	end
 
-	locked = Perl_Party_Target_Config[name]["Locked"];
-	scale = Perl_Party_Target_Config[name]["Scale"];
-	focusscale = Perl_Party_Target_Config[name]["FocusScale"];
-	transparency = Perl_Party_Target_Config[name]["Transparency"];
-	hidepowerbars = Perl_Party_Target_Config[name]["HidePowerBars"];
-	classcolorednames = Perl_Party_Target_Config[name]["ClassColoredNames"];
-	enabled = Perl_Party_Target_Config[name]["Enabled"];
-	partyhiddeninraid = Perl_Party_Target_Config[name]["PartyHiddenInRaid"];
-	enabledfocus = Perl_Party_Target_Config[name]["EnabledFocus"];
-	focushiddeninraid = Perl_Party_Target_Config[name]["FocusHiddenInRaid"];
+	locked = Perl_Party_Target_Config[index]["Locked"];
+	scale = Perl_Party_Target_Config[index]["Scale"];
+	focusscale = Perl_Party_Target_Config[index]["FocusScale"];
+	transparency = Perl_Party_Target_Config[index]["Transparency"];
+	hidepowerbars = Perl_Party_Target_Config[index]["HidePowerBars"];
+	classcolorednames = Perl_Party_Target_Config[index]["ClassColoredNames"];
+	enabled = Perl_Party_Target_Config[index]["Enabled"];
+	partyhiddeninraid = Perl_Party_Target_Config[index]["PartyHiddenInRaid"];
+	enabledfocus = Perl_Party_Target_Config[index]["EnabledFocus"];
+	focushiddeninraid = Perl_Party_Target_Config[index]["FocusHiddenInRaid"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1065,7 +1066,7 @@ function Perl_Party_Target_UpdateVars(vartable)
 		Perl_Party_Target_Frame_Style();
 	end
 
-	Perl_Party_Target_Config[UnitName("player")] = {
+	Perl_Party_Target_Config[GetRealmName("player").."-"..UnitName("player")] = {
 		["Locked"] = locked,
 		["Scale"] = scale,
 		["FocusScale"] = focusscale,

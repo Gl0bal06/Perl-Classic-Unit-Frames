@@ -131,7 +131,8 @@ function Perl_Config_Initialize()
 	end
 
 	-- Check if a previous exists, if not, enable by default.
-	if (type(Perl_Config_Config[UnitName("player")]) == "table") then
+	Perl_Config_Migrate_Vars_Old_To_New("Config");
+	if (type(Perl_Config_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
 		Perl_Config_GetVars();
 	else
 		Perl_Config_UpdateVars();
@@ -153,6 +154,356 @@ function Perl_Config_Initialize()
 	Initialized = 1;
 
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": "..PERL_LOCALIZED_VERSION.." loaded.");
+end
+
+
+-------------------------------
+-- Migrate Settings Function --
+-------------------------------
+function Perl_Config_Migrate_Vars_Old_To_New(addon)
+	local name = UnitName("player");
+	local realm = GetRealmName("player");
+
+	if (addon == "ArcaneBar") then
+		if (type(Perl_ArcaneBar_Config[name]) == "table" and type(Perl_ArcaneBar_Config[realm.."-"..name]) ~= "table") then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": Migrating settings for Perl_"..addon);
+
+			Perl_ArcaneBar_Config[realm.."-"..name] = {
+				["PlayerEnabled"] = Perl_ArcaneBar_Config[name]["PlayerEnabled"],
+				["TargetEnabled"] = Perl_ArcaneBar_Config[name]["TargetEnabled"],
+				["FocusEnabled"] = Perl_ArcaneBar_Config[name]["FocusEnabled"],
+				["PartyEnabled"] = Perl_ArcaneBar_Config[name]["PartyEnabled"],
+				["PlayerShowTimer"] = Perl_ArcaneBar_Config[name]["PlayerShowTimer"],
+				["TargetShowTimer"] = Perl_ArcaneBar_Config[name]["TargetShowTimer"],
+				["FocusShowTimer"] = Perl_ArcaneBar_Config[name]["FocusShowTimer"],
+				["PartyShowTimer"] = Perl_ArcaneBar_Config[name]["PartyShowTimer"],
+				["PlayerLeftTimer"] = Perl_ArcaneBar_Config[name]["PlayerLeftTimer"],
+				["TargetLeftTimer"] = Perl_ArcaneBar_Config[name]["TargetLeftTimer"],
+				["FocusLeftTimer"] = Perl_ArcaneBar_Config[name]["FocusLeftTimer"],
+				["PartyLeftTimer"] = Perl_ArcaneBar_Config[name]["PartyLeftTimer"],
+				["PlayerNameReplace"] = Perl_ArcaneBar_Config[name]["PlayerNameReplace"],
+				["TargetNameReplace"] = Perl_ArcaneBar_Config[name]["TargetNameReplace"],
+				["FocusNameReplace"] = Perl_ArcaneBar_Config[name]["FocusNameReplace"],
+				["PartyNameReplace"] = Perl_ArcaneBar_Config[name]["PartyNameReplace"],
+				["HideOriginal"] = Perl_ArcaneBar_Config[name]["HideOriginal"],
+				["Transparency"] = Perl_ArcaneBar_Config[name]["Transparency"],
+			};
+		end
+	end
+
+	if (addon == "CombatDisplay") then
+		if (type(Perl_CombatDisplay_Config[name]) == "table" and type(Perl_CombatDisplay_Config[realm.."-"..name]) ~= "table") then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": Migrating settings for Perl_"..addon);
+
+			Perl_CombatDisplay_Config[realm.."-"..name] = {
+				["State"] = Perl_CombatDisplay_Config[name]["State"],
+				["Locked"] = Perl_CombatDisplay_Config[name]["Locked"],
+				["HealthPersist"] = Perl_CombatDisplay_Config[name]["HealthPersist"],
+				["ManaPersist"] = Perl_CombatDisplay_Config[name]["ManaPersist"],
+				["Scale"] = Perl_CombatDisplay_Config[name]["Scale"],
+				["Transparency"] = Perl_CombatDisplay_Config[name]["Transparency"],
+				["ShowTarget"] = Perl_CombatDisplay_Config[name]["ShowTarget"],
+				["ShowDruidBar"] = Perl_CombatDisplay_Config[name]["ShowDruidBar"],
+				["ShowPetBars"] = Perl_CombatDisplay_Config[name]["ShowPetBars"],
+				["RightClickMenu"] = Perl_CombatDisplay_Config[name]["RightClickMenu"],
+				["DisplayPercents"] = Perl_CombatDisplay_Config[name]["DisplayPercents"],
+				["ShowCP"] = Perl_CombatDisplay_Config[name]["ShowCP"],
+				["ClickThrough"] = Perl_CombatDisplay_Config[name]["ClickThrough"],
+			};
+		end
+	end
+
+	if (addon == "Config") then
+		if (type(Perl_Config_Config[name]) == "table" and type(Perl_Config_Config[realm.."-"..name]) ~= "table") then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": Migrating settings for Perl_"..addon);
+
+			Perl_Config_Config[realm.."-"..name] = {
+				["Texture"] = Perl_Config_Config[name]["Texture"],
+				["ShowMiniMapButton"] = Perl_Config_Config[name]["ShowMiniMapButton"],
+				["MiniMapButtonPos"] = Perl_Config_Config[name]["MiniMapButtonPos"],
+				["TransparentBackground"] = Perl_Config_Config[name]["TransparentBackground"],
+				["PCUF_CastPartySupport"] = Perl_Config_Config[name]["PCUF_CastPartySupport"],
+				["PCUF_ColorHealth"] = Perl_Config_Config[name]["PCUF_ColorHealth"],
+				["TexturedBarBackround"] = Perl_Config_Config[name]["TexturedBarBackround"],
+				["PCUF_FadeBars"] = Perl_Config_Config[name]["PCUF_FadeBars"],
+				["PCUF_NameFrameClickCast"] = Perl_Config_Config[name]["PCUF_NameFrameClickCast"],
+				["PCUF_InvertBarValues"] = Perl_Config_Config[name]["PCUF_InvertBarValues"],
+				["MiniMapButtonRad"] = Perl_Config_Config[name]["MiniMapButtonRad"],
+				["PCUF_ColorFrameDebuff"] = Perl_Config_Config[name]["PCUF_ColorFrameDebuff"],
+				["PositioningMode"] = Perl_Config_Config[name]["PositioningMode"],
+				["PCUF_ThreatIcon"] = Perl_Config_Config[name]["PCUF_ThreatIcon"],
+			};
+		end
+	end
+
+	if (addon == "Focus") then
+		if (type(Perl_Focus_Config[name]) == "table" and type(Perl_Focus_Config[realm.."-"..name]) ~= "table") then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": Migrating settings for Perl_"..addon);
+
+			Perl_Focus_Config[realm.."-"..name] = {
+				["Locked"] = Perl_Focus_Config[name]["Locked"],
+				["ClassIcon"] = Perl_Focus_Config[name]["ClassIcon"],
+				["ClassFrame"] = Perl_Focus_Config[name]["ClassFrame"],
+				["PvPIcon"] = Perl_Focus_Config[name]["PvPIcon"],
+				["Buffs"] = Perl_Focus_Config[name]["Buffs"],
+				["Debuffs"] = Perl_Focus_Config[name]["Debuffs"],
+				["Scale"] = Perl_Focus_Config[name]["Scale"],
+				["Transparency"] = Perl_Focus_Config[name]["Transparency"],
+				["BuffDebuffScale"] = Perl_Focus_Config[name]["BuffDebuffScale"],
+				["ShowPortrait"] = Perl_Focus_Config[name]["ShowPortrait"],
+				["ThreeDPortrait"] = Perl_Focus_Config[name]["ThreeDPortrait"],
+				["PortraitCombatText"] = Perl_Focus_Config[name]["PortraitCombatText"],
+				["ShowRareEliteFrame"] = Perl_Focus_Config[name]["ShowRareEliteFrame"],
+				["NameFrameComboPoints"] = Perl_Focus_Config[name]["NameFrameComboPoints"],
+				["ComboFrameDebuffs"] = Perl_Focus_Config[name]["ComboFrameDebuffs"],
+				["FrameStyle"] = Perl_Focus_Config[name]["FrameStyle"],
+				["CompactMode"] = Perl_Focus_Config[name]["CompactMode"],
+				["CompactPercent"] = Perl_Focus_Config[name]["CompactPercent"],
+				["HideBuffBackground"] = Perl_Focus_Config[name]["HideBuffBackground"],
+				["ShortBars"] = Perl_Focus_Config[name]["ShortBars"],
+				["HealerMode"] = Perl_Focus_Config[name]["HealerMode"],
+				["DisplayCastableBuffs"] = Perl_Focus_Config[name]["DisplayCastableBuffs"],
+				["ClassColoredNames"] = Perl_Focus_Config[name]["ClassColoredNames"],
+				["ShowManaDeficit"] = Perl_Focus_Config[name]["ShowManaDeficit"],
+				["InvertBuffs"] = Perl_Focus_Config[name]["InvertBuffs"],
+				["DisplayCurableDebuff"] = Perl_Focus_Config[name]["DisplayCurableDebuff"],
+				["DisplayBuffTimers"] = Perl_Focus_Config[name]["DisplayBuffTimers"],
+				["DisplayOnlyMyDebuffs"] = Perl_Focus_Config[name]["DisplayOnlyMyDebuffs"],
+			};
+		end
+	end
+
+	if (addon == "Party") then
+		if (type(Perl_Party_Config[name]) == "table" and type(Perl_Party_Config[realm.."-"..name]) ~= "table") then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": Migrating settings for Perl_"..addon);
+
+			Perl_Party_Config[realm.."-"..name] = {
+				["Locked"] = Perl_Party_Config[name]["Locked"],
+				["CompactMode"] = Perl_Party_Config[name]["CompactMode"],
+				["PartyHidden"] = Perl_Party_Config[name]["PartyHidden"],
+				["PartySpacing"] = Perl_Party_Config[name]["PartySpacing"],
+				["Scale"] = Perl_Party_Config[name]["Scale"],
+				["ShowPets"] = Perl_Party_Config[name]["ShowPets"],
+				["HealerMode"] = Perl_Party_Config[name]["HealerMode"],
+				["Transparency"] = Perl_Party_Config[name]["Transparency"],
+				["BuffLocation"] = Perl_Party_Config[name]["BuffLocation"],
+				["DebuffLocation"] = Perl_Party_Config[name]["DebuffLocation"],
+				["VerticalAlign"] = Perl_Party_Config[name]["VerticalAlign"],
+				["CompactPercent"] = Perl_Party_Config[name]["CompactPercent"],
+				["ShowPortrait"] = Perl_Party_Config[name]["ShowPortrait"],
+				["ShowFKeys"] = Perl_Party_Config[name]["ShowFKeys"],
+				["DisplayCastableBuffs"] = Perl_Party_Config[name]["DisplayCastableBuffs"],
+				["ThreeDPortrait"] = Perl_Party_Config[name]["ThreeDPortrait"],
+				["BuffSize"] = Perl_Party_Config[name]["BuffSize"],
+				["DebuffSize"] = Perl_Party_Config[name]["DebuffSize"],
+				["Buffs"] = Perl_Party_Config[name]["Buffs"],
+				["Debuffs"] = Perl_Party_Config[name]["Debuffs"],
+				["ClassColoredNames"] = Perl_Party_Config[name]["ClassColoredNames"],
+				["ShortBars"] = Perl_Party_Config[name]["ShortBars"],
+				["HideClassLevelFrame"] = Perl_Party_Config[name]["HideClassLevelFrame"],
+				["ShowManaDeficit"] = Perl_Party_Config[name]["ShowManaDeficit"],
+				["ShowPvPIcon"] = Perl_Party_Config[name]["ShowPvPIcon"],
+				["ShowBarValues"] = Perl_Party_Config[name]["ShowBarValues"],
+				["DisplayCurableDebuff"] = Perl_Party_Config[name]["DisplayCurableDebuff"],
+				["PortraitBuffs"] = Perl_Party_Config[name]["PortraitBuffs"],
+				["DisplayBuffTimers"] = Perl_Party_Config[name]["DisplayBuffTimers"],
+			};
+		end
+	end
+
+	if (addon == "Party_Pet") then
+		if (type(Perl_Party_Pet_Config[name]) == "table" and type(Perl_Party_Pet_Config[realm.."-"..name]) ~= "table") then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": Migrating settings for Perl_"..addon);
+
+			Perl_Party_Pet_Config[realm.."-"..name] = {
+				["Locked"] = Perl_Party_Pet_Config[name]["Locked"],
+				["ShowPortrait"] = Perl_Party_Pet_Config[name]["ShowPortrait"],
+				["ThreeDPortrait"] = Perl_Party_Pet_Config[name]["ThreeDPortrait"],
+				["Scale"] = Perl_Party_Pet_Config[name]["Scale"],
+				["Transparency"] = Perl_Party_Pet_Config[name]["Transparency"],
+				["Buffs"] = Perl_Party_Pet_Config[name]["Buffs"],
+				["Debuffs"] = Perl_Party_Pet_Config[name]["Debuffs"],
+				["BuffSize"] = Perl_Party_Pet_Config[name]["BuffSize"],
+				["DebuffSize"] = Perl_Party_Pet_Config[name]["DebuffSize"],
+				["BuffLocation"] = Perl_Party_Pet_Config[name]["BuffLocation"],
+				["DebuffLocation"] = Perl_Party_Pet_Config[name]["DebuffLocation"],
+				["HiddenInRaids"] = Perl_Party_Pet_Config[name]["HiddenInRaids"],
+				["Enabled"] = Perl_Party_Pet_Config[name]["Enabled"],
+				["DisplayCastableBuffs"] = Perl_Party_Pet_Config[name]["DisplayCastableBuffs"],
+				["DisplayCurableDebuff"] = Perl_Party_Pet_Config[name]["DisplayCurableDebuff"],
+			};
+		end
+	end
+
+	if (addon == "Party_Target") then
+		if (type(Perl_Party_Target_Config[name]) == "table" and type(Perl_Party_Target_Config[realm.."-"..name]) ~= "table") then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": Migrating settings for Perl_"..addon);
+
+			Perl_Party_Target_Config[realm.."-"..name] = {
+				["Locked"] = Perl_Party_Target_Config[name]["Locked"],
+				["Scale"] = Perl_Party_Target_Config[name]["Scale"],
+				["FocusScale"] = Perl_Party_Target_Config[name]["FocusScale"],
+				["Transparency"] = Perl_Party_Target_Config[name]["Transparency"],
+				["HidePowerBars"] = Perl_Party_Target_Config[name]["HidePowerBars"],
+				["ClassColoredNames"] = Perl_Party_Target_Config[name]["ClassColoredNames"],
+				["Enabled"] = Perl_Party_Target_Config[name]["Enabled"],
+				["PartyHiddenInRaid"] = Perl_Party_Target_Config[name]["PartyHiddenInRaid"],
+				["EnabledFocus"] = Perl_Party_Target_Config[name]["EnabledFocus"],
+				["FocusHiddenInRaid"] = Perl_Party_Target_Config[name]["FocusHiddenInRaid"],
+			};
+		end
+	end
+
+	if (addon == "Player") then
+		if (type(Perl_Player_Config[name]) == "table" and type(Perl_Player_Config[realm.."-"..name]) ~= "table") then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": Migrating settings for Perl_"..addon);
+
+			Perl_Player_Config[realm.."-"..name] = {
+				["Locked"] = Perl_Player_Config[name]["Locked"],
+				["XPBarState"] = Perl_Player_Config[name]["XPBarState"],
+				["CompactMode"] = Perl_Player_Config[name]["CompactMode"],
+				["ShowRaidGroup"] = Perl_Player_Config[name]["ShowRaidGroup"],
+				["Scale"] = Perl_Player_Config[name]["Scale"],
+				["HealerMode"] = Perl_Player_Config[name]["HealerMode"],
+				["Transparency"] = Perl_Player_Config[name]["Transparency"],
+				["ShowPortrait"] = Perl_Player_Config[name]["ShowPortrait"],
+				["CompactPercent"] = Perl_Player_Config[name]["CompactPercent"],
+				["ThreeDPortrait"] = Perl_Player_Config[name]["ThreeDPortrait"],
+				["PortraitCombatText"] = Perl_Player_Config[name]["PortraitCombatText"],
+				["ShowDruidBar"] = Perl_Player_Config[name]["ShowDruidBar"],
+				["ShortBars"] = Perl_Player_Config[name]["ShortBars"],
+				["ClassColoredNames"] = Perl_Player_Config[name]["ClassColoredNames"],
+				["HideClassLevelFrame"] = Perl_Player_Config[name]["HideClassLevelFrame"],
+				["ShowManaDeficit"] = Perl_Player_Config[name]["ShowManaDeficit"],
+				["HiddenInRaid"] = Perl_Player_Config[name]["HiddenInRaid"],
+				["ShowPvPIcon"] = Perl_Player_Config[name]["ShowPvPIcon"],
+				["ShowBarValues"] = Perl_Player_Config[name]["ShowBarValues"],
+				["ShowRaidGroupInName"] = Perl_Player_Config[name]["ShowRaidGroupInName"],
+				["FiveSecondRule"] = Perl_Player_Config[name]["FiveSecondRule"],
+				["TotemTimers"] = Perl_Player_Config[name]["TotemTimers"],
+				["RuneFrame"] = Perl_Player_Config[name]["RuneFrame"],
+				["PvPTimer"] = Perl_Player_Config[name]["PvPTimer"],
+				["PaladinPowerBar"] = Perl_Player_Config[name]["PaladinPowerBar"],
+				["ShardBarFrame"] = Perl_Player_Config[name]["ShardBarFrame"],
+				["EclipseBarFrame"] = Perl_Player_Config[name]["EclipseBarFrame"],
+				["HarmonyBarFrame"] = Perl_Player_Config[name]["HarmonyBarFrame"],
+				["PriestBarFrame"] = Perl_Player_Config[name]["PriestBarFrame"],
+			};
+		end
+	end
+
+	if (addon == "Player_Buff") then
+		if (type(Perl_Player_Buff_Config[name]) == "table" and type(Perl_Player_Buff_Config[realm.."-"..name]) ~= "table") then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": Migrating settings for Perl_"..addon);
+
+			Perl_Player_Buff_Config[realm.."-"..name] = {
+				["BuffAlerts"] = Perl_Player_Buff_Config[name]["BuffAlerts"],
+				["ShowBuffs"] = Perl_Player_Buff_Config[name]["ShowBuffs"],
+				["Scale"] = Perl_Player_Buff_Config[name]["Scale"],
+				["HideSeconds"] = Perl_Player_Buff_Config[name]["HideSeconds"],
+				["HorizontalSpacing"] = Perl_Player_Buff_Config[name]["HorizontalSpacing"],
+			};
+		end
+	end
+
+	if (addon == "Player_Pet") then
+		if (type(Perl_Player_Pet_Config[name]) == "table" and type(Perl_Player_Pet_Config[realm.."-"..name]) ~= "table") then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": Migrating settings for Perl_"..addon);
+
+			Perl_Player_Pet_Config[realm.."-"..name] = {
+				["Locked"] = Perl_Player_Pet_Config[name]["Locked"],
+				["ShowXP"] = Perl_Player_Pet_Config[name]["ShowXP"],
+				["Scale"] = Perl_Player_Pet_Config[name]["Scale"],
+				["TargetScale"] = Perl_Player_Pet_Config[name]["TargetScale"],
+				["Buffs"] = Perl_Player_Pet_Config[name]["Buffs"],
+				["Debuffs"] = Perl_Player_Pet_Config[name]["Debuffs"],
+				["Transparency"] = Perl_Player_Pet_Config[name]["Transparency"],
+				["BuffLocation"] = Perl_Player_Pet_Config[name]["BuffLocation"],
+				["DebuffLocation"] = Perl_Player_Pet_Config[name]["DebuffLocation"],
+				["BuffSize"] = Perl_Player_Pet_Config[name]["BuffSize"],
+				["DebuffSize"] = Perl_Player_Pet_Config[name]["DebuffSize"],
+				["ShowPortrait"] = Perl_Player_Pet_Config[name]["ShowPortrait"],
+				["ThreeDPortrait"] = Perl_Player_Pet_Config[name]["ThreeDPortrait"],
+				["PortraitCombatText"] = Perl_Player_Pet_Config[name]["PortraitCombatText"],
+				["CompactMode"] = Perl_Player_Pet_Config[name]["CompactMode"],
+				["HideName"] = Perl_Player_Pet_Config[name]["HideName"],
+				["DisplayPetTarget"] = Perl_Player_Pet_Config[name]["DisplayPetTarget"],
+				["ClassColoredNames"] = Perl_Player_Pet_Config[name]["ClassColoredNames"],
+				["ShowFriendlyHealth"] = Perl_Player_Pet_Config[name]["ShowFriendlyHealth"],
+				["DisplayCastableBuffs"] = Perl_Player_Pet_Config[name]["DisplayCastableBuffs"],
+				["DisplayCurableDebuff"] = Perl_Player_Pet_Config[name]["DisplayCurableDebuff"],
+			};
+		end
+	end
+
+	if (addon == "Target") then
+		if (type(Perl_Target_Config[name]) == "table" and type(Perl_Target_Config[realm.."-"..name]) ~= "table") then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": Migrating settings for Perl_"..addon);
+
+			Perl_Target_Config[realm.."-"..name] = {
+				["Locked"] = Perl_Target_Config[name]["Locked"],
+				["ComboPoints"] = Perl_Target_Config[name]["ComboPoints"],
+				["ClassIcon"] = Perl_Target_Config[name]["ClassIcon"],
+				["ClassFrame"] = Perl_Target_Config[name]["ClassFrame"],
+				["PvPIcon"] = Perl_Target_Config[name]["PvPIcon"],
+				["Buffs"] = Perl_Target_Config[name]["Buffs"],
+				["Debuffs"] = Perl_Target_Config[name]["Debuffs"],
+				["Scale"] = Perl_Target_Config[name]["Scale"],
+				["Transparency"] = Perl_Target_Config[name]["Transparency"],
+				["BuffDebuffScale"] = Perl_Target_Config[name]["BuffDebuffScale"],
+				["ShowPortrait"] = Perl_Target_Config[name]["ShowPortrait"],
+				["ThreeDPortrait"] = Perl_Target_Config[name]["ThreeDPortrait"],
+				["PortraitCombatText"] = Perl_Target_Config[name]["PortraitCombatText"],
+				["ShowRareEliteFrame"] = Perl_Target_Config[name]["ShowRareEliteFrame"],
+				["NameFrameComboPoints"] = Perl_Target_Config[name]["NameFrameComboPoints"],
+				["ComboFrameDebuffs"] = Perl_Target_Config[name]["ComboFrameDebuffs"],
+				["FrameStyle"] = Perl_Target_Config[name]["FrameStyle"],
+				["CompactMode"] = Perl_Target_Config[name]["CompactMode"],
+				["CompactPercent"] = Perl_Target_Config[name]["CompactPercent"],
+				["HideBuffBackground"] = Perl_Target_Config[name]["HideBuffBackground"],
+				["ShortBars"] = Perl_Target_Config[name]["ShortBars"],
+				["HealerMode"] = Perl_Target_Config[name]["HealerMode"],
+				["SoundTargetChange"] = Perl_Target_Config[name]["SoundTargetChange"],
+				["DisplayCastableBuffs"] = Perl_Target_Config[name]["DisplayCastableBuffs"],
+				["ClassColoredNames"] = Perl_Target_Config[name]["ClassColoredNames"],
+				["ShowManaDeficit"] = Perl_Target_Config[name]["ShowManaDeficit"],
+				["InvertBuffs"] = Perl_Target_Config[name]["InvertBuffs"],
+				["ShowGuildName"] = Perl_Target_Config[name]["ShowGuildName"],
+				["EliteRareGraphic"] = Perl_Target_Config[name]["EliteRareGraphic"],
+				["DisplayCurableDebuff"] = Perl_Target_Config[name]["DisplayCurableDebuff"],
+				["DisplayBuffTimers"] = Perl_Target_Config[name]["DisplayBuffTimers"],
+				["DisplayNumbericThreat"] = Perl_Target_Config[name]["DisplayNumbericThreat"],
+				["DisplayOnlyMyDebuffs"] = Perl_Target_Config[name]["DisplayOnlyMyDebuffs"],
+			};
+		end
+	end
+
+	if (addon == "Target_Target") then
+		if (type(Perl_Target_Target_Config[name]) == "table" and type(Perl_Target_Target_Config[realm.."-"..name]) ~= "table") then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": Migrating settings for Perl_"..addon);
+
+			Perl_Target_Target_Config[realm.."-"..name] = {
+				["Locked"] = Perl_Target_Target_Config[name]["Locked"],
+				["Scale"] = Perl_Target_Target_Config[name]["Scale"],
+				["ToTSupport"] = Perl_Target_Target_Config[name]["ToTSupport"],
+				["ToToTSupport"] = Perl_Target_Target_Config[name]["ToToTSupport"],
+				["Transparency"] = Perl_Target_Target_Config[name]["Transparency"],
+				["AlertSound"] = Perl_Target_Target_Config[name]["AlertSound"],
+				["AlertMode"] = Perl_Target_Target_Config[name]["AlertMode"],
+				["AlertSize"] = Perl_Target_Target_Config[name]["AlertSize"],
+				["ShowToTBuffs"] = Perl_Target_Target_Config[name]["ShowToTBuffs"],
+				["ShowToToTBuffs"] = Perl_Target_Target_Config[name]["ShowToToTBuffs"],
+				["HidePowerBars"] = Perl_Target_Target_Config[name]["HidePowerBars"],
+				["ShowToTDebuffs"] = Perl_Target_Target_Config[name]["ShowToTDebuffs"],
+				["ShowToToTDebuffs"] = Perl_Target_Target_Config[name]["ShowToToTDebuffs"],
+				["DisplayCastableBuffs"] = Perl_Target_Target_Config[name]["DisplayCastableBuffs"],
+				["ClassColoredNames"] = Perl_Target_Target_Config[name]["ClassColoredNames"],
+				["ShowFriendlyHealth"] = Perl_Target_Target_Config[name]["ShowFriendlyHealth"],
+				["DisplayCurableDebuff"] = Perl_Target_Target_Config[name]["DisplayCurableDebuff"],
+				["DisplayOnlyMyDebuffs"] = Perl_Target_Target_Config[name]["DisplayOnlyMyDebuffs"],
+			};
+		end
+	end
 end
 
 
@@ -358,7 +709,7 @@ end
 -- Profile Functions --
 -----------------------
 function Perl_Config_Profile_Work()
-	local name = UnitName("player");
+	local name = GetRealmName("player").."-"..UnitName("player");
 	local found = 0;
 
 	for i=1,table.getn(Perl_Config_Profiles),1 do
@@ -397,6 +748,7 @@ end
 
 function Perl_Config_Profile_Load()
 	local name = Perl_Config_Profiles[currentprofilenumber];
+
 	if (name ~= nil) then
 		Perl_Config_GetVars(name, 1);
 
@@ -447,18 +799,10 @@ function Perl_Config_Profile_Load()
 end
 
 function Perl_Config_Profile_Delete()
-	local name = Perl_Config_Profiles[currentprofilenumber];
-	local indexfound = nil;
-	for i = 1, getn(Perl_Config_Profiles), 1 do
-		if (name == Perl_Config_Profiles[i]) then
-			indexfound = i;
-			break;
-		end
-	end
-
-	if (indexfound ~= nil) then
-		DEFAULT_CHAT_FRAME:AddMessage(PERL_LOCALIZED_CONFIG_ALL_DELETE_PROFILE_OUTPUT..Perl_Config_Profiles[indexfound]);
-		Perl_Config_Profiles[indexfound] = table.remove(Perl_Config_Profiles);
+	if (getn(Perl_Config_Profiles) > 0 and currentprofilenumber ~= 0) then
+		table.remove(Perl_Config_Profiles, currentprofilenumber);
+		UIDropDownMenu_SetSelectedID(Perl_Config_All_Frame_DropDown1, 0);
+		currentprofilenumber = 0;
 	end
 end
 
@@ -1700,25 +2044,25 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Config_GetVars(name, updateflag)
-	if (name == nil) then
-		name = UnitName("player");
+function Perl_Config_GetVars(index, updateflag)
+	if (index == nil) then
+		index = GetRealmName("player").."-"..UnitName("player");
 	end
 
-	texture = Perl_Config_Config[name]["Texture"];
-	showminimapbutton = Perl_Config_Config[name]["ShowMiniMapButton"];
-	minimapbuttonpos = Perl_Config_Config[name]["MiniMapButtonPos"];
-	transparentbackground = Perl_Config_Config[name]["TransparentBackground"];
-	PCUF_CASTPARTYSUPPORT = Perl_Config_Config[name]["PCUF_CastPartySupport"];
-	PCUF_COLORHEALTH = Perl_Config_Config[name]["PCUF_ColorHealth"];
-	texturedbarbackground = Perl_Config_Config[name]["TexturedBarBackround"];
-	PCUF_FADEBARS = Perl_Config_Config[name]["PCUF_FadeBars"];
-	PCUF_NAMEFRAMECLICKCAST = Perl_Config_Config[name]["PCUF_NameFrameClickCast"];
-	PCUF_INVERTBARVALUES = Perl_Config_Config[name]["PCUF_InvertBarValues"];
-	minimapbuttonrad = Perl_Config_Config[name]["MiniMapButtonRad"];
-	PCUF_COLORFRAMEDEBUFF = Perl_Config_Config[name]["PCUF_ColorFrameDebuff"];
-	positioningmode = Perl_Config_Config[name]["PositioningMode"];
-	PCUF_THREATICON = Perl_Config_Config[name]["PCUF_ThreatIcon"];
+	texture = Perl_Config_Config[index]["Texture"];
+	showminimapbutton = Perl_Config_Config[index]["ShowMiniMapButton"];
+	minimapbuttonpos = Perl_Config_Config[index]["MiniMapButtonPos"];
+	transparentbackground = Perl_Config_Config[index]["TransparentBackground"];
+	PCUF_CASTPARTYSUPPORT = Perl_Config_Config[index]["PCUF_CastPartySupport"];
+	PCUF_COLORHEALTH = Perl_Config_Config[index]["PCUF_ColorHealth"];
+	texturedbarbackground = Perl_Config_Config[index]["TexturedBarBackround"];
+	PCUF_FADEBARS = Perl_Config_Config[index]["PCUF_FadeBars"];
+	PCUF_NAMEFRAMECLICKCAST = Perl_Config_Config[index]["PCUF_NameFrameClickCast"];
+	PCUF_INVERTBARVALUES = Perl_Config_Config[index]["PCUF_InvertBarValues"];
+	minimapbuttonrad = Perl_Config_Config[index]["MiniMapButtonRad"];
+	PCUF_COLORFRAMEDEBUFF = Perl_Config_Config[index]["PCUF_ColorFrameDebuff"];
+	positioningmode = Perl_Config_Config[index]["PositioningMode"];
+	PCUF_THREATICON = Perl_Config_Config[index]["PCUF_ThreatIcon"];
 
 	if (texture == nil) then
 		texture = 0;
@@ -1921,7 +2265,7 @@ function Perl_Config_UpdateVars(vartable)
 		Perl_Config_Set_Background();
 	end
 
-	Perl_Config_Config[UnitName("player")] = {
+	Perl_Config_Config[GetRealmName("player").."-"..UnitName("player")] = {
 		["Texture"] = texture,
 		["ShowMiniMapButton"] = showminimapbutton,
 		["MiniMapButtonPos"] = minimapbuttonpos,
@@ -2000,55 +2344,55 @@ function Perl_Config_Button_OnClick(self, button)
 		local unlockedflag = 0;
 
 		if (Perl_CombatDisplay_Frame) then
-			if (Perl_CombatDisplay_Config[UnitName("player")]["Locked"] == 0) then
+			if (Perl_CombatDisplay_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				unlockedflag = 1;
 			end
 		end
 
 		if (Perl_Focus_Frame) then
-			if (Perl_Focus_Config[UnitName("player")]["Locked"] == 0) then
+			if (Perl_Focus_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				unlockedflag = 1;
 			end
 		end
 
 		if (Perl_Party_Frame) then
-			if (Perl_Party_Config[UnitName("player")]["Locked"] == 0) then
+			if (Perl_Party_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				unlockedflag = 1;
 			end
 		end
 
 		if (Perl_Party_Pet_Script_Frame) then
-			if (Perl_Party_Pet_Config[UnitName("player")]["Locked"] == 0) then
+			if (Perl_Party_Pet_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				unlockedflag = 1;
 			end
 		end
 
 		if (Perl_Party_Target_Script_Frame) then
-			if (Perl_Party_Target_Config[UnitName("player")]["Locked"] == 0) then
+			if (Perl_Party_Target_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				unlockedflag = 1;
 			end
 		end
 
 		if (Perl_Player_Frame) then
-			if (Perl_Player_Config[UnitName("player")]["Locked"] == 0) then
+			if (Perl_Player_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				unlockedflag = 1;
 			end
 		end
 
 		if (Perl_Player_Pet_Frame) then
-			if (Perl_Player_Pet_Config[UnitName("player")]["Locked"] == 0) then
+			if (Perl_Player_Pet_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				unlockedflag = 1;
 			end
 		end
 
 		if (Perl_Target_Frame) then
-			if (Perl_Target_Config[UnitName("player")]["Locked"] == 0) then
+			if (Perl_Target_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				unlockedflag = 1;
 			end
 		end
 
 		if (Perl_Target_Target_Script_Frame) then
-			if (Perl_Target_Target_Config[UnitName("player")]["Locked"] == 0) then
+			if (Perl_Target_Target_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				unlockedflag = 1;
 			end
 		end
@@ -2071,8 +2415,8 @@ function Perl_Config_Button_Tooltip(self)
 	GameTooltip:SetText("Perl Classic Options");
 
 	if (Perl_CombatDisplay_Frame) then
-		if (type(Perl_CombatDisplay_Config[UnitName("player")]) == "table") then
-			if (Perl_CombatDisplay_Config[UnitName("player")]["Locked"] == 0) then
+		if (type(Perl_CombatDisplay_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
+			if (Perl_CombatDisplay_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				GameTooltip:AddLine("Perl_CombatDisplay is unlocked");
 				unlockedflag = 1;
 			else
@@ -2085,8 +2429,8 @@ function Perl_Config_Button_Tooltip(self)
 	end
 
 	if (Perl_Focus_Frame) then
-		if (type(Perl_Focus_Config[UnitName("player")]) == "table") then
-			if (Perl_Focus_Config[UnitName("player")]["Locked"] == 0) then
+		if (type(Perl_Focus_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
+			if (Perl_Focus_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				GameTooltip:AddLine("Perl_Focus is unlocked");
 				unlockedflag = 1;
 			else
@@ -2099,8 +2443,8 @@ function Perl_Config_Button_Tooltip(self)
 	end
 
 	if (Perl_Party_Frame) then
-		if (type(Perl_Party_Config[UnitName("player")]) == "table") then
-			if (Perl_Party_Config[UnitName("player")]["Locked"] == 0) then
+		if (type(Perl_Party_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
+			if (Perl_Party_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				GameTooltip:AddLine("Perl_Party is unlocked");
 				unlockedflag = 1;
 			else
@@ -2113,8 +2457,8 @@ function Perl_Config_Button_Tooltip(self)
 	end
 
 	if (Perl_Party_Pet_Script_Frame) then
-		if (type(Perl_Party_Pet_Config[UnitName("player")]) == "table") then
-			if (Perl_Party_Pet_Config[UnitName("player")]["Locked"] == 0) then
+		if (type(Perl_Party_Pet_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
+			if (Perl_Party_Pet_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				GameTooltip:AddLine("Perl_Party_Pet is unlocked");
 				unlockedflag = 1;
 			else
@@ -2127,8 +2471,8 @@ function Perl_Config_Button_Tooltip(self)
 	end
 
 	if (Perl_Party_Target_Script_Frame) then
-		if (type(Perl_Party_Target_Config[UnitName("player")]) == "table") then
-			if (Perl_Party_Target_Config[UnitName("player")]["Locked"] == 0) then
+		if (type(Perl_Party_Target_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
+			if (Perl_Party_Target_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				GameTooltip:AddLine("Perl_Party_Target is unlocked");
 				unlockedflag = 1;
 			else
@@ -2141,8 +2485,8 @@ function Perl_Config_Button_Tooltip(self)
 	end
 
 	if (Perl_Player_Frame) then
-		if (type(Perl_Player_Config[UnitName("player")]) == "table") then
-			if (Perl_Player_Config[UnitName("player")]["Locked"] == 0) then
+		if (type(Perl_Player_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
+			if (Perl_Player_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				GameTooltip:AddLine("Perl_Player is unlocked");
 				unlockedflag = 1;
 			else
@@ -2155,8 +2499,8 @@ function Perl_Config_Button_Tooltip(self)
 	end
 
 	if (Perl_Player_Pet_Frame) then
-		if (type(Perl_Player_Pet_Config[UnitName("player")]) == "table") then
-			if (Perl_Player_Pet_Config[UnitName("player")]["Locked"] == 0) then
+		if (type(Perl_Player_Pet_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
+			if (Perl_Player_Pet_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				GameTooltip:AddLine("Perl_Player_Pet is unlocked");
 				unlockedflag = 1;
 			else
@@ -2169,8 +2513,8 @@ function Perl_Config_Button_Tooltip(self)
 	end
 
 	if (Perl_Target_Frame) then
-		if (type(Perl_Target_Config[UnitName("player")]) == "table") then
-			if (Perl_Target_Config[UnitName("player")]["Locked"] == 0) then
+		if (type(Perl_Target_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
+			if (Perl_Target_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				GameTooltip:AddLine("Perl_Target is unlocked");
 				unlockedflag = 1;
 			else
@@ -2183,8 +2527,8 @@ function Perl_Config_Button_Tooltip(self)
 	end
 
 	if (Perl_Target_Target_Script_Frame) then
-		if (type(Perl_Target_Target_Config[UnitName("player")]) == "table") then
-			if (Perl_Target_Target_Config[UnitName("player")]["Locked"] == 0) then
+		if (type(Perl_Target_Target_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
+			if (Perl_Target_Target_Config[GetRealmName("player").."-"..UnitName("player")]["Locked"] == 0) then
 				GameTooltip:AddLine("Perl_Target_Target is unlocked");
 				unlockedflag = 1;
 			else

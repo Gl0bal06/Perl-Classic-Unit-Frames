@@ -360,7 +360,8 @@ function Perl_ArcaneBar_Initialize()
 	end
 
 	-- Check if a previous exists, if not, enable by default.
-	if (type(Perl_ArcaneBar_Config[UnitName("player")]) == "table") then
+	Perl_Config_Migrate_Vars_Old_To_New("ArcaneBar");
+	if (type(Perl_ArcaneBar_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
 		Perl_ArcaneBar_GetVars();
 	else
 		Perl_ArcaneBar_UpdateVars();
@@ -873,29 +874,29 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_ArcaneBar_GetVars(name, updateflag)
-	if (name == nil) then
-		name = UnitName("player");
+function Perl_ArcaneBar_GetVars(index, updateflag)
+	if (index == nil) then
+		index = GetRealmName("player").."-"..UnitName("player");
 	end
 
-	playerenabled = Perl_ArcaneBar_Config[name]["PlayerEnabled"];
-	targetenabled = Perl_ArcaneBar_Config[name]["TargetEnabled"];
-	focusenabled = Perl_ArcaneBar_Config[name]["FocusEnabled"];
-	partyenabled = Perl_ArcaneBar_Config[name]["PartyEnabled"];
-	playershowtimer = Perl_ArcaneBar_Config[name]["PlayerShowTimer"];
-	targetshowtimer = Perl_ArcaneBar_Config[name]["TargetShowTimer"];
-	focusshowtimer = Perl_ArcaneBar_Config[name]["FocusShowTimer"];
-	partyshowtimer = Perl_ArcaneBar_Config[name]["PartyShowTimer"];
-	playerlefttimer = Perl_ArcaneBar_Config[name]["PlayerLeftTimer"];
-	targetlefttimer = Perl_ArcaneBar_Config[name]["TargetLeftTimer"];
-	focuslefttimer = Perl_ArcaneBar_Config[name]["FocusLeftTimer"];
-	partylefttimer = Perl_ArcaneBar_Config[name]["PartyLeftTimer"];
-	playernamereplace = Perl_ArcaneBar_Config[name]["PlayerNameReplace"];
-	targetnamereplace = Perl_ArcaneBar_Config[name]["TargetNameReplace"];
-	focusnamereplace = Perl_ArcaneBar_Config[name]["FocusNameReplace"];
-	partynamereplace = Perl_ArcaneBar_Config[name]["PartyNameReplace"];
-	hideoriginal = Perl_ArcaneBar_Config[name]["HideOriginal"];
-	transparency = Perl_ArcaneBar_Config[name]["Transparency"];
+	playerenabled = Perl_ArcaneBar_Config[index]["PlayerEnabled"];
+	targetenabled = Perl_ArcaneBar_Config[index]["TargetEnabled"];
+	focusenabled = Perl_ArcaneBar_Config[index]["FocusEnabled"];
+	partyenabled = Perl_ArcaneBar_Config[index]["PartyEnabled"];
+	playershowtimer = Perl_ArcaneBar_Config[index]["PlayerShowTimer"];
+	targetshowtimer = Perl_ArcaneBar_Config[index]["TargetShowTimer"];
+	focusshowtimer = Perl_ArcaneBar_Config[index]["FocusShowTimer"];
+	partyshowtimer = Perl_ArcaneBar_Config[index]["PartyShowTimer"];
+	playerlefttimer = Perl_ArcaneBar_Config[index]["PlayerLeftTimer"];
+	targetlefttimer = Perl_ArcaneBar_Config[index]["TargetLeftTimer"];
+	focuslefttimer = Perl_ArcaneBar_Config[index]["FocusLeftTimer"];
+	partylefttimer = Perl_ArcaneBar_Config[index]["PartyLeftTimer"];
+	playernamereplace = Perl_ArcaneBar_Config[index]["PlayerNameReplace"];
+	targetnamereplace = Perl_ArcaneBar_Config[index]["TargetNameReplace"];
+	focusnamereplace = Perl_ArcaneBar_Config[index]["FocusNameReplace"];
+	partynamereplace = Perl_ArcaneBar_Config[index]["PartyNameReplace"];
+	hideoriginal = Perl_ArcaneBar_Config[index]["HideOriginal"];
+	transparency = Perl_ArcaneBar_Config[index]["Transparency"];
 
 	if (playerenabled == nil) then
 		playerenabled = 1;
@@ -1142,7 +1143,7 @@ function Perl_ArcaneBar_UpdateVars(vartable)
 		Perl_ArcaneBar_Set_Transparency();
 	end
 
-	Perl_ArcaneBar_Config[UnitName("player")] = {
+	Perl_ArcaneBar_Config[GetRealmName("player").."-"..UnitName("player")] = {
 		["PlayerEnabled"] = playerenabled,
 		["TargetEnabled"] = targetenabled,
 		["FocusEnabled"] = focusenabled,
