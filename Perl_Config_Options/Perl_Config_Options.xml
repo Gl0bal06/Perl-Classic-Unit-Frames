@@ -313,24 +313,6 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Raid_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_RAID" hidden="true">
-				<Size>
-					<AbsDimension x="100" y="22"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Player_Pet_Button">
-						<Offset>
-							<AbsDimension x="-3" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						Perl_Config_Raid_Display();
-					</OnClick>
-				</Scripts>
-			</Button>
-
 			<Button name="Perl_Config_Target_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_TARGET">
 				<Size>
 					<AbsDimension x="100" y="22"/>
@@ -363,24 +345,6 @@
 				<Scripts>
 					<OnClick>
 						Perl_Config_Target_Target_Display();
-					</OnClick>
-				</Scripts>
-			</Button>
-
-			<Button name="Perl_Config_ThirdParty_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_THIRDPARTY">
-				<Size>
-					<AbsDimension x="90" y="22"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_All_Button">
-						<Offset>
-							<AbsDimension x="65" y="-5"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						Perl_Config_ThirdParty_Display();
 					</OnClick>
 				</Scripts>
 			</Button>

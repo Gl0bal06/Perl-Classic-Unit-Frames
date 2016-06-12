@@ -1,3 +1,15 @@
+2.12 - November 13, 2007
+ - All: Updated TOC Interface version to 20300
+ - All: Buffs and debuffs now appear behind unit frames when overlapped
+ - CombatDisplay/Player: Removed deprecated FiveSec support code
+ - Config: Removed some translations that are no longer used
+ - Config: Removed the white background graphic as it is no longer used
+ - Config: Removed all remaining Perl_Raid code and option frames
+ - Config: Removed the Third Party options button and code since it was never used
+ - Focus/Player/Target: Removed the PvP Rank Icon option since it has been useless a while now
+ - Player/Target: Combat text will now display above other frames
+ - Target: Removed civilian checks since the function call was removed in 2.3
+
 2.11 - October 12, 2007
  - All: Reversed previous strata change and correctly made raid icons appear on top of all frames
  - ArcaneBar: Added a sanity check for line 258

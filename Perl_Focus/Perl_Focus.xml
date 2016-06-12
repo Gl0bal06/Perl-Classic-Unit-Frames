@@ -190,20 +190,6 @@
 							</Anchors>
 						</Texture>
 
-						<!-- PVP Rank Icon -->
-						<Texture name="Perl_Focus_PVPRank">
-							<Size>
-								<AbsDimension x="16" y="16"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
-									<Offset>
-										<AbsDimension x="-22" y="-4"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</Texture>
-
 						<!-- Death Icon -->
 						<Texture name="Perl_Focus_DeadStatus" file="Interface\TargetingFrame\TargetDead" visible="false">
 							<Size>
@@ -975,7 +961,7 @@
 
 
 			<!-- Buffs Frame -->
-			<Frame name="Perl_Focus_BuffFrame">
+			<Frame name="Perl_Focus_BuffFrame" frameStrata="BACKGROUND">
 				<Size>
 					<AbsDimension x="100" y="34"/>
 				</Size>
@@ -1164,7 +1150,7 @@
 
 
 			<!-- Debuffs Frame -->
-			<Frame name="Perl_Focus_DebuffFrame">
+			<Frame name="Perl_Focus_DebuffFrame" frameStrata="BACKGROUND">
 				<Size>
 					<AbsDimension x="100" y="34"/>
 				</Size>

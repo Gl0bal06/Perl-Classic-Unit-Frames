@@ -16,7 +16,6 @@ local mobhealthsupport = 1;	-- mobhealth is enabled by default
 local showdruidbar = 0;		-- Druid Bar support is enabled by default
 local showpetbars = 0;		-- Pet info is hidden by default
 local rightclickmenu = 0;	-- The ability to open a menu from CombatDisplay is disabled by default
-local fivesecsupport = 0;	-- FiveSec support is disabled by default
 local displaypercents = 0;	-- percents are off by default
 local showcp = 0;		-- combo points are hidden by default
 local clickthrough = 0;		-- frames are clickable by default
@@ -556,20 +555,6 @@ function Perl_CombatDisplay_Update_Mana()
 			Perl_CombatDisplay_DruidBar:SetValue(0);
 		end
 	end
-
---	if (fivesecsupport == 1) then
---		if (REGENERATING_MANA ~= nil) then				-- Is FiveSec installed?
---			if (UnitPowerType("player") == 0) then			-- If we aren't in mana mode, bail out
---				if (REGENERATING_MANA == false) then		-- If we aren't in regen mode, color light blue
---					Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0.7, 1, 1);
---					Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0.7, 1, 0.25);
---				else						-- Then we must be in regen mode, color bar normally
---					Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0, 1, 1);
---					Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
---				end
---			end
---		end
---	end
 end
 
 function Perl_CombatDisplay_Update_DruidBar(arg1)
@@ -1297,13 +1282,6 @@ function Perl_CombatDisplay_Set_DruidBar(newvalue)
 	Perl_CombatDisplay_Frame_Style();
 end
 
-function Perl_CombatDisplay_Set_FiveSec(newvalue)
-	fivesecsupport = newvalue;
-	Perl_CombatDisplay_UpdateVars();
-	Perl_CombatDisplay_UpdateBars();
-	Perl_CombatDisplay_Update_Mana();
-end
-
 function Perl_CombatDisplay_Set_PetBars(newvalue)
 	showpetbars = newvalue;
 	Perl_CombatDisplay_UpdateVars();
@@ -1388,7 +1366,6 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 	showdruidbar = Perl_CombatDisplay_Config[name]["ShowDruidBar"];
 	showpetbars = Perl_CombatDisplay_Config[name]["ShowPetBars"];
 	rightclickmenu = Perl_CombatDisplay_Config[name]["RightClickMenu"];
-	fivesecsupport = Perl_CombatDisplay_Config[name]["FiveSecSupport"];
 	displaypercents = Perl_CombatDisplay_Config[name]["DisplayPercents"];
 	showcp = Perl_CombatDisplay_Config[name]["ShowCP"];
 	clickthrough = Perl_CombatDisplay_Config[name]["ClickThrough"];
@@ -1426,9 +1403,6 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 	end
 	if (rightclickmenu == nil) then
 		rightclickmenu = 0;
-	end
-	if (fivesecsupport == nil) then
-		fivesecsupport = 0;
 	end
 	if (displaypercents == nil) then
 		displaypercents = 0;
@@ -1469,7 +1443,6 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 		["showdruidbar"] = showdruidbar,
 		["showpetbars"] = showpetbars,
 		["rightclickmenu"] = rightclickmenu,
-		["fivesecsupport"] = fivesecsupport,
 		["displaypercents"] = displaypercents,
 		["showcp"] = showcp,
 		["clickthrough"] = clickthrough,
@@ -1537,11 +1510,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			else
 				rightclickmenu = nil;
 			end
-			if (vartable["Global Settings"]["FiveSecSupport"] ~= nil) then
-				fivesecsupport = vartable["Global Settings"]["FiveSecSupport"];
-			else
-				fivesecsupport = nil;
-			end
 			if (vartable["Global Settings"]["DisplayPercents"] ~= nil) then
 				displaypercents = vartable["Global Settings"]["DisplayPercents"];
 			else
@@ -1598,9 +1566,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		if (rightclickmenu == nil) then
 			rightclickmenu = 0;
 		end
-		if (fivesecsupport == nil) then
-			fivesecsupport = 0;
-		end
 		if (displaypercents == nil) then
 			displaypercents = 0;
 		end
@@ -1640,7 +1605,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		["ShowDruidBar"] = showdruidbar,
 		["ShowPetBars"] = showpetbars,
 		["RightClickMenu"] = rightclickmenu,
-		["FiveSecSupport"] = fivesecsupport,
 		["DisplayPercents"] = displaypercents,
 		["ShowCP"] = showcp,
 		["ClickThrough"] = clickthrough,

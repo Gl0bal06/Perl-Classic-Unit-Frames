@@ -11,7 +11,6 @@ if (GetLocale() == "zhCN") then
 	PERL_LOCALIZED_WARRIOR = "战士";
 
 	-- Creature Types
-	PERL_LOCALIZED_CIVILIAN = "平民";
 	PERL_LOCALIZED_CREATURE = "生物";
 	PERL_LOCALIZED_NOTSPECIFIED = "非特定的";
 
@@ -66,9 +65,4 @@ if (GetLocale() == "zhCN") then
 	-- Perl Config Key Binging Strings
 	BINDING_HEADER_PERLCONFIG = PERL_LOCALIZED_NAME;
 	BINDING_NAME_TOGGLEOPTIONS = "Toggle选项菜单";
-
-	-- Perl Raid Key Binging Strings
-	BINDING_HEADER_PERLRAID = "Perl Raid";
-	BINDING_NAME_SHOWHIDE = "显示/隐藏 团队框体";
-	BINDING_NAME_TOGGLECLASS = "Toggle 队伍/职业 分类排列";
 end

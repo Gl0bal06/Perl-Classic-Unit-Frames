@@ -97,13 +97,6 @@ function Perl_Config_CombatDisplay_Set_Values()
 		Perl_Config_CombatDisplay_Frame_CheckButton14:SetChecked(nil);
 	end
 
-	if (vartable["fivesecsupport"] == 1) then
-		Perl_Config_CombatDisplay_Frame_CheckButton15:SetChecked(1);
-	else
-		Perl_Config_CombatDisplay_Frame_CheckButton15:SetChecked(nil);
-	end
-	Perl_Config_CombatDisplay_Frame_CheckButton15:Hide();
-
 	if (vartable["displaypercents"] == 1) then
 		Perl_Config_CombatDisplay_Frame_CheckButton16:SetChecked(1);
 	else
@@ -205,14 +198,6 @@ function Perl_Config_CombatDisplay_Right_Click_Update()
 		Perl_CombatDisplay_Set_Right_Click(1);
 	else
 		Perl_CombatDisplay_Set_Right_Click(0);
-	end
-end
-
-function Perl_Config_CombatDisplay_FiveSec_Update()
-	if (Perl_Config_CombatDisplay_Frame_CheckButton15:GetChecked() == 1) then
-		Perl_CombatDisplay_Set_FiveSec(1);
-	else
-		Perl_CombatDisplay_Set_FiveSec(0);
 	end
 end
 

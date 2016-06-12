@@ -17,11 +17,9 @@ local compactpercent = 0;	-- percents are not shown in compact mode by default
 local threedportrait = 0;	-- 3d portraits are off by default
 local portraitcombattext = 0;	-- Combat text is disabled by default on the portrait frame
 local showdruidbar = 0;		-- Druid Bar support is enabled by default
-local fivesecsupport = 0;	-- FiveSec support is disabled by default
 local shortbars = 0;		-- Health/Power/Experience bars are all normal length
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local hideclasslevelframe = 0;	-- Showing the class icon and level frame by default
-local showpvprank = 0;		-- hide the pvp rank by default
 local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
 local hiddeninraid = 0;		-- player frame is shown in a raid by default
 local showpvpicon = 1;		-- show the pvp icon
@@ -608,20 +606,6 @@ function Perl_Player_Update_Mana()
 			Perl_Player_DruidBar:SetValue(0);
 		end
 	end
-
---	if (fivesecsupport == 1) then
---		if (REGENERATING_MANA ~= nil) then						-- Is FiveSec installed?
---			if (UnitPowerType("player") == 0) then					-- If we aren't in mana mode, bail out
---				if (REGENERATING_MANA == false) then				-- If we aren't in regen mode, color light blue
---					Perl_Player_ManaBar:SetStatusBarColor(0, 0.7, 1, 1);
---					Perl_Player_ManaBarBG:SetStatusBarColor(0, 0.7, 1, 0.25);
---				else								-- Then we must be in regen mode, color bar normally
---					Perl_Player_ManaBar:SetStatusBarColor(0, 0, 1, 1);
---					Perl_Player_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
---				end
---			end
---		end
---	end
 end
 
 function Perl_Player_Update_DruidBar(arg1)
@@ -1313,25 +1297,6 @@ function Perl_Player_Frame_Style()
 		end
 		-- End: Align the text according to compact and healer mode
 
-		-- Begin: Are we displaying our rank icon?
-		if (showpvprank == 1) then
-			local rankNumber = UnitPVPRank("player");
-			if (rankNumber == 0) then
-				Perl_Player_PVPRank:Hide();
-			elseif (rankNumber < 14) then
-				rankNumber = rankNumber - 4;
-				Perl_Player_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber);
-				Perl_Player_PVPRank:Show();
-			else
-				rankNumber = rankNumber - 4;
-				Perl_Player_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
-				Perl_Player_PVPRank:Show();
-			end
-		else
-			Perl_Player_PVPRank:Hide();
-		end
-		-- End: Are we displaying our rank icon?
-
 		-- Begin: Show/Hide the portrait frame
 		if (showportrait == 1) then
 			Perl_Player_PortraitFrame:Show();					-- Show the main portrait frame
@@ -1488,13 +1453,6 @@ function Perl_Player_Set_Short_Bars(newvalue)
 	Perl_Player_Frame_Style();
 end
 
-function Perl_Player_Set_FiveSec(newvalue)
-	fivesecsupport = newvalue;
-	Perl_Player_UpdateVars();
-	Perl_Player_Update_Mana_Bar();
-	Perl_Player_Update_Mana();
-end
-
 function Perl_Player_Set_Class_Colored_Names(newvalue)
 	classcolorednames = newvalue;
 	Perl_Player_UpdateVars();
@@ -1503,12 +1461,6 @@ end
 
 function Perl_Player_Set_Hide_Class_Level_Frame(newvalue)
 	hideclasslevelframe = newvalue;
-	Perl_Player_UpdateVars();
-	Perl_Player_Frame_Style();
-end
-
-function Perl_Player_Set_PvP_Rank_Icon(newvalue)
-	showpvprank = newvalue;
 	Perl_Player_UpdateVars();
 	Perl_Player_Frame_Style();
 end
@@ -1598,11 +1550,9 @@ function Perl_Player_GetVars(name, updateflag)
 	threedportrait = Perl_Player_Config[name]["ThreeDPortrait"];
 	portraitcombattext = Perl_Player_Config[name]["PortraitCombatText"];
 	showdruidbar = Perl_Player_Config[name]["ShowDruidBar"];
-	fivesecsupport = Perl_Player_Config[name]["FiveSecSupport"];
 	shortbars = Perl_Player_Config[name]["ShortBars"];
 	classcolorednames = Perl_Player_Config[name]["ClassColoredNames"];
 	hideclasslevelframe = Perl_Player_Config[name]["HideClassLevelFrame"];
-	showpvprank = Perl_Player_Config[name]["ShowPvPRank"];
 	showmanadeficit = Perl_Player_Config[name]["ShowManaDeficit"];
 	hiddeninraid = Perl_Player_Config[name]["HiddenInRaid"];
 	showpvpicon = Perl_Player_Config[name]["ShowPvPIcon"];
@@ -1646,9 +1596,6 @@ function Perl_Player_GetVars(name, updateflag)
 	if (showdruidbar == nil) then
 		showdruidbar = 0;
 	end
-	if (fivesecsupport == nil) then
-		fivesecsupport = 0;
-	end
 	if (shortbars == nil) then
 		shortbars = 0;
 	end
@@ -1657,9 +1604,6 @@ function Perl_Player_GetVars(name, updateflag)
 	end
 	if (hideclasslevelframe == nil) then
 		hideclasslevelframe = 0;
-	end
-	if (showpvprank == nil) then
-		showpvprank = 0;
 	end
 	if (showmanadeficit == nil) then
 		showmanadeficit = 0;
@@ -1704,11 +1648,9 @@ function Perl_Player_GetVars(name, updateflag)
 		["threedportrait"] = threedportrait,
 		["portraitcombattext"] = portraitcombattext,
 		["showdruidbar"] = showdruidbar,
-		["fivesecsupport"] = fivesecsupport,
 		["shortbars"] = shortbars,
 		["classcolorednames"] = classcolorednames,
 		["hideclasslevelframe"] = hideclasslevelframe,
-		["showpvprank"] = showpvprank,
 		["showmanadeficit"] = showmanadeficit,
 		["hiddeninraid"] = hiddeninraid,
 		["showpvpicon"] = showpvpicon,
@@ -1783,11 +1725,6 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				showdruidbar = nil;
 			end
-			if (vartable["Global Settings"]["FiveSecSupport"] ~= nil) then
-				fivesecsupport = vartable["Global Settings"]["FiveSecSupport"];
-			else
-				fivesecsupport = nil;
-			end
 			if (vartable["Global Settings"]["ShortBars"] ~= nil) then
 				shortbars = vartable["Global Settings"]["ShortBars"];
 			else
@@ -1802,11 +1739,6 @@ function Perl_Player_UpdateVars(vartable)
 				hideclasslevelframe = vartable["Global Settings"]["HideClassLevelFrame"];
 			else
 				hideclasslevelframe = nil;
-			end
-			if (vartable["Global Settings"]["ShowPvPRank"] ~= nil) then
-				showpvprank = vartable["Global Settings"]["ShowPvPRank"];
-			else
-				showpvprank = nil;
 			end
 			if (vartable["Global Settings"]["ShowManaDeficit"] ~= nil) then
 				showmanadeficit = vartable["Global Settings"]["ShowManaDeficit"];
@@ -1877,9 +1809,6 @@ function Perl_Player_UpdateVars(vartable)
 		if (showdruidbar == nil) then
 			showdruidbar = 0;
 		end
-		if (fivesecsupport == nil) then
-			fivesecsupport = 0;
-		end
 		if (shortbars == nil) then
 			shortbars = 0;
 		end
@@ -1888,9 +1817,6 @@ function Perl_Player_UpdateVars(vartable)
 		end
 		if (hideclasslevelframe == nil) then
 			hideclasslevelframe = 0;
-		end
-		if (showpvprank == nil) then
-			showpvprank = 0;
 		end
 		if (showmanadeficit == nil) then
 			showmanadeficit = 0;
@@ -1935,11 +1861,9 @@ function Perl_Player_UpdateVars(vartable)
 		["ThreeDPortrait"] = threedportrait,
 		["PortraitCombatText"] = portraitcombattext,
 		["ShowDruidBar"] = showdruidbar,
-		["FiveSecSupport"] = fivesecsupport,
 		["ShortBars"] = shortbars,
 		["ClassColoredNames"] = classcolorednames,
 		["HideClassLevelFrame"] = hideclasslevelframe,
-		["ShowPvPRank"] = showpvprank,
 		["ShowManaDeficit"] = showmanadeficit,
 		["HiddenInRaid"] = hiddeninraid,
 		["ShowPvPIcon"] = showpvpicon,

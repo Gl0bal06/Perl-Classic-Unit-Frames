@@ -17,7 +17,6 @@ Perl_Config_Global_Party_Target_Config = {};
 Perl_Config_Global_Player_Config = {};
 Perl_Config_Global_Player_Buff_Config = {};
 Perl_Config_Global_Player_Pet_Config = {};
-Perl_Config_Global_Raid_Config = {};
 Perl_Config_Global_Target_Config = {};
 Perl_Config_Global_Target_Target_Config = {};
 
@@ -296,10 +295,6 @@ function Perl_Config_Profile_Load()
 			Perl_Player_Pet_GetVars(name, 1);
 		end
 
---		if (Perl_Raid_Frame) then
---			Perl_Raid_GetVars(name, 1);
---		end
-
 		if (Perl_Target_Frame) then
 			Perl_Target_GetVars(name, 1);
 		end
@@ -504,20 +499,6 @@ function Perl_Config_Set_Texture(newvalue)
 		end
 	end
 
---	if (Perl_Raid_Frame) then
---		for num=1,40 do
---			getglobal("Perl_Raid"..num.."_StatsFrame_HealthBar_HealthBarTex"):SetTexture(texturename);
---			getglobal("Perl_Raid"..num.."_StatsFrame_ManaBar_ManaBarTex"):SetTexture(texturename);
---			if (texturedbarbackground == 1) then
---				getglobal("Perl_Raid"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture(texturename);
---				getglobal("Perl_Raid"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture(texturename);
---			else
---				getglobal("Perl_Raid"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
---				getglobal("Perl_Raid"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
---			end
---		end
---	end
-
 	if (Perl_Target_Frame) then
 		Perl_Target_HealthBarTex:SetTexture(texturename);
 		Perl_Target_HealthBarFadeBarTex:SetTexture(texturename);
@@ -626,14 +607,6 @@ function Perl_Config_Set_Background(newvalue)
 			Perl_Player_Pet_Initialize_Frame_Color();
 		end
 
---		if (Perl_Raid_Frame) then
---			for num=1,40 do
---				getglobal("Perl_Raid"..num.."_NameFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
---				getglobal("Perl_Raid"..num.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
---			end
---			Perl_Raid_Initialize_Frame_Color();
---		end
-
 		if (Perl_Target_Frame) then
 			Perl_Target_GuildFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_ClassNameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
@@ -717,14 +690,6 @@ function Perl_Config_Set_Background(newvalue)
 			Perl_Player_Pet_Initialize_Frame_Color();
 		end
 
---		if (Perl_Raid_Frame) then
---			for num=1,40 do
---				getglobal("Perl_Raid"..num.."_NameFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
---				getglobal("Perl_Raid"..num.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
---			end
---			Perl_Raid_Initialize_Frame_Color();
---		end
-
 		if (Perl_Target_Frame) then
 			Perl_Target_GuildFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_ClassNameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
@@ -779,10 +744,6 @@ function Perl_Config_Set_Transparency(newvalue)
 	if (Perl_Player_Pet_Frame) then
 		Perl_Player_Pet_Set_Transparency(newvalue);
 	end
-
---	if (Perl_Raid_Frame) then
---		Perl_Raid_Set_Transparency(newvalue);
---	end
 
 	if (Perl_Target_Frame) then
 		Perl_Target_Set_Transparency(newvalue);
@@ -955,10 +916,6 @@ function Perl_Config_Lock_Unlock(value)
 		Perl_Player_Pet_Set_Lock(value);
 	end
 
---	if (Perl_Raid_Frame) then
---		Perl_Raid_Set_Lock(value);
---	end
-
 	if (Perl_Target_Frame) then
 		Perl_Target_Set_Lock(value);
 	end
@@ -1009,21 +966,6 @@ function Perl_Config_Frame_Reset_Positions()
 		Perl_Player_Pet_Frame:SetUserPlaced(1);
 		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 27, -112);
 	end
-
---	if (Perl_Raid_Frame) then
---		for num=1,9 do
---			getglobal("Perl_Raid_Grp"..num):SetUserPlaced(1);
---		end
---		getglobal("Perl_Raid_Grp1"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 300, -150);
---		getglobal("Perl_Raid_Grp2"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 400, -150);
---		getglobal("Perl_Raid_Grp3"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 500, -150);
---		getglobal("Perl_Raid_Grp4"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 600, -150);
---		getglobal("Perl_Raid_Grp5"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 300, -250);
---		getglobal("Perl_Raid_Grp6"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 400, -250);
---		getglobal("Perl_Raid_Grp7"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 500, -250);
---		getglobal("Perl_Raid_Grp8"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 600, -250);
---		getglobal("Perl_Raid_Grp9"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 300, -350);
---	end
 
 	if (Perl_Target_Frame) then
 		Perl_Target_Frame:SetUserPlaced(1);
@@ -1085,7 +1027,6 @@ function Perl_Config_Global_Save_Settings()
 			["ShowDruidBar"] = vartable["showdruidbar"],
 			["ShowPetBars"] = vartable["showpetbars"],
 			["RightClickMenu"] = vartable["rightclickmenu"],
-			["FiveSecSupport"] = vartable["fivesecsupport"],
 			["DisplayPercents"] = vartable["displaypercents"],
 			["ShowCP"] = vartable["showcp"],
 			["ClickThrough"] = vartable["clickthrough"],
@@ -1121,7 +1062,6 @@ function Perl_Config_Global_Save_Settings()
 			["Debuffs"] = vartable["numdebuffsshown"],
 			["MobHealthSupport"] = vartable["mobhealthsupport"],
 			["Scale"] = vartable["scale"],
-			["ShowPvPRank"] = vartable["showpvprank"],
 			["Transparency"] = vartable["transparency"],
 			["BuffDebuffScale"] = vartable["buffdebuffscale"],
 			["XPosition"] = floor(Perl_Focus_Frame:GetLeft() + 0.5),
@@ -1253,11 +1193,9 @@ function Perl_Config_Global_Save_Settings()
 			["ThreeDPortrait"] = vartable["threedportrait"],
 			["PortraitCombatText"] = vartable["portraitcombattext"],
 			["ShowDruidBar"] = vartable["showdruidbar"],
-			["FiveSecSupport"] = vartable["fivesecsupport"],
 			["ShortBars"] = vartable["shortbars"],
 			["ClassColoredNames"] = vartable["classcolorednames"],
 			["HideClassLevelFrame"] = vartable["hideclasslevelframe"],
-			["ShowPvPRank"] = vartable["showpvprank"],
 			["ShowManaDeficit"] = vartable["showmanadeficit"],
 			["HiddenInRaid"] = vartable["hiddeninraid"],
 			["ShowPvPIcon"] = vartable["showpvpicon"],
@@ -1305,57 +1243,6 @@ function Perl_Config_Global_Save_Settings()
 		};
 	end
 
---	if (Perl_Raid_Frame) then
---		local vartable = Perl_Raid_GetVars();
---		Perl_Config_Global_Raid_Config["Global Settings"] = {
---			["Locked"] = locked,
---			["ShowGroup1"] = vartable["showgroup1"],
---			["ShowGroup2"] = vartable["showgroup2"],
---			["ShowGroup3"] = vartable["showgroup3"],
---			["ShowGroup4"] = vartable["showgroup4"],
---			["ShowGroup5"] = vartable["showgroup5"],
---			["ShowGroup6"] = vartable["showgroup6"],
---			["ShowGroup7"] = vartable["showgroup7"],
---			["ShowGroup8"] = vartable["showgroup8"],
---			["ShowGroup9"] = vartable["showgroup9"],
---			["SortRaidByClass"] = vartable["sortraidbyclass"],
---			["Transparency"] = vartable["transparency"],
---			["Scale"] = vartable["scale"],
---			["XPosition1"] = floor(Perl_Raid_Grp1:GetLeft() + 0.5),
---			["YPosition1"] = floor(Perl_Raid_Grp1:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp1:GetScale()) + 0.5),
---			["XPosition2"] = floor(Perl_Raid_Grp2:GetLeft() + 0.5),
---			["YPosition2"] = floor(Perl_Raid_Grp2:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp2:GetScale()) + 0.5),
---			["XPosition3"] = floor(Perl_Raid_Grp3:GetLeft() + 0.5),
---			["YPosition3"] = floor(Perl_Raid_Grp3:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp3:GetScale()) + 0.5),
---			["XPosition4"] = floor(Perl_Raid_Grp4:GetLeft() + 0.5),
---			["YPosition4"] = floor(Perl_Raid_Grp4:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp4:GetScale()) + 0.5),
---			["XPosition5"] = floor(Perl_Raid_Grp5:GetLeft() + 0.5),
---			["YPosition5"] = floor(Perl_Raid_Grp5:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp5:GetScale()) + 0.5),
---			["XPosition6"] = floor(Perl_Raid_Grp6:GetLeft() + 0.5),
---			["YPosition6"] = floor(Perl_Raid_Grp6:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp6:GetScale()) + 0.5),
---			["XPosition7"] = floor(Perl_Raid_Grp7:GetLeft() + 0.5),
---			["YPosition7"] = floor(Perl_Raid_Grp7:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp7:GetScale()) + 0.5),
---			["XPosition8"] = floor(Perl_Raid_Grp8:GetLeft() + 0.5),
---			["YPosition8"] = floor(Perl_Raid_Grp8:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp8:GetScale()) + 0.5),
---			["ShowHeaders"] = vartable["showheaders"],
---			["ShowMissingHealth"] = vartable["showmissinghealth"],
---			["VerticalAlign"] = vartable["verticalalign"],
---			["InvertedGroups"] = vartable["invertedgroups"],
---			["ShowDebuffs"] = vartable["showraiddebuffs"],
---			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
---			["ShowBuffs"] = vartable["showraidbuffs"],
---			["ColorDebuffNames"] = vartable["colordebuffnames"],
---			["FrameStyle"] = vartable["framestyle"],
---			["ShowBorder"] = vartable["showborder"],
---			["RemoveSpace"] = vartable["removespace"],
---			["HidePowerBars"] = vartable["hidepowerbars"],
---			["CTRAStyleTip"] = vartable["ctrastyletip"],
---			["ShowHealthPercents"] = vartable["showhealthpercents"],
---			["ShowManaPercents"] = vartable["showmanapercents"],
---			["HideEmptyHeaders"] = vartable["hideemptyheaders"],
---		};
---	end
-
 	if (Perl_Target_Frame) then
 		local vartable = Perl_Target_GetVars();
 		Perl_Config_Global_Target_Config["Global Settings"] = {
@@ -1368,12 +1255,11 @@ function Perl_Config_Global_Save_Settings()
 			["Debuffs"] = vartable["numdebuffsshown"],
 			["MobHealthSupport"] = vartable["mobhealthsupport"],
 			["Scale"] = vartable["scale"],
-			["ShowPvPRank"] = vartable["showpvprank"],
 			["Transparency"] = vartable["transparency"],
 			["BuffDebuffScale"] = vartable["buffdebuffscale"],
 			["XPosition"] = floor(Perl_Target_Frame:GetLeft() + 0.5),
 			["YPosition"] = floor(Perl_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Frame:GetScale()) + 0.5),
-			["ShowPortrait"] = vartable["showportrait"],
+			["ShowPortrait"] = vartablqe["showportrait"],
 			["ThreeDPortrait"] = vartable["threedportrait"],
 			["PortraitCombatText"] = vartable["portraitcombattext"],
 			["ShowRareEliteFrame"] = vartable["showrareeliteframe"],
@@ -1534,33 +1420,6 @@ function Perl_Config_Global_Load_Settings()
 			end
 		end
 	end
-
---	if (Perl_Raid_Frame) then
---		Perl_Raid_Set_Scale();
---		Perl_Raid_Set_Transparency();
---		Perl_Raid_UpdateVars(Perl_Config_Global_Raid_Config);
---
---		if (Perl_Config_Global_Raid_Config["Global Settings"] ~= nil) then
---			if ((Perl_Config_Global_Raid_Config["Global Settings"]["XPosition1"] ~= nil) and (Perl_Config_Global_Raid_Config["Global Settings"]["YPosition1"] ~= nil)) then
---				Perl_Raid_Grp1:SetUserPlaced(1);
---				Perl_Raid_Grp2:SetUserPlaced(1);
---				Perl_Raid_Grp3:SetUserPlaced(1);
---				Perl_Raid_Grp4:SetUserPlaced(1);
---				Perl_Raid_Grp5:SetUserPlaced(1);
---				Perl_Raid_Grp6:SetUserPlaced(1);
---				Perl_Raid_Grp7:SetUserPlaced(1);
---				Perl_Raid_Grp8:SetUserPlaced(1);
---				Perl_Raid_Grp1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition1"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition1"]);
---				Perl_Raid_Grp2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition2"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition2"]);
---				Perl_Raid_Grp3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition3"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition3"]);
---				Perl_Raid_Grp4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition4"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition4"]);
---				Perl_Raid_Grp5:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition5"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition5"]);
---				Perl_Raid_Grp6:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition6"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition6"]);
---				Perl_Raid_Grp7:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition7"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition7"]);
---				Perl_Raid_Grp8:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition8"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition8"]);
---			end
---		end
---	end
 
 	if (Perl_Target_Frame) then
 		Perl_Target_UpdateVars(Perl_Config_Global_Target_Config);
@@ -1839,15 +1698,8 @@ function Perl_Config_Hide_All()
 	Perl_Config_Player_Frame:Hide();
 	Perl_Config_Player_Buff_Frame:Hide();
 	Perl_Config_Player_Pet_Frame:Hide();
-	Perl_Config_Raid_Frame:Hide();
 	Perl_Config_Target_Frame:Hide();
 	Perl_Config_Target_Target_Frame:Hide();
-	Perl_Config_ThirdParty_Frame:Hide();
-
-	-- All third party frames can be checked for here
-	if (Perl_Config_ColorChange_Frame) then
-		Perl_Config_ColorChange_Frame:Hide();
-	end
 end
 
 function Perl_Config_ShowHide_MiniMap_Button()
@@ -1909,12 +1761,6 @@ function Perl_Config_Button_OnClick(button)
 				unlockedflag = 1;
 			end
 		end
-
---		if (Perl_Raid_Frame) then
---			if (Perl_Raid_Config[UnitName("player")]["Locked"] == 0) then
---				unlockedflag = 1;
---			end
---		end
 
 		if (Perl_Target_Frame) then
 			if (Perl_Target_Config[UnitName("player")]["Locked"] == 0) then
@@ -2042,20 +1888,6 @@ function Perl_Config_Button_Tooltip()
 			GameTooltip:AddLine("Perl_Player_Pet could not verify its status.");
 		end
 	end
-
---	if (Perl_Raid_Frame) then
---		if (type(Perl_Raid_Config[UnitName("player")]) == "table") then
---			if (Perl_Raid_Config[UnitName("player")]["Locked"] == 0) then
---				GameTooltip:AddLine("Perl_Raid is unlocked");
---				unlockedflag = 1;
---			else
---				GameTooltip:AddLine("Perl_Raid is locked");
---			end
---		else
---			Perl_Raid_UpdateVars();
---			GameTooltip:AddLine("Perl_Raid could not verify its status.");
---		end
---	end
 
 	if (Perl_Target_Frame) then
 		if (type(Perl_Target_Config[UnitName("player")]) == "table") then

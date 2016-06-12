@@ -442,7 +442,7 @@
 
 
 			<!-- Buffs Frame -->
-			<Frame name="$parent_BuffFrame">
+			<Frame name="$parent_BuffFrame" frameStrata="BACKGROUND">
 				<Size>
 					<AbsDimension x="170" y="20"/>
 				</Size>

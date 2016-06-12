@@ -1,7 +1,7 @@
 --if (GetLocale() == "enUS") then	-- Bypassing this allows us to at least give other languages English since they aren't fully translated
 	-- Generic Globals that do NOT need localizing
-	PERL_LOCALIZED_VERSION_NUMBER = "2.11";
-	PERL_LOCALIZED_DATE = "October 12, 2007";
+	PERL_LOCALIZED_VERSION_NUMBER = "2.12";
+	PERL_LOCALIZED_DATE = "November 13, 2007";
 	PERL_LOCALIZED_BUFF_NONE = "none";
 
 	-- Title and Version
@@ -20,7 +20,6 @@
 	PERL_LOCALIZED_WARRIOR = "Warrior";
 
 	-- Creature Types
-	PERL_LOCALIZED_CIVILIAN = "Civilian";
 	PERL_LOCALIZED_CREATURE = "Creature";
 	PERL_LOCALIZED_NOTSPECIFIED = "Not specified";
 
@@ -81,9 +80,4 @@
 	-- Perl Config Key Binging Strings
 	BINDING_HEADER_PERLCONFIG = PERL_LOCALIZED_NAME;
 	BINDING_NAME_TOGGLEOPTIONS = "Toggle Options Menu";
-
-	-- Perl Raid Key Binging Strings
-	BINDING_HEADER_PERLRAID = "Perl Raid";
-	BINDING_NAME_SHOWHIDE = "Show/Hide Raid Frames";
-	BINDING_NAME_TOGGLECLASS = "Toggle Group/Class Sorting";
 --end

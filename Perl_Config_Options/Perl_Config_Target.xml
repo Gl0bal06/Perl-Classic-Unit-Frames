@@ -142,33 +142,12 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton2" inherits="UICheckButtonTemplate" id="2">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton1" >
-						<Offset>
-							<AbsDimension  x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PVP_RANK_ICON);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Target_PvP_Rank_Icon_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
 			<CheckButton name="$parent_CheckButton3" inherits="UICheckButtonTemplate" id="3">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton2">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton1">
 						<Offset>
 							<AbsDimension  x="0" y="-20"/>
 						</Offset>

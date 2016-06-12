@@ -519,54 +519,12 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton16" inherits="UICheckButtonTemplate" id="16">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton14">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_FIVESEC);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Player_FiveSec_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton20" inherits="UICheckButtonTemplate" id="20">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton14">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PVP_RANK_ICON);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Player_PvP_Rank_Icon_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
 			<CheckButton name="$parent_CheckButton23" inherits="UICheckButtonTemplate" id="23">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton20">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton14">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>

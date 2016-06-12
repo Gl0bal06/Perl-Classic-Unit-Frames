@@ -11,7 +11,6 @@ if (GetLocale() == "frFR") then
 	PERL_LOCALIZED_WARRIOR = "Guerrier";
 
 	-- Creature Types
-	PERL_LOCALIZED_CIVILIAN = "Civil";
 	PERL_LOCALIZED_CREATURE = "Cr\195\169ature";
 	PERL_LOCALIZED_NOTSPECIFIED = "Non indiqu\195\169";
 
@@ -66,9 +65,4 @@ if (GetLocale() == "frFR") then
 	-- Perl Config Key Binging Strings
 	BINDING_HEADER_PERLCONFIG = PERL_LOCALIZED_NAME;
 	BINDING_NAME_TOGGLEOPTIONS = "Afficher le menu d\'options ";
-
-	-- Perl Raid Key Binging Strings
-	BINDING_HEADER_PERLRAID = "Perl Raid";
-	BINDING_NAME_SHOWHIDE = "Afficher/Cacher les cadres du Raid";
-	BINDING_NAME_TOGGLECLASS = "Classer par Groupes/Classes";
 end

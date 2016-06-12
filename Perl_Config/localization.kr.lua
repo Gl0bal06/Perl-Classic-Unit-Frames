@@ -11,7 +11,6 @@ if (GetLocale() == "koKR") then
 	PERL_LOCALIZED_WARRIOR = "전사";
 
 	-- Creature Types
-	PERL_LOCALIZED_CIVILIAN = "민간인";
 	PERL_LOCALIZED_CREATURE = "동물";
 	PERL_LOCALIZED_NOTSPECIFIED = "무엇인가";
 
@@ -72,9 +71,4 @@ if (GetLocale() == "koKR") then
 	-- Perl Config Key Binging Strings
 	BINDING_HEADER_PERLCONFIG = PERL_LOCALIZED_NAME;
 	BINDING_NAME_TOGGLEOPTIONS = "설정창 토글";
-
-	-- Perl Raid Key Binging Strings
-	BINDING_HEADER_PERLRAID = "Perl Raid";
-	BINDING_NAME_SHOWHIDE = "공격대 창 표시/숨김";
-	BINDING_NAME_TOGGLECLASS = "그룹/직업 정렬 토글";
 end

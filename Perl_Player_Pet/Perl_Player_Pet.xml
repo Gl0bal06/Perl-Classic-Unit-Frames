@@ -576,7 +576,7 @@
 
 
 			<!-- Buffs Frame -->
-			<Frame name="Perl_Player_Pet_BuffFrame">
+			<Frame name="Perl_Player_Pet_BuffFrame" frameStrata="BACKGROUND">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -587,19 +587,6 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<!--
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<EdgeSize>
-						<AbsValue val="16"/>
-					</EdgeSize>
-					<TileSize>
-						<AbsValue val="16"/>
-					</TileSize>
-					<BackgroundInsets>
-						<AbsInset left="5" right="5" top="5" bottom="5"/>
-					</BackgroundInsets>
-				</Backdrop>
-				-->
 				<Frames>
 					<!-- Start buttons -->
 					<Button name="Perl_Player_Pet_Buff1" inherits="Perl_Player_Pet_BuffTemplate" id="1">
@@ -766,7 +753,7 @@
 			</Frame>
 
 			<!-- Debuffs Frame -->
-			<Frame name="Perl_Player_Pet_DebuffFrame">
+			<Frame name="Perl_Player_Pet_DebuffFrame" frameStrata="BACKGROUND">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -777,19 +764,6 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<!--
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-					<EdgeSize>
-						<AbsValue val="16"/>
-					</EdgeSize>
-					<TileSize>
-						<AbsValue val="16"/>
-					</TileSize>
-					<BackgroundInsets>
-						<AbsInset left="5" right="5" top="5" bottom="5"/>
-					</BackgroundInsets>
-				</Backdrop>
-				-->
 				<Frames>
 					<!-- Start buttons -->
 					<Button name="Perl_Player_Pet_Debuff1" inherits="Perl_Player_Pet_BuffTemplate" id="17">

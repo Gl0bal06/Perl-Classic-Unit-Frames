@@ -93,13 +93,6 @@ function Perl_Config_Player_Set_Values()
 		Perl_Config_Player_Frame_CheckButton14:SetChecked(nil);
 	end
 
-	if (vartable["fivesecsupport"] == 1) then
-		Perl_Config_Player_Frame_CheckButton16:SetChecked(1);
-	else
-		Perl_Config_Player_Frame_CheckButton16:SetChecked(nil);
-	end
-	Perl_Config_Player_Frame_CheckButton16:Hide();
-
 	if (vartable["shortbars"] == 1) then
 		Perl_Config_Player_Frame_CheckButton17:SetChecked(1);
 	else
@@ -116,12 +109,6 @@ function Perl_Config_Player_Set_Values()
 		Perl_Config_Player_Frame_CheckButton19:SetChecked(1);
 	else
 		Perl_Config_Player_Frame_CheckButton19:SetChecked(nil);
-	end
-
-	if (vartable["showpvprank"] == 1) then
-		Perl_Config_Player_Frame_CheckButton20:SetChecked(1);
-	else
-		Perl_Config_Player_Frame_CheckButton20:SetChecked(nil);
 	end
 
 	if (vartable["showmanadeficit"] == 1) then
@@ -270,14 +257,6 @@ function Perl_Config_Player_DruidBar_Update()
 	end
 end
 
-function Perl_Config_Player_FiveSec_Update()
-	if (Perl_Config_Player_Frame_CheckButton16:GetChecked() == 1) then
-		Perl_Player_Set_FiveSec(1);
-	else
-		Perl_Player_Set_FiveSec(0);
-	end
-end
-
 function Perl_Config_Player_Class_Colored_Names_Update()
 	if (Perl_Config_Player_Frame_CheckButton18:GetChecked() == 1) then
 		Perl_Player_Set_Class_Colored_Names(1);
@@ -291,14 +270,6 @@ function Perl_Config_Player_Hide_Class_Level_Frame_Update()
 		Perl_Player_Set_Hide_Class_Level_Frame(1);
 	else
 		Perl_Player_Set_Hide_Class_Level_Frame(0);
-	end
-end
-
-function Perl_Config_Player_PvP_Rank_Icon_Update()
-	if (Perl_Config_Player_Frame_CheckButton20:GetChecked() == 1) then
-		Perl_Player_Set_PvP_Rank_Icon(1);
-	else
-		Perl_Player_Set_PvP_Rank_Icon(0);
 	end
 end
 

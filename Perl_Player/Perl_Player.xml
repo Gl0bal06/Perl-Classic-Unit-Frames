@@ -101,20 +101,6 @@
 							</Anchors>
 						</Texture>
 
-						<!-- PVP Rank Icon -->
-						<Texture name="Perl_Player_PVPRank">
-							<Size>
-								<AbsDimension x="16" y="16"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
-									<Offset>
-										<AbsDimension x="23" y="-4"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</Texture>
-
 						<!-- Leader Icon -->
 						<Texture name="Perl_Player_LeaderIcon" file="Interface\GroupFrame\UI-Group-LeaderIcon" hidden="true">
 							<Size>
@@ -477,7 +463,7 @@
 
 
 			<!-- Portrait Text Frame -->
-			<Frame name="Perl_Player_PortraitTextFrame">
+			<Frame name="Perl_Player_PortraitTextFrame" frameStrata="MEDIUM">
 				<Size>
 					<AbsDimension x="60" y="61"/>
 				</Size>

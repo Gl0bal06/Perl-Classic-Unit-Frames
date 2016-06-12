@@ -26,12 +26,6 @@ function Perl_Config_Focus_Set_Values()
 		Perl_Config_Focus_Frame_CheckButton1:SetChecked(nil);
 	end
 
-	if (vartable["showpvprank"] == 1) then
-		Perl_Config_Focus_Frame_CheckButton2:SetChecked(1);
-	else
-		Perl_Config_Focus_Frame_CheckButton2:SetChecked(nil);
-	end
-
 	if (vartable["showpvpicon"] == 1) then
 		Perl_Config_Focus_Frame_CheckButton3:SetChecked(1);
 	else
@@ -194,14 +188,6 @@ function Perl_Config_Focus_Class_Icon_Update()
 		Perl_Focus_Set_Class_Icon(1);
 	else
 		Perl_Focus_Set_Class_Icon(0);
-	end
-end
-
-function Perl_Config_Focus_PvP_Rank_Icon_Update()
-	if (Perl_Config_Focus_Frame_CheckButton2:GetChecked() == 1) then
-		Perl_Focus_Set_PvP_Rank_Icon(1);
-	else
-		Perl_Focus_Set_PvP_Rank_Icon(0);
 	end
 end
 

@@ -1,4 +1,4 @@
-## Interface: 20200
+## Interface: 20300
 ## Title: Perl Target Frame
 ## Notes: Displays a movable target frame to replace the default.
 ## Dependencies: Perl_Config

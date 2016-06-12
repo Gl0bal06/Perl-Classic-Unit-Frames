@@ -13,7 +13,6 @@ local numbuffsshown = 16;	-- buff row is 16 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
 local mobhealthsupport = 1;	-- mobhealth support is on by default
 local scale = 1;		-- default scale
-local showpvprank = 0;		-- hide the pvp rank by default
 local transparency = 1;		-- transparency for frames
 local buffdebuffscale = 1;	-- default scale for buffs and debuffs
 local showportrait = 0;		-- portrait is hidden by default
@@ -423,27 +422,6 @@ function Perl_Focus_Update_Once()
 		end
 	end
 	-- End: Set the Focus's class in the class frame
-
-	-- Begin: Set the pvp rank icon
-	if (showpvprank == 1) then
-		if (UnitIsPlayer("focus")) then
-			local rankNumber = UnitPVPRank("focus");
-			if (rankNumber == 0) then
-				Perl_Focus_PVPRank:Hide();
-			elseif (rankNumber < 14) then
-				rankNumber = rankNumber - 4;
-				Perl_Focus_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber);
-				Perl_Focus_PVPRank:Show();
-			else
-				rankNumber = rankNumber - 4;
-				Perl_Focus_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
-				Perl_Focus_PVPRank:Show();
-			end
-		else
-			Perl_Focus_PVPRank:Hide();
-		end
-	end
-	-- End: Set the pvp rank icon
 
 	-- Begin: Voice Chat Icon already in progress?
 	if (UnitIsTalking(UnitName("focus"))) then
@@ -1004,12 +982,10 @@ function Perl_Focus_Update_Name()
 	end
 
 	if (UnitIsPlayer("focus")) then
-		if (showpvprank == 0) then
-			if (showpvpicon == 1) then
-				namelengthrestrictor = namelengthrestrictor + 2;
-			else
-				namelengthrestrictor = namelengthrestrictor + 4;
-			end
+		if (showpvpicon == 1) then
+			namelengthrestrictor = namelengthrestrictor + 2;
+		else
+			namelengthrestrictor = namelengthrestrictor + 4;
 		end
 		if (showclassicon == 1) then
 			Perl_Focus_NameBarText:SetPoint("LEFT", "Perl_Focus_ClassTexture", "RIGHT", 5, 0);
@@ -1367,10 +1343,6 @@ function Perl_Focus_Main_Style()
 		Perl_Focus_ClassTexture:Hide();
 	end
 
-	if (showpvprank == 0) then			-- Are we showing the PvP Rank Icon?
-		Perl_Focus_PVPRank:Hide();
-	end
-
 	if (portraitcombattext == 1) then		-- Are we showing combat text?
 		Perl_Focus_PortraitTextFrame:Show();
 	else
@@ -1532,15 +1504,6 @@ end
 
 function Perl_Focus_Set_Class_Icon(newvalue)
 	showclassicon = newvalue;
-	Perl_Focus_UpdateVars();		-- Save the new setting
-	Perl_Focus_Frame_Style();		-- Apply any showing/hiding of frames and enabling/disabling of events
-	if (UnitExists("focus")) then
-		Perl_Focus_Update_Once();	-- Update the Focus frame information if appropriate
-	end
-end
-
-function Perl_Focus_Set_PvP_Rank_Icon(newvalue)
-	showpvprank = newvalue;
 	Perl_Focus_UpdateVars();		-- Save the new setting
 	Perl_Focus_Frame_Style();		-- Apply any showing/hiding of frames and enabling/disabling of events
 	if (UnitExists("focus")) then
@@ -1760,7 +1723,6 @@ function Perl_Focus_GetVars(name, updateflag)
 	numdebuffsshown = Perl_Focus_Config[name]["Debuffs"];
 	mobhealthsupport = Perl_Focus_Config[name]["MobHealthSupport"];
 	scale = Perl_Focus_Config[name]["Scale"];
-	showpvprank = Perl_Focus_Config[name]["ShowPvPRank"];
 	transparency = Perl_Focus_Config[name]["Transparency"];
 	buffdebuffscale = Perl_Focus_Config[name]["BuffDebuffScale"];
 	showportrait = Perl_Focus_Config[name]["ShowPortrait"];
@@ -1805,9 +1767,6 @@ function Perl_Focus_GetVars(name, updateflag)
 	end
 	if (scale == nil) then
 		scale = 1;
-	end
-	if (showpvprank == nil) then
-		showpvprank = 0;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -1895,7 +1854,6 @@ function Perl_Focus_GetVars(name, updateflag)
 		["numdebuffsshown"] = numdebuffsshown,
 		["mobhealthsupport"] = mobhealthsupport,
 		["scale"] = scale,
-		["showpvprank"] = showpvprank,
 		["transparency"] = transparency,
 		["buffdebuffscale"] = buffdebuffscale,
 		["showportrait"] = showportrait,
@@ -1963,11 +1921,6 @@ function Perl_Focus_UpdateVars(vartable)
 				scale = vartable["Global Settings"]["Scale"];
 			else
 				scale = nil;
-			end
-			if (vartable["Global Settings"]["ShowPvPRank"] ~= nil) then
-				showpvprank = vartable["Global Settings"]["ShowPvPRank"];
-			else
-				showpvprank = nil;
 			end
 			if (vartable["Global Settings"]["Transparency"] ~= nil) then
 				transparency = vartable["Global Settings"]["Transparency"];
@@ -2096,9 +2049,6 @@ function Perl_Focus_UpdateVars(vartable)
 		if (scale == nil) then
 			scale = 1;
 		end
-		if (showpvprank == nil) then
-			showpvprank = 0;
-		end
 		if (transparency == nil) then
 			transparency = 1;
 		end
@@ -2185,7 +2135,6 @@ function Perl_Focus_UpdateVars(vartable)
 		["Debuffs"] = numdebuffsshown,
 		["MobHealthSupport"] = mobhealthsupport,
 		["Scale"] = scale,
-		["ShowPvPRank"] = showpvprank,
 		["Transparency"] = transparency,
 		["BuffDebuffScale"] = buffdebuffscale,
 		["ShowPortrait"] = showportrait,

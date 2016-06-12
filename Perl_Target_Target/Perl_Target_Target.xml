@@ -490,7 +490,7 @@
 
 
 			<!-- Buffs Frame -->
-			<Frame name="Perl_Target_Target_BuffFrame">
+			<Frame name="Perl_Target_Target_BuffFrame" frameStrata="BACKGROUND">
 				<Size>
 					<AbsDimension x="80" y="20"/>
 				</Size>
@@ -1204,7 +1204,7 @@
 
 
 			<!-- Buffs Frame -->
-			<Frame name="Perl_Target_Target_Target_BuffFrame">
+			<Frame name="Perl_Target_Target_Target_BuffFrame" frameStrata="BACKGROUND">
 				<Size>
 					<AbsDimension x="80" y="20"/>
 				</Size>

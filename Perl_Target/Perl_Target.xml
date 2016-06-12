@@ -182,20 +182,6 @@
 							</Anchors>
 						</Texture>
 
-						<!-- PVP Rank Icon -->
-						<Texture name="Perl_Target_PVPRank">
-							<Size>
-								<AbsDimension x="16" y="16"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
-									<Offset>
-										<AbsDimension x="-22" y="-4"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</Texture>
-
 						<!-- Death Icon -->
 						<Texture name="Perl_Target_DeadStatus" file="Interface\TargetingFrame\TargetDead" visible="false">
 							<Size>
@@ -539,7 +525,7 @@
 
 
 			<!-- Portrait Text Frame -->
-			<Frame name="Perl_Target_PortraitTextFrame">
+			<Frame name="Perl_Target_PortraitTextFrame" frameStrata="MEDIUM">
 				<Size>
 					<AbsDimension x="60" y="61"/>
 				</Size>
@@ -1065,7 +1051,7 @@
 
 
 			<!-- Buffs Frame -->
-			<Frame name="Perl_Target_BuffFrame">
+			<Frame name="Perl_Target_BuffFrame" frameStrata="BACKGROUND">
 				<Size>
 					<AbsDimension x="100" y="34"/>
 				</Size>
@@ -1294,7 +1280,7 @@
 
 
 			<!-- Debuffs Frame -->
-			<Frame name="Perl_Target_DebuffFrame">
+			<Frame name="Perl_Target_DebuffFrame" frameStrata="BACKGROUND">
 				<Size>
 					<AbsDimension x="100" y="34"/>
 				</Size>
