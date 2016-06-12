@@ -5,7 +5,6 @@ Perl_Party_Config = {};
 
 -- Defaults
 local transparency = 1.0;
-local Perl_Party_State = 1;
 local Initialized = nil;	-- waiting to be initialized
 local buffmapping = {
 	["buffmapping1"] = 0,
@@ -69,23 +68,24 @@ local Perl_Party_ClassPosBottom = {
 ----------------------
 function Perl_Party_OnLoad()
 	--Events
-	this:RegisterEvent("ADDON_LOADED"); --
-	this:RegisterEvent("PARTY_LEADER_CHANGED"); --
+	this:RegisterEvent("ADDON_LOADED"); 
+	this:RegisterEvent("PARTY_LEADER_CHANGED");
 	this:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
-	this:RegisterEvent("PARTY_MEMBER_DISABLE"); --
-	this:RegisterEvent("PARTY_MEMBER_ENABLE"); --
-	this:RegisterEvent("PARTY_MEMBERS_CHANGED"); --
-	this:RegisterEvent("PLAYER_ENTERING_WORLD"); --
-	this:RegisterEvent("UNIT_AURA"); --
-	this:RegisterEvent("UNIT_DISPLAYPOWER"); --
-	this:RegisterEvent("UNIT_ENERGY"); --
-	--this:RegisterEvent("UNIT_FOCUS");
-	this:RegisterEvent("UNIT_HEALTH"); --
-	this:RegisterEvent("UNIT_LEVEL"); --
-	this:RegisterEvent("UNIT_MANA"); --
-	this:RegisterEvent("UNIT_PVP_UPDATE"); --
-	this:RegisterEvent("UNIT_RAGE"); --
-	this:RegisterEvent("VARIABLES_LOADED"); --
+	this:RegisterEvent("PARTY_MEMBER_DISABLE");
+	this:RegisterEvent("PARTY_MEMBER_ENABLE");
+	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
+	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("UNIT_AURA");
+	this:RegisterEvent("UNIT_DISPLAYPOWER");
+	this:RegisterEvent("UNIT_ENERGY");
+	--this:RegisterEvent("UNIT_FOCUS");	-- will be used for party pets
+	this:RegisterEvent("UNIT_HEALTH");
+	this:RegisterEvent("UNIT_LEVEL");
+	this:RegisterEvent("UNIT_MANA");
+	this:RegisterEvent("UNIT_NAME_UPDATE");
+	this:RegisterEvent("UNIT_PVP_UPDATE");
+	this:RegisterEvent("UNIT_RAGE");
+	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Slash Commands
 	SlashCmdList["PERL_PARTY"] = Perl_Party_SlashHandler;
@@ -130,6 +130,12 @@ function Perl_Party_OnEvent(event)
 	elseif (event == "UNIT_PVP_UPDATE") then
 		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
 			Perl_Party_Update_PvP_Status();		-- Is the character PvP flagged?
+		end
+		return;
+	elseif (event == "UNIT_NAME_UPDATE") then
+		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+			Perl_Party_Set_Name();			-- Set the player's name
+			Perl_Party_Set_Class_Icon();		-- Set the player's class icon
 		end
 		return;
 	elseif (event == "UNIT_LEVEL") then
@@ -223,11 +229,14 @@ function Perl_Party_MembersUpdate()
 		local frame = getglobal("Perl_Party_MemberFrame"..partynum);
 		if (UnitName(partyid) ~= nil) then
 			frame:Show();
+			
 		else
 			frame:Hide();
 		end
 	end
+	Perl_Party_Set_Name();			-- All this is here just in case a "/console reloadui" is called and you are already in a group
 	Perl_Party_Update_PvP_Status();
+	Perl_Party_Set_Class_Icon();
 	Perl_Party_Update_Level();
 	Perl_Party_Update_Health();
 	Perl_Party_Update_Dead_Status();
@@ -235,8 +244,6 @@ function Perl_Party_MembersUpdate()
 	Perl_Party_Update_Mana_Bar();
 	Perl_Party_Update_Leader_Loot_Method();
 	Perl_Party_Buff_UpdateAll();
-	Perl_Party_Set_Name();
-	Perl_Party_Set_Class_Icon();
 	getglobal(this:GetName().."_NameFrame_PVPStatus"):Hide();	-- Set pvp status icon (need to remove the xml code eventually)
 	HidePartyFrame();
 end
@@ -303,7 +310,7 @@ function Perl_Party_Set_Name()
 	-- Set name
 	if (UnitName(partyid) ~= nil) then
 		if (strlen(partyname) > 20) then
-			partyname = strsub(partyname, 1, 19).."...";
+			Partyname = strsub(partyname, 1, 19).."...";
 		end
 		getglobal(this:GetName().."_NameFrame_NameBarText"):SetText(partyname);
 	end
@@ -320,36 +327,6 @@ function Perl_Party_Set_Class_Icon()
 		getglobal(this:GetName().."_LevelFrame_ClassTexture"):Hide();
 	end
 end
-
---function Perl_Party_Set_Name()	--Failed attempt at the Unknown Entity fix
---	for partynum=1,4 do
---		local partyid = "party"..partynum;
---		local partyname = UnitName(partyid);
---		-- Set name
---		if (UnitName(partyid) ~= nil) then
---			if (strlen(partyname) > 20) then
---				partyname = strsub(partyname, 1, 19).."...";
---			end
---			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetText(partyname);
---		else
---			-- do nothing since this should be taken care of by Perl_Party_MembersUpdate
---		end
---	end
---end
-
---function Perl_Party_Set_Class_Icon()	--Failed attempt at the empty class icon fix
---	for partynum=1,4 do
---		local partyid = "party"..partynum;
---		-- Set Class Icon
---		if (UnitIsPlayer(partyid)) then
---			local PlayerClass = UnitClass(partyid);
---			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):SetTexCoord(Perl_Party_ClassPosRight[PlayerClass], Perl_Party_ClassPosLeft[PlayerClass], Perl_Party_ClassPosTop[PlayerClass], Perl_Party_ClassPosBottom[PlayerClass]); -- Set the player's class icon
---			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):Show();
---		else
---			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):Hide();
---		end
---	end
---end
 
 function Perl_Party_Update_PvP_Status()
 	local partyid = "party"..this:GetID();
@@ -458,12 +435,6 @@ function Perl_Party_Toggle_Hide()
 end
 
 function Perl_Party_Status()
---	if (Perl_Player_State == 0) then
---		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffDisabled|cffffff00.");
---	else
---		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffEnabled|cffffff00.");
---	end
-
 	if (partyhidden == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffShown|cffffff00.");
 	else
@@ -605,39 +576,6 @@ function Perl_Party_MouseDown(button)
 	end
 end
 
---function UnitFrame_OnEnter()	-- Taken from 1.8
---	this.unit = ("player"..this:GetID());
---	if ( SpellIsTargeting() ) then
---		if ( SpellCanTargetUnit(this.unit) ) then
---			SetCursor("CAST_CURSOR");
---		else
---			SetCursor("CAST_ERROR_CURSOR");
---		end
---	end
---
---	GameTooltip_SetDefaultAnchor(GameTooltip, this);
---	-- If showing newbie tips then only show the explanation
---	if ( SHOW_NEWBIE_TIPS == "1" and this:GetName() ~= "PartyMemberFrame1" and this:GetName() ~= "PartyMemberFrame2" and this:GetName() ~= "PartyMemberFrame3" and this:GetName() ~= "PartyMemberFrame4") then
---		if ( this:GetName() == "PlayerFrame" ) then
---			GameTooltip_AddNewbieTip(PARTY_OPTIONS_LABEL, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_PARTYOPTIONS);
---			return;
---		elseif ( UnitPlayerControlled("target") and not UnitIsUnit("target", "player") and not UnitIsUnit("target", "pet") ) then
---			GameTooltip_AddNewbieTip(PLAYER_OPTIONS_LABEL, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_PLAYEROPTIONS);
---			return;
---		end
---	end
---	
---	if ( GameTooltip:SetUnit(this.unit) ) then
---		this.updateTooltip = TOOLTIP_UPDATE_TIME;
---	else
---		this.updateTooltip = nil;
---	end
---
---	this.r, this.g, this.b = GameTooltip_UnitColor(this.unit);
---	--GameTooltip:SetBackdropColor(this.r, this.g, this.b);
---	GameTooltipTextLeft1:SetTextColor(this.r, this.g, this.b);
---end
-
 function Perl_Party_PlayerTip()
 	GameTooltip_SetDefaultAnchor(GameTooltip, this);
 	GameTooltip:SetUnit("party"..this:GetID());
@@ -652,7 +590,7 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.17",
+			version = "v0.18",
 			releaseDate = "November 9, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",

@@ -97,7 +97,6 @@ function Perl_Player_OnLoad()
 	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame by Perl loaded successfully.");
 	end
-	UIErrorsFrame:AddMessage("|cffffff00Player Frame by Perl loaded successfully.", 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME);
 end
 
 
@@ -659,7 +658,7 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.17",
+			version = "v0.18",
 			releaseDate = "November 9, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
