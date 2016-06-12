@@ -95,9 +95,6 @@
 				GameTooltip:Hide();
 				<!-- UnitFrame_OnLeave(); -->
 			</OnLeave>
-			<OnUpdate>
-				<!-- Perl_Party_OnUpdate(); -->
-			</OnUpdate>
 		</Scripts>
 
 		<Frames>

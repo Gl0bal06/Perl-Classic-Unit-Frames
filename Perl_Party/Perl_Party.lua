@@ -3,21 +3,16 @@
 ---------------
 Perl_Party_Config = {};
 
--- Defaults
-local transparency = 1.0;
-local Initialized = nil;	-- waiting to be initialized
-local buffmapping = {
-	["buffmapping1"] = 0,
-	["buffmapping2"] = 0,
-	["buffmapping3"] = 0,
-	["buffmapping4"] = 0,
-};
+-- Default Saved Variables (also set in Perl_Party_GetVars)
 local locked = 0;		-- unlocked by default
-local scale = 1;		-- default scale
 local compactmode = 0;		-- compact mode is disabled by default
 local partyhidden = 0;		-- party frame is set to always show by default
 local partyspacing = -80;	-- default spacing between party member frames
 local scale = 1;		-- default scale
+
+-- Default Local Variables
+local Initialized = nil;	-- waiting to be initialized
+local transparency = 1.0;
 
 -- Variables for position of the class icon texture.
 local Perl_Party_ClassPosRight = {
@@ -256,6 +251,40 @@ function Perl_Party_Initialize()
 		getglobal(this:GetName().."_StatsFrame"):SetWidth(170);
 	end
 
+	-- The following UnregisterEvent calls were taken from Nymbia's Perl
+	-- Blizz Party Events
+	for num = 1, 4 do
+		frame = getglobal("PartyMemberFrame"..num);
+		HealthBar = getglobal("PartyMemberFrame"..num.."HealthBar");
+		ManaBar = getglobal("PartyMemberFrame"..num.."ManaBar");
+		frame:UnregisterEvent("PARTY_MEMBERS_CHANGED");
+		frame:UnregisterEvent("PARTY_LEADER_CHANGED");
+		frame:UnregisterEvent("PARTY_MEMBER_ENABLE");
+		frame:UnregisterEvent("PARTY_MEMBER_DISABLE");
+		frame:UnregisterEvent("PARTY_LOOT_METHOD_CHANGED");
+		frame:UnregisterEvent("UNIT_PVP_UPDATE");
+		frame:UnregisterEvent("UNIT_AURA");
+		-- HealthBar Events
+		HealthBar:UnregisterEvent("UNIT_HEALTH");
+		HealthBar:UnregisterEvent("UNIT_MAXHEALTH");
+		-- ManaBar Events
+		ManaBar:UnregisterEvent("UNIT_MANA");
+		ManaBar:UnregisterEvent("UNIT_RAGE");
+		ManaBar:UnregisterEvent("UNIT_FOCUS");
+		ManaBar:UnregisterEvent("UNIT_ENERGY");
+		ManaBar:UnregisterEvent("UNIT_HAPPINESS");
+		ManaBar:UnregisterEvent("UNIT_MAXMANA");
+		ManaBar:UnregisterEvent("UNIT_MAXRAGE");
+		ManaBar:UnregisterEvent("UNIT_MAXFOCUS");
+		ManaBar:UnregisterEvent("UNIT_MAXENERGY");
+		ManaBar:UnregisterEvent("UNIT_MAXHAPPINESS");
+		ManaBar:UnregisterEvent("UNIT_DISPLAYPOWER");
+		-- UnitFrame Events
+		frame:UnregisterEvent("UNIT_NAME_UPDATE");
+		frame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
+		frame:UnregisterEvent("UNIT_DISPLAYPOWER");
+	end
+
 	Perl_Party_MembersUpdate();
 end
 
@@ -296,8 +325,7 @@ function Perl_Party_MembersUpdate()
 	Perl_Party_Update_Mana();
 	Perl_Party_Update_Mana_Bar();
 	Perl_Party_Update_Leader_Loot_Method();
-	--Perl_Party_Set_Space();
-	Perl_Party_Update_Pet();	-- Call after Perl_Party_Set_Space to ensure spacing is correctly set for pets
+	Perl_Party_Update_Pet();		-- Call instead of Perl_Party_Set_Space to ensure spacing is correctly set for pets
 	Perl_Party_Update_Pet_Health();
 	Perl_Party_Buff_UpdateAll();
 	getglobal(this:GetName().."_NameFrame_PVPStatus"):Hide();	-- Set pvp status icon (need to remove the xml code eventually)
@@ -722,7 +750,6 @@ end
 --------------------
 function Perl_Party_Buff_UpdateAll()
 	local partyid = "party"..this:GetID();
-	local mapid = "buffmapping"..this:GetID();
 	if (UnitName(partyid)) then
 		for buffnum=1,12 do
 			local button = getglobal(this:GetName().."_BuffFrame_Buff"..buffnum);
@@ -738,7 +765,6 @@ function Perl_Party_Buff_UpdateAll()
 			end
 		end
 
-		--DEFAULT_CHAT_FRAME:AddMessage(partyid..buffmapping[mapid]);
 		local debuffCount, debuffTexture, debuffApplications;
 		for buffnum=1,8 do
 			debuffTexture, debuffApplications = UnitDebuff(partyid, buffnum);
@@ -862,8 +888,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.20",
-			releaseDate = "November 19, 2005",
+			version = "v0.21",
+			releaseDate = "November 21, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

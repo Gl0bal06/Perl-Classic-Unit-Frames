@@ -3,21 +3,20 @@
 ---------------
 Perl_Target_Config = {};
 
--- Defaults(also set in Perl_Target_GetVars)
-local Initialized = nil;	-- waiting to be initialized
-local transparency = 1;		-- 0.8 default from perl
-local Perl_Target_State = 1;	-- enabled by default
+-- Default Saved Variables (also set in Perl_Target_GetVars)
 local locked = 0;		-- unlocked by default
 local showcp = 1;		-- combo points displayed by default
 local showclassicon = 1;	-- show the class icon
-local showpvpicon = 1;		-- show the pvp icon
 local showclassframe = 1;	-- show the class frame
-local numbuffsshown = 16;	-- buff row is 20 long
+local showpvpicon = 1;		-- show the pvp icon
+local numbuffsshown = 16;	-- buff row is 16 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
-local scale = 1;		-- default scale
 local mobhealthsupport = 1;	-- mobhealth support is on by default
-local BlizzardTargetFrame_Update = TargetFrame_Update;	-- backup the original target function in case we toggle the mod off
-local BlizzardUnitFrame_OnEnter = UnitFrame_OnEnter;	-- may not need to back this up
+local scale = 1;		-- default scale
+
+-- Default Local Variables
+local Initialized = nil;	-- waiting to be initialized
+local transparency = 1;		-- 0.8 default from perl
 
 -- Variables for position of the class icon texture.
 local Perl_Target_ClassPosRight = {
@@ -108,63 +107,62 @@ end
 -- Event Handler --
 -------------------
 function Perl_Target_OnEvent(event)
-	if (Perl_Target_State == 0) then
+	if ((event == "PLAYER_TARGET_CHANGED") or (event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")) then
+		if (UnitExists("target")) then
+			Perl_Target_Update_Once();			-- Set the unchanging info for the target
+		else
+			Perl_Target_Frame:Hide();
+		end
+		return;
+	elseif (event == "UNIT_HEALTH") then
+		if (arg1 == "target") then
+			Perl_Target_Update_Health();		-- Update health values
+			Perl_Target_Update_Dead_Status();	-- Is the target dead?
+		end
+		return;
+	elseif ((event == "UNIT_ENERGY") or (event == "UNIT_MANA") or (event == "UNIT_RAGE") or (event == "UNIT_FOCUS")) then
+		if (arg1 == "target") then
+			Perl_Target_Update_Mana();		-- Update energy/mana/rage values
+		end
+		return;
+	elseif (event == "UNIT_AURA") then
+		if (arg1 == "target") then
+			Perl_Target_Buff_UpdateAll();		-- Update the buffs
+		end
+		return;
+	elseif (event == "UNIT_DYNAMIC_FLAGS") then
+		if (arg1 == "target") then
+			Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
+		end
+		return;
+	elseif (event == "UNIT_PVP_UPDATE") then
+		Perl_Target_Update_Text_Color();		-- Is the character PvP flagged?
+		Perl_Target_Update_PvP_Status_Icon();		-- Set pvp status icon
+		return;
+	elseif (event == "UNIT_LEVEL") then
+		if (arg1 == "target") then
+			Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
+		end
+		return;
+	elseif (event == "PLAYER_COMBO_POINTS") then
+		Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
+		return;
+	elseif (event == "UNIT_DISPLAYPOWER") then
+		if (arg1 == "target") then
+			Perl_Target_Update_Mana_Bar();		-- What type of energy are they using now?
+			Perl_Target_Update_Mana();		-- Update the energy info immediately
+		end
+		return;
+	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
+		Perl_Target_Initialize();
+		return;
+	elseif (event == "ADDON_LOADED") then
+		if (arg1 == "Perl_Target") then
+			Perl_Target_myAddOns_Support();
+		end
 		return;
 	else
-		if ((event == "PLAYER_TARGET_CHANGED") or (event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")) then
-			Perl_Target_Update_Once();			-- Set the unchanging info for the target
-			return;
-		elseif (event == "UNIT_HEALTH") then
-			if (arg1 == "target") then
-				Perl_Target_Update_Health();		-- Update health values
-				Perl_Target_Update_Dead_Status();	-- Is the target dead?
-			end
-			return;
-		elseif ((event == "UNIT_ENERGY") or (event == "UNIT_MANA") or (event == "UNIT_RAGE") or (event == "UNIT_FOCUS")) then
-			if (arg1 == "target") then
-				Perl_Target_Update_Mana();		-- Update energy/mana/rage values
-			end
-			return;
-		elseif (event == "UNIT_AURA") then
-			if (arg1 == "target") then
-				Perl_Target_Buff_UpdateAll();		-- Update the buffs
-			end
-			return;
-		elseif (event == "UNIT_DYNAMIC_FLAGS") then
-			if (arg1 == "target") then
-				Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
-			end
-			return;
-		elseif (event == "UNIT_PVP_UPDATE") then
-			Perl_Target_Update_Text_Color();		-- Is the character PvP flagged?
-			Perl_Target_Update_PvP_Status_Icon();		-- Set pvp status icon
-			return;
-		elseif (event == "UNIT_LEVEL") then
-			if (arg1 == "target") then
-				Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
-			end
-			return;
-		elseif (event == "PLAYER_COMBO_POINTS") then
-			Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
-			return;
-		elseif (event == "UNIT_DISPLAYPOWER") then
-			if (arg1 == "target") then
-				Perl_Target_Update_Mana_Bar();		-- What type of energy are they using now?
-				Perl_Target_Update_Mana();		-- Update the energy info immediately
-			end
-			return;
-		elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
-			Perl_Target_Initialize();
-			return;
-		elseif (event == "ADDON_LOADED") then
-			if (arg1 == "Perl_Target") then
-				Perl_Target_myAddOns_Support();
-			end
-			return;
-		else
-			Perl_Target_Update_Frequently();
-			return;
-		end
+		return;
 	end
 end
 
@@ -196,9 +194,6 @@ function Perl_Target_SlashHandler(msg)
 		return;
 	elseif (string.find(msg, "status")) then
 		Perl_Target_Status();
-		return;
-	elseif (string.find(msg, "toggle")) then
-		Perl_Target_ToggleTarget();
 		return;
 	elseif (string.find(msg, "debuffs")) then
 		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
@@ -258,7 +253,6 @@ function Perl_Target_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs # |cffffff00- Show the number of buffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuffs # |cffffff00- Show the number of debuffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/pt scale ui' to set to the current UI scale.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the target frame on and off.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 		return;
 	end
@@ -301,14 +295,41 @@ function Perl_Target_Initialize()
 	Perl_Target_ManaBarText:SetTextColor(1,1,1,1);
 	Perl_Target_ClassNameBarText:SetTextColor(1,1,1);
 
-	
-
-	if (Perl_Target_State == 1) then
-		TargetFrame_Update = Perl_Target_Update_Frequently;
-	else
-		Perl_Target_Frame:Hide();
-		TargetFrame_Update = BlizzardTargetFrame_Update;
-	end
+	-- The following UnregisterEvent calls were taken from Nymbia's Perl
+	-- Blizz Target Frame Events
+	TargetFrame:UnregisterEvent("UNIT_HEALTH");
+	TargetFrame:UnregisterEvent("UNIT_LEVEL");
+	TargetFrame:UnregisterEvent("UNIT_FACTION");
+	TargetFrame:UnregisterEvent("UNIT_DYNAMIC_FLAGS");
+	TargetFrame:UnregisterEvent("UNIT_CLASSIFICATION_CHANGED");
+	TargetFrame:UnregisterEvent("PLAYER_PVPLEVEL_CHANGED");
+	TargetFrame:UnregisterEvent("PLAYER_TARGET_CHANGED");
+	TargetFrame:UnregisterEvent("PARTY_MEMBERS_CHANGED");
+	TargetFrame:UnregisterEvent("PARTY_LEADER_CHANGED");
+	TargetFrame:UnregisterEvent("PARTY_MEMBER_ENABLE");
+	TargetFrame:UnregisterEvent("PARTY_MEMBER_DISABLE");
+	TargetFrame:UnregisterEvent("UNIT_AURA");
+	TargetFrame:UnregisterEvent("PLAYER_FLAGS_CHANGED");
+	ComboFrame:UnregisterEvent("PLAYER_TARGET_CHANGED");
+	ComboFrame:UnregisterEvent("PLAYER_COMBO_POINTS");
+	TargetFrameHealthBar:UnregisterEvent("UNIT_HEALTH");
+	TargetFrameHealthBar:UnregisterEvent("UNIT_MAXHEALTH");
+	-- ManaBar Events
+	TargetFrameManaBar:UnregisterEvent("UNIT_MANA");
+	TargetFrameManaBar:UnregisterEvent("UNIT_RAGE");
+	TargetFrameManaBar:UnregisterEvent("UNIT_FOCUS");
+	TargetFrameManaBar:UnregisterEvent("UNIT_ENERGY");
+	TargetFrameManaBar:UnregisterEvent("UNIT_HAPPINESS");
+	TargetFrameManaBar:UnregisterEvent("UNIT_MAXMANA");
+	TargetFrameManaBar:UnregisterEvent("UNIT_MAXRAGE");
+	TargetFrameManaBar:UnregisterEvent("UNIT_MAXFOCUS");
+	TargetFrameManaBar:UnregisterEvent("UNIT_MAXENERGY");
+	TargetFrameManaBar:UnregisterEvent("UNIT_MAXHAPPINESS");
+	TargetFrameManaBar:UnregisterEvent("UNIT_DISPLAYPOWER");
+	-- UnitFrame Events
+	TargetFrame:UnregisterEvent("UNIT_NAME_UPDATE");
+	TargetFrame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
+	TargetFrame:UnregisterEvent("UNIT_DISPLAYPOWER");
 
 	Initialized = 1;
 end
@@ -333,15 +354,6 @@ function Perl_Target_Update_Once()
 		Perl_Target_Set_Character_Class_Icon();	-- Draw the class icon?
 		Perl_Target_Set_Target_Class();		-- Set the target's class in the class frame
 		Perl_Target_Buff_UpdateAll();		-- Update the buffs
-	end
-end
-
-function Perl_Target_Update_Frequently()
-	if (UnitExists("target")) then
-		return;
-	else
-		Perl_Target_Frame:Hide();
-		Perl_Target_Frame:StopMovingOrSizing();
 	end
 end
 
@@ -625,24 +637,6 @@ end
 ----------------------
 -- Config functions --
 ----------------------
-function Perl_Target_ToggleTarget()
-	if (Perl_Target_State == 0) then
-		Perl_Target_State = 1;
-		TargetFrame:Hide();
-		ComboFrame:Hide();
-		TargetFrame_Update = Perl_Target_Update_Frequently;
-		Perl_Target_Frame:Show();
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now |cffffffffEnabled|cffffff00.");
-		Perl_Target_Update_Frequently();
-	else
-		Perl_Target_State = 0;
-		TargetFrame_Update = BlizzardTargetFrame_Update;
-		Perl_Target_Frame:Hide();
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now |cffffffffDisabled|cffffff00.");
-	end
-	Perl_Target_UpdateVars();
-end
-
 function Perl_Target_Lock()
 	locked = 1;
 	Perl_Target_UpdateVars();
@@ -763,12 +757,6 @@ function Perl_Target_Set_Scale(number)
 end
 
 function Perl_Target_Status()
-	if (Perl_Target_State == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffDisabled|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffEnabled|cffffff00.");
-	end
-
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffUnlocked|cffffff00.");
 	else
@@ -806,7 +794,6 @@ function Perl_Target_Status()
 end
 
 function Perl_Target_GetVars()
-	Perl_Target_State = Perl_Target_Config[UnitName("player")]["State"];
 	locked = Perl_Target_Config[UnitName("player")]["Locked"];
 	showcp = Perl_Target_Config[UnitName("player")]["ComboPoints"];
 	showclassicon = Perl_Target_Config[UnitName("player")]["ClassIcon"];
@@ -817,9 +804,6 @@ function Perl_Target_GetVars()
 	mobhealthsupport = Perl_Target_Config[UnitName("player")]["MobHealthSupport"];
 	scale = Perl_Target_Config[UnitName("player")]["Scale"];
 
-	if (Perl_Target_State == nil) then
-		Perl_Target_State = 1;
-	end
 	if (locked == nil) then
 		locked = 0;
 	end
@@ -855,7 +839,6 @@ end
 
 function Perl_Target_UpdateVars()
 	Perl_Target_Config[UnitName("player")] = {
-						["State"] = Perl_Target_State,
 						["Locked"] = locked,
 						["ComboPoints"] = showcp,
 						["ClassIcon"] = showclassicon,
@@ -898,19 +881,6 @@ function Perl_Target_Buff_UpdateAll()
 			end
 		end
 
-		if (buffmax == 0) then
-			Perl_Target_BuffFrame:Hide();
-		else
-			if (friendly == 1) then
-				Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
-			else
-				Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
-			end
-			Perl_Target_BuffFrame:Show();
-			Perl_Target_BuffFrame:SetWidth(5 + buffmax*29);
-		end
-
-
 		local debuffmax = 0;
 		local debuffCount, debuffTexture, debuffApplications;
 		for debuffnum=1,numdebuffsshown do
@@ -937,23 +907,58 @@ function Perl_Target_Buff_UpdateAll()
 			end
 		end
 
+		if (buffmax == 0) then
+			Perl_Target_BuffFrame:Hide();
+		else
+			if (friendly == 1) then
+				Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
+			else
+				if (debuffmax > 8) then
+					Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -51);
+				else
+					Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
+				end
+			end
+			Perl_Target_BuffFrame:Show();
+			if (buffmax > 8) then
+				Perl_Target_BuffFrame:SetWidth(221);	-- 5 + 8 * 27
+				Perl_Target_BuffFrame:SetHeight(61);
+			else
+				Perl_Target_BuffFrame:SetWidth(5 + buffmax * 27);
+				Perl_Target_BuffFrame:SetHeight(34);
+			end
+		end
+
 		if (debuffmax == 0) then
 			Perl_Target_DebuffFrame:Hide();
 		else
 			if (friendly == 1) then
-				Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
+				if (buffmax > 8) then
+					Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -51);
+				else
+					Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
+				end
 			else
 				Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
 			end
 			Perl_Target_DebuffFrame:Show();
-			Perl_Target_DebuffFrame:SetWidth(5 + debuffmax*29);
+			if (debuffmax > 8) then
+				Perl_Target_DebuffFrame:SetWidth(221);	-- 5 + 8 * 27
+				Perl_Target_DebuffFrame:SetHeight(61);
+			else
+				Perl_Target_DebuffFrame:SetWidth(5 + debuffmax * 27);
+				Perl_Target_DebuffFrame:SetHeight(34);
+			end
 		end
 	end
 end
 
 function Perl_Target_Reset_Buffs()
-	for buffnum=1,20 do
-		local button = getglobal("Perl_Target_Buff"..buffnum);
+	local button;
+	for buffnum=1,16 do
+		button = getglobal("Perl_Target_Buff"..buffnum);
+		button:Hide();
+		button = getglobal("Perl_Target_Debuff"..buffnum);
 		button:Hide();
 	end
 end
@@ -1095,8 +1100,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.20",
-			releaseDate = "November 19, 2005",
+			version = "v0.21",
+			releaseDate = "November 21, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

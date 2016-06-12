@@ -3,17 +3,17 @@
 ---------------
 Perl_Player_Config = {};
 
--- Defaults (also set in Perl_Player_GetVars)
-local Perl_Player_State = 1;	-- enabled by default
+-- Default Saved Variables (also set in Perl_Player_GetVars)
 local locked = 0;		-- unlocked by default
 local xpbarstate = 1;		-- show default xp bar by default
 local compactmode = 0;		-- compact mode is disabled by default
 local showraidgroup = 1;	-- show the raid group number by default when in raids
 local scale = 1;		-- default scale
+
+-- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
-local transparency = 1;		-- general transparency for frames relative to bars/text  default is 0.8
 local Initialized = nil;	-- waiting to be initialized
-local BlizzardPlayerFrame_Update = PlayerFrame_UpdateStatus;	-- backup the original player function in case we toggle the mod off
+local transparency = 1;		-- general transparency for frames relative to bars/text  default is 0.8
 
 -- Variables for position of the class icon texture.
 local Perl_Player_ClassPosRight = {
@@ -143,7 +143,7 @@ function Perl_Player_OnEvent(event)
 	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Player_Initialize();
 		InCombat = 0;				-- You can't be fighting if you're zoning, and no event is sent, force it to no combat.
-		Perl_Player_Update_Combat_Status();	-- Are we already fighting or resting? (to fix zoning while in combat display bug)
+		Perl_Player_Update_Once();
 		return;
 	elseif (event == "ADDON_LOADED") then
 		if (arg1 == "Perl_Player") then
@@ -187,8 +187,6 @@ function Perl_Player_SlashHandler(msg)
 			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pp scale ui' to set to the current UI scale.");
 			return;
 		end
-	elseif (string.find(msg, "toggle")) then
-		Perl_Player_TogglePlayer();
 	elseif (string.find(msg, "status")) then
 		Perl_Player_Status();
 	elseif (string.find(msg, "xp")) then
@@ -211,7 +209,6 @@ function Perl_Player_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff raid |cffffff00- Toggle the displaying of your group number while in a raid.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp # |cffffff00- Set the display mode of the experience bar: 1) default, 2) pvp rank, 3) off");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/pp scale ui' to set to the current UI scale.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the player frame on and off.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 	end
 end
@@ -248,14 +245,43 @@ function Perl_Player_Initialize()
 	Perl_Player_ManaBarText:SetTextColor(1,1,1,1);
 	Perl_Player_RaidGroupNumberBarText:SetTextColor(1,1,1);
 
-	if (Perl_Player_State == 1) then
-		PlayerFrame_UpdateStatus = Perl_Player_Update_Once;
-		Perl_Player_Frame:Show();
-		Perl_Player_Update_Once();
-	else
-		Perl_Player_Frame:Hide();
-		PlayerFrame_UpdateStatus = BlizzardPlayerFrame_Update;
-	end
+	-- The following UnregisterEvent calls were taken from Nymbia's Perl
+	-- Blizz Player Frame Events
+	PlayerFrame:UnregisterEvent("UNIT_LEVEL");
+	PlayerFrame:UnregisterEvent("UNIT_COMBAT");
+	PlayerFrame:UnregisterEvent("UNIT_SPELLMISS");
+	PlayerFrame:UnregisterEvent("UNIT_PVP_UPDATE");
+	PlayerFrame:UnregisterEvent("UNIT_MAXMANA");
+	PlayerFrame:UnregisterEvent("PLAYER_ENTER_COMBAT");
+	PlayerFrame:UnregisterEvent("PLAYER_LEAVE_COMBAT");
+	PlayerFrame:UnregisterEvent("PLAYER_UPDATE_RESTING");
+	PlayerFrame:UnregisterEvent("PARTY_MEMBERS_CHANGED");
+	PlayerFrame:UnregisterEvent("PARTY_LEADER_CHANGED");
+	PlayerFrame:UnregisterEvent("PARTY_LOOT_METHOD_CHANGED");
+	PlayerFrame:UnregisterEvent("PLAYER_ENTERING_WORLD");
+	PlayerFrame:UnregisterEvent("PLAYER_REGEN_DISABLED");
+	PlayerFrame:UnregisterEvent("PLAYER_REGEN_ENABLED");
+	PlayerFrameHealthBar:UnregisterEvent("UNIT_HEALTH");
+	PlayerFrameHealthBar:UnregisterEvent("UNIT_MAXHEALTH");
+	-- ManaBar Events
+	PlayerFrameManaBar:UnregisterEvent("UNIT_MANA");
+	PlayerFrameManaBar:UnregisterEvent("UNIT_RAGE");
+	PlayerFrameManaBar:UnregisterEvent("UNIT_FOCUS");
+	PlayerFrameManaBar:UnregisterEvent("UNIT_ENERGY");
+	PlayerFrameManaBar:UnregisterEvent("UNIT_HAPPINESS");
+	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXMANA");
+	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXRAGE");
+	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXFOCUS");
+	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXENERGY");
+	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXHAPPINESS");
+	PlayerFrameManaBar:UnregisterEvent("UNIT_DISPLAYPOWER");
+	-- UnitFrame Events
+	PlayerFrame:UnregisterEvent("UNIT_NAME_UPDATE");
+	PlayerFrame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
+	PlayerFrame:UnregisterEvent("UNIT_DISPLAYPOWER");
+
+	Perl_Player_Frame:Show();
+	--Perl_Player_Update_Once();
 
 	Initialized = 1;
 end
@@ -339,33 +365,47 @@ function Perl_Player_Update_Mana_Bar()
 end
 
 function Perl_Player_Update_Experience()
-	-- XP Bar stuff
-	local playerxp = UnitXP("player");
-	local playerxpmax = UnitXPMax("player");
-	local playerxprest = GetXPExhaustion();
+	if (UnitLevel("player") ~= 70) then
+		-- XP Bar stuff
+		local playerxp = UnitXP("player");
+		local playerxpmax = UnitXPMax("player");
+		local playerxprest = GetXPExhaustion();
 
-	Perl_Player_XPBar:SetMinMaxValues(0, playerxpmax);
-	Perl_Player_XPRestBar:SetMinMaxValues(0, playerxpmax);
-	Perl_Player_XPBar:SetValue(playerxp);
+		Perl_Player_XPBar:SetMinMaxValues(0, playerxpmax);
+		Perl_Player_XPRestBar:SetMinMaxValues(0, playerxpmax);
+		Perl_Player_XPBar:SetValue(playerxp);
 
-	-- Set xp text
-	local xptext = playerxp.."/"..playerxpmax;
-	local xptextpercent = floor(playerxp/playerxpmax*100+0.5);
+		-- Set xp text
+		local xptext = playerxp.."/"..playerxpmax;
+		local xptextpercent = floor(playerxp/playerxpmax*100+0.5);
 
-	if (playerxprest) then
-		xptext = xptext .."(+"..(playerxprest)..")";
-		Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
-		Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
-		Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
-		Perl_Player_XPRestBar:SetValue(playerxp + playerxprest);
+		if (playerxprest) then
+			xptext = xptext .."(+"..(playerxprest)..")";
+			Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
+			Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
+			Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
+			Perl_Player_XPRestBar:SetValue(playerxp + playerxprest);
+		else
+			Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
+			Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
+			Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
+			Perl_Player_XPRestBar:SetValue(playerxp);
+		end
+
+		Perl_Player_XPBarText:SetText(xptextpercent.."%");
 	else
+		Perl_Player_XPBar:SetMinMaxValues(0, 1);
+		Perl_Player_XPRestBar:SetMinMaxValues(0, 1);
+		Perl_Player_XPBar:SetValue(1);
+		Perl_Player_XPRestBar:SetValue(1);
+
 		Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
 		Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 		Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
-		Perl_Player_XPRestBar:SetValue(playerxp);
-	end
 
-	Perl_Player_XPBarText:SetText(xptextpercent.."%");
+		Perl_Player_XPBarText:SetText("Level 70");
+	end
+	
 end
 
 function Perl_Player_Update_Combat_Status(event)
@@ -457,24 +497,6 @@ end
 ----------------------
 -- Config Functions --
 ----------------------
-function Perl_Player_TogglePlayer()
-	if (Perl_Player_State == 0) then
-		Perl_Player_State = 1;
-		PlayerFrame_UpdateStatus = Perl_Player_Update_Once;
-		PlayerFrame:Hide();	-- Hide default frame
-		Perl_Player_Frame:Show();
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now |cffffffffEnabled|cffffff00.");
-		Perl_Player_Update_Once();
-	else
-		Perl_Player_State = 0;
-		PlayerFrame_UpdateStatus = BlizzardPlayerFrame_Update;
-		Perl_Player_Frame:Hide();
-		PlayerFrame:Show();	-- Show default frame
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now |cffffffffDisabled|cffffff00.");
-	end
-	Perl_Player_UpdateVars();
-end
-
 function Perl_Player_Lock()
 	locked = 1;
 	Perl_Player_UpdateVars();
@@ -561,12 +583,6 @@ function Perl_Player_Set_Scale(number)
 end
 
 function Perl_Player_Status()
-	if (Perl_Player_State == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisabled|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffEnabled|cffffff00.");
-	end
-
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffUnlocked|cffffff00.");
 	else
@@ -657,7 +673,11 @@ function Perl_Player_MouseUp(button)
 			TargetUnit("player");
 		end
 	else
-		ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
+		if (this:GetName() == "Perl_Player_Frame") then
+			ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
+		else
+			return;
+		end
 	end
 
 	Perl_Player_Frame:StopMovingOrSizing();
@@ -674,20 +694,45 @@ end
 -- Experience Tooltip --
 ------------------------
 function Perl_Player_XPTooltip()
-	local playerxp = UnitXP("player");
-	local playerxpmax = UnitXPMax("player");
-	local playerxprest = GetXPExhaustion();
-	local playerlevel = UnitLevel("player") + 1;
-	local xptext = playerxp.."/"..playerxpmax;
-	local xptolevel = playerxpmax - playerxp
-
-	if (playerxprest) then
-		xptext = xptext .."(+"..(playerxprest)..")";
-	end
-
+	local playerxp, playerxpmax, xptext
 	GameTooltip_SetDefaultAnchor(GameTooltip, this);
-	GameTooltip:SetText(xptext, 255/255, 209/255, 0/255);
-	GameTooltip:AddLine(xptolevel.." until level "..playerlevel, 255/255, 209/255, 0/255);
+	if (xpbarstate == 1) then
+		local playerlevel = UnitLevel("player");			-- Player's next level
+		if (playerlevel < 70) then
+			playerxp = UnitXP("player");				-- Player's current XP
+			playerxpmax = UnitXPMax("player");			-- Experience for the current level
+			local playerxprest = GetXPExhaustion();			-- Amount of bonus xp we have
+			local xptolevel = playerxpmax - playerxp		-- XP till level
+
+			if (playerxprest) then
+				xptext = playerxp.."/"..playerxpmax .." (+"..(playerxprest)..")";	-- Create the experience string w/ rest xp
+			else
+				xptext = playerxp.."/"..playerxpmax;		-- Create the experience string w/ no rest xp
+			end
+
+			GameTooltip:SetText(xptext, 255/255, 209/255, 0/255);
+			GameTooltip:AddLine(xptolevel.." until level "..(playerlevel + 1), 255/255, 209/255, 0/255);
+		else
+			GameTooltip:SetText("You can't gain anymore experience!", 255/255, 209/255, 0/255);
+		end
+		
+	else
+		local rankNumber, rankName, rankProgress;			-- Some variables
+		rankNumber = UnitPVPRank("player")				-- 
+		if (rankNumber < 1) then
+			rankName = "Unranked"
+			GameTooltip:SetText("You are Unranked.", 255/255, 209/255, 0/255);
+		else
+			rankName = GetPVPRankInfo(rankNumber, "player");
+			rankProgress = floor(GetPVPRankProgress() * 100);
+			GameTooltip:SetText(rankProgress.."% into Rank "..(rankNumber - 4).." ("..rankName..")", 255/255, 209/255, 0/255);
+			if (rankNumber < 18) then
+				rankNumber = rankNumber + 1;
+				rankName = GetPVPRankInfo(rankNumber, "player");
+				GameTooltip:AddLine((100 - rankProgress).."% until Rank "..(rankNumber - 4).." ("..rankName..")", 255/255, 209/255, 0/255);
+			end
+		end
+	end
 	GameTooltip:Show();
 end
 
@@ -700,8 +745,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.20",
-			releaseDate = "November 19, 2005",
+			version = "v0.21",
+			releaseDate = "November 21, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

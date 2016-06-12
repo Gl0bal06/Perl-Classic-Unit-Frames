@@ -1,11 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
 	<Script file="Perl_CombatDisplay_Options.lua"/>
-	<!--
-	
-	Virtual templates
-	
-	-->
-	
+
+
+	<!-- Virtual templates -->
 	<CheckButton name="Perl_CombatDisplay_Options_CheckButton" virtual="true">
 		<Size>
 			<AbsDimension x="32" y="32"/>
@@ -33,7 +30,7 @@
 			</OnShow>
 		</Scripts>
 	</CheckButton>
-	
+
 	<CheckButton name="Perl_CombatDisplay_Options_TabsTemplate" virtual="true">
 		<Size>
 			<AbsDimension x="100" y="24"/>
@@ -59,8 +56,6 @@
 			<OnClick>
 				Perl_CombatDisplay_Options_TabChecked();
 			</OnClick>
-			<OnLoad>
-			</OnLoad>
 		</Scripts>
 	</CheckButton>
 	
@@ -92,13 +87,8 @@
 		</Anchors>
 	</Frame>
 
-	
-	<!--
-	
-	Actual Options Frame
-	
-	-->
-	
+
+	<!-- Actual Options Frame -->
 	<Frame name="Perl_CombatDisplay_Options_Frame" movable="true" frameStrata="DIALOG" hidden="true">
 		<Anchors>
 			<Anchor point="CENTER"/>

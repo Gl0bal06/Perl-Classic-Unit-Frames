@@ -20,9 +20,6 @@
 
 		<!-- Script Events -->
 		<Scripts>
-			<OnUpdate>
-				<!-- Perl_Player_Buff_UpdateAll(); -->
-			</OnUpdate>
 			<OnLoad>
 				Perl_Player_OnLoad();
 			</OnLoad>
@@ -153,6 +150,11 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
+				<Scripts>
+					<OnMouseUp>
+						Perl_Player_MouseUp(arg1);
+					</OnMouseUp>
+				</Scripts>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -193,6 +195,11 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
+				<Scripts>
+					<OnMouseUp>
+						Perl_Player_MouseUp(arg1);
+					</OnMouseUp>
+				</Scripts>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -247,6 +254,11 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
+				<Scripts>
+					<OnMouseUp>
+						Perl_Player_MouseUp(arg1);
+					</OnMouseUp>
+				</Scripts>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -271,6 +283,11 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
 						<BarTexture name="Perl_Player_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0"/>
 						<Layers>
@@ -326,6 +343,11 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
 						<BarTexture name="Perl_Player_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0" b="1"/>
 						<Layers>
@@ -374,11 +396,6 @@
 						<Size>
 							<AbsDimension x="220" y="10"/>
 						</Size>
-						<Scripts>
-							<OnEnter>
-								Perl_Player_XPTooltip();
-							</OnEnter>
-						</Scripts>
 						<Anchors>
 							<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Player_ManaBar">
 								<Offset>
@@ -386,6 +403,14 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnEnter>
+								Perl_Player_XPTooltip();
+							</OnEnter>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
 						<BarTexture name="Perl_Player_XPBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0.6" g="0" b="0.6"/>
 						<Layers>

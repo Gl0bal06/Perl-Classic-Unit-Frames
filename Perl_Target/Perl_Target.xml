@@ -75,9 +75,6 @@
 
 		<!-- Script Events -->
 		<Scripts>
-			<OnUpdate>
-				<!-- Perl_Target_Buff_UpdateAll(); -->
-			</OnUpdate>
 			<OnLoad>
 				Perl_Target_OnLoad();
 			</OnLoad>
@@ -211,7 +208,7 @@
 			<!-- Target Level Frame -->
 			<Frame name="Perl_Target_LevelFrame">
 				<Size>
-					<AbsDimension x="45" y="24"/>
+					<AbsDimension x="46" y="24"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_NameFrame">
@@ -331,7 +328,7 @@
 			<!-- Target Stats -->
 			<Frame name="Perl_Target_StatsFrame">
 				<Size>
-					<AbsDimension x="220" y="42"/>
+					<AbsDimension x="221" y="42"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Target_NameFrame">
@@ -482,7 +479,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff1" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -492,7 +489,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff2" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -502,7 +499,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff3" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -512,7 +509,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff4" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -522,7 +519,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff5" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -532,7 +529,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff6" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -542,7 +539,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff7" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -550,9 +547,9 @@
 
 					<Button name="Perl_Target_Buff9" inherits="Perl_Target_BuffTemplate" id="9">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff8" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff1" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="0" y="-3"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -562,7 +559,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff9" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -572,7 +569,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff10" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -582,7 +579,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff11" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -592,7 +589,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff12" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -602,7 +599,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff13" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -612,7 +609,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff14" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -622,47 +619,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff15" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-
-					<Button name="Perl_Target_Buff17" inherits="Perl_Target_BuffTemplate" id="17">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff16" relativePoint="TOPRIGHT">
-								<Offset>
-									<AbsDimension x="5" y="0"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-
-					<Button name="Perl_Target_Buff18" inherits="Perl_Target_BuffTemplate" id="18">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff17" relativePoint="TOPRIGHT">
-								<Offset>
-									<AbsDimension x="5" y="0"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-
-					<Button name="Perl_Target_Buff19" inherits="Perl_Target_BuffTemplate" id="19">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff18" relativePoint="TOPRIGHT">
-								<Offset>
-									<AbsDimension x="5" y="0"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-
-					<Button name="Perl_Target_Buff20" inherits="Perl_Target_BuffTemplate" id="20">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff19" relativePoint="TOPRIGHT">
-								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -711,7 +668,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff1" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -721,7 +678,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff2" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -731,7 +688,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff3" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -741,7 +698,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff4" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -751,7 +708,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff5" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -761,7 +718,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff6" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -771,7 +728,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff7" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -779,9 +736,9 @@
 
 					<Button name="Perl_Target_Debuff9" inherits="Perl_Target_BuffTemplate" id="9">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff8" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff1" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="0" y="-3"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -791,7 +748,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff9" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -801,7 +758,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff10" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -811,7 +768,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff11" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -821,7 +778,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff12" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -831,7 +788,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff13" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -841,7 +798,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff14" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -851,7 +808,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff15" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="5" y="0"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>

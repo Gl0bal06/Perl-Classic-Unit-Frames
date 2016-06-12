@@ -3,15 +3,16 @@
 ---------------
 Perl_Player_Pet_Config = {};
 
--- Defaults (also set in Perl_Player_Pet_GetVars)
-local Perl_Player_Pet_State = 1;	-- enabled by default
+-- Default Saved Variables (also set in Perl_Player_Pet_GetVars)
 local locked = 0;			-- unlocked by default
 local showxp = 0;			-- xp bar is hidden by default
-local transparency = 1;			-- 0.8 default from perl
-local Initialized = nil;		-- waiting to be initialized
-local scale = 1;		-- default scale
-local BlizzardPetFrame_Update = PetFrame_Update;	-- backup the original target function in case we toggle the mod off
+local scale = 1;			-- default scale
+local numpetbuffsshown = 16;		-- buff row is 16 long
+local numpetdebuffsshown = 16;		-- debuff row is 16 long
 
+-- Default Local Variables
+local Initialized = nil;		-- waiting to be initialized
+local transparency = 1;			-- 0.8 default from perl
 
 ----------------------
 -- Loading Function --
@@ -40,7 +41,7 @@ function Perl_Player_Pet_OnLoad()
 
 	table.insert(UnitPopupFrames,"Perl_Player_Pet_DropDown");
 
-	if( DEFAULT_CHAT_FRAME ) then
+	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame by Perl loaded successfully.");
 	end
 end
@@ -50,68 +51,64 @@ end
 -- Event Handler --
 -------------------
 function Perl_Player_Pet_OnEvent(event)
-	if (Perl_Player_Pet_State == 0) then
+	if (event == "UNIT_HEALTH") then
+		if (arg1 == "pet") then
+			Perl_Player_Pet_Update_Health();	-- Update health values
+		end
+		return;
+	elseif (event == "UNIT_FOCUS" or event == "UNIT_MANA") then
+		if (arg1 == "pet") then
+			Perl_Player_Pet_Update_Mana();		-- Update energy/mana/rage values
+		end
+		return;
+	elseif (event == "UNIT_HAPPINESS") then
+		Perl_Player_PetFrame_SetHappiness();
+		return;
+	elseif (event == "UNIT_NAME_UPDATE") then
+		if (arg1 == "pet") then
+			Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));	-- Set name
+		end
+		return;
+	elseif (event == "UNIT_AURA") then
+		if (arg1 == "pet") then
+			Perl_Player_Pet_Buff_UpdateAll();	-- Update the buff/debuff list
+		end
+		return;
+	elseif (event == "PLAYER_XP_UPDATE") then
+		if (showxp == 1) then
+			Perl_Player_Pet_Update_Experience();	-- Set the experience bar info
+		end
+		return;
+	elseif (event == "UNIT_LEVEL") then
+		if (arg1 == "pet") then
+			Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
+		end
+		return;
+	elseif (event == "UNIT_DISPLAYPOWER") then
+		if (arg1 == "pet") then
+			Perl_Player_Pet_Update_Mana_Bar();	-- What type of energy are we using now?
+			Perl_Player_Pet_Update_Mana();		-- Update the energy info immediately
+		end
+		return;
+	elseif (event == "PLAYER_PET_CHANGED") then
+		Perl_Player_Pet_Update_Once();
+		return;
+	elseif (event == "UNIT_PET") then
+		if (arg1 == "player") then
+			Perl_Player_Pet_Update_Once();
+		end
+		return;
+	elseif (event == "VARIABLES_LOADED") or (event == "PLAYER_ENTERING_WORLD") then
+		Perl_Player_Pet_Initialize();
+		Perl_Player_Pet_Update_Once();
+		return;
+	elseif (event == "ADDON_LOADED") then
+		if (arg1 == "Perl_Player_Pet") then
+			Perl_Player_Pet_myAddOns_Support();
+		end
 		return;
 	else
-		if (event == "UNIT_HEALTH") then
-			if (arg1 == "pet") then
-				Perl_Player_Pet_Update_Health();	-- Update health values
-			end
-			return;
-		elseif (event == "UNIT_FOCUS" or event == "UNIT_MANA") then
-			if (arg1 == "pet") then
-				Perl_Player_Pet_Update_Mana();		-- Update energy/mana/rage values
-			end
-			return;
-		elseif (event == "UNIT_HAPPINESS") then
-			Perl_Player_PetFrame_SetHappiness();
-			return;
-		elseif (event == "UNIT_NAME_UPDATE") then
-			if (arg1 == "pet") then
-				Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));	-- Set name
-			end
-			return;
-		elseif (event == "UNIT_AURA") then
-			if (arg1 == "pet") then
-				Perl_Player_Pet_Buff_UpdateAll();	-- Update the buff/debuff list
-			end
-			return;
-		elseif (event == "PLAYER_XP_UPDATE") then
-			if (showxp == 1) then
-				Perl_Player_Pet_Update_Experience();	-- Set the experience bar info
-			end
-			return;
-		elseif (event == "UNIT_LEVEL") then
-			if (arg1 == "pet") then
-				Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
-			end
-			return;
-		elseif (event == "UNIT_DISPLAYPOWER") then
-			if (arg1 == "pet") then
-				Perl_Player_Pet_Update_Mana_Bar();	-- What type of energy are we using now?
-				Perl_Player_Pet_Update_Mana();		-- Update the energy info immediately
-			end
-			return;
-		elseif (event == "PLAYER_PET_CHANGED") then
-			Perl_Player_Pet_Update_Once();
-			return;
-		elseif (event == "UNIT_PET") then
-			if (arg1 == "player") then
-				Perl_Player_Pet_Update_Once();
-			end
-			return;
-		elseif (event == "VARIABLES_LOADED") or (event == "PLAYER_ENTERING_WORLD") then
-			Perl_Player_Pet_Initialize();
-			--Perl_Player_Pet_Update_Once();
-			return;
-		elseif (event == "ADDON_LOADED") then
-			if (arg1 == "Perl_Player_Pet") then
-				Perl_Player_Pet_myAddOns_Support();
-			end
-			return;
-		else
-			return;
-		end
+		return;
 	end
 end
 
@@ -126,6 +123,33 @@ function Perl_Player_Pet_SlashHandler(msg)
 		Perl_Player_Pet_Lock();
 	elseif (string.find(msg, "xp")) then
 		Perl_Player_Pet_Toggle_XPMode();
+	elseif (string.find(msg, "debuffs")) then
+		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
+		if (arg1 ~= "") then
+			local number = tonumber(arg1);
+			if (number >= 0 and number <= 16) then
+				Perl_Player_Pet_Set_Debuffs(number)
+			else
+				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-16)");
+			end
+		else
+			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of debuffs to display (0-16): /ppp debuffs #");
+		end
+	elseif (string.find(msg, "buffs")) then
+		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
+		if (arg1 ~= "") then
+			local number = tonumber(arg1);
+			if (number >= 0 and number <= 16) then
+				Perl_Player_Pet_Set_Buffs(number)
+				return;
+			else
+				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-16)");
+				return;
+			end
+		else
+			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of buffs to display (0-16): /ppp buffs #");
+			return;
+		end
 	elseif (string.find(msg, "scale")) then
 		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
 		if (arg1 ~= "") then
@@ -152,6 +176,8 @@ function Perl_Player_Pet_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp |cffffff00- Toggle the pet experience bar.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs # |cffffff00- Show the number of buffs to display.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuffs # |cffffff00- Show the number of debuffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/ppp scale ui' to set to the current UI scale.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 	end
@@ -183,17 +209,22 @@ function Perl_Player_Pet_Initialize()
 	Perl_Player_Pet_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Player_Pet_BuffFrame:SetBackdropColor(0, 0, 0, transparency);
 	Perl_Player_Pet_BuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Player_Pet_DebuffFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_Pet_DebuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 
 	Perl_Player_Pet_HealthBarText:SetTextColor(1,1,1,1);
 	Perl_Player_Pet_ManaBarText:SetTextColor(1,1,1,1);
 
-	if (Perl_Player_Pet_State == 1) then
-		PetFrame_Update = Perl_Player_Pet_Update_Once;
-		Perl_Player_Pet_Update_Once();
-	else
-		Perl_Player_Frame:Hide();
-		PetFrame_Update = BlizzardPetFrame_Update;
-	end
+	-- The following UnregisterEvent calls were taken from Nymbia's Perl
+	-- Blizz Pet Frame Events
+	PetFrame:UnregisterEvent("UNIT_COMBAT");
+	PetFrame:UnregisterEvent("UNIT_SPELLMISS");
+	PetFrame:UnregisterEvent("UNIT_AURA");
+	PetFrame:UnregisterEvent("PLAYER_PET_CHANGED");
+	PetFrame:UnregisterEvent("PET_ATTACK_START");
+	PetFrame:UnregisterEvent("PET_ATTACK_STOP");
+	PetFrame:UnregisterEvent("UNIT_HAPPINESS");
+	PetFrame:UnregisterEvent("PLAYER_ENTERING_WORLD");
 
 	Initialized = 1;
 end
@@ -347,6 +378,28 @@ function Perl_Player_Pet_Toggle_XPMode()
 	Perl_Player_Pet_ShowXP();
 end
 
+function Perl_Player_Pet_Set_Buffs(newbuffnumber)
+	if (newbuffnumber == nil) then
+		newbuffnumber = 16;
+	end
+	numpetbuffsshown = newbuffnumber;
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Reset_Buffs();	-- Reset the buff icons
+	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetbuffsshown.."|cffffff00 buffs.");
+end
+
+function Perl_Player_Pet_Set_Debuffs(newdebuffnumber)
+	if (newdebuffnumber == nil) then
+		newdebuffnumber = 16;
+	end
+	numpetdebuffsshown = newdebuffnumber;
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Reset_Buffs();	-- Reset the buff icons
+	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetdebuffsshown.."|cffffff00 debuffs.");
+end
+
 function Perl_Player_Pet_Set_ParentUI_Scale()
 	scale = UIParent:GetScale();
 	Perl_Player_Pet_Frame:SetScale(scale);
@@ -374,6 +427,9 @@ function Perl_Player_Pet_Status()
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffShowing Experience|cffffff00.");
 	end
 
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetbuffsshown.."|cffffff00 buffs.");
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetdebuffsshown.."|cffffff00 debuffs.");
+
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying at a scale of |cffffffff"..(scale * 100).."%|cffffff00.");
 end
 
@@ -381,6 +437,8 @@ function Perl_Player_Pet_GetVars()
 	locked = Perl_Player_Pet_Config[UnitName("player")]["Locked"];
 	showxp = Perl_Player_Pet_Config[UnitName("player")]["ShowXP"];
 	scale = Perl_Player_Pet_Config[UnitName("player")]["Scale"];
+	numpetbuffsshown = Perl_Player_Pet_Config[UnitName("player")]["Buffs"];
+	numpetdebuffsshown = Perl_Player_Pet_Config[UnitName("player")]["Debuffs"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -391,6 +449,12 @@ function Perl_Player_Pet_GetVars()
 	if (scale == nil) then
 		scale = 1;
 	end
+	if (numpetbuffsshown == nil) then
+		numpetbuffsshown = 16;
+	end
+	if (numpetdebuffsshown == nil) then
+		numpetdebuffsshown = 16;
+	end
 end
 
 function Perl_Player_Pet_UpdateVars()
@@ -398,6 +462,8 @@ function Perl_Player_Pet_UpdateVars()
 		["Locked"] = locked,
 		["ShowXP"] = showxp,
 		["Scale"] = scale,
+		["Buffs"] = numpetbuffsshown,
+		["Debuffs"] = numpetdebuffsshown,
 	};
 end
 
@@ -408,7 +474,7 @@ end
 function Perl_Player_Pet_Buff_UpdateAll()
 	if (UnitName("pet")) then
 		local buffmax = 0;
-		for buffnum=1,12 do
+		for buffnum=1,numpetbuffsshown do
 			local button = getglobal("Perl_Player_Pet_Buff"..buffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
@@ -424,20 +490,27 @@ function Perl_Player_Pet_Buff_UpdateAll()
 			end
 		end
 
-		buffmapping = buffmax;
-		debuffmax = 13 - buffmapping;
-
-		for buffnum=1,debuffmax do
-			local button = getglobal("Perl_Player_Pet_Buff"..(buffnum+buffmapping));
+		local debuffmax = 0;
+		local debuffCount, debuffTexture, debuffApplications;
+		for debuffnum=1,numpetdebuffsshown do
+			debuffTexture, debuffApplications = UnitDebuff("target", debuffnum);
+			local button = getglobal("Perl_Player_Pet_Debuff"..debuffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
 			
-			if (UnitDebuff("pet", buffnum)) then
-				icon:SetTexture(UnitDebuff("pet", buffnum));
+			if (UnitDebuff("pet", debuffnum)) then
+				icon:SetTexture(UnitDebuff("pet", debuffnum));
 				button.isdebuff = 1;
 				debuff:Show();
 				button:Show();
-				buffmax = buffnum+buffmapping;
+				debuffCount = getglobal("Perl_Player_Pet_Debuff"..debuffnum.."Count");
+				if (debuffApplications > 1) then
+					debuffCount:SetText(debuffApplications);
+					debuffCount:Show();
+				else
+					debuffCount:Hide();
+				end
+				debuffmax = debuffnum;
 			else
 				button:Hide();
 			end
@@ -447,12 +520,30 @@ function Perl_Player_Pet_Buff_UpdateAll()
 			Perl_Player_Pet_BuffFrame:Hide();
 		else
 			Perl_Player_Pet_BuffFrame:Show();
-			Perl_Player_Pet_BuffFrame:SetWidth(5 + buffmax*29);
+			Perl_Player_Pet_BuffFrame:SetWidth(5 + buffmax * 17);
+		end
+
+		if (debuffmax == 0) then
+			Perl_Player_Pet_DebuffFrame:Hide();
+		else
+			Perl_Player_Pet_DebuffFrame:Show();
+			Perl_Player_Pet_DebuffFrame:SetWidth(5 + debuffmax * 17);
 		end
 	end
 end
 
+function Perl_Player_Pet_Reset_Buffs()
+	local button;
+	for buffnum=1,16 do
+		button = getglobal("Perl_Player_Pet_Buff"..buffnum);
+		button:Hide();
+		button = getglobal("Perl_Player_Pet_Debuff"..buffnum);
+		button:Hide();
+	end
+end
+
 function Perl_Player_Pet_SetBuffTooltip()
+	local buffmapping = 0;
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
 	if (this.isdebuff == 1) then
 		GameTooltip:SetUnitDebuff("pet", this:GetID()-buffmapping);
@@ -470,11 +561,7 @@ function Perl_Player_Pet_DropDown_OnLoad()
 end
 
 function Perl_Player_Pet_DropDown_Initialize()
-	if (PetCanBeRenamed()) then
-		UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, "PET_RENAME", "pet");
-	else
-		UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, "PET", "pet");
-	end
+	UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, "PET", "pet");
 end
 
 function Perl_Player_Pet_MouseUp(button)
@@ -490,7 +577,11 @@ function Perl_Player_Pet_MouseUp(button)
 			TargetUnit("pet");
 		end
 	else
-		ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
+		if (this:GetName() == "Perl_Player_Pet_Frame") then
+			ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
+		else
+			return;
+		end
 	end
 
 	Perl_Player_Pet_Frame:StopMovingOrSizing();
@@ -511,8 +602,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.20",
-			releaseDate = "November 19, 2005",
+			version = "v0.21",
+			releaseDate = "November 21, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

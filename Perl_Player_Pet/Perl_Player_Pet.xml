@@ -6,13 +6,13 @@
 	<!-- Virtual buffs template -->
 	<Button name="Perl_Player_Pet_BuffTemplate" virtual="true">
 		<Size>
-			<AbsDimension x="24" y="24"/>
+			<AbsDimension x="12" y="12"/>
 		</Size>
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="$parentIcon">
 					<Size>
-						<AbsDimension x="24" y="24"/>
+						<AbsDimension x="12" y="12"/>
 					</Size>
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -26,7 +26,7 @@
 			<Layer level="OVERLAY">
 				<Texture name="$parentDebuffBorder" file="Interface\Buttons\UI-Debuff-Border" hidden="true">
 					<Size>
-						<AbsDimension x="24" y="24"/>
+						<AbsDimension x="12" y="12"/>
 					</Size>
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -36,6 +36,15 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
+				<FontString name="$parentCount" inherits="NumberFontNormalSmall">
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="-1" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
 			</Layer>
 		</Layers>
 		<Scripts>
@@ -65,9 +74,6 @@
 
 		<!-- Script Events -->
 		<Scripts>
-			<OnUpdate>
-				<!-- Perl_Player_Pet_Buff_UpdateAll(); -->
-			</OnUpdate>
 			<OnLoad>
 				Perl_Player_Pet_OnLoad();
 			</OnLoad>
@@ -114,7 +120,7 @@
 							<AbsDimension x="0" y="0"/>
 						</Offset>
 					</Anchor>
-				</Anchors>		
+				</Anchors>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -190,6 +196,11 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnMouseUp>
+								Perl_Player_Pet_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
 						<Layers>
 							<Layer level="BACKGROUND">
 								<Texture name="Perl_Player_PetHappinessTexture" file="Interface\PetPaperDollFrame\UI-PetHappiness" setAllPoints="true">
@@ -235,6 +246,11 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
+				<Scripts>
+					<OnMouseUp>
+						Perl_Player_Pet_MouseUp(arg1);
+					</OnMouseUp>
+				</Scripts>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -259,6 +275,11 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnMouseUp>
+								Perl_Player_Pet_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
 						<BarTexture name="Perl_Player_Pet_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0"/>
 						<Layers>
@@ -303,6 +324,11 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnMouseUp>
+								Perl_Player_Pet_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
 						<BarTexture name="Perl_Player_Pet_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0" b="1"/>
 						<Layers>
@@ -347,6 +373,11 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnMouseUp>
+								Perl_Player_Pet_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
 						<BarTexture name="Perl_Player_Pet_XPBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0.6" g="0" b="0.6"/>
 						<Layers>
@@ -385,15 +416,16 @@
 			<!-- Buffs Frame -->
 			<Frame name="Perl_Player_Pet_BuffFrame">
 				<Size>
-					<AbsDimension x="100" y="34"/>
+					<AbsDimension x="100" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Player_Pet_StatsFrame">
 						<Offset>
-							<AbsDimension x="-5" y="0"/>
+							<AbsDimension x="-5" y="1"/>
 						</Offset>
 					</Anchor>
-				</Anchors>		
+				</Anchors>
+				<!--
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -405,6 +437,7 @@
 						<AbsInset left="5" right="5" top="5" bottom="5"/>
 					</BackgroundInsets>
 				</Backdrop>
+				-->
 				<Frames>
 					<!-- Start buttons -->
 					<Button name="Perl_Player_Pet_Buff1" inherits="Perl_Player_Pet_BuffTemplate" id="1">
@@ -536,9 +569,230 @@
 							</Anchor>
 						</Anchors>
 					</Button>
+
+					<Button name="Perl_Player_Pet_Buff14" inherits="Perl_Player_Pet_BuffTemplate" id="14">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Buff13" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Buff15" inherits="Perl_Player_Pet_BuffTemplate" id="15">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Buff14" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Buff16" inherits="Perl_Player_Pet_BuffTemplate" id="16">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Buff15" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
 					<!-- End buttons -->
 				</Frames>
 			</Frame>
+
+			<!-- Debuffs Frame -->
+			<Frame name="Perl_Player_Pet_DebuffFrame">
+				<Size>
+					<AbsDimension x="100" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="Perl_Player_Pet_StatsFrame">
+						<Offset>
+							<AbsDimension x="-5" y="-1"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<!--
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				-->
+				<Frames>
+					<!-- Start buttons -->
+					<Button name="Perl_Player_Pet_Debuff1" inherits="Perl_Player_Pet_BuffTemplate" id="1">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="5" y="-5"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff2" inherits="Perl_Player_Pet_BuffTemplate" id="2">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff1" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff3" inherits="Perl_Player_Pet_BuffTemplate" id="3">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff2" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					
+					<Button name="Perl_Player_Pet_Debuff4" inherits="Perl_Player_Pet_BuffTemplate" id="4">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff3" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff5" inherits="Perl_Player_Pet_BuffTemplate" id="5">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff4" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff6" inherits="Perl_Player_Pet_BuffTemplate" id="6">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff5" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff7" inherits="Perl_Player_Pet_BuffTemplate" id="7">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff6" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff8" inherits="Perl_Player_Pet_BuffTemplate" id="8">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff7" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff9" inherits="Perl_Player_Pet_BuffTemplate" id="9">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff8" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff10" inherits="Perl_Player_Pet_BuffTemplate" id="10">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff9" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff11" inherits="Perl_Player_Pet_BuffTemplate" id="11">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff10" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff12" inherits="Perl_Player_Pet_BuffTemplate" id="12">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff11" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff13" inherits="Perl_Player_Pet_BuffTemplate" id="13">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff12" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff14" inherits="Perl_Player_Pet_BuffTemplate" id="14">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff13" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff15" inherits="Perl_Player_Pet_BuffTemplate" id="15">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff14" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Player_Pet_Debuff16" inherits="Perl_Player_Pet_BuffTemplate" id="16">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff15" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+					<!-- End buttons -->
+				</Frames>
+			</Frame>
+
 		</Frames>
 	</Frame>
 </Ui>

@@ -3,18 +3,19 @@
 ---------------
 Perl_CombatDisplay_Config = {};
 
--- Defaults (also set in Perl_CombatDisplay_GetVars)
+-- Default Saved Variables (also set in Perl_CombatDisplay_GetVars)
 local state = 3;
-local locked = 0;
 local manapersist = 0;
 local healthpersist = 0;
+local locked = 0;
 local scale = 1;
 
-local IsAggroed = 0;
-local InCombat = 0;
+-- Default Local Variables
 local healthfull = 0;
-local manafull = 0;
+local InCombat = 0;
 local Initialized = nil;
+local IsAggroed = 0;
+local manafull = 0;
 
 
 ----------------------
@@ -40,7 +41,7 @@ function Perl_CombatDisplay_OnLoad()
 	SLASH_COMBATDISPLAY1 = "/perlcombatdisplay";
 	SLASH_COMBATDISPLAY2 = "/pcd";
 
-	if(DEFAULT_CHAT_FRAME) then
+	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Combat Display by Perl loaded successfully.");
 	end
 end
@@ -180,6 +181,8 @@ function Perl_CombatDisplay_OnEvent(event)
 		if (arg1 == "Perl_CombatDisplay") then
 			Perl_CombatDisplay_myAddOns_Support();
 		end
+		return;
+	else
 		return;
 	end
 end
@@ -442,8 +445,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.20",
-			releaseDate = "November 19, 2005",
+			version = "v0.21",
+			releaseDate = "November 21, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
