@@ -15,8 +15,9 @@ local showportrait = 0;		-- portrait is hidden by default
 local compactpercent = 0;	-- percents are not shown in compact mode by default
 local threedportrait = 0;	-- 3d portraits are off by default
 local portraitcombattext = 0;	-- Combat text is disabled by default on the portrait frame
-local showdruidbar = 1;		-- Druid Bar support is enabled by default
+local showdruidbar = 0;		-- Druid Bar support is enabled by default
 local fivesecsupport = 0;	-- FiveSec support is disabled by default
+local shortbars = 0;		-- Health/Power/Experience bars are all normal length
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -223,9 +224,17 @@ function Perl_Player_IFrameManager(initflag)
 			right = 70;
 		else
 			if (compactpercent == 0) then
-				right = 0;
+				if (shortbars == 0) then
+					right = 0;
+				else
+					right = -35;
+				end
 			else
-				right = 35;
+				if (shortbars == 0) then
+					right = 35;
+				else
+					right = 0;
+				end
 			end
 		end
 		if (showportrait == 0) then
@@ -726,8 +735,6 @@ end
 
 function Perl_Player_Set_CompactMode()
 	if (compactmode == 0) then
-		Perl_Player_Update_Health();
-		Perl_Player_Update_Mana();
 		Perl_Player_XPBar:SetWidth(220);
 		Perl_Player_XPRestBar:SetWidth(220);
 		Perl_Player_XPBarBG:SetWidth(220);
@@ -736,26 +743,72 @@ function Perl_Player_Set_CompactMode()
 		Perl_Player_StatsFrame_CastClickOverlay:SetWidth(240);
 	else
 		if (compactpercent == 0) then
-			Perl_Player_Update_Health();
-			Perl_Player_Update_Mana();
-			Perl_Player_XPBar:SetWidth(150);
-			Perl_Player_XPRestBar:SetWidth(150);
-			Perl_Player_XPBarBG:SetWidth(150);
-			Perl_Player_XPBar_CastClickOverlay:SetWidth(150);
-			Perl_Player_StatsFrame:SetWidth(170);
-			Perl_Player_StatsFrame_CastClickOverlay:SetWidth(170);
+			if (shortbars == 0) then
+				Perl_Player_XPBar:SetWidth(150);
+				Perl_Player_XPRestBar:SetWidth(150);
+				Perl_Player_XPBarBG:SetWidth(150);
+				Perl_Player_XPBar_CastClickOverlay:SetWidth(150);
+				Perl_Player_StatsFrame:SetWidth(170);
+				Perl_Player_StatsFrame_CastClickOverlay:SetWidth(170);
+			else
+				Perl_Player_XPBar:SetWidth(115);
+				Perl_Player_XPRestBar:SetWidth(115);
+				Perl_Player_XPBarBG:SetWidth(115);
+				Perl_Player_XPBar_CastClickOverlay:SetWidth(115);
+				Perl_Player_StatsFrame:SetWidth(135);
+				Perl_Player_StatsFrame_CastClickOverlay:SetWidth(135);
+			end
 		else
-			Perl_Player_Update_Health();
-			Perl_Player_Update_Mana();
-			Perl_Player_XPBar:SetWidth(185);
-			Perl_Player_XPRestBar:SetWidth(185);
-			Perl_Player_XPBarBG:SetWidth(185);
-			Perl_Player_XPBar_CastClickOverlay:SetWidth(185);
-			Perl_Player_StatsFrame:SetWidth(205);
-			Perl_Player_StatsFrame_CastClickOverlay:SetWidth(205);
+			if (shortbars == 0) then
+				Perl_Player_XPBar:SetWidth(185);
+				Perl_Player_XPRestBar:SetWidth(185);
+				Perl_Player_XPBarBG:SetWidth(185);
+				Perl_Player_XPBar_CastClickOverlay:SetWidth(185);
+				Perl_Player_StatsFrame:SetWidth(205);
+				Perl_Player_StatsFrame_CastClickOverlay:SetWidth(205);
+			else
+				Perl_Player_XPBar:SetWidth(150);
+				Perl_Player_XPRestBar:SetWidth(150);
+				Perl_Player_XPBarBG:SetWidth(150);
+				Perl_Player_XPBar_CastClickOverlay:SetWidth(150);
+				Perl_Player_StatsFrame:SetWidth(170);
+				Perl_Player_StatsFrame_CastClickOverlay:SetWidth(170);
+			end
 		end
-		
 	end
+
+	if (compactmode == 1 and shortbars == 1) then
+		Perl_Player_NameFrame:SetWidth(165);
+		Perl_Player_Name:SetWidth(165);
+		Perl_Player_Name_CastClickOverlay:SetWidth(165);
+
+		Perl_Player_HealthBar:SetWidth(115);
+		Perl_Player_HealthBarBG:SetWidth(115);
+		Perl_Player_HealthBar_CastClickOverlay:SetWidth(115);
+		Perl_Player_ManaBar:SetWidth(115);
+		Perl_Player_ManaBarBG:SetWidth(115);
+		Perl_Player_ManaBar_CastClickOverlay:SetWidth(115);
+		Perl_Player_DruidBar:SetWidth(115);
+		Perl_Player_DruidBarBG:SetWidth(115);
+		Perl_Player_DruidBar_CastClickOverlay:SetWidth(115);
+	else
+		Perl_Player_NameFrame:SetWidth(200);
+		Perl_Player_Name:SetWidth(200);
+		Perl_Player_Name_CastClickOverlay:SetWidth(200);
+
+		Perl_Player_HealthBar:SetWidth(150);
+		Perl_Player_HealthBarBG:SetWidth(150);
+		Perl_Player_HealthBar_CastClickOverlay:SetWidth(150);
+		Perl_Player_ManaBar:SetWidth(150);
+		Perl_Player_ManaBarBG:SetWidth(150);
+		Perl_Player_ManaBar_CastClickOverlay:SetWidth(150);
+		Perl_Player_DruidBar:SetWidth(150);
+		Perl_Player_DruidBarBG:SetWidth(150);
+		Perl_Player_DruidBar_CastClickOverlay:SetWidth(150);
+	end
+
+	Perl_Player_Update_Health();
+	Perl_Player_Update_Mana();
 end
 
 function Perl_Player_Set_Text_Positions()
@@ -767,20 +820,29 @@ function Perl_Player_Set_Text_Positions()
 		Perl_Player_DruidBarText:SetPoint("RIGHT", 70, 0);
 		Perl_Player_DruidBarTextPercent:SetPoint("TOP", 0, 1);
 	else
-		if (healermode == 1) then
-			Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
-			Perl_Player_HealthBarTextPercent:SetPoint("TOP", -40, 1);
-			Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
-			Perl_Player_ManaBarTextPercent:SetPoint("TOP", -40, 1);
-			Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
-			Perl_Player_DruidBarTextPercent:SetPoint("TOP", -40, 1);
-		else
+		if (healermode == 0) then
 			Perl_Player_HealthBarText:SetPoint("RIGHT", 70, 0);
 			Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
 			Perl_Player_ManaBarText:SetPoint("RIGHT", 70, 0);
 			Perl_Player_ManaBarTextPercent:SetPoint("TOP", 0, 1);
 			Perl_Player_DruidBarText:SetPoint("RIGHT", 70, 0);
 			Perl_Player_DruidBarTextPercent:SetPoint("TOP", 0, 1);
+		else
+			if (shortbars == 0) then
+				Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
+				Perl_Player_HealthBarTextPercent:SetPoint("TOP", -40, 1);
+				Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
+				Perl_Player_ManaBarTextPercent:SetPoint("TOP", -40, 1);
+				Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
+				Perl_Player_DruidBarTextPercent:SetPoint("TOP", -40, 1);
+			else
+				Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
+				Perl_Player_HealthBarTextPercent:SetPoint("TOP", -25, 1);
+				Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
+				Perl_Player_ManaBarTextPercent:SetPoint("TOP", -25, 1);
+				Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
+				Perl_Player_DruidBarTextPercent:SetPoint("TOP", -25, 1);
+			end
 		end
 	end
 end
@@ -1048,8 +1110,13 @@ function Perl_Player_Set_Compact_Percent(newvalue)
 	Perl_Player_UpdateVars();
 	Perl_Player_Set_Text_Positions();
 	Perl_Player_Set_CompactMode();
-	Perl_Player_Update_Health();
-	Perl_Player_Update_Mana();
+end
+
+function Perl_Player_Set_Short_Bars(newvalue)
+	shortbars = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Set_Text_Positions();
+	Perl_Player_Set_CompactMode();
 end
 
 function Perl_Player_Set_DruidBar(newvalue)
@@ -1102,6 +1169,7 @@ function Perl_Player_GetVars()
 	portraitcombattext = Perl_Player_Config[UnitName("player")]["PortraitCombatText"];
 	showdruidbar = Perl_Player_Config[UnitName("player")]["ShowDruidBar"];
 	fivesecsupport = Perl_Player_Config[UnitName("player")]["FiveSecSupport"];
+	shortbars = Perl_Player_Config[UnitName("player")]["ShortBars"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1137,10 +1205,13 @@ function Perl_Player_GetVars()
 		portraitcombattext = 0;
 	end
 	if (showdruidbar == nil) then
-		showdruidbar = 1;
+		showdruidbar = 0;
 	end
 	if (fivesecsupport == nil) then
 		fivesecsupport = 0;
+	end
+	if (shortbars == nil) then
+		shortbars = 0;
 	end
 
 	local vars = {
@@ -1157,6 +1228,7 @@ function Perl_Player_GetVars()
 		["portraitcombattext"] = portraitcombattext,
 		["showdruidbar"] = showdruidbar,
 		["fivesecsupport"] = fivesecsupport,
+		["shortbars"] = shortbars,
 	}
 	return vars;
 end
@@ -1230,6 +1302,11 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				fivesecsupport = nil;
 			end
+			if (vartable["Global Settings"]["ShortBars"] ~= nil) then
+				shortbars = vartable["Global Settings"]["ShortBars"];
+			else
+				shortbars = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1267,10 +1344,13 @@ function Perl_Player_UpdateVars(vartable)
 			portraitcombattext = 0;
 		end
 		if (showdruidbar == nil) then
-			showdruidbar = 1;
+			showdruidbar = 0;
 		end
 		if (fivesecsupport == nil) then
 			fivesecsupport = 0;
+		end
+		if (shortbars == nil) then
+			shortbars = 0;
 		end
 
 		-- Call any code we need to activate them
@@ -1306,6 +1386,7 @@ function Perl_Player_UpdateVars(vartable)
 		["PortraitCombatText"] = portraitcombattext,
 		["ShowDruidBar"] = showdruidbar,
 		["FiveSecSupport"] = fivesecsupport,
+		["ShortBars"] = shortbars,
 	};
 end
 
@@ -1499,8 +1580,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.67",
-			releaseDate = "May 26, 2006",
+			version = "Version 0.68",
+			releaseDate = "May 30, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -220,6 +220,27 @@
 				</Scripts>
 			</CheckButton>
 
+			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton3">
+						<Offset>
+							<AbsDimension x="0" y="-40"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Vertical Party Frames");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_VerticalAlign_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
 			<CheckButton name="$parent_CheckButton4" inherits="UICheckButtonTemplate" id="4">
 				<Size>
 					<AbsDimension x="20" y="20"/>
@@ -262,12 +283,33 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton5" inherits="UICheckButtonTemplate" id="5">
+			<CheckButton name="$parent_CheckButton17" inherits="UICheckButtonTemplate" id="17">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton11">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Short Bars");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Short_Bars_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton5" inherits="UICheckButtonTemplate" id="5">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton17">
 						<Offset>
 							<AbsDimension x="-20" y="-20"/>
 						</Offset>
@@ -304,33 +346,12 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton6">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Vertical Party Frames");
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Party_VerticalAlign_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
 			<CheckButton name="$parent_CheckButton12" inherits="UICheckButtonTemplate" id="12">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton6">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>

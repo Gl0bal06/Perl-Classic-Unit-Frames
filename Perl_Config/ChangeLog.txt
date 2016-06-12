@@ -1,3 +1,11 @@
+0.68 - May 30, 2006
+ - CombatDisplay/Player: Druid Bar support is now off by default
+ - CombatDisplay/Target/ToT: Temporarily removed 1.11 raid targets due to errors they were causing
+ - Config: Buff settings for the ToT frames will now save when doing global saves
+ - Party/Player/Target: Added an option to toggle shorter status bars while in compact mode
+ - Target: Made some more minor memory tweaks
+ - Target: Added healer mode for group, raid, and self in alternative mode only
+
 0.67 - May 26, 2006
  - All: Added IFrameManager support
  - All: Made a number of memory improvements

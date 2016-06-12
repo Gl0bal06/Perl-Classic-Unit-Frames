@@ -1361,10 +1361,12 @@ function Perl_TargetTargetDropDown_OnLoad()
 end
 
 function Perl_TargetTargetDropDown_Initialize()
-	local menu, name;
+	--local menu, name;
+	local menu;
 	if (UnitIsEnemy("targettarget", "player")) then
-		menu = "RAID_TARGET_ICON";
-		name = RAID_TARGET_ICON;
+		--menu = "RAID_TARGET_ICON";
+		--name = RAID_TARGET_ICON;
+		return;
 	end
 	if (UnitIsUnit("targettarget", "player")) then
 		menu = "SELF";
@@ -1378,7 +1380,8 @@ function Perl_TargetTargetDropDown_Initialize()
 		end
 	end
 	if (menu) then
-		UnitPopup_ShowMenu(Perl_Target_Target_DropDown, menu, "targettarget", name);
+		--UnitPopup_ShowMenu(Perl_Target_Target_DropDown, menu, "targettarget", name);
+		UnitPopup_ShowMenu(Perl_Target_Target_DropDown, menu, "targettarget");
 	end
 end
 
@@ -1461,10 +1464,12 @@ function Perl_TargetTargetTargetDropDown_OnLoad()
 end
 
 function Perl_TargetTargetTargetDropDown_Initialize()
-	local menu, name;
+	--local menu, name;
+	local menu;
 	if (UnitIsEnemy("targettargettarget", "player")) then
-		menu = "RAID_TARGET_ICON";
-		name = RAID_TARGET_ICON;
+		--menu = "RAID_TARGET_ICON";
+		--name = RAID_TARGET_ICON;
+		return;
 	end
 	if (UnitIsUnit("targettargettarget", "player")) then
 		menu = "SELF";
@@ -1478,7 +1483,8 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 		end
 	end
 	if (menu) then
-		UnitPopup_ShowMenu(Perl_Target_Target_Target_DropDown, menu, "targettargettarget", name);
+		--UnitPopup_ShowMenu(Perl_Target_Target_Target_DropDown, menu, "targettargettarget", name);
+		UnitPopup_ShowMenu(Perl_Target_Target_Target_DropDown, menu, "targettargettarget");
 	end
 end
 
@@ -1643,8 +1649,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "Version 0.67",
-			releaseDate = "May 26, 2006",
+			version = "Version 0.68",
+			releaseDate = "May 30, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

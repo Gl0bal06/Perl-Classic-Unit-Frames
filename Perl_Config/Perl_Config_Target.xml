@@ -542,14 +542,35 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton17" inherits="UICheckButtonTemplate" id="17">
+			<CheckButton name="$parent_CheckButton21" inherits="UICheckButtonTemplate" id="21">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton16">
 						<Offset>
-							<AbsDimension x="20" y="-20"/>
+							<AbsDimension x="10" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Healer Mode");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Healer_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton17" inherits="UICheckButtonTemplate" id="17">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton21">
+						<Offset>
+							<AbsDimension x="10" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -580,6 +601,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Compact_Percents_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton20" inherits="UICheckButtonTemplate" id="20">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton18">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Short Bars");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Short_Bars_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

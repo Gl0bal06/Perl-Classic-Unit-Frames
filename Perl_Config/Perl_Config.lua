@@ -631,6 +631,7 @@ function Perl_Config_Global_Save_Settings()
 			["Buffs"] = vartable["numbuffsshown"],
 			["Debuffs"] = vartable["numdebuffsshown"],
 			["ClassColoredNames"] = vartable["classcolorednames"],
+			["ShortBars"] = vartable["shortbars"],
 		};
 	end
 
@@ -678,6 +679,7 @@ function Perl_Config_Global_Save_Settings()
 			["PortraitCombatText"] = vartable["portraitcombattext"],
 			["ShowDruidBar"] = vartable["showdruidbar"],
 			["FiveSecSupport"] = vartable["fivesecsupport"],
+			["ShortBars"] = vartable["shortbars"],
 		};
 	end
 
@@ -779,6 +781,8 @@ function Perl_Config_Global_Save_Settings()
 			["CompactMode"] = vartable["compactmode"],
 			["CompactPercent"] = vartable["compactpercent"],
 			["HideBuffBackground"] = vartable["hidebuffbackground"],
+			["ShortBars"] = vartable["shortbars"],
+			["HealerMode"] = vartable["healermode"],
 		};
 	end
 
@@ -798,6 +802,8 @@ function Perl_Config_Global_Save_Settings()
 			["AlertSound"] = vartable["alertsound"],
 			["AlertMode"] = vartable["alertmode"],
 			["AlertSize"] = vartable["alertsize"],
+			["ShowToTBuffs"] = vartable["showtotbuffs"],
+			["ShowToToTBuffs"] = vartable["showtototbuffs"],
 		};
 	end
 end
@@ -1277,8 +1283,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.67",
-			releaseDate = "May 26, 2006",
+			version = "Version 0.68",
+			releaseDate = "May 30, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

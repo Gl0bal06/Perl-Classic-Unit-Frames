@@ -26,12 +26,14 @@ local framestyle = 1;		-- default frame style is "classic"
 local compactmode = 0;		-- compact mode is disabled by default
 local compactpercent = 0;	-- percents are not shown in compact mode by default
 local hidebuffbackground = 0;	-- buff and debuff backgrounds are shown by default
+local shortbars = 0;		-- Health/Power/Experience bars are all normal length
+local healermode = 0;		-- nurfed unit frame style
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 
 -- Local variables to save memory
-local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, localizedclass, creatureType;
+local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, localizedclass, creatureType, r, g, b;
 
 -- Variables for position of the class icon texture.
 local Perl_Target_ClassPosRight = {};
@@ -176,7 +178,7 @@ end
 -- Loading Settings Function --
 -------------------------------
 function Perl_Target_Initialize()
-	if (Initialized) then	-- PLAYER_ENTERING_WORLD stuff goes here
+	if (Initialized) then
 		Perl_Target_Set_Scale();		-- Set the scale
 		Perl_Target_Set_Transparency();		-- Set the transparency
 		return;
@@ -229,9 +231,17 @@ function Perl_Target_IFrameManager(initflag)
 				right = 60;
 			else
 				if (compactpercent == 0) then
-					right = -10;
+					if (shortbars == 0) then
+						right = -10;
+					else
+						right = -45;
+					end
 				else
-					right = 25;
+					if (shortbars == 0) then
+						right = 25;
+					else
+						right = -10;
+					end
 				end
 			end
 		end
@@ -318,13 +328,25 @@ function Perl_Target_Update_Once()
 					targetname = strsub(targetname, 1, 18).."...";
 				end
 			else
-				if (compactpercent == 1) then
-					if (strlen(targetname) > 15) then
-						targetname = strsub(targetname, 1, 14).."...";
+				if (compactpercent == 0) then
+					if (shortbars == 0) then
+						if (strlen(targetname) > 11) then
+							targetname = strsub(targetname, 1, 10).."...";
+						end
+					else
+						if (strlen(targetname) > 6) then
+							targetname = strsub(targetname, 1, 5).."...";
+						end
 					end
 				else
-					if (strlen(targetname) > 11) then
-						targetname = strsub(targetname, 1, 10).."...";
+					if (shortbars == 0) then
+						if (strlen(targetname) > 15) then
+							targetname = strsub(targetname, 1, 14).."...";
+						end
+					else
+						if (strlen(targetname) > 13) then
+							targetname = strsub(targetname, 1, 12).."...";
+						end
 					end
 				end
 			end
@@ -612,9 +634,16 @@ function Perl_Target_Update_Health()
 			Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
 		elseif (framestyle == 2) then
 			if (compactmode == 0) then
-				Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-				Perl_Target_HealthBarText:SetText(targethealthpercent.."%");
-				Perl_Target_HealthBarTextRight:SetText(targethealth.."/"..targethealthmax);
+				if (healermode == 0) then
+					Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+					Perl_Target_HealthBarText:SetText(targethealthpercent.."%");
+					Perl_Target_HealthBarTextRight:SetText(targethealth.."/"..targethealthmax);
+				else
+					Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+					Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+					Perl_Target_HealthBarTextRight:SetText("-"..targethealthmax - targethealth);
+				end
+				
 			else
 				if (compactpercent == 0) then
 					Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
@@ -657,12 +686,22 @@ function Perl_Target_Update_Mana()
 		if (compactmode == 0) then
 			Perl_Target_ManaBarTextCompactPercent:SetText();	-- Hide this text in this frame style
 
-			if (targetpower == 1 or targetpower == 2) then
-				Perl_Target_ManaBarText:SetText(targetmana.."%");
-				Perl_Target_ManaBarTextRight:SetText(targetmana);
+			if (healermode == 0) then
+				if (targetpower == 1 or targetpower == 2) then
+					Perl_Target_ManaBarText:SetText(targetmana.."%");
+					Perl_Target_ManaBarTextRight:SetText(targetmana);
+				else
+					Perl_Target_ManaBarText:SetText(targetmanapercent.."%");
+					Perl_Target_ManaBarTextRight:SetText(targetmana.."/"..targetmanamax);
+				end
 			else
-				Perl_Target_ManaBarText:SetText(targetmanapercent.."%");
-				Perl_Target_ManaBarTextRight:SetText(targetmana.."/"..targetmanamax);
+				if (targetpower == 1 or targetpower == 2) then
+					Perl_Target_ManaBarText:SetText(targetmana);
+					Perl_Target_ManaBarTextRight:SetText();
+				else
+					Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
+					Perl_Target_ManaBarTextRight:SetText();
+				end
 			end
 		else
 			if (compactpercent == 0) then
@@ -690,7 +729,7 @@ function Perl_Target_Update_Mana()
 end
 
 function Perl_Target_Update_Mana_Bar()
-	local targetpower = UnitPowerType("target");
+	targetpower = UnitPowerType("target");
 
 	-- Set mana bar color
 	if (UnitManaMax("target") == 0) then
@@ -797,7 +836,6 @@ end
 
 function Perl_Target_Update_Text_Color()
 	if (UnitIsPlayer("target") or UnitPlayerControlled("target")) then		-- is it a player
-		local r, g, b;
 		if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
 			-- Hostile players are red
 			if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
@@ -831,7 +869,6 @@ function Perl_Target_Update_Text_Color()
 	else
 		local reaction = UnitReaction("target", "player");
 		if (reaction) then
-			local r, g, b;
 			r = UnitReactionColor[reaction].r;
 			g = UnitReactionColor[reaction].g;
 			b = UnitReactionColor[reaction].b;
@@ -983,35 +1020,72 @@ function Perl_Target_Frame_Style()
 			Perl_Target_NameFrame_CastClickOverlay:SetWidth(199);
 			Perl_Target_StatsFrame_CastClickOverlay:SetWidth(240);
 		else
-			if (compactpercent == 0) then
-				Perl_Target_CivilianFrame:SetWidth(85);
-				Perl_Target_ClassNameFrame:SetWidth(90);
-				Perl_Target_LevelFrame:SetWidth(46);
-				Perl_Target_Name:SetWidth(129);
-				Perl_Target_NameFrame:SetWidth(129);
-				Perl_Target_RareEliteFrame:SetWidth(46);
-				Perl_Target_StatsFrame:SetWidth(170);
-				Perl_Target_RareEliteFrame:SetPoint("TOPLEFT", "Perl_Target_CivilianFrame", "TOPRIGHT", -46, 0);
+			if (shortbars == 0) then
+				if (compactpercent == 0) then
+					Perl_Target_CivilianFrame:SetWidth(85);
+					Perl_Target_ClassNameFrame:SetWidth(90);
+					Perl_Target_LevelFrame:SetWidth(46);
+					Perl_Target_Name:SetWidth(129);
+					Perl_Target_NameFrame:SetWidth(129);
+					Perl_Target_RareEliteFrame:SetWidth(46);
+					Perl_Target_StatsFrame:SetWidth(170);
+					Perl_Target_RareEliteFrame:SetPoint("TOPLEFT", "Perl_Target_CivilianFrame", "TOPRIGHT", -46, 0);
 
-				Perl_Target_NameFrame_CPMeter:SetWidth(119);
+					Perl_Target_NameFrame_CPMeter:SetWidth(119);
 
-				Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(85);
-				Perl_Target_NameFrame_CastClickOverlay:SetWidth(129);
-				Perl_Target_StatsFrame_CastClickOverlay:SetWidth(170);
+					Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(85);
+					Perl_Target_NameFrame_CastClickOverlay:SetWidth(129);
+					Perl_Target_StatsFrame_CastClickOverlay:SetWidth(170);
+				else
+					Perl_Target_CivilianFrame:SetWidth(79);
+					Perl_Target_ClassNameFrame:SetWidth(90);
+					Perl_Target_LevelFrame:SetWidth(46);
+					Perl_Target_Name:SetWidth(164);
+					Perl_Target_NameFrame:SetWidth(164);
+					Perl_Target_RareEliteFrame:SetWidth(46);
+					Perl_Target_StatsFrame:SetWidth(205);
+
+					Perl_Target_NameFrame_CPMeter:SetWidth(154);
+
+					Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(79);
+					Perl_Target_NameFrame_CastClickOverlay:SetWidth(164);
+					Perl_Target_StatsFrame_CastClickOverlay:SetWidth(205);
+				end
 			else
-				Perl_Target_CivilianFrame:SetWidth(79);
-				Perl_Target_ClassNameFrame:SetWidth(90);
-				Perl_Target_LevelFrame:SetWidth(46);
-				Perl_Target_Name:SetWidth(164);
-				Perl_Target_NameFrame:SetWidth(164);
-				Perl_Target_RareEliteFrame:SetWidth(46);
-				Perl_Target_StatsFrame:SetWidth(205);
+				Perl_Target_HealthBar:SetWidth(115);
+				Perl_Target_HealthBarBG:SetWidth(115);
+				Perl_Target_ManaBar:SetWidth(115);
+				Perl_Target_ManaBarBG:SetWidth(115);
 
-				Perl_Target_NameFrame_CPMeter:SetWidth(154);
+				if (compactpercent == 0) then				-- civilian probably needs resizing
+					Perl_Target_CivilianFrame:SetWidth(79);
+					Perl_Target_ClassNameFrame:SetWidth(90);
+					Perl_Target_LevelFrame:SetWidth(46);
+					Perl_Target_Name:SetWidth(94);
+					Perl_Target_NameFrame:SetWidth(94);
+					Perl_Target_RareEliteFrame:SetWidth(46);
+					Perl_Target_StatsFrame:SetWidth(135);
 
-				Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(79);
-				Perl_Target_NameFrame_CastClickOverlay:SetWidth(164);
-				Perl_Target_StatsFrame_CastClickOverlay:SetWidth(205);
+					Perl_Target_NameFrame_CPMeter:SetWidth(84);
+
+					Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(79);
+					Perl_Target_NameFrame_CastClickOverlay:SetWidth(94);
+					Perl_Target_StatsFrame_CastClickOverlay:SetWidth(135);
+				else
+					Perl_Target_CivilianFrame:SetWidth(79);
+					Perl_Target_ClassNameFrame:SetWidth(90);
+					Perl_Target_LevelFrame:SetWidth(46);
+					Perl_Target_Name:SetWidth(129);
+					Perl_Target_NameFrame:SetWidth(129);
+					Perl_Target_RareEliteFrame:SetWidth(46);
+					Perl_Target_StatsFrame:SetWidth(170);
+
+					Perl_Target_NameFrame_CPMeter:SetWidth(119);
+
+					Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(79);
+					Perl_Target_NameFrame_CastClickOverlay:SetWidth(129);
+					Perl_Target_StatsFrame_CastClickOverlay:SetWidth(170);
+				end
 			end
 		end
 	end
@@ -1187,6 +1261,19 @@ function Perl_Target_Set_Compact_Percents(newvalue)
 	Perl_Target_Update_Once();
 end
 
+function Perl_Target_Set_Short_Bars(newvalue)
+	shortbars = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Frame_Style();
+	Perl_Target_Update_Once();
+end
+
+function Perl_Target_Set_Healer(newvalue)
+	healermode = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
 function Perl_Target_Set_Buff_Debuff_Background(newvalue)
 	hidebuffbackground = newvalue;
 	Perl_Target_UpdateVars();
@@ -1250,6 +1337,8 @@ function Perl_Target_GetVars()
 	compactmode = Perl_Target_Config[UnitName("player")]["CompactMode"];
 	compactpercent = Perl_Target_Config[UnitName("player")]["CompactPercent"];
 	hidebuffbackground = Perl_Target_Config[UnitName("player")]["HideBuffBackground"];
+	shortbars = Perl_Target_Config[UnitName("player")]["ShortBars"];
+	healermode = Perl_Target_Config[UnitName("player")]["HealerMode"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1317,6 +1406,12 @@ function Perl_Target_GetVars()
 	if (hidebuffbackground == nil) then
 		hidebuffbackground = 0;
 	end
+	if (shortbars == nil) then
+		shortbars = 0;
+	end
+	if (healermode == nil) then
+		healermode = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1341,6 +1436,8 @@ function Perl_Target_GetVars()
 		["compactmode"] = compactmode,
 		["compactpercent"] = compactpercent,
 		["hidebuffbackground"] = hidebuffbackground,
+		["shortbars"] = shortbars,
+		["healermode"] = healermode,
 	}
 	return vars;
 end
@@ -1459,6 +1556,16 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				hidebuffbackground = nil;
 			end
+			if (vartable["Global Settings"]["ShortBars"] ~= nil) then
+				shortbars = vartable["Global Settings"]["ShortBars"];
+			else
+				shortbars = nil;
+			end
+			if (vartable["Global Settings"]["HealerMode"] ~= nil) then
+				healermode = vartable["Global Settings"]["HealerMode"];
+			else
+				healermode = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1528,6 +1635,12 @@ function Perl_Target_UpdateVars(vartable)
 		if (hidebuffbackground == nil) then
 			hidebuffbackground = 0;
 		end
+		if (shortbars == nil) then
+			shortbars = 0;
+		end
+		if (healermode == nil) then
+			healermode = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();		-- Reset the buff icons
@@ -1567,6 +1680,8 @@ function Perl_Target_UpdateVars(vartable)
 		["CompactMode"] = compactmode,
 		["CompactPercent"] = compactpercent,
 		["HideBuffBackground"] = hidebuffbackground,
+		["ShortBars"] = shortbars,
+		["HealerMode"] = healermode,
 	};
 end
 
@@ -1786,10 +1901,12 @@ function Perl_TargetDropDown_OnLoad()
 end
 
 function Perl_TargetDropDown_Initialize()
-	local menu, name;
+	--local menu, name;
+	local menu;
 	if (UnitIsEnemy("target", "player")) then
-		menu = "RAID_TARGET_ICON";
-		name = RAID_TARGET_ICON;
+		--menu = "RAID_TARGET_ICON";
+		--name = RAID_TARGET_ICON;
+		return;
 	end
 	if (UnitIsUnit("target", "player")) then
 		menu = "SELF";
@@ -1803,7 +1920,8 @@ function Perl_TargetDropDown_Initialize()
 		end
 	end
 	if (menu) then
-		UnitPopup_ShowMenu(Perl_Target_DropDown, menu, "target", name);
+		--UnitPopup_ShowMenu(Perl_Target_DropDown, menu, "target", name);
+		UnitPopup_ShowMenu(Perl_Target_DropDown, menu, "target");
 	end
 end
 
@@ -1908,8 +2026,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.67",
-			releaseDate = "May 26, 2006",
+			version = "Version 0.68",
+			releaseDate = "May 30, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

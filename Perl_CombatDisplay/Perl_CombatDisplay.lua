@@ -12,7 +12,7 @@ local scale = 1;		-- default scale
 local transparency = 1;		-- transparency for the frame
 local showtarget = 0;		-- target frame is disabled by default
 local mobhealthsupport = 1;	-- mobhealth is enabled by default
-local showdruidbar = 1;		-- Druid Bar support is enabled by default
+local showdruidbar = 0;		-- Druid Bar support is enabled by default
 local showpetbars = 0;		-- Pet info is hidden by default
 local rightclickmenu = 0;	-- The ability to open a menu from CombatDisplay is disabled by default
 local fivesecsupport = 0;	-- FiveSec support is disabled by default
@@ -1011,7 +1011,7 @@ function Perl_CombatDisplay_GetVars()
 		mobhealthsupport = 1;
 	end
 	if (showdruidbar == nil) then
-		showdruidbar = 1;
+		showdruidbar = 0;
 	end
 	if (showpetbars == nil) then
 		showpetbars = 0;
@@ -1132,7 +1132,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			mobhealthsupport = 1;
 		end
 		if (showdruidbar == nil) then
-			showdruidbar = 1;
+			showdruidbar = 0;
 		end
 		if (showpetbars == nil) then
 			showpetbars = 0;
@@ -1261,10 +1261,12 @@ function Perl_CombatDisplayTargetDropDown_OnLoad()
 end
 
 function Perl_CombatDisplayTargetDropDown_Initialize()
-	local menu, name;
+	--local menu, name;
+	local menu;
 	if (UnitIsEnemy("target", "player")) then
-		menu = "RAID_TARGET_ICON";
-		name = RAID_TARGET_ICON;
+		--menu = "RAID_TARGET_ICON";
+		--name = RAID_TARGET_ICON;
+		return;
 	end
 	if (UnitIsUnit("target", "player")) then
 		menu = "SELF";
@@ -1278,7 +1280,8 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 		end
 	end
 	if (menu) then
-		UnitPopup_ShowMenu(Perl_CombatDisplay_Target_DropDown, menu, "target", name);
+		--UnitPopup_ShowMenu(Perl_CombatDisplay_Target_DropDown, menu, "target", name);
+		UnitPopup_ShowMenu(Perl_CombatDisplay_Target_DropDown, menu, "target");
 	end
 end
 
@@ -1359,8 +1362,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.67",
-			releaseDate = "May 26, 2006",
+			version = "Version 0.68",
+			releaseDate = "May 30, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

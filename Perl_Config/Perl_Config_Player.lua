@@ -99,6 +99,12 @@ function Perl_Config_Player_Set_Values()
 		Perl_Config_Player_Frame_CheckButton16:SetChecked(nil);
 	end
 
+	if (vartable["shortbars"] == 1) then
+		Perl_Config_Player_Frame_CheckButton17:SetChecked(1);
+	else
+		Perl_Config_Player_Frame_CheckButton17:SetChecked(nil);
+	end
+
 	Perl_Config_Player_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Player_Frame_Slider1High:SetText("Big");
 	Perl_Config_Player_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -174,6 +180,14 @@ function Perl_Config_Player_Compact_Percent_Update()
 		Perl_Player_Set_Compact_Percent(1);
 	else
 		Perl_Player_Set_Compact_Percent(0);
+	end
+end
+
+function Perl_Config_Player_Short_Bars_Update()
+	if (Perl_Config_Player_Frame_CheckButton17:GetChecked() == 1) then
+		Perl_Player_Set_Short_Bars(1);
+	else
+		Perl_Player_Set_Short_Bars(0);
 	end
 end
 

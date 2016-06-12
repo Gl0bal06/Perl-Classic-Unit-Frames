@@ -25,6 +25,7 @@ local debuffsize = 16;		-- default debuff size is 16
 local numbuffsshown = 16;	-- buff row is 16 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
 local classcolorednames = 0;	-- names are colored based on pvp status by default
+local shortbars = 1;		-- Health/Power/Experience bars are all normal length
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -269,9 +270,17 @@ function Perl_Party_IFrameManager(initflag)
 				right = 70;
 			else
 				if (compactpercent == 0) then
-					right = 0;
+					if (shortbars == 0) then
+						right = 0;
+					else
+						right = -35;
+					end
 				else
-					right = 35;
+					if (shortbars == 0) then
+						right = 35;
+					else
+						right = 0;
+					end
 				end
 			end
 			local buffflag;
@@ -297,10 +306,23 @@ function Perl_Party_IFrameManager(initflag)
 				if (compactmode == 0) then
 					right = 70;
 				else
+--					if (compactpercent == 0) then
+--						right = 0;
+--					else
+--						right = 35;
+--					end
 					if (compactpercent == 0) then
-						right = 0;
+						if (shortbars == 0) then
+							right = 0;
+						else
+							right = -35;
+						end
 					else
-						right = 35;
+						if (shortbars == 0) then
+							right = 35;
+						else
+							right = 0;
+						end
 					end
 				end
 			else
@@ -309,10 +331,23 @@ function Perl_Party_IFrameManager(initflag)
 				if (compactmode == 0) then
 					right = right + 70;
 				else
+--					if (compactpercent == 0) then
+--						right = right + 0;
+--					else
+--						right = right + 35;
+--					end
 					if (compactpercent == 0) then
-						right = right + 0;
+						if (shortbars == 0) then
+							right = right + 0;
+						else
+							right = right - 35;
+						end
 					else
-						right = right + 35;
+						if (shortbars == 0) then
+							right = right + 35;
+						else
+							right = right + 0;
+						end
 					end
 				end
 			end
@@ -909,16 +944,7 @@ function Perl_Party_Set_Text_Positions()
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetPoint("TOP", 0, 1);
 		end
 	else
-		if (healermode == 1) then
-			for partynum=1,4 do
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetPoint("RIGHT", -10, 0);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetPoint("TOP", -40, 1);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetPoint("RIGHT", -10, 0);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetPoint("TOP", -40, 1);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetPoint("RIGHT", -10, 0);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetPoint("TOP", -40, 1);
-			end
-		else
+		if (healermode == 0) then
 			for partynum=1,4 do
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetPoint("RIGHT", 70, 0);
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetPoint("TOP", 0, 1);
@@ -926,6 +952,26 @@ function Perl_Party_Set_Text_Positions()
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetPoint("TOP", 0, 1);
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetPoint("RIGHT", 70, 0);
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetPoint("TOP", 0, 1);
+			end
+		else
+			if (shortbars == 0) then
+				for partynum=1,4 do
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetPoint("RIGHT", -10, 0);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetPoint("TOP", -40, 1);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetPoint("RIGHT", -10, 0);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetPoint("TOP", -40, 1);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetPoint("RIGHT", -10, 0);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetPoint("TOP", -40, 1);
+				end
+			else
+				for partynum=1,4 do
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetPoint("RIGHT", -10, 0);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetPoint("TOP", -25, 1);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetPoint("RIGHT", -10, 0);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetPoint("TOP", -25, 1);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetPoint("RIGHT", -10, 0);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetPoint("TOP", -25, 1);
+				end
 			end
 		end
 	end
@@ -1516,6 +1562,7 @@ function Perl_Party_Set_Compact(newvalue)
 	end
 
 	Perl_Party_Set_Text_Positions();
+
 	if (compactmode == 0) then
 		Perl_Party_MemberFrame1_StatsFrame:SetWidth(240);
 		Perl_Party_MemberFrame2_StatsFrame:SetWidth(240);
@@ -1526,26 +1573,85 @@ function Perl_Party_Set_Compact(newvalue)
 		Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetWidth(240);
 		Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetWidth(240);
 	else
-		if (compactpercent == 0) then
-			Perl_Party_MemberFrame1_StatsFrame:SetWidth(170);
-			Perl_Party_MemberFrame2_StatsFrame:SetWidth(170);
-			Perl_Party_MemberFrame3_StatsFrame:SetWidth(170);
-			Perl_Party_MemberFrame4_StatsFrame:SetWidth(170);
-			Perl_Party_MemberFrame1_StatsFrame_CastClickOverlay:SetWidth(170);
-			Perl_Party_MemberFrame2_StatsFrame_CastClickOverlay:SetWidth(170);
-			Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetWidth(170);
-			Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetWidth(170);
+		if (shortbars == 0) then
+			if (compactpercent == 0) then
+				Perl_Party_MemberFrame1_StatsFrame:SetWidth(170);
+				Perl_Party_MemberFrame2_StatsFrame:SetWidth(170);
+				Perl_Party_MemberFrame3_StatsFrame:SetWidth(170);
+				Perl_Party_MemberFrame4_StatsFrame:SetWidth(170);
+				Perl_Party_MemberFrame1_StatsFrame_CastClickOverlay:SetWidth(170);
+				Perl_Party_MemberFrame2_StatsFrame_CastClickOverlay:SetWidth(170);
+				Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetWidth(170);
+				Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetWidth(170);
+			else
+				Perl_Party_MemberFrame1_StatsFrame:SetWidth(205);
+				Perl_Party_MemberFrame2_StatsFrame:SetWidth(205);
+				Perl_Party_MemberFrame3_StatsFrame:SetWidth(205);
+				Perl_Party_MemberFrame4_StatsFrame:SetWidth(205);
+				Perl_Party_MemberFrame1_StatsFrame_CastClickOverlay:SetWidth(205);
+				Perl_Party_MemberFrame2_StatsFrame_CastClickOverlay:SetWidth(205);
+				Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetWidth(205);
+				Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetWidth(205);
+			end
 		else
-			Perl_Party_MemberFrame1_StatsFrame:SetWidth(205);
-			Perl_Party_MemberFrame2_StatsFrame:SetWidth(205);
-			Perl_Party_MemberFrame3_StatsFrame:SetWidth(205);
-			Perl_Party_MemberFrame4_StatsFrame:SetWidth(205);
-			Perl_Party_MemberFrame1_StatsFrame_CastClickOverlay:SetWidth(205);
-			Perl_Party_MemberFrame2_StatsFrame_CastClickOverlay:SetWidth(205);
-			Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetWidth(205);
-			Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetWidth(205);
+			if (compactpercent == 0) then
+				Perl_Party_MemberFrame1_StatsFrame:SetWidth(135);
+				Perl_Party_MemberFrame2_StatsFrame:SetWidth(135);
+				Perl_Party_MemberFrame3_StatsFrame:SetWidth(135);
+				Perl_Party_MemberFrame4_StatsFrame:SetWidth(135);
+				Perl_Party_MemberFrame1_StatsFrame_CastClickOverlay:SetWidth(135);
+				Perl_Party_MemberFrame2_StatsFrame_CastClickOverlay:SetWidth(135);
+				Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetWidth(135);
+				Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetWidth(135);
+			else
+				Perl_Party_MemberFrame1_StatsFrame:SetWidth(170);
+				Perl_Party_MemberFrame2_StatsFrame:SetWidth(170);
+				Perl_Party_MemberFrame3_StatsFrame:SetWidth(170);
+				Perl_Party_MemberFrame4_StatsFrame:SetWidth(170);
+				Perl_Party_MemberFrame1_StatsFrame_CastClickOverlay:SetWidth(170);
+				Perl_Party_MemberFrame2_StatsFrame_CastClickOverlay:SetWidth(170);
+				Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetWidth(170);
+				Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetWidth(170);
+			end
 		end
 	end
+
+	if (compactmode == 1 and shortbars == 1) then
+		for num=1,4 do
+			getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"):SetWidth(165);
+			getglobal("Perl_Party_MemberFrame"..num.."_NameFrame_CastClickOverlay"):SetWidth(165);
+
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):SetWidth(115);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"):SetWidth(115);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetWidth(115);
+
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):SetWidth(115);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"):SetWidth(115);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetWidth(115);
+
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):SetWidth(115);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"):SetWidth(115);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetWidth(115);
+		end
+	else
+		for num=1,4 do
+			getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"):SetWidth(200);
+			getglobal("Perl_Party_MemberFrame"..num.."_NameFrame_CastClickOverlay"):SetWidth(200);
+
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):SetWidth(150);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"):SetWidth(150);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetWidth(150);
+
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):SetWidth(150);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"):SetWidth(150);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetWidth(150);
+
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):SetWidth(150);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"):SetWidth(150);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetWidth(150);
+		end
+	end
+
 	Perl_Party_Update_Health_Mana();
 	Perl_Party_Update_Buffs();
 end
@@ -1653,6 +1759,12 @@ end
 
 function Perl_Party_Set_Compact_Percent(newvalue)
 	compactpercent = newvalue;
+	Perl_Party_UpdateVars();
+	Perl_Party_Set_Compact();
+end
+
+function Perl_Party_Set_Short_Bars(newvalue)
+	shortbars = newvalue;
 	Perl_Party_UpdateVars();
 	Perl_Party_Set_Compact();
 end
@@ -1805,6 +1917,7 @@ function Perl_Party_GetVars()
 	numbuffsshown = Perl_Party_Config[UnitName("player")]["Buffs"];
 	numdebuffsshown = Perl_Party_Config[UnitName("player")]["Debuffs"];
 	classcolorednames = Perl_Party_Config[UnitName("player")]["ClassColoredNames"];
+	shortbars = Perl_Party_Config[UnitName("player")]["ShortBars"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1869,6 +1982,9 @@ function Perl_Party_GetVars()
 	if (classcolorednames == nil) then
 		classcolorednames = 0;
 	end
+	if (shortbars == nil) then
+		shortbars = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1892,6 +2008,7 @@ function Perl_Party_GetVars()
 		["numbuffsshown"] = numbuffsshown,
 		["numdebuffsshown"] = numdebuffsshown,
 		["classcolorednames"] = classcolorednames,
+		["shortbars"] = shortbars,
 	}
 	return vars;
 end
@@ -2005,6 +2122,11 @@ function Perl_Party_UpdateVars(vartable)
 			else
 				classcolorednames = nil;
 			end
+			if (vartable["Global Settings"]["ShortBars"] ~= nil) then
+				shortbars = vartable["Global Settings"]["ShortBars"];
+			else
+				shortbars = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2071,6 +2193,9 @@ function Perl_Party_UpdateVars(vartable)
 		if (classcolorednames == nil) then
 			classcolorednames = 0;
 		end
+		if (shortbars == nil) then
+			shortbars = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Party_Set_Space();				-- This probably isn't needed, but one extra call for this won't matter
@@ -2112,6 +2237,7 @@ function Perl_Party_UpdateVars(vartable)
 		["Buffs"] = numbuffsshown,
 		["Debuffs"] = numdebuffsshown,
 		["ClassColoredNames"] = classcolorednames,
+		["ShortBars"] = shortbars,
 	};
 end
 
@@ -2439,8 +2565,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.67",
-			releaseDate = "May 26, 2006",
+			version = "Version 0.68",
+			releaseDate = "May 30, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

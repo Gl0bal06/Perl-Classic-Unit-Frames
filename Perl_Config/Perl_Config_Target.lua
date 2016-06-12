@@ -122,6 +122,18 @@ function Perl_Config_Target_Set_Values()
 		Perl_Config_Target_Frame_CheckButton19:SetChecked(nil);
 	end
 
+	if (vartable["shortbars"] == 1) then
+		Perl_Config_Target_Frame_CheckButton20:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton20:SetChecked(nil);
+	end
+
+	if (vartable["healermode"] == 1) then
+		Perl_Config_Target_Frame_CheckButton21:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton21:SetChecked(nil);
+	end
+
 	Perl_Config_Target_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Target_Frame_Slider1High:SetText("Big");
 	Perl_Config_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -281,11 +293,27 @@ function Perl_Config_Target_Compact_Percents_Update()
 	end
 end
 
+function Perl_Config_Target_Short_Bars_Update()
+	if (Perl_Config_Target_Frame_CheckButton20:GetChecked() == 1) then
+		Perl_Target_Set_Short_Bars(1);
+	else
+		Perl_Target_Set_Short_Bars(0);
+	end
+end
+
 function Perl_Config_Target_Buff_Background_Update()
 	if (Perl_Config_Target_Frame_CheckButton19:GetChecked() == 1) then
 		Perl_Target_Set_Buff_Debuff_Background(1);
 	else
 		Perl_Target_Set_Buff_Debuff_Background(0);
+	end
+end
+
+function Perl_Config_Target_Healer_Update()
+	if (Perl_Config_Target_Frame_CheckButton21:GetChecked() == 1) then
+		Perl_Target_Set_Healer(1);
+	else
+		Perl_Target_Set_Healer(0);
 	end
 end
 
