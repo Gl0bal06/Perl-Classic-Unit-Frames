@@ -134,7 +134,7 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
-					<StatusBar name="Perl_Focus_NameFrame_CPMeter" inherits="TextStatusBar">
+					<StatusBar name="Perl_Focus_NameFrame_CPMeter">
 						<Size>
 							<AbsDimension x="170" y="12"/>
 						</Size>
@@ -145,7 +145,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture name="Perl_Focus_NameFrame_CPMeterTex" file="Interface\FocusingFrame\UI-StatusBar"/>
+						<BarTexture name="Perl_Focus_NameFrame_CPMeterTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="1" g="0" b="0" a="1"/>
 					</StatusBar>
 				</Frames>
@@ -166,7 +166,7 @@
 						</Texture>
 
 						<!-- PVP Icon -->
-						<Texture name="Perl_Focus_PVPStatus" file="Interface\FocusingFrame\UI-PVP-FFA">
+						<Texture name="Perl_Focus_PVPStatus" file="Interface\TargetingFrame\UI-PVP-FFA">
 							<Size>
 								<AbsDimension x="32" y="32"/>
 							</Size>
@@ -226,7 +226,7 @@
 				<Layers>
 					<Layer level="OVERLAY">
 						<!-- Raid Focus Icon -->
-						<Texture name="Perl_Focus_RaidFocusIcon" file="Interface\FocusingFrame\UI-RaidFocusingIcons" hidden="true">
+						<Texture name="Perl_Focus_RaidFocusIcon" file="Interface\TargetingFrame\UI-RaidTargetingIcons" hidden="true">
 							<Size>
 								<AbsDimension x="26" y="26"/>
 							</Size>
@@ -745,7 +745,7 @@
 					</Button>
 
 					<!-- Health Bar -->
-					<StatusBar name="Perl_Focus_HealthBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Focus_HealthBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -764,7 +764,7 @@
 								Perl_Focus_DragStop(arg1);
 							</OnDragStop>
 						</Scripts>
-						<BarTexture name="Perl_Focus_HealthBarTex" file="Interface\FocusingFrame\UI-StatusBar"/>
+						<BarTexture name="Perl_Focus_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0"/>
 						<Layers>
 							<!-- Health Text -->
@@ -801,7 +801,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Focus_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Focus_HealthBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -812,10 +812,10 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture name="Perl_Focus_HealthBarFadeBarTex" file="Interface\FocusingFrame\UI-StatusBar"/>
+						<BarTexture name="Perl_Focus_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Focus_HealthBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Focus_HealthBarBG">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -826,12 +826,12 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture name="Perl_Focus_HealthBarBGTex" file="Interface\FocusingFrame\UI-FocusingFrame-BarFill"/>
+						<BarTexture name="Perl_Focus_HealthBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
 
 					<!-- Mana Bar -->
-					<StatusBar name="Perl_Focus_ManaBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Focus_ManaBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -850,7 +850,7 @@
 								Perl_Focus_DragStop(arg1);
 							</OnDragStop>
 						</Scripts>
-						<BarTexture name="Perl_Focus_ManaBarTex" file="Interface\FocusingFrame\UI-StatusBar"/>
+						<BarTexture name="Perl_Focus_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0" b="1"/>
 						<Layers>
 							<!-- Mana Text -->
@@ -887,7 +887,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Focus_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Focus_ManaBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -898,10 +898,10 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture name="Perl_Focus_ManaBarFadeBarTex" file="Interface\FocusingFrame\UI-StatusBar"/>
+						<BarTexture name="Perl_Focus_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Focus_ManaBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Focus_ManaBarBG">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -912,7 +912,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture name="Perl_Focus_ManaBarBGTex" file="Interface\FocusingFrame\UI-FocusingFrame-BarFill"/>
+						<BarTexture name="Perl_Focus_ManaBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
 				</Frames>

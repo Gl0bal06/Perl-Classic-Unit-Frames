@@ -44,13 +44,7 @@ local Perl_Focus_ManaBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Focus_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local focushealth, focushealthmax, focushealthpercent, focusmana, focusmanamax, focusmanapercent, focuspower, focusname, focuslevel, focuslevelcolor, focusclassification, focusclassificationframetext, localizedclass, creatureType, r, g, b, namelengthrestrictor, mobhealththreenumerics;
-
--- Variables for position of the class icon texture.
-local Perl_Focus_ClassPosRight = {};
-local Perl_Focus_ClassPosLeft = {};
-local Perl_Focus_ClassPosTop = {};
-local Perl_Focus_ClassPosBottom = {};
+local focushealth, focushealthmax, focushealthpercent, focusmana, focusmanamax, focusmanapercent, focuspower, focusname, focuslevel, focuslevelcolor, focusclassification, focusclassificationframetext, englishclass, creatureType, r, g, b, namelengthrestrictor, mobhealththreenumerics;
 
 
 ----------------------
@@ -92,7 +86,6 @@ function Perl_Focus_OnLoad()
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Focus_OnEvent);
 	this:SetScript("OnHide", Perl_Focus_OnHide);
-	--this:SetScript("OnShow", Perl_Focus_OnShow);
 	this:SetScript("OnUpdate", CombatFeedback_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
@@ -112,7 +105,6 @@ function Perl_Focus_OnLoad()
 	-- WoW 2.0 Secure API Stuff
 	this:SetAttribute("unit", "focus");
 	RegisterUnitWatch(this);
---	hooksecurefunc("Perl_Focus_OnShow", Perl_Focus_Update_Once);
 end
 
 
@@ -249,64 +241,59 @@ function Perl_Focus_Initialize()
 	Perl_Focus_Initialize_Frame_Color();		-- Give the borders (and background if applicable) that "Perl" look
 	Perl_Focus_Frame_Style();			-- Layout the frame according to our mode
 	Perl_Focus_Buff_Debuff_Background();		-- Do the buffs and debuffs have their transparent background frame?
-	Perl_Focus_Set_Localized_ClassIcons();		-- Assign class icons to the appropriate classes
 
 	Perl_Focus_NameFrame_CPMeter:SetMinMaxValues(0, 5);	-- REMOVE THIS LATER
 	Perl_Focus_NameFrame_CPMeter:SetValue(0);		-- REMOVE THIS LATER
 
-	-- Unregister and Hide the Blizzard frames
---	Perl_clearBlizzardFrameDisable(FocusFrame);
---	Perl_clearBlizzardFrameDisable(ComboFrame);
-
 	-- MyAddOns Support
---	Perl_Focus_myAddOns_Support();
+	Perl_Focus_myAddOns_Support();
 
 	-- IFrameManager Support
---	if (IFrameManager) then
---		Perl_Focus_IFrameManager();
---	end
+	if (IFrameManager) then
+		Perl_Focus_IFrameManager();
+	end
 
 	-- Set the initialization flag
 	Initialized = 1;
 end
 
---function Perl_Focus_IFrameManager()
---	local iface = IFrameManager:Interface();
---	function iface:getName(frame)
---		return "Perl Focus";
---	end
---	function iface:getBorder(frame)
---		local bottom, right, top;
---		if (showclassframe == 1 or showrareeliteframe == 1) then
---			top = 20;
---		else
---			top = 0;
---		end
---		if (framestyle == 1) then
---			right = 41;
---		else
---			if (compactmode == 0) then
---				right = 60;
---			else
---				if (compactpercent == 0) then
---					if (shortbars == 0) then
---						right = -10;
---					else
---						right = -45;
---					end
---				else
---					if (shortbars == 0) then
---						right = 25;
---					else
---						right = -10;
---					end
---				end
---			end
---		end
---		if (showportrait == 1) then
---			right = right + 55;
---		end
---		bottom = 0;
+function Perl_Focus_IFrameManager()
+	local iface = IFrameManager:Interface();
+	function iface:getName(frame)
+		return "Perl Focus";
+	end
+	function iface:getBorder(frame)
+		local bottom, right, top;
+		if (showclassframe == 1 or showrareeliteframe == 1) then
+			top = 20;
+		else
+			top = 0;
+		end
+		if (framestyle == 1) then
+			right = 41;
+		else
+			if (compactmode == 0) then
+				right = 60;
+			else
+				if (compactpercent == 0) then
+					if (shortbars == 0) then
+						right = -10;
+					else
+						right = -45;
+					end
+				else
+					if (shortbars == 0) then
+						right = 25;
+					else
+						right = -10;
+					end
+				end
+			end
+		end
+		if (showportrait == 1) then
+			right = right + 55;
+		end
+		bottom = 0;
 --		if (invertbuffs == 0) then
 --			if (numbuffsshown == 0) then
 --				-- bottom is already 0
@@ -338,11 +325,11 @@ end
 --				top = top + 48;
 --			end
 --		end
---		bottom = bottom + 38;	-- Offset for the stats frame
---		return top, right, bottom, 0;
---	end
---	IFrameManager:Register(this, iface);
---end
+		bottom = bottom + 38;	-- Offset for the stats frame
+		return top, right, bottom, 0;
+	end
+	IFrameManager:Register(this, iface);
+end
 
 function Perl_Focus_Initialize_Frame_Color()
 	Perl_Focus_StatsFrame:SetBackdropColor(0, 0, 0, 1);
@@ -392,8 +379,8 @@ function Perl_Focus_Update_Once()
 	-- Begin: Draw the class icon?
 	if (showclassicon == 1) then
 		if (UnitIsPlayer("focus")) then
-			localizedclass = UnitClass("focus");
-			Perl_Focus_ClassTexture:SetTexCoord(Perl_Focus_ClassPosRight[localizedclass], Perl_Focus_ClassPosLeft[localizedclass], Perl_Focus_ClassPosTop[localizedclass], Perl_Focus_ClassPosBottom[localizedclass]);
+			_, englishclass = UnitClass("focus");
+			Perl_Focus_ClassTexture:SetTexCoord(PCUF_CLASSPOSRIGHT[englishclass], PCUF_CLASSPOSLEFT[englishclass], PCUF_CLASSPOSTOP[englishclass], PCUF_CLASSPOSBOTTOM[englishclass]);
 			Perl_Focus_ClassTexture:Show();
 		else
 			Perl_Focus_ClassTexture:Hide();
@@ -568,8 +555,6 @@ function Perl_Focus_Update_Health()
 					end
 				end
 			elseif (MobHealthFrame) then	-- mobhealth2, telo, and mobinfo
---				MobHealthFrame:Hide();
-
 				local index;
 				if UnitIsPlayer("focus") then
 					index = UnitName("focus");
@@ -685,10 +670,6 @@ function Perl_Focus_Update_Health()
 				end
 			end
 		else	-- mobhealthsupport == 0
---			if (MobHealthFrame) then
---				MobHealthFrame:Show();
---			end
-
 			-- MobHealth support is disabled
 			if (framestyle == 1) then
 				Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
@@ -1027,8 +1008,57 @@ function Perl_Focus_Update_Name()
 end
 
 function Perl_Focus_Update_Text_Color()
-	if (classcolorednames == 0) then
-		if (UnitPlayerControlled("focus")) then					-- is it a player
+	if (classcolorednames == 1) then
+		if (UnitIsPlayer("focus")) then
+			_, englishclass = UnitClass("focus");
+			Perl_Focus_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+			return;
+		end
+	end
+
+	if (UnitPlayerControlled("focus")) then					-- is it a player
+		if (UnitCanAttack("focus", "player")) then				-- are we in an enemy controlled zone
+			-- Hostile players are red
+			if (not UnitCanAttack("player", "focus")) then			-- enemy is not pvp enabled
+				r = 0.5;
+				g = 0.5;
+				b = 1.0;
+			else								-- enemy is pvp enabled
+				r = 1.0;
+				g = 0.0;
+				b = 0.0;
+			end
+		elseif (UnitCanAttack("player", "focus")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+			-- Players we can attack but which are not hostile are yellow
+			r = 1.0;
+			g = 1.0;
+			b = 0.0;
+		elseif (UnitIsPVP("focus") and not UnitIsPVPSanctuary("focus") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
+			-- Players we can assist but are PvP flagged are green
+			r = 0.0;
+			g = 1.0;
+			b = 0.0;
+		else									-- friendly non pvp enabled character
+			-- All other players are blue (the usual state on the "blue" server)
+			r = 0.5;
+			g = 0.5;
+			b = 1.0;
+		end
+		Perl_Focus_NameBarText:SetTextColor(r, g, b);
+	elseif (UnitIsTapped("focus") and not UnitIsTappedByPlayer("focus")) then
+		Perl_Focus_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
+	else
+		if (UnitIsVisible("focus")) then
+			local reaction = UnitReaction("focus", "player");
+			if (reaction) then
+				r = UnitReactionColor[reaction].r;
+				g = UnitReactionColor[reaction].g;
+				b = UnitReactionColor[reaction].b;
+				Perl_Focus_NameBarText:SetTextColor(r, g, b);
+			else
+				Perl_Focus_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+			end
+		else
 			if (UnitCanAttack("focus", "player")) then				-- are we in an enemy controlled zone
 				-- Hostile players are red
 				if (not UnitCanAttack("player", "focus")) then			-- enemy is not pvp enabled
@@ -1045,7 +1075,7 @@ function Perl_Focus_Update_Text_Color()
 				r = 1.0;
 				g = 1.0;
 				b = 0.0;
-			elseif (UnitIsPVP("focus")) then					-- friendly pvp enabled character
+			elseif (UnitIsPVP("focus") and not UnitIsPVPSanctuary("focus") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
 				-- Players we can assist but are PvP flagged are green
 				r = 0.0;
 				g = 1.0;
@@ -1057,118 +1087,6 @@ function Perl_Focus_Update_Text_Color()
 				b = 1.0;
 			end
 			Perl_Focus_NameBarText:SetTextColor(r, g, b);
-		elseif (UnitIsTapped("focus") and not UnitIsTappedByPlayer("focus")) then
-			Perl_Focus_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
-		else
-			if (UnitIsVisible("focus")) then
-				local reaction = UnitReaction("focus", "player");
-				if (reaction) then
-					r = UnitReactionColor[reaction].r;
-					g = UnitReactionColor[reaction].g;
-					b = UnitReactionColor[reaction].b;
-					Perl_Focus_NameBarText:SetTextColor(r, g, b);
-				else
-					Perl_Focus_NameBarText:SetTextColor(0.5, 0.5, 1.0);
-				end
-			else
-				if (UnitCanAttack("focus", "player")) then				-- are we in an enemy controlled zone
-					-- Hostile players are red
-					if (not UnitCanAttack("player", "focus")) then			-- enemy is not pvp enabled
-						r = 0.5;
-						g = 0.5;
-						b = 1.0;
-					else								-- enemy is pvp enabled
-						r = 1.0;
-						g = 0.0;
-						b = 0.0;
-					end
-				elseif (UnitCanAttack("player", "focus")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
-					-- Players we can attack but which are not hostile are yellow
-					r = 1.0;
-					g = 1.0;
-					b = 0.0;
-				elseif (UnitIsPVP("focus")) then					-- friendly pvp enabled character
-					-- Players we can assist but are PvP flagged are green
-					r = 0.0;
-					g = 1.0;
-					b = 0.0;
-				else									-- friendly non pvp enabled character
-					-- All other players are blue (the usual state on the "blue" server)
-					r = 0.5;
-					g = 0.5;
-					b = 1.0;
-				end
-				Perl_Focus_NameBarText:SetTextColor(r, g, b);
-			end
-			
-		end
-	else
-		if (UnitIsPlayer("focus")) then
-			if (UnitClass("focus") == PERL_LOCALIZED_WARRIOR) then
-				Perl_Focus_NameBarText:SetTextColor(0.78, 0.61, 0.43);
-			elseif (UnitClass("focus") == PERL_LOCALIZED_MAGE) then
-				Perl_Focus_NameBarText:SetTextColor(0.41, 0.8, 0.94);
-			elseif (UnitClass("focus") == PERL_LOCALIZED_ROGUE) then
-				Perl_Focus_NameBarText:SetTextColor(1, 0.96, 0.41);
-			elseif (UnitClass("focus") == PERL_LOCALIZED_DRUID) then
-				Perl_Focus_NameBarText:SetTextColor(1, 0.49, 0.04);
-			elseif (UnitClass("focus") == PERL_LOCALIZED_HUNTER) then
-				Perl_Focus_NameBarText:SetTextColor(0.67, 0.83, 0.45);
-			elseif (UnitClass("focus") == PERL_LOCALIZED_SHAMAN) then
-				Perl_Focus_NameBarText:SetTextColor(0, 0.86, 0.73);
-			elseif (UnitClass("focus") == PERL_LOCALIZED_PRIEST) then
-				Perl_Focus_NameBarText:SetTextColor(1, 1, 1);
-			elseif (UnitClass("focus") == PERL_LOCALIZED_WARLOCK) then
-				Perl_Focus_NameBarText:SetTextColor(0.58, 0.51, 0.79);
-			elseif (UnitClass("focus") == PERL_LOCALIZED_PALADIN) then
-				Perl_Focus_NameBarText:SetTextColor(0.96, 0.55, 0.73);
-			end
-		else
-			if (UnitIsTapped("focus") and not UnitIsTappedByPlayer("focus")) then
-				Perl_Focus_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
-			else
-				if (UnitIsVisible("focus")) then
-					local reaction = UnitReaction("focus", "player");
-					if (reaction) then
-						r = UnitReactionColor[reaction].r;
-						g = UnitReactionColor[reaction].g;
-						b = UnitReactionColor[reaction].b;
-						Perl_Focus_NameBarText:SetTextColor(r, g, b);
-					else
-						Perl_Focus_NameBarText:SetTextColor(0.5, 0.5, 1.0);
-					end
-				else
-					if (UnitCanAttack("focus", "player")) then				-- are we in an enemy controlled zone
-						-- Hostile players are red
-						if (not UnitCanAttack("player", "focus")) then			-- enemy is not pvp enabled
-							r = 0.5;
-							g = 0.5;
-							b = 1.0;
-						else								-- enemy is pvp enabled
-							r = 1.0;
-							g = 0.0;
-							b = 0.0;
-						end
-					elseif (UnitCanAttack("player", "focus")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
-						-- Players we can attack but which are not hostile are yellow
-						r = 1.0;
-						g = 1.0;
-						b = 0.0;
-					elseif (UnitIsPVP("focus")) then					-- friendly pvp enabled character
-						-- Players we can assist but are PvP flagged are green
-						r = 0.0;
-						g = 1.0;
-						b = 0.0;
-					else									-- friendly non pvp enabled character
-						-- All other players are blue (the usual state on the "blue" server)
-						r = 0.5;
-						g = 0.5;
-						b = 1.0;
-					end
-					Perl_Focus_NameBarText:SetTextColor(r, g, b);
-				end
-				
-			end
 		end
 	end
 end
@@ -1258,54 +1176,6 @@ function Perl_Focus_Buff_Debuff_Background()
 		Perl_Focus_BuffFrame:SetBackdrop(nil);
 		Perl_Focus_DebuffFrame:SetBackdrop(nil);
 	end
-end
-
-function Perl_Focus_Set_Localized_ClassIcons()
-	Perl_Focus_ClassPosRight = {
-		[PERL_LOCALIZED_DRUID] = 0.75,
-		[PERL_LOCALIZED_HUNTER] = 0,
-		[PERL_LOCALIZED_MAGE] = 0.25,
-		[PERL_LOCALIZED_PALADIN] = 0,
-		[PERL_LOCALIZED_PRIEST] = 0.5,
-		[PERL_LOCALIZED_ROGUE] = 0.5,
-		[PERL_LOCALIZED_SHAMAN] = 0.25,
-		[PERL_LOCALIZED_WARLOCK] = 0.75,
-		[PERL_LOCALIZED_WARRIOR] = 0,
-	};
-	Perl_Focus_ClassPosLeft = {
-		[PERL_LOCALIZED_DRUID] = 1,
-		[PERL_LOCALIZED_HUNTER] = 0.25,
-		[PERL_LOCALIZED_MAGE] = 0.5,
-		[PERL_LOCALIZED_PALADIN] = 0.25,
-		[PERL_LOCALIZED_PRIEST] = 0.75,
-		[PERL_LOCALIZED_ROGUE] = 0.75,
-		[PERL_LOCALIZED_SHAMAN] = 0.5,
-		[PERL_LOCALIZED_WARLOCK] = 1,
-		[PERL_LOCALIZED_WARRIOR] = 0.25,
-	};
-	Perl_Focus_ClassPosTop = {
-		[PERL_LOCALIZED_DRUID] = 0,
-		[PERL_LOCALIZED_HUNTER] = 0.25,
-		[PERL_LOCALIZED_MAGE] = 0,
-		[PERL_LOCALIZED_PALADIN] = 0.5,
-		[PERL_LOCALIZED_PRIEST] = 0.25,
-		[PERL_LOCALIZED_ROGUE] = 0,
-		[PERL_LOCALIZED_SHAMAN] = 0.25,
-		[PERL_LOCALIZED_WARLOCK] = 0.25,
-		[PERL_LOCALIZED_WARRIOR] = 0,
-		
-	};
-	Perl_Focus_ClassPosBottom = {
-		[PERL_LOCALIZED_DRUID] = 0.25,
-		[PERL_LOCALIZED_HUNTER] = 0.5,
-		[PERL_LOCALIZED_MAGE] = 0.25,
-		[PERL_LOCALIZED_PALADIN] = 0.75,
-		[PERL_LOCALIZED_PRIEST] = 0.5,
-		[PERL_LOCALIZED_ROGUE] = 0.25,
-		[PERL_LOCALIZED_SHAMAN] = 0.5,
-		[PERL_LOCALIZED_WARLOCK] = 0.5,
-		[PERL_LOCALIZED_WARRIOR] = 0.25,
-	};
 end
 
 
@@ -2562,60 +2432,6 @@ function Perl_FocusDropDown_Initialize()
 	end
 end
 
---function Perl_Focus_MouseClick(button)
---	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
---		if (Perl_Custom_ClickFunction(button, "focus")) then	-- If the function returns true, then we return
---			return;
---		end
---	end								-- Otherwise, it did nothing, so take default action
---
---	if (PCUF_CASTPARTYSUPPORT == 1) then
---		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
---			if (CastPartyConfig) then
---				CastParty.Event.OnClickByUnit(button, "focus");
---				return;
---			elseif (Genesis_MouseHeal and Genesis_MouseHeal("focus", button)) then
---				return;
---			elseif (CH_Config) then
---				if (CH_Config.PCUFEnabled) then
---					CH_UnitClicked("focus", button);
---					return;
---				end
---			elseif (SmartHeal) then
---				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
---					local KeyDownType = SmartHeal:GetClickHealButton();
---					if(KeyDownType and KeyDownType ~= "undetermined") then
---						SmartHeal:ClickHeal(KeyDownType..button, "focus");
---					else
---						SmartHeal:DefaultClick(button, "focus");
---					end
---					return;
---				end
---			end
---		end
---	end
---
---	if (button == "LeftButton") then
---		if (SpellIsFocusing()) then
---			SpellFocusUnit("focus");
---		elseif (CursorHasItem()) then
---			DropItemOnUnit("focus");
---		end
---		return;
---	end
---
---	if (button == "RightButton") then
---		if (SpellIsFocusing()) then
---			SpellStopFocusing();
---			return;
---		end
---	end
---
---	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
---		ToggleDropDownMenu(1, nil, Perl_Focus_DropDown, "Perl_Focus_NameFrame", 40, 0);
---	end
---end
-
 function Perl_Focus_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_Focus_Frame:StartMoving();
@@ -2625,24 +2441,6 @@ end
 function Perl_Focus_DragStop(button)
 	Perl_Focus_Frame:StopMovingOrSizing();
 end
-
---function Perl_Focus_OnShow()
---	if (soundFocuschange == 1) then
---		if (UnitIsEnemy("focus", "player")) then
---			PlaySound("igCreatureAggroSelect");
---		elseif (UnitIsFriend("player", "focus")) then
---			PlaySound("igCharacterNPCSelect");
---		else
---			PlaySound("igCreatureNeutralSelect");
---		end
---	end
---end
---
---function Perl_Focus_OnHide()
---	if (soundFocuschange == 1) then
---		PlaySound("INTERFACESOUND_LOSTTARGETUNIT");
---	end
---end
 
 
 -------------
@@ -2660,20 +2458,20 @@ end
 ----------------------
 -- myAddOns Support --
 ----------------------
---function Perl_Focus_myAddOns_Support()
---	-- Register the addon in myAddOns
---	if (myAddOnsFrame_Register) then
---		local Perl_Focus_myAddOns_Details = {
---			name = "Perl_Focus",
---			version = PERL_LOCALIZED_VERSION,
---			releaseDate = PERL_LOCALIZED_DATE,
---			author = "Perl; Maintained by Global",
---			email = "global@g-ball.com",
---			website = "http://www.curse-gaming.com/mod.php?addid=2257",
---			category = MYADDONS_CATEGORY_OTHERS
---		};
---		Perl_Focus_myAddOns_Help = {};
---		Perl_Focus_myAddOns_Help[1] = "/perl";
---		myAddOnsFrame_Register(Perl_Focus_myAddOns_Details, Perl_Focus_myAddOns_Help);
---	end
---end
+function Perl_Focus_myAddOns_Support()
+	-- Register the addon in myAddOns
+	if (myAddOnsFrame_Register) then
+		local Perl_Focus_myAddOns_Details = {
+			name = "Perl_Focus",
+			version = PERL_LOCALIZED_VERSION,
+			releaseDate = PERL_LOCALIZED_DATE,
+			author = "Perl; Maintained by Global",
+			email = "global@g-ball.com",
+			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+			category = MYADDONS_CATEGORY_OTHERS
+		};
+		Perl_Focus_myAddOns_Help = {};
+		Perl_Focus_myAddOns_Help[1] = "/perl";
+		myAddOnsFrame_Register(Perl_Focus_myAddOns_Details, Perl_Focus_myAddOns_Help);
+	end
+end

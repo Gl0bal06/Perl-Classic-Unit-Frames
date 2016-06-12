@@ -1,3 +1,28 @@
+2.02 - December 21, 2006
+ - All: Added iFrameManager support
+ - All: Added myAddOns support
+ - All: Memory improvements by no longer inheriting TextStatusBar
+ - All: Updated class colors to the Blizzard RAID_CLASS_COLORS template
+ - All: Updated TOC for the currently supported addons
+ - All: Removed a lot of old commented code
+ - CombatDisplay: Combo point, Druid Bar, and pet bar display is now restricted to the appropriate classes
+ - CombatDisplay/Target/ToT: Updated menu conditions to the latest Blizzard version
+ - Config: Added a radius value to the minimap position for square minimaps
+ - Config: Moved all class icon coordinates to one centralized location
+ - Config: Commented some Perl_Raid code while attemping to get Perl_Raid working
+ - Focus: Raid target icons now work properly
+ - Focus: Fixed some silent XML errors
+ - Focus: Added sanctuary detection for PvP status name coloring
+ - Focus/Party/Player/Target: Class icons now use non localized data
+ - Focus/Target: Optimized the PvP status function
+ - Party: Buff and debuff size is now correctly set upon login
+ - Party: Changed the default spacing to 90
+ - Player: Druid Bar support is only displayed for Druids
+ - Target: Added 40 debuff support
+ - Target: Added 20 buff support
+ - Target: Made some changes to how target changes occur
+ - Target: Removed buff sizing from iFrameManager support
+
 2.01 - December 5, 2006
  - All: Updated TOC Interface version to 20000
  - All: Converted all clickable surfaces to the new secure templates

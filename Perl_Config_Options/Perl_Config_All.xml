@@ -68,6 +68,16 @@
 					</Anchors>
 				</FontString>
 
+				<FontString name="$parent_MiniMap_Radius_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_ALL_MINIMAP_RADIUS">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="350" y="-150"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
 				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_MISC">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
@@ -404,12 +414,31 @@
 				</Scripts>
 			</Slider>
 
+			<Slider name="$parent_Slider4" inherits="OptionsSliderTemplate" minValue="40" maxValue="150" valueStep="1">
+				<Size>
+					<AbsDimension x="200" y="15"/> <!-- 260 -->
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_MiniMap_Radius_Text">
+						<Offset>
+							<AbsDimension x="20" y="-25"/> <!-- -40 -->
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Config_All_Set_MiniMap_Radius(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+
 			<CheckButton name="$parent_CheckButton8" inherits="UICheckButtonTemplate" id="8">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_MiniMap_Text">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_MiniMap_Radius_Text">
 						<Offset>
 							<AbsDimension  x="20" y="-50"/>
 						</Offset>

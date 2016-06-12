@@ -413,7 +413,7 @@
 					</Button>
 
 					<!-- Health Bar -->
-					<StatusBar name="Perl_Player_Pet_HealthBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_Pet_HealthBar">
 						<Size>
 							<AbsDimension x="133" y="10"/>
 						</Size>
@@ -441,7 +441,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Player_Pet_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Player_Pet_HealthBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="133" y="10"/>
 						</Size>
@@ -455,7 +455,7 @@
 						<BarTexture name="Perl_Player_Pet_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Player_Pet_HealthBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_Pet_HealthBarBG">
 						<Size>
 							<AbsDimension x="133" y="10"/>
 						</Size>
@@ -471,7 +471,7 @@
 					</StatusBar>
 
 					<!-- Mana Bar -->
-					<StatusBar name="Perl_Player_Pet_ManaBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_Pet_ManaBar">
 						<Size>
 							<AbsDimension x="133" y="10"/>
 						</Size>
@@ -499,7 +499,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Player_Pet_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Player_Pet_ManaBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="133" y="10"/>
 						</Size>
@@ -513,7 +513,7 @@
 						<BarTexture name="Perl_Player_Pet_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Player_Pet_ManaBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_Pet_ManaBarBG">
 						<Size>
 							<AbsDimension x="133" y="10"/>
 						</Size>
@@ -529,7 +529,7 @@
 					</StatusBar>
 
 					<!-- XP Bar -->
-					<StatusBar name="Perl_Player_Pet_XPBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_Pet_XPBar">
 						<Size>
 							<AbsDimension x="133" y="10"/>
 						</Size>
@@ -557,7 +557,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Player_Pet_XPBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_Pet_XPBarBG">
 						<Size>
 							<AbsDimension x="133" y="10"/>
 						</Size>

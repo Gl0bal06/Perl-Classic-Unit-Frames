@@ -2,6 +2,6 @@
 ## Title: Perl Player Frame
 ## Notes: Displays a movable player frame to replace the default.
 ## Dependencies: Perl_Config
-## OptionalDeps: Clique, DruidBar
+## OptionalDeps: Clique, DruidBar, myAddOns
 ## SavedVariables: Perl_Player_Config
 Perl_Player.xml

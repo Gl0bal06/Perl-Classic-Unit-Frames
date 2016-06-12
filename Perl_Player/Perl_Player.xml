@@ -516,7 +516,7 @@
 					</Button>
 
 					<!-- Health Bar -->
-					<StatusBar name="Perl_Player_HealthBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_HealthBar">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -565,7 +565,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Player_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Player_HealthBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -579,7 +579,7 @@
 						<BarTexture name="Perl_Player_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Player_HealthBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_HealthBarBG">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -626,7 +626,7 @@
 					</Button>
 
 					<!-- Mana Bar -->
-					<StatusBar name="Perl_Player_ManaBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_ManaBar">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -675,7 +675,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Player_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Player_ManaBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -689,7 +689,7 @@
 						<BarTexture name="Perl_Player_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Player_ManaBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_ManaBarBG">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -736,7 +736,7 @@
 					</Button>
 
 					<!-- Druid Mana Bar -->
-					<StatusBar name="Perl_Player_DruidBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_DruidBar">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -786,7 +786,7 @@
 						</Layers>
 					</StatusBar>
 					<!--
-					<StatusBar name="Perl_Player_DruidBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Player_DruidBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -801,7 +801,7 @@
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
 					-->
-					<StatusBar name="Perl_Player_DruidBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_DruidBarBG">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -848,7 +848,7 @@
 					</Button>
 
 					<!-- XP Bar -->
-					<StatusBar name="Perl_Player_XPBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_XPBar">
 						<Size>
 							<AbsDimension x="220" y="10"/>
 						</Size>
@@ -877,7 +877,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Player_XPBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_XPBarBG">
 						<Size>
 							<AbsDimension x="220" y="10"/>
 						</Size>
@@ -891,7 +891,7 @@
 						<BarTexture name="Perl_Player_XPBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.6" b="0.6" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Player_XPRestBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Player_XPRestBar">
 						<Size>
 							<AbsDimension x="220" y="10"/>
 						</Size>

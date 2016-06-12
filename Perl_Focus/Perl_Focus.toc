@@ -2,6 +2,6 @@
 ## Title: Perl Focus Frame
 ## Notes: Displays a movable focus frame.
 ## Dependencies: Perl_Config
-## OptionalDeps: Clique, MobHealth
+## OptionalDeps: Clique, MobHealth, myAddOns
 ## SavedVariables: Perl_Focus_Config
 Perl_Focus.xml

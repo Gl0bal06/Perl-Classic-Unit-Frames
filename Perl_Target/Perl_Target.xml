@@ -79,14 +79,6 @@
 			<OnLoad>
 				Perl_Target_OnLoad();
 			</OnLoad>
-			<!--
-			<OnHide>
-				Perl_Target_OnHide();
-			</OnHide>
-			-->
-			<OnShow>
-				Perl_Target_OnShow();
-			</OnShow>
 		</Scripts>
 
 		<Frames>
@@ -134,7 +126,7 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
-					<StatusBar name="Perl_Target_NameFrame_CPMeter" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_NameFrame_CPMeter">
 						<Size>
 							<AbsDimension x="170" y="12"/>
 						</Size>
@@ -812,7 +804,7 @@
 					</Button>
 
 					<!-- Health Bar -->
-					<StatusBar name="Perl_Target_HealthBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_HealthBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -868,7 +860,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Target_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Target_HealthBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -882,7 +874,7 @@
 						<BarTexture name="Perl_Target_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Target_HealthBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_HealthBarBG">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -898,7 +890,7 @@
 					</StatusBar>
 
 					<!-- Mana Bar -->
-					<StatusBar name="Perl_Target_ManaBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_ManaBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -954,7 +946,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Target_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Target_ManaBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -968,7 +960,7 @@
 						<BarTexture name="Perl_Target_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Target_ManaBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_ManaBarBG">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -1093,9 +1085,9 @@
 
 					<Button name="Perl_Target_Buff9" inherits="Perl_Target_BuffTemplate" id="9">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff1" relativePoint="BOTTOMLEFT">
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff8" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="0" y="-3"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1113,9 +1105,9 @@
 
 					<Button name="Perl_Target_Buff11" inherits="Perl_Target_BuffTemplate" id="11">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff10" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff1" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="2.71" y="0"/>
+									<AbsDimension x="0" y="-3"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1170,6 +1162,46 @@
 							</Anchor>
 						</Anchors>
 					</Button>
+
+					<Button name="Perl_Target_Buff17" inherits="Perl_Target_BuffTemplate" id="17">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff16" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Buff18" inherits="Perl_Target_BuffTemplate" id="18">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff17" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Buff19" inherits="Perl_Target_BuffTemplate" id="19">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff18" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Buff20" inherits="Perl_Target_BuffTemplate" id="20">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Buff19" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
 					<!-- End buttons -->
 				</Frames>
 			</Frame>
@@ -1200,7 +1232,7 @@
 				</Backdrop>
 				<Frames>
 					<!-- Start buttons -->
-					<Button name="Perl_Target_Debuff1" inherits="Perl_Target_BuffTemplate" id="17">
+					<Button name="Perl_Target_Debuff1" inherits="Perl_Target_BuffTemplate" id="21">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
@@ -1210,7 +1242,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff2" inherits="Perl_Target_BuffTemplate" id="18">
+					<Button name="Perl_Target_Debuff2" inherits="Perl_Target_BuffTemplate" id="22">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff1" relativePoint="TOPRIGHT">
 								<Offset>
@@ -1220,7 +1252,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff3" inherits="Perl_Target_BuffTemplate" id="19">
+					<Button name="Perl_Target_Debuff3" inherits="Perl_Target_BuffTemplate" id="23">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff2" relativePoint="TOPRIGHT">
 								<Offset>
@@ -1230,7 +1262,7 @@
 						</Anchors>
 					</Button>
 					
-					<Button name="Perl_Target_Debuff4" inherits="Perl_Target_BuffTemplate" id="20">
+					<Button name="Perl_Target_Debuff4" inherits="Perl_Target_BuffTemplate" id="24">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff3" relativePoint="TOPRIGHT">
 								<Offset>
@@ -1240,7 +1272,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff5" inherits="Perl_Target_BuffTemplate" id="21">
+					<Button name="Perl_Target_Debuff5" inherits="Perl_Target_BuffTemplate" id="25">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff4" relativePoint="TOPRIGHT">
 								<Offset>
@@ -1250,7 +1282,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff6" inherits="Perl_Target_BuffTemplate" id="22">
+					<Button name="Perl_Target_Debuff6" inherits="Perl_Target_BuffTemplate" id="26">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff5" relativePoint="TOPRIGHT">
 								<Offset>
@@ -1260,7 +1292,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff7" inherits="Perl_Target_BuffTemplate" id="23">
+					<Button name="Perl_Target_Debuff7" inherits="Perl_Target_BuffTemplate" id="27">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff6" relativePoint="TOPRIGHT">
 								<Offset>
@@ -1270,7 +1302,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff8" inherits="Perl_Target_BuffTemplate" id="24">
+					<Button name="Perl_Target_Debuff8" inherits="Perl_Target_BuffTemplate" id="28">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff7" relativePoint="TOPRIGHT">
 								<Offset>
@@ -1280,17 +1312,17 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff9" inherits="Perl_Target_BuffTemplate" id="25">
+					<Button name="Perl_Target_Debuff9" inherits="Perl_Target_BuffTemplate" id="29">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff1" relativePoint="BOTTOMLEFT">
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff8" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="0" y="-3"/>
+									<AbsDimension x="2.71" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff10" inherits="Perl_Target_BuffTemplate" id="26">
+					<Button name="Perl_Target_Debuff10" inherits="Perl_Target_BuffTemplate" id="30">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff9" relativePoint="TOPRIGHT">
 								<Offset>
@@ -1300,17 +1332,17 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff11" inherits="Perl_Target_BuffTemplate" id="27">
+					<Button name="Perl_Target_Debuff11" inherits="Perl_Target_BuffTemplate" id="31">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff10" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff1" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="2.71" y="0"/>
+									<AbsDimension x="0" y="-3"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff12" inherits="Perl_Target_BuffTemplate" id="28">
+					<Button name="Perl_Target_Debuff12" inherits="Perl_Target_BuffTemplate" id="32">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff11" relativePoint="TOPRIGHT">
 								<Offset>
@@ -1320,7 +1352,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff13" inherits="Perl_Target_BuffTemplate" id="29">
+					<Button name="Perl_Target_Debuff13" inherits="Perl_Target_BuffTemplate" id="33">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff12" relativePoint="TOPRIGHT">
 								<Offset>
@@ -1330,7 +1362,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff14" inherits="Perl_Target_BuffTemplate" id="30">
+					<Button name="Perl_Target_Debuff14" inherits="Perl_Target_BuffTemplate" id="34">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff13" relativePoint="TOPRIGHT">
 								<Offset>
@@ -1340,7 +1372,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff15" inherits="Perl_Target_BuffTemplate" id="31">
+					<Button name="Perl_Target_Debuff15" inherits="Perl_Target_BuffTemplate" id="35">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff14" relativePoint="TOPRIGHT">
 								<Offset>
@@ -1350,9 +1382,249 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Target_Debuff16" inherits="Perl_Target_BuffTemplate" id="32">
+					<Button name="Perl_Target_Debuff16" inherits="Perl_Target_BuffTemplate" id="36">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff15" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors> 
+					</Button>
+
+					<Button name="Perl_Target_Debuff17" inherits="Perl_Target_BuffTemplate" id="37">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff16" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff18" inherits="Perl_Target_BuffTemplate" id="38">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff17" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff19" inherits="Perl_Target_BuffTemplate" id="39">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff18" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff20" inherits="Perl_Target_BuffTemplate" id="40">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff19" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff21" inherits="Perl_Target_BuffTemplate" id="41">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff11" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-3"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff22" inherits="Perl_Target_BuffTemplate" id="42">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff21" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff23" inherits="Perl_Target_BuffTemplate" id="43">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff22" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff24" inherits="Perl_Target_BuffTemplate" id="44">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff23" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff25" inherits="Perl_Target_BuffTemplate" id="45">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff24" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff26" inherits="Perl_Target_BuffTemplate" id="46">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff25" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors> 
+					</Button>
+
+					<Button name="Perl_Target_Debuff27" inherits="Perl_Target_BuffTemplate" id="47">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff26" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff28" inherits="Perl_Target_BuffTemplate" id="48">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff27" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff29" inherits="Perl_Target_BuffTemplate" id="49">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff28" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff30" inherits="Perl_Target_BuffTemplate" id="50">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff29" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff31" inherits="Perl_Target_BuffTemplate" id="51">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff21" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-3"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff32" inherits="Perl_Target_BuffTemplate" id="52">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff31" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff33" inherits="Perl_Target_BuffTemplate" id="53">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff32" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff34" inherits="Perl_Target_BuffTemplate" id="54">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff33" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff35" inherits="Perl_Target_BuffTemplate" id="55">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff34" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff36" inherits="Perl_Target_BuffTemplate" id="56">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff35" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors> 
+					</Button>
+
+					<Button name="Perl_Target_Debuff37" inherits="Perl_Target_BuffTemplate" id="57">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff36" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff38" inherits="Perl_Target_BuffTemplate" id="58">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff37" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff39" inherits="Perl_Target_BuffTemplate" id="59">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff38" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="2.71" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="Perl_Target_Debuff40" inherits="Perl_Target_BuffTemplate" id="60">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="Perl_Target_Debuff39" relativePoint="TOPRIGHT">
 								<Offset>
 									<AbsDimension x="2.71" y="0"/>
 								</Offset>

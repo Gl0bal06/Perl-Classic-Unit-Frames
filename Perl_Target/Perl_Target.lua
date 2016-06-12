@@ -10,8 +10,8 @@ local showcp = 1;		-- combo points displayed by default
 local showclassicon = 1;	-- show the class icon
 local showclassframe = 1;	-- show the class frame
 local showpvpicon = 1;		-- show the pvp icon
-local numbuffsshown = 16;	-- buff row is 16 long
-local numdebuffsshown = 16;	-- debuff row is 16 long
+local numbuffsshown = 20;	-- buff row is 2x10
+local numdebuffsshown = 40;	-- debuff row is 4x10
 local mobhealthsupport = 1;	-- mobhealth support is on by default
 local scale = 1;		-- default scale
 local showpvprank = 0;		-- hide the pvp rank by default
@@ -37,7 +37,6 @@ local invertbuffs = 0;		-- buffs and debuffs are below the target frame by defau
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
-local newtarget = 1;		-- ensure we only load target date once per fresh targetting
 
 -- Fade Bar Variables
 local Perl_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
@@ -46,13 +45,7 @@ local Perl_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, localizedclass, creatureType, r, g, b, namelengthrestrictor, mobhealththreenumerics;
-
--- Variables for position of the class icon texture.
-local Perl_Target_ClassPosRight = {};
-local Perl_Target_ClassPosLeft = {};
-local Perl_Target_ClassPosTop = {};
-local Perl_Target_ClassPosBottom = {};
+local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, englishclass, creatureType, r, g, b, namelengthrestrictor, mobhealththreenumerics;
 
 
 ----------------------
@@ -96,7 +89,7 @@ function Perl_Target_OnLoad()
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Target_OnEvent);
 	this:SetScript("OnHide", Perl_Target_OnHide);
-	--this:SetScript("OnShow", Perl_Target_OnShow);
+	this:SetScript("OnShow", Perl_Target_OnShow);
 	this:SetScript("OnUpdate", CombatFeedback_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
@@ -117,7 +110,6 @@ function Perl_Target_OnLoad()
 	-- WoW 2.0 Secure API Stuff
 	this:SetAttribute("unit", "target");
 	RegisterUnitWatch(this);
-	hooksecurefunc("Perl_Target_OnShow", Perl_Target_Update_Once);
 end
 
 
@@ -137,9 +129,7 @@ end
 
 function Perl_Target_Events:PLAYER_TARGET_CHANGED()
 	if (UnitExists(this:GetAttribute("unit"))) then
-		if (newtarget == 0) then
-			Perl_Target_Update_Once();		-- Set the unchanging info for the target
-		end
+		Perl_Target_Update_Once();		-- Set the unchanging info for the target
 	end
 end
 Perl_Target_Events.PARTY_MEMBERS_CHANGED = Perl_Target_Events.PLAYER_TARGET_CHANGED;
@@ -258,64 +248,63 @@ function Perl_Target_Initialize()
 	Perl_Target_Initialize_Frame_Color();		-- Give the borders (and background if applicable) that "Perl" look
 	Perl_Target_Frame_Style();			-- Layout the frame according to our mode
 	Perl_Target_Buff_Debuff_Background();		-- Do the buffs and debuffs have their transparent background frame?
-	Perl_Target_Set_Localized_ClassIcons();		-- Assign class icons to the appropriate classes
 
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(TargetFrame);
 	Perl_clearBlizzardFrameDisable(ComboFrame);
 
 	-- MyAddOns Support
---	Perl_Target_myAddOns_Support();
+	Perl_Target_myAddOns_Support();
 
 	-- IFrameManager Support
---	if (IFrameManager) then
---		Perl_Target_IFrameManager();
---	end
+	if (IFrameManager) then
+		Perl_Target_IFrameManager();
+	end
 
 	-- Set the initialization flag
 	Initialized = 1;
 end
 
---function Perl_Target_IFrameManager()
---	local iface = IFrameManager:Interface();
---	function iface:getName(frame)
---		return "Perl Target";
---	end
---	function iface:getBorder(frame)
---		local bottom, right, top;
---		if (showclassframe == 1 or showrareeliteframe == 1) then
---			top = 20;
---		else
---			top = 0;
---		end
---		if (framestyle == 1) then
---			right = 41;
---		else
---			if (compactmode == 0) then
---				right = 60;
---			else
---				if (compactpercent == 0) then
---					if (shortbars == 0) then
---						right = -10;
---					else
---						right = -45;
---					end
---				else
---					if (shortbars == 0) then
---						right = 25;
---					else
---						right = -10;
---					end
---				end
---			end
---		end
---		if (showportrait == 1) then
---			right = right + 55;
---		end
---		if (showcp == 1) then
---			right = right + 21;
---		end
---		bottom = 0;
+function Perl_Target_IFrameManager()
+	local iface = IFrameManager:Interface();
+	function iface:getName(frame)
+		return "Perl Target";
+	end
+	function iface:getBorder(frame)
+		local bottom, right, top;
+		if (showclassframe == 1 or showrareeliteframe == 1) then
+			top = 20;
+		else
+			top = 0;
+		end
+		if (framestyle == 1) then
+			right = 41;
+		else
+			if (compactmode == 0) then
+				right = 60;
+			else
+				if (compactpercent == 0) then
+					if (shortbars == 0) then
+						right = -10;
+					else
+						right = -45;
+					end
+				else
+					if (shortbars == 0) then
+						right = 25;
+					else
+						right = -10;
+					end
+				end
+			end
+		end
+		if (showportrait == 1) then
+			right = right + 55;
+		end
+		if (showcp == 1) then
+			right = right + 21;
+		end
+		bottom = 0;
 --		if (invertbuffs == 0) then
 --			if (numbuffsshown == 0) then
 --				-- bottom is already 0
@@ -347,11 +336,11 @@ end
 --				top = top + 48;
 --			end
 --		end
---		bottom = bottom + 38;	-- Offset for the stats frame
---		return top, right, bottom, 0;
---	end
---	IFrameManager:Register(this, iface);
---end
+		bottom = bottom + 38;	-- Offset for the stats frame
+		return top, right, bottom, 0;
+	end
+	IFrameManager:Register(this, iface);
+end
 
 function Perl_Target_Initialize_Frame_Color()
 	Perl_Target_StatsFrame:SetBackdropColor(0, 0, 0, 1);
@@ -404,8 +393,8 @@ function Perl_Target_Update_Once()
 	-- Begin: Draw the class icon?
 	if (showclassicon == 1) then
 		if (UnitIsPlayer("target")) then
-			localizedclass = UnitClass("target");
-			Perl_Target_ClassTexture:SetTexCoord(Perl_Target_ClassPosRight[localizedclass], Perl_Target_ClassPosLeft[localizedclass], Perl_Target_ClassPosTop[localizedclass], Perl_Target_ClassPosBottom[localizedclass]);
+			_, englishclass = UnitClass("target");
+			Perl_Target_ClassTexture:SetTexCoord(PCUF_CLASSPOSRIGHT[englishclass], PCUF_CLASSPOSLEFT[englishclass], PCUF_CLASSPOSTOP[englishclass], PCUF_CLASSPOSBOTTOM[englishclass]);
 			Perl_Target_ClassTexture:Show();
 		else
 			Perl_Target_ClassTexture:Hide();
@@ -1080,8 +1069,57 @@ function Perl_Target_Update_Name()
 end
 
 function Perl_Target_Update_Text_Color()
-	if (classcolorednames == 0) then
-		if (UnitPlayerControlled("target")) then					-- is it a player
+	if (classcolorednames == 1) then
+		if (UnitIsPlayer("target")) then
+			_, englishclass = UnitClass("target");
+			Perl_Target_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+			return;
+		end
+	end
+
+	if (UnitPlayerControlled("target")) then						-- is it a player
+		if (UnitCanAttack("target", "player")) then					-- are we in an enemy controlled zone
+			-- Hostile players are red
+			if (not UnitCanAttack("player", "target")) then				-- enemy is not pvp enabled
+				r = 0.5;
+				g = 0.5;
+				b = 1.0;
+			else									-- enemy is pvp enabled
+				r = 1.0;
+				g = 0.0;
+				b = 0.0;
+			end
+		elseif (UnitCanAttack("player", "target")) then					-- enemy in a zone controlled by friendlies or when we're a ghost
+			-- Players we can attack but which are not hostile are yellow
+			r = 1.0;
+			g = 1.0;
+			b = 0.0;
+		elseif (UnitIsPVP("target") and not UnitIsPVPSanctuary("target") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
+			-- Players we can assist but are PvP flagged are green
+			r = 0.0;
+			g = 1.0;
+			b = 0.0;
+		else										-- friendly non pvp enabled character
+			-- All other players are blue (the usual state on the "blue" server)
+			r = 0.5;
+			g = 0.5;
+			b = 1.0;
+		end
+		Perl_Target_NameBarText:SetTextColor(r, g, b);
+	elseif (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
+		Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 0.5);				-- not our tap
+	else
+		if (UnitIsVisible("target")) then
+			local reaction = UnitReaction("target", "player");
+			if (reaction) then
+				r = UnitReactionColor[reaction].r;
+				g = UnitReactionColor[reaction].g;
+				b = UnitReactionColor[reaction].b;
+				Perl_Target_NameBarText:SetTextColor(r, g, b);
+			else
+				Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+			end
+		else
 			if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
 				-- Hostile players are red
 				if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
@@ -1110,120 +1148,159 @@ function Perl_Target_Update_Text_Color()
 				b = 1.0;
 			end
 			Perl_Target_NameBarText:SetTextColor(r, g, b);
-		elseif (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
-			Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
-		else
-			if (UnitIsVisible("target")) then
-				local reaction = UnitReaction("target", "player");
-				if (reaction) then
-					r = UnitReactionColor[reaction].r;
-					g = UnitReactionColor[reaction].g;
-					b = UnitReactionColor[reaction].b;
-					Perl_Target_NameBarText:SetTextColor(r, g, b);
-				else
-					Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
-				end
-			else
-				if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
-					-- Hostile players are red
-					if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
-						r = 0.5;
-						g = 0.5;
-						b = 1.0;
-					else								-- enemy is pvp enabled
-						r = 1.0;
-						g = 0.0;
-						b = 0.0;
-					end
-				elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
-					-- Players we can attack but which are not hostile are yellow
-					r = 1.0;
-					g = 1.0;
-					b = 0.0;
-				elseif (UnitIsPVP("target") and not UnitIsPVPSanctuary("target") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
-					-- Players we can assist but are PvP flagged are green
-					r = 0.0;
-					g = 1.0;
-					b = 0.0;
-				else									-- friendly non pvp enabled character
-					-- All other players are blue (the usual state on the "blue" server)
-					r = 0.5;
-					g = 0.5;
-					b = 1.0;
-				end
-				Perl_Target_NameBarText:SetTextColor(r, g, b);
-			end
-			
 		end
-	else
-		if (UnitIsPlayer("target")) then
-			if (UnitClass("target") == PERL_LOCALIZED_WARRIOR) then
-				Perl_Target_NameBarText:SetTextColor(0.78, 0.61, 0.43);
-			elseif (UnitClass("target") == PERL_LOCALIZED_MAGE) then
-				Perl_Target_NameBarText:SetTextColor(0.41, 0.8, 0.94);
-			elseif (UnitClass("target") == PERL_LOCALIZED_ROGUE) then
-				Perl_Target_NameBarText:SetTextColor(1, 0.96, 0.41);
-			elseif (UnitClass("target") == PERL_LOCALIZED_DRUID) then
-				Perl_Target_NameBarText:SetTextColor(1, 0.49, 0.04);
-			elseif (UnitClass("target") == PERL_LOCALIZED_HUNTER) then
-				Perl_Target_NameBarText:SetTextColor(0.67, 0.83, 0.45);
-			elseif (UnitClass("target") == PERL_LOCALIZED_SHAMAN) then
-				Perl_Target_NameBarText:SetTextColor(0, 0.86, 0.73);
-			elseif (UnitClass("target") == PERL_LOCALIZED_PRIEST) then
-				Perl_Target_NameBarText:SetTextColor(1, 1, 1);
-			elseif (UnitClass("target") == PERL_LOCALIZED_WARLOCK) then
-				Perl_Target_NameBarText:SetTextColor(0.58, 0.51, 0.79);
-			elseif (UnitClass("target") == PERL_LOCALIZED_PALADIN) then
-				Perl_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
-			end
-		else
-			if (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
-				Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
-			else
-				if (UnitIsVisible("target")) then
-					local reaction = UnitReaction("target", "player");
-					if (reaction) then
-						r = UnitReactionColor[reaction].r;
-						g = UnitReactionColor[reaction].g;
-						b = UnitReactionColor[reaction].b;
-						Perl_Target_NameBarText:SetTextColor(r, g, b);
-					else
-						Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
-					end
-				else
-					if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
-						-- Hostile players are red
-						if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
-							r = 0.5;
-							g = 0.5;
-							b = 1.0;
-						else								-- enemy is pvp enabled
-							r = 1.0;
-							g = 0.0;
-							b = 0.0;
-						end
-					elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
-						-- Players we can attack but which are not hostile are yellow
-						r = 1.0;
-						g = 1.0;
-						b = 0.0;
-					elseif (UnitIsPVP("target")) then					-- friendly pvp enabled character
-						-- Players we can assist but are PvP flagged are green
-						r = 0.0;
-						g = 1.0;
-						b = 0.0;
-					else									-- friendly non pvp enabled character
-						-- All other players are blue (the usual state on the "blue" server)
-						r = 0.5;
-						g = 0.5;
-						b = 1.0;
-					end
-					Perl_Target_NameBarText:SetTextColor(r, g, b);
-				end
-				
-			end
-		end
+		
 	end
+
+
+
+
+
+
+--	if (classcolorednames == 0) then
+--		if (UnitPlayerControlled("target")) then					-- is it a player
+--			if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
+--				-- Hostile players are red
+--				if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
+--					r = 0.5;
+--					g = 0.5;
+--					b = 1.0;
+--				else								-- enemy is pvp enabled
+--					r = 1.0;
+--					g = 0.0;
+--					b = 0.0;
+--				end
+--			elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+--				-- Players we can attack but which are not hostile are yellow
+--				r = 1.0;
+--				g = 1.0;
+--				b = 0.0;
+--			elseif (UnitIsPVP("target") and not UnitIsPVPSanctuary("target") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
+--				-- Players we can assist but are PvP flagged are green
+--				r = 0.0;
+--				g = 1.0;
+--				b = 0.0;
+--			else									-- friendly non pvp enabled character
+--				-- All other players are blue (the usual state on the "blue" server)
+--				r = 0.5;
+--				g = 0.5;
+--				b = 1.0;
+--			end
+--			Perl_Target_NameBarText:SetTextColor(r, g, b);
+--		elseif (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
+--			Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
+--		else
+--			if (UnitIsVisible("target")) then
+--				local reaction = UnitReaction("target", "player");
+--				if (reaction) then
+--					r = UnitReactionColor[reaction].r;
+--					g = UnitReactionColor[reaction].g;
+--					b = UnitReactionColor[reaction].b;
+--					Perl_Target_NameBarText:SetTextColor(r, g, b);
+--				else
+--					Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+--				end
+--			else
+--				if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
+--					-- Hostile players are red
+--					if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
+--						r = 0.5;
+--						g = 0.5;
+--						b = 1.0;
+--					else								-- enemy is pvp enabled
+--						r = 1.0;
+--						g = 0.0;
+--						b = 0.0;
+--					end
+--				elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+--					-- Players we can attack but which are not hostile are yellow
+--					r = 1.0;
+--					g = 1.0;
+--					b = 0.0;
+--				elseif (UnitIsPVP("target") and not UnitIsPVPSanctuary("target") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
+--					-- Players we can assist but are PvP flagged are green
+--					r = 0.0;
+--					g = 1.0;
+--					b = 0.0;
+--				else									-- friendly non pvp enabled character
+--					-- All other players are blue (the usual state on the "blue" server)
+--					r = 0.5;
+--					g = 0.5;
+--					b = 1.0;
+--				end
+--				Perl_Target_NameBarText:SetTextColor(r, g, b);
+--			end
+--			
+--		end
+--	else
+--		if (UnitIsPlayer("target")) then
+--			if (UnitClass("target") == PERL_LOCALIZED_WARRIOR) then
+--				Perl_Target_NameBarText:SetTextColor(0.78, 0.61, 0.43);
+--			elseif (UnitClass("target") == PERL_LOCALIZED_MAGE) then
+--				Perl_Target_NameBarText:SetTextColor(0.41, 0.8, 0.94);
+--			elseif (UnitClass("target") == PERL_LOCALIZED_ROGUE) then
+--				Perl_Target_NameBarText:SetTextColor(1, 0.96, 0.41);
+--			elseif (UnitClass("target") == PERL_LOCALIZED_DRUID) then
+--				Perl_Target_NameBarText:SetTextColor(1, 0.49, 0.04);
+--			elseif (UnitClass("target") == PERL_LOCALIZED_HUNTER) then
+--				Perl_Target_NameBarText:SetTextColor(0.67, 0.83, 0.45);
+--			elseif (UnitClass("target") == PERL_LOCALIZED_SHAMAN) then
+--				Perl_Target_NameBarText:SetTextColor(0, 0.86, 0.73);
+--			elseif (UnitClass("target") == PERL_LOCALIZED_PRIEST) then
+--				Perl_Target_NameBarText:SetTextColor(1, 1, 1);
+--			elseif (UnitClass("target") == PERL_LOCALIZED_WARLOCK) then
+--				Perl_Target_NameBarText:SetTextColor(0.58, 0.51, 0.79);
+--			elseif (UnitClass("target") == PERL_LOCALIZED_PALADIN) then
+--				Perl_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+--			end
+--		else
+--			if (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
+--				Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
+--			else
+--				if (UnitIsVisible("target")) then
+--					local reaction = UnitReaction("target", "player");
+--					if (reaction) then
+--						r = UnitReactionColor[reaction].r;
+--						g = UnitReactionColor[reaction].g;
+--						b = UnitReactionColor[reaction].b;
+--						Perl_Target_NameBarText:SetTextColor(r, g, b);
+--					else
+--						Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+--					end
+--				else
+--					if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
+--						-- Hostile players are red
+--						if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
+--							r = 0.5;
+--							g = 0.5;
+--							b = 1.0;
+--						else								-- enemy is pvp enabled
+--							r = 1.0;
+--							g = 0.0;
+--							b = 0.0;
+--						end
+--					elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+--						-- Players we can attack but which are not hostile are yellow
+--						r = 1.0;
+--						g = 1.0;
+--						b = 0.0;
+--					elseif (UnitIsPVP("target")) then					-- friendly pvp enabled character
+--						-- Players we can assist but are PvP flagged are green
+--						r = 0.0;
+--						g = 1.0;
+--						b = 0.0;
+--					else									-- friendly non pvp enabled character
+--						-- All other players are blue (the usual state on the "blue" server)
+--						r = 0.5;
+--						g = 0.5;
+--						b = 1.0;
+--					end
+--					Perl_Target_NameBarText:SetTextColor(r, g, b);
+--				end
+--				
+--			end
+--		end
+--	end
 end
 
 function Perl_Target_Frame_Set_Level()
@@ -1313,54 +1390,6 @@ function Perl_Target_Buff_Debuff_Background()
 	end
 end
 
-function Perl_Target_Set_Localized_ClassIcons()
-	Perl_Target_ClassPosRight = {
-		[PERL_LOCALIZED_DRUID] = 0.75,
-		[PERL_LOCALIZED_HUNTER] = 0,
-		[PERL_LOCALIZED_MAGE] = 0.25,
-		[PERL_LOCALIZED_PALADIN] = 0,
-		[PERL_LOCALIZED_PRIEST] = 0.5,
-		[PERL_LOCALIZED_ROGUE] = 0.5,
-		[PERL_LOCALIZED_SHAMAN] = 0.25,
-		[PERL_LOCALIZED_WARLOCK] = 0.75,
-		[PERL_LOCALIZED_WARRIOR] = 0,
-	};
-	Perl_Target_ClassPosLeft = {
-		[PERL_LOCALIZED_DRUID] = 1,
-		[PERL_LOCALIZED_HUNTER] = 0.25,
-		[PERL_LOCALIZED_MAGE] = 0.5,
-		[PERL_LOCALIZED_PALADIN] = 0.25,
-		[PERL_LOCALIZED_PRIEST] = 0.75,
-		[PERL_LOCALIZED_ROGUE] = 0.75,
-		[PERL_LOCALIZED_SHAMAN] = 0.5,
-		[PERL_LOCALIZED_WARLOCK] = 1,
-		[PERL_LOCALIZED_WARRIOR] = 0.25,
-	};
-	Perl_Target_ClassPosTop = {
-		[PERL_LOCALIZED_DRUID] = 0,
-		[PERL_LOCALIZED_HUNTER] = 0.25,
-		[PERL_LOCALIZED_MAGE] = 0,
-		[PERL_LOCALIZED_PALADIN] = 0.5,
-		[PERL_LOCALIZED_PRIEST] = 0.25,
-		[PERL_LOCALIZED_ROGUE] = 0,
-		[PERL_LOCALIZED_SHAMAN] = 0.25,
-		[PERL_LOCALIZED_WARLOCK] = 0.25,
-		[PERL_LOCALIZED_WARRIOR] = 0,
-		
-	};
-	Perl_Target_ClassPosBottom = {
-		[PERL_LOCALIZED_DRUID] = 0.25,
-		[PERL_LOCALIZED_HUNTER] = 0.5,
-		[PERL_LOCALIZED_MAGE] = 0.25,
-		[PERL_LOCALIZED_PALADIN] = 0.75,
-		[PERL_LOCALIZED_PRIEST] = 0.5,
-		[PERL_LOCALIZED_ROGUE] = 0.25,
-		[PERL_LOCALIZED_SHAMAN] = 0.5,
-		[PERL_LOCALIZED_WARLOCK] = 0.5,
-		[PERL_LOCALIZED_WARRIOR] = 0.25,
-	};
-end
-
 
 -------------------------------
 -- Style Show/Hide Functions --
@@ -1371,7 +1400,6 @@ function Perl_Target_Frame_Style()
 end
 
 function Perl_Target_Main_Style()
---	Perl_Target_RareEliteFrame:SetPoint("TOPLEFT", "Perl_Target_CivilianFrame", "TOPRIGHT", -5, 0);
 	Perl_Target_RareEliteFrame:ClearAllPoints();
 	Perl_Target_RareEliteFrame:SetPoint("BOTTOMLEFT", "Perl_Target_LevelFrame", "TOPLEFT", 0, -4);
 
@@ -1432,7 +1460,6 @@ function Perl_Target_Main_Style()
 					Perl_Target_NameFrame:SetWidth(129);
 					Perl_Target_RareEliteFrame:SetWidth(46);
 					Perl_Target_StatsFrame:SetWidth(170);
---					Perl_Target_RareEliteFrame:SetPoint("TOPLEFT", "Perl_Target_CivilianFrame", "TOPRIGHT", -46, 0);
 
 					Perl_Target_NameFrame_CPMeter:SetWidth(119);
 
@@ -2305,9 +2332,9 @@ function Perl_Target_UpdateVars(vartable)
 	end
 
 	-- IFrameManager Support
---	if (IFrameManager) then
---		IFrameManager:Refresh();
---	end
+	if (IFrameManager) then
+		IFrameManager:Refresh();
+	end
 
 	Perl_Target_Config[UnitName("player")] = {
 		["Locked"] = locked,
@@ -2411,7 +2438,11 @@ function Perl_Target_Buff_UpdateAll()
 				if (UnitIsFriend("player", "target")) then
 					Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
 				else
-					if (numDebuffs > 8) then
+					if (numDebuffs > 30) then
+						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -103);
+					elseif (numDebuffs > 20) then
+						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -77);
+					elseif (numDebuffs > 10) then
 						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -51);
 					else
 						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
@@ -2427,13 +2458,21 @@ function Perl_Target_Buff_UpdateAll()
 					end
 				else
 					if (showclassframe == 1 or showrareeliteframe == 1) then
-						if (numDebuffs > 8) then
+						if (numDebuffs > 30) then
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 124);
+						elseif (numDebuffs > 20) then
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 98);
+						elseif (numDebuffs > 10) then
 							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 72);
 						else
 							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 46);
 						end
 					else
-						if (numDebuffs > 8) then
+						if (numDebuffs > 30) then
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 103);
+						elseif (numDebuffs > 20) then
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 77);
+						elseif (numDebuffs > 10) then
 							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 51);
 						else
 							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 25);
@@ -2443,8 +2482,8 @@ function Perl_Target_Buff_UpdateAll()
 			end
 
 			Perl_Target_BuffFrame:Show();
-			if (numBuffs > 8) then
-				Perl_Target_BuffFrame:SetWidth(221);			-- 5 + 8 * (24 + 3)	5 = border gap, 8 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
+			if (numBuffs > 10) then
+				Perl_Target_BuffFrame:SetWidth(275);			-- 5 + 10 * (24 + 3)	5 = border gap, 10 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
 				Perl_Target_BuffFrame:SetHeight(61);			-- 2 rows tall
 			else
 				Perl_Target_BuffFrame:SetWidth(5 + numBuffs * 27);	-- Dynamically extend the background frame
@@ -2458,7 +2497,7 @@ function Perl_Target_Buff_UpdateAll()
 			if (invertbuffs == 0) then
 				Perl_Target_DebuffFrame:ClearAllPoints();
 				if (UnitIsFriend("player", "target")) then
-					if (numBuffs > 8) then
+					if (numBuffs > 10) then
 						Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -51);
 					else
 						Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
@@ -2470,13 +2509,13 @@ function Perl_Target_Buff_UpdateAll()
 				Perl_Target_DebuffFrame:ClearAllPoints();
 				if (UnitIsFriend("player", "target")) then
 					if (showclassframe == 1 or showrareeliteframe == 1) then
-						if (numBuffs > 8) then
+						if (numBuffs > 10) then
 							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 72);
 						else
 							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 46);
 						end
 					else
-						if (numBuffs > 8) then
+						if (numBuffs > 10) then
 							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 51);
 						else
 							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 25);
@@ -2492,8 +2531,14 @@ function Perl_Target_Buff_UpdateAll()
 			end
 
 			Perl_Target_DebuffFrame:Show();
-			if (numDebuffs > 8) then
-				Perl_Target_DebuffFrame:SetWidth(221);			-- 5 + 8 * (24 + 3)	5 = border gap, 8 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
+			if (numDebuffs > 30) then
+				Perl_Target_DebuffFrame:SetWidth(275);			-- 5 + 10 * (24 + 3)	5 = border gap, 10 debuffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
+				Perl_Target_DebuffFrame:SetHeight(115);			-- 4 rows tall
+			elseif (numDebuffs > 20) then
+				Perl_Target_DebuffFrame:SetWidth(275);			-- 5 + 10 * (24 + 3)	5 = border gap, 10 debuffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
+				Perl_Target_DebuffFrame:SetHeight(88);			-- 3 rows tall
+			elseif (numDebuffs > 10) then
+				Perl_Target_DebuffFrame:SetWidth(275);			-- 5 + 10 * (24 + 3)	5 = border gap, 10 debuffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
 				Perl_Target_DebuffFrame:SetHeight(61);			-- 2 rows tall
 			else
 				Perl_Target_DebuffFrame:SetWidth(5 + numDebuffs * 27);	-- Dynamically extend the background frame
@@ -2521,7 +2566,6 @@ function Perl_Target_Buff_UpdateCPMeter()
 	end
 
 	if (debuffapplications == 0) then
-		--Perl_Target_CPFrame:Hide();
 		Perl_Target_NameFrame_CPMeter:Hide();
 	else
 		if (comboframedebuffs == 1) then
@@ -2542,11 +2586,7 @@ function Perl_Target_Buff_UpdateCPMeter()
 			elseif (debuffapplications == 1) then
 				Perl_Target_CPFrame:Show();
 				Perl_Target_CPText:SetTextColor(0, 1, 0);	-- green text
-			else
-				--Perl_Target_CPFrame:Hide();
 			end
-		else
-			--Perl_Target_CPFrame:Hide();
 		end
 
 		if (nameframecombopoints == 1) then				-- this isn't nested since you can have both combo point styles on at the same time
@@ -2593,18 +2633,20 @@ end
 
 function Perl_Target_Reset_Buffs()
 	local button;
-	for buffnum=1,16 do
+	for buffnum=1,20 do
 		button = getglobal("Perl_Target_Buff"..buffnum);
 		button:Hide();
-		button = getglobal("Perl_Target_Debuff"..buffnum);
+	end
+	for debuffnum=1,40 do
+		button = getglobal("Perl_Target_Debuff"..debuffnum);
 		button:Hide();
 	end
 end
 
 function Perl_Target_SetBuffTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
-	if (this:GetID() > 16) then
-		GameTooltip:SetUnitDebuff("target", this:GetID()-16, displaycastablebuffs);
+	if (this:GetID() > 20) then
+		GameTooltip:SetUnitDebuff("target", this:GetID()-20, displaycastablebuffs);
 	else
 		GameTooltip:SetUnitBuff("target", this:GetID(), displaycastablebuffs);
 	end
@@ -2633,12 +2675,16 @@ end
 
 function Perl_TargetDropDown_Initialize()
 	local menu, name;
+	local id = nil;
 	if (UnitIsUnit("target", "player")) then
 		menu = "SELF";
 	elseif (UnitIsUnit("target", "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer("target")) then
-		if (UnitInParty("target")) then
+		id = UnitInRaid("target");
+		if (id) then
+			menu = "RAID_PLAYER";
+		elseif (UnitInParty("target")) then
 			menu = "PARTY";
 		else
 			menu = "PLAYER";
@@ -2648,63 +2694,9 @@ function Perl_TargetDropDown_Initialize()
 		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
-		UnitPopup_ShowMenu(Perl_Target_DropDown, menu, "target", name);
+		UnitPopup_ShowMenu(Perl_Target_DropDown, menu, "target", name, id);
 	end
 end
-
---function Perl_Target_MouseClick(button)
---	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
---		if (Perl_Custom_ClickFunction(button, "target")) then	-- If the function returns true, then we return
---			return;
---		end
---	end								-- Otherwise, it did nothing, so take default action
---
---	if (PCUF_CASTPARTYSUPPORT == 1) then
---		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
---			if (CastPartyConfig) then
---				CastParty.Event.OnClickByUnit(button, "target");
---				return;
---			elseif (Genesis_MouseHeal and Genesis_MouseHeal("target", button)) then
---				return;
---			elseif (CH_Config) then
---				if (CH_Config.PCUFEnabled) then
---					CH_UnitClicked("target", button);
---					return;
---				end
---			elseif (SmartHeal) then
---				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
---					local KeyDownType = SmartHeal:GetClickHealButton();
---					if(KeyDownType and KeyDownType ~= "undetermined") then
---						SmartHeal:ClickHeal(KeyDownType..button, "target");
---					else
---						SmartHeal:DefaultClick(button, "target");
---					end
---					return;
---				end
---			end
---		end
---	end
---
---	if (button == "LeftButton") then
---		if (SpellIsTargeting()) then
---			SpellTargetUnit("target");
---		elseif (CursorHasItem()) then
---			DropItemOnUnit("target");
---		end
---		return;
---	end
---
---	if (button == "RightButton") then
---		if (SpellIsTargeting()) then
---			SpellStopTargeting();
---			return;
---		end
---	end
---
---	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
---		ToggleDropDownMenu(1, nil, Perl_Target_DropDown, "Perl_Target_NameFrame", 40, 0);
---	end
---end
 
 function Perl_Target_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
@@ -2726,16 +2718,12 @@ function Perl_Target_OnShow()
 			PlaySound("igCreatureNeutralSelect");
 		end
 	end
-
-	newtarget = 0;
 end
 
 function Perl_Target_OnHide()
 	if (soundtargetchange == 1) then
 		PlaySound("INTERFACESOUND_LOSTTARGETUNIT");
 	end
-
-	newtarget = 1;
 end
 
 
@@ -2754,20 +2742,20 @@ end
 ----------------------
 -- myAddOns Support --
 ----------------------
---function Perl_Target_myAddOns_Support()
---	-- Register the addon in myAddOns
---	if (myAddOnsFrame_Register) then
---		local Perl_Target_myAddOns_Details = {
---			name = "Perl_Target",
---			version = PERL_LOCALIZED_VERSION,
---			releaseDate = PERL_LOCALIZED_DATE,
---			author = "Perl; Maintained by Global",
---			email = "global@g-ball.com",
---			website = "http://www.curse-gaming.com/mod.php?addid=2257",
---			category = MYADDONS_CATEGORY_OTHERS
---		};
---		Perl_Target_myAddOns_Help = {};
---		Perl_Target_myAddOns_Help[1] = "/perl";
---		myAddOnsFrame_Register(Perl_Target_myAddOns_Details, Perl_Target_myAddOns_Help);
---	end
---end
+function Perl_Target_myAddOns_Support()
+	-- Register the addon in myAddOns
+	if (myAddOnsFrame_Register) then
+		local Perl_Target_myAddOns_Details = {
+			name = "Perl_Target",
+			version = PERL_LOCALIZED_VERSION,
+			releaseDate = PERL_LOCALIZED_DATE,
+			author = "Perl; Maintained by Global",
+			email = "global@g-ball.com",
+			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+			category = MYADDONS_CATEGORY_OTHERS
+		};
+		Perl_Target_myAddOns_Help = {};
+		Perl_Target_myAddOns_Help[1] = "/perl";
+		myAddOnsFrame_Register(Perl_Target_myAddOns_Details, Perl_Target_myAddOns_Help);
+	end
+end

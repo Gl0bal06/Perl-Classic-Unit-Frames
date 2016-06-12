@@ -53,7 +53,7 @@ local targettargetname, targettargethealth, targettargethealthmax, targettargeth
 local targettargettargetname, targettargettargethealth, targettargettargethealthmax, targettargettargethealthpercent, targettargettargetmana, targettargettargetmanamax, targettargettargetpower, raidtargettargettargetindex;
 
 -- Shared
-local r, g, b, reaction, mobhealththreenumerics;
+local r, g, b, reaction, mobhealththreenumerics, englishclass;
 
 ----------------------
 -- Loading Function --
@@ -83,19 +83,7 @@ function Perl_Target_Target_OnLoad()
 	Perl_Target_Target_ManaBarFadeBar:SetFrameLevel(Perl_Target_Target_ManaBar:GetFrameLevel() - 1);
 	Perl_Target_Target_Target_HealthBarFadeBar:SetFrameLevel(Perl_Target_Target_Target_HealthBar:GetFrameLevel() - 1);
 	Perl_Target_Target_Target_ManaBarFadeBar:SetFrameLevel(Perl_Target_Target_Target_ManaBar:GetFrameLevel() - 1);
-
-	-- WoW 2.0 Secure API Stuff
-	--this:SetAttribute("unit", "targettarget");
-	--RegisterUnitWatch(this);
-	--hooksecurefunc("Perl_Target_OnShow", Perl_Target_Update_Once);
 end
-
---function Perl_Target_Target_Target_OnLoad()
-	-- WoW 2.0 Secure API Stuff
-	--this:SetAttribute("unit", "targettargettarget");
-	--RegisterUnitWatch(this);
-	--hooksecurefunc("Perl_Target_OnShow", Perl_Target_Update_Once);
---end
 
 
 -------------------
@@ -143,63 +131,61 @@ function Perl_Target_Target_Initialize()
 	-- Major config options.
 	Perl_Target_Target_Initialize_Frame_Color();
 	Perl_Target_Target_Frame_Style();
---	Perl_Target_Target_Frame:Hide();
---	Perl_Target_Target_Target_Frame:Hide();
 
 	-- MyAddOns Support
---	Perl_Target_Target_myAddOns_Support();
+	Perl_Target_Target_myAddOns_Support();
 
 	-- IFrameManager Support
---	if (IFrameManager) then
---		Perl_Target_Target_IFrameManager();
---	end
+	if (IFrameManager) then
+		Perl_Target_Target_IFrameManager();
+	end
 
 	Initialized = 1;
 end
 
---function Perl_Target_Target_IFrameManager()
---	local iface = IFrameManager:Interface();
---	function iface:getName(frame)
---		if (frame == Perl_Target_Target_Frame) then
---			return "Perl Target Target";
---		else
---			return "Perl Target Target Target";
---		end
---	end
---	function iface:getBorder(frame)
---		local bottom = 0;
---		local left = 0;
---		local right = 0;
---		local top = 0;
---		if (frame == Perl_Target_Target_Frame) then
---			if (showtotbuffs == 1 and showtotdebuffs == 1) then
---				bottom = 88;
---			elseif ((showtotbuffs == 0 and showtotdebuffs == 1) or (showtotbuffs == 1 and showtotdebuffs == 0)) then
---				bottom = 58;
---			else
---				bottom = 38;
---			end
---			if (hidepowerbars == 1) then
---				bottom = bottom - 12;
---			end
---			return top, right, bottom, left;
---		else
---			if (showtototbuffs == 1 and showtototdebuffs == 1) then
---				bottom = 88;
---			elseif ((showtototbuffs == 0 and showtototdebuffs == 1) or (showtototbuffs == 1 and showtototdebuffs == 0)) then
---				bottom = 58;
---			else
---				bottom = 38;
---			end
---			if (hidepowerbars == 1) then
---				bottom = bottom - 12;
---			end
---			return top, right, bottom, left;
---		end
---	end
---	IFrameManager:Register(Perl_Target_Target_Frame, iface);
---	IFrameManager:Register(Perl_Target_Target_Target_Frame, iface);
---end
+function Perl_Target_Target_IFrameManager()
+	local iface = IFrameManager:Interface();
+	function iface:getName(frame)
+		if (frame == Perl_Target_Target_Frame) then
+			return "Perl Target Target";
+		else
+			return "Perl Target Target Target";
+		end
+	end
+	function iface:getBorder(frame)
+		local bottom = 0;
+		local left = 0;
+		local right = 0;
+		local top = 0;
+		if (frame == Perl_Target_Target_Frame) then
+			if (showtotbuffs == 1 and showtotdebuffs == 1) then
+				bottom = 88;
+			elseif ((showtotbuffs == 0 and showtotdebuffs == 1) or (showtotbuffs == 1 and showtotdebuffs == 0)) then
+				bottom = 58;
+			else
+				bottom = 38;
+			end
+			if (hidepowerbars == 1) then
+				bottom = bottom - 12;
+			end
+			return top, right, bottom, left;
+		else
+			if (showtototbuffs == 1 and showtototdebuffs == 1) then
+				bottom = 88;
+			elseif ((showtototbuffs == 0 and showtototdebuffs == 1) or (showtototbuffs == 1 and showtototdebuffs == 0)) then
+				bottom = 58;
+			else
+				bottom = 38;
+			end
+			if (hidepowerbars == 1) then
+				bottom = bottom - 12;
+			end
+			return top, right, bottom, left;
+		end
+	end
+	IFrameManager:Register(Perl_Target_Target_Frame, iface);
+	IFrameManager:Register(Perl_Target_Target_Target_Frame, iface);
+end
 
 function Perl_Target_Target_Initialize_Frame_Color()
 	Perl_Target_Target_StatsFrame:SetBackdropColor(0, 0, 0, 1);
@@ -324,25 +310,8 @@ function Perl_Target_Target_OnUpdate()
 
 			if (classcolorednames == 1) then
 				if (UnitIsPlayer("targettarget")) then
-					if (UnitClass("targettarget") == PERL_LOCALIZED_WARRIOR) then
-						Perl_Target_Target_NameBarText:SetTextColor(0.78, 0.61, 0.43);
-					elseif (UnitClass("targettarget") == PERL_LOCALIZED_MAGE) then
-						Perl_Target_Target_NameBarText:SetTextColor(0.41, 0.8, 0.94);
-					elseif (UnitClass("targettarget") == PERL_LOCALIZED_ROGUE) then
-						Perl_Target_Target_NameBarText:SetTextColor(1, 0.96, 0.41);
-					elseif (UnitClass("targettarget") == PERL_LOCALIZED_DRUID) then
-						Perl_Target_Target_NameBarText:SetTextColor(1, 0.49, 0.04);
-					elseif (UnitClass("targettarget") == PERL_LOCALIZED_HUNTER) then
-						Perl_Target_Target_NameBarText:SetTextColor(0.67, 0.83, 0.45);
-					elseif (UnitClass("targettarget") == PERL_LOCALIZED_SHAMAN) then
-						Perl_Target_Target_NameBarText:SetTextColor(0, 0.86, 0.73);
-					elseif (UnitClass("targettarget") == PERL_LOCALIZED_PRIEST) then
-						Perl_Target_Target_NameBarText:SetTextColor(1, 1, 1);
-					elseif (UnitClass("targettarget") == PERL_LOCALIZED_WARLOCK) then
-						Perl_Target_Target_NameBarText:SetTextColor(0.58, 0.51, 0.79);
-					elseif (UnitClass("targettarget") == PERL_LOCALIZED_PALADIN) then
-						Perl_Target_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
-					end
+					_, englishclass = UnitClass("targettarget");
+					Perl_Target_Target_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
 				end
 			end
 			-- End: Set the name text color
@@ -601,25 +570,8 @@ function Perl_Target_Target_OnUpdate()
 
 			if (classcolorednames == 1) then
 				if (UnitIsPlayer("targettargettarget")) then
-					if (UnitClass("targettargettarget") == PERL_LOCALIZED_WARRIOR) then
-						Perl_Target_Target_Target_NameBarText:SetTextColor(0.78, 0.61, 0.43);
-					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_MAGE) then
-						Perl_Target_Target_Target_NameBarText:SetTextColor(0.41, 0.8, 0.94);
-					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_ROGUE) then
-						Perl_Target_Target_Target_NameBarText:SetTextColor(1, 0.96, 0.41);
-					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_DRUID) then
-						Perl_Target_Target_Target_NameBarText:SetTextColor(1, 0.49, 0.04);
-					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_HUNTER) then
-						Perl_Target_Target_Target_NameBarText:SetTextColor(0.67, 0.83, 0.45);
-					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_SHAMAN) then
-						Perl_Target_Target_Target_NameBarText:SetTextColor(0, 0.86, 0.73);
-					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_PRIEST) then
-						Perl_Target_Target_Target_NameBarText:SetTextColor(1, 1, 1);
-					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_WARLOCK) then
-						Perl_Target_Target_Target_NameBarText:SetTextColor(0.58, 0.51, 0.79);
-					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_PALADIN) then
-						Perl_Target_Target_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
-					end
+					_, englishclass = UnitClass("targettargettarget");
+					Perl_Target_Target_Target_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
 				end
 			end
 			-- End: Set the name text color
@@ -1677,7 +1629,6 @@ function Perl_Target_Target_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
 		scale = (number / 100);					-- convert the user input to a wow acceptable value
-		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
 	end
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 	Perl_Target_Target_Frame:SetScale(unsavedscale);
@@ -1996,9 +1947,9 @@ function Perl_Target_Target_UpdateVars(vartable)
 	end
 
 	-- IFrameManager Support
---	if (IFrameManager) then
---		IFrameManager:Refresh();
---	end
+	if (IFrameManager) then
+		IFrameManager:Refresh();
+	end
 
 	Perl_Target_Target_Config[UnitName("player")] = {
 		["Locked"] = locked,
@@ -2045,12 +1996,16 @@ end
 
 function Perl_TargetTargetDropDown_Initialize()
 	local menu, name;
+	local id = nil;
 	if (UnitIsUnit("targettarget", "player")) then
 		menu = "SELF";
 	elseif (UnitIsUnit("targettarget", "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer("targettarget")) then
-		if (UnitInParty("targettarget")) then
+		id = UnitInRaid("targettarget");
+		if (id) then
+			menu = "RAID_PLAYER";
+		elseif (UnitInParty("targettarget")) then
 			menu = "PARTY";
 		else
 			menu = "PLAYER";
@@ -2060,65 +2015,9 @@ function Perl_TargetTargetDropDown_Initialize()
 		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
-		UnitPopup_ShowMenu(Perl_Target_Target_DropDown, menu, "targettarget", name);
+		UnitPopup_ShowMenu(Perl_Target_Target_DropDown, menu, "targettarget", name, id);
 	end
 end
-
---function Perl_Target_Target_MouseClick(button)
---	if (Perl_Custom_ClickFunction) then					-- Check to see if someone defined a custom click function
---		if (Perl_Custom_ClickFunction(button, "targettarget")) then	-- If the function returns true, then we return
---			return;
---		end
---	end									-- Otherwise, it did nothing, so take default action
---
---	if (PCUF_CASTPARTYSUPPORT == 1) then
---		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
---			if (CastPartyConfig) then
---				CastParty.Event.OnClickByUnit(button, "targettarget");
---				return;
---			elseif (Genesis_MouseHeal and Genesis_MouseHeal("targettarget", button)) then
---				return;
---			elseif (CH_Config) then
---				if (CH_Config.PCUFEnabled) then
---					CH_UnitClicked("targettarget", button);
---					return;
---				end
---			elseif (SmartHeal) then
---				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
---					local KeyDownType = SmartHeal:GetClickHealButton();
---					if(KeyDownType and KeyDownType ~= "undetermined") then
---						SmartHeal:ClickHeal(KeyDownType..button, "targettarget");
---					else
---						SmartHeal:DefaultClick(button, "targettarget");
---					end
---					return;
---				end
---			end
---		end
---	end
---
---	if (button == "LeftButton") then
---		if (SpellIsTargeting()) then
---			SpellTargetUnit("targettarget");
---		elseif (CursorHasItem()) then
---			DropItemOnUnit("targettarget");
---		else
---			TargetUnit("targettarget");
---		end
---		return;
---	end
---
---	if (button == "RightButton") then
---		if (SpellIsTargeting()) then
---			SpellStopTargeting();
---			return;
---		end
---	end
---
---	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
---		ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
---	end
---end
 
 function Perl_Target_Target_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
@@ -2151,12 +2050,16 @@ end
 
 function Perl_TargetTargetTargetDropDown_Initialize()
 	local menu, name;
+	local id = nil;
 	if (UnitIsUnit("targettargettarget", "player")) then
 		menu = "SELF";
 	elseif (UnitIsUnit("targettargettarget", "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer("targettargettarget")) then
-		if (UnitInParty("targettargettarget")) then
+		id = UnitInRaid("targettargettarget");
+		if (id) then
+			menu = "RAID_PLAYER";
+		elseif (UnitInParty("targettargettarget")) then
 			menu = "PARTY";
 		else
 			menu = "PLAYER";
@@ -2166,65 +2069,9 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
-		UnitPopup_ShowMenu(Perl_Target_Target_Target_DropDown, menu, "targettargettarget", name);
+		UnitPopup_ShowMenu(Perl_Target_Target_Target_DropDown, menu, "targettargettarget", name, id);
 	end
 end
-
---function Perl_Target_Target_Target_MouseClick(button)
---	if (Perl_Custom_ClickFunction) then						-- Check to see if someone defined a custom click function
---		if (Perl_Custom_ClickFunction(button, "targettargettarget")) then	-- If the function returns true, then we return
---			return;
---		end
---	end										-- Otherwise, it did nothing, so take default action
---
---	if (PCUF_CASTPARTYSUPPORT == 1) then
---		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
---			if (CastPartyConfig) then
---				CastParty.Event.OnClickByUnit(button, "targettargettarget");
---				return;
---			elseif (Genesis_MouseHeal and Genesis_MouseHeal("targettargettarget", button)) then
---				return;
---			elseif (CH_Config) then
---				if (CH_Config.PCUFEnabled) then
---					CH_UnitClicked("targettargettarget", button);
---					return;
---				end
---			elseif (SmartHeal) then
---				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
---					local KeyDownType = SmartHeal:GetClickHealButton();
---					if(KeyDownType and KeyDownType ~= "undetermined") then
---						SmartHeal:ClickHeal(KeyDownType..button, "targettargettarget");
---					else
---						SmartHeal:DefaultClick(button, "targettargettarget");
---					end
---					return;
---				end
---			end
---		end
---	end
---
---	if (button == "LeftButton") then
---		if (SpellIsTargeting()) then
---			SpellTargetUnit("targettargettarget");
---		elseif (CursorHasItem()) then
---			DropItemOnUnit("targettargettarget");
---		else
---			TargetUnit("targettargettarget");
---		end
---		return;
---	end
---
---	if (button == "RightButton") then
---		if (SpellIsTargeting()) then
---			SpellStopTargeting();
---			return;
---		end
---	end
---
---	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
---		ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
---	end
---end
 
 function Perl_Target_Target_Target_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
@@ -2321,20 +2168,20 @@ end
 ----------------------
 -- myAddOns Support --
 ----------------------
---function Perl_Target_Target_myAddOns_Support()
---	-- Register the addon in myAddOns
---	if (myAddOnsFrame_Register) then
---		local Perl_Target_Target_myAddOns_Details = {
---			name = "Perl_Target_Target",
---			version = PERL_LOCALIZED_VERSION,
---			releaseDate = PERL_LOCALIZED_DATE,
---			author = "Global",
---			email = "global@g-ball.com",
---			website = "http://www.curse-gaming.com/mod.php?addid=2257",
---			category = MYADDONS_CATEGORY_OTHERS
---		};
---		Perl_Target_Target_myAddOns_Help = {};
---		Perl_Target_Target_myAddOns_Help[1] = "/perl";
---		myAddOnsFrame_Register(Perl_Target_Target_myAddOns_Details, Perl_Target_Target_myAddOns_Help);
---	end
---end
+function Perl_Target_Target_myAddOns_Support()
+	-- Register the addon in myAddOns
+	if (myAddOnsFrame_Register) then
+		local Perl_Target_Target_myAddOns_Details = {
+			name = "Perl_Target_Target",
+			version = PERL_LOCALIZED_VERSION,
+			releaseDate = PERL_LOCALIZED_DATE,
+			author = "Global",
+			email = "global@g-ball.com",
+			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+			category = MYADDONS_CATEGORY_OTHERS
+		};
+		Perl_Target_Target_myAddOns_Help = {};
+		Perl_Target_Target_myAddOns_Help[1] = "/perl";
+		myAddOnsFrame_Register(Perl_Target_Target_myAddOns_Details, Perl_Target_Target_myAddOns_Help);
+	end
+end

@@ -13,11 +13,11 @@ function Perl_Config_Target_Set_Values()
 	local vartable = Perl_Target_GetVars();
 
 	Perl_Config_Target_Frame_Slider2Low:SetText("0");
-	Perl_Config_Target_Frame_Slider2High:SetText("16");
+	Perl_Config_Target_Frame_Slider2High:SetText("20");
 	Perl_Config_Target_Frame_Slider2:SetValue(vartable["numbuffsshown"]);
 
 	Perl_Config_Target_Frame_Slider3Low:SetText("0");
-	Perl_Config_Target_Frame_Slider3High:SetText("16");
+	Perl_Config_Target_Frame_Slider3High:SetText("40");
 	Perl_Config_Target_Frame_Slider3:SetValue(vartable["numdebuffsshown"]);
 
 	if (vartable["showclassicon"] == 1) then

@@ -113,7 +113,7 @@ if (GetLocale() == "frFR") then
 	PERL_LOCALIZED_CONFIG_COMBATDISPLAY_ENABLE_TARGET = "Activer le cadre de la cible";
 
 	-- Perl Config Party
-	PERL_LOCALIZED_CONFIG_PARTY_SPACING = "Espace (80 par d\195\169faut)";
+	PERL_LOCALIZED_CONFIG_PARTY_SPACING = "Espace (90 par d\195\169faut)";
 	PERL_LOCALIZED_CONFIG_PARTY_FKEYS = "Afficher F Keys";
 	PERL_LOCALIZED_CONFIG_PARTY_LOCK = "V\195\169rrouiller "..PERL_LOCALIZED_CONFIG_PARTY.." Cadre";
 

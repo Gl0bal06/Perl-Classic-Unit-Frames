@@ -470,7 +470,7 @@
 					</Button>
 
 					<!-- Health Bar -->
-					<StatusBar name="$parent_HealthBar" inherits="TextStatusBar">
+					<StatusBar name="$parent_HealthBar">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -519,7 +519,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="$parent_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="$parent_HealthBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -533,7 +533,7 @@
 						<BarTexture name="$parent_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="$parent_HealthBarBG" inherits="TextStatusBar">
+					<StatusBar name="$parent_HealthBarBG">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -580,7 +580,7 @@
 					</Button>
 
 					<!-- Mana Bar -->
-					<StatusBar name="$parent_ManaBar" inherits="TextStatusBar">
+					<StatusBar name="$parent_ManaBar">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -629,7 +629,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="$parent_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="$parent_ManaBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -643,7 +643,7 @@
 						<BarTexture name="$parent_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="$parent_ManaBarBG" inherits="TextStatusBar">
+					<StatusBar name="$parent_ManaBarBG">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -690,7 +690,7 @@
 					</Button>
 
 					<!-- Pet Health Bar -->
-					<StatusBar name="$parent_PetHealthBar" inherits="TextStatusBar">
+					<StatusBar name="$parent_PetHealthBar">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -739,7 +739,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="$parent_PetHealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="$parent_PetHealthBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -753,7 +753,7 @@
 						<BarTexture name="$parent_PetHealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="$parent_PetHealthBarBG" inherits="TextStatusBar">
+					<StatusBar name="$parent_PetHealthBarBG">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -1180,7 +1180,7 @@
 				</Backdrop>
 			</Frame>
 			-->
-			<Frame name="Perl_Party_MemberFrame1" inherits="Perl_Party_FrameTemplate" id="1">
+			<Frame name="Perl_Party_MemberFrame1" inherits="Perl_Party_FrameTemplate" hidden="true" id="1">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="Perl_Party_Frame">
 						<Offset>
@@ -1189,7 +1189,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="Perl_Party_MemberFrame2" inherits="Perl_Party_FrameTemplate" id="2">
+			<Frame name="Perl_Party_MemberFrame2" inherits="Perl_Party_FrameTemplate" hidden="true" id="2">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame1">
 						<Offset>
@@ -1198,7 +1198,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="Perl_Party_MemberFrame3" inherits="Perl_Party_FrameTemplate" id="3">
+			<Frame name="Perl_Party_MemberFrame3" inherits="Perl_Party_FrameTemplate" hidden="true" id="3">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame2">
 						<Offset>
@@ -1207,7 +1207,7 @@
 					</Anchor>
 				</Anchors>
 			</Frame>
-			<Frame name="Perl_Party_MemberFrame4" inherits="Perl_Party_FrameTemplate" id="4">
+			<Frame name="Perl_Party_MemberFrame4" inherits="Perl_Party_FrameTemplate" hidden="true" id="4">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame3">
 						<Offset>

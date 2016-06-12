@@ -1,7 +1,7 @@
 ---------------
 -- Variables --
 ---------------
-PCUF_SHOW_DEBUG_EVENTS = 0;	-- event hijack monitor
+PCUF_SHOW_DEBUG_EVENTS = 0;	-- event hijack and forbidden action monitor
 Perl_Config_Config = {};
 Perl_Config_Profiles = {};
 local Perl_Config_Events = {};	-- event manager
@@ -25,6 +25,7 @@ Perl_Config_Global_Target_Target_Config = {};
 local texture = 0;			-- no texture is set by default
 local showminimapbutton = 1;		-- minimap button is on by default
 local minimapbuttonpos = 270;		-- default minimap button position
+local minimapbuttonrad = 80;		-- default minimap button radius
 local transparentbackground = 0;	-- use solid black background as default
 local texturedbarbackground = 0;	-- bar backgrounds are plain by default
 PCUF_CASTPARTYSUPPORT = 0;		-- CastParty support is disabled by default
@@ -38,6 +39,52 @@ local Initialized = nil;		-- waiting to be initialized
 local currentprofilenumber = 0;		-- easy way to make our profile system work
 local eventqueuetotal = 0;		-- variable to check how many queued events we have
 
+-- Variables for position of the class icon texture.
+PCUF_CLASSPOSRIGHT = {
+	["DRUID"] = 0.75,
+	["HUNTER"] = 0,
+	["MAGE"] = 0.25,
+	["PALADIN"] = 0,
+	["PRIEST"] = 0.5,
+	["ROGUE"] = 0.5,
+	["SHAMAN"] = 0.25,
+	["WARLOCK"] = 0.75,
+	["WARRIOR"] = 0,
+};
+PCUF_CLASSPOSLEFT = {
+	["DRUID"] = 1,
+	["HUNTER"] = 0.25,
+	["MAGE"] = 0.5,
+	["PALADIN"] = 0.25,
+	["PRIEST"] = 0.75,
+	["ROGUE"] = 0.75,
+	["SHAMAN"] = 0.5,
+	["WARLOCK"] = 1,
+	["WARRIOR"] = 0.25,
+};
+PCUF_CLASSPOSTOP = {
+	["DRUID"] = 0,
+	["HUNTER"] = 0.25,
+	["MAGE"] = 0,
+	["PALADIN"] = 0.5,
+	["PRIEST"] = 0.25,
+	["ROGUE"] = 0,
+	["SHAMAN"] = 0.25,
+	["WARLOCK"] = 0.25,
+	["WARRIOR"] = 0,
+};
+PCUF_CLASSPOSBOTTOM = {
+	["DRUID"] = 0.25,
+	["HUNTER"] = 0.5,
+	["MAGE"] = 0.25,
+	["PALADIN"] = 0.75,
+	["PRIEST"] = 0.5,
+	["ROGUE"] = 0.25,
+	["SHAMAN"] = 0.5,
+	["WARLOCK"] = 0.5,
+	["WARRIOR"] = 0.25,
+};
+
 
 ----------------------
 -- Loading Function --
@@ -48,9 +95,6 @@ function Perl_Config_OnLoad()
 	this:RegisterEvent("PLAYER_REGEN_DISABLED");
 	this:RegisterEvent("PLAYER_REGEN_ENABLED");
 	this:RegisterEvent("VARIABLES_LOADED");
-
-	this:RegisterEvent("ADDON_ACTION_BLOCKED");
-	this:RegisterEvent("ADDON_ACTION_FORBIDDEN");
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Config_OnEvent);
@@ -132,11 +176,17 @@ function Perl_Config_Initialize()
 		Perl_Config_UpdateVars();
 	end
 
+	-- Debug Stuff
+	if (PCUF_SHOW_DEBUG_EVENTS == 1) then
+		Perl_Config_Script_Frame:RegisterEvent("ADDON_ACTION_BLOCKED");
+		Perl_Config_Script_Frame:RegisterEvent("ADDON_ACTION_FORBIDDEN");
+	end
+
 	-- Profile Support
 	Perl_Config_Profile_Work();
 
 	-- MyAddOns Support
---	Perl_Config_myAddOns_Support();
+	Perl_Config_myAddOns_Support();
 
 	-- Set the initialization flag
 	Initialized = 1;
@@ -443,19 +493,19 @@ function Perl_Config_Set_Texture(newvalue)
 		end
 	end
 
-	if (Perl_Raid_Frame) then
-		for num=1,40 do
-			getglobal("Perl_Raid"..num.."_StatsFrame_HealthBar_HealthBarTex"):SetTexture(texturename);
-			getglobal("Perl_Raid"..num.."_StatsFrame_ManaBar_ManaBarTex"):SetTexture(texturename);
-			if (texturedbarbackground == 1) then
-				getglobal("Perl_Raid"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture(texturename);
-				getglobal("Perl_Raid"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture(texturename);
-			else
-				getglobal("Perl_Raid"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
-				getglobal("Perl_Raid"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
-			end
-		end
-	end
+--	if (Perl_Raid_Frame) then
+--		for num=1,40 do
+--			getglobal("Perl_Raid"..num.."_StatsFrame_HealthBar_HealthBarTex"):SetTexture(texturename);
+--			getglobal("Perl_Raid"..num.."_StatsFrame_ManaBar_ManaBarTex"):SetTexture(texturename);
+--			if (texturedbarbackground == 1) then
+--				getglobal("Perl_Raid"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture(texturename);
+--				getglobal("Perl_Raid"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture(texturename);
+--			else
+--				getglobal("Perl_Raid"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+--				getglobal("Perl_Raid"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+--			end
+--		end
+--	end
 
 	if (Perl_Target_Frame) then
 		Perl_Target_HealthBarTex:SetTexture(texturename);
@@ -563,13 +613,13 @@ function Perl_Config_Set_Background(newvalue)
 			Perl_Player_Pet_Initialize_Frame_Color();
 		end
 
-		if (Perl_Raid_Frame) then
-			for num=1,40 do
-				getglobal("Perl_Raid"..num.."_NameFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
-				getglobal("Perl_Raid"..num.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
-			end
-			Perl_Raid_Initialize_Frame_Color();
-		end
+--		if (Perl_Raid_Frame) then
+--			for num=1,40 do
+--				getglobal("Perl_Raid"..num.."_NameFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+--				getglobal("Perl_Raid"..num.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+--			end
+--			Perl_Raid_Initialize_Frame_Color();
+--		end
 
 		if (Perl_Target_Frame) then
 			Perl_Target_CivilianFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
@@ -652,13 +702,13 @@ function Perl_Config_Set_Background(newvalue)
 			Perl_Player_Pet_Initialize_Frame_Color();
 		end
 
-		if (Perl_Raid_Frame) then
-			for num=1,40 do
-				getglobal("Perl_Raid"..num.."_NameFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
-				getglobal("Perl_Raid"..num.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
-			end
-			Perl_Raid_Initialize_Frame_Color();
-		end
+--		if (Perl_Raid_Frame) then
+--			for num=1,40 do
+--				getglobal("Perl_Raid"..num.."_NameFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+--				getglobal("Perl_Raid"..num.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+--			end
+--			Perl_Raid_Initialize_Frame_Color();
+--		end
 
 		if (Perl_Target_Frame) then
 			Perl_Target_CivilianFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_White", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
@@ -736,6 +786,12 @@ end
 
 function Perl_Config_Set_MiniMap_Position(newvalue)
 	minimapbuttonpos = newvalue;
+	Perl_Config_UpdateVars();
+	Perl_Config_Button_UpdatePosition();
+end
+
+function Perl_Config_Set_MiniMap_Radius(newvalue)
+	minimapbuttonrad = newvalue;
 	Perl_Config_UpdateVars();
 	Perl_Config_Button_UpdatePosition();
 end
@@ -875,7 +931,7 @@ function Perl_Config_Frame_Reset_Positions()
 
 	if (Perl_Focus_Frame) then
 		Perl_Focus_Frame:SetUserPlaced(1);
---		Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 263, -43);
+--		Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 263, -43);	-- Find a good default location for this at some point
 	end
 
 	if (Perl_Party_Frame) then
@@ -982,6 +1038,7 @@ function Perl_Config_Global_Save_Settings()
 			["TexturedBarBackround"] = vartable["texturedbarbackground"],
 			["PCUF_FadeBars"] = vartable["PCUF_FadeBars"],
 			["PCUF_InvertBarValues"] = vartable["PCUF_InvertBarValues"],
+			["MiniMapButtonRad"] = vartable["minimapbuttonrad"],
 		};
 	end
 
@@ -1460,6 +1517,7 @@ function Perl_Config_GetVars(name, updateflag)
 	PCUF_FADEBARS = Perl_Config_Config[name]["PCUF_FadeBars"];
 	PCUF_NAMEFRAMECLICKCAST = Perl_Config_Config[name]["PCUF_NameFrameClickCast"];
 	PCUF_INVERTBARVALUES = Perl_Config_Config[name]["PCUF_InvertBarValues"];
+	minimapbuttonrad = Perl_Config_Config[name]["MiniMapButtonRad"];
 
 	if (texture == nil) then
 		texture = 0;
@@ -1491,6 +1549,9 @@ function Perl_Config_GetVars(name, updateflag)
 	if (PCUF_INVERTBARVALUES == nil) then
 		PCUF_INVERTBARVALUES = 0;
 	end
+	if (minimapbuttonrad == nil) then
+		minimapbuttonrad = 80;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1515,6 +1576,7 @@ function Perl_Config_GetVars(name, updateflag)
 		["PCUF_FadeBars"] = PCUF_FADEBARS,
 		["PCUF_NameFrameClickCast"] = PCUF_NAMEFRAMECLICKCAST,
 		["PCUF_InvertBarValues"] = PCUF_INVERTBARVALUES,
+		["minimapbuttonrad"] = minimapbuttonrad,
 	}
 	return vars;
 end
@@ -1573,6 +1635,11 @@ function Perl_Config_UpdateVars(vartable)
 			else
 				PCUF_INVERTBARVALUES = nil;
 			end
+			if (vartable["Global Settings"]["MiniMapButtonRad"] ~= nil) then
+				minimapbuttonrad = vartable["Global Settings"]["MiniMapButtonRad"];
+			else
+				minimapbuttonrad = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1606,6 +1673,9 @@ function Perl_Config_UpdateVars(vartable)
 		if (PCUF_INVERTBARVALUES == nil) then
 			PCUF_INVERTBARVALUES = 0;
 		end
+		if (minimapbuttonrad == nil) then
+			minimapbuttonrad = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Config_Set_Texture(texture);
@@ -1625,6 +1695,7 @@ function Perl_Config_UpdateVars(vartable)
 		["PCUF_FadeBars"] = PCUF_FADEBARS,
 		["PCUF_NameFrameClickCast"] = PCUF_NAMEFRAMECLICKCAST,
 		["PCUF_InvertBarValues"] = PCUF_INVERTBARVALUES,
+		["MiniMapButtonRad"] = minimapbuttonrad,
 	};
 end
 
@@ -1928,8 +1999,8 @@ function Perl_Config_Button_UpdatePosition()
 		"TOPLEFT",
 		"Minimap",
 		"TOPLEFT",
-		52 - (80 * cos(minimapbuttonpos)),
-		(80 * sin(minimapbuttonpos)) - 52
+		52 - (minimapbuttonrad * cos(minimapbuttonpos)),
+		(minimapbuttonrad * sin(minimapbuttonpos)) - 52
 	);
 end
 
@@ -1949,21 +2020,21 @@ end
 ----------------------
 -- myAddOns Support --
 ----------------------
---function Perl_Config_myAddOns_Support()
---	-- Register the addon in myAddOns
---	if (myAddOnsFrame_Register) then
---		local Perl_Config_myAddOns_Details = {
---			name = "Perl_Config",
---			version = PERL_LOCALIZED_VERSION,
---			releaseDate = PERL_LOCALIZED_DATE,
---			author = "Global",
---			email = "global@g-ball.com",
---			website = "http://www.curse-gaming.com/mod.php?addid=2257",
---			category = MYADDONS_CATEGORY_OTHERS,
---			optionsframe = "Perl_Config_Frame",
---		};
---		Perl_Config_myAddOns_Help = {};
---		Perl_Config_myAddOns_Help[1] = "/perl";
---		myAddOnsFrame_Register(Perl_Config_myAddOns_Details, Perl_Config_myAddOns_Help);
---	end
---end
+function Perl_Config_myAddOns_Support()
+	-- Register the addon in myAddOns
+	if (myAddOnsFrame_Register) then
+		local Perl_Config_myAddOns_Details = {
+			name = "Perl_Config",
+			version = PERL_LOCALIZED_VERSION,
+			releaseDate = PERL_LOCALIZED_DATE,
+			author = "Global",
+			email = "global@g-ball.com",
+			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+			category = MYADDONS_CATEGORY_OTHERS,
+			optionsframe = "Perl_Config_Frame",
+		};
+		Perl_Config_myAddOns_Help = {};
+		Perl_Config_myAddOns_Help[1] = "/perl";
+		myAddOnsFrame_Register(Perl_Config_myAddOns_Details, Perl_Config_myAddOns_Help);
+	end
+end

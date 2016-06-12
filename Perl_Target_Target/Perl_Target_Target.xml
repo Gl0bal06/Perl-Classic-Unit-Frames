@@ -309,7 +309,7 @@
 					</Button>
 
 					<!-- Health Bar -->
-					<StatusBar name="Perl_Target_Target_HealthBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_Target_HealthBar">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -337,7 +337,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Target_Target_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Target_Target_HealthBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -351,7 +351,7 @@
 						<BarTexture name="Perl_Target_Target_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Target_Target_HealthBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_Target_HealthBarBG">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -398,7 +398,7 @@
 					</Button>
 
 					<!-- Mana Bar -->
-					<StatusBar name="Perl_Target_Target_ManaBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_Target_ManaBar">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -426,7 +426,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Target_Target_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Target_Target_ManaBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -440,7 +440,7 @@
 						<BarTexture name="Perl_Target_Target_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Target_Target_ManaBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_Target_ManaBarBG">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -1023,7 +1023,7 @@
 					</Button>
 
 					<!-- Health Bar -->
-					<StatusBar name="Perl_Target_Target_Target_HealthBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_Target_Target_HealthBar">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -1051,7 +1051,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Target_Target_Target_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Target_Target_Target_HealthBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -1065,7 +1065,7 @@
 						<BarTexture name="Perl_Target_Target_Target_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Target_Target_Target_HealthBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_Target_Target_HealthBarBG">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -1112,7 +1112,7 @@
 					</Button>
 
 					<!-- Mana Bar -->
-					<StatusBar name="Perl_Target_Target_Target_ManaBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_Target_Target_ManaBar">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -1140,7 +1140,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_Target_Target_Target_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_Target_Target_Target_ManaBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -1154,7 +1154,7 @@
 						<BarTexture name="Perl_Target_Target_Target_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_Target_Target_Target_ManaBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_Target_Target_Target_ManaBarBG">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>

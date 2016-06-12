@@ -79,7 +79,6 @@ function Perl_Player_Pet_OnLoad()
 	-- WoW 2.0 Secure API Stuff
 	this:SetAttribute("unit", "pet");
 	RegisterUnitWatch(this);
-	--hooksecurefunc("Perl_Target_OnShow", Perl_Target_Update_Once);
 end
 
 
@@ -214,43 +213,47 @@ function Perl_Player_Pet_Initialize()
 	Perl_clearBlizzardFrameDisable(PetFrame);
 
 	-- MyAddOns Support
---	Perl_Player_Pet_myAddOns_Support();
+	Perl_Player_Pet_myAddOns_Support();
 
 	-- IFrameManager Support
---	if (IFrameManager) then
---		Perl_Player_Pet_IFrameManager();
---	end
+	if (IFrameManager) then
+		Perl_Player_Pet_IFrameManager();
+	end
 
 	Initialized = 1;
 end
 
---function Perl_Player_Pet_IFrameManager()
---	local iface = IFrameManager:Interface();
---	function iface:getName(frame)
---		return "Perl Player Pet";
---	end
---	function iface:getBorder(frame)
---		local bottom, left, right;
---		if (showxp == 0) then
---			bottom = 30;
---		else
---			bottom = 43;
---		end
---		if (showportrait == 0) then
---			left = 0;
---		else
---			left = 48;
---		end
---		if (compactmode == 0) then
---			right = 0;
---		else
---			right = -35;
---		end
---		--return top, right, bottom, left;
---		return 0, right, bottom, left;
---	end
---	IFrameManager:Register(this, iface);
---end
+function Perl_Player_Pet_IFrameManager()
+	local iface = IFrameManager:Interface();
+	function iface:getName(frame)
+		return "Perl Player Pet";
+	end
+	function iface:getBorder(frame)
+		local bottom, left, right, top;
+		if (showxp == 0) then
+			bottom = 30;
+		else
+			bottom = 43;
+		end
+		if (showportrait == 0) then
+			left = 0;
+		else
+			left = 48;
+		end
+		if (compactmode == 0) then
+			right = 0;
+		else
+			right = -35;
+		end
+		if (hidename == 0) then
+			top = 0;
+		else
+			top = -20;
+		end
+		return top, right, bottom, left;
+	end
+	IFrameManager:Register(this, iface);
+end
 
 function Perl_Player_Pet_Initialize_Frame_Color()
 	Perl_Player_Pet_StatsFrame:SetBackdropColor(0, 0, 0, 1);
@@ -601,14 +604,6 @@ function Perl_Player_Pet_ManaBar_Fade(arg1)
 		Perl_Player_Pet_ManaBarFadeBar:Hide();
 		Perl_Player_Pet_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
-end
-
-
--------------------------------
--- Style Show/Hide Functions --
--------------------------------
-function Perl_Player_Pet_Frame_Style()
-	
 end
 
 
@@ -989,9 +984,9 @@ function Perl_Player_Pet_UpdateVars(vartable)
 	end
 
 	-- IFrameManager Support
---	if (IFrameManager) then
---		IFrameManager:Refresh();
---	end
+	if (IFrameManager) then
+		IFrameManager:Refresh();
+	end
 
 	Perl_Player_Pet_Config[UnitName("player")] = {
 		["Locked"] = locked,
@@ -1192,62 +1187,6 @@ function Perl_Player_Pet_DropDown_Initialize()
 	UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, "PET", "pet");
 end
 
---function Perl_Player_Pet_MouseClick(button)
---	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
---		if (Perl_Custom_ClickFunction(button, "pet")) then	-- If the function returns true, then we return
---			return;
---		end
---	end								-- Otherwise, it did nothing, so take default action
---
---	if (PCUF_CASTPARTYSUPPORT == 1) then
---		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
---			if (CastPartyConfig) then
---				CastParty.Event.OnClickByUnit(button, "pet");
---				return;
---			elseif (Genesis_MouseHeal and Genesis_MouseHeal("pet", button)) then
---				return;
---			elseif (CH_Config) then
---				if (CH_Config.PCUFEnabled) then
---					CH_UnitClicked("pet", button);
---					return;
---				end
---			elseif (SmartHeal) then
---				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
---					local KeyDownType = SmartHeal:GetClickHealButton();
---					if(KeyDownType and KeyDownType ~= "undetermined") then
---						SmartHeal:ClickHeal(KeyDownType..button, "pet");
---					else
---						SmartHeal:DefaultClick(button, "pet");
---					end
---					return;
---				end
---			end
---		end
---	end
---
---	if (button == "LeftButton") then
---		if (SpellIsTargeting()) then
---			SpellTargetUnit("pet");
---		elseif (CursorHasItem()) then
---			DropItemOnUnit("pet");
---		else
---			TargetUnit("pet");
---		end
---		return;
---	end
---
---	if (button == "RightButton") then
---		if (SpellIsTargeting()) then
---			SpellStopTargeting();
---			return;
---		end
---	end
---
---	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
---		ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
---	end
---end
-
 function Perl_Player_Pet_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_Player_Pet_Frame:StartMoving();
@@ -1262,20 +1201,20 @@ end
 ----------------------
 -- myAddOns Support --
 ----------------------
---function Perl_Player_Pet_myAddOns_Support()
---	-- Register the addon in myAddOns
---	if(myAddOnsFrame_Register) then
---		local Perl_Player_Pet_myAddOns_Details = {
---			name = "Perl_Player_Pet",
---			version = PERL_LOCALIZED_VERSION,
---			releaseDate = PERL_LOCALIZED_DATE,
---			author = "Perl; Maintained by Global",
---			email = "global@g-ball.com",
---			website = "http://www.curse-gaming.com/mod.php?addid=2257",
---			category = MYADDONS_CATEGORY_OTHERS
---		};
---		Perl_Player_Pet_myAddOns_Help = {};
---		Perl_Player_Pet_myAddOns_Help[1] = "/perl";
---		myAddOnsFrame_Register(Perl_Player_Pet_myAddOns_Details, Perl_Player_Pet_myAddOns_Help);
---	end
---end
+function Perl_Player_Pet_myAddOns_Support()
+	-- Register the addon in myAddOns
+	if(myAddOnsFrame_Register) then
+		local Perl_Player_Pet_myAddOns_Details = {
+			name = "Perl_Player_Pet",
+			version = PERL_LOCALIZED_VERSION,
+			releaseDate = PERL_LOCALIZED_DATE,
+			author = "Perl; Maintained by Global",
+			email = "global@g-ball.com",
+			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+			category = MYADDONS_CATEGORY_OTHERS
+		};
+		Perl_Player_Pet_myAddOns_Help = {};
+		Perl_Player_Pet_myAddOns_Help[1] = "/perl";
+		myAddOnsFrame_Register(Perl_Player_Pet_myAddOns_Details, Perl_Player_Pet_myAddOns_Help);
+	end
+end

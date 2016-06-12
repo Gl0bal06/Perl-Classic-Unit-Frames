@@ -95,7 +95,7 @@
 					</Button>
 
 					<!-- Health Bar -->
-					<StatusBar name="Perl_CombatDisplay_HealthBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_HealthBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -123,7 +123,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_CombatDisplay_HealthBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -137,7 +137,7 @@
 						<BarTexture name="Perl_CombatDisplay_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_HealthBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_HealthBarBG">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -153,7 +153,7 @@
 					</StatusBar>
 
 					<!-- Mana Bar -->
-					<StatusBar name="Perl_CombatDisplay_ManaBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_ManaBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -181,7 +181,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_CombatDisplay_ManaBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -195,7 +195,7 @@
 						<BarTexture name="Perl_CombatDisplay_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_ManaBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_ManaBarBG">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -211,7 +211,7 @@
 					</StatusBar>
 
 					<!-- Druid Mana Bar -->
-					<StatusBar name="Perl_CombatDisplay_DruidBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_DruidBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -241,7 +241,7 @@
 						</Layers>
 					</StatusBar>
 					<!--
-					<StatusBar name="Perl_CombatDisplay_DruidBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_CombatDisplay_DruidBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -256,7 +256,7 @@
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
 					-->
-					<StatusBar name="Perl_CombatDisplay_DruidBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_DruidBarBG">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -272,7 +272,7 @@
 					</StatusBar>
 
 					<!-- Bar for CPs -->
-					<StatusBar name="Perl_CombatDisplay_CPBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_CPBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -300,7 +300,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_CPBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_CombatDisplay_CPBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -314,7 +314,7 @@
 						<BarTexture name="Perl_CombatDisplay_CPBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_CPBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_CPBarBG">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -330,7 +330,7 @@
 					</StatusBar>
 
 					<!-- Pet Health Bar -->
-					<StatusBar name="Perl_CombatDisplay_PetHealthBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_PetHealthBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -358,7 +358,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_PetHealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_CombatDisplay_PetHealthBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -372,7 +372,7 @@
 						<BarTexture name="Perl_CombatDisplay_PetHealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_PetHealthBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_PetHealthBarBG">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -388,7 +388,7 @@
 					</StatusBar>
 
 					<!-- Pet Mana Bar -->
-					<StatusBar name="Perl_CombatDisplay_PetManaBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_PetManaBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -416,7 +416,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_PetManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_CombatDisplay_PetManaBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -430,7 +430,7 @@
 						<BarTexture name="Perl_CombatDisplay_PetManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_PetManaBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_PetManaBarBG">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -541,7 +541,7 @@
 					</Button>
 
 					<!-- Health Bar -->
-					<StatusBar name="Perl_CombatDisplay_Target_HealthBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_Target_HealthBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -569,7 +569,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_Target_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_CombatDisplay_Target_HealthBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -583,7 +583,7 @@
 						<BarTexture name="Perl_CombatDisplay_Target_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_Target_HealthBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_Target_HealthBarBG">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -599,7 +599,7 @@
 					</StatusBar>
 
 					<!-- Mana Bar -->
-					<StatusBar name="Perl_CombatDisplay_Target_ManaBar" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_Target_ManaBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -627,7 +627,7 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_Target_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+					<StatusBar name="Perl_CombatDisplay_Target_ManaBarFadeBar" hidden="true">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
@@ -641,7 +641,7 @@
 						<BarTexture name="Perl_CombatDisplay_Target_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<StatusBar name="Perl_CombatDisplay_Target_ManaBarBG" inherits="TextStatusBar">
+					<StatusBar name="Perl_CombatDisplay_Target_ManaBarBG">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>

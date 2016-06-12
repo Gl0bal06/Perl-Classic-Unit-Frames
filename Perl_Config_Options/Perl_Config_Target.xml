@@ -245,7 +245,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<Slider name="$parent_Slider2" inherits="OptionsSliderTemplate" minValue="0" maxValue="16" valueStep="1">
+			<Slider name="$parent_Slider2" inherits="OptionsSliderTemplate" minValue="0" maxValue="20" valueStep="1">
 				<Size>
 					<AbsDimension x="150" y="15"/>
 				</Size>
@@ -264,7 +264,7 @@
 				</Scripts>
 			</Slider>
 
-			<Slider name="$parent_Slider3" inherits="OptionsSliderTemplate" minValue="0" maxValue="16" valueStep="1">
+			<Slider name="$parent_Slider3" inherits="OptionsSliderTemplate" minValue="0" maxValue="40" valueStep="1">
 				<Size>
 					<AbsDimension x="150" y="15"/>
 				</Size>

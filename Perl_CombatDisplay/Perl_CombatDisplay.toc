@@ -1,7 +1,7 @@
 ## Interface: 20000
-## Title: Perl Combat Display
+## Title: Perl CombatDisplay
 ## Notes: Displays a movable bar that displays health, rage/energy/mana, and combo points.
 ## Dependencies: Perl_Config
-## OptionalDeps: DruidBar, MobHealth
+## OptionalDeps: Clique, DruidBar, MobHealth, myAddOns
 ## SavedVariables: Perl_CombatDisplay_Config
 Perl_CombatDisplay.xml

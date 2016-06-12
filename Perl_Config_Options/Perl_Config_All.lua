@@ -36,6 +36,10 @@ function Perl_Config_All_Set_Values()
 	Perl_Config_All_Frame_Slider3High:SetText("360");
 	Perl_Config_All_Frame_Slider3:SetValue(vartable["minimapbuttonpos"]);
 
+	Perl_Config_All_Frame_Slider4Low:SetText("40");
+	Perl_Config_All_Frame_Slider4High:SetText("150");
+	Perl_Config_All_Frame_Slider4:SetValue(vartable["minimapbuttonrad"]);
+
 	if (vartable["showminimapbutton"] == 1) then
 		Perl_Config_All_Frame_CheckButton8:SetChecked(1);
 	else
@@ -170,6 +174,10 @@ end
 
 function Perl_Config_All_Set_MiniMap_Position(value)
 	Perl_Config_Set_MiniMap_Position(value);
+end
+
+function Perl_Config_All_Set_MiniMap_Radius(value)
+	Perl_Config_Set_MiniMap_Radius(value);
 end
 
 function Perl_Config_All_Set_Transparent_Background()
