@@ -5,48 +5,43 @@ Perl_Player_Config = {};
 local Perl_Player_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Player_GetVars)
-local locked = 0;		-- unlocked by default
-local xpbarstate = 1;		-- show default xp bar by default
-local compactmode = 0;		-- compact mode is disabled by default
-local showraidgroup = 1;	-- show the raid group number by default when in raids
-local scale = 0.9;		-- default scale
-local healermode = 0;		-- nurfed unit frame style
-local transparency = 1;		-- transparency for frames
-local showportrait = 0;		-- portrait is hidden by default
-local compactpercent = 0;	-- percents are not shown in compact mode by default
-local threedportrait = 0;	-- 3d portraits are off by default
+local locked = 0;				-- unlocked by default
+local xpbarstate = 1;			-- show default xp bar by default
+local compactmode = 0;			-- compact mode is disabled by default
+local showraidgroup = 1;		-- show the raid group number by default when in raids
+local scale = 0.9;				-- default scale
+local healermode = 0;			-- nurfed unit frame style
+local transparency = 1;			-- transparency for frames
+local showportrait = 0;			-- portrait is hidden by default
+local compactpercent = 0;		-- percents are not shown in compact mode by default
+local threedportrait = 0;		-- 3d portraits are off by default
 local portraitcombattext = 0;	-- Combat text is disabled by default on the portrait frame
-local showdruidbar = 0;		-- Druid Bar support is enabled by default
-local shortbars = 0;		-- Health/Power/Experience bars are all normal length
+local showdruidbar = 0;			-- Druid Bar support is enabled by default
+local shortbars = 0;			-- Health/Power/Experience bars are all normal length
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local hideclasslevelframe = 0;	-- Showing the class icon and level frame by default
-local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
-local hiddeninraid = 0;		-- player frame is shown in a raid by default
-local showpvpicon = 1;		-- show the pvp icon
-local showbarvalues = 0;	-- healer mode will have the bar values hidden by default
+local showmanadeficit = 0;		-- Mana deficit in healer mode is off by default
+local hiddeninraid = 0;			-- player frame is shown in a raid by default
+local showpvpicon = 1;			-- show the pvp icon
+local showbarvalues = 0;		-- healer mode will have the bar values hidden by default
 local showraidgroupinname = 0;	-- raid number is not shown in the name by default
-local fivesecondrule = 0;	-- five second rule is off by default
-local totemtimers = 1;		-- default for totem timers is on by default
-local runeframe = 1;		-- default for rune frame is on by default
-local pvptimer = 0;		-- pvp timer is hidden by default
+local fivesecondrule = 0;		-- five second rule is off by default
+local totemtimers = 1;			-- default for totem timers is on by default
+local runeframe = 1;			-- default for rune frame is on by default
+local pvptimer = 0;				-- pvp timer is hidden by default
 
 -- Default Local Variables
-local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
-local Initialized = nil;	-- waiting to be initialized
-local Perl_Player_ManaBar_Time_Elapsed = 0;		-- set the update timer to 0
+local InCombat = 0;				-- used to track if the player is in combat and if the icon should be displayed
+local Initialized = nil;		-- waiting to be initialized
 local Perl_Player_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
-local Perl_Player_DruidBar_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Player_DruidBar_Time_Update_Rate = 0.2;	-- the update interval
-local Perl_Player_PvP_Text_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Player_PvP_Text_Time_Update_Rate = 0.1;	-- the update interval
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 
 -- Fade Bar Variables
-local Perl_Player_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Player_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Player_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Player_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Player_HealthBar_Fade_Color = 1;			-- the color fading interval
+local Perl_Player_ManaBar_Fade_Color = 1;			-- the color fading interval
 --local Perl_Player_DruidBar_Fade_Color = 1;		-- the color fading interval
 --local Perl_Player_DruidBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
@@ -60,6 +55,9 @@ local fivesecondruletime = nil;
 -- Loading Function --
 ----------------------
 function Perl_Player_OnLoad(self)
+	-- Variables
+	self.lastMana = 0;
+
 	-- Combat Text
 	CombatFeedback_Initialize(self, Perl_Player_HitIndicator, 30);
 
@@ -78,21 +76,15 @@ function Perl_Player_OnLoad(self)
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_COMBAT");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
-	self:RegisterEvent("UNIT_ENERGY");
 	self:RegisterEvent("UNIT_FACTION");
 	self:RegisterEvent("UNIT_HEALTH");
 	self:RegisterEvent("UNIT_LEVEL");
-	self:RegisterEvent("UNIT_MANA");
-	self:RegisterEvent("UNIT_MAXENERGY");
 	self:RegisterEvent("UNIT_MAXHEALTH");
-	self:RegisterEvent("UNIT_MAXMANA");
-	self:RegisterEvent("UNIT_MAXRAGE");
-	self:RegisterEvent("UNIT_MAXRUNIC_POWER");
+	self:RegisterEvent("UNIT_MAXPOWER");
 	self:RegisterEvent("UNIT_MODEL_CHANGED");
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+	self:RegisterEvent("UNIT_POWER");
 	self:RegisterEvent("UNIT_PVP_UPDATE");
-	self:RegisterEvent("UNIT_RAGE");
-	self:RegisterEvent("UNIT_RUNIC_POWER");
 	self:RegisterEvent("UNIT_SPELLMISS");
 	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 	self:RegisterEvent("UPDATE_FACTION");
@@ -100,7 +92,11 @@ function Perl_Player_OnLoad(self)
 	self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
-	self:SetScript("OnEvent", Perl_Player_OnEvent);
+	self:SetScript("OnEvent", 
+		function(self, event, ...)
+			Perl_Player_Events[event](self, ...);
+		end
+	);
 	self:SetScript("OnUpdate", CombatFeedback_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
@@ -123,70 +119,43 @@ function Perl_Player_OnLoad(self)
 end
 
 
--------------------
--- Event Handler --
--------------------
-function Perl_Player_OnEvent()
-	local func = Perl_Player_Events[event];
-	if (func) then
-		func();
-	else
-		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
-			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Player: Report the following event error to the author: "..event);
-		end
-	end
-end
-
-function Perl_Player_Events:UNIT_HEALTH()
+------------
+-- Events --
+------------
+function Perl_Player_Events:UNIT_HEALTH(arg1)
 	if (arg1 == "player") then
 		Perl_Player_Update_Health();		-- Update health values
 	end
 end
 Perl_Player_Events.UNIT_MAXHEALTH = Perl_Player_Events.UNIT_HEALTH;
 
-function Perl_Player_Events:UNIT_MANA()
+function Perl_Player_Events:UNIT_POWER(arg1)
 	if (arg1 == "player") then
 		Perl_Player_Update_Mana();		-- Update mana values
 	end
 end
+Perl_Player_Events.UNIT_MAXPOWER = Perl_Player_Events.UNIT_POWER;
 
-function Perl_Player_Events:UNIT_MAXMANA()
-	if (arg1 == "player") then
-		Perl_Player_Update_Mana();		-- Update mana/rage values
-	end
-end
-Perl_Player_Events.UNIT_RAGE = Perl_Player_Events.UNIT_MAXMANA;
-Perl_Player_Events.UNIT_MAXRAGE = Perl_Player_Events.UNIT_MAXMANA;
-Perl_Player_Events.UNIT_RUNIC_POWER = Perl_Player_Events.UNIT_MAXMANA;
-Perl_Player_Events.UNIT_MAXRUNIC_POWER = Perl_Player_Events.UNIT_MAXMANA;
-
-function Perl_Player_Events:UNIT_ENERGY()
-	if (arg1 == "player") then
-		Perl_Player_Update_Mana();		-- Update energy values
-	end
-end
-Perl_Player_Events.UNIT_MAXENERGY = Perl_Player_Events.UNIT_ENERGY;
-
-function Perl_Player_Events:UNIT_DISPLAYPOWER()
+function Perl_Player_Events:UNIT_DISPLAYPOWER(msg, arg1)
 	if (arg1 == "player") then
 		Perl_Player_Update_Mana_Bar();		-- What type of energy are we using now?
 		Perl_Player_Update_Mana();		-- Update the energy info immediately
 	end
 end
 
-function Perl_Player_Events:UNIT_AURA()
+function Perl_Player_Events:UNIT_AURA(arg1)
 	if (arg1 == "player") then
 		Perl_Player_BuffUpdateAll();
 	end
 end
 
-function Perl_Player_Events:UNIT_COMBAT()
+function Perl_Player_Events:UNIT_COMBAT(arg1, arg2, arg3, arg4, arg5)
 	if (arg1 == "player") then
 		CombatFeedback_OnCombatEvent(Perl_Player_Frame, arg2, arg3, arg4, arg5);
 	end
 end
 
-function Perl_Player_Events:UNIT_SPELLMISS()
+function Perl_Player_Events:UNIT_SPELLMISS(arg1, arg2)
 	if (arg1 == "player") then
 		CombatFeedback_OnSpellMissEvent(arg2);
 	end
@@ -215,7 +184,8 @@ function Perl_Player_Events:UNIT_FACTION()
 end
 Perl_Player_Events.UNIT_PVP_UPDATE = Perl_Player_Events.UNIT_FACTION;
 
-function Perl_Player_Events:UNIT_LEVEL()
+
+function Perl_Player_Events:UNIT_LEVEL(arg1)
 	if (arg1 == "player") then
 		Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
 	end
@@ -237,26 +207,26 @@ function Perl_Player_Events:PARTY_LOOT_METHOD_CHANGED()
 	Perl_Player_Update_Loot_Method();
 end
 
-function Perl_Player_Events:UNIT_PORTRAIT_UPDATE()
+function Perl_Player_Events:UNIT_PORTRAIT_UPDATE(arg1)
 	if (arg1 == "player") then
 		Perl_Player_Update_Portrait();
 	end
 end
 Perl_Player_Events.UNIT_MODEL_CHANGED = Perl_Player_Events.UNIT_PORTRAIT_UPDATE;
 
-function Perl_Player_Events:VOICE_START()
+function Perl_Player_Events:VOICE_START(arg1)
 	if (arg1 == "player") then
 		Perl_Player_VoiceChatIconFrame:Show();
 	end
 end
 
-function Perl_Player_Events:VOICE_STOP()
+function Perl_Player_Events:VOICE_STOP(arg1)
 	if (arg1 == "player") then
 		Perl_Player_VoiceChatIconFrame:Hide();
 	end
 end
 
-function Perl_Player_Events:UNIT_THREAT_SITUATION_UPDATE()
+function Perl_Player_Events:UNIT_THREAT_SITUATION_UPDATE(arg1)
 	if (arg1 == "player") then
 		Perl_Player_Update_Threat();
 	end
@@ -270,6 +240,7 @@ function Perl_Player_Events:PLAYER_LOGIN()
 	Perl_Player_Initialize();
 end
 Perl_Player_Events.PLAYER_ENTERING_WORLD = Perl_Player_Events.PLAYER_LOGIN;
+
 
 
 -------------------------------
@@ -332,27 +303,30 @@ function Perl_Player_Update_Once()
 	_, englishclass = UnitClass("player");
 
 	-- Anytime functions
-	Perl_Player_NameBarText:SetText(UnitName("player"));			-- Set the player's name
-	if (Perl_ArcaneBar_Frame_Loaded_Frame) then				-- ArcaneBar Support
+	Perl_Player_NameBarText:SetText(UnitName("player"));				-- Set the player's name
+	if (Perl_ArcaneBar_Frame_Loaded_Frame) then							-- ArcaneBar Support
 		Perl_ArcaneBar_player.unitname = Perl_Player_NameBarText:GetText();
 	end
 	Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
 	Perl_Player_ClassTexture:SetTexCoord(PCUF_CLASSPOSRIGHT[englishclass], PCUF_CLASSPOSLEFT[englishclass], PCUF_CLASSPOSTOP[englishclass], PCUF_CLASSPOSBOTTOM[englishclass]);	-- Set the player's class icon
-	Perl_Player_Update_Portrait();						-- Set the player's portrait
-	Perl_Player_Update_PvP_Status();					-- Is the character PvP flagged?
-	Perl_Player_Update_PvP_Timer();						-- Is the PvP timer counting down?
-	Perl_Player_Update_Health();						-- Set the player's health on load or toggle
-	Perl_Player_Update_Mana_Bar();						-- Set the type of mana used
-	Perl_Player_Update_Mana();						-- Set the player's mana/energy on load or toggle
-	Perl_Player_Update_Leader();						-- Are we the party leader?
-	Perl_Player_Update_Loot_Method();					-- Are we the master looter?
-	Perl_Player_Update_Role();						-- What group role are we playing as?
-	Perl_Player_Update_Combat_Status();					-- Are we already fighting or resting?
-	Perl_Player_Update_Threat();						-- Are we agro on something?
-	Perl_Player_BuffUpdateAll();						-- Do we have any curable debuffs on us?
+	Perl_Player_Update_Portrait();										-- Set the player's portrait
+	Perl_Player_Update_PvP_Status();									-- Is the character PvP flagged?
+	Perl_Player_Update_PvP_Timer();										-- Is the PvP timer counting down?
+	Perl_Player_Update_Health();										-- Set the player's health on load or toggle
+	Perl_Player_Update_Mana_Bar();										-- Set the type of mana used
+	Perl_Player_Update_Mana();											-- Set the player's mana/energy on load or toggle
+	Perl_Player_Update_Leader();										-- Are we the party leader?
+	Perl_Player_Update_Loot_Method();									-- Are we the master looter?
+	Perl_Player_Update_Role();											-- What group role are we playing as?
+	Perl_Player_Update_Combat_Status();									-- Are we already fighting or resting?
+	Perl_Player_Update_Threat();										-- Are we agro on something?
+	Perl_Player_BuffUpdateAll();										-- Do we have any curable debuffs on us?
 
 	-- Out of Combat ONLY functions
-	Perl_Player_Update_Raid_Group_Number();					-- Are we in a raid?
+	Perl_Player_Update_Raid_Group_Number();								-- Are we in a raid?
+	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+		Perl_ArcaneBar_Initialize();									-- Make sure the ArcaneBar savedvariables are loaded (fix for Cataclysm)
+	end
 	Perl_Player_Frame_Style();
 end
 
@@ -361,7 +335,7 @@ function Perl_Player_Update_Health()
 	playerhealthmax = UnitHealthMax("player");
 	playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
 
-	if (UnitIsDead("player") or UnitIsGhost("player")) then			-- This prevents negative health
+	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative health
 		playerhealth = 0;
 		playerhealthpercent = 0;
 	end
@@ -372,7 +346,7 @@ function Perl_Player_Update_Health()
 			Perl_Player_HealthBarFadeBar:SetValue(Perl_Player_HealthBar:GetValue());
 			Perl_Player_HealthBarFadeBar:Show();
 			Perl_Player_HealthBar_Fade_Color = 1;
-			Perl_Player_HealthBar_Fade_Time_Elapsed = 0;
+			Perl_Player_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_Player_HealthBar_Fade_OnUpdate_Frame:Show();
 		end
 	end
@@ -460,8 +434,8 @@ function Perl_Player_Update_Health()
 end
 
 function Perl_Player_Update_Mana()
-	playermana = UnitMana("player");
-	playermanamax = UnitManaMax("player");
+	playermana = UnitPower("player");
+	playermanamax = UnitPowerMax("player");
 	playermanapercent = floor(playermana/playermanamax*100+0.5);
 
 	if (UnitIsDead("player") or UnitIsGhost("player") or playermanamax == 0) then			-- This prevents negative mana
@@ -476,12 +450,12 @@ function Perl_Player_Update_Mana()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (playermana < Perl_Player_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and playermana > Perl_Player_ManaBar:GetValue())) then
+		if (playermana < Perl_Player_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and playermana > Perl_Player_Frame.lastMana)) then
 			Perl_Player_ManaBarFadeBar:SetMinMaxValues(0, playermanamax);
-			Perl_Player_ManaBarFadeBar:SetValue(Perl_Player_ManaBar:GetValue());
+			Perl_Player_ManaBarFadeBar:SetValue(Perl_Player_Frame.lastMana);
 			Perl_Player_ManaBarFadeBar:Show();
 			Perl_Player_ManaBar_Fade_Color = 1;
-			Perl_Player_ManaBar_Fade_Time_Elapsed = 0;
+			Perl_Player_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_Player_ManaBar_Fade_OnUpdate_Frame:Show();
 		end
 	end
@@ -601,8 +575,10 @@ function Perl_Player_Update_Mana()
 			fivesecondruletime = GetTime();
 			Perl_Player_FiveSecondRule:Show();
 		end
-		fivesecondrulelastmana = playermana
+		fivesecondrulelastmana = playermana;
 	end
+
+	Perl_Player_Frame.lastMana = playermana;
 end
 
 function Perl_Player_Update_Mana_Text()
@@ -686,12 +662,24 @@ function Perl_Player_Update_Mana_Text()
 	end
 end
 
-function Perl_Player_OnUpdate_ManaBar(arg1)
-	Perl_Player_ManaBar_Time_Elapsed = Perl_Player_ManaBar_Time_Elapsed + arg1;
-	if (Perl_Player_ManaBar_Time_Elapsed > Perl_Player_ManaBar_Time_Update_Rate) then
-		Perl_Player_ManaBar_Time_Elapsed = 0;
+function Perl_Player_OnUpdate_ManaBar(self, elapsed)
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
+	if (self.TimeSinceLastUpdate > Perl_Player_ManaBar_Time_Update_Rate) then
+		self.TimeSinceLastUpdate = 0;
 
 		playeronupdatemana = UnitPower("player", UnitPowerType("player"));
+
+		if (PCUF_FADEBARS == 1) then
+			if (playeronupdatemana < Perl_Player_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and playeronupdatemana > Perl_Player_Frame.lastMana)) then
+				Perl_Player_ManaBarFadeBar:SetMinMaxValues(0, playermanamax);
+				Perl_Player_ManaBarFadeBar:SetValue(Perl_Player_Frame.lastMana);
+				Perl_Player_ManaBarFadeBar:Show();
+				Perl_Player_ManaBar_Fade_Color = 1;
+				Perl_Player_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
+				Perl_Player_ManaBar_Fade_OnUpdate_Frame:Show();
+			end
+		end
+
 		if (playeronupdatemana ~= playermana) then
 			playermana = playeronupdatemana;
 			if (PCUF_INVERTBARVALUES == 1) then
@@ -701,6 +689,8 @@ function Perl_Player_OnUpdate_ManaBar(arg1)
 			end
 			Perl_Player_Update_Mana_Text();
 		end
+
+		Perl_Player_Frame.lastMana = playeronupdatemana;
 	end
 end
 
@@ -714,6 +704,9 @@ function Perl_Player_Update_Mana_Bar()
 	elseif (playerpower == 1) then		-- rage
 		Perl_Player_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+	elseif (playerpower == 2) then		-- focus
+		Perl_Player_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
+		Perl_Player_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 	elseif (playerpower == 3) then		-- energy
 		Perl_Player_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
@@ -731,7 +724,7 @@ function Perl_Player_Update_Experience()
 	Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 	Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 
-	if (UnitLevel("player") ~= 80) then
+	if (UnitLevel("player") ~= 85) then
 		-- XP Bar stuff
 		local playerxp = UnitXP("player");
 		local playerxpmax = UnitXPMax("player");
@@ -770,7 +763,7 @@ function Perl_Player_Update_Reputation()
 		value = value - min;
 		max = max - min;
 		min = 0;
-		
+
 		Perl_Player_XPBar:SetMinMaxValues(min, max);
 		Perl_Player_XPRestBar:SetMinMaxValues(min, max);
 		Perl_Player_XPBar:SetValue(value);
@@ -903,14 +896,14 @@ function Perl_Player_Update_Loot_Method()
 end
 
 function Perl_Player_Update_Role()
-	local isTank, isHealer, isDamage = UnitGroupRolesAssigned("player");
-	if(isTank) then
+	local role = UnitGroupRolesAssigned("player");
+	if(role == "TANK") then
 		Perl_Player_RoleIcon:SetTexCoord(0, 19/64, 22/64, 41/64);
 		Perl_Player_RoleIcon:Show();
-	elseif(isHealer) then
+	elseif(role == "HEALER") then
 		Perl_Player_RoleIcon:SetTexCoord(20/64, 39/64, 1/64, 20/64);
 		Perl_Player_RoleIcon:Show();
-	elseif(isDamage) then
+	elseif(role == "DAMAGER") then
 		Perl_Player_RoleIcon:SetTexCoord(20/64, 39/64, 22/64, 41/64);
 		Perl_Player_RoleIcon:Show();
 	else
@@ -977,12 +970,12 @@ function Perl_Player_Update_PvP_Timer()
 	end
 end
 
-function Perl_Player_OnUpdate_PvP_Timer()
-	Perl_Player_PvP_Text_Time_Elapsed = Perl_Player_PvP_Text_Time_Elapsed + arg1;
-	if (Perl_Player_PvP_Text_Time_Elapsed > Perl_Player_PvP_Text_Time_Update_Rate) then
-		Perl_Player_PvP_Text_Time_Elapsed = 0;
+function Perl_Player_OnUpdate_PvP_Timer(self, elapsed)
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
+	if (self.TimeSinceLastUpdate > Perl_Player_PvP_Text_Time_Update_Rate) then
+		self.TimeSinceLastUpdate = 0;
 
-		pvptimeleft = floor(GetPVPTimer()/1200);
+		pvptimeleft = floor(GetPVPTimer()/1000);
 		if (pvptimeleft > 60) then
 			Perl_Player_NameBarPvPTimerText:SetText(floor(pvptimeleft/60).."m"..(pvptimeleft%60).."s");
 		else
@@ -1019,8 +1012,8 @@ end
 function Perl_Player_ManaShow()
 	if (healermode == 1) then
 		if (showbarvalues == 0) then
-			playermana = UnitMana("player");
-			playermanamax = UnitManaMax("player");
+			playermana = UnitPower("player");
+			playermanamax = UnitPowerMax("player");
 
 			if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
 				playermana = 0;
@@ -1099,37 +1092,39 @@ end
 ------------------------
 -- Fade Bar Functions --
 ------------------------
-function Perl_Player_HealthBar_Fade(arg1)
-	Perl_Player_HealthBar_Fade_Color = Perl_Player_HealthBar_Fade_Color - arg1;
-	Perl_Player_HealthBar_Fade_Time_Elapsed = Perl_Player_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Player_HealthBar_Fade(self, elapsed)
+	Perl_Player_HealthBar_Fade_Color = Perl_Player_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Player_HealthBarFadeBar:SetStatusBarColor(0, Perl_Player_HealthBar_Fade_Color, 0, Perl_Player_HealthBar_Fade_Color);
 
-	if (Perl_Player_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Player_HealthBar_Fade_Color = 1;
-		Perl_Player_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Player_HealthBarFadeBar:Hide();
 		Perl_Player_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Player_ManaBar_Fade(arg1)
-	Perl_Player_ManaBar_Fade_Color = Perl_Player_ManaBar_Fade_Color - arg1;
-	Perl_Player_ManaBar_Fade_Time_Elapsed = Perl_Player_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Player_ManaBar_Fade(self, elapsed)
+	Perl_Player_ManaBar_Fade_Color = Perl_Player_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (playerpower == 0) then
 		Perl_Player_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Player_ManaBar_Fade_Color, Perl_Player_ManaBar_Fade_Color);
 	elseif (playerpower == 1) then
 		Perl_Player_ManaBarFadeBar:SetStatusBarColor(Perl_Player_ManaBar_Fade_Color, 0, 0, Perl_Player_ManaBar_Fade_Color);
+	elseif (targetpower == 2) then
+		Perl_Player_ManaBarFadeBar:SetStatusBarColor(Perl_Player_ManaBar_Fade_Color, (Perl_Player_ManaBar_Fade_Color-0.5), 0, Perl_Player_ManaBar_Fade_Color);
 	elseif (playerpower == 3) then
 		Perl_Player_ManaBarFadeBar:SetStatusBarColor(Perl_Player_ManaBar_Fade_Color, Perl_Player_ManaBar_Fade_Color, 0, Perl_Player_ManaBar_Fade_Color);
 	elseif (playerpower == 6) then
 		Perl_Player_ManaBarFadeBar:SetStatusBarColor(0, Perl_Player_ManaBar_Fade_Color, Perl_Player_ManaBar_Fade_Color, Perl_Player_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Player_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Player_ManaBar_Fade_Color = 1;
-		Perl_Player_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Player_ManaBarFadeBar:Hide();
 		Perl_Player_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
@@ -1444,6 +1439,14 @@ function Perl_Player_Frame_Style()
 
 		if (Initialized) then
 			if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+				-- Make sure the ArcaneBar savedvariables are loaded (fix for Cataclysm)
+				-- if (type(Perl_ArcaneBar_Config[UnitName("player")]) == "table") then	-- Check if a previous exists, if not, enable by default.
+					-- Perl_ArcaneBar_GetVars();
+				-- else
+					-- Perl_ArcaneBar_UpdateVars();
+				-- end
+				--Perl_ArcaneBar_Initialize();
+
 				Perl_ArcaneBar_player:SetPoint("TOPLEFT", "Perl_Player_NameFrame", "TOPLEFT", 5, -5);
 				Perl_ArcaneBar_player_CastTime:ClearAllPoints();
 				if (Perl_ArcaneBar_Config[UnitName("player")]["PlayerLeftTimer"] == 0) then
@@ -2094,7 +2097,7 @@ function Perl_Player_DragStart(button)
 	end
 end
 
-function Perl_Player_DragStop(button)
+function Perl_Player_DragStop()
 	Perl_Player_Frame:StopMovingOrSizing();
 end
 
@@ -2107,7 +2110,7 @@ function Perl_Player_XPTooltip(self)
 	GameTooltip_SetDefaultAnchor(GameTooltip, self);
 	if (xpbarstate == 1) then
 		local playerlevel = UnitLevel("player");			-- Player's next level
-		if (playerlevel < 80) then
+		if (playerlevel < 85) then
 			playerxp = UnitXP("player");				-- Player's current XP
 			playerxpmax = UnitXPMax("player");			-- Experience for the current level
 			local playerxprest = GetXPExhaustion();			-- Amount of bonus xp we have

@@ -29,20 +29,16 @@ local displaycurabledebuff = 0;	-- display all debuffs by default
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
-local Perl_Player_Pet_Target_Time_Elapsed = 0;		-- set the update timer to 0
+--local Perl_Player_Pet_Target_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Player_Pet_Target_Time_Update_Rate = 0.2;	-- the update interval
 local mouseoverpettargethealthflag = 0;			-- are we showing detailed health info?
 local mouseoverpettargetmanaflag = 0;			-- are we showing detailed mana info?
 
 -- Fade Bar Variables
 local Perl_Player_Pet_HealthBar_Fade_Color = 1;			-- the color fading interval
-local Perl_Player_Pet_HealthBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Player_Pet_ManaBar_Fade_Color = 1;			-- the color fading interval
-local Perl_Player_Pet_ManaBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Player_Pet_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Player_Pet_Target_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
 local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext, r, g, b, reaction, pettargethealth, pettargethealthmax, pettargethealthpercent, pettargetmana, pettargetmanamax, pettargetpower, raidpettargetindex, englishclass, bufffilter, debufffilter;
@@ -62,26 +58,26 @@ function Perl_Player_Pet_OnLoad(self)
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_COMBAT");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
-	self:RegisterEvent("UNIT_ENERGY");
-	self:RegisterEvent("UNIT_FOCUS");
-	self:RegisterEvent("UNIT_HAPPINESS");
+	self:RegisterEvent("UNIT_HAPPINESS");	-- need to see if this one still fires the right info
 	self:RegisterEvent("UNIT_HEALTH");
 	self:RegisterEvent("UNIT_LEVEL");
-	self:RegisterEvent("UNIT_MANA");
-	self:RegisterEvent("UNIT_MAXENERGY");
-	self:RegisterEvent("UNIT_MAXFOCUS");
 	self:RegisterEvent("UNIT_MAXHEALTH");
-	self:RegisterEvent("UNIT_MAXMANA");
+	self:RegisterEvent("UNIT_MAXPOWER");
 	self:RegisterEvent("UNIT_MODEL_CHANGED");
 	self:RegisterEvent("UNIT_NAME_UPDATE");
 	self:RegisterEvent("UNIT_PET");
 	self:RegisterEvent("UNIT_PET_EXPERIENCE");
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+	self:RegisterEvent("UNIT_POWER");
 	self:RegisterEvent("UNIT_SPELLMISS");
 	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 
 	-- Scripts
-	self:SetScript("OnEvent", Perl_Player_Pet_OnEvent);
+	self:SetScript("OnEvent", 
+		function(self, event, ...)
+			Perl_Player_Pet_Events[event](self, ...);
+		end
+	);
 	self:SetScript("OnUpdate", CombatFeedback_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
@@ -101,6 +97,9 @@ function Perl_Player_Pet_OnLoad(self)
 end
 
 function Perl_Player_Pet_Target_OnLoad(self)
+	-- Variables
+	self.TimeSinceLastUpdate = 0;
+
 	-- Scripts
 	self:SetScript("OnUpdate", Perl_Player_Pet_Target_OnUpdate);
 
@@ -120,61 +119,46 @@ function Perl_Player_Pet_Target_OnLoad(self)
 end
 
 
--------------------
--- Event Handler --
--------------------
-function Perl_Player_Pet_OnEvent()
-	local func = Perl_Player_Pet_Events[event];
-	if (func) then
-		func();
-	else
-		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
-			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Player Pet: Report the following event error to the author: "..event);
-		end
-	end
-end
-
-function Perl_Player_Pet_Events:UNIT_HEALTH()
+------------
+-- Events --
+------------
+function Perl_Player_Pet_Events:UNIT_HEALTH(arg1)
 	if (arg1 == "pet") then
 		Perl_Player_Pet_Update_Health();	-- Update health values
 	end
 end
 Perl_Player_Pet_Events.UNIT_MAXHEALTH = Perl_Player_Pet_Events.UNIT_HEALTH;
 
-function Perl_Player_Pet_Events:UNIT_FOCUS()
+function Perl_Player_Pet_Events:UNIT_POWER(arg1)
 	if (arg1 == "pet") then
 		Perl_Player_Pet_Update_Mana();		-- Update energy/mana/rage values
 	end
 end
-Perl_Player_Pet_Events.UNIT_MAXFOCUS = Perl_Player_Pet_Events.UNIT_FOCUS;
-Perl_Player_Pet_Events.UNIT_MANA = Perl_Player_Pet_Events.UNIT_FOCUS;
-Perl_Player_Pet_Events.UNIT_MAXMANA = Perl_Player_Pet_Events.UNIT_FOCUS;
-Perl_Player_Pet_Events.UNIT_ENERGY = Perl_Player_Pet_Events.UNIT_FOCUS;
-Perl_Player_Pet_Events.UNIT_MAXENERGY = Perl_Player_Pet_Events.UNIT_FOCUS;
+Perl_Player_Pet_Events.UNIT_MAXPOWER = Perl_Player_Pet_Events.UNIT_POWER;
 
 function Perl_Player_Pet_Events:UNIT_HAPPINESS()
 	Perl_Player_PetFrame_SetHappiness();
 end
 
-function Perl_Player_Pet_Events:UNIT_COMBAT()
+function Perl_Player_Pet_Events:UNIT_COMBAT(arg1)
 	if (arg1 == "pet") then
 		CombatFeedback_OnCombatEvent(Perl_Player_Pet_Frame, arg2, arg3, arg4, arg5);
 	end
 end
 
-function Perl_Player_Pet_Events:UNIT_SPELLMISS()
+function Perl_Player_Pet_Events:UNIT_SPELLMISS(arg1)
 	if (arg1 == "pet") then
 		CombatFeedback_OnSpellMissEvent(arg2);
 	end
 end
 
-function Perl_Player_Pet_Events:UNIT_NAME_UPDATE()
+function Perl_Player_Pet_Events:UNIT_NAME_UPDATE(arg1)
 	if (arg1 == "pet") then
 		Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));	-- Set name
 	end
 end
 
-function Perl_Player_Pet_Events:UNIT_AURA()
+function Perl_Player_Pet_Events:UNIT_AURA(arg1)
 	if (arg1 == "pet") then
 		Perl_Player_Pet_Buff_UpdateAll();	-- Update the buff/debuff list
 	end
@@ -186,7 +170,7 @@ function Perl_Player_Pet_Events:UNIT_PET_EXPERIENCE()
 	end
 end
 
-function Perl_Player_Pet_Events:UNIT_LEVEL()
+function Perl_Player_Pet_Events:UNIT_LEVEL(arg1)
 	if (arg1 == "pet") then
 		Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
 	elseif (arg1 == "player") then
@@ -194,7 +178,7 @@ function Perl_Player_Pet_Events:UNIT_LEVEL()
 	end
 end
 
-function Perl_Player_Pet_Events:UNIT_DISPLAYPOWER()
+function Perl_Player_Pet_Events:UNIT_DISPLAYPOWER(arg1)
 	if (arg1 == "pet") then
 		Perl_Player_Pet_Update_Mana_Bar();	-- What type of energy are we using now?
 		Perl_Player_Pet_Update_Mana();		-- Update the energy info immediately
@@ -205,13 +189,13 @@ function Perl_Player_Pet_Events:PLAYER_PET_CHANGED()
 	Perl_Player_Pet_Update_Once();
 end
 
-function Perl_Player_Pet_Events:UNIT_PET()
+function Perl_Player_Pet_Events:UNIT_PET(arg1)
 	if (arg1 == "player") then
 		Perl_Player_Pet_Update_Once();
 	end
 end
 
-function Perl_Player_Pet_Events:UNIT_PORTRAIT_UPDATE()
+function Perl_Player_Pet_Events:UNIT_PORTRAIT_UPDATE(arg1)
 	if (arg1 == "pet") then
 		--Perl_Player_Pet_Update_Portrait();	-- Uncomment this line if the line below is ever removed
 		Perl_Player_Pet_Update_Once();		-- As of 1.10 the stable is partially broken, this event however is always called after a pet is swapped, so we will just update the whole mod here too to ensure a clean switch.
@@ -219,7 +203,7 @@ function Perl_Player_Pet_Events:UNIT_PORTRAIT_UPDATE()
 end
 Perl_Player_Pet_Events.UNIT_MODEL_CHANGED = Perl_Player_Pet_Events.UNIT_PORTRAIT_UPDATE;
 
-function Perl_Player_Pet_Events:UNIT_THREAT_SITUATION_UPDATE()
+function Perl_Player_Pet_Events:UNIT_THREAT_SITUATION_UPDATE(arg1)
 	if (arg1 == "pet") then
 		Perl_Player_Pet_Update_Threat();
 	end
@@ -333,7 +317,7 @@ function Perl_Player_Pet_Update_Health()
 			Perl_Player_Pet_HealthBarFadeBar:SetValue(Perl_Player_Pet_HealthBar:GetValue());
 			Perl_Player_Pet_HealthBarFadeBar:Show();
 			Perl_Player_Pet_HealthBar_Fade_Color = 1;
-			Perl_Player_Pet_HealthBar_Fade_Time_Elapsed = 0;
+			Perl_Player_Pet_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_Player_Pet_HealthBar_Fade_OnUpdate_Frame:Show();
 		end
 	end
@@ -387,8 +371,8 @@ function Perl_Player_Pet_Update_Health()
 end
 
 function Perl_Player_Pet_Update_Mana()
-	petmana = UnitMana("pet");
-	petmanamax = UnitManaMax("pet");
+	petmana = UnitPower("pet");
+	petmanamax = UnitPowerMax("pet");
 
 	if (UnitIsDead("pet") or UnitIsGhost("pet")) then				-- This prevents negative mana
 		petmana = 0;
@@ -400,7 +384,7 @@ function Perl_Player_Pet_Update_Mana()
 			Perl_Player_Pet_ManaBarFadeBar:SetValue(Perl_Player_Pet_ManaBar:GetValue());
 			Perl_Player_Pet_ManaBarFadeBar:Show();
 			Perl_Player_Pet_ManaBar_Fade_Color = 1;
-			Perl_Player_Pet_ManaBar_Fade_Time_Elapsed = 0;
+			Perl_Player_Pet_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_Player_Pet_ManaBar_Fade_OnUpdate_Frame:Show();
 		end
 	end
@@ -666,10 +650,11 @@ end
 --------------------------
 -- Pet Target Functions --
 --------------------------
-function Perl_Player_Pet_Target_OnUpdate()
-	Perl_Player_Pet_Target_Time_Elapsed = Perl_Player_Pet_Target_Time_Elapsed + arg1;
-	if (Perl_Player_Pet_Target_Time_Elapsed > Perl_Player_Pet_Target_Time_Update_Rate) then
-		Perl_Player_Pet_Target_Time_Elapsed = 0;
+function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
+	--Perl_Player_Pet_Target_Time_Elapsed = Perl_Player_Pet_Target_Time_Elapsed + arg1;
+	if (self.TimeSinceLastUpdate > Perl_Player_Pet_Target_Time_Update_Rate) then
+		self.TimeSinceLastUpdate = 0;
 
 		if (UnitExists(Perl_Player_Pet_Target_Frame:GetAttribute("unit"))) then
 			-- Begin: Set the name
@@ -827,8 +812,8 @@ function Perl_Player_Pet_Target_OnUpdate()
 			-- End: Update the health bar
 
 			-- Begin: Update the mana bar
-			pettargetmana = UnitMana("pettarget");
-			pettargetmanamax = UnitManaMax("pettarget");
+			pettargetmana = UnitPower("pettarget");
+			pettargetmanamax = UnitPowerMax("pettarget");
 
 			if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then				-- This prevents negative mana
 				pettargetmana = 0;
@@ -856,7 +841,7 @@ function Perl_Player_Pet_Target_OnUpdate()
 
 			-- Begin: Update the mana bar color
 			pettargetpower = UnitPowerType("pettarget");
-			if (UnitManaMax("pettarget") == 0) then
+			if (UnitPowerMax("pettarget") == 0) then
 				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(0, 0, 0, 1);
 				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(0, 0, 0, 0.25);
 			elseif (pettargetpower == 1) then
@@ -915,7 +900,7 @@ function Perl_Player_Pet_Target_HealthBar_Fade_Check()
 			Perl_Player_Pet_Target_HealthBarFadeBar:SetValue(Perl_Player_Pet_Target_HealthBar:GetValue());
 			Perl_Player_Pet_Target_HealthBarFadeBar:Show();
 			Perl_Player_Pet_Target_HealthBar_Fade_Color = 1;
-			Perl_Player_Pet_Target_HealthBar_Fade_Time_Elapsed = 0;
+			Perl_Player_Pet_Target_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_Player_Pet_Target_HealthBarFadeBar:SetStatusBarColor(0, Perl_Player_Pet_Target_HealthBar_Fade_Color, 0, Perl_Player_Pet_Target_HealthBar_Fade_Color);
 			Perl_Player_Pet_Target_HealthBar_Fade_OnUpdate_Frame:Show();
 		end
@@ -929,7 +914,7 @@ function Perl_Player_Pet_Target_ManaBar_Fade_Check()
 			Perl_Player_Pet_Target_ManaBarFadeBar:SetValue(Perl_Player_Pet_Target_ManaBar:GetValue());
 			Perl_Player_Pet_Target_ManaBarFadeBar:Show();
 			Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;
-			Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed = 0;
+			Perl_Player_Pet_Target_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			if (pettargetpower == 0) then			-- Forcing an initial value will prevent the fade from starting incorrectly
 				Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color);
 			elseif (pettargetpower == 1) then
@@ -972,8 +957,8 @@ function Perl_Player_Pet_Target_HealthHide()
 end
 
 function Perl_Player_Pet_Target_ManaShow()
-	pettargetmana = UnitMana("pettarget");
-	pettargetmanamax = UnitManaMax("pettarget");
+	pettargetmana = UnitPower("pettarget");
+	pettargetmanamax = UnitPowerMax("pettarget");
 
 	if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then				-- This prevents negative mana
 		pettargetmana = 0;
@@ -997,23 +982,23 @@ end
 ------------------------
 -- Fade Bar Functions --
 ------------------------
-function Perl_Player_Pet_HealthBar_Fade(arg1)
-	Perl_Player_Pet_HealthBar_Fade_Color = Perl_Player_Pet_HealthBar_Fade_Color - arg1;
-	Perl_Player_Pet_HealthBar_Fade_Time_Elapsed = Perl_Player_Pet_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Player_Pet_HealthBar_Fade(self, elapsed)
+	Perl_Player_Pet_HealthBar_Fade_Color = Perl_Player_Pet_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Player_Pet_HealthBarFadeBar:SetStatusBarColor(0, Perl_Player_Pet_HealthBar_Fade_Color, 0, Perl_Player_Pet_HealthBar_Fade_Color);
 
-	if (Perl_Player_Pet_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Player_Pet_HealthBar_Fade_Color = 1;
-		Perl_Player_Pet_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Player_Pet_HealthBarFadeBar:Hide();
 		Perl_Player_Pet_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Player_Pet_ManaBar_Fade(arg1)
-	Perl_Player_Pet_ManaBar_Fade_Color = Perl_Player_Pet_ManaBar_Fade_Color - arg1;
-	Perl_Player_Pet_ManaBar_Fade_Time_Elapsed = Perl_Player_Pet_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Player_Pet_ManaBar_Fade(self, elapsed)
+	Perl_Player_Pet_ManaBar_Fade_Color = Perl_Player_Pet_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (UnitPowerType("pet") == 0) then
 		Perl_Player_Pet_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Player_Pet_ManaBar_Fade_Color, Perl_Player_Pet_ManaBar_Fade_Color);
@@ -1021,31 +1006,31 @@ function Perl_Player_Pet_ManaBar_Fade(arg1)
 		Perl_Player_Pet_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_ManaBar_Fade_Color, (Perl_Player_Pet_ManaBar_Fade_Color-0.5), 0, Perl_Player_Pet_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Player_Pet_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Player_Pet_ManaBar_Fade_Color = 1;
-		Perl_Player_Pet_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Player_Pet_ManaBarFadeBar:Hide();
 		Perl_Player_Pet_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Player_Pet_Target_HealthBar_Fade(arg1)
-	Perl_Player_Pet_Target_HealthBar_Fade_Color = Perl_Player_Pet_Target_HealthBar_Fade_Color - arg1;
-	Perl_Player_Pet_Target_HealthBar_Fade_Time_Elapsed = Perl_Player_Pet_Target_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Player_Pet_Target_HealthBar_Fade(self, elapsed)
+	Perl_Player_Pet_Target_HealthBar_Fade_Color = Perl_Player_Pet_Target_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Player_Pet_Target_HealthBarFadeBar:SetStatusBarColor(0, Perl_Player_Pet_Target_HealthBar_Fade_Color, 0, Perl_Player_Pet_Target_HealthBar_Fade_Color);
 
-	if (Perl_Player_Pet_Target_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Player_Pet_Target_HealthBar_Fade_Color = 1;
-		Perl_Player_Pet_Target_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Player_Pet_Target_HealthBarFadeBar:Hide();
 		Perl_Player_Pet_Target_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Player_Pet_Target_ManaBar_Fade(arg1)
-	Perl_Player_Pet_Target_ManaBar_Fade_Color = Perl_Player_Pet_Target_ManaBar_Fade_Color - arg1;
-	Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed = Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Player_Pet_Target_ManaBar_Fade(self, elapsed)
+	Perl_Player_Pet_Target_ManaBar_Fade_Color = Perl_Player_Pet_Target_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (pettargetpower == 0) then
 		Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color);
@@ -1059,9 +1044,9 @@ function Perl_Player_Pet_Target_ManaBar_Fade(arg1)
 		Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;
-		Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Player_Pet_Target_ManaBarFadeBar:Hide();
 		Perl_Player_Pet_Target_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
@@ -1632,11 +1617,11 @@ function Perl_Player_Pet_Buff_UpdateAll()
 				bufffilter = "HELPFUL RAID";
 			end
 			_, _, buffTexture, buffApplications = UnitAura("pet", buffnum, bufffilter);			-- Get the texture and buff stacking information if any
-			button = getglobal("Perl_Player_Pet_Buff"..buffnum);						-- Create the main icon for the buff
+			button = _G["Perl_Player_Pet_Buff"..buffnum];						-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Hide();					-- Hide the debuff border
-				buffCount = getglobal(button:GetName().."Count");					-- Declare the buff counting text variable
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
+				_G[button:GetName().."DebuffBorder"]:Hide();					-- Hide the debuff border
+				buffCount = _G[button:GetName().."Count"];					-- Declare the buff counting text variable
 				if (buffApplications > 1) then
 					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
 					buffCount:Show();								-- Show the text
@@ -1656,9 +1641,9 @@ function Perl_Player_Pet_Buff_UpdateAll()
 				debufffilter = "HARMFUL";
 			end
 			_, _, buffTexture, buffApplications, debuffType = UnitAura("pet", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
-			button = getglobal("Perl_Player_Pet_Debuff"..debuffnum);					-- Create the main icon for the debuff
+			button = _G["Perl_Player_Pet_Debuff"..debuffnum];					-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
@@ -1675,9 +1660,9 @@ function Perl_Player_Pet_Buff_UpdateAll()
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
-				getglobal(button:GetName().."DebuffBorder"):SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
-				getglobal(button:GetName().."DebuffBorder"):Show();					-- Show the debuff border
-				buffCount = getglobal(button:GetName().."Count");					-- Declare the debuff counting text variable
+				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
+				_G[button:GetName().."DebuffBorder"]:Show();					-- Show the debuff border
+				buffCount = _G[button:GetName().."Count"];					-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
 					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
 					buffCount:Show();								-- Show the text
@@ -1795,9 +1780,9 @@ function Perl_Player_Pet_Reset_Buffs()
 	local button, debuff, icon;
 
 	for buffnum=1,16 do
-		button = getglobal("Perl_Player_Pet_Buff"..buffnum);
-		icon = getglobal(button:GetName().."Icon");
-		debuff = getglobal(button:GetName().."DebuffBorder");
+		button = _G["Perl_Player_Pet_Buff"..buffnum];
+		icon = _G[button:GetName().."Icon"];
+		debuff = _G[button:GetName().."DebuffBorder"];
 		button:SetHeight(buffsize);
 		button:SetWidth(buffsize);
 		icon:SetHeight(buffsize);
@@ -1806,9 +1791,9 @@ function Perl_Player_Pet_Reset_Buffs()
 		debuff:SetWidth(buffsize);
 		button:Hide();
 
-		button = getglobal("Perl_Player_Pet_Debuff"..buffnum);
-		icon = getglobal(button:GetName().."Icon");
-		debuff = getglobal(button:GetName().."DebuffBorder");
+		button = _G["Perl_Player_Pet_Debuff"..buffnum];
+		icon = _G[button:GetName().."Icon"];
+		debuff = _G[button:GetName().."DebuffBorder"];
 		button:SetHeight(debuffsize);
 		button:SetWidth(debuffsize);
 		icon:SetHeight(debuffsize);
@@ -1863,7 +1848,7 @@ function Perl_Player_Pet_DragStart(button)
 	end
 end
 
-function Perl_Player_Pet_DragStop(button)
+function Perl_Player_Pet_DragStop()
 	Perl_Player_Pet_Frame:StopMovingOrSizing();
 end
 

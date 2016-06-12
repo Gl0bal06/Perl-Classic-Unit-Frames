@@ -124,7 +124,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_ONE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_ONE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
@@ -151,7 +151,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_TWO);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_TWO);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -178,7 +178,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_THREE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_THREE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -205,7 +205,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_FOUR);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_FOUR);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -232,7 +232,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_FIVE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_FIVE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -259,7 +259,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_SIX);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_SIX);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -286,7 +286,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_NONE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_NONE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -349,8 +349,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_All_Set_Scale(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_All_Set_Scale(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -368,7 +368,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Scale();
@@ -389,8 +389,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_All_Set_Transparency(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_All_Set_Transparency(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -408,8 +408,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_All_Set_MiniMap_Position(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_All_Set_MiniMap_Position(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -427,8 +427,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_All_Set_MiniMap_Radius(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_All_Set_MiniMap_Radius(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -446,7 +446,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_SHOW_MINIMAP);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_SHOW_MINIMAP);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_MiniMap_Button();
@@ -467,7 +467,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_POSITIONING_MODE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_POSITIONING_MODE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Positioning_Mode();
@@ -496,7 +496,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TRANSPARENT_BACKGROUND);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TRANSPARENT_BACKGROUND);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Transparent_Background();
@@ -575,7 +575,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_CLICKHEALING);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_CLICKHEALING);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_CastParty_Support();
@@ -596,7 +596,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_CLICKCASTABLE_NAME_FRAMES);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_CLICKCASTABLE_NAME_FRAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Name_Frame_Click_Cast();
@@ -681,7 +681,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_PROGRESSIVE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_PROGRESSIVE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Color_Health();
@@ -702,7 +702,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURED_BACKGROUND);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURED_BACKGROUND);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Textured_Bar_Background();
@@ -723,7 +723,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_FADE_BARS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_FADE_BARS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Fade_Bars();
@@ -744,7 +744,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_INVERT_BAR_VALUES);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_INVERT_BAR_VALUES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Invert_Bar_Values();
@@ -765,7 +765,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COLOR_FRAME_DEBUFF);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_COLOR_FRAME_DEBUFF);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Color_Frame_Debuff();
@@ -786,7 +786,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_THREAT_ICONS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_THREAT_ICONS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Threat_Icon();

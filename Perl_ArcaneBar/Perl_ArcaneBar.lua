@@ -49,9 +49,9 @@ local Perl_ArcaneBar_Colors = {		-- color table
 ----------------------
 function Perl_ArcaneBar_OnLoad(self)
 	self.unit = string.sub(self:GetName(), 16);
-	self.barFlash = getglobal(self:GetName().."_Flash");
-	self.barSpark = getglobal(self:GetName().."Spark");
-	self.castTimeText = getglobal(self:GetName().."_CastTime");
+	self.barFlash = _G[self:GetName().."_Flash"];
+	self.barSpark = _G[self:GetName().."Spark"];
+	self.castTimeText = _G[self:GetName().."_CastTime"];
 
 	if (self.unit == "player") then
 		self.nameframetext = Perl_Player_NameBarText;
@@ -384,9 +384,9 @@ function Perl_ArcaneBar_Initialize()
 	end
 	if (Perl_Party_Frame) then
 		for id=1,4 do
-			getglobal("Perl_ArcaneBar_party"..id):SetParent(getglobal("Perl_Party_MemberFrame"..id));
-			getglobal("Perl_ArcaneBar_party"..id):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_NameFrame"):GetFrameLevel() + 1);
-			getglobal("Perl_Party_MemberFrame"..id.."_Name"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_NameFrame"):GetFrameLevel() + 2);
+			_G["Perl_ArcaneBar_party"..id]:SetParent(_G["Perl_Party_MemberFrame"..id]);
+			_G["Perl_ArcaneBar_party"..id]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_NameFrame"]:GetFrameLevel() + 1);
+			_G["Perl_Party_MemberFrame"..id.."_Name"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_NameFrame"]:GetFrameLevel() + 2);
 		end
 	end
 
@@ -651,11 +651,11 @@ function Perl_ArcaneBar_Frame_Style()
 
 	if (partyenabled == 1) then
 		for id=1,4 do
-			Perl_ArcaneBar_Register(getglobal("Perl_ArcaneBar_party"..id), 1);
+			Perl_ArcaneBar_Register(_G["Perl_ArcaneBar_party"..id], 1);
 		end
 	else
 		for id=1,4 do
-			Perl_ArcaneBar_Register(getglobal("Perl_ArcaneBar_party"..id), 0);
+			Perl_ArcaneBar_Register(_G["Perl_ArcaneBar_party"..id], 0);
 		end
 	end
 
@@ -682,12 +682,12 @@ function Perl_ArcaneBar_Frame_Style()
 
 	if (partyshowtimer == 0) then
 		for id=1,4 do
-			getglobal("Perl_ArcaneBar_party"..id.."_CastTime"):Hide();
-			getglobal("Perl_ArcaneBar_party"..id).showtimer = 0;
+			_G["Perl_ArcaneBar_party"..id.."_CastTime"]:Hide();
+			_G["Perl_ArcaneBar_party"..id].showtimer = 0;
 		end
 	else
 		for id=1,4 do
-			getglobal("Perl_ArcaneBar_party"..id).showtimer = 1;
+			_G["Perl_ArcaneBar_party"..id].showtimer = 1;
 		end
 	end
 
@@ -742,14 +742,14 @@ function Perl_ArcaneBar_Frame_Style()
 		for id=1,4 do
 			if (Perl_Party_Frame) then
 				if (UnitExists("party"..id)) then
-					getglobal("Perl_Party_MemberFrame"..id.."_Name_NameBarText"):SetText(UnitName("party"..id));
+					_G["Perl_Party_MemberFrame"..id.."_Name_NameBarText"]:SetText(UnitName("party"..id));
 				end
 			end
-			getglobal("Perl_ArcaneBar_party"..id).namereplace = 0;
+			_G["Perl_ArcaneBar_party"..id].namereplace = 0;
 		end
 	else
 		for id=1,4 do
-			getglobal("Perl_ArcaneBar_party"..id).namereplace = 1;
+			_G["Perl_ArcaneBar_party"..id].namereplace = 1;
 		end
 	end
 

@@ -47,7 +47,7 @@ local Perl_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Target_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Target_ManaBar_Time_Elapsed = 0;		-- set the update timer to 0
+--local Perl_Target_ManaBar_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Target_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
 
 -- Local variables to save memory
@@ -58,6 +58,9 @@ local targethealth, targethealthmax, targethealthpercent, targetmana, targetmana
 -- Loading Function --
 ----------------------
 function Perl_Target_OnLoad(self)
+	-- Variables
+	self.lastMana = 0;
+
 	-- Combat Text
 	CombatFeedback_Initialize(self, Perl_Target_HitIndicator, 30);
 
@@ -77,30 +80,26 @@ function Perl_Target_OnLoad(self)
 	self:RegisterEvent("UNIT_COMBO_POINTS");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
 	self:RegisterEvent("UNIT_DYNAMIC_FLAGS");
-	self:RegisterEvent("UNIT_ENERGY");
-	self:RegisterEvent("UNIT_FOCUS");
 	self:RegisterEvent("UNIT_HEALTH");
 	self:RegisterEvent("UNIT_LEVEL");
-	self:RegisterEvent("UNIT_MANA");
-	self:RegisterEvent("UNIT_MAXENERGY");
-	self:RegisterEvent("UNIT_MAXFOCUS");
 	self:RegisterEvent("UNIT_MAXHEALTH");
-	self:RegisterEvent("UNIT_MAXMANA");
-	self:RegisterEvent("UNIT_MAXRAGE");
-	self:RegisterEvent("UNIT_MAXRUNIC_POWER");
+	self:RegisterEvent("UNIT_MAXPOWER");
 	self:RegisterEvent("UNIT_NAME_UPDATE");
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+	self:RegisterEvent("UNIT_POWER");
 	self:RegisterEvent("UNIT_PVP_UPDATE");
 	self:RegisterEvent("UNIT_FACTION");
-	self:RegisterEvent("UNIT_RAGE");
-	self:RegisterEvent("UNIT_RUNIC_POWER");
 	self:RegisterEvent("UNIT_SPELLMISS");
 	self:RegisterEvent("UNIT_THREAT_LIST_UPDATE");
 	self:RegisterEvent("VOICE_START");
 	self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
-	self:SetScript("OnEvent", Perl_Target_OnEvent);
+	self:SetScript("OnEvent", 
+		function(self, event, ...)
+			Perl_Target_Events[event](self, ...);
+		end
+	);
 	self:SetScript("OnHide", Perl_Target_OnHide);
 	self:SetScript("OnShow", Perl_Target_OnShow);
 	self:SetScript("OnUpdate", CombatFeedback_OnUpdate);
@@ -128,20 +127,9 @@ function Perl_Target_OnLoad(self)
 end
 
 
--------------------
--- Event Handler --
--------------------
-function Perl_Target_OnEvent()
-	local func = Perl_Target_Events[event];
-	if (func) then
-		func();
-	else
-		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
-			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Target: Report the following event error to the author: "..event);
-		end
-	end
-end
-
+------------
+-- Events --
+------------
 function Perl_Target_Events:PLAYER_TARGET_CHANGED()
 	if (UnitExists(Perl_Target_Frame:GetAttribute("unit"))) then
 		Perl_Target_Update_Once();		-- Set the unchanging info for the target
@@ -157,53 +145,45 @@ function Perl_Target_Events:PARTY_LOOT_METHOD_CHANGED()
 end
 Perl_Target_Events.RAID_ROSTER_UPDATE = Perl_Target_Events.PARTY_LOOT_METHOD_CHANGED;
 
-function Perl_Target_Events:UNIT_HEALTH()
+function Perl_Target_Events:UNIT_HEALTH(arg1)
 	if (arg1 == "target") then
 		Perl_Target_Update_Health();		-- Update health values
 	end
 end
 Perl_Target_Events.UNIT_MAXHEALTH = Perl_Target_Events.UNIT_HEALTH;
 
-function Perl_Target_Events:UNIT_ENERGY()
+function Perl_Target_Events:UNIT_POWER(arg1)
 	if (arg1 == "target") then
-		Perl_Target_Update_Mana();		-- Update energy/mana/rage values
+		Perl_Target_Update_Mana();		-- Update energy/focus/mana/rage/runicpower values
 	end
 end
-Perl_Target_Events.UNIT_MAXENERGY = Perl_Target_Events.UNIT_ENERGY;
-Perl_Target_Events.UNIT_MANA = Perl_Target_Events.UNIT_ENERGY;
-Perl_Target_Events.UNIT_MAXMANA = Perl_Target_Events.UNIT_ENERGY;
-Perl_Target_Events.UNIT_RAGE = Perl_Target_Events.UNIT_ENERGY;
-Perl_Target_Events.UNIT_MAXRAGE = Perl_Target_Events.UNIT_ENERGY;
-Perl_Target_Events.UNIT_FOCUS = Perl_Target_Events.UNIT_ENERGY;
-Perl_Target_Events.UNIT_MAXFOCUS = Perl_Target_Events.UNIT_ENERGY;
-Perl_Target_Events.UNIT_RUNIC_POWER = Perl_Target_Events.UNIT_ENERGY;
-Perl_Target_Events.UNIT_MAXRUNIC_POWER = Perl_Target_Events.UNIT_ENERGY;
+Perl_Target_Events.UNIT_MAXPOWER = Perl_Target_Events.UNIT_POWER;
 
-function Perl_Target_Events:UNIT_AURA()
+function Perl_Target_Events:UNIT_AURA(arg1)
 	if (arg1 == "target") then
 		Perl_Target_Buff_UpdateAll();		-- Update the buffs
 	end
 end
 
-function Perl_Target_Events:UNIT_DYNAMIC_FLAGS()
+function Perl_Target_Events:UNIT_DYNAMIC_FLAGS(arg1)
 	if (arg1 == "target") then
 		Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
 	end
 end
 
-function Perl_Target_Events:UNIT_COMBAT()
+function Perl_Target_Events:UNIT_COMBAT(arg1, arg2, arg3, arg4, arg5)
 	if (arg1 == "target") then
 		CombatFeedback_OnCombatEvent(Perl_Target_Frame, arg2, arg3, arg4, arg5);
 	end
 end
 
-function Perl_Target_Events:UNIT_SPELLMISS()
+function Perl_Target_Events:UNIT_SPELLMISS(arg1, arg2)
 	if (arg1 == "target") then
 		CombatFeedback_OnSpellMissEvent(arg2);
 	end
 end
 
-function Perl_Target_Events:UNIT_NAME_UPDATE()
+function Perl_Target_Events:UNIT_NAME_UPDATE(arg1)
 	if (arg1 == "target") then
 		Perl_Target_Frame_Set_Level();
 		Perl_Target_Update_Name();
@@ -216,13 +196,13 @@ function Perl_Target_Events:UNIT_FACTION()
 end
 Perl_Target_Events.UNIT_PVP_UPDATE = Perl_Target_Events.UNIT_FACTION;
 
-function Perl_Target_Events:UNIT_PORTRAIT_UPDATE()
+function Perl_Target_Events:UNIT_PORTRAIT_UPDATE(arg1)
 	if (arg1 == "target") then
 		Perl_Target_Update_Portrait();
 	end
 end
 
-function Perl_Target_Events:UNIT_COMBO_POINTS()
+function Perl_Target_Events:UNIT_COMBO_POINTS(arg1)
 	if (arg1 == "player" or arg1 == "vehicle") then
 		Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
 	end
@@ -232,32 +212,32 @@ function Perl_Target_Events:RAID_TARGET_UPDATE()
 	Perl_Target_UpdateRaidTargetIcon();
 end
 
-function Perl_Target_Events:UNIT_LEVEL()
+function Perl_Target_Events:UNIT_LEVEL(arg1)
 	if (arg1 == "target") then
 		Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
 	end
 end
 
-function Perl_Target_Events:UNIT_DISPLAYPOWER()
+function Perl_Target_Events:UNIT_DISPLAYPOWER(arg1)
 	if (arg1 == "target") then
 		Perl_Target_Update_Mana_Bar();		-- What type of energy are they using now?
 		Perl_Target_Update_Mana();		-- Update the energy info immediately
 	end
 end
 
-function Perl_Target_Events:VOICE_START()
+function Perl_Target_Events:VOICE_START(arg1)
 	if (arg1 == "target") then
 		Perl_Target_VoiceChatIconFrame:Show();
 	end
 end
 
-function Perl_Target_Events:VOICE_STOP()
+function Perl_Target_Events:VOICE_STOP(arg1)
 	if (arg1 == "target") then
 		Perl_Target_VoiceChatIconFrame:Hide();
 	end
 end
 
-function Perl_Target_Events:UNIT_THREAT_LIST_UPDATE()
+function Perl_Target_Events:UNIT_THREAT_LIST_UPDATE(arg1)
 	if (arg1 == "target") then
 		Perl_Target_Update_Threat();
 	end
@@ -450,7 +430,7 @@ function Perl_Target_Update_Health()
 			Perl_Target_HealthBarFadeBar:SetValue(Perl_Target_HealthBar:GetValue());
 			Perl_Target_HealthBarFadeBar:Show();
 			Perl_Target_HealthBar_Fade_Color = 1;
-			Perl_Target_HealthBar_Fade_Time_Elapsed = 0;
+			Perl_Target_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_Target_HealthBar_Fade_OnUpdate_Frame:Show();
 		end
 	end
@@ -553,8 +533,8 @@ function Perl_Target_Update_Health()
 end
 
 function Perl_Target_Update_Mana()
-	targetmana = UnitMana("target");
-	targetmanamax = UnitManaMax("target");
+	targetmana = UnitPower("target");
+	targetmanamax = UnitPowerMax("target");
 	targetpower = UnitPowerType("target");
 
 	if (UnitIsDead("target") or UnitIsGhost("target")) then				-- This prevents negative mana
@@ -568,12 +548,12 @@ function Perl_Target_Update_Mana()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (targetmana < Perl_Target_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and targetmana > Perl_Target_ManaBar:GetValue())) then
+		if (targetmana < Perl_Target_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and targetmana > Perl_Target_Frame.lastMana)) then
 			Perl_Target_ManaBarFadeBar:SetMinMaxValues(0, targetmanamax);
-			Perl_Target_ManaBarFadeBar:SetValue(Perl_Target_ManaBar:GetValue());
+			Perl_Target_ManaBarFadeBar:SetValue(Perl_Target_Frame.lastMana);
 			Perl_Target_ManaBarFadeBar:Show();
 			Perl_Target_ManaBar_Fade_Color = 1;
-			Perl_Target_ManaBar_Fade_Time_Elapsed = 0;
+			Perl_Target_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_Target_ManaBar_Fade_OnUpdate_Frame:Show();
 		end
 	end
@@ -584,6 +564,8 @@ function Perl_Target_Update_Mana()
 	else
 		Perl_Target_ManaBar:SetValue(targetmana);
 	end
+
+	Perl_Target_Frame.lastMana = targetmana;
 
 	Perl_Target_Update_Mana_Text();
 end
@@ -669,13 +651,25 @@ function Perl_Target_Update_Mana_Text()
 	end
 end
 
-function Perl_Target_OnUpdate_ManaBar(arg1)
-	Perl_Target_ManaBar_Time_Elapsed = Perl_Target_ManaBar_Time_Elapsed + arg1;
-	if (Perl_Target_ManaBar_Time_Elapsed > Perl_Target_ManaBar_Time_Update_Rate) then
-		Perl_Target_ManaBar_Time_Elapsed = 0;
+function Perl_Target_OnUpdate_ManaBar(self, elapsed)
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
+	if (self.TimeSinceLastUpdate > Perl_Target_ManaBar_Time_Update_Rate) then
+		self.TimeSinceLastUpdate = 0;
 
 		targetonupdatemana = UnitPower("target", UnitPowerType("target"));
-		if (playeronupdatemana ~= targetmana) then
+
+		if (PCUF_FADEBARS == 1) then
+			if (targetonupdatemana < Perl_Target_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and targetonupdatemana > Perl_Target_Frame.lastMana)) then
+				Perl_Target_ManaBarFadeBar:SetMinMaxValues(0, targetmanamax);
+				Perl_Target_ManaBarFadeBar:SetValue(Perl_Target_Frame.lastMana);
+				Perl_Target_ManaBarFadeBar:Show();
+				Perl_Target_ManaBar_Fade_Color = 1;
+				Perl_Target_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
+				Perl_Target_ManaBar_Fade_OnUpdate_Frame:Show();
+			end
+		end
+
+		if (targetonupdatemana ~= targetmana) then
 			targetmana = targetonupdatemana;
 			if (PCUF_INVERTBARVALUES == 1) then
 				Perl_Target_ManaBar:SetValue(targetmanamax - targetonupdatemana);
@@ -684,14 +678,16 @@ function Perl_Target_OnUpdate_ManaBar(arg1)
 			end
 			Perl_Target_Update_Mana_Text();
 		end
+
+		Perl_Target_Frame.lastMana = targetonupdatemana;
 	end
 end
 
 function Perl_Target_Update_Mana_Bar()
-	targetpower = UnitPowerType("target");
+	targetpower, _ = UnitPowerType("target");
 
 	-- Set mana bar color
-	if (UnitManaMax("target") == 0) then
+	if (UnitPowerMax("target") == 0) then
 		Perl_Target_ManaBar:Hide();
 		Perl_Target_ManaBarBG:Hide();
 	elseif (targetpower == 1) then
@@ -1346,23 +1342,23 @@ end
 ------------------------
 -- Fade Bar Functions --
 ------------------------
-function Perl_Target_HealthBar_Fade(arg1)
-	Perl_Target_HealthBar_Fade_Color = Perl_Target_HealthBar_Fade_Color - arg1;
-	Perl_Target_HealthBar_Fade_Time_Elapsed = Perl_Target_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Target_HealthBar_Fade(self, elapsed)
+	Perl_Target_HealthBar_Fade_Color = Perl_Target_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Target_HealthBarFadeBar:SetStatusBarColor(0, Perl_Target_HealthBar_Fade_Color, 0, Perl_Target_HealthBar_Fade_Color);
 
-	if (Perl_Target_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Target_HealthBar_Fade_Color = 1;
-		Perl_Target_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Target_HealthBarFadeBar:Hide();
 		Perl_Target_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Target_ManaBar_Fade(arg1)
-	Perl_Target_ManaBar_Fade_Color = Perl_Target_ManaBar_Fade_Color - arg1;
-	Perl_Target_ManaBar_Fade_Time_Elapsed = Perl_Target_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Target_ManaBar_Fade(self, elapsed)
+	Perl_Target_ManaBar_Fade_Color = Perl_Target_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (targetpower == 0) then
 		Perl_Target_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Target_ManaBar_Fade_Color, Perl_Target_ManaBar_Fade_Color);
@@ -1376,9 +1372,9 @@ function Perl_Target_ManaBar_Fade(arg1)
 		Perl_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_Target_ManaBar_Fade_Color, Perl_Target_ManaBar_Fade_Color, Perl_Target_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Target_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Target_ManaBar_Fade_Color = 1;
-		Perl_Target_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Target_ManaBarFadeBar:Hide();
 		Perl_Target_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
@@ -2227,11 +2223,11 @@ function Perl_Target_Buff_UpdateAll()
 				bufffilter = "HELPFUL RAID";
 			end
 			_, _, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura("target", buffnum, bufffilter);	-- Get the texture and buff stacking information if any
-			button = getglobal("Perl_Target_Buff"..buffnum);						-- Create the main icon for the buff
+			button = _G["Perl_Target_Buff"..buffnum];						-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Hide();					-- Hide the debuff border
-				buffCount = getglobal(button:GetName().."Count");					-- Declare the buff counting text variable
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
+				_G[button:GetName().."DebuffBorder"]:Hide();					-- Hide the debuff border
+				buffCount = _G[button:GetName().."Count"];					-- Declare the buff counting text variable
 				if (buffApplications > 1) then
 					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
 					buffCount:Show();								-- Show the text
@@ -2239,7 +2235,7 @@ function Perl_Target_Buff_UpdateAll()
 					buffCount:Hide();								-- Hide the text if equal to 0
 				end
 				if (displaybufftimers == 1) then
-					cooldown = getglobal(button:GetName().."Cooldown");				-- Handle cooldowns
+					cooldown = _G[button:GetName().."Cooldown"];				-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
 							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
@@ -2264,9 +2260,9 @@ function Perl_Target_Buff_UpdateAll()
 		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
 			Perl_Target_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
 			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura("target", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
-			button = getglobal("Perl_Target_Debuff"..debuffnum);						-- Create the main icon for the debuff
+			button = _G["Perl_Target_Debuff"..debuffnum];						-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
@@ -2289,9 +2285,9 @@ function Perl_Target_Buff_UpdateAll()
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
-				getglobal(button:GetName().."DebuffBorder"):SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
-				getglobal(button:GetName().."DebuffBorder"):Show();					-- Show the debuff border
-				buffCount = getglobal(button:GetName().."Count");					-- Declare the debuff counting text variable
+				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
+				_G[button:GetName().."DebuffBorder"]:Show();					-- Show the debuff border
+				buffCount = _G[button:GetName().."Count"];					-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
 					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
 					buffCount:Show();								-- Show the text
@@ -2299,7 +2295,7 @@ function Perl_Target_Buff_UpdateAll()
 					buffCount:Hide();								-- Hide the text if equal to 0
 				end
 				if (displaybufftimers == 1) then
-					cooldown = getglobal(button:GetName().."Cooldown");					-- Handle cooldowns
+					cooldown = _G[button:GetName().."Cooldown"];					-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
 							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
@@ -2542,17 +2538,17 @@ end
 function Perl_Target_Reset_Buffs()
 	local button, cooldown;
 	for buffnum=1,20 do
-		button = getglobal("Perl_Target_Buff"..buffnum);
+		button = _G["Perl_Target_Buff"..buffnum];
 		--button:Hide();
-		cooldown = getglobal(button:GetName().."Cooldown");
+		cooldown = _G[button:GetName().."Cooldown"];
 		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 		cooldown:Hide();
 		button:Hide();
 	end
 	for debuffnum=1,40 do
-		button = getglobal("Perl_Target_Debuff"..debuffnum);
+		button = _G["Perl_Target_Debuff"..debuffnum];
 		--button:Hide();
-		cooldown = getglobal(button:GetName().."Cooldown");
+		cooldown = _G[button:GetName().."Cooldown"];
 		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 		cooldown:Hide();
 		button:Hide();
@@ -2623,7 +2619,7 @@ function Perl_Target_DragStart(button)
 	end
 end
 
-function Perl_Target_DragStop(button)
+function Perl_Target_DragStop()
 	Perl_Target_Frame:StopMovingOrSizing();
 end
 

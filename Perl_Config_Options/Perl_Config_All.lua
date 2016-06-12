@@ -21,7 +21,7 @@ function Perl_Config_All_Set_Values()
 			num = 7;
 		end
 		Perl_Config_All_Frame_CheckButton7:SetChecked(nil);
-		getglobal("Perl_Config_All_Frame_CheckButton"..num):SetChecked(1);
+		_G["Perl_Config_All_Frame_CheckButton"..num]:SetChecked(1);
 	end
 
 	Perl_Config_All_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);

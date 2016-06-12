@@ -269,10 +269,10 @@
 								UnitFrame_OnLeave();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Focus_DragStart(arg1);
+								Perl_Focus_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Focus_DragStop(arg1);
+								Perl_Focus_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -384,10 +384,10 @@
 								Perl_Focus_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Focus_DragStart(arg1);
+								Perl_Focus_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Focus_DragStop(arg1);
+								Perl_Focus_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -462,10 +462,10 @@
 								Perl_Focus_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Focus_DragStart(arg1);
+								Perl_Focus_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Focus_DragStop(arg1);
+								Perl_Focus_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -570,10 +570,10 @@
 								Perl_Focus_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Focus_DragStart(arg1);
+								Perl_Focus_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Focus_DragStop(arg1);
+								Perl_Focus_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -637,10 +637,10 @@
 								Perl_Focus_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Focus_DragStart(arg1);
+								Perl_Focus_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Focus_DragStop(arg1);
+								Perl_Focus_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -704,10 +704,10 @@
 								Perl_Focus_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Focus_DragStart(arg1);
+								Perl_Focus_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Focus_DragStop(arg1);
+								Perl_Focus_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -783,10 +783,10 @@
 								Perl_Focus_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Focus_DragStart(arg1);
+								Perl_Focus_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Focus_DragStop(arg1);
+								Perl_Focus_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -805,10 +805,10 @@
 						</Anchors>
 						<Scripts>
 							<OnDragStart>
-								Perl_Focus_DragStart(arg1);
+								Perl_Focus_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Focus_DragStop(arg1);
+								Perl_Focus_DragStop();
 							</OnDragStop>
 						</Scripts>
 						<BarTexture name="Perl_Focus_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
@@ -891,10 +891,10 @@
 						</Anchors>
 						<Scripts>
 							<OnDragStart>
-								Perl_Focus_DragStart(arg1);
+								Perl_Focus_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Focus_DragStop(arg1);
+								Perl_Focus_DragStop();
 							</OnDragStop>
 						</Scripts>
 						<BarTexture name="Perl_Focus_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
@@ -1347,17 +1347,19 @@
 
 	<Frame name="Perl_Focus_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Focus_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Focus_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Focus_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Focus_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Focus_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 

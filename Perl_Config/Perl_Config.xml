@@ -48,7 +48,7 @@
 						self:RegisterForClicks('LeftButtonUp', 'RightButtonUp');
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Button_OnClick(arg1, self);
+						Perl_Config_Button_OnClick(self, button);
 					</OnClick>
 					<OnEnter>
 						Perl_Config_Button_Tooltip(self);

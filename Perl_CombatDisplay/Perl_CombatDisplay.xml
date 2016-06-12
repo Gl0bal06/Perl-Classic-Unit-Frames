@@ -86,10 +86,10 @@
 								Perl_CombatDisplay_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_CombatDisplay_DragStart(arg1);
+								Perl_CombatDisplay_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_CombatDisplay_DragStop(arg1);
+								Perl_CombatDisplay_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -532,10 +532,10 @@
 								Perl_CombatDisplay_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_CombatDisplay_Target_DragStart(arg1);
+								Perl_CombatDisplay_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_CombatDisplay_Target_DragStop(arg1);
+								Perl_CombatDisplay_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -662,17 +662,19 @@
 
 	<Frame name="Perl_CombatDisplay_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_CombatDisplay_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_CombatDisplay_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_CombatDisplay_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_CombatDisplay_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_CombatDisplay_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 
@@ -688,57 +690,64 @@
 
 	<Frame name="Perl_CombatDisplay_CPBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_CombatDisplay_CPBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_CombatDisplay_CPBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_CombatDisplay_PetHealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_CombatDisplay_PetHealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_CombatDisplay_PetHealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_CombatDisplay_PetManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_CombatDisplay_PetManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_CombatDisplay_PetManaBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_CombatDisplay_Target_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_CombatDisplay_Target_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_CombatDisplay_Target_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_CombatDisplay_Target_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_CombatDisplay_Target_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_CombatDisplay_Target_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_CombatDisplay_ManaBar_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_CombatDisplay_OnUpdate_ManaBar(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_CombatDisplay_OnUpdate_ManaBar" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_CombatDisplay_Target_ManaBar_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_CombatDisplay_Target_OnUpdate_ManaBar(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_CombatDisplay_Target_OnUpdate_ManaBar" />
 		</Scripts>
 	</Frame>
 </Ui>

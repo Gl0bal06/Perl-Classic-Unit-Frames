@@ -114,7 +114,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_ENABLE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_ENABLE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Player_Enabled_Update();
@@ -135,7 +135,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_DISPLAY_TIMER);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_DISPLAY_TIMER);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Player_Show_Timer_Update();
@@ -156,7 +156,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_LEFT_TIMER);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_LEFT_TIMER);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Player_Left_Timer_Update();
@@ -177,7 +177,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_REPLACE_NAME);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_REPLACE_NAME);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Player_Name_Replace_Update();
@@ -198,7 +198,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_ENABLE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_ENABLE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Target_Enabled_Update();
@@ -219,7 +219,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_DISPLAY_TIMER);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_DISPLAY_TIMER);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Target_Show_Timer_Update();
@@ -240,7 +240,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_LEFT_TIMER);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_LEFT_TIMER);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Target_Left_Timer_Update();
@@ -261,7 +261,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_REPLACE_NAME);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_REPLACE_NAME);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Target_Name_Replace_Update();
@@ -282,7 +282,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_ENABLE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_ENABLE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Focus_Enabled_Update();
@@ -303,7 +303,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_DISPLAY_TIMER);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_DISPLAY_TIMER);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Focus_Show_Timer_Update();
@@ -324,7 +324,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_LEFT_TIMER);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_LEFT_TIMER);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Focus_Left_Timer_Update();
@@ -345,7 +345,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_REPLACE_NAME);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_REPLACE_NAME);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Focus_Name_Replace_Update();
@@ -366,7 +366,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_ENABLE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_ENABLE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Party_Enabled_Update();
@@ -387,7 +387,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_DISPLAY_TIMER);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_DISPLAY_TIMER);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Party_Show_Timer_Update();
@@ -408,7 +408,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_LEFT_TIMER);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_LEFT_TIMER);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Party_Left_Timer_Update();
@@ -429,7 +429,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_REPLACE_NAME);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_REPLACE_NAME);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Party_Name_Replace_Update();
@@ -450,7 +450,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_HIDE_BLIZZARD);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_HIDE_BLIZZARD);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Hide_Original_Update();
@@ -471,8 +471,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_ArcaneBar_Set_Transparency(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_ArcaneBar_Set_Transparency(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>

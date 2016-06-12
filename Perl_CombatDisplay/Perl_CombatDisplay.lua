@@ -23,9 +23,9 @@ local clickthrough = 0;		-- frames are clickable by default
 local InCombat = 0;
 local Initialized = nil;
 local IsAggroed = 0;
-local Perl_CombatDisplay_ManaBar_Time_Elapsed = 0;		-- set the update timer to 0
+--local Perl_CombatDisplay_ManaBar_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_CombatDisplay_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
-local Perl_CombatDisplay_Target_ManaBar_Time_Elapsed = 0;	-- set the update timer to 0
+--local Perl_CombatDisplay_Target_ManaBar_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_CombatDisplay_Target_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
 local Perl_CombatDisplay_DruidBar_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_CombatDisplay_DruidBar_Time_Update_Rate = 0.2;	-- the update interval
@@ -34,21 +34,14 @@ local manafull = 0;
 
 -- Fade Bar Variables
 local Perl_CombatDisplay_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_CombatDisplay_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_CombatDisplay_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_CombatDisplay_ManaBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
 --local Perl_CombatDisplay_DruidBar_Fade_Color = 1;		-- the color fading interval
 --local Perl_CombatDisplay_DruidBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_CombatDisplay_CPBar_Fade_Color = 1;			-- the color fading interval
-local Perl_CombatDisplay_CPBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_CombatDisplay_PetHealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_CombatDisplay_PetHealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_CombatDisplay_PetManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_CombatDisplay_PetManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_CombatDisplay_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_CombatDisplay_Target_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_CombatDisplay_Target_ManaBar_Fade_Color = 1;			-- the color fading interval
-local Perl_CombatDisplay_Target_ManaBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
 
 -- Local variables to save memory
 local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, pethealth, pethealthmax, petmana, petmanamax, targethealth, targethealthmax, targetmana, targetmanamax, targetpowertype, englishclass, playeronupdatemana, targetonupdatemana;
@@ -67,22 +60,18 @@ function Perl_CombatDisplay_OnLoad(self)
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_COMBO_POINTS");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
-	self:RegisterEvent("UNIT_ENERGY");
-	self:RegisterEvent("UNIT_FOCUS");
 	self:RegisterEvent("UNIT_HEALTH");
-	self:RegisterEvent("UNIT_MANA");
-	self:RegisterEvent("UNIT_MAXENERGY");
-	self:RegisterEvent("UNIT_MAXFOCUS");
 	self:RegisterEvent("UNIT_MAXHEALTH");
-	self:RegisterEvent("UNIT_MAXMANA");
-	self:RegisterEvent("UNIT_MAXRAGE");
-	self:RegisterEvent("UNIT_MAXRUNIC_POWER");
+	self:RegisterEvent("UNIT_MAXPOWER");
 	self:RegisterEvent("UNIT_PET");
-	self:RegisterEvent("UNIT_RAGE");
-	self:RegisterEvent("UNIT_RUNIC_POWER");
+	self:RegisterEvent("UNIT_POWER");
 
 	-- Scripts
-	self:SetScript("OnEvent", Perl_CombatDisplay_OnEvent);
+	self:SetScript("OnEvent", 
+		function(self, event, ...)
+			Perl_CombatDisplay_Events[event](self, ...);
+		end
+	);
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetFrameLevel(Perl_CombatDisplay_ManaFrame:GetFrameLevel() + 2);
@@ -105,22 +94,10 @@ function Perl_CombatDisplay_Target_OnLoad(self)
 end
 
 
--------------------
--- Event Handler --
--------------------
-function Perl_CombatDisplay_OnEvent()
-	local func = Perl_CombatDisplay_Events[event];
-	
-	if (func) then
-		func();
-	else
-		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
-			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - CombatDisplay: Report the following event error to the author: "..event);
-		end
-	end
-end
-
-function Perl_CombatDisplay_Events:UNIT_HEALTH()
+------------
+-- Events --
+------------
+function Perl_CombatDisplay_Events:UNIT_HEALTH(arg1)
 	if (arg1 == "player") then
 		if (UnitHealth("player") == UnitHealthMax("player")) then
 			healthfull = 1;
@@ -141,82 +118,69 @@ function Perl_CombatDisplay_Events:UNIT_HEALTH()
 end
 Perl_CombatDisplay_Events.UNIT_MAXHEALTH = Perl_CombatDisplay_Events.UNIT_HEALTH;
 
-function Perl_CombatDisplay_Events:UNIT_ENERGY()
-	if (arg1 == "player") then
-		if (UnitMana("player") == UnitManaMax("player")) then
-			manafull = 1;
-			if (manapersist == 1) then
-				Perl_CombatDisplay_UpdateDisplay();
-			end
-		else
-			manafull = 0;
-		end
-		Perl_CombatDisplay_Update_Mana();
-	elseif (arg1 == "target") then
-		Perl_CombatDisplay_Target_Update_Mana();
-	elseif (arg1 == "pet") then
-		if (showpetbars == 1) then
-			Perl_CombatDisplay_Update_PetMana();
-		end
-	end
-end
-Perl_CombatDisplay_Events.UNIT_MAXENERGY = Perl_CombatDisplay_Events.UNIT_ENERGY;
+function Perl_CombatDisplay_Events:UNIT_POWER(arg1)
+	local powertype, _ = UnitPowerType("arg1");
 
-function Perl_CombatDisplay_Events:UNIT_MANA()
-	if (arg1 == "player") then
-		if (UnitMana("player") == UnitManaMax("player")) then
-			manafull = 1;
-			if (manapersist == 1) then
-				Perl_CombatDisplay_UpdateDisplay();
+	if (powertype == 0) then -- mana
+		if (arg1 == "player") then
+			if (UnitPower("player") == UnitPowerMax("player")) then
+				manafull = 1;
+				if (manapersist == 1) then
+					Perl_CombatDisplay_UpdateDisplay();
+				end
+			else
+				manafull = 0;
 			end
-		else
-			manafull = 0;
-		end
-		Perl_CombatDisplay_Update_Mana();
-	elseif (arg1 == "target") then
-		Perl_CombatDisplay_Target_Update_Mana();
-	elseif (arg1 == "pet") then
-		if (showpetbars == 1) then
-			Perl_CombatDisplay_Update_PetMana();
-		end
-	end
-end
-Perl_CombatDisplay_Events.UNIT_MAXMANA = Perl_CombatDisplay_Events.UNIT_MANA;
-
-function Perl_CombatDisplay_Events:UNIT_RAGE()
-	if (arg1 == "player") then
-		if (UnitMana("player") == 0) then
-			manafull = 1;
-			if (manapersist == 1) then
-				Perl_CombatDisplay_UpdateDisplay();
+			Perl_CombatDisplay_Update_Mana();
+		elseif (arg1 == "target") then
+			Perl_CombatDisplay_Target_Update_Mana();
+		elseif (arg1 == "pet") then
+			if (showpetbars == 1) then
+				Perl_CombatDisplay_Update_PetMana();
 			end
-		else
-			manafull = 0;
 		end
-		Perl_CombatDisplay_Update_Mana();
-	elseif (arg1 == "target") then
-		Perl_CombatDisplay_Target_Update_Mana();
+	elseif (powertype == 1 or powertype == 6) then		-- rage or runic power
+		if (arg1 == "player") then
+			if (UnitPower("player") == 0) then
+				manafull = 1;
+				if (manapersist == 1) then
+					Perl_CombatDisplay_UpdateDisplay();
+				end
+			else
+				manafull = 0;
+			end
+			Perl_CombatDisplay_Update_Mana();
+		elseif (arg1 == "target") then
+			Perl_CombatDisplay_Target_Update_Mana();
+		end
+	elseif (powertype == 2 or powertype == 3) then	-- energy
+		if (arg1 == "player") then
+			if (UnitPower("player") == UnitPowerMax("player")) then
+				manafull = 1;
+				if (manapersist == 1) then
+					Perl_CombatDisplay_UpdateDisplay();
+				end
+			else
+				manafull = 0;
+			end
+			Perl_CombatDisplay_Update_Mana();
+		elseif (arg1 == "target") then
+			Perl_CombatDisplay_Target_Update_Mana();
+		elseif (arg1 == "pet") then
+			if (showpetbars == 1) then
+				Perl_CombatDisplay_Update_PetMana();
+			end
+		end
 	end
 end
-Perl_CombatDisplay_Events.UNIT_MAXRAGE = Perl_CombatDisplay_Events.UNIT_RAGE;
-Perl_CombatDisplay_Events.UNIT_RUNIC_POWER = Perl_CombatDisplay_Events.UNIT_RAGE;
-Perl_CombatDisplay_Events.UNIT_MAXRUNIC_POWER = Perl_CombatDisplay_Events.UNIT_RAGE;
-
-function Perl_CombatDisplay_Events:UNIT_FOCUS()
-	if (arg1 == "pet") then
-		if (showpetbars == 1) then
-			Perl_CombatDisplay_Update_PetMana();
-		end
-	end
-end
-Perl_CombatDisplay_Events.UNIT_MAXFOCUS = Perl_CombatDisplay_Events.UNIT_FOCUS;
+Perl_CombatDisplay_Events.UNIT_MAXPOWER = Perl_CombatDisplay_Events.UNIT_POWER;
 
 function Perl_CombatDisplay_Events:PLAYER_TARGET_CHANGED()
 	Perl_CombatDisplay_UpdateDisplay();
 	Perl_CombatDisplay_Update_Combo_Points();
 end
 
-function Perl_CombatDisplay_Events:UNIT_COMBO_POINTS()
+function Perl_CombatDisplay_Events:UNIT_COMBO_POINTS(arg1)
 	if (arg1 == "player" or arg1 == "vehicle") then
 		Perl_CombatDisplay_Update_Combo_Points();
 	end
@@ -243,7 +207,7 @@ function Perl_CombatDisplay_Events:PLAYER_REGEN_DISABLED()
 	end
 end
 
-function Perl_CombatDisplay_Events:UNIT_DISPLAYPOWER()
+function Perl_CombatDisplay_Events:UNIT_DISPLAYPOWER(arg1)
 	if (arg1 == "player") then
 		Perl_CombatDisplay_UpdateBars();
 		Perl_CombatDisplay_Update_Mana();
@@ -265,7 +229,7 @@ function Perl_CombatDisplay_Events:UNIT_DISPLAYPOWER()
 	end
 end
 
-function Perl_CombatDisplay_Events:UNIT_AURA()
+function Perl_CombatDisplay_Events:UNIT_AURA(arg1)
 	if (arg1 == "player") then
 		Perl_CombatDisplay_Buff_UpdateAll(arg1, Perl_CombatDisplay_ManaFrame);
 	elseif (arg1 == "target") then
@@ -288,13 +252,13 @@ function Perl_CombatDisplay_Events:PLAYER_LOGIN()
 		healthfull = 0;
 	end
 	if (powertype == 0 or powertype == 3) then
-		if (UnitMana("player") == UnitManaMax("player")) then
+		if (UnitPower("player") == UnitPowerMax("player")) then
 			manafull = 1;
 		else
 			manafull = 0;
 		end
 	elseif (powertype == 1) then
-		if (UnitMana("player") == 0) then
+		if (UnitPower("player") == 0) then
 			manafull = 1;
 		else
 			manafull = 0;
@@ -413,7 +377,7 @@ function Perl_CombatDisplay_Update_Health()
 			Perl_CombatDisplay_HealthBarFadeBar:SetValue(Perl_CombatDisplay_HealthBar:GetValue());
 			Perl_CombatDisplay_HealthBarFadeBar:Show();
 			Perl_CombatDisplay_HealthBar_Fade_Color = 1;
-			Perl_CombatDisplay_HealthBar_Fade_Time_Elapsed = 0;
+			Perl_CombatDisplay_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_CombatDisplay_HealthBar_Fade_OnUpdate_Frame:Show();
 		end
 	end
@@ -467,8 +431,8 @@ function Perl_CombatDisplay_Update_Health()
 end
 
 function Perl_CombatDisplay_Update_Mana()
-	playermana = UnitMana("player");
-	playermanamax = UnitManaMax("player");
+	playermana = UnitPower("player");
+	playermanamax = UnitPowerMax("player");
 	playerpower = UnitPowerType("player");
 
 	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
@@ -487,7 +451,7 @@ function Perl_CombatDisplay_Update_Mana()
 			Perl_CombatDisplay_ManaBarFadeBar:SetValue(Perl_CombatDisplay_ManaBar:GetValue());
 			Perl_CombatDisplay_ManaBarFadeBar:Show();
 			Perl_CombatDisplay_ManaBar_Fade_Color = 1;
-			Perl_CombatDisplay_ManaBar_Fade_Time_Elapsed = 0;
+			Perl_CombatDisplay_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_CombatDisplay_ManaBar_Fade_OnUpdate_Frame:Show();
 		end
 	end
@@ -564,10 +528,10 @@ function Perl_CombatDisplay_Update_Mana_Text()
 	end
 end
 
-function Perl_CombatDisplay_OnUpdate_ManaBar(arg1)
-	Perl_CombatDisplay_ManaBar_Time_Elapsed = Perl_CombatDisplay_ManaBar_Time_Elapsed + arg1;
-	if (Perl_CombatDisplay_ManaBar_Time_Elapsed > Perl_CombatDisplay_ManaBar_Time_Update_Rate) then
-		Perl_CombatDisplay_ManaBar_Time_Elapsed = 0;
+function Perl_CombatDisplay_OnUpdate_ManaBar(self, elapsed)
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
+	if (self.TimeSinceLastUpdate > Perl_CombatDisplay_ManaBar_Time_Update_Rate) then
+		self.TimeSinceLastUpdate = 0;
 
 		playeronupdatemana = UnitPower("player", UnitPowerType("player"));
 		if (playeronupdatemana ~= playermana) then
@@ -595,7 +559,7 @@ function Perl_CombatDisplay_Update_Combo_Points()
 				Perl_CombatDisplay_CPBarFadeBar:SetValue(Perl_CombatDisplay_CPBar:GetValue());
 				Perl_CombatDisplay_CPBarFadeBar:Show();
 				Perl_CombatDisplay_CPBar_Fade_Color = 1;
-				Perl_CombatDisplay_CPBar_Fade_Time_Elapsed = 0;
+				Perl_CombatDisplay_CPBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 				Perl_CombatDisplay_CPBar_Fade_OnUpdate_Frame:Show();
 			end
 		end
@@ -621,6 +585,11 @@ function Perl_CombatDisplay_UpdateBars()
 	elseif (playerpower == 1) then		-- rage
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+		-- Hide CP Bar
+		return;
+	elseif (playerpower == 2) then		-- focus
+		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
+		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 		-- Hide CP Bar
 		return;
 	elseif (playerpower == 3) then		-- energy
@@ -676,7 +645,7 @@ function Perl_CombatDisplay_Update_PetHealth()
 			Perl_CombatDisplay_PetHealthBarFadeBar:SetValue(Perl_CombatDisplay_PetHealthBar:GetValue());
 			Perl_CombatDisplay_PetHealthBarFadeBar:Show();
 			Perl_CombatDisplay_PetHealthBar_Fade_Color = 1;
-			Perl_CombatDisplay_PetHealthBar_Fade_Time_Elapsed = 0;
+			Perl_CombatDisplay_PetHealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_CombatDisplay_PetHealthBar_Fade_OnUpdate_Frame:Show();
 		end
 	end
@@ -730,8 +699,8 @@ function Perl_CombatDisplay_Update_PetHealth()
 end
 
 function Perl_CombatDisplay_Update_PetMana()
-	petmana = UnitMana("pet");
-	petmanamax = UnitManaMax("pet");
+	petmana = UnitPower("pet");
+	petmanamax = UnitPowerMax("pet");
 
 	if (UnitIsDead("pet") or UnitIsGhost("pet")) then				-- This prevents negative mana
 		petmana = 0;
@@ -743,7 +712,7 @@ function Perl_CombatDisplay_Update_PetMana()
 			Perl_CombatDisplay_PetManaBarFadeBar:SetValue(Perl_CombatDisplay_PetManaBar:GetValue());
 			Perl_CombatDisplay_PetManaBarFadeBar:Show();
 			Perl_CombatDisplay_PetManaBar_Fade_Color = 1;
-			Perl_CombatDisplay_PetManaBar_Fade_Time_Elapsed = 0;
+			Perl_CombatDisplay_PetManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_CombatDisplay_PetManaBar_Fade_OnUpdate_Frame:Show();
 		end
 	end
@@ -795,7 +764,7 @@ function Perl_CombatDisplay_Target_Update_Health()
 			Perl_CombatDisplay_Target_HealthBarFadeBar:SetValue(Perl_CombatDisplay_Target_HealthBar:GetValue());
 			Perl_CombatDisplay_Target_HealthBarFadeBar:Show();
 			Perl_CombatDisplay_Target_HealthBar_Fade_Color = 1;
-			Perl_CombatDisplay_Target_HealthBar_Fade_Time_Elapsed = 0;
+			Perl_CombatDisplay_Target_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_CombatDisplay_Target_HealthBar_Fade_OnUpdate_Frame:Show();
 		end
 	end
@@ -849,8 +818,8 @@ function Perl_CombatDisplay_Target_Update_Health()
 end
 
 function Perl_CombatDisplay_Target_Update_Mana()
-	targetmana = UnitMana("target");
-	targetmanamax = UnitManaMax("target");
+	targetmana = UnitPower("target");
+	targetmanamax = UnitPowerMax("target");
 	targetpowertype = UnitPowerType("target");
 
 	if (targetmanamax == 0) then
@@ -874,7 +843,7 @@ function Perl_CombatDisplay_Target_Update_Mana()
 			Perl_CombatDisplay_Target_ManaBarFadeBar:SetValue(Perl_CombatDisplay_Target_ManaBar:GetValue());
 			Perl_CombatDisplay_Target_ManaBarFadeBar:Show();
 			Perl_CombatDisplay_Target_ManaBar_Fade_Color = 1;
-			Perl_CombatDisplay_Target_ManaBar_Fade_Time_Elapsed = 0;
+			Perl_CombatDisplay_Target_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_CombatDisplay_Target_ManaBar_Fade_OnUpdate_Frame:Show();
 		end
 	end
@@ -901,10 +870,10 @@ function Perl_CombatDisplay_Target_Update_Mana_Text()
 	end
 end
 
-function Perl_CombatDisplay_Target_OnUpdate_ManaBar(arg1)
-	Perl_CombatDisplay_Target_ManaBar_Time_Elapsed = Perl_CombatDisplay_Target_ManaBar_Time_Elapsed + arg1;
-	if (Perl_CombatDisplay_Target_ManaBar_Time_Elapsed > Perl_CombatDisplay_Target_ManaBar_Time_Update_Rate) then
-		Perl_CombatDisplay_Target_ManaBar_Time_Elapsed = 0;
+function Perl_CombatDisplay_Target_OnUpdate_ManaBar(self, elapsed)
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
+	if (self.TimeSinceLastUpdate > Perl_CombatDisplay_Target_ManaBar_Time_Update_Rate) then
+		self.TimeSinceLastUpdate = 0;
 
 		targetonupdatemana = UnitPower("target", UnitPowerType("target"));
 		if (targetonupdatemana ~= targetmana) then
@@ -920,7 +889,7 @@ function Perl_CombatDisplay_Target_OnUpdate_ManaBar(arg1)
 end
 
 function Perl_CombatDisplay_Target_UpdateBars()
-	targetmanamax = UnitManaMax("target");
+	targetmanamax = UnitPowerMax("target");
 	targetpowertype = UnitPowerType("target");
 
 	-- Set power type specific events and colors.
@@ -955,23 +924,23 @@ end
 ------------------------
 -- Fade Bar Functions --
 ------------------------
-function Perl_CombatDisplay_HealthBar_Fade(arg1)
-	Perl_CombatDisplay_HealthBar_Fade_Color = Perl_CombatDisplay_HealthBar_Fade_Color - arg1;
-	Perl_CombatDisplay_HealthBar_Fade_Time_Elapsed = Perl_CombatDisplay_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_CombatDisplay_HealthBar_Fade(self, elapsed)
+	Perl_CombatDisplay_HealthBar_Fade_Color = Perl_CombatDisplay_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_CombatDisplay_HealthBarFadeBar:SetStatusBarColor(0, Perl_CombatDisplay_HealthBar_Fade_Color, 0, Perl_CombatDisplay_HealthBar_Fade_Color);
 
-	if (Perl_CombatDisplay_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_CombatDisplay_HealthBar_Fade_Color = 1;
-		Perl_CombatDisplay_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_CombatDisplay_HealthBarFadeBar:Hide();
 		Perl_CombatDisplay_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_CombatDisplay_ManaBar_Fade(arg1)
-	Perl_CombatDisplay_ManaBar_Fade_Color = Perl_CombatDisplay_ManaBar_Fade_Color - arg1;
-	Perl_CombatDisplay_ManaBar_Fade_Time_Elapsed = Perl_CombatDisplay_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_CombatDisplay_ManaBar_Fade(self, elapsed)
+	Perl_CombatDisplay_ManaBar_Fade_Color = Perl_CombatDisplay_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (playerpower == 0) then
 		Perl_CombatDisplay_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_CombatDisplay_ManaBar_Fade_Color, Perl_CombatDisplay_ManaBar_Fade_Color);
@@ -983,9 +952,9 @@ function Perl_CombatDisplay_ManaBar_Fade(arg1)
 		Perl_CombatDisplay_ManaBarFadeBar:SetStatusBarColor(0, Perl_CombatDisplay_ManaBar_Fade_Color, Perl_CombatDisplay_ManaBar_Fade_Color, Perl_CombatDisplay_ManaBar_Fade_Color);
 	end
 
-	if (Perl_CombatDisplay_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_CombatDisplay_ManaBar_Fade_Color = 1;
-		Perl_CombatDisplay_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_CombatDisplay_ManaBarFadeBar:Hide();
 		Perl_CombatDisplay_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
@@ -1005,37 +974,37 @@ end
 --	end
 --end
 
-function Perl_CombatDisplay_CPBar_Fade(arg1)
-	Perl_CombatDisplay_CPBar_Fade_Color = Perl_CombatDisplay_CPBar_Fade_Color - arg1;
-	Perl_CombatDisplay_CPBar_Fade_Time_Elapsed = Perl_CombatDisplay_CPBar_Fade_Time_Elapsed + arg1;
+function Perl_CombatDisplay_CPBar_Fade(self, elapsed)
+	Perl_CombatDisplay_CPBar_Fade_Color = Perl_CombatDisplay_CPBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_CombatDisplay_CPBarFadeBar:SetStatusBarColor(Perl_CombatDisplay_CPBar_Fade_Color, 0, 0, Perl_CombatDisplay_CPBar_Fade_Color);
 
-	if (Perl_CombatDisplay_CPBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_CombatDisplay_CPBar_Fade_Color = 1;
-		Perl_CombatDisplay_CPBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_CombatDisplay_CPBarFadeBar:Hide();
 		Perl_CombatDisplay_CPBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_CombatDisplay_PetHealthBar_Fade(arg1)
-	Perl_CombatDisplay_PetHealthBar_Fade_Color = Perl_CombatDisplay_PetHealthBar_Fade_Color - arg1;
-	Perl_CombatDisplay_PetHealthBar_Fade_Time_Elapsed = Perl_CombatDisplay_PetHealthBar_Fade_Time_Elapsed + arg1;
+function Perl_CombatDisplay_PetHealthBar_Fade(self, elapsed)
+	Perl_CombatDisplay_PetHealthBar_Fade_Color = Perl_CombatDisplay_PetHealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_CombatDisplay_PetHealthBarFadeBar:SetStatusBarColor(0, Perl_CombatDisplay_PetHealthBar_Fade_Color, 0, Perl_CombatDisplay_PetHealthBar_Fade_Color);
 
-	if (Perl_CombatDisplay_PetHealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_CombatDisplay_PetHealthBar_Fade_Color = 1;
-		Perl_CombatDisplay_PetHealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_CombatDisplay_PetHealthBarFadeBar:Hide();
 		Perl_CombatDisplay_PetHealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_CombatDisplay_PetManaBar_Fade(arg1)
-	Perl_CombatDisplay_PetManaBar_Fade_Color = Perl_CombatDisplay_PetManaBar_Fade_Color - arg1;
-	Perl_CombatDisplay_PetManaBar_Fade_Time_Elapsed = Perl_CombatDisplay_PetManaBar_Fade_Time_Elapsed + arg1;
+function Perl_CombatDisplay_PetManaBar_Fade(self, elapsed)
+	Perl_CombatDisplay_PetManaBar_Fade_Color = Perl_CombatDisplay_PetManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (UnitPowerType("pet") == 0) then
 		Perl_CombatDisplay_PetManaBarFadeBar:SetStatusBarColor(0, 0, Perl_CombatDisplay_PetManaBar_Fade_Color, Perl_CombatDisplay_PetManaBar_Fade_Color);
@@ -1043,31 +1012,31 @@ function Perl_CombatDisplay_PetManaBar_Fade(arg1)
 		Perl_CombatDisplay_PetManaBarFadeBar:SetStatusBarColor(Perl_CombatDisplay_PetManaBar_Fade_Color, (Perl_CombatDisplay_PetManaBar_Fade_Color-0.5), 0, Perl_CombatDisplay_PetManaBar_Fade_Color);
 	end
 
-	if (Perl_CombatDisplay_PetManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_CombatDisplay_PetManaBar_Fade_Color = 1;
-		Perl_CombatDisplay_PetManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_CombatDisplay_PetManaBarFadeBar:Hide();
 		Perl_CombatDisplay_PetManaBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_CombatDisplay_Target_HealthBar_Fade(arg1)
-	Perl_CombatDisplay_Target_HealthBar_Fade_Color = Perl_CombatDisplay_Target_HealthBar_Fade_Color - arg1;
-	Perl_CombatDisplay_Target_HealthBar_Fade_Time_Elapsed = Perl_CombatDisplay_Target_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_CombatDisplay_Target_HealthBar_Fade(self, elapsed)
+	Perl_CombatDisplay_Target_HealthBar_Fade_Color = Perl_CombatDisplay_Target_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_CombatDisplay_Target_HealthBarFadeBar:SetStatusBarColor(0, Perl_CombatDisplay_Target_HealthBar_Fade_Color, 0, Perl_CombatDisplay_Target_HealthBar_Fade_Color);
 
-	if (Perl_CombatDisplay_Target_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_CombatDisplay_Target_HealthBar_Fade_Color = 1;
-		Perl_CombatDisplay_Target_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_CombatDisplay_Target_HealthBarFadeBar:Hide();
 		Perl_CombatDisplay_Target_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_CombatDisplay_Target_ManaBar_Fade(arg1)
-	Perl_CombatDisplay_Target_ManaBar_Fade_Color = Perl_CombatDisplay_Target_ManaBar_Fade_Color - arg1;
-	Perl_CombatDisplay_Target_ManaBar_Fade_Time_Elapsed = Perl_CombatDisplay_Target_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_CombatDisplay_Target_ManaBar_Fade(self, elapsed)
+	Perl_CombatDisplay_Target_ManaBar_Fade_Color = Perl_CombatDisplay_Target_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (targetpowertype == 0) then
 		Perl_CombatDisplay_Target_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_CombatDisplay_Target_ManaBar_Fade_Color, Perl_CombatDisplay_Target_ManaBar_Fade_Color);
@@ -1081,9 +1050,9 @@ function Perl_CombatDisplay_Target_ManaBar_Fade(arg1)
 		Perl_CombatDisplay_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_CombatDisplay_Target_ManaBar_Fade_Color, Perl_CombatDisplay_Target_ManaBar_Fade_Color, Perl_CombatDisplay_Target_ManaBar_Fade_Color);
 	end
 
-	if (Perl_CombatDisplay_Target_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_CombatDisplay_Target_ManaBar_Fade_Color = 1;
-		Perl_CombatDisplay_Target_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_CombatDisplay_Target_ManaBarFadeBar:Hide();
 		Perl_CombatDisplay_Target_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
@@ -1590,7 +1559,7 @@ function Perl_CombatDisplay_DragStart(button)
 	end
 end
 
-function Perl_CombatDisplay_DragStop(button)
+function Perl_CombatDisplay_DragStop()
 	Perl_CombatDisplay_Frame:StopMovingOrSizing();
 end
 
@@ -1648,7 +1617,7 @@ function Perl_CombatDisplay_Target_DragStart(button)
 	end
 end
 
-function Perl_CombatDisplay_Target_DragStop(button)
+function Perl_CombatDisplay_Target_DragStop()
 	Perl_CombatDisplay_Target_Frame:StopMovingOrSizing();
 end
 

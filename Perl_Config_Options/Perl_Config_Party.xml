@@ -174,7 +174,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALWAYS_SHOWN);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALWAYS_SHOWN);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
@@ -197,7 +197,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDDEN_IN_RAID);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_HIDDEN_IN_RAID);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -220,7 +220,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALWAYS_HIDDEN);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALWAYS_HIDDEN);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -243,7 +243,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_VERTICAL_FRAMES);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_VERTICAL_FRAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_VerticalAlign_Update();
@@ -264,7 +264,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Class_Colored_Names_Update();
@@ -285,7 +285,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDE_CLASSICON_FRAME);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_HIDE_CLASSICON_FRAME);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Hide_Class_Level_Frame_Update();
@@ -306,7 +306,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PVP_STATUS_ICON);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PVP_STATUS_ICON);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_PvP_Icon_Update();
@@ -327,7 +327,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTY_FKEYS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PARTY_FKEYS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_FKeys_Update();
@@ -348,7 +348,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFF);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFF);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Class_Buffs_Update();
@@ -369,7 +369,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_DEBUFF);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_CLASS_DEBUFF);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Class_Debuffs_Update();
@@ -390,7 +390,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_BUFF_DEBUFF_TIMERS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGET_BUFF_DEBUFF_TIMERS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Buff_Timers_Update();
@@ -411,7 +411,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMPACT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_COMPACT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Compact_Update();
@@ -432,7 +432,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_DISPLAY_PERCENTS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_DISPLAY_PERCENTS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Compact_Percent_Update();
@@ -453,7 +453,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SHORT_BARS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_SHORT_BARS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Short_Bars_Update();
@@ -474,7 +474,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HEALER_MODE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_HEALER_MODE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Healer_Update();
@@ -495,7 +495,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_DISPLAY_MANA_DEFICIT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_DISPLAY_MANA_DEFICIT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Mana_Deficit_Update();
@@ -516,7 +516,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SHOW_BAR_VALUES);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_SHOW_BAR_VALUES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Show_Bar_Values_Update();
@@ -537,7 +537,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PET_SUPPORT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PET_SUPPORT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Pets_Update();
@@ -558,7 +558,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PORTRAITS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PORTRAITS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Portrait_Update();
@@ -579,7 +579,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_THREED_PORTRAITS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_THREED_PORTRAITS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_3D_Portrait_Update();
@@ -600,7 +600,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTY_PORTRAITBUFFS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PARTY_PORTRAITBUFFS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Portrait_Buffs_Update();
@@ -621,7 +621,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTY_LOCK);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PARTY_LOCK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Lock_Update();
@@ -642,8 +642,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Party_Set_Scale(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Party_Set_Scale(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -661,7 +661,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Set_Scale();
@@ -682,8 +682,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Party_Set_Space(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Party_Set_Space(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -701,8 +701,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Party_Set_Transparency(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Party_Set_Transparency(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -720,8 +720,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Party_Set_Buff_Location(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Party_Set_Buff_Location(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -739,8 +739,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Party_Set_Debuff_Location(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Party_Set_Debuff_Location(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -758,8 +758,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Party_Set_Buff_Size(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Party_Set_Buff_Size(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -777,8 +777,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Party_Set_Debuff_Size(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Party_Set_Debuff_Size(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -796,8 +796,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Party_Set_Buffs(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Party_Set_Buffs(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -815,8 +815,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Party_Set_Debuffs(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Party_Set_Debuffs(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>

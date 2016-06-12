@@ -137,10 +137,10 @@
 								Perl_Party_Pet_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Party_Pet_DragStart(self, arg1);
+								Perl_Party_Pet_DragStart(self, button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_Pet_DragStop(self, arg1);
+								Perl_Party_Pet_DragStop(self);
 							</OnDragStop>
 							<OnEnter>
 								UnitFrame_OnEnter(self:GetParent():GetParent());
@@ -252,10 +252,10 @@
 								Perl_Party_Pet_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Party_Pet_DragStart(self, arg1);
+								Perl_Party_Pet_DragStart(self, button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_Pet_DragStop(self, arg1);
+								Perl_Party_Pet_DragStop(self);
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -322,10 +322,10 @@
 								Perl_Party_Pet_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Party_Pet_DragStart(self, arg1);
+								Perl_Party_Pet_DragStart(self, button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_Pet_DragStop(self, arg1);
+								Perl_Party_Pet_DragStop(self);
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -860,65 +860,73 @@
 	<!-- The Script Frames -->
 	<Frame name="Perl_Party_Pet1_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Pet_One_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Pet_One_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_Pet2_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Pet_Two_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Pet_Two_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_Pet3_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Pet_Three_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Pet_Three_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_Pet4_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Pet_Four_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Pet_Four_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_Pet1_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Pet_One_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Pet_One_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_Pet2_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Pet_Two_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Pet_Two_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_Pet3_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Pet_Three_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Pet_Three_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_Pet4_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Pet_Four_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Pet_Four_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 

@@ -19,9 +19,7 @@
 			<OnLoad>
 				Perl_ArcaneBar_OnLoad(self);
 			</OnLoad>
-			<OnEvent>
-				Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
-			</OnEvent>
+			<OnEvent function="Perl_ArcaneBar_OnEvent" />
 		</Scripts>
 		<BarTexture name="$parentTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 		<Layers>

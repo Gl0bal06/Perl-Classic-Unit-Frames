@@ -189,10 +189,10 @@
 								UnitFrame_OnLeave();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Target_Target_DragStart(arg1);
+								Perl_Target_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Target_Target_DragStop(arg1);
+								Perl_Target_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -300,10 +300,10 @@
 								Perl_TargetTarget_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Target_Target_DragStart(arg1);
+								Perl_Target_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Target_Target_DragStop(arg1);
+								Perl_Target_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -389,10 +389,10 @@
 								Perl_Target_Target_HealthHide();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Target_Target_DragStart(arg1);
+								Perl_Target_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Target_Target_DragStop(arg1);
+								Perl_Target_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -478,10 +478,10 @@
 								Perl_Target_Target_ManaHide();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Target_Target_DragStart(arg1);
+								Perl_Target_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Target_Target_DragStop(arg1);
+								Perl_Target_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -903,10 +903,10 @@
 								UnitFrame_OnLeave();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Target_Target_Target_DragStart(arg1);
+								Perl_Target_Target_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Target_Target_Target_DragStop(arg1);
+								Perl_Target_Target_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -1014,10 +1014,10 @@
 								Perl_TargetTargetTarget_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Target_Target_Target_DragStart(arg1);
+								Perl_Target_Target_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Target_Target_Target_DragStop(arg1);
+								Perl_Target_Target_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -1103,10 +1103,10 @@
 								Perl_Target_Target_Target_HealthHide();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Target_Target_Target_DragStart(arg1);
+								Perl_Target_Target_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Target_Target_Target_DragStop(arg1);
+								Perl_Target_Target_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -1192,10 +1192,10 @@
 								Perl_Target_Target_Target_ManaHide();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Target_Target_Target_DragStart(arg1);
+								Perl_Target_Target_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Target_Target_Target_DragStop(arg1);
+								Perl_Target_Target_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -1580,33 +1580,37 @@
 
 	<Frame name="Perl_Target_Target_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Target_Target_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Target_Target_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Target_Target_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Target_Target_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Target_Target_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Target_Target_Target_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Target_Target_Target_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Target_Target_Target_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Target_Target_Target_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Target_Target_Target_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Target_Target_Target_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 

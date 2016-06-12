@@ -268,10 +268,10 @@
 								Perl_Party_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Party_DragStart(arg1);
+								Perl_Party_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_DragStop(arg1);
+								Perl_Party_DragStop();
 							</OnDragStop>
 							<OnEnter>
 								UnitFrame_OnEnter(self:GetParent():GetParent());
@@ -367,10 +367,10 @@
 								Perl_Party_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Party_DragStart(arg1);
+								Perl_Party_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_DragStop(arg1);
+								Perl_Party_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -476,10 +476,10 @@
 								Perl_Party_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Party_DragStart(arg1);
+								Perl_Party_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_DragStop(arg1);
+								Perl_Party_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -546,10 +546,10 @@
 								Perl_Party_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Party_DragStart(arg1);
+								Perl_Party_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_DragStop(arg1);
+								Perl_Party_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -656,10 +656,10 @@
 								Perl_Party_HealthHide(self:GetParent():GetParent());
 							</OnLeave>
 							<OnDragStart>
-								Perl_Party_DragStart(arg1);
+								Perl_Party_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_DragStop(arg1);
+								Perl_Party_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -766,10 +766,10 @@
 								Perl_Party_ManaHide(self:GetParent():GetParent());
 							</OnLeave>
 							<OnDragStart>
-								Perl_Party_DragStart(arg1);
+								Perl_Party_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_DragStop(arg1);
+								Perl_Party_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -876,10 +876,10 @@
 								Perl_Party_Pet_HealthHide(self:GetParent():GetParent());
 							</OnLeave>
 							<OnDragStart>
-								Perl_Party_DragStart(arg1);
+								Perl_Party_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_DragStop(arg1);
+								Perl_Party_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -1306,97 +1306,109 @@
 
 	<Frame name="Perl_Party_1_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_One_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_One_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_2_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Two_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Two_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_3_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Three_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Three_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_4_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Four_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Four_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_1_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_One_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_One_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_2_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Two_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Two_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_3_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Three_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Three_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_4_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Four_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Four_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_1_PetHealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_One_PetHealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_One_PetHealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_2_PetHealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Two_PetHealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Two_PetHealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_3_PetHealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Three_PetHealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Three_PetHealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Party_4_PetHealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Party_Four_PetHealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Party_Four_PetHealthBar_Fade" />
 		</Scripts>
 	</Frame>
 

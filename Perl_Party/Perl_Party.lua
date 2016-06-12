@@ -2,71 +2,59 @@
 -- Variables --
 ---------------
 Perl_Party_Config = {};
-local Perl_Party_Events = {};		-- event manager
+local Perl_Party_Events = {};			-- event manager
 local Perl_Party_Script_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Party_GetVars)
-local locked = 0;		-- unlocked by default
-local compactmode = 0;		-- compact mode is disabled by default
-local partyhidden = 0;		-- party frame is set to always show by default
-local partyspacing = -95;	-- default spacing between party member frames
-local scale = 0.9;		-- default scale
-local showpets = 1;		-- show pets by default
-local healermode = 0;		-- nurfed unit frame style
-local transparency = 1.0;	-- transparency for frames
-local bufflocation = 6;		-- default buff location
-local debufflocation = 3;	-- default debuff location
-local verticalalign = 1;	-- default alignment is vertically
-local compactpercent = 0;	-- percents are not shown in compact mode by default
-local showportrait = 0;		-- portrait is hidden by default
-local showfkeys = 1;		-- show appropriate F key in the name frame by default
-local displaycastablebuffs = 0;	-- display all buffs by default
-local threedportrait = 0;	-- 3d portraits are off by default
-local buffsize = 16;		-- default buff size is 16
-local debuffsize = 16;		-- default debuff size is 16
-local numbuffsshown = 16;	-- buff row is 16 long
-local numdebuffsshown = 16;	-- debuff row is 16 long
-local classcolorednames = 0;	-- names are colored based on pvp status by default
-local shortbars = 0;		-- Health/Power/Experience bars are all normal length
-local hideclasslevelframe = 0;	-- Showing the class icon and level frame by default
-local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
-local showpvpicon = 1;		-- show the pvp icon
-local showbarvalues = 0;	-- healer mode will have the bar values hidden by default
-local displaycurabledebuff = 0;	-- display all debuffs by default
-local portraitbuffs = 1;	-- buffs will be pushed over to the portrait if it is displayed
-local displaybufftimers = 0;	-- buff/debuff timers are off by default
+local locked = 0;						-- unlocked by default
+local compactmode = 0;					-- compact mode is disabled by default
+local partyhidden = 0;					-- party frame is set to always show by default
+local partyspacing = -95;				-- default spacing between party member frames
+local scale = 0.9;						-- default scale
+local showpets = 1;						-- show pets by default
+local healermode = 0;					-- nurfed unit frame style
+local transparency = 1.0;				-- transparency for frames
+local bufflocation = 6;					-- default buff location
+local debufflocation = 3;				-- default debuff location
+local verticalalign = 1;				-- default alignment is vertically
+local compactpercent = 0;				-- percents are not shown in compact mode by default
+local showportrait = 0;					-- portrait is hidden by default
+local showfkeys = 1;					-- show appropriate F key in the name frame by default
+local displaycastablebuffs = 0;			-- display all buffs by default
+local threedportrait = 0;				-- 3d portraits are off by default
+local buffsize = 16;					-- default buff size is 16
+local debuffsize = 16;					-- default debuff size is 16
+local numbuffsshown = 16;				-- buff row is 16 long
+local numdebuffsshown = 16;				-- debuff row is 16 long
+local classcolorednames = 0;			-- names are colored based on pvp status by default
+local shortbars = 0;					-- Health/Power/Experience bars are all normal length
+local hideclasslevelframe = 0;			-- Showing the class icon and level frame by default
+local showmanadeficit = 0;				-- Mana deficit in healer mode is off by default
+local showpvpicon = 1;					-- show the pvp icon
+local showbarvalues = 0;				-- healer mode will have the bar values hidden by default
+local displaycurabledebuff = 0;			-- display all debuffs by default
+local portraitbuffs = 1;				-- buffs will be pushed over to the portrait if it is displayed
+local displaybufftimers = 0;			-- buff/debuff timers are off by default
 
 -- Default Local Variables
-local Initialized = nil;	-- waiting to be initialized
-local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
-local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
-local mouseoverpethealthflag = 0;	-- is the mouse over the pet health bar for healer mode?
+local Initialized = nil;				-- waiting to be initialized
+local mouseoverhealthflag = 0;			-- is the mouse over the health bar for healer mode?
+local mouseovermanaflag = 0;			-- is the mouse over the mana bar for healer mode?
+local mouseoverpethealthflag = 0;		-- is the mouse over the pet health bar for healer mode?
 
 -- Fade Bar Variables
-local Perl_Party_One_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_One_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Party_Two_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Two_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Party_Three_HealthBar_Fade_Color = 1;	-- the color fading interval
-local Perl_Party_Three_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Party_Four_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Four_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Party_One_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_One_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Party_Two_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Two_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Party_Three_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Three_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Party_Four_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Four_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Party_One_PetHealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_One_PetHealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Party_Two_PetHealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Two_PetHealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Party_Three_PetHealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Three_PetHealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Party_Four_PetHealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Party_One_HealthBar_Fade_Color = 1;				-- the color fading interval
+local Perl_Party_Two_HealthBar_Fade_Color = 1;				-- the color fading interval
+local Perl_Party_Three_HealthBar_Fade_Color = 1;			-- the color fading interval
+local Perl_Party_Four_HealthBar_Fade_Color = 1;				-- the color fading interval
+local Perl_Party_One_ManaBar_Fade_Color = 1;				-- the color fading interval
+local Perl_Party_Two_ManaBar_Fade_Color = 1;				-- the color fading interval
+local Perl_Party_Three_ManaBar_Fade_Color = 1;				-- the color fading interval
+local Perl_Party_Four_ManaBar_Fade_Color = 1;				-- the color fading interval
+local Perl_Party_One_PetHealthBar_Fade_Color = 1;			-- the color fading interval
+local Perl_Party_Two_PetHealthBar_Fade_Color = 1;			-- the color fading interval
+local Perl_Party_Three_PetHealthBar_Fade_Color = 1;			-- the color fading interval
+local Perl_Party_Four_PetHealthBar_Fade_Color = 1;			-- the color fading interval
 
 -- Local variables to save memory
 local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, partymanapercent, partypethealth, partypethealthmax, partypethealthpercent, englishclass, bufffilter, debufffilter;
@@ -82,7 +70,11 @@ function Perl_Party_Script_OnLoad(self)
 	self:RegisterEvent("RAID_ROSTER_UPDATE");
 
 	-- Scripts
-	self:SetScript("OnEvent", Perl_Party_Script_OnEvent);
+	self:SetScript("OnEvent", 
+		function(self, event, ...)
+			Perl_Party_Script_Events[event](self, ...);
+		end
+	);
 end
 
 function Perl_Party_OnLoad(self)
@@ -90,41 +82,41 @@ function Perl_Party_OnLoad(self)
 	self.unit = "party"..self.id;
 	self.unitpet = "partypet"..self.id;
 
-	self.classTexture = getglobal("Perl_Party_MemberFrame"..self.id.."_LevelFrame_ClassTexture");
-	self.deadStatus = getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame_DeadStatus");
-	self.disconnectStatus = getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame_DisconnectStatus");
-	self.fKeyText = getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame_FKeyText");
-	self.leaderIcon = getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame_LeaderIcon")
-	self.levelText = getglobal("Perl_Party_MemberFrame"..self.id.."_LevelFrame_LevelBarText");
-	self.masterLootIcon = getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame_MasterIcon");
-	self.nameText = getglobal("Perl_Party_MemberFrame"..self.id.."_Name_NameBarText");
-	self.portrait2D = getglobal("Perl_Party_MemberFrame"..self.id.."_PortraitFrame_Portrait");
-	self.portrait3D = getglobal("Perl_Party_MemberFrame"..self.id.."_PortraitFrame_PartyModel");
-	self.pvpStatus = getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame_PVPStatus");
-	self.roleIcon = getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame_RoleIcon");
-	self.threatIcon = getglobal("Perl_Party_MemberFrame"..self.id.."_Name_ThreatIndicator");
-	self.voiceChat = getglobal("Perl_Party_MemberFrame"..self.id.."_VoiceChatIconFrame");
+	self.classTexture = _G["Perl_Party_MemberFrame"..self.id.."_LevelFrame_ClassTexture"];
+	self.deadStatus = _G["Perl_Party_MemberFrame"..self.id.."_NameFrame_DeadStatus"];
+	self.disconnectStatus = _G["Perl_Party_MemberFrame"..self.id.."_NameFrame_DisconnectStatus"];
+	self.fKeyText = _G["Perl_Party_MemberFrame"..self.id.."_NameFrame_FKeyText"];
+	self.leaderIcon = _G["Perl_Party_MemberFrame"..self.id.."_NameFrame_LeaderIcon"]
+	self.levelText = _G["Perl_Party_MemberFrame"..self.id.."_LevelFrame_LevelBarText"];
+	self.masterLootIcon = _G["Perl_Party_MemberFrame"..self.id.."_NameFrame_MasterIcon"];
+	self.nameText = _G["Perl_Party_MemberFrame"..self.id.."_Name_NameBarText"];
+	self.portrait2D = _G["Perl_Party_MemberFrame"..self.id.."_PortraitFrame_Portrait"];
+	self.portrait3D = _G["Perl_Party_MemberFrame"..self.id.."_PortraitFrame_PartyModel"];
+	self.pvpStatus = _G["Perl_Party_MemberFrame"..self.id.."_NameFrame_PVPStatus"];
+	self.roleIcon = _G["Perl_Party_MemberFrame"..self.id.."_NameFrame_RoleIcon"];
+	self.threatIcon = _G["Perl_Party_MemberFrame"..self.id.."_Name_ThreatIndicator"];
+	self.voiceChat = _G["Perl_Party_MemberFrame"..self.id.."_VoiceChatIconFrame"];
 	self.voiceChat:ClearAllPoints();	-- Didn't feel like moving this line and the one below it to the style function
 	self.voiceChat:SetPoint("CENTER", "Perl_Party_MemberFrame"..self.id, "TOPRIGHT", -35, -12);
 
-	self.healthBar = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar");
-	self.healthBarBG = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBarBG");
-	self.healthBarFadeBar = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBarFadeBar");
-	self.healthBarText = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar_HealthBarText");
-	self.healthBarTextPercent = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar_HealthBarTextPercent");
-	self.healthBarTextCompactPercent = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar_HealthBarTextCompactPercent");
-	self.manaBar = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_ManaBar");
-	self.manaBarBG = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_ManaBarBG");
-	self.manaBarFadeBar = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_ManaBarFadeBar");
-	self.manaBarText = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_ManaBar_ManaBarText");
-	self.manaBarTextPercent = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_ManaBar_ManaBarTextPercent");
-	self.manaBarTextCompactPercent = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_ManaBar_ManaBarTextCompactPercent");
-	self.petHealthBar = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBar");
-	self.petHealthBarBG = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBarBG");
-	self.petHealthBarFadeBar = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBarFadeBar");
-	self.petHealthBarText = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBar_PetHealthBarText");
-	self.petHealthBarTextPercent = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent");
-	self.petHealthBarTextCompactPercent = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent");
+	self.healthBar = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar"];
+	self.healthBarBG = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBarBG"];
+	self.healthBarFadeBar = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBarFadeBar"];
+	self.healthBarText = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar_HealthBarText"];
+	self.healthBarTextPercent = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar_HealthBarTextPercent"];
+	self.healthBarTextCompactPercent = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar_HealthBarTextCompactPercent"];
+	self.manaBar = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_ManaBar"];
+	self.manaBarBG = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_ManaBarBG"];
+	self.manaBarFadeBar = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_ManaBarFadeBar"];
+	self.manaBarText = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_ManaBar_ManaBarText"];
+	self.manaBarTextPercent = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_ManaBar_ManaBarTextPercent"];
+	self.manaBarTextCompactPercent = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_ManaBar_ManaBarTextCompactPercent"];
+	self.petHealthBar = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBar"];
+	self.petHealthBarBG = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBarBG"];
+	self.petHealthBarFadeBar = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBarFadeBar"];
+	self.petHealthBarText = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBar_PetHealthBarText"];
+	self.petHealthBarTextPercent = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"];
+	self.petHealthBarTextCompactPercent = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"];
 
 	-- Events
 	self:RegisterEvent("PARTY_LEADER_CHANGED");
@@ -134,172 +126,142 @@ function Perl_Party_OnLoad(self)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
-	self:RegisterEvent("UNIT_ENERGY");
 	self:RegisterEvent("UNIT_FACTION");
 	self:RegisterEvent("UNIT_HEALTH");
 	self:RegisterEvent("UNIT_LEVEL");
-	self:RegisterEvent("UNIT_MANA");
-	self:RegisterEvent("UNIT_MAXENERGY");
 	self:RegisterEvent("UNIT_MAXHEALTH");
-	self:RegisterEvent("UNIT_MAXMANA");
-	self:RegisterEvent("UNIT_MAXRAGE");
-	self:RegisterEvent("UNIT_MAXRUNIC_POWER");
+	self:RegisterEvent("UNIT_MAXPOWER");
 	self:RegisterEvent("UNIT_MODEL_CHANGED");
 	self:RegisterEvent("UNIT_NAME_UPDATE");
 	self:RegisterEvent("UNIT_PET");
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+	self:RegisterEvent("UNIT_POWER");
 	self:RegisterEvent("UNIT_PVP_UPDATE");
-	self:RegisterEvent("UNIT_RAGE");
-	self:RegisterEvent("UNIT_RUNIC_POWER");
 	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 	self:RegisterEvent("VOICE_START");
 	self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
-	self:SetScript("OnEvent", Perl_Party_OnEvent);
+	self:SetScript("OnEvent", 
+		function(self, event, ...)
+			Perl_Party_Events[event](self, ...);
+		end
+	);
 
 	-- WoW 2.0 Secure API Stuff
 	self:SetAttribute("unit", self.unit);
 end
 
 
--------------------
--- Event Handler --
--------------------
-function Perl_Party_Script_OnEvent()
-	local func = Perl_Party_Script_Events[event];
-	if (func) then
-		func();
-	else
-		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
-			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Party: Report the following event error to the author: "..event);
-		end
-	end
-end
-
+------------
+-- Events --
+------------
 function Perl_Party_Script_Events:PLAYER_LOGIN()
 	if (Initialized) then
 		Perl_Party_Check_Hidden();		-- Are we running a hidden mode?
 	end
 end
-Perl_Party_Events.PLAYER_ENTERING_WORLD = Perl_Party_Events.PLAYER_LOGIN;
+Perl_Party_Script_Events.PLAYER_ENTERING_WORLD = Perl_Party_Script_Events.PLAYER_LOGIN;
 
 function Perl_Party_Script_Events:RAID_ROSTER_UPDATE()
 	Perl_Party_Check_Hidden();
 end
 
 
-function Perl_Party_OnEvent()
-	local func = Perl_Party_Events[event];
-	if (func) then
-		func();
-	else
-		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
-			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Party: Report the following event error to the author: "..event);
-		end
-	end
-end
-
-function Perl_Party_Events:UNIT_HEALTH()
-	if (arg1 == this.unit) then
-		Perl_Party_Update_Health(this);
+function Perl_Party_Events:UNIT_HEALTH(arg1)
+	if (arg1 == self.unit) then
+		Perl_Party_Update_Health(self);
 	elseif (showpets == 1) then
-		if (arg1 == this.unitpet) then
-			Perl_Party_Update_Pet_Health(this);
+		if (arg1 == self.unitpet) then
+			Perl_Party_Update_Pet_Health(self);
 		end
 	end
 end
 Perl_Party_Events.UNIT_MAXHEALTH = Perl_Party_Events.UNIT_HEALTH;
 
-function Perl_Party_Events:UNIT_ENERGY()
-	if (arg1 == this.unit) then
-		Perl_Party_Update_Mana(this);
+function Perl_Party_Events:UNIT_POWER(arg1)
+	if (arg1 == self.unit) then
+		Perl_Party_Update_Mana(self);
 	end
 end
-Perl_Party_Events.UNIT_MAXENERGY = Perl_Party_Events.UNIT_ENERGY;
-Perl_Party_Events.UNIT_MANA = Perl_Party_Events.UNIT_ENERGY;
-Perl_Party_Events.UNIT_MAXMANA = Perl_Party_Events.UNIT_ENERGY;
-Perl_Party_Events.UNIT_RAGE = Perl_Party_Events.UNIT_ENERGY;
-Perl_Party_Events.UNIT_MAXRAGE = Perl_Party_Events.UNIT_ENERGY;
-Perl_Party_Events.UNIT_RUNIC_POWER = Perl_Party_Events.UNIT_ENERGY;
-Perl_Party_Events.UNIT_MAXRUNIC_POWER = Perl_Party_Events.UNIT_ENERGY;
+Perl_Party_Events.UNIT_MAXPOWER = Perl_Party_Events.UNIT_POWER;
 
-function Perl_Party_Events:UNIT_AURA()
-	if (arg1 == this.unit) then
-		Perl_Party_Buff_UpdateAll(this);
+function Perl_Party_Events:UNIT_AURA(arg1)
+	if (arg1 == self.unit) then
+		Perl_Party_Buff_UpdateAll(self);
 	end
 end
 
-function Perl_Party_Events:UNIT_DISPLAYPOWER()
-	if (arg1 == this.unit) then
-		Perl_Party_Update_Mana_Bar(this);	-- What type of energy are we using now?
-		Perl_Party_Update_Mana(this);		-- Update the power info immediately
+function Perl_Party_Events:UNIT_DISPLAYPOWER(arg1)
+	if (arg1 == self.unit) then
+		Perl_Party_Update_Mana_Bar(self);	-- What type of energy are we using now?
+		Perl_Party_Update_Mana(self);		-- Update the power info immediately
 	end
 end
 
-function Perl_Party_Events:UNIT_FACTION()
-	if (arg1 == this.unit) then
-		Perl_Party_Update_PvP_Status(this);	-- Is the character PvP flagged?
+function Perl_Party_Events:UNIT_FACTION(arg1)
+	if (arg1 == self.unit) then
+		Perl_Party_Update_PvP_Status(self);	-- Is the character PvP flagged?
 	end
 end
 Perl_Party_Events.UNIT_PVP_UPDATE = Perl_Party_Events.UNIT_FACTION;
 
-function Perl_Party_Events:UNIT_NAME_UPDATE()
-	if (arg1 == this.unit) then
-		Perl_Party_Set_Name(this);		-- Set the player's name and class icon
+function Perl_Party_Events:UNIT_NAME_UPDATE(arg1)
+	if (arg1 == self.unit) then
+		Perl_Party_Set_Name(self);		-- Set the player's name and class icon
 	end
 end
 
-function Perl_Party_Events:UNIT_PET()
-	if (arg1 == this.unit) then
-		Perl_Party_Update_Pet_Health(this);	-- Update the pet health bar
+function Perl_Party_Events:UNIT_PET(arg1)
+	if (arg1 == self.unit) then
+		Perl_Party_Update_Pet_Health(self);	-- Update the pet health bar
 	end
 end
 
-function Perl_Party_Events:UNIT_LEVEL()
-	if (arg1 == this.unit) then
-		Perl_Party_Update_Level(this);		-- Set the player's level
+function Perl_Party_Events:UNIT_LEVEL(arg1)
+	if (arg1 == self.unit) then
+		Perl_Party_Update_Level(self);		-- Set the player's level
 	end
 end
 
 function Perl_Party_Events:PARTY_MEMBERS_CHANGED()
-	Perl_Party_MembersUpdate(this);			-- How many members are in the group and show the correct frames and do UpdateOnce things
+	Perl_Party_MembersUpdate(self);			-- How many members are in the group and show the correct frames and do UpdateOnce things
 end
 
 function Perl_Party_Events:PARTY_LEADER_CHANGED()
-	Perl_Party_Update_Leader(this);			-- Who is the group leader
+	Perl_Party_Update_Leader(self);			-- Who is the group leader
 end
 
-function Perl_Party_Events:UNIT_PORTRAIT_UPDATE()
-	if (arg1 == this.unit) then
-		Perl_Party_Update_Portrait(this);
+function Perl_Party_Events:UNIT_PORTRAIT_UPDATE(arg1)
+	if (arg1 == self.unit) then
+		Perl_Party_Update_Portrait(self);
 	end
 end
 Perl_Party_Events.UNIT_MODEL_CHANGED = Perl_Party_Events.UNIT_PORTRAIT_UPDATE;
 
 function Perl_Party_Events:PARTY_LOOT_METHOD_CHANGED()
-	Perl_Party_Update_Loot_Method(this);		-- Who is the master looter if any
+	Perl_Party_Update_Loot_Method(self);		-- Who is the master looter if any
 end
 
 function Perl_Party_Events:PLAYER_ALIVE()
 	Perl_Party_Check_Hidden();			-- Are we running a hidden mode? (Hopefully the last check we need to add for this)
 end
 
-function Perl_Party_Events:VOICE_START()
-	if (arg1 == this.unit) then
-		this.voiceChat:Show();
+function Perl_Party_Events:VOICE_START(arg1)
+	if (arg1 == self.unit) then
+		self.voiceChat:Show();
 	end
 end
 
-function Perl_Party_Events:VOICE_STOP()
-	if (arg1 == this.unit) then
-		this.voiceChat:Hide();
+function Perl_Party_Events:VOICE_STOP(arg1)
+	if (arg1 == self.unit) then
+		self.voiceChat:Hide();
 	end
 end
 
-function Perl_Party_Events:UNIT_THREAT_SITUATION_UPDATE()
-	if (arg1 == this.unit) then
-		Perl_Party_Update_Threat(this);
+function Perl_Party_Events:UNIT_THREAT_SITUATION_UPDATE(arg1)
+	if (arg1 == self.unit) then
+		Perl_Party_Update_Threat(self);
 	end
 end
 
@@ -347,7 +309,7 @@ function Perl_Party_Initialize()
 		function()
 			if (not InCombatLockdown()) then
 				for i = 1,4 do
-					getglobal("PartyMemberFrame"..i):Hide();
+					_G["PartyMemberFrame"..i]:Hide();
 				end
 			end
 		end
@@ -355,29 +317,29 @@ function Perl_Party_Initialize()
 
 	-- Set the ID of the frame
 	for id=1,4 do
-		getglobal("Perl_Party_MemberFrame"..id.."_Name_CastClickOverlay"):SetID(id);
-		getglobal("Perl_Party_MemberFrame"..id.."_LevelFrame_CastClickOverlay"):SetID(id);
-		getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_CastClickOverlay"):SetID(id);
-		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_CastClickOverlay"):SetID(id);
-		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_CastClickOverlay"):SetID(id);
-		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBar_CastClickOverlay"):SetID(id);
-		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetID(id);
+		_G["Perl_Party_MemberFrame"..id.."_Name_CastClickOverlay"]:SetID(id);
+		_G["Perl_Party_MemberFrame"..id.."_LevelFrame_CastClickOverlay"]:SetID(id);
+		_G["Perl_Party_MemberFrame"..id.."_PortraitFrame_CastClickOverlay"]:SetID(id);
+		_G["Perl_Party_MemberFrame"..id.."_StatsFrame_CastClickOverlay"]:SetID(id);
+		_G["Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_CastClickOverlay"]:SetID(id);
+		_G["Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBar_CastClickOverlay"]:SetID(id);
+		_G["Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar_CastClickOverlay"]:SetID(id);
 	end
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	for id=1,4 do
-		getglobal("Perl_Party_MemberFrame"..id.."_Name_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_NameFrame"):GetFrameLevel() + 2);
-		getglobal("Perl_Party_MemberFrame"..id.."_Name"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_NameFrame"):GetFrameLevel() + 1);
-		getglobal("Perl_Party_MemberFrame"..id.."_Name_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_Name"):GetFrameLevel() + 2);
-		getglobal("Perl_Party_MemberFrame"..id.."_LevelFrame_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_LevelFrame"):GetFrameLevel() + 2);
-		getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame"):GetFrameLevel() + 2);
-		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame"):GetFrameLevel() + 1);
-		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame"):GetFrameLevel() + 2);
-		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame"):GetFrameLevel() + 2);
-		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame"):GetFrameLevel() + 2);
-		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBarFadeBar"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar"):GetFrameLevel() - 1);
-		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBarFadeBar"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBar"):GetFrameLevel() - 1);
-		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBarFadeBar"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar"):GetFrameLevel() - 1);
+		_G["Perl_Party_MemberFrame"..id.."_Name_CastClickOverlay"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_NameFrame"]:GetFrameLevel() + 2);
+		_G["Perl_Party_MemberFrame"..id.."_Name"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_NameFrame"]:GetFrameLevel() + 1);
+		_G["Perl_Party_MemberFrame"..id.."_Name_CastClickOverlay"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_Name"]:GetFrameLevel() + 2);
+		_G["Perl_Party_MemberFrame"..id.."_LevelFrame_CastClickOverlay"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_LevelFrame"]:GetFrameLevel() + 2);
+		_G["Perl_Party_MemberFrame"..id.."_PortraitFrame_CastClickOverlay"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_PortraitFrame"]:GetFrameLevel() + 2);
+		_G["Perl_Party_MemberFrame"..id.."_StatsFrame_CastClickOverlay"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_StatsFrame"]:GetFrameLevel() + 1);
+		_G["Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_CastClickOverlay"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_StatsFrame"]:GetFrameLevel() + 2);
+		_G["Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBar_CastClickOverlay"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_StatsFrame"]:GetFrameLevel() + 2);
+		_G["Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar_CastClickOverlay"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_StatsFrame"]:GetFrameLevel() + 2);
+		_G["Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBarFadeBar"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar"]:GetFrameLevel() - 1);
+		_G["Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBarFadeBar"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBar"]:GetFrameLevel() - 1);
+		_G["Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBarFadeBar"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar"]:GetFrameLevel() - 1);
 	end
 
 	-- MyAddOns Support
@@ -398,14 +360,14 @@ end
 
 function Perl_Party_Initialize_Frame_Color()
 	for partynum=1,4 do
-		getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame"):SetBackdropColor(0, 0, 0, 1);
-		getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-		getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame"):SetBackdropColor(0, 0, 0, 1);
-		getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-		getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame"):SetBackdropColor(0, 0, 0, 1);
-		getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-		getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetBackdropColor(0, 0, 0, 1);
-		getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		_G["Perl_Party_MemberFrame"..partynum.."_NameFrame"]:SetBackdropColor(0, 0, 0, 1);
+		_G["Perl_Party_MemberFrame"..partynum.."_NameFrame"]:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		_G["Perl_Party_MemberFrame"..partynum.."_LevelFrame"]:SetBackdropColor(0, 0, 0, 1);
+		_G["Perl_Party_MemberFrame"..partynum.."_LevelFrame"]:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		_G["Perl_Party_MemberFrame"..partynum.."_PortraitFrame"]:SetBackdropColor(0, 0, 0, 1);
+		_G["Perl_Party_MemberFrame"..partynum.."_PortraitFrame"]:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame"]:SetBackdropColor(0, 0, 0, 1);
+		_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame"]:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	end
 end
 
@@ -447,19 +409,19 @@ function Perl_Party_Update_Health(self)
 			self.healthBarFadeBar:Show();
 			if (self.id == 1) then						-- This makes the bars fade much smoother when lots of change is happening to a given bar
 				Perl_Party_One_HealthBar_Fade_Color = 1;
-				Perl_Party_One_HealthBar_Fade_Time_Elapsed = 0;
+				Perl_Party_1_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 				Perl_Party_1_HealthBar_Fade_OnUpdate_Frame:Show();
 			elseif (self.id == 2) then
 				Perl_Party_Two_HealthBar_Fade_Color = 1;
-				Perl_Party_Two_HealthBar_Fade_Time_Elapsed = 0;
+				Perl_Party_2_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 				Perl_Party_2_HealthBar_Fade_OnUpdate_Frame:Show();
 			elseif (self.id == 3) then
 				Perl_Party_Three_HealthBar_Fade_Color = 1;
-				Perl_Party_Three_HealthBar_Fade_Time_Elapsed = 0;
+				Perl_Party_3_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 				Perl_Party_3_HealthBar_Fade_OnUpdate_Frame:Show();
 			elseif (self.id == 4) then
 				Perl_Party_Four_HealthBar_Fade_Color = 1;
-				Perl_Party_Four_HealthBar_Fade_Time_Elapsed = 0;
+				Perl_Party_4_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 				Perl_Party_4_HealthBar_Fade_OnUpdate_Frame:Show();
 			end
 		end
@@ -599,8 +561,8 @@ function Perl_Party_Update_Health(self)
 end
 
 function Perl_Party_Update_Mana(self)
-	partymana = UnitMana(self.unit);
-	partymanamax = UnitManaMax(self.unit);
+	partymana = UnitPower(self.unit);
+	partymanamax = UnitPowerMax(self.unit);
 	partymanapercent = floor(partymana/partymanamax*100+0.5);
 
 	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit) or partymanamax == 0) then			-- This prevents negative mana
@@ -615,19 +577,19 @@ function Perl_Party_Update_Mana(self)
 			self.manaBarFadeBar:Show();
 			if (self.id == 1) then						-- This makes the bars fade much smoother when lots of change is happening to a given bar
 				Perl_Party_One_ManaBar_Fade_Color = 1;
-				Perl_Party_One_ManaBar_Fade_Time_Elapsed = 0;
+				Perl_Party_1_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 				Perl_Party_1_ManaBar_Fade_OnUpdate_Frame:Show();
 			elseif (self.id == 2) then
 				Perl_Party_Two_ManaBar_Fade_Color = 1;
-				Perl_Party_Two_ManaBar_Fade_Time_Elapsed = 0;
+				Perl_Party_2_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 				Perl_Party_2_ManaBar_Fade_OnUpdate_Frame:Show();
 			elseif (self.id == 3) then
 				Perl_Party_Three_ManaBar_Fade_Color = 1;
-				Perl_Party_Three_ManaBar_Fade_Time_Elapsed = 0;
+				Perl_Party_3_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 				Perl_Party_3_ManaBar_Fade_OnUpdate_Frame:Show();
 			elseif (self.id == 4) then
 				Perl_Party_Four_ManaBar_Fade_Color = 1;
-				Perl_Party_Four_ManaBar_Fade_Time_Elapsed = 0;
+				Perl_Party_4_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 				Perl_Party_4_ManaBar_Fade_OnUpdate_Frame:Show();
 			end
 		end
@@ -727,6 +689,9 @@ function Perl_Party_Update_Mana_Bar(self)
 	elseif (partypower == 1) then	-- Energy
 		self.manaBar:SetStatusBarColor(1, 0, 0, 1);
 		self.manaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+	elseif (partypower == 2) then	-- Focus
+		self.manaBar:SetStatusBarColor(1, 0.5, 0, 1);
+		self.manaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 	elseif (partypower == 3) then	-- Rage
 		self.manaBar:SetStatusBarColor(1, 1, 0, 1);
 		self.manaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
@@ -754,19 +719,19 @@ function Perl_Party_Update_Pet_Health(self)
 				self.petHealthBarFadeBar:Show();
 				if (self.id == 1) then						-- This makes the bars fade much smoother when lots of change is happening to a given bar
 					Perl_Party_One_PetHealthBar_Fade_Color = 1;
-					Perl_Party_One_PetHealthBar_Fade_Time_Elapsed = 0;
+					Perl_Party_1_PetHealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 					Perl_Party_1_PetHealthBar_Fade_OnUpdate_Frame:Show();
 				elseif (self.id == 2) then
 					Perl_Party_Two_PetHealthBar_Fade_Color = 1;
-					Perl_Party_Two_PetHealthBar_Fade_Time_Elapsed = 0;
+					Perl_Party_2_PetHealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 					Perl_Party_2_PetHealthBar_Fade_OnUpdate_Frame:Show();
 				elseif (self.id == 3) then
 					Perl_Party_Three_PetHealthBar_Fade_Color = 1;
-					Perl_Party_Three_PetHealthBar_Fade_Time_Elapsed = 0;
+					Perl_Party_3_PetHealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 					Perl_Party_3_PetHealthBar_Fade_OnUpdate_Frame:Show();
 				elseif (self.id == 4) then
 					Perl_Party_Four_PetHealthBar_Fade_Color = 1;
-					Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed = 0;
+					Perl_Party_4_PetHealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 					Perl_Party_4_PetHealthBar_Fade_OnUpdate_Frame:Show();
 				end
 			end
@@ -865,7 +830,7 @@ function Perl_Party_Set_Name(self)
 		self.nameText:SetText(partyname);
 
 		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
-			getglobal("Perl_ArcaneBar_party"..self.id).unitname = partyname;
+			_G["Perl_ArcaneBar_party"..self.id].unitname = partyname;
 		end
 	end
 
@@ -949,14 +914,14 @@ function Perl_Party_Update_Loot_Method(self)
 end
 
 function Perl_Party_Update_Role(self)
-	local isTank, isHealer, isDamage = UnitGroupRolesAssigned("party"..self.id);
-	if(isTank) then
+	local role = UnitGroupRolesAssigned("party"..self.id);
+	if(role == "TANK") then
 		self.roleIcon:SetTexCoord(0, 19/64, 22/64, 41/64);
 		self.roleIcon:Show();
-	elseif(isHealer) then
+	elseif(role == "HEALER") then
 		self.roleIcon:SetTexCoord(20/64, 39/64, 1/64, 20/64);
 		self.roleIcon:Show();
-	elseif(isDamage) then
+	elseif(role == "DAMAGER") then
 		self.roleIcon:SetTexCoord(20/64, 39/64, 22/64, 41/64);
 		self.roleIcon:Show();
 	else
@@ -1090,8 +1055,8 @@ end
 function Perl_Party_ManaShow(self)
 	if (healermode == 1) then
 		if (showbarvalues == 0) then
-			partymana = UnitMana(self.unit);
-			partymanamax = UnitManaMax(self.unit);
+			partymana = UnitPower(self.unit);
+			partymanamax = UnitPowerMax(self.unit);
 
 			if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then	-- This prevents negative mana
 				partymana = 0;
@@ -1171,7 +1136,7 @@ end
 function Perl_Party_Update_Health_Mana()
 	local self;
 	for id=1,4 do
-		self = getglobal("Perl_Party_MemberFrame"..id);
+		self = _G["Perl_Party_MemberFrame"..id];
 		if (UnitName(self.unit) ~= nil) then
 			Perl_Party_Update_Health(self);
 			Perl_Party_Update_Mana(self);
@@ -1185,7 +1150,7 @@ function Perl_Party_Force_Update()
 
 	local self;
 	for id = 1, 4 do
-		self = getglobal("Perl_Party_MemberFrame"..id);
+		self = _G["Perl_Party_MemberFrame"..id];
 		Perl_Party_Set_Name(self);		-- Set Name & Class Icon
 		Perl_Party_Update_Level(self);		-- Set Level
 		Perl_Party_Update_Health(self);		-- Set Death State & Disconnected State
@@ -1200,65 +1165,65 @@ end
 ------------------------
 -- Fade Bar Functions --
 ------------------------
-function Perl_Party_One_HealthBar_Fade(arg1)
-	Perl_Party_One_HealthBar_Fade_Color = Perl_Party_One_HealthBar_Fade_Color - arg1;
-	Perl_Party_One_HealthBar_Fade_Time_Elapsed = Perl_Party_One_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_One_HealthBar_Fade(self, elapsed)
+	Perl_Party_One_HealthBar_Fade_Color = Perl_Party_One_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_MemberFrame1_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_One_HealthBar_Fade_Color, 0, Perl_Party_One_HealthBar_Fade_Color);
 
-	if (Perl_Party_One_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_One_HealthBar_Fade_Color = 1;
-		Perl_Party_One_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_MemberFrame1_StatsFrame_HealthBarFadeBar:Hide();
 		Perl_Party_1_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Two_HealthBar_Fade(arg1)
-	Perl_Party_Two_HealthBar_Fade_Color = Perl_Party_Two_HealthBar_Fade_Color - arg1;
-	Perl_Party_Two_HealthBar_Fade_Time_Elapsed = Perl_Party_Two_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Two_HealthBar_Fade(self, elapsed)
+	Perl_Party_Two_HealthBar_Fade_Color = Perl_Party_Two_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_MemberFrame2_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Two_HealthBar_Fade_Color, 0, Perl_Party_Two_HealthBar_Fade_Color);
 
-	if (Perl_Party_Two_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Two_HealthBar_Fade_Color = 1;
-		Perl_Party_Two_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_MemberFrame2_StatsFrame_HealthBarFadeBar:Hide();
 		Perl_Party_2_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Three_HealthBar_Fade(arg1)
-	Perl_Party_Three_HealthBar_Fade_Color = Perl_Party_Three_HealthBar_Fade_Color - arg1;
-	Perl_Party_Three_HealthBar_Fade_Time_Elapsed = Perl_Party_Three_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Three_HealthBar_Fade(self, elapsed)
+	Perl_Party_Three_HealthBar_Fade_Color = Perl_Party_Three_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_MemberFrame3_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Three_HealthBar_Fade_Color, 0, Perl_Party_Three_HealthBar_Fade_Color);
 
-	if (Perl_Party_Three_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Three_HealthBar_Fade_Color = 1;
-		Perl_Party_Three_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_MemberFrame3_StatsFrame_HealthBarFadeBar:Hide();
 		Perl_Party_3_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Four_HealthBar_Fade(arg1)
-	Perl_Party_Four_HealthBar_Fade_Color = Perl_Party_Four_HealthBar_Fade_Color - arg1;
-	Perl_Party_Four_HealthBar_Fade_Time_Elapsed = Perl_Party_Four_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Four_HealthBar_Fade(self, elapsed)
+	Perl_Party_Four_HealthBar_Fade_Color = Perl_Party_Four_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_MemberFrame4_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Four_HealthBar_Fade_Color, 0, Perl_Party_Four_HealthBar_Fade_Color);
 
-	if (Perl_Party_Four_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Four_HealthBar_Fade_Color = 1;
-		Perl_Party_Four_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_MemberFrame4_StatsFrame_HealthBarFadeBar:Hide();
 		Perl_Party_4_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_One_ManaBar_Fade(arg1)
-	Perl_Party_One_ManaBar_Fade_Color = Perl_Party_One_ManaBar_Fade_Color - arg1;
-	Perl_Party_One_ManaBar_Fade_Time_Elapsed = Perl_Party_One_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_One_ManaBar_Fade(self, elapsed)
+	Perl_Party_One_ManaBar_Fade_Color = Perl_Party_One_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (UnitPowerType("party1") == 0) then
 		Perl_Party_MemberFrame1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_One_ManaBar_Fade_Color, Perl_Party_One_ManaBar_Fade_Color);
@@ -1270,17 +1235,17 @@ function Perl_Party_One_ManaBar_Fade(arg1)
 		Perl_Party_MemberFrame1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_One_ManaBar_Fade_Color, Perl_Party_One_ManaBar_Fade_Color, Perl_Party_One_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Party_One_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_One_ManaBar_Fade_Color = 1;
-		Perl_Party_One_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_MemberFrame1_StatsFrame_ManaBarFadeBar:Hide();
 		Perl_Party_1_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Two_ManaBar_Fade(arg1)
-	Perl_Party_Two_ManaBar_Fade_Color = Perl_Party_Two_ManaBar_Fade_Color - arg1;
-	Perl_Party_Two_ManaBar_Fade_Time_Elapsed = Perl_Party_Two_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Two_ManaBar_Fade(self, elapsed)
+	Perl_Party_Two_ManaBar_Fade_Color = Perl_Party_Two_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (UnitPowerType("party2") == 0) then
 		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_Two_ManaBar_Fade_Color, Perl_Party_Two_ManaBar_Fade_Color);
@@ -1292,17 +1257,17 @@ function Perl_Party_Two_ManaBar_Fade(arg1)
 		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Two_ManaBar_Fade_Color, Perl_Party_Two_ManaBar_Fade_Color, Perl_Party_Two_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Party_One_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Two_ManaBar_Fade_Color = 1;
-		Perl_Party_Two_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:Hide();
 		Perl_Party_2_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Three_ManaBar_Fade(arg1)
-	Perl_Party_Three_ManaBar_Fade_Color = Perl_Party_Three_ManaBar_Fade_Color - arg1;
-	Perl_Party_Three_ManaBar_Fade_Time_Elapsed = Perl_Party_Three_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Three_ManaBar_Fade(self, elapsed)
+	Perl_Party_Three_ManaBar_Fade_Color = Perl_Party_Three_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (UnitPowerType("party3") == 0) then
 		Perl_Party_MemberFrame3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_Three_ManaBar_Fade_Color, Perl_Party_Three_ManaBar_Fade_Color);
@@ -1314,17 +1279,17 @@ function Perl_Party_Three_ManaBar_Fade(arg1)
 		Perl_Party_MemberFrame3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Three_ManaBar_Fade_Color, Perl_Party_Three_ManaBar_Fade_Color, Perl_Party_Three_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Party_Three_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Three_ManaBar_Fade_Color = 1;
-		Perl_Party_Three_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_MemberFrame3_StatsFrame_ManaBarFadeBar:Hide();
 		Perl_Party_3_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Four_ManaBar_Fade(arg1)
-	Perl_Party_Four_ManaBar_Fade_Color = Perl_Party_Four_ManaBar_Fade_Color - arg1;
-	Perl_Party_Four_ManaBar_Fade_Time_Elapsed = Perl_Party_Four_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Four_ManaBar_Fade(self, elapsed)
+	Perl_Party_Four_ManaBar_Fade_Color = Perl_Party_Four_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (UnitPowerType("party4") == 0) then
 		Perl_Party_MemberFrame4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_Four_ManaBar_Fade_Color, Perl_Party_Four_ManaBar_Fade_Color);
@@ -1336,65 +1301,65 @@ function Perl_Party_Four_ManaBar_Fade(arg1)
 		Perl_Party_MemberFrame4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Four_ManaBar_Fade_Color, Perl_Party_Four_ManaBar_Fade_Color, Perl_Party_Four_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Party_Four_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Four_ManaBar_Fade_Color = 1;
-		Perl_Party_Four_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_MemberFrame4_StatsFrame_ManaBarFadeBar:Hide();
 		Perl_Party_4_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_One_PetHealthBar_Fade(arg1)
-	Perl_Party_One_PetHealthBar_Fade_Color = Perl_Party_One_PetHealthBar_Fade_Color - arg1;
-	Perl_Party_One_PetHealthBar_Fade_Time_Elapsed = Perl_Party_One_PetHealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_One_PetHealthBar_Fade(self, elapsed)
+	Perl_Party_One_PetHealthBar_Fade_Color = Perl_Party_One_PetHealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_MemberFrame1_StatsFrame_PetHealthBarFadeBar:SetStatusBarColor(0, Perl_Party_One_PetHealthBar_Fade_Color, 0, Perl_Party_One_PetHealthBar_Fade_Color);
 
-	if (Perl_Party_One_PetHealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_One_PetHealthBar_Fade_Color = 1;
-		Perl_Party_One_PetHealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_MemberFrame1_StatsFrame_PetHealthBarFadeBar:Hide();
 		Perl_Party_1_PetHealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Two_PetHealthBar_Fade(arg1)
+function Perl_Party_Two_PetHealthBar_Fade(self, elapsed)
 	Perl_Party_Two_PetHealthBar_Fade_Color = Perl_Party_Two_PetHealthBar_Fade_Color - arg1;
-	Perl_Party_Two_PetHealthBar_Fade_Time_Elapsed = Perl_Party_Two_PetHealthBar_Fade_Time_Elapsed + arg1;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + arg1;
 
 	Perl_Party_MemberFrame2_StatsFrame_PetHealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Two_PetHealthBar_Fade_Color, 0, Perl_Party_Two_PetHealthBar_Fade_Color);
 
-	if (Perl_Party_Two_PetHealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Two_PetHealthBar_Fade_Color = 1;
-		Perl_Party_Two_PetHealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_MemberFrame2_StatsFrame_PetHealthBarFadeBar:Hide();
 		Perl_Party_2_PetHealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Three_PetHealthBar_Fade(arg1)
+function Perl_Party_Three_PetHealthBar_Fade(self, elapsed)
 	Perl_Party_Three_PetHealthBar_Fade_Color = Perl_Party_Three_PetHealthBar_Fade_Color - arg1;
-	Perl_Party_Three_PetHealthBar_Fade_Time_Elapsed = Perl_Party_Three_PetHealthBar_Fade_Time_Elapsed + arg1;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + arg1;
 
 	Perl_Party_MemberFrame3_StatsFrame_PetHealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Three_PetHealthBar_Fade_Color, 0, Perl_Party_Three_PetHealthBar_Fade_Color);
 
-	if (Perl_Party_Three_PetHealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Three_PetHealthBar_Fade_Color = 1;
-		Perl_Party_Three_PetHealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_MemberFrame3_StatsFrame_PetHealthBarFadeBar:Hide();
 		Perl_Party_3_PetHealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Four_PetHealthBar_Fade(arg1)
+function Perl_Party_Four_PetHealthBar_Fade(self, elapsed)
 	Perl_Party_Four_PetHealthBar_Fade_Color = Perl_Party_Four_PetHealthBar_Fade_Color - arg1;
-	Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed = Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed + arg1;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + arg1;
 
 	Perl_Party_MemberFrame4_StatsFrame_PetHealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Four_PetHealthBar_Fade_Color, 0, Perl_Party_Four_PetHealthBar_Fade_Color);
 
-	if (Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Four_PetHealthBar_Fade_Color = 1;
-		Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_MemberFrame4_StatsFrame_PetHealthBarFadeBar:Hide();
 		Perl_Party_4_PetHealthBar_Fade_OnUpdate_Frame:Hide();
 	end
@@ -1411,19 +1376,19 @@ function Perl_Party_Frame_Style()
 		-- Begin: Set the frame size for pets
 		if (showpets == 1) then
 			for id=1,4 do
-				getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame"):SetHeight(54);
-				getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_CastClickOverlay"):SetHeight(54);
-				getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar"):Show();
-				getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBarBG"):Show();
-				getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar_CastClickOverlay"):Show();
+				_G["Perl_Party_MemberFrame"..id.."_StatsFrame"]:SetHeight(54);
+				_G["Perl_Party_MemberFrame"..id.."_StatsFrame_CastClickOverlay"]:SetHeight(54);
+				_G["Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar"]:Show();
+				_G["Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBarBG"]:Show();
+				_G["Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar_CastClickOverlay"]:Show();
 			end
 		else
 			for id=1,4 do
-				getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame"):SetHeight(42);
-				getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_CastClickOverlay"):SetHeight(42);
-				getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar"):Hide();
-				getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBarBG"):Hide();
-				getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar_CastClickOverlay"):Hide();
+				_G["Perl_Party_MemberFrame"..id.."_StatsFrame"]:SetHeight(42);
+				_G["Perl_Party_MemberFrame"..id.."_StatsFrame_CastClickOverlay"]:SetHeight(42);
+				_G["Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar"]:Hide();
+				_G["Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBarBG"]:Hide();
+				_G["Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar_CastClickOverlay"]:Hide();
 			end
 		end
 		-- End: Set the frame size for pets
@@ -1513,47 +1478,47 @@ function Perl_Party_Frame_Style()
 		-- Begin: Short Bars
 		if (compactmode == 1 and shortbars == 1) then
 			for num=1,4 do
-				getglobal("Perl_Party_MemberFrame"..num):SetWidth(167);
-				getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"):SetWidth(167);
-				getglobal("Perl_Party_MemberFrame"..num.."_Name"):SetWidth(167);
-				getglobal("Perl_Party_MemberFrame"..num.."_Name_CastClickOverlay"):SetWidth(167);
+				_G["Perl_Party_MemberFrame"..num]:SetWidth(167);
+				_G["Perl_Party_MemberFrame"..num.."_NameFrame"]:SetWidth(167);
+				_G["Perl_Party_MemberFrame"..num.."_Name"]:SetWidth(167);
+				_G["Perl_Party_MemberFrame"..num.."_Name_CastClickOverlay"]:SetWidth(167);
 
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):SetWidth(115);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"):SetWidth(115);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"):SetWidth(115);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetWidth(115);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"]:SetWidth(115);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"]:SetWidth(115);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"]:SetWidth(115);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"]:SetWidth(115);
 
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):SetWidth(115);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"):SetWidth(115);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"):SetWidth(115);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetWidth(115);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"]:SetWidth(115);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"]:SetWidth(115);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"]:SetWidth(115);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"]:SetWidth(115);
 
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):SetWidth(115);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"):SetWidth(115);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"):SetWidth(115);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetWidth(115);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"]:SetWidth(115);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"]:SetWidth(115);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"]:SetWidth(115);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"]:SetWidth(115);
 			end
 		else
 			for num=1,4 do
-				getglobal("Perl_Party_MemberFrame"..num):SetWidth(202);
-				getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"):SetWidth(202);
-				getglobal("Perl_Party_MemberFrame"..num.."_Name"):SetWidth(202);
-				getglobal("Perl_Party_MemberFrame"..num.."_Name_CastClickOverlay"):SetWidth(202);
+				_G["Perl_Party_MemberFrame"..num]:SetWidth(202);
+				_G["Perl_Party_MemberFrame"..num.."_NameFrame"]:SetWidth(202);
+				_G["Perl_Party_MemberFrame"..num.."_Name"]:SetWidth(202);
+				_G["Perl_Party_MemberFrame"..num.."_Name_CastClickOverlay"]:SetWidth(202);
 
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):SetWidth(150);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"):SetWidth(150);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"):SetWidth(150);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetWidth(150);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"]:SetWidth(150);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"]:SetWidth(150);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"]:SetWidth(150);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"]:SetWidth(150);
 
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):SetWidth(150);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"):SetWidth(150);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"):SetWidth(150);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetWidth(150);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"]:SetWidth(150);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"]:SetWidth(150);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"]:SetWidth(150);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"]:SetWidth(150);
 
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):SetWidth(150);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"):SetWidth(150);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"):SetWidth(150);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetWidth(150);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"]:SetWidth(150);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"]:SetWidth(150);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"]:SetWidth(150);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"]:SetWidth(150);
 			end
 		end
 		-- End: Short Bars
@@ -1561,68 +1526,68 @@ function Perl_Party_Frame_Style()
 		-- Begin: Hide Class Level Frame
 		if (hideclasslevelframe == 1) then
 			for num=1,4 do
-				getglobal("Perl_Party_MemberFrame"..num.."_LevelFrame"):Hide();
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):SetPoint("TOPLEFT", getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"), "BOTTOMLEFT", 0, 2);
+				_G["Perl_Party_MemberFrame"..num.."_LevelFrame"]:Hide();
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame"]:SetPoint("TOPLEFT", _G["Perl_Party_MemberFrame"..num.."_NameFrame"], "BOTTOMLEFT", 0, 2);
 
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):GetWidth() + 30);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_CastClickOverlay"):GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame"]:GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_CastClickOverlay"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_CastClickOverlay"]:GetWidth() + 30);
 
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):GetWidth() + 30);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"):GetWidth() + 30);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"):GetWidth() + 30);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"]:GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"]:GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"]:GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"]:GetWidth() + 30);
 
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):GetWidth() + 30);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"):GetWidth() + 30);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"):GetWidth() + 30);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"]:GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"]:GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"]:GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"]:GetWidth() + 30);
 
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):GetWidth() + 30);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"):GetWidth() + 30);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"):GetWidth() + 30);
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"]:GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"]:GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"]:GetWidth() + 30);
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"]:SetWidth(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"]:GetWidth() + 30);
 			end
 		else
 			for num=1,4 do
-				getglobal("Perl_Party_MemberFrame"..num.."_LevelFrame"):Show();
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):SetPoint("TOPLEFT", getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"), "BOTTOMLEFT", 32, 2);
+				_G["Perl_Party_MemberFrame"..num.."_LevelFrame"]:Show();
+				_G["Perl_Party_MemberFrame"..num.."_StatsFrame"]:SetPoint("TOPLEFT", _G["Perl_Party_MemberFrame"..num.."_NameFrame"], "BOTTOMLEFT", 32, 2);
 			end
 		end
 		-- End: Hide Class Level Frame
 
 		-- Begin: Set Text Positions
 		for partynum=1,4 do
-			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):ClearAllPoints();
-			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):ClearAllPoints();
-			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):ClearAllPoints();
+			_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"]:ClearAllPoints();
+			_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"]:ClearAllPoints();
+			_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"]:ClearAllPoints();
 		end
 		if (compactmode == 0) then
 			for partynum=1,4 do
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetPoint("RIGHT", 85, 0);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetPoint("TOP", 0, 1);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetPoint("RIGHT", 85, 0);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetPoint("TOP", 0, 1);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetPoint("RIGHT", 85, 0);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetPoint("TOP", 0, 1);
+				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"]:SetPoint("RIGHT", 85, 0);
+				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"]:SetPoint("TOP", 0, 1);
+				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"]:SetPoint("RIGHT", 85, 0);
+				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"]:SetPoint("TOP", 0, 1);
+				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"]:SetPoint("RIGHT", 85, 0);
+				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"]:SetPoint("TOP", 0, 1);
 			end
 		else
 			if (healermode == 0) then
 				for partynum=1,4 do
-					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetPoint("RIGHT", 85, 0);
-					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetPoint("TOP", 0, 1);
-					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetPoint("RIGHT", 85, 1);
-					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetPoint("TOP", 0, 1);
-					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetPoint("RIGHT", 85, 0);
-					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetPoint("TOP", 0, 1);
+					_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"]:SetPoint("RIGHT", 85, 0);
+					_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"]:SetPoint("TOP", 0, 1);
+					_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"]:SetPoint("RIGHT", 85, 1);
+					_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"]:SetPoint("TOP", 0, 1);
+					_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"]:SetPoint("RIGHT", 85, 0);
+					_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"]:SetPoint("TOP", 0, 1);
 				end
 			else
 				for partynum=1,4 do
-					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetPoint("RIGHT", -10, 0);
-					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetPoint("TOPLEFT", 5, 1);
-					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetPoint("RIGHT", -10, 0);
-					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetPoint("TOPLEFT", 5, 1);
-					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetPoint("RIGHT", -10, 0);
-					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetPoint("TOPLEFT", 5, 1);
+					_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"]:SetPoint("RIGHT", -10, 0);
+					_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"]:SetPoint("TOPLEFT", 5, 1);
+					_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"]:SetPoint("RIGHT", -10, 0);
+					_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"]:SetPoint("TOPLEFT", 5, 1);
+					_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"]:SetPoint("RIGHT", -10, 0);
+					_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"]:SetPoint("TOPLEFT", 5, 1);
 				end
 			end
 		end
@@ -1631,13 +1596,13 @@ function Perl_Party_Frame_Style()
 		-- Begin: Show/Hide the portrait frame
 		for id=1,4 do
 			if (showportrait == 1) then
-				getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame"):Show();			-- Show the main portrait frame
+				_G["Perl_Party_MemberFrame"..id.."_PortraitFrame"]:Show();			-- Show the main portrait frame
 				if (threedportrait == 0) then
-					getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):Hide();	-- Hide the 3d graphic
-					getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"):Show();	-- Show the 2d graphic
+					_G["Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"]:Hide();	-- Hide the 3d graphic
+					_G["Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"]:Show();	-- Show the 2d graphic
 				end
 			else
-				getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame"):Hide();			-- Hide the frame and 2d/3d portion
+				_G["Perl_Party_MemberFrame"..id.."_PortraitFrame"]:Hide();			-- Hide the frame and 2d/3d portion
 			end
 		end
 		-- End: Show/Hide the portrait frame
@@ -1645,9 +1610,9 @@ function Perl_Party_Frame_Style()
 		Perl_Party_Update_All_Buff_Positions();	-- Update Buff Positions
 
 		for id=1,4 do				-- Update the name length
-			getglobal("Perl_Party_MemberFrame"..id.."_Name_NameBarText"):SetWidth(getglobal("Perl_Party_MemberFrame"..id.."_Name"):GetWidth() - 45);
-			getglobal("Perl_Party_MemberFrame"..id.."_Name_NameBarText"):SetHeight(getglobal("Perl_Party_MemberFrame"..id.."_Name"):GetHeight() - 10);
-			getglobal("Perl_Party_MemberFrame"..id.."_Name_NameBarText"):SetNonSpaceWrap(false);
+			_G["Perl_Party_MemberFrame"..id.."_Name_NameBarText"]:SetWidth(_G["Perl_Party_MemberFrame"..id.."_Name"]:GetWidth() - 45);
+			_G["Perl_Party_MemberFrame"..id.."_Name_NameBarText"]:SetHeight(_G["Perl_Party_MemberFrame"..id.."_Name"]:GetHeight() - 10);
+			_G["Perl_Party_MemberFrame"..id.."_Name_NameBarText"]:SetNonSpaceWrap(false);
 		end
 
 		if (Initialized) then
@@ -1665,12 +1630,12 @@ end
 function Perl_Party_ArcaneBar_Support()
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 		for id=1,4 do
-			getglobal("Perl_ArcaneBar_party"..id):SetPoint("TOPLEFT", getglobal("Perl_Party_MemberFrame"..id.."_NameFrame"), "TOPLEFT", 5, -5);
-			getglobal("Perl_ArcaneBar_party"..id.."_CastTime"):ClearAllPoints();
-			getglobal("Perl_ArcaneBar_party"..id.."_CastTime"):SetPoint("LEFT", getglobal("Perl_Party_MemberFrame"..id.."_NameFrame"), "RIGHT", 0, 0);
+			_G["Perl_ArcaneBar_party"..id]:SetPoint("TOPLEFT", _G["Perl_Party_MemberFrame"..id.."_NameFrame"], "TOPLEFT", 5, -5);
+			_G["Perl_ArcaneBar_party"..id.."_CastTime"]:ClearAllPoints();
+			_G["Perl_ArcaneBar_party"..id.."_CastTime"]:SetPoint("LEFT", _G["Perl_Party_MemberFrame"..id.."_NameFrame"], "RIGHT", 0, 0);
 
-			getglobal("Perl_ArcaneBar_party"..id):SetWidth(getglobal("Perl_Party_MemberFrame"..id.."_NameFrame"):GetWidth() - 10);
-			getglobal("Perl_ArcaneBar_party"..id.."_Flash"):SetWidth(getglobal("Perl_Party_MemberFrame"..id.."_NameFrame"):GetWidth() + 5);
+			_G["Perl_ArcaneBar_party"..id]:SetWidth(_G["Perl_Party_MemberFrame"..id.."_NameFrame"]:GetWidth() - 10);
+			_G["Perl_ArcaneBar_party"..id.."_Flash"]:SetWidth(_G["Perl_Party_MemberFrame"..id.."_NameFrame"]:GetWidth() + 5);
 		end
 
 		Perl_ArcaneBar_Set_Spark_Width(nil, nil, nil, Perl_Party_MemberFrame1_NameFrame:GetWidth());
@@ -2398,11 +2363,11 @@ function Perl_Party_Buff_UpdateAll(self)
 				bufffilter = "HELPFUL RAID";
 			end
 			_, _, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura(self.unit, buffnum, bufffilter);	-- Get the texture and buff stacking information if any
-			button = getglobal("Perl_Party_MemberFrame"..self.id.."_BuffFrame_Buff"..buffnum);				-- Create the main icon for the buff
+			button = _G["Perl_Party_MemberFrame"..self.id.."_BuffFrame_Buff"..buffnum];				-- Create the main icon for the buff
 			if (buffTexture) then												-- If there is a valid texture, proceed with buff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Hide();							-- Hide the debuff border
-				buffCount = getglobal(button:GetName().."Count");							-- Declare the buff counting text variable
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);						-- Set the texture
+				_G[button:GetName().."DebuffBorder"]:Hide();							-- Hide the debuff border
+				buffCount = _G[button:GetName().."Count"];							-- Declare the buff counting text variable
 				if (buffApplications > 1) then
 					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
 					buffCount:Show();										-- Show the text
@@ -2410,7 +2375,7 @@ function Perl_Party_Buff_UpdateAll(self)
 					buffCount:Hide();										-- Hide the text if equal to 0
 				end
 				if (displaybufftimers == 1) then
-					cooldown = getglobal(button:GetName().."Cooldown");				-- Handle cooldowns
+					cooldown = _G[button:GetName().."Cooldown"];				-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
 							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
@@ -2437,18 +2402,18 @@ function Perl_Party_Buff_UpdateAll(self)
 				debufffilter = "HARMFUL";
 			end
 			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura(self.unit, debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
-			button = getglobal("Perl_Party_MemberFrame"..self.id.."_BuffFrame_Debuff"..debuffnum);				-- Create the main icon for the debuff
+			button = _G["Perl_Party_MemberFrame"..self.id.."_BuffFrame_Debuff"..debuffnum];				-- Create the main icon for the debuff
 			if (buffTexture) then												-- If there is a valid texture, proceed with debuff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);						-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
 						if (curableDebuffFound == 0) then
 							if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
-								getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame"):SetBackdropBorderColor(color.r, color.g, color.b, 1);
-								getglobal("Perl_Party_MemberFrame"..self.id.."_LevelFrame"):SetBackdropBorderColor(color.r, color.g, color.b, 1);
-								getglobal("Perl_Party_MemberFrame"..self.id.."_PortraitFrame"):SetBackdropBorderColor(color.r, color.g, color.b, 1);
-								getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame"):SetBackdropBorderColor(color.r, color.g, color.b, 1);
+								_G["Perl_Party_MemberFrame"..self.id.."_NameFrame"]:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+								_G["Perl_Party_MemberFrame"..self.id.."_LevelFrame"]:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+								_G["Perl_Party_MemberFrame"..self.id.."_PortraitFrame"]:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+								_G["Perl_Party_MemberFrame"..self.id.."_StatsFrame"]:SetBackdropBorderColor(color.r, color.g, color.b, 1);
 								curableDebuffFound = 1;
 							end
 						end
@@ -2456,9 +2421,9 @@ function Perl_Party_Buff_UpdateAll(self)
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
-				getglobal(button:GetName().."DebuffBorder"):SetVertexColor(color.r, color.g, color.b);		-- Set the debuff border color
-				getglobal(button:GetName().."DebuffBorder"):Show();						-- Show the debuff border
-				buffCount = getglobal(button:GetName().."Count");						-- Declare the debuff counting text variable
+				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);		-- Set the debuff border color
+				_G[button:GetName().."DebuffBorder"]:Show();						-- Show the debuff border
+				buffCount = _G[button:GetName().."Count"];						-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
 					buffCount:SetText(buffApplications);							-- Set the text to the number of applications if greater than 0
 					buffCount:Show();									-- Show the text
@@ -2466,7 +2431,7 @@ function Perl_Party_Buff_UpdateAll(self)
 					buffCount:Hide();									-- Hide the text if equal to 0
 				end
 				if (displaybufftimers == 1) then
-					cooldown = getglobal(button:GetName().."Cooldown");					-- Handle cooldowns
+					cooldown = _G[button:GetName().."Cooldown"];					-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
 							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
@@ -2487,10 +2452,10 @@ function Perl_Party_Buff_UpdateAll(self)
 		end														-- End main debuff loop
 
 		if (curableDebuffFound == 0) then
-			getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-			getglobal("Perl_Party_MemberFrame"..self.id.."_LevelFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-			getglobal("Perl_Party_MemberFrame"..self.id.."_PortraitFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-			getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			_G["Perl_Party_MemberFrame"..self.id.."_NameFrame"]:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			_G["Perl_Party_MemberFrame"..self.id.."_LevelFrame"]:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			_G["Perl_Party_MemberFrame"..self.id.."_PortraitFrame"]:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			_G["Perl_Party_MemberFrame"..self.id.."_StatsFrame"]:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 		end
 
 		if (UnitIsDead(self.unit)) then
@@ -2501,9 +2466,9 @@ function Perl_Party_Buff_UpdateAll(self)
 				while (buffTexture) do
 					if (buffTexture == "Interface\\Icons\\Ability_Rogue_FeignDeath") then
 						if (compactmode == 0) then
-							getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar_HealthBarText"):SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
+							_G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar_HealthBarText"]:SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
 						else
-							getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
+							_G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar_HealthBarTextPercent"]:SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
 						end
 						break;
 					end
@@ -2530,84 +2495,84 @@ function Perl_Party_Update_All_Buff_Positions()
 end
 
 function Perl_Party_Buff_Position_Update(id)
-	getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):ClearAllPoints();
+	_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:ClearAllPoints();
 	if (bufflocation == 1) then
 		if (portraitbuffs == 1 and showportrait == 1) then
-			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "TOPLEFT", 3, 20);
+			_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "TOPLEFT", 3, 20);
 		else
-			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPLEFT", 3, 20);
+			_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPLEFT", 3, 20);
 		end
 	elseif (bufflocation == 2) then
 		if (portraitbuffs == 1 and showportrait == 1) then
-			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "TOPLEFT", 3, 0);
+			_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "TOPLEFT", 3, 0);
 		else
-			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPLEFT", 3, 0);
+			_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPLEFT", 3, 0);
 		end
 	elseif (bufflocation == 3) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPRIGHT", 0, -3);
+		_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPRIGHT", 0, -3);
 	elseif (bufflocation == 4) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -3);
+		_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -3);
 	elseif (bufflocation == 5) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -23);
+		_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -23);
 	elseif (bufflocation == 6) then
 		if (portraitbuffs == 1 and showportrait == 1) then
-			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "BOTTOMLEFT", 3, 0);
+			_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "BOTTOMLEFT", 3, 0);
 		else
 			if (hideclasslevelframe == 0) then
-				getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, 0);
+				_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, 0);
 			else
-				getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, 0);
+				_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, 0);
 			end
 		end
 	elseif (bufflocation == 7) then
 		if (portraitbuffs == 1 and showportrait == 1) then
-			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "BOTTOMLEFT", 3, -20);
+			_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "BOTTOMLEFT", 3, -20);
 		else
 			if (hideclasslevelframe == 0) then
-				getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, -20);
+				_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, -20);
 			else
-				getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, -20);
+				_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, -20);
 			end
 		end
 	end
 
-	getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):ClearAllPoints();
+	_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:ClearAllPoints();
 	if (debufflocation == 1) then
 		if (portraitbuffs == 1 and showportrait == 1) then
-			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "TOPLEFT", 3, 20);
+			_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "TOPLEFT", 3, 20);
 		else
-			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPLEFT", 3, 20);
+			_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPLEFT", 3, 20);
 		end
 	elseif (debufflocation == 2) then
 		if (portraitbuffs == 1 and showportrait == 1) then
-			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "TOPLEFT", 3, 0);
+			_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "TOPLEFT", 3, 0);
 		else
-			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPLEFT", 3, 0);
+			_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPLEFT", 3, 0);
 		end
 	elseif (debufflocation == 3) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPRIGHT", 0, -3);
+		_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPRIGHT", 0, -3);
 	elseif (debufflocation == 4) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -3);
+		_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -3);
 	elseif (debufflocation == 5) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -23);
+		_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -23);
 	elseif (debufflocation == 6) then
 		if (portraitbuffs == 1 and showportrait == 1) then
-			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "BOTTOMLEFT", 3, 0);
+			_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "BOTTOMLEFT", 3, 0);
 		else
 			if (hideclasslevelframe == 0) then
-				getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, 0);
+				_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, 0);
 			else
-				getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, 0);
+				_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, 0);
 			end
 		end
 	elseif (debufflocation == 7) then
 		if (portraitbuffs == 1 and showportrait == 1) then
-			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "BOTTOMLEFT", 3, -20);
+			_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_PortraitFrame", "BOTTOMLEFT", 3, -20);
 		else
 			if (hideclasslevelframe == 0) then
-				getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, -20);
+				_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, -20);
 			else
-				getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, -20);
+				_G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"]:SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, -20);
 			end
 		end
 	end
@@ -2617,10 +2582,10 @@ function Perl_Party_Reset_Buffs()
 	local button, debuff, icon, cooldown;
 	for id=1,4 do
 		for buffnum=1,16 do
-			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..buffnum);
-			icon = getglobal(button:GetName().."Icon");
-			debuff = getglobal(button:GetName().."DebuffBorder");
-			cooldown = getglobal(button:GetName().."Cooldown");
+			button = _G["Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..buffnum];
+			icon = _G[button:GetName().."Icon"];
+			debuff = _G[button:GetName().."DebuffBorder"];
+			cooldown = _G[button:GetName().."Cooldown"];
 			CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 			cooldown:Hide();
 			button:SetHeight(buffsize);
@@ -2633,10 +2598,10 @@ function Perl_Party_Reset_Buffs()
 			debuff:Hide();
 		end
 		for buffnum=1,16 do
-			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..buffnum);
-			icon = getglobal(button:GetName().."Icon");
-			debuff = getglobal(button:GetName().."DebuffBorder");
-			cooldown = getglobal(button:GetName().."Cooldown");
+			button = _G["Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..buffnum];
+			icon = _G[button:GetName().."Icon"];
+			debuff = _G[button:GetName().."DebuffBorder"];
+			cooldown = _G[button:GetName().."Cooldown"];
 			CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 			cooldown:Hide();
 			button:SetHeight(debuffsize);
@@ -2666,7 +2631,7 @@ end
 --------------------
 function Perl_Party_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
-		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID().."_DropDown"), "Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID(), 0, 0);
+		ToggleDropDownMenu(1, nil, _G["Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID().."_DropDown"], "Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID(), 0, 0);
 	end
 	SecureUnitButton_OnLoad(self, "party"..self:GetParent():GetParent():GetID(), showmenu);
 
@@ -2692,13 +2657,13 @@ function Perl_Party_DragStart(button)
 	end
 end
 
-function Perl_Party_DragStop(button)
+function Perl_Party_DragStop()
 	Perl_Party_Frame:StopMovingOrSizing();
 end
 
 function Perl_Party_Pet_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
-		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID().."_DropDown"), "Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID(), 0, 0);
+		ToggleDropDownMenu(1, nil, _G["Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID().."_DropDown"], "Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID(), 0, 0);
 	end
 	SecureUnitButton_OnLoad(self, "partypet"..self:GetParent():GetParent():GetID(), showmenu);
 

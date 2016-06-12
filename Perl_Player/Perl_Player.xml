@@ -164,10 +164,10 @@
 								Perl_Player_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Player_DragStart(arg1);
+								Perl_Player_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_DragStop(arg1);
+								Perl_Player_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -255,10 +255,10 @@
 								Perl_Player_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Player_DragStart(arg1);
+								Perl_Player_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_DragStop(arg1);
+								Perl_Player_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -366,10 +366,10 @@
 								Perl_Player_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Player_DragStart(arg1);
+								Perl_Player_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_DragStop(arg1);
+								Perl_Player_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -458,10 +458,10 @@
 								Perl_Player_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Player_DragStart(arg1);
+								Perl_Player_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_DragStop(arg1);
+								Perl_Player_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -578,10 +578,10 @@
 								Perl_Player_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Player_DragStart(arg1);
+								Perl_Player_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_DragStop(arg1);
+								Perl_Player_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -688,10 +688,10 @@
 								Perl_Player_HealthHide();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Player_DragStart(arg1);
+								Perl_Player_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_DragStop(arg1);
+								Perl_Player_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -798,10 +798,10 @@
 								Perl_Player_ManaHide();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Player_DragStart(arg1);
+								Perl_Player_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_DragStop(arg1);
+								Perl_Player_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -910,10 +910,10 @@
 								Perl_Player_DruidBarManaHide();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Player_DragStart(arg1);
+								Perl_Player_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_DragStop(arg1);
+								Perl_Player_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -1000,10 +1000,10 @@
 								GameTooltip:Hide();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Player_DragStart(arg1);
+								Perl_Player_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_DragStop(arg1);
+								Perl_Player_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -1044,17 +1044,19 @@
 
 	<Frame name="Perl_Player_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Player_HealthBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Player_HealthBar_Fade" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Player_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Player_ManaBar_Fade(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Player_ManaBar_Fade" />
 		</Scripts>
 	</Frame>
 
@@ -1070,17 +1072,19 @@
 
 	<Frame name="Perl_Player_ManaBar_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Player_OnUpdate_ManaBar(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Player_OnUpdate_ManaBar" />
 		</Scripts>
 	</Frame>
 
 	<Frame name="Perl_Player_PvP_Timer_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
-			<OnUpdate>
-				Perl_Player_OnUpdate_PvP_Timer(arg1);
-			</OnUpdate>
+			<OnLoad>
+				self.TimeSinceLastUpdate = 0;
+			</OnLoad>
+			<OnUpdate function="Perl_Player_OnUpdate_PvP_Timer" />
 		</Scripts>
 	</Frame>
 </Ui>

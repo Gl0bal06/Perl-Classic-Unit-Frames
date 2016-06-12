@@ -19,30 +19,19 @@ local focushiddeninraid = 0;	-- focus target is not hidden in raids by default
 
 -- Default Local Variables
 local Initialized = nil;			-- waiting to be initialized
-local Perl_Party_Target_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Party_Target_Time_Update_Rate = 0.2;	-- the update interval
 local mouseoverhealthflag = 0;			-- is the mouse over the health bar?
 local mouseovermanaflag = 0;			-- is the mouse over the mana bar?
 local Perl_Party_Target_One_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_One_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Party_Target_Two_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Two_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Party_Target_Three_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Three_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Party_Target_Four_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Four_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Party_Target_Five_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Five_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Party_Target_One_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_One_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Party_Target_Two_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Two_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Party_Target_Three_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Three_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Party_Target_Four_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Four_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Party_Target_Five_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Five_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
 local r, g, b, currentunit, partytargethealth, partytargethealthmax, partytargethealthpercent, partytargetmana, partytargetmanamax, partytargetpower, englishclass, raidpartytargetindex;
@@ -52,13 +41,20 @@ local r, g, b, currentunit, partytargethealth, partytargethealthmax, partytarget
 -- Loading Function --
 ----------------------
 function Perl_Party_Target_Script_OnLoad(self)
+	-- Variables
+	self.TimeSinceLastUpdate = 0;
+
 	-- Events
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
 	self:RegisterEvent("RAID_ROSTER_UPDATE");
 
 	-- Scripts
-	self:SetScript("OnEvent", Perl_Party_Target_Script_OnEvent);
+	self:SetScript("OnEvent", 
+		function(self, event, ...)
+			Perl_Party_Target_Events[event](self, ...);
+		end
+	);
 	self:SetScript("OnUpdate", Perl_Party_Target_OnUpdate);
 end
 
@@ -70,36 +66,25 @@ function Perl_Party_Target_OnLoad(self)
 		self.unit = "party"..self.id.."target";
 	end
 
-	self.nameFrame = getglobal("Perl_Party_Target"..self.id.."_NameFrame");
-	self.nameText = getglobal("Perl_Party_Target"..self.id.."_NameFrame_NameBarText");
-	self.raidIcon = getglobal("Perl_Party_Target"..self.id.."_RaidIconFrame_RaidTargetIcon");
-	self.statsFrame = getglobal("Perl_Party_Target"..self.id.."_StatsFrame");
+	self.nameFrame = _G["Perl_Party_Target"..self.id.."_NameFrame"];
+	self.nameText = _G["Perl_Party_Target"..self.id.."_NameFrame_NameBarText"];
+	self.raidIcon = _G["Perl_Party_Target"..self.id.."_RaidIconFrame_RaidTargetIcon"];
+	self.statsFrame = _G["Perl_Party_Target"..self.id.."_StatsFrame"];
 
-	self.healthBar = getglobal("Perl_Party_Target"..self.id.."_StatsFrame_HealthBar");
-	self.healthBarBG = getglobal("Perl_Party_Target"..self.id.."_StatsFrame_HealthBarBG");
-	self.healthBarText = getglobal("Perl_Party_Target"..self.id.."_StatsFrame_HealthBar_HealthBarText");
-	self.healthBarFadeBar = getglobal("Perl_Party_Target"..self.id.."_StatsFrame_HealthBarFadeBar");
-	self.manaBar = getglobal("Perl_Party_Target"..self.id.."_StatsFrame_ManaBar");
-	self.manaBarBG = getglobal("Perl_Party_Target"..self.id.."_StatsFrame_ManaBarBG");
-	self.manaBarText = getglobal("Perl_Party_Target"..self.id.."_StatsFrame_ManaBar_ManaBarText");
-	self.manaBarFadeBar = getglobal("Perl_Party_Target"..self.id.."_StatsFrame_ManaBarFadeBar");
+	self.healthBar = _G["Perl_Party_Target"..self.id.."_StatsFrame_HealthBar"];
+	self.healthBarBG = _G["Perl_Party_Target"..self.id.."_StatsFrame_HealthBarBG"];
+	self.healthBarText = _G["Perl_Party_Target"..self.id.."_StatsFrame_HealthBar_HealthBarText"];
+	self.healthBarFadeBar = _G["Perl_Party_Target"..self.id.."_StatsFrame_HealthBarFadeBar"];
+	self.manaBar = _G["Perl_Party_Target"..self.id.."_StatsFrame_ManaBar"];
+	self.manaBarBG = _G["Perl_Party_Target"..self.id.."_StatsFrame_ManaBarBG"];
+	self.manaBarText = _G["Perl_Party_Target"..self.id.."_StatsFrame_ManaBar_ManaBarText"];
+	self.manaBarFadeBar = _G["Perl_Party_Target"..self.id.."_StatsFrame_ManaBarFadeBar"];
 end
 
 
--------------------
--- Event Handler --
--------------------
-function Perl_Party_Target_Script_OnEvent()
-	local func = Perl_Party_Target_Events[event];
-	if (func) then
-		func();
-	else
-		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
-			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Party Target: Report the following event error to the author: "..event);
-		end
-	end
-end
-
+------------
+-- Events --
+------------
 function Perl_Party_Target_Events:RAID_ROSTER_UPDATE()
 	Perl_Party_Target_Check_Hidden();
 end
@@ -135,21 +120,21 @@ function Perl_Party_Target_Initialize()
 
 	-- Set the ID of the frame
 	for num=1,5 do
-		getglobal("Perl_Party_Target"..num.."_NameFrame_CastClickOverlay"):SetID(num);
-		getglobal("Perl_Party_Target"..num.."_StatsFrame_CastClickOverlay"):SetID(num);
-		getglobal("Perl_Party_Target"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetID(num);
-		getglobal("Perl_Party_Target"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetID(num);
+		_G["Perl_Party_Target"..num.."_NameFrame_CastClickOverlay"]:SetID(num);
+		_G["Perl_Party_Target"..num.."_StatsFrame_CastClickOverlay"]:SetID(num);
+		_G["Perl_Party_Target"..num.."_StatsFrame_HealthBar_CastClickOverlay"]:SetID(num);
+		_G["Perl_Party_Target"..num.."_StatsFrame_ManaBar_CastClickOverlay"]:SetID(num);
 	end
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	for num=1,5 do
-		getglobal("Perl_Party_Target"..num.."_NameFrame_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_Target"..num.."_NameFrame"):GetFrameLevel() + 1);
-		getglobal("Perl_Party_Target"..num.."_StatsFrame_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_Target"..num.."_StatsFrame"):GetFrameLevel() + 1);
-		getglobal("Perl_Party_Target"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_Target"..num.."_StatsFrame"):GetFrameLevel() + 2);
-		getglobal("Perl_Party_Target"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_Target"..num.."_StatsFrame"):GetFrameLevel() + 2);
-		getglobal("Perl_Party_Target"..num.."_RaidIconFrame"):SetFrameLevel(getglobal("Perl_Party_Target"..num.."_NameFrame_CastClickOverlay"):GetFrameLevel() - 1);
-		getglobal("Perl_Party_Target"..num.."_StatsFrame_HealthBarFadeBar"):SetFrameLevel(getglobal("Perl_Party_Target"..num.."_StatsFrame_HealthBar"):GetFrameLevel() - 1);
-		getglobal("Perl_Party_Target"..num.."_StatsFrame_ManaBarFadeBar"):SetFrameLevel(getglobal("Perl_Party_Target"..num.."_StatsFrame_ManaBar"):GetFrameLevel() - 1);
+		_G["Perl_Party_Target"..num.."_NameFrame_CastClickOverlay"]:SetFrameLevel(_G["Perl_Party_Target"..num.."_NameFrame"]:GetFrameLevel() + 1);
+		_G["Perl_Party_Target"..num.."_StatsFrame_CastClickOverlay"]:SetFrameLevel(_G["Perl_Party_Target"..num.."_StatsFrame"]:GetFrameLevel() + 1);
+		_G["Perl_Party_Target"..num.."_StatsFrame_HealthBar_CastClickOverlay"]:SetFrameLevel(_G["Perl_Party_Target"..num.."_StatsFrame"]:GetFrameLevel() + 2);
+		_G["Perl_Party_Target"..num.."_StatsFrame_ManaBar_CastClickOverlay"]:SetFrameLevel(_G["Perl_Party_Target"..num.."_StatsFrame"]:GetFrameLevel() + 2);
+		_G["Perl_Party_Target"..num.."_RaidIconFrame"]:SetFrameLevel(_G["Perl_Party_Target"..num.."_NameFrame_CastClickOverlay"]:GetFrameLevel() - 1);
+		_G["Perl_Party_Target"..num.."_StatsFrame_HealthBarFadeBar"]:SetFrameLevel(_G["Perl_Party_Target"..num.."_StatsFrame_HealthBar"]:GetFrameLevel() - 1);
+		_G["Perl_Party_Target"..num.."_StatsFrame_ManaBarFadeBar"]:SetFrameLevel(_G["Perl_Party_Target"..num.."_StatsFrame_ManaBar"]:GetFrameLevel() - 1);
 	end
 
 	-- MyAddOns Support
@@ -157,7 +142,7 @@ function Perl_Party_Target_Initialize()
 
 	-- IFrameManager Support (Deprecated)
 	for num=1,5 do
-		getglobal("Perl_Party_Target"..num):SetUserPlaced(1);
+		_G["Perl_Party_Target"..num]:SetUserPlaced(1);
 	end
 
 	Initialized = 1;
@@ -165,12 +150,12 @@ end
 
 function Perl_Party_Target_Initialize_Frame_Color()
 	for partynum=1,5 do
-		getglobal("Perl_Party_Target"..partynum.."_NameFrame"):SetBackdropColor(0, 0, 0, 1);
-		getglobal("Perl_Party_Target"..partynum.."_NameFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-		getglobal("Perl_Party_Target"..partynum.."_StatsFrame"):SetBackdropColor(0, 0, 0, 1);
-		getglobal("Perl_Party_Target"..partynum.."_StatsFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-		getglobal("Perl_Party_Target"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetTextColor(1, 1, 1, 1);
-		getglobal("Perl_Party_Target"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetTextColor(1, 1, 1, 1);
+		_G["Perl_Party_Target"..partynum.."_NameFrame"]:SetBackdropColor(0, 0, 0, 1);
+		_G["Perl_Party_Target"..partynum.."_NameFrame"]:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		_G["Perl_Party_Target"..partynum.."_StatsFrame"]:SetBackdropColor(0, 0, 0, 1);
+		_G["Perl_Party_Target"..partynum.."_StatsFrame"]:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		_G["Perl_Party_Target"..partynum.."_StatsFrame_HealthBar_HealthBarText"]:SetTextColor(1, 1, 1, 1);
+		_G["Perl_Party_Target"..partynum.."_StatsFrame_ManaBar_ManaBarText"]:SetTextColor(1, 1, 1, 1);
 	end
 end
 
@@ -178,10 +163,10 @@ end
 -------------------------
 -- The Update Function --
 -------------------------
-function Perl_Party_Target_OnUpdate()
-	Perl_Party_Target_Time_Elapsed = Perl_Party_Target_Time_Elapsed + arg1;
-	if (Perl_Party_Target_Time_Elapsed > Perl_Party_Target_Time_Update_Rate) then
-		Perl_Party_Target_Time_Elapsed = 0;
+function Perl_Party_Target_OnUpdate(self, elapsed)
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
+	if (self.TimeSinceLastUpdate > Perl_Party_Target_Time_Update_Rate) then
+		self.TimeSinceLastUpdate = 0;
 		if (UnitExists(Perl_Party_Target1:GetAttribute("unit"))) then
 			Perl_Party_Target_Work(Perl_Party_Target1);
 		end
@@ -352,7 +337,7 @@ function Perl_Party_Target_Work(self)
 		partytargetpower = UnitPowerType(self.unit);
 
 		-- Set mana bar color
-		if (UnitManaMax(self.unit) == 0) then
+		if (UnitPowerMax(self.unit) == 0) then
 			self.manaBar:SetStatusBarColor(0, 0, 0, 0);
 			self.manaBarBG:SetStatusBarColor(0, 0, 0, 0);
 		elseif (partytargetpower == 1) then
@@ -374,8 +359,8 @@ function Perl_Party_Target_Work(self)
 		-- End: Update the mana bar color
 
 		-- Begin: Update the mana bar
-		partytargetmana = UnitMana(self.unit);
-		partytargetmanamax = UnitManaMax(self.unit);
+		partytargetmana = UnitPower(self.unit);
+		partytargetmanamax = UnitPowerMax(self.unit);
 
 		if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then				-- This prevents negative mana
 			partytargetmana = 0;
@@ -430,8 +415,8 @@ function Perl_Party_Target_HealthHide(self)
 end
 
 function Perl_Party_Target_ManaShow(self)
-	partytargetmana = UnitMana(self.unit);
-	partytargetmanamax = UnitManaMax(self.unit);
+	partytargetmana = UnitPower(self.unit);
+	partytargetmanamax = UnitPowerMax(self.unit);
 
 	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then						-- This prevents negative mana
 		partytargetmana = 0;
@@ -498,7 +483,7 @@ function Perl_Party_Target_HealthBar_Fade_Check(self)
 			self.healthBarFadeBar:SetValue(self.healthBar:GetValue());
 			self.healthBarFadeBar:Show();
 			-- We don't reset the values since this breaks fading due to not using individual variables for all 4 frames (not a big deal, still looks fine)
-			getglobal("Perl_Party_Target"..self.id.."_HealthBar_Fade_OnUpdate_Frame"):Show();
+			_G["Perl_Party_Target"..self.id.."_HealthBar_Fade_OnUpdate_Frame"]:Show();
 		end
 	end
 end
@@ -510,84 +495,84 @@ function Perl_Party_Target_ManaBar_Fade_Check(self)
 			self.manaBarFadeBar:SetValue(self.manaBar:GetValue());
 			self.manaBarFadeBar:Show();
 			-- We don't reset the values since this breaks fading due to not using individual variables for all 4 frames (not a big deal, still looks fine)
-			getglobal("Perl_Party_Target"..self.id.."_ManaBar_Fade_OnUpdate_Frame"):Show();
+			_G["Perl_Party_Target"..self.id.."_ManaBar_Fade_OnUpdate_Frame"]:Show();
 		end
 	end
 end
 
-function Perl_Party_Target_One_HealthBar_Fade(arg1)
-	Perl_Party_Target_One_HealthBar_Fade_Color = Perl_Party_Target_One_HealthBar_Fade_Color - arg1;
-	Perl_Party_Target_One_HealthBar_Fade_Time_Elapsed = Perl_Party_Target_One_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Target_One_HealthBar_Fade(self, elapsed)
+	Perl_Party_Target_One_HealthBar_Fade_Color = Perl_Party_Target_One_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_Target1_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_One_HealthBar_Fade_Color, 0, Perl_Party_Target_One_HealthBar_Fade_Color);
 
-	if (Perl_Party_Target_One_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Target_One_HealthBar_Fade_Color = 1;
-		Perl_Party_Target_One_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_Target1_StatsFrame_HealthBarFadeBar:Hide();
 		Perl_Party_Target1_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Target_Two_HealthBar_Fade(arg1)
-	Perl_Party_Target_Two_HealthBar_Fade_Color = Perl_Party_Target_Two_HealthBar_Fade_Color - arg1;
-	Perl_Party_Target_Two_HealthBar_Fade_Time_Elapsed = Perl_Party_Target_Two_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Target_Two_HealthBar_Fade(self, elapsed)
+	Perl_Party_Target_Two_HealthBar_Fade_Color = Perl_Party_Target_Two_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_Target2_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_Two_HealthBar_Fade_Color, 0, Perl_Party_Target_Two_HealthBar_Fade_Color);
 
-	if (Perl_Party_Target_Two_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Target_Two_HealthBar_Fade_Color = 1;
-		Perl_Party_Target_Two_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_Target2_StatsFrame_HealthBarFadeBar:Hide();
 		Perl_Party_Target2_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Target_Three_HealthBar_Fade(arg1)
-	Perl_Party_Target_Three_HealthBar_Fade_Color = Perl_Party_Target_Three_HealthBar_Fade_Color - arg1;
-	Perl_Party_Target_Three_HealthBar_Fade_Time_Elapsed = Perl_Party_Target_Three_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Target_Three_HealthBar_Fade(self, elapsed)
+	Perl_Party_Target_Three_HealthBar_Fade_Color = Perl_Party_Target_Three_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_Target3_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_Three_HealthBar_Fade_Color, 0, Perl_Party_Target_Three_HealthBar_Fade_Color);
 
-	if (Perl_Party_Target_Three_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Target_Three_HealthBar_Fade_Color = 1;
-		Perl_Party_Target_Three_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_Target3_StatsFrame_HealthBarFadeBar:Hide();
 		Perl_Party_Target3_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Target_Four_HealthBar_Fade(arg1)
-	Perl_Party_Target_Four_HealthBar_Fade_Color = Perl_Party_Target_Four_HealthBar_Fade_Color - arg1;
-	Perl_Party_Target_Four_HealthBar_Fade_Time_Elapsed = Perl_Party_Target_Four_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Target_Four_HealthBar_Fade(self, elapsed)
+	Perl_Party_Target_Four_HealthBar_Fade_Color = Perl_Party_Target_Four_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_Target4_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_Four_HealthBar_Fade_Color, 0, Perl_Party_Target_Four_HealthBar_Fade_Color);
 
-	if (Perl_Party_Target_Four_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Target_Four_HealthBar_Fade_Color = 1;
-		Perl_Party_Target_Four_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_Target4_StatsFrame_HealthBarFadeBar:Hide();
 		Perl_Party_Target4_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Target_Five_HealthBar_Fade(arg1)
-	Perl_Party_Target_Five_HealthBar_Fade_Color = Perl_Party_Target_Five_HealthBar_Fade_Color - arg1;
-	Perl_Party_Target_Five_HealthBar_Fade_Time_Elapsed = Perl_Party_Target_Five_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Target_Five_HealthBar_Fade(self, elapsed)
+	Perl_Party_Target_Five_HealthBar_Fade_Color = Perl_Party_Target_Five_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_Target5_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_Five_HealthBar_Fade_Color, 0, Perl_Party_Target_Five_HealthBar_Fade_Color);
 
-	if (Perl_Party_Target_Five_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Target_Five_HealthBar_Fade_Color = 1;
-		Perl_Party_Target_Five_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_Target5_StatsFrame_HealthBarFadeBar:Hide();
 		Perl_Party_Target5_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Target_One_ManaBar_Fade(arg1)
-	Perl_Party_Target_One_ManaBar_Fade_Color = Perl_Party_Target_One_ManaBar_Fade_Color - arg1;
-	Perl_Party_Target_One_ManaBar_Fade_Time_Elapsed = Perl_Party_Target_One_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Target_One_ManaBar_Fade(self, elapsed)
+	Perl_Party_Target_One_ManaBar_Fade_Color = Perl_Party_Target_One_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (UnitPowerType("party1target") == 0) then
 		Perl_Party_Target1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_Target_One_ManaBar_Fade_Color, Perl_Party_Target_One_ManaBar_Fade_Color);
@@ -601,17 +586,17 @@ function Perl_Party_Target_One_ManaBar_Fade(arg1)
 		Perl_Party_Target1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_One_ManaBar_Fade_Color, Perl_Party_Target_One_ManaBar_Fade_Color, Perl_Party_Target_One_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Party_Target_One_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Target_One_ManaBar_Fade_Color = 1;
-		Perl_Party_Target_One_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_Target1_StatsFrame_ManaBarFadeBar:Hide();
 		Perl_Party_Target1_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Target_Two_ManaBar_Fade(arg1)
-	Perl_Party_Target_Two_ManaBar_Fade_Color = Perl_Party_Target_Two_ManaBar_Fade_Color - arg1;
-	Perl_Party_Target_Two_ManaBar_Fade_Time_Elapsed = Perl_Party_Target_Two_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Target_Two_ManaBar_Fade(self, elapsed)
+	Perl_Party_Target_Two_ManaBar_Fade_Color = Perl_Party_Target_Two_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (UnitPowerType("party2target") == 0) then
 		Perl_Party_Target2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_Target_Two_ManaBar_Fade_Color, Perl_Party_Target_Two_ManaBar_Fade_Color);
@@ -625,17 +610,17 @@ function Perl_Party_Target_Two_ManaBar_Fade(arg1)
 		Perl_Party_Target2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_Two_ManaBar_Fade_Color, Perl_Party_Target_Two_ManaBar_Fade_Color, Perl_Party_Target_Two_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Party_Target_Two_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Target_Two_ManaBar_Fade_Color = 1;
-		Perl_Party_Target_Two_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_Target2_StatsFrame_ManaBarFadeBar:Hide();
 		Perl_Party_Target2_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Target_Three_ManaBar_Fade(arg1)
-	Perl_Party_Target_Three_ManaBar_Fade_Color = Perl_Party_Target_Three_ManaBar_Fade_Color - arg1;
-	Perl_Party_Target_Three_ManaBar_Fade_Time_Elapsed = Perl_Party_Target_Three_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Target_Three_ManaBar_Fade(self, elapsed)
+	Perl_Party_Target_Three_ManaBar_Fade_Color = Perl_Party_Target_Three_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (UnitPowerType("party3target") == 0) then
 		Perl_Party_Target3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_Target_Three_ManaBar_Fade_Color, Perl_Party_Target_Three_ManaBar_Fade_Color);
@@ -649,17 +634,17 @@ function Perl_Party_Target_Three_ManaBar_Fade(arg1)
 		Perl_Party_Target3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_Three_ManaBar_Fade_Color, Perl_Party_Target_Three_ManaBar_Fade_Color, Perl_Party_Target_Three_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Party_Target_Three_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Target_Three_ManaBar_Fade_Color = 1;
-		Perl_Party_Target_Three_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_Target3_StatsFrame_ManaBarFadeBar:Hide();
 		Perl_Party_Target3_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Target_Four_ManaBar_Fade(arg1)
-	Perl_Party_Target_Four_ManaBar_Fade_Color = Perl_Party_Target_Four_ManaBar_Fade_Color - arg1;
-	Perl_Party_Target_Four_ManaBar_Fade_Time_Elapsed = Perl_Party_Target_Four_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Target_Four_ManaBar_Fade(self, elapsed)
+	Perl_Party_Target_Four_ManaBar_Fade_Color = Perl_Party_Target_Four_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (UnitPowerType("party4target") == 0) then
 		Perl_Party_Target4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_Target_Four_ManaBar_Fade_Color, Perl_Party_Target_Four_ManaBar_Fade_Color);
@@ -673,17 +658,17 @@ function Perl_Party_Target_Four_ManaBar_Fade(arg1)
 		Perl_Party_Target4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_Four_ManaBar_Fade_Color, Perl_Party_Target_Four_ManaBar_Fade_Color, Perl_Party_Target_Four_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Party_Target_Four_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Target_Four_ManaBar_Fade_Color = 1;
-		Perl_Party_Target_Four_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_Target4_StatsFrame_ManaBarFadeBar:Hide();
 		Perl_Party_Target4_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Party_Target_Five_ManaBar_Fade(arg1)
-	Perl_Party_Target_Five_ManaBar_Fade_Color = Perl_Party_Target_Five_ManaBar_Fade_Color - arg1;
-	Perl_Party_Target_Five_ManaBar_Fade_Time_Elapsed = Perl_Party_Target_Five_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Party_Target_Five_ManaBar_Fade(self, elapsed)
+	Perl_Party_Target_Five_ManaBar_Fade_Color = Perl_Party_Target_Five_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (UnitPowerType("focustarget") == 0) then
 		Perl_Party_Target5_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_Target_Five_ManaBar_Fade_Color, Perl_Party_Target_Five_ManaBar_Fade_Color);
@@ -697,9 +682,9 @@ function Perl_Party_Target_Five_ManaBar_Fade(arg1)
 		Perl_Party_Target5_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_Five_ManaBar_Fade_Color, Perl_Party_Target_Five_ManaBar_Fade_Color, Perl_Party_Target_Five_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Party_Target_Five_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Party_Target_Five_ManaBar_Fade_Color = 1;
-		Perl_Party_Target_Five_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Party_Target5_StatsFrame_ManaBarFadeBar:Hide();
 		Perl_Party_Target5_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
@@ -729,27 +714,27 @@ function Perl_Party_Target_Frame_Style()
 
 		if (hidepowerbars == 1) then
 			for partynum=1,5 do
-				getglobal("Perl_Party_Target"..partynum.."_StatsFrame_ManaBar"):Hide();
-				getglobal("Perl_Party_Target"..partynum.."_StatsFrame_ManaBarBG"):Hide();
-				getglobal("Perl_Party_Target"..partynum.."_StatsFrame_ManaBar_CastClickOverlay"):Hide();
-				getglobal("Perl_Party_Target"..partynum.."_StatsFrame"):SetHeight(30);
-				getglobal("Perl_Party_Target"..partynum.."_StatsFrame_CastClickOverlay"):SetHeight(30);
+				_G["Perl_Party_Target"..partynum.."_StatsFrame_ManaBar"]:Hide();
+				_G["Perl_Party_Target"..partynum.."_StatsFrame_ManaBarBG"]:Hide();
+				_G["Perl_Party_Target"..partynum.."_StatsFrame_ManaBar_CastClickOverlay"]:Hide();
+				_G["Perl_Party_Target"..partynum.."_StatsFrame"]:SetHeight(30);
+				_G["Perl_Party_Target"..partynum.."_StatsFrame_CastClickOverlay"]:SetHeight(30);
 			end
 		else
 			for partynum=1,5 do
-				getglobal("Perl_Party_Target"..partynum.."_StatsFrame_ManaBar"):Show();
-				getglobal("Perl_Party_Target"..partynum.."_StatsFrame_ManaBarBG"):Show();
-				getglobal("Perl_Party_Target"..partynum.."_StatsFrame_ManaBar_CastClickOverlay"):Show();
-				getglobal("Perl_Party_Target"..partynum.."_StatsFrame"):SetHeight(42);
-				getglobal("Perl_Party_Target"..partynum.."_StatsFrame_CastClickOverlay"):SetHeight(42);
+				_G["Perl_Party_Target"..partynum.."_StatsFrame_ManaBar"]:Show();
+				_G["Perl_Party_Target"..partynum.."_StatsFrame_ManaBarBG"]:Show();
+				_G["Perl_Party_Target"..partynum.."_StatsFrame_ManaBar_CastClickOverlay"]:Show();
+				_G["Perl_Party_Target"..partynum.."_StatsFrame"]:SetHeight(42);
+				_G["Perl_Party_Target"..partynum.."_StatsFrame_CastClickOverlay"]:SetHeight(42);
 			end
 		end
 
 		for partynum=1,5 do
-			getglobal("Perl_Party_Target"..partynum.."_NameFrame_NameBarText"):SetWidth(getglobal("Perl_Party_Target"..partynum.."_NameFrame"):GetWidth() - 13);
-			getglobal("Perl_Party_Target"..partynum.."_NameFrame_NameBarText"):SetHeight(getglobal("Perl_Party_Target"..partynum.."_NameFrame"):GetHeight() - 10);
-			getglobal("Perl_Party_Target"..partynum.."_NameFrame_NameBarText"):SetNonSpaceWrap(false);
-			getglobal("Perl_Party_Target"..partynum.."_NameFrame_NameBarText"):SetJustifyH("LEFT");
+			_G["Perl_Party_Target"..partynum.."_NameFrame_NameBarText"]:SetWidth(_G["Perl_Party_Target"..partynum.."_NameFrame"]:GetWidth() - 13);
+			_G["Perl_Party_Target"..partynum.."_NameFrame_NameBarText"]:SetHeight(_G["Perl_Party_Target"..partynum.."_NameFrame"]:GetHeight() - 10);
+			_G["Perl_Party_Target"..partynum.."_NameFrame_NameBarText"]:SetNonSpaceWrap(false);
+			_G["Perl_Party_Target"..partynum.."_NameFrame_NameBarText"]:SetJustifyH("LEFT");
 		end
 	end
 end
@@ -1101,7 +1086,7 @@ end
 --------------------
 function Perl_Party_Target_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
-		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_Target"..self:GetParent():GetParent():GetID().."_DropDown"), "Perl_Party_Target"..self:GetParent():GetParent():GetID().."_NameFrame", 0, 0);
+		ToggleDropDownMenu(1, nil, _G["Perl_Party_Target"..self:GetParent():GetParent():GetID().."_DropDown"], "Perl_Party_Target"..self:GetParent():GetParent():GetID().."_NameFrame", 0, 0);
 	end
 	SecureUnitButton_OnLoad(self, "party"..self:GetParent():GetParent():GetID().."target", showmenu);
 
@@ -1294,13 +1279,13 @@ end
 
 function Perl_Party_Target_DragStart(self, button)
 	if (button == "LeftButton" and locked == 0) then
-		getglobal("Perl_Party_Target"..self:GetID()):StartMoving();
+		_G["Perl_Party_Target"..self:GetID()]:StartMoving();
 	end
 end
 
-function Perl_Party_Target_DragStop(self, button)
-	getglobal("Perl_Party_Target"..self:GetID()):SetUserPlaced(1);
-	getglobal("Perl_Party_Target"..self:GetID()):StopMovingOrSizing();
+function Perl_Party_Target_DragStop(self)
+	_G["Perl_Party_Target"..self:GetID()]:SetUserPlaced(1);
+	_G["Perl_Party_Target"..self:GetID()]:StopMovingOrSizing();
 end
 
 

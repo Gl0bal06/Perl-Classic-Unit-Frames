@@ -114,7 +114,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_ENABLE_TOT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_ENABLE_TOT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_ToT_Update();
@@ -135,7 +135,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_ENABLE_TOTOT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_ENABLE_TOTOT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_ToToT_Update();
@@ -156,7 +156,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_AUDIO_ALERT_ON_AGRO);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_AUDIO_ALERT_ON_AGRO);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Sound_Update();
@@ -177,7 +177,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_FRIENDLY_HEALTH);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_FRIENDLY_HEALTH);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Show_Friendly_Health_Update();
@@ -198,7 +198,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDE_POWER_BARS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_HIDE_POWER_BARS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Hide_Power_Bars_Update();
@@ -219,7 +219,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Class_Colored_Names_Update();
@@ -240,7 +240,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_LOCK);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_LOCK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Lock_Update();
@@ -261,7 +261,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_TOT_BUFFS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_TOT_BUFFS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Buff_Update();
@@ -282,7 +282,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_TOT_DEBUFFS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_TOT_DEBUFFS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Debuff_Update();
@@ -303,7 +303,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_TOTOT_BUFFS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_TOTOT_BUFFS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Target_Buff_Update();
@@ -324,7 +324,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_TOTOT_DEBUFFS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_TOTOT_DEBUFFS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Target_Debuff_Update();
@@ -345,7 +345,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFF);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFF);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Class_Buffs_Update();
@@ -366,7 +366,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_DEBUFF);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_CLASS_DEBUFF);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Class_Debuffs_Update();
@@ -387,7 +387,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_MY_DEBUFFS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_MY_DEBUFFS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Only_Self_Debuffs_Update();
@@ -408,8 +408,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Target_Target_Set_Scale(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Target_Target_Set_Scale(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -427,7 +427,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Set_Scale();
@@ -448,8 +448,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Target_Target_Set_Transparency(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Target_Target_Set_Transparency(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -467,7 +467,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_DPS_MODE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_DPS_MODE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Frame_CheckButton9:SetChecked(nil);	<!-- We need to uncheck Button 9 -->
@@ -490,7 +490,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_TANK_MODE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_TANK_MODE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(nil);	<!-- We need to uncheck Button 8 -->
@@ -513,7 +513,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_HEALER_MODE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_HEALER_MODE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(nil);	<!-- We need to uncheck Button 8 -->
@@ -536,7 +536,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SMALL_TEXT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SMALL_TEXT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Frame_CheckButton12:SetChecked(nil);	<!-- We need to uncheck Button 12 -->
@@ -559,7 +559,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_LARGE_TEXT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_LARGE_TEXT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(nil);	<!-- We need to uncheck Button 11 -->
@@ -582,7 +582,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_NO_TEXT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_NO_TEXT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(nil);	<!-- We need to uncheck Button 11 -->

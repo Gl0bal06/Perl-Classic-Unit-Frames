@@ -1,3 +1,21 @@
+4.01 Beta 1 - September 22, 2010
+ - All: Updated TOC Interface version to 40000
+ - All: Updated OnEvent code for Cataclysm
+ - All: Updated OnUpdate code for Cataclysm
+ - All: Updated global variable syntax for Cataclysm
+ - All: Updated to use UNIT_POWER and UNIT_MAXPOWER events
+ - All: Updated to use UnitPower and UnitPowerMax functions
+ - All: Updated OnClick and OnDragStart code for Cataclysm
+ - CombatDisplay/Party/Player: Added focus as a valid bar for player characters
+ - Party: Fixed an issue with fade bars on the power bar for party member two
+ - Party: Fixed a condition where the party frame may not be hidden when logging in
+ - Party/Player: Updated UnitGroupRolesAssigned function for Cataclysm
+ - Player: The experience bar now maxes out at Level 85
+ - Player: The PvP timer now correctly counts down from 5 minutes (Thanks flare1985)
+ - Player: Added a sanity check for loading ArcaneBar saved variables
+ - Player/Target: Fade bars option works correctly on power bars with OnUpdate scripts
+ - Target: Fixed an issue with inverted bars not working correctly on the power bar
+
 3.12 - June 13, 2010
  - ArcaneBar: Casting a spell while a spell is already casting will no longer display as a failed cast
  - CombatDisplay/Player: Removed Druid Bar references from TOC files

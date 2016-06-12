@@ -106,7 +106,12 @@ function Perl_Config_OnLoad(self)
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
 
 	-- Scripts
-	self:SetScript("OnEvent", Perl_Config_OnEvent);
+	--self:SetScript("OnEvent", Perl_Config_OnEvent);
+	self:SetScript("OnEvent", 
+		function(self, event, ...)
+			Perl_Config_Events[event](self, ...);
+		end
+	);
 
 	-- Slash Commands
 	SlashCmdList["PERL_CONFIG"] = Perl_Config_SlashHandler;
@@ -119,20 +124,9 @@ function Perl_BlizzardOptions_OnLoad(panel)
 end
 
 
--------------------
--- Event Handler --
--------------------
-function Perl_Config_OnEvent()
-	local func = Perl_Config_Events[event];
-	if (func) then
-		func();
-	else
-		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
-			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Config: Report the following event error to the author: "..event);
-		end
-	end
-end
-
+------------
+-- Events --
+------------
 function Perl_Config_Events:PLAYER_REGEN_DISABLED()
 	if (Perl_Config_Frame) then
 		if (Perl_Config_Frame:IsVisible()) then
@@ -604,52 +598,52 @@ function Perl_Config_Set_Texture(newvalue)
 
 	if (Perl_Party_Frame) then
 		for num=1,4 do
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_HealthBarTex"), texturename);
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar_HealthBarFadeBarTex"), texturename);
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_ManaBarTex"), texturename);
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar_ManaBarFadeBarTex"), texturename);
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_PetHealthBarTex"), texturename);
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar_PetHealthBarFadeBarTex"), texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_HealthBarTex"], texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar_HealthBarFadeBarTex"], texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_ManaBarTex"], texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar_ManaBarFadeBarTex"], texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_PetHealthBarTex"], texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar_PetHealthBarFadeBarTex"], texturename);
 			if (texturedbarbackground == 1) then
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"), texturename);
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"), texturename);
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG_PetHealthBarBGTex"), texturename);
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"], texturename);
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"], texturename);
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG_PetHealthBarBGTex"], texturename);
 			else
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"), "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"), "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG_PetHealthBarBGTex"), "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"], "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"], "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG_PetHealthBarBGTex"], "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
 			end
 		end
 	end
 
 	if (Perl_Party_Pet_Script_Frame) then
 		for num=1,4 do
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Pet"..num.."_StatsFrame_HealthBar_HealthBarTex"), texturename);
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Pet"..num.."_StatsFrame_HealthBarFadeBar_HealthBarFadeBarTex"), texturename);
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Pet"..num.."_StatsFrame_ManaBar_ManaBarTex"), texturename);
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Pet"..num.."_StatsFrame_ManaBarFadeBar_ManaBarFadeBarTex"), texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_Pet"..num.."_StatsFrame_HealthBar_HealthBarTex"], texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_Pet"..num.."_StatsFrame_HealthBarFadeBar_HealthBarFadeBarTex"], texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_Pet"..num.."_StatsFrame_ManaBar_ManaBarTex"], texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_Pet"..num.."_StatsFrame_ManaBarFadeBar_ManaBarFadeBarTex"], texturename);
 			if (texturedbarbackground == 1) then
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Pet"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"), texturename);
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Pet"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"), texturename);
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_Pet"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"], texturename);
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_Pet"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"], texturename);
 			else
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Pet"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"), "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Pet"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"), "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_Pet"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"], "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_Pet"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"], "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
 			end
 		end
 	end
 
 	if (Perl_Party_Target_Script_Frame) then
 		for num=1,5 do
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Target"..num.."_StatsFrame_HealthBar_HealthBarTex"), texturename);
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Target"..num.."_StatsFrame_HealthBarFadeBar_HealthBarFadeBarTex"), texturename);
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Target"..num.."_StatsFrame_ManaBar_ManaBarTex"), texturename);
-			Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Target"..num.."_StatsFrame_ManaBarFadeBar_ManaBarFadeBarTex"), texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_Target"..num.."_StatsFrame_HealthBar_HealthBarTex"], texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_Target"..num.."_StatsFrame_HealthBarFadeBar_HealthBarFadeBarTex"], texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_Target"..num.."_StatsFrame_ManaBar_ManaBarTex"], texturename);
+			Perl_Config_Set_Texture_Properties(_G["Perl_Party_Target"..num.."_StatsFrame_ManaBarFadeBar_ManaBarFadeBarTex"], texturename);
 			if (texturedbarbackground == 1) then
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Target"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"), texturename);
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Target"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"), texturename);
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_Target"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"], texturename);
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_Target"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"], texturename);
 			else
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Target"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"), "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
-				Perl_Config_Set_Texture_Properties(getglobal("Perl_Party_Target"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"), "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_Target"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"], "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+				Perl_Config_Set_Texture_Properties(_G["Perl_Party_Target"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"], "Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
 			end
 		end
 	end
@@ -772,27 +766,27 @@ function Perl_Config_Set_Background(newvalue)
 
 		if (Perl_Party_Frame) then
 			for partynum=1,4 do
-				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
-				getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
-				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_MemberFrame"..partynum.."_NameFrame"]:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_MemberFrame"..partynum.."_LevelFrame"]:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_MemberFrame"..partynum.."_PortraitFrame"]:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame"]:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
 			end
 			Perl_Party_Initialize_Frame_Color();
 		end
 
 		if (Perl_Party_Pet_Script_Frame) then
 			for partynum=1,4 do
-				getglobal("Perl_Party_Pet"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
-				getglobal("Perl_Party_Pet"..partynum.."_PortraitFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
-				getglobal("Perl_Party_Pet"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_Pet"..partynum.."_NameFrame"]:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_Pet"..partynum.."_PortraitFrame"]:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_Pet"..partynum.."_StatsFrame"]:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
 			end
 			Perl_Party_Pet_Initialize_Frame_Color();
 		end
 
 		if (Perl_Party_Target_Script_Frame) then
 			for partynum=1,5 do
-				getglobal("Perl_Party_Target"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
-				getglobal("Perl_Party_Target"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_Target"..partynum.."_NameFrame"]:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_Target"..partynum.."_StatsFrame"]:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
 			end
 			Perl_Party_Target_Initialize_Frame_Color();
 		end
@@ -855,27 +849,27 @@ function Perl_Config_Set_Background(newvalue)
 
 		if (Perl_Party_Frame) then
 			for partynum=1,4 do
-				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
-				getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
-				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_MemberFrame"..partynum.."_NameFrame"]:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_MemberFrame"..partynum.."_LevelFrame"]:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_MemberFrame"..partynum.."_PortraitFrame"]:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame"]:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
 			end
 			Perl_Party_Initialize_Frame_Color();
 		end
 
 		if (Perl_Party_Pet_Script_Frame) then
 			for partynum=1,4 do
-				getglobal("Perl_Party_Pet"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
-				getglobal("Perl_Party_Pet"..partynum.."_PortraitFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
-				getglobal("Perl_Party_Pet"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_Pet"..partynum.."_NameFrame"]:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_Pet"..partynum.."_PortraitFrame"]:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_Pet"..partynum.."_StatsFrame"]:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
 			end
 			Perl_Party_Pet_Initialize_Frame_Color();
 		end
 
 		if (Perl_Party_Target_Script_Frame) then
 			for partynum=1,5 do
-				getglobal("Perl_Party_Target"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
-				getglobal("Perl_Party_Target"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_Target"..partynum.."_NameFrame"]:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
+				_G["Perl_Party_Target"..partynum.."_StatsFrame"]:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 3, right = 3, top = 3, bottom = 3 }});
 			end
 			Perl_Party_Target_Initialize_Frame_Color();
 		end
@@ -1118,8 +1112,8 @@ function Perl_Config_Set_Threat_Icon(newvalue)
 
 	if (Perl_Party_Frame) then
 		for id=1,4 do
-			if (UnitExists(getglobal("Perl_Party_MemberFrame"..id))) then
-				Perl_Party_Update_Threat(getglobal("Perl_Party_MemberFrame"..id));
+			if (UnitExists(_G["Perl_Party_MemberFrame"..id])) then
+				Perl_Party_Update_Threat(_G["Perl_Party_MemberFrame"..id]);
 			end
 		end
 	end
@@ -2047,7 +2041,7 @@ end
 ---------------------------
 -- The Minimap Functions --
 ---------------------------
-function Perl_Config_Button_OnClick(button, self)
+function Perl_Config_Button_OnClick(self, button)
 	if (button == "LeftButton") then
 		Perl_Config_Toggle();
 	elseif (button == "RightButton") then

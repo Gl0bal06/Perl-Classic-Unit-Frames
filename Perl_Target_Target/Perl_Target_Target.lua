@@ -26,7 +26,7 @@ local displayonlymydebuffs = 0;	-- display all debuffs by default
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
-local Perl_Target_Target_Time_Elapsed = 0;		-- set the update timer to 0
+--local Perl_Target_Target_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Target_Target_Time_Update_Rate = 0.2;	-- the update interval
 local aggroWarningCount = 0;				-- the check to see if we have alerted the player of a ToT event
 local aggroToToTWarningCount = 0;			-- the check to see if we have alerted the player of a ToToT event
@@ -38,13 +38,9 @@ local mouseovertargettargettargetmanaflag = 0;		-- is the mouse over the mana ba
 
 -- Fade Bar Variables
 local Perl_Target_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Target_Target_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Target_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Target_Target_ManaBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Target_Target_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Target_Target_Target_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Target_Target_Target_ManaBar_Fade_Color = 1;			-- the color fading interval
-local Perl_Target_Target_Target_ManaBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
 
 -- Local variables to save memory
 -- ToT variables
@@ -60,6 +56,9 @@ local r, g, b, reaction, englishclass;
 -- Loading Function --
 ----------------------
 function Perl_Target_Target_OnLoad(self)
+	-- Variables
+	self.TimeSinceLastUpdate = 0;
+
 	-- Events
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
@@ -67,7 +66,11 @@ function Perl_Target_Target_OnLoad(self)
 	self:RegisterEvent("PLAYER_TARGET_CHANGED");
 
 	-- Scripts
-	self:SetScript("OnEvent", Perl_Target_Target_OnEvent);
+	self:SetScript("OnEvent", 
+		function(self, event, ...)
+			Perl_Target_Target_Events[event](self, ...);
+		end
+	);
 	self:SetScript("OnUpdate", Perl_Target_Target_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
@@ -87,20 +90,9 @@ function Perl_Target_Target_OnLoad(self)
 end
 
 
--------------------
--- Event Handler --
--------------------
-function Perl_Target_Target_OnEvent()
-	local func = Perl_Target_Target_Events[event];
-	if (func) then
-		func();
-	else
-		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
-			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Target of Target: Report the following event error to the author: "..event);
-		end
-	end
-end
-
+------------
+-- Events --
+------------
 function Perl_Target_Target_Events:PLAYER_TARGET_CHANGED()
 	aggroWarningCount = 0;
 end
@@ -165,10 +157,10 @@ end
 --------------------------
 -- The Update Functions --
 --------------------------
-function Perl_Target_Target_OnUpdate()
-	Perl_Target_Target_Time_Elapsed = Perl_Target_Target_Time_Elapsed + arg1;
-	if (Perl_Target_Target_Time_Elapsed > Perl_Target_Target_Time_Update_Rate) then
-		Perl_Target_Target_Time_Elapsed = 0;
+function Perl_Target_Target_OnUpdate(self, elapsed)
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
+	if (self.TimeSinceLastUpdate > Perl_Target_Target_Time_Update_Rate) then
+		self.TimeSinceLastUpdate = 0;
 
 		if (UnitExists(Perl_Target_Target_Frame:GetAttribute("unit"))) then
 			Perl_Target_Target_Warn();				-- Display any warnings if needed
@@ -329,8 +321,8 @@ function Perl_Target_Target_OnUpdate()
 
 			if (hidepowerbars == 0) then
 				-- Begin: Update the mana bar
-				targettargetmana = UnitMana("targettarget");
-				targettargetmanamax = UnitManaMax("targettarget");
+				targettargetmana = UnitPower("targettarget");
+				targettargetmanamax = UnitPowerMax("targettarget");
 
 				if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative mana
 					targettargetmana = 0;
@@ -360,7 +352,7 @@ function Perl_Target_Target_OnUpdate()
 				targettargetpower = UnitPowerType("targettarget");
 
 				-- Set mana bar color
-				if (UnitManaMax("targettarget") == 0) then
+				if (UnitPowerMax("targettarget") == 0) then
 					Perl_Target_Target_ManaBar:SetStatusBarColor(0, 0, 0, 1);
 					Perl_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 0, 0.25);
 				elseif (targettargetpower == 1) then
@@ -575,8 +567,8 @@ function Perl_Target_Target_OnUpdate()
 
 			if (hidepowerbars == 0) then
 				-- Begin: Update the mana bar
-				targettargettargetmana = UnitMana("targettargettarget");
-				targettargettargetmanamax = UnitManaMax("targettargettarget");
+				targettargettargetmana = UnitPower("targettargettarget");
+				targettargettargetmanamax = UnitPowerMax("targettargettarget");
 
 				if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative mana
 					targettargettargetmana = 0;
@@ -606,7 +598,7 @@ function Perl_Target_Target_OnUpdate()
 				targettargettargetpower = UnitPowerType("targettargettarget");
 
 				-- Set mana bar color
-				if (UnitManaMax("targettargettarget") == 0) then
+				if (UnitPowerMax("targettargettarget") == 0) then
 					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(0, 0, 0, 1);
 					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 0, 0.25);
 				elseif (targettargettargetpower == 1) then
@@ -673,11 +665,11 @@ function Perl_Target_Target_Update_Buffs()
 				targettargetbufffilter = "HELPFUL RAID";
 			end
 			_, _, buffTexture, buffApplications = UnitAura("targettarget", buffnum, targettargetbufffilter);	-- Get the texture and buff stacking information if any
-			button = getglobal("Perl_Target_Target_BuffFrame_Buff"..buffnum);						-- Create the main icon for the buff
+			button = _G["Perl_Target_Target_BuffFrame_Buff"..buffnum];						-- Create the main icon for the buff
 			if (buffTexture) then												-- If there is a valid texture, proceed with buff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Hide();							-- Hide the debuff border
-				buffCount = getglobal(button:GetName().."Count");							-- Declare the buff counting text variable
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);						-- Set the texture
+				_G[button:GetName().."DebuffBorder"]:Hide();							-- Hide the debuff border
+				buffCount = _G[button:GetName().."Count"];							-- Declare the buff counting text variable
 				if (buffApplications > 1) then
 					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
 					buffCount:Show();										-- Show the text
@@ -699,9 +691,9 @@ function Perl_Target_Target_Update_Buffs()
 		for debuffnum=1,16 do													-- Start main debuff loop
 			Perl_Target_Target_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
 			_, _, buffTexture, buffApplications, debuffType = UnitAura("targettarget", debuffnum, targettargetdebufffilter);	-- Get the texture and debuff stacking information if any
-			button = getglobal("Perl_Target_Target_BuffFrame_Debuff"..debuffnum);						-- Create the main icon for the debuff
+			button = _G["Perl_Target_Target_BuffFrame_Debuff"..debuffnum];						-- Create the main icon for the debuff
 			if (buffTexture) then												-- If there is a valid texture, proceed with debuff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);						-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
@@ -718,9 +710,9 @@ function Perl_Target_Target_Update_Buffs()
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
-				getglobal(button:GetName().."DebuffBorder"):SetVertexColor(color.r, color.g, color.b);			-- Set the debuff border color
-				getglobal(button:GetName().."DebuffBorder"):Show();							-- Show the debuff border
-				buffCount = getglobal(button:GetName().."Count");							-- Declare the debuff counting text variable
+				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);			-- Set the debuff border color
+				_G[button:GetName().."DebuffBorder"]:Show();							-- Show the debuff border
+				buffCount = _G[button:GetName().."Count"];							-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
 					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
 					buffCount:Show();										-- Show the text
@@ -788,11 +780,11 @@ function Perl_Target_Target_Target_Update_Buffs()
 				targettargettargetbufffilter = "HELPFUL RAID";
 			end
 			_, _, buffTexture, buffApplications = UnitAura("targettargettarget", buffnum, targettargettargetbufffilter);	-- Get the texture and buff stacking information if any
-			button = getglobal("Perl_Target_Target_Target_BuffFrame_Buff"..buffnum);					-- Create the main icon for the buff
+			button = _G["Perl_Target_Target_Target_BuffFrame_Buff"..buffnum];					-- Create the main icon for the buff
 			if (buffTexture) then
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Hide();							-- Hide the debuff border
-				buffCount = getglobal(button:GetName().."Count");							-- Declare the buff counting text variable
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);						-- Set the texture
+				_G[button:GetName().."DebuffBorder"]:Hide();							-- Hide the debuff border
+				buffCount = _G[button:GetName().."Count"];							-- Declare the buff counting text variable
 				if (buffApplications > 1) then
 					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
 					buffCount:Show();										-- Show the text
@@ -814,9 +806,9 @@ function Perl_Target_Target_Target_Update_Buffs()
 		for debuffnum=1,16 do
 			Perl_Target_Target_Target_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
 			_, _, buffTexture, buffApplications, debuffType = UnitAura("targettargettarget", debuffnum, targettargettargetdebufffilter);	-- Get the texture and debuff stacking information if any
-			button = getglobal("Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum);					-- Create the main icon for the debuff
+			button = _G["Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum];					-- Create the main icon for the debuff
 			if (buffTexture) then
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);						-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
@@ -833,9 +825,9 @@ function Perl_Target_Target_Target_Update_Buffs()
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
-				getglobal(button:GetName().."DebuffBorder"):SetVertexColor(color.r, color.g, color.b);			-- Set the debuff border color
-				getglobal(button:GetName().."DebuffBorder"):Show();							-- Show the debuff border
-				buffCount = getglobal(button:GetName().."Count");							-- Declare the debuff counting text variable
+				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);			-- Set the debuff border color
+				_G[button:GetName().."DebuffBorder"]:Show();							-- Show the debuff border
+				buffCount = _G[button:GetName().."Count"];							-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
 					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
 					buffCount:Show();										-- Show the text
@@ -1097,14 +1089,14 @@ end
 function Perl_Target_Target_Reset_Buffs()
 	local button, debuff;
 	for buffnum=1,16 do
-		button = getglobal("Perl_Target_Target_BuffFrame_Buff"..buffnum);
-		debuff = getglobal(button:GetName().."DebuffBorder");
+		button = _G["Perl_Target_Target_BuffFrame_Buff"..buffnum];
+		debuff = _G[button:GetName().."DebuffBorder"];
 		button:Hide();
 		debuff:Hide();
 	end
 	for debuffnum=1,16 do
-		button = getglobal("Perl_Target_Target_BuffFrame_Debuff"..debuffnum);
-		debuff = getglobal(button:GetName().."DebuffBorder");
+		button = _G["Perl_Target_Target_BuffFrame_Debuff"..debuffnum];
+		debuff = _G[button:GetName().."DebuffBorder"];
 		button:Hide();
 		debuff:Hide();
 	end
@@ -1113,14 +1105,14 @@ end
 function Perl_Target_Target_Target_Reset_Buffs()
 	local button, debuff;
 	for buffnum=1,16 do
-		button = getglobal("Perl_Target_Target_Target_BuffFrame_Buff"..buffnum);
-		debuff = getglobal(button:GetName().."DebuffBorder");
+		button = _G["Perl_Target_Target_Target_BuffFrame_Buff"..buffnum];
+		debuff = _G[button:GetName().."DebuffBorder"];
 		button:Hide();
 		debuff:Hide();
 	end
 	for debuffnum=1,16 do
-		button = getglobal("Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum);
-		debuff = getglobal(button:GetName().."DebuffBorder");
+		button = _G["Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum];
+		debuff = _G[button:GetName().."DebuffBorder"];
 		button:Hide();
 		debuff:Hide();
 	end
@@ -1157,8 +1149,8 @@ function Perl_Target_Target_HealthHide()
 end
 
 function Perl_Target_Target_ManaShow()
-	targettargetmana = UnitMana("targettarget");
-	targettargetmanamax = UnitManaMax("targettarget");
+	targettargetmana = UnitPower("targettarget");
+	targettargetmanamax = UnitPowerMax("targettarget");
 
 	if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative mana
 		targettargetmana = 0;
@@ -1206,8 +1198,8 @@ function Perl_Target_Target_Target_HealthHide()
 end
 
 function Perl_Target_Target_Target_ManaShow()
-	targettargettargetmana = UnitMana("targettargettarget");
-	targettargettargetmanamax = UnitManaMax("targettargettarget");
+	targettargettargetmana = UnitPower("targettargettarget");
+	targettargettargetmanamax = UnitPowerMax("targettargettarget");
 
 	if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative mana
 		targettargettargetmana = 0;
@@ -1239,7 +1231,7 @@ function Perl_Target_Target_HealthBar_Fade_Check()
 			Perl_Target_Target_HealthBarFadeBar:SetValue(Perl_Target_Target_HealthBar:GetValue());
 			Perl_Target_Target_HealthBarFadeBar:Show();
 			Perl_Target_Target_HealthBar_Fade_Color = 1;
-			Perl_Target_Target_HealthBar_Fade_Time_Elapsed = 0;
+			Perl_Target_Target_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_Target_Target_HealthBarFadeBar:SetStatusBarColor(0, Perl_Target_Target_HealthBar_Fade_Color, 0, Perl_Target_Target_HealthBar_Fade_Color);
 			Perl_Target_Target_HealthBar_Fade_OnUpdate_Frame:Show();
 		end
@@ -1253,7 +1245,7 @@ function Perl_Target_Target_ManaBar_Fade_Check()
 			Perl_Target_Target_ManaBarFadeBar:SetValue(Perl_Target_Target_ManaBar:GetValue());
 			Perl_Target_Target_ManaBarFadeBar:Show();
 			Perl_Target_Target_ManaBar_Fade_Color = 1;
-			Perl_Target_Target_ManaBar_Fade_Time_Elapsed = 0;
+			Perl_Target_Target_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			if (targettargetpower == 0) then			-- Forcing an initial value will prevent the fade from starting incorrectly
 				Perl_Target_Target_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_ManaBar_Fade_Color);
 			elseif (targettargetpower == 1) then
@@ -1277,7 +1269,7 @@ function Perl_Target_Target_Target_HealthBar_Fade_Check()
 			Perl_Target_Target_Target_HealthBarFadeBar:SetValue(Perl_Target_Target_Target_HealthBar:GetValue());
 			Perl_Target_Target_Target_HealthBarFadeBar:Show();
 			Perl_Target_Target_Target_HealthBar_Fade_Color = 1;
-			Perl_Target_Target_Target_HealthBar_Fade_Time_Elapsed = 0;
+			Perl_Target_Target_Target_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			Perl_Target_Target_Target_HealthBarFadeBar:SetStatusBarColor(0, Perl_Target_Target_Target_HealthBar_Fade_Color, 0, Perl_Target_Target_Target_HealthBar_Fade_Color);
 			Perl_Target_Target_Target_HealthBar_Fade_OnUpdate_Frame:Show();
 		end
@@ -1291,7 +1283,7 @@ function Perl_Target_Target_Target_ManaBar_Fade_Check()
 			Perl_Target_Target_Target_ManaBarFadeBar:SetValue(Perl_Target_Target_Target_ManaBar:GetValue());
 			Perl_Target_Target_Target_ManaBarFadeBar:Show();
 			Perl_Target_Target_Target_ManaBar_Fade_Color = 1;
-			Perl_Target_Target_Target_ManaBar_Fade_Time_Elapsed = 0;
+			Perl_Target_Target_Target_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 			if (targettargettargetpower == 0) then
 				Perl_Target_Target_Target_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Target_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_Target_ManaBar_Fade_Color);
 			elseif (targettargettargetpower == 1) then
@@ -1308,23 +1300,23 @@ function Perl_Target_Target_Target_ManaBar_Fade_Check()
 	end
 end
 
-function Perl_Target_Target_HealthBar_Fade(arg1)
-	Perl_Target_Target_HealthBar_Fade_Color = Perl_Target_Target_HealthBar_Fade_Color - arg1;
-	Perl_Target_Target_HealthBar_Fade_Time_Elapsed = Perl_Target_Target_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Target_Target_HealthBar_Fade(self, elapsed)
+	Perl_Target_Target_HealthBar_Fade_Color = Perl_Target_Target_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Target_Target_HealthBarFadeBar:SetStatusBarColor(0, Perl_Target_Target_HealthBar_Fade_Color, 0, Perl_Target_Target_HealthBar_Fade_Color);
 
-	if (Perl_Target_Target_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Target_Target_HealthBar_Fade_Color = 1;
-		Perl_Target_Target_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Target_Target_HealthBarFadeBar:Hide();
 		Perl_Target_Target_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Target_Target_ManaBar_Fade(arg1)
-	Perl_Target_Target_ManaBar_Fade_Color = Perl_Target_Target_ManaBar_Fade_Color - arg1;
-	Perl_Target_Target_ManaBar_Fade_Time_Elapsed = Perl_Target_Target_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Target_Target_ManaBar_Fade(self, elapsed)
+	Perl_Target_Target_ManaBar_Fade_Color = Perl_Target_Target_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (targettargetpower == 0) then
 		Perl_Target_Target_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_ManaBar_Fade_Color);
@@ -1338,31 +1330,31 @@ function Perl_Target_Target_ManaBar_Fade(arg1)
 		Perl_Target_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Target_Target_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Target_Target_ManaBar_Fade_Color = 1;
-		Perl_Target_Target_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Target_Target_ManaBarFadeBar:Hide();
 		Perl_Target_Target_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Target_Target_Target_HealthBar_Fade(arg1)
-	Perl_Target_Target_Target_HealthBar_Fade_Color = Perl_Target_Target_Target_HealthBar_Fade_Color - arg1;
-	Perl_Target_Target_Target_HealthBar_Fade_Time_Elapsed = Perl_Target_Target_Target_HealthBar_Fade_Time_Elapsed + arg1;
+function Perl_Target_Target_Target_HealthBar_Fade(self, elapsed)
+	Perl_Target_Target_Target_HealthBar_Fade_Color = Perl_Target_Target_Target_HealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Target_Target_Target_HealthBarFadeBar:SetStatusBarColor(0, Perl_Target_Target_Target_HealthBar_Fade_Color, 0, Perl_Target_Target_Target_HealthBar_Fade_Color);
 
-	if (Perl_Target_Target_Target_HealthBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Target_Target_Target_HealthBar_Fade_Color = 1;
-		Perl_Target_Target_Target_HealthBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Target_Target_Target_HealthBarFadeBar:Hide();
 		Perl_Target_Target_Target_HealthBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
-function Perl_Target_Target_Target_ManaBar_Fade(arg1)
-	Perl_Target_Target_Target_ManaBar_Fade_Color = Perl_Target_Target_Target_ManaBar_Fade_Color - arg1;
-	Perl_Target_Target_Target_ManaBar_Fade_Time_Elapsed = Perl_Target_Target_Target_ManaBar_Fade_Time_Elapsed + arg1;
+function Perl_Target_Target_Target_ManaBar_Fade(self, elapsed)
+	Perl_Target_Target_Target_ManaBar_Fade_Color = Perl_Target_Target_Target_ManaBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	if (targettargettargetpower == 0) then
 		Perl_Target_Target_Target_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Target_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_Target_ManaBar_Fade_Color);
@@ -1376,9 +1368,9 @@ function Perl_Target_Target_Target_ManaBar_Fade(arg1)
 		Perl_Target_Target_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_Target_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_Target_ManaBar_Fade_Color);
 	end
 
-	if (Perl_Target_Target_Target_ManaBar_Fade_Time_Elapsed > 1) then
+	if (self.TimeSinceLastUpdate > 1) then
 		Perl_Target_Target_Target_ManaBar_Fade_Color = 1;
-		Perl_Target_Target_Target_ManaBar_Fade_Time_Elapsed = 0;
+		self.TimeSinceLastUpdate = 0;
 		Perl_Target_Target_Target_ManaBarFadeBar:Hide();
 		Perl_Target_Target_Target_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
@@ -1956,7 +1948,7 @@ function Perl_Target_Target_DragStart(button)
 	end
 end
 
-function Perl_Target_Target_DragStop(button)
+function Perl_Target_Target_DragStop()
 	Perl_Target_Target_Frame:StopMovingOrSizing();
 end
 -- Target of Target End
@@ -2013,7 +2005,7 @@ function Perl_Target_Target_Target_DragStart(button)
 	end
 end
 
-function Perl_Target_Target_Target_DragStop(button)
+function Perl_Target_Target_Target_DragStop()
 	Perl_Target_Target_Target_Frame:StopMovingOrSizing();
 end
 -- Target of Target of Target End

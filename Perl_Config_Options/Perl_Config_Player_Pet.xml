@@ -164,7 +164,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERPET_EXPERIENCE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYERPET_EXPERIENCE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_ShowXP_Update();
@@ -185,7 +185,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMPACT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_COMPACT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_Compact_Mode_Update();
@@ -206,7 +206,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERPET_HIDENAME);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYERPET_HIDENAME);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_Hide_Name_Update();
@@ -227,7 +227,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PORTRAITS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PORTRAITS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_Portrait_Update();
@@ -248,7 +248,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_THREED_PORTRAITS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_THREED_PORTRAITS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_3D_Portrait_Update();
@@ -269,7 +269,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBAT_TEXT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_COMBAT_TEXT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_Portrait_Combat_Text_Update();
@@ -290,7 +290,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFF);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFF);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_Class_Buffs_Update();
@@ -311,7 +311,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_DEBUFF);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_CLASS_DEBUFF);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_Curable_Debuffs_Update();
@@ -332,7 +332,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERPET_LOCK);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYERPET_LOCK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_Lock_Update();
@@ -353,8 +353,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Player_Pet_Set_Scale(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Player_Pet_Set_Scale(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -372,7 +372,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_Set_Scale();
@@ -393,7 +393,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERPET_TARGET_ENABLE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYERPET_TARGET_ENABLE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_Pet_Target_Update();
@@ -414,7 +414,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_Class_Colored_Names_Update();
@@ -435,7 +435,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_FRIENDLY_HEALTH);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_FRIENDLY_HEALTH);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_Friendly_Health_Update();
@@ -474,8 +474,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Player_Pet_Set_Buffs(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Player_Pet_Set_Buffs(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -493,8 +493,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Player_Pet_Set_Debuffs(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Player_Pet_Set_Debuffs(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -512,8 +512,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Player_Pet_Set_Transparency(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Player_Pet_Set_Transparency(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -531,8 +531,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Player_Pet_Set_Buff_Location(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Player_Pet_Set_Buff_Location(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -550,8 +550,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Player_Pet_Set_Debuff_Location(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Player_Pet_Set_Debuff_Location(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -569,8 +569,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Player_Pet_Set_Buff_Size(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Player_Pet_Set_Buff_Size(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -588,8 +588,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Player_Pet_Set_Debuff_Size(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Player_Pet_Set_Debuff_Size(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -607,8 +607,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Player_Pet_Target_Set_Scale(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Player_Pet_Target_Set_Scale(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -626,7 +626,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Pet_Target_Set_Scale();

@@ -94,7 +94,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_ENABLE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_ENABLE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Enabled_Update();
@@ -115,7 +115,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_FOCUSTARGET_ENABLE);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_FOCUSTARGET_ENABLE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Enabled_Focus_Update();
@@ -136,7 +136,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_PARTY_HIDDEN_IN_RAID);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_PARTY_HIDDEN_IN_RAID);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Party_Hidden_In_Raid_Update();
@@ -157,7 +157,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_FOCUS_HIDDEN_IN_RAID);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_FOCUS_HIDDEN_IN_RAID);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Focus_Hidden_In_Raid_Update();
@@ -178,7 +178,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Class_Colored_Names_Update();
@@ -199,7 +199,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDE_POWER_BARS);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_HIDE_POWER_BARS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Hide_Power_Bars_Update();
@@ -220,7 +220,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_LOCK);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_LOCK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Lock_Update();
@@ -259,8 +259,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Party_Target_Set_Scale(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Party_Target_Set_Scale(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -278,7 +278,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Set_Scale();
@@ -299,8 +299,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Party_Target_Set_Transparency(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Party_Target_Set_Transparency(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -318,8 +318,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
-						Perl_Config_Party_Target_Focus_Set_Scale(getglobal(self:GetName()):GetValue());
+						_G[self:GetName().."Text"]:SetText(_G[self:GetName()]:GetValue());
+						Perl_Config_Party_Target_Focus_Set_Scale(_G[self:GetName()]:GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -337,7 +337,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Focus_Set_Scale();
