@@ -29,6 +29,8 @@ local fivesecondrule = 0;		-- five second rule is off by default
 local totemtimers = 1;			-- default for totem timers is on by default
 local runeframe = 1;			-- default for rune frame is on by default
 local pvptimer = 0;				-- pvp timer is hidden by default
+local paladinpowerbar = 1;		-- default for paladin power bar is on by default
+local shardbarframe = 1;		-- default for shard bar frame is on by default
 
 -- Default Local Variables
 local InCombat = 0;				-- used to track if the player is in combat and if the icon should be displayed
@@ -57,6 +59,7 @@ local fivesecondruletime = nil;
 function Perl_Player_OnLoad(self)
 	-- Variables
 	self.lastMana = 0;
+	self.unit = "player";
 
 	-- Combat Text
 	CombatFeedback_Initialize(self, Perl_Player_HitIndicator, 30);
@@ -116,6 +119,8 @@ function Perl_Player_OnLoad(self)
 
 	TotemFrame:SetParent(Perl_Player_Frame);
 	RuneFrame:SetParent(Perl_Player_Frame);
+	PaladinPowerBar:SetParent(Perl_Player_Frame);
+	ShardBarFrame:SetParent(Perl_Player_Frame);
 end
 
 
@@ -136,7 +141,7 @@ function Perl_Player_Events:UNIT_POWER(arg1)
 end
 Perl_Player_Events.UNIT_MAXPOWER = Perl_Player_Events.UNIT_POWER;
 
-function Perl_Player_Events:UNIT_DISPLAYPOWER(msg, arg1)
+function Perl_Player_Events:UNIT_DISPLAYPOWER(arg1)
 	if (arg1 == "player") then
 		Perl_Player_Update_Mana_Bar();		-- What type of energy are we using now?
 		Perl_Player_Update_Mana();		-- Update the energy info immediately
@@ -161,11 +166,17 @@ function Perl_Player_Events:UNIT_SPELLMISS(arg1, arg2)
 	end
 end
 
-function Perl_Player_Events:PLAYER_UPDATE_RESTING()
-	Perl_Player_Update_Combat_Status(event);	-- Are we fighting, resting, or none?
+function Perl_Player_Events:PLAYER_REGEN_DISABLED()
+	Perl_Player_Update_Combat_Status("PLAYER_REGEN_DISABLED");	-- Are we fighting, resting, or none?
 end
-Perl_Player_Events.PLAYER_REGEN_DISABLED = Perl_Player_Events.PLAYER_UPDATE_RESTING;
-Perl_Player_Events.PLAYER_REGEN_ENABLED = Perl_Player_Events.PLAYER_UPDATE_RESTING;
+
+function Perl_Player_Events:PLAYER_REGEN_ENABLED()
+	Perl_Player_Update_Combat_Status("PLAYER_REGEN_ENABLED");	-- Are we fighting, resting, or none?
+end
+
+function Perl_Player_Events:PLAYER_UPDATE_RESTING()
+	Perl_Player_Update_Combat_Status("PLAYER_UPDATE_RESTING");	-- Are we fighting, resting, or none?
+end
 
 function Perl_Player_Events:PLAYER_XP_UPDATE()
 	if (xpbarstate == 1) then
@@ -452,7 +463,11 @@ function Perl_Player_Update_Mana()
 	if (PCUF_FADEBARS == 1) then
 		if (playermana < Perl_Player_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and playermana > Perl_Player_Frame.lastMana)) then
 			Perl_Player_ManaBarFadeBar:SetMinMaxValues(0, playermanamax);
-			Perl_Player_ManaBarFadeBar:SetValue(Perl_Player_Frame.lastMana);
+			if (PCUF_INVERTBARVALUES == 1) then
+				Perl_Player_ManaBarFadeBar:SetValue(playermanamax - Perl_Player_Frame.lastMana);
+			else
+				Perl_Player_ManaBarFadeBar:SetValue(Perl_Player_Frame.lastMana);
+			end
 			Perl_Player_ManaBarFadeBar:Show();
 			Perl_Player_ManaBar_Fade_Color = 1;
 			Perl_Player_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
@@ -672,7 +687,11 @@ function Perl_Player_OnUpdate_ManaBar(self, elapsed)
 		if (PCUF_FADEBARS == 1) then
 			if (playeronupdatemana < Perl_Player_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and playeronupdatemana > Perl_Player_Frame.lastMana)) then
 				Perl_Player_ManaBarFadeBar:SetMinMaxValues(0, playermanamax);
-				Perl_Player_ManaBarFadeBar:SetValue(Perl_Player_Frame.lastMana);
+				if (PCUF_INVERTBARVALUES == 1) then
+					Perl_Player_ManaBarFadeBar:SetValue(playermanamax - Perl_Player_Frame.lastMana);
+				else
+					Perl_Player_ManaBarFadeBar:SetValue(Perl_Player_Frame.lastMana);
+				end
 				Perl_Player_ManaBarFadeBar:Show();
 				Perl_Player_ManaBar_Fade_Color = 1;
 				Perl_Player_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
@@ -752,7 +771,7 @@ function Perl_Player_Update_Experience()
 		Perl_Player_XPBar:SetValue(1);
 		Perl_Player_XPRestBar:SetValue(1);
 
-		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_LEVEL_EIGHTY);
+		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_LEVEL_EIGHTY_FIVE);
 	end
 	
 end
@@ -1430,6 +1449,20 @@ function Perl_Player_Frame_Style()
 			RuneFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
+		-- Hi-jack the Blizzard paladin power bar
+		if (paladinpowerbar == 1) then
+			PaladinPowerBar:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 15, 8);
+		else
+			PaladinPowerBar:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+		end
+
+		-- Hi-jack the Blizzard shard bar frame
+		if (shardbarframe == 1) then
+			ShardBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 28, 0);
+		else
+			ShardBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+		end
+
 		-- Update the five second rule
 		Perl_Player_FiveSecondRule:SetWidth(Perl_Player_ManaBar:GetWidth());
 
@@ -1621,6 +1654,18 @@ function Perl_Player_Set_Show_PvP_Timer(newvalue)
 	Perl_Player_Update_PvP_Timer();
 end
 
+function Perl_Player_Set_Show_Paladin_Power_Bar(newvalue)
+	paladinpowerbar = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
+end
+
+function Perl_Player_Set_Show_Shard_Bar_Frame(newvalue)
+	shardbarframe = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
+end
+
 function Perl_Player_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);							-- convert the user input to a wow acceptable value
@@ -1681,6 +1726,8 @@ function Perl_Player_GetVars(name, updateflag)
 	totemtimers = Perl_Player_Config[name]["TotemTimers"];
 	runeframe = Perl_Player_Config[name]["RuneFrame"];
 	pvptimer = Perl_Player_Config[name]["PvPTimer"];
+	paladinpowerbar = Perl_Player_Config[name]["PaladinPowerBar"];
+	shardbarframe = Perl_Player_Config[name]["ShardBarFrame"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1754,6 +1801,12 @@ function Perl_Player_GetVars(name, updateflag)
 	if (pvptimer == nil) then
 		pvptimer = 0;
 	end
+	if (paladinpowerbar == nil) then
+		paladinpowerbar = 1;
+	end
+	if (shardbarframe == nil) then
+		shardbarframe = 1;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1791,6 +1844,8 @@ function Perl_Player_GetVars(name, updateflag)
 		["totemtimers"] = totemtimers,
 		["runeframe"] = runeframe,
 		["pvptimer"] = pvptimer,
+		["paladinpowerbar"] = paladinpowerbar,
+		["shardbarframe"] = shardbarframe,
 	}
 	return vars;
 end
@@ -1919,6 +1974,16 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				pvptimer = nil;
 			end
+			if (vartable["Global Settings"]["PaladinPowerBar"] ~= nil) then
+				paladinpowerbar = vartable["Global Settings"]["PaladinPowerBar"];
+			else
+				paladinpowerbar = nil;
+			end
+			if (vartable["Global Settings"]["ShardBarFrame"] ~= nil) then
+				shardbarframe = vartable["Global Settings"]["ShardBarFrame"];
+			else
+				shardbarframe = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1994,6 +2059,12 @@ function Perl_Player_UpdateVars(vartable)
 		if (pvptimer == nil) then
 			pvptimer = 0;
 		end
+		if (paladinpowerbar == nil) then
+			paladinpowerbar = 1;
+		end
+		if (shardbarframe == nil) then
+			shardbarframe = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Update_Once();
@@ -2026,6 +2097,8 @@ function Perl_Player_UpdateVars(vartable)
 		["TotemTimers"] = totemtimers,
 		["RuneFrame"] = runeframe,
 		["PvPTimer"] = pvptimer,
+		["PaladinPowerBar"] = paladinpowerbar,
+		["ShardBarFrame"] = shardbarframe,
 	};
 end
 

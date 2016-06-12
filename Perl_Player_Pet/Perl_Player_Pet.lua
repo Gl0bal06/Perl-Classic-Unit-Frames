@@ -486,6 +486,10 @@ function Perl_Player_Pet_Update_Experience()
 	Perl_Player_Pet_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
 	Perl_Player_Pet_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 	Perl_Player_Pet_XPBarText:SetText(xptext);
+
+	if (UnitLevel("pet") == UnitLevel("player")) then
+		Perl_Player_Pet_ShowXP();
+	end
 end
 
 function Perl_Player_Pet_Update_Portrait()

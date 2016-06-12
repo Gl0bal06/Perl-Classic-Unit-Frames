@@ -686,6 +686,48 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton31" inherits="UICheckButtonTemplate" id="31">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton30">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_PALADIN_POWER_BAR);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Show_Paladin_Power_Bar_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton32" inherits="UICheckButtonTemplate" id="32">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton31">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_SHARD_BAR_FRAME);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Show_Shard_Bar_Frame_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
 		</Frames>
 
 	</Frame>

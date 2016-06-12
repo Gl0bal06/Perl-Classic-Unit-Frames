@@ -2,52 +2,49 @@
 -- Variables --
 ---------------
 Perl_Target_Config = {};
-local Perl_Target_Events = {};	-- event manager
+local Perl_Target_Events = {};		-- event manager
 
 -- Default Saved Variables (also set in Perl_Target_GetVars)
-local locked = 0;		-- unlocked by default
-local showcp = 1;		-- combo points displayed by default
-local showclassicon = 1;	-- show the class icon
-local showclassframe = 1;	-- show the class frame
-local showpvpicon = 1;		-- show the pvp icon
-local numbuffsshown = 20;	-- buff row is 2x10
-local numdebuffsshown = 20;	-- debuff row is 4x10
-local scale = 0.9;		-- default scale
-local transparency = 1;		-- transparency for frames
-local buffdebuffscale = 1;	-- default scale for buffs and debuffs
-local showportrait = 0;		-- portrait is hidden by default
-local threedportrait = 0;	-- 3d portraits are off by default
-local portraitcombattext = 0;	-- Combat text is disabled by default on the portrait frame
-local showrareeliteframe = 0;	-- rare/elite frame is hidden by default
-local nameframecombopoints = 0;	-- combo points are not displayed in the name frame by default
-local comboframedebuffs = 0;	-- combo point frame will not be used for debuffs by default
-local framestyle = 1;		-- default frame style is "classic"
-local compactmode = 0;		-- compact mode is disabled by default
-local compactpercent = 0;	-- percents are not shown in compact mode by default
-local hidebuffbackground = 0;	-- buff and debuff backgrounds are shown by default
-local shortbars = 0;		-- Health/Power/Experience bars are all normal length
-local healermode = 0;		-- nurfed unit frame style
-local soundtargetchange = 0;	-- sound when changing targets is off by default
-local displaycastablebuffs = 0;	-- display all buffs by default
-local classcolorednames = 0;	-- names are colored based on pvp status by default
-local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
-local invertbuffs = 0;		-- buffs and debuffs are below the target frame by default
-local showguildname = 0;	-- guild names are hidden by default
-local eliteraregraphic = 0;	-- the blizzard elite/rare graphic is off by default
-local displaycurabledebuff = 0;	-- display all debuffs by default
-local displaybufftimers = 1;	-- buff/debuff timers are on by default
-local displaynumbericthreat = 1;-- threat is displayed numerically by default
-local displayonlymydebuffs = 0;	-- display all debuffs by default
+local locked = 0;					-- unlocked by default
+local showcp = 1;					-- combo points displayed by default
+local showclassicon = 1;			-- show the class icon
+local showclassframe = 1;			-- show the class frame
+local showpvpicon = 1;				-- show the pvp icon
+local numbuffsshown = 20;			-- buff row is 2x10
+local numdebuffsshown = 20;			-- debuff row is 4x10
+local scale = 0.9;					-- default scale
+local transparency = 1;				-- transparency for frames
+local buffdebuffscale = 1;			-- default scale for buffs and debuffs
+local showportrait = 0;				-- portrait is hidden by default
+local threedportrait = 0;			-- 3d portraits are off by default
+local portraitcombattext = 0;		-- Combat text is disabled by default on the portrait frame
+local showrareeliteframe = 0;		-- rare/elite frame is hidden by default
+local nameframecombopoints = 0;		-- combo points are not displayed in the name frame by default
+local comboframedebuffs = 0;		-- combo point frame will not be used for debuffs by default
+local framestyle = 1;				-- default frame style is "classic"
+local compactmode = 0;				-- compact mode is disabled by default
+local compactpercent = 0;			-- percents are not shown in compact mode by default
+local hidebuffbackground = 0;		-- buff and debuff backgrounds are shown by default
+local shortbars = 0;				-- Health/Power/Experience bars are all normal length
+local healermode = 0;				-- nurfed unit frame style
+local soundtargetchange = 0;		-- sound when changing targets is off by default
+local displaycastablebuffs = 0;		-- display all buffs by default
+local classcolorednames = 0;		-- names are colored based on pvp status by default
+local showmanadeficit = 0;			-- Mana deficit in healer mode is off by default
+local invertbuffs = 0;				-- buffs and debuffs are below the target frame by default
+local showguildname = 0;			-- guild names are hidden by default
+local eliteraregraphic = 0;			-- the blizzard elite/rare graphic is off by default
+local displaycurabledebuff = 0;		-- display all debuffs by default
+local displaybufftimers = 1;		-- buff/debuff timers are on by default
+local displaynumbericthreat = 1;	-- threat is displayed numerically by default
+local displayonlymydebuffs = 0;		-- display all debuffs by default
 
 -- Default Local Variables
-local Initialized = nil;	-- waiting to be initialized
+local Initialized = nil;			-- waiting to be initialized
 
 -- Fade Bar Variables
-local Perl_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Target_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
---local Perl_Target_ManaBar_Time_Elapsed = 0;		-- set the update timer to 0
+local Perl_Target_HealthBar_Fade_Color = 1;			-- the color fading interval
+local Perl_Target_ManaBar_Fade_Color = 1;			-- the color fading interval
 local Perl_Target_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
 
 -- Local variables to save memory
@@ -550,7 +547,11 @@ function Perl_Target_Update_Mana()
 	if (PCUF_FADEBARS == 1) then
 		if (targetmana < Perl_Target_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and targetmana > Perl_Target_Frame.lastMana)) then
 			Perl_Target_ManaBarFadeBar:SetMinMaxValues(0, targetmanamax);
-			Perl_Target_ManaBarFadeBar:SetValue(Perl_Target_Frame.lastMana);
+			if (PCUF_INVERTBARVALUES == 1) then
+				Perl_Target_ManaBarFadeBar:SetValue(targetmanamax - Perl_Target_Frame.lastMana);
+			else
+				Perl_Target_ManaBarFadeBar:SetValue(Perl_Target_Frame.lastMana);
+			end
 			Perl_Target_ManaBarFadeBar:Show();
 			Perl_Target_ManaBar_Fade_Color = 1;
 			Perl_Target_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
@@ -661,7 +662,11 @@ function Perl_Target_OnUpdate_ManaBar(self, elapsed)
 		if (PCUF_FADEBARS == 1) then
 			if (targetonupdatemana < Perl_Target_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and targetonupdatemana > Perl_Target_Frame.lastMana)) then
 				Perl_Target_ManaBarFadeBar:SetMinMaxValues(0, targetmanamax);
-				Perl_Target_ManaBarFadeBar:SetValue(Perl_Target_Frame.lastMana);
+				if (PCUF_INVERTBARVALUES == 1) then
+					Perl_Target_ManaBarFadeBar:SetValue(targetmanamax - Perl_Target_Frame.lastMana);
+				else
+					Perl_Target_ManaBarFadeBar:SetValue(Perl_Target_Frame.lastMana);
+				end
 				Perl_Target_ManaBarFadeBar:Show();
 				Perl_Target_ManaBar_Fade_Color = 1;
 				Perl_Target_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;

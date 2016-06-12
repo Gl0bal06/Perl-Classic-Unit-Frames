@@ -1,3 +1,13 @@
+4.01 Beta 2 - September 27, 2010
+ - CombatDisplay: Fade bars option works correctly on power bars with OnUpdate scripts
+ - CombatDisplay/Player/Target: Fade bars used with inverted bars work again
+ - Pet: Experience bar does not disappear when pet levels up to the same level as the player
+ - Player: Added support for Paladin Holy Bar
+ - Player: Added support for Warlock Shard Bar
+ - Player: The combat status icon works again
+ - Player: Power bar now correctly changes color when necessary
+ - Player: The experience bar now correctly shows level 85 being the max level
+
 4.01 Beta 1 - September 22, 2010
  - All: Updated TOC Interface version to 40000
  - All: Updated OnEvent code for Cataclysm

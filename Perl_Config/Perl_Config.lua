@@ -1498,6 +1498,8 @@ function Perl_Config_Global_Save_Settings()
 			["TotemTimers"] = vartable["totemtimers"],
 			["RuneFrame"] = vartable["runeframe"],
 			["PvPTimer"] = vartable["pvptimer"],
+			["PaladinPowerBar"] = vartable["paladinpowerbar"],
+			["ShardBarFrame"] = vartable["shardbarframe"],
 		};
 	end
 

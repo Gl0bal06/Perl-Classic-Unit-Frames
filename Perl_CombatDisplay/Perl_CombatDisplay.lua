@@ -5,29 +5,26 @@ Perl_CombatDisplay_Config = {};
 local Perl_CombatDisplay_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_CombatDisplay_GetVars)
-local state = 3;		-- hidden unless in combat by default
+local state = 3;			-- hidden unless in combat by default
 local manapersist = 0;		-- mana persist is off by default
 local healthpersist = 0;	-- health persist is off by default
-local locked = 0;		-- unlocked by default
-local scale = 0.9;		-- default scale
+local locked = 0;			-- unlocked by default
+local scale = 0.9;			-- default scale
 local transparency = 1;		-- transparency for the frame
 local showtarget = 0;		-- target frame is disabled by default
 local showdruidbar = 0;		-- Druid Bar support is enabled by default
 local showpetbars = 0;		-- Pet info is hidden by default
 local rightclickmenu = 0;	-- The ability to open a menu from CombatDisplay is disabled by default
 local displaypercents = 0;	-- percents are off by default
-local showcp = 0;		-- combo points are hidden by default
+local showcp = 0;			-- combo points are hidden by default
 local clickthrough = 0;		-- frames are clickable by default
 
 -- Default Local Variables
 local InCombat = 0;
 local Initialized = nil;
 local IsAggroed = 0;
---local Perl_CombatDisplay_ManaBar_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_CombatDisplay_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
---local Perl_CombatDisplay_Target_ManaBar_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_CombatDisplay_Target_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
-local Perl_CombatDisplay_DruidBar_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_CombatDisplay_DruidBar_Time_Update_Rate = 0.2;	-- the update interval
 local healthfull = 0;
 local manafull = 0;
@@ -51,6 +48,9 @@ local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, pla
 -- Loading Function --
 ----------------------
 function Perl_CombatDisplay_OnLoad(self)
+	-- Variables
+	self.lastMana = 0;
+
 	-- Events
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
@@ -84,6 +84,9 @@ function Perl_CombatDisplay_OnLoad(self)
 end
 
 function Perl_CombatDisplay_Target_OnLoad(self)
+	-- Variables
+	self.lastMana = 0;
+
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetFrameLevel(Perl_CombatDisplay_Target_ManaFrame:GetFrameLevel() + 2);
 	Perl_CombatDisplay_Target_HealthBarFadeBar:SetFrameLevel(Perl_CombatDisplay_Target_HealthBar:GetFrameLevel() - 1);
@@ -446,9 +449,13 @@ function Perl_CombatDisplay_Update_Mana()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (playermana < Perl_CombatDisplay_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and playermana > Perl_CombatDisplay_ManaBar:GetValue())) then
+		if (playermana < Perl_CombatDisplay_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and playermana > Perl_CombatDisplay_Frame.lastMana)) then
 			Perl_CombatDisplay_ManaBarFadeBar:SetMinMaxValues(0, playermanamax);
-			Perl_CombatDisplay_ManaBarFadeBar:SetValue(Perl_CombatDisplay_ManaBar:GetValue());
+			if (PCUF_INVERTBARVALUES == 1) then
+				Perl_CombatDisplay_ManaBarFadeBar:SetValue(playermanamax - Perl_CombatDisplay_Frame.lastMana);
+			else
+				Perl_CombatDisplay_ManaBarFadeBar:SetValue(Perl_CombatDisplay_Frame.lastMana);
+			end
 			Perl_CombatDisplay_ManaBarFadeBar:Show();
 			Perl_CombatDisplay_ManaBar_Fade_Color = 1;
 			Perl_CombatDisplay_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
@@ -462,6 +469,8 @@ function Perl_CombatDisplay_Update_Mana()
 	else
 		Perl_CombatDisplay_ManaBar:SetValue(playermana);
 	end
+
+	Perl_CombatDisplay_Frame.lastMana = playermana;
 
 	Perl_CombatDisplay_Update_Mana_Text();
 
@@ -534,6 +543,22 @@ function Perl_CombatDisplay_OnUpdate_ManaBar(self, elapsed)
 		self.TimeSinceLastUpdate = 0;
 
 		playeronupdatemana = UnitPower("player", UnitPowerType("player"));
+
+		if (PCUF_FADEBARS == 1) then
+			if (playeronupdatemana < Perl_CombatDisplay_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and playeronupdatemana > Perl_CombatDisplay_Frame.lastMana)) then
+				Perl_CombatDisplay_ManaBarFadeBar:SetMinMaxValues(0, playermanamax);
+				if (PCUF_INVERTBARVALUES == 1) then
+					Perl_CombatDisplay_ManaBarFadeBar:SetValue(playermanamax - Perl_CombatDisplay_Frame.lastMana);
+				else
+					Perl_CombatDisplay_ManaBarFadeBar:SetValue(Perl_CombatDisplay_Frame.lastMana);
+				end
+				Perl_CombatDisplay_ManaBarFadeBar:Show();
+				Perl_CombatDisplay_ManaBar_Fade_Color = 1;
+				Perl_CombatDisplay_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
+				Perl_CombatDisplay_ManaBar_Fade_OnUpdate_Frame:Show();
+			end
+		end
+
 		if (playeronupdatemana ~= playermana) then
 			playermana = playeronupdatemana;
 			if (PCUF_INVERTBARVALUES == 1) then
@@ -543,6 +568,8 @@ function Perl_CombatDisplay_OnUpdate_ManaBar(self, elapsed)
 			end
 			Perl_CombatDisplay_Update_Mana_Text();
 		end
+
+		Perl_CombatDisplay_Frame.lastMana = playeronupdatemana;
 	end
 end
 
@@ -838,9 +865,13 @@ function Perl_CombatDisplay_Target_Update_Mana()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (targetmana < Perl_CombatDisplay_Target_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and targetmana > Perl_CombatDisplay_Target_ManaBar:GetValue())) then
+		if (targetmana < Perl_CombatDisplay_Target_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and targetmana > Perl_CombatDisplay_Target_Frame.lastMana)) then
 			Perl_CombatDisplay_Target_ManaBarFadeBar:SetMinMaxValues(0, targetmanamax);
-			Perl_CombatDisplay_Target_ManaBarFadeBar:SetValue(Perl_CombatDisplay_Target_ManaBar:GetValue());
+			if (PCUF_INVERTBARVALUES == 1) then
+				Perl_CombatDisplay_Target_ManaBarFadeBar:SetValue(targetmanamax - Perl_CombatDisplay_Target_Frame.lastMana);
+			else
+				Perl_CombatDisplay_Target_ManaBarFadeBar:SetValue(Perl_CombatDisplay_Target_Frame.lastMana);
+			end
 			Perl_CombatDisplay_Target_ManaBarFadeBar:Show();
 			Perl_CombatDisplay_Target_ManaBar_Fade_Color = 1;
 			Perl_CombatDisplay_Target_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
@@ -854,6 +885,8 @@ function Perl_CombatDisplay_Target_Update_Mana()
 	else
 		Perl_CombatDisplay_Target_ManaBar:SetValue(targetmana);
 	end
+
+	Perl_CombatDisplay_Target_Frame.lastMana = targetmana;
 
 	Perl_CombatDisplay_Target_Update_Mana_Text();
 end
@@ -876,6 +909,22 @@ function Perl_CombatDisplay_Target_OnUpdate_ManaBar(self, elapsed)
 		self.TimeSinceLastUpdate = 0;
 
 		targetonupdatemana = UnitPower("target", UnitPowerType("target"));
+
+		if (PCUF_FADEBARS == 1) then
+			if (targetonupdatemana < Perl_CombatDisplay_Target_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and targetonupdatemana > Perl_CombatDisplay_Target_Frame.lastMana)) then
+				Perl_CombatDisplay_Target_ManaBarFadeBar:SetMinMaxValues(0, targetmanamax);
+				if (PCUF_INVERTBARVALUES == 1) then
+					Perl_CombatDisplay_Target_ManaBarFadeBar:SetValue(targetmanamax - Perl_CombatDisplay_Target_Frame.lastMana);
+				else
+					Perl_CombatDisplay_Target_ManaBarFadeBar:SetValue(Perl_CombatDisplay_Target_Frame.lastMana);
+				end
+				Perl_CombatDisplay_Target_ManaBarFadeBar:Show();
+				Perl_CombatDisplay_Target_ManaBar_Fade_Color = 1;
+				Perl_CombatDisplay_Target_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
+				Perl_CombatDisplay_Target_ManaBar_Fade_OnUpdate_Frame:Show();
+			end
+		end
+
 		if (targetonupdatemana ~= targetmana) then
 			targetmana = targetonupdatemana;
 			if (PCUF_INVERTBARVALUES == 1) then
@@ -885,6 +934,8 @@ function Perl_CombatDisplay_Target_OnUpdate_ManaBar(self, elapsed)
 			end
 			Perl_CombatDisplay_Target_Update_Mana_Text();
 		end
+
+		Perl_CombatDisplay_Target_Frame.lastMana = targetonupdatemana;
 	end
 end
 
