@@ -1,3 +1,20 @@
+0.80 - September 22, 2006
+ - All: Can now fade lost amounts on status bars
+ - All: Can now toggle the name frame as a valid click casting frame
+ - All: Can now invert status bars to fill as you lose health or mana
+ - All: Added the ability to display textures on background of status bars
+ - CombatDisplay/Player: Changed some XML regarding Druid Bar
+ - Config: Added support for third party perl mods in the menu
+ - Config: Readded support and updated options available for Perl_Player_Buff
+ - Config: Updated options available for Perl_ArcaneBar
+ - Config: The show and hide all buttons for Perl_Raid now work for Group 9
+ - Config: Added Spanish translations (Thanks KaRLsM)
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - Config: Updated Simplified Chinese translations (Thanks middle007)
+ - Config: Updated Traditional Chinese translations (Thanks hmj1026)
+ - Party: Fixed a potential bug with determining if a pet is a valid unit
+ - Player: Perl_Player_Buff will now realign itself if the portrait is displayed
+
 0.79 - August 26, 2006
  - CombatDisplay: Can now toggle the display of percents
  - CombatDisplay: Changed FiveSec support code slightly

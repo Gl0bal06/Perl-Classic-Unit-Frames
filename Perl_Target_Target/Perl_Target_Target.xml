@@ -304,6 +304,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_Target_Target_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="90" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Target_Target_HealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Target_Target_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_Target_Target_HealthBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="90" y="10"/>
@@ -315,7 +329,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_Target_Target_HealthBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
 					<Button name="Perl_Target_Target_HealthBar_CastClickOverlay">
@@ -381,6 +395,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_Target_Target_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="90" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Target_Target_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Target_Target_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_Target_Target_ManaBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="90" y="10"/>
@@ -392,7 +420,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_Target_Target_ManaBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
 					<Button name="Perl_Target_Target_ManaBar_CastClickOverlay">
@@ -961,6 +989,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_Target_Target_Target_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="90" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Target_Target_Target_HealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Target_Target_Target_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_Target_Target_Target_HealthBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="90" y="10"/>
@@ -972,7 +1014,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_Target_Target_Target_HealthBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
 					<Button name="Perl_Target_Target_Target_HealthBar_CastClickOverlay">
@@ -1038,6 +1080,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_Target_Target_Target_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="90" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Target_Target_Target_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Target_Target_Target_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_Target_Target_Target_ManaBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="90" y="10"/>
@@ -1049,7 +1105,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_Target_Target_Target_ManaBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
 					<Button name="Perl_Target_Target_Target_ManaBar_CastClickOverlay">
@@ -1463,6 +1519,38 @@
 			</OnLoad>
 			<OnUpdate>
 				Perl_Target_Target_BigWarning_OnUpdate();
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_Target_Target_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_Target_Target_HealthBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_Target_Target_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_Target_Target_ManaBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_Target_Target_Target_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_Target_Target_Target_HealthBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_Target_Target_Target_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_Target_Target_Target_ManaBar_Fade(arg1);
 			</OnUpdate>
 		</Scripts>
 	</Frame>

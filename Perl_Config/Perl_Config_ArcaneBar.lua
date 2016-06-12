@@ -30,6 +30,18 @@ function Perl_Config_ArcaneBar_Set_Values()
 		Perl_Config_ArcaneBar_Frame_CheckButton3:SetChecked(nil);
 	end
 
+	if (vartable["namereplace"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton4:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton4:SetChecked(nil);
+	end
+
+	if (vartable["lefttimer"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton5:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton5:SetChecked(nil);
+	end
+
 	Perl_Config_ArcaneBar_Frame_Slider1Low:SetText("0");
 	Perl_Config_ArcaneBar_Frame_Slider1High:SetText("100");
 	Perl_Config_ArcaneBar_Frame_Slider1:SetValue(vartable["transparency"]*100);
@@ -56,6 +68,22 @@ function Perl_Config_ArcaneBar_Hide_Original_Update()
 		Perl_ArcaneBar_Set_Hide(1);
 	else
 		Perl_ArcaneBar_Set_Hide(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Name_Replace_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton4:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Name_Replace(1);
+	else
+		Perl_ArcaneBar_Set_Name_Replace(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Left_Timer_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton5:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Left_Timer(1);
+	else
+		Perl_ArcaneBar_Set_Left_Timer(0);
 	end
 end
 

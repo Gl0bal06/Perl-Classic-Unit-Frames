@@ -68,7 +68,17 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_ALL_FRAMES">
+				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_MISC">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="150" y="-30"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Frame_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_ALL_FRAMES">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -285,7 +295,7 @@
 					<AbsDimension x="170" y="22"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Frame_Text">
 						<Offset>
 							<AbsDimension x="20" y="-45"/>
 						</Offset>
@@ -377,12 +387,12 @@
 
 			<Slider name="$parent_Slider3" inherits="OptionsSliderTemplate" minValue="0" maxValue="360" valueStep="1">
 				<Size>
-					<AbsDimension x="260" y="15"/>
+					<AbsDimension x="200" y="15"/> <!-- 260 -->
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_MiniMap_Text">
 						<Offset>
-							<AbsDimension x="-40" y="-25"/>
+							<AbsDimension x="20" y="-25"/> <!-- -40 -->
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -420,7 +430,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Frame_Text">
 						<Offset>
 							<AbsDimension  x="20" y="-20"/>
 						</Offset>
@@ -499,7 +509,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Frame_Text">
 						<Offset>
 							<AbsDimension  x="210" y="-20"/>
 						</Offset>
@@ -515,23 +525,23 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton11" inherits="UICheckButtonTemplate" id="11">
+			<CheckButton name="$parent_CheckButton15" inherits="UICheckButtonTemplate" id="15">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
 						<Offset>
-							<AbsDimension  x="0" y="-20"/>
+							<AbsDimension  x="20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_PROGRESSIVE);
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_CLICKCASTABLE_NAME_FRAMES);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_All_Set_Color_Health();
+						Perl_Config_All_Set_Name_Frame_Click_Cast();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -599,6 +609,90 @@
 					</OnClick>
 				</Scripts>
 			</Button>
+
+			<CheckButton name="$parent_CheckButton11" inherits="UICheckButtonTemplate" id="11">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
+						<Offset>
+							<AbsDimension  x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_PROGRESSIVE);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_All_Set_Color_Health();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton13" inherits="UICheckButtonTemplate" id="13">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton11">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURED_BACKGROUND);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_All_Set_Textured_Bar_Background();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton14" inherits="UICheckButtonTemplate" id="14">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton13">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_FADE_BARS);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_All_Set_Fade_Bars();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton16" inherits="UICheckButtonTemplate" id="16">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton14">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_INVERT_BAR_VALUES);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_All_Set_Invert_Bar_Values();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
 		</Frames>
 
 	</Frame>

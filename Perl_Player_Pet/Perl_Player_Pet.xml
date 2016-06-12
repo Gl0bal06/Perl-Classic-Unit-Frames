@@ -459,6 +459,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_Player_Pet_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="133" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_Pet_HealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Player_Pet_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_Player_Pet_HealthBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="133" y="10"/>
@@ -470,7 +484,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_Player_Pet_HealthBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
 
@@ -503,6 +517,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_Player_Pet_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="133" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_Pet_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Player_Pet_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_Player_Pet_ManaBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="133" y="10"/>
@@ -514,7 +542,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_Player_Pet_ManaBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
 
@@ -558,7 +586,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_Player_Pet_XPBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0.6" g="0" b="0.6" a="0.25"/>
 					</StatusBar>
 				</Frames>
@@ -944,7 +972,22 @@
 					<!-- End buttons -->
 				</Frames>
 			</Frame>
-
 		</Frames>
+	</Frame>
+
+	<Frame name="Perl_Player_Pet_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_Player_Pet_HealthBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_Player_Pet_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_Player_Pet_ManaBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
 	</Frame>
 </Ui>

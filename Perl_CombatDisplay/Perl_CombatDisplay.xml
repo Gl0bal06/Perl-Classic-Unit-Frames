@@ -128,6 +128,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_CombatDisplay_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_CombatDisplay_HealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_CombatDisplay_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_CombatDisplay_HealthBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
@@ -139,7 +153,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_CombatDisplay_HealthBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
 
@@ -172,6 +186,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_CombatDisplay_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_CombatDisplay_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_CombatDisplay_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_CombatDisplay_ManaBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
@@ -183,7 +211,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_CombatDisplay_ManaBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="1" b="0" a="0.25"/>
 					</StatusBar>
 
@@ -217,6 +245,22 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<!--
+					<StatusBar name="Perl_CombatDisplay_DruidBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_CombatDisplay_DruidBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_CombatDisplay_DruidBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
+					-->
 					<StatusBar name="Perl_CombatDisplay_DruidBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
@@ -228,7 +272,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_CombatDisplay_DruidBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
 
@@ -261,6 +305,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_CombatDisplay_CPBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_CombatDisplay_CPBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_CombatDisplay_CPBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_CombatDisplay_CPBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
@@ -272,7 +330,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_CombatDisplay_CPBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="1" g="0" b="0" a="0.25"/>
 					</StatusBar>
 
@@ -305,6 +363,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_CombatDisplay_PetHealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_CombatDisplay_PetHealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_CombatDisplay_PetHealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_CombatDisplay_PetHealthBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
@@ -316,7 +388,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_CombatDisplay_PetHealthBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
 
@@ -349,6 +421,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_CombatDisplay_PetManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_CombatDisplay_PetManaBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_CombatDisplay_PetManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_CombatDisplay_PetManaBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
@@ -360,7 +446,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_CombatDisplay_PetManaBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="1" b="0" a="0.25"/>
 					</StatusBar>
 				</Frames>
@@ -490,6 +576,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_CombatDisplay_Target_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_CombatDisplay_Target_HealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_CombatDisplay_Target_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_CombatDisplay_Target_HealthBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
@@ -501,7 +601,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_CombatDisplay_Target_HealthBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
 
@@ -534,6 +634,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_CombatDisplay_Target_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_CombatDisplay_Target_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_CombatDisplay_Target_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_CombatDisplay_Target_ManaBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
@@ -545,16 +659,81 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_CombatDisplay_Target_ManaBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="1" b="0" a="0.25"/>
 					</StatusBar>
 				</Frames>
 			</Frame>
 		</Frames>
-
 	</Frame>
 
-	<Frame name="Perl_CombatDisplay_DruidBar_OnUpdate_Frame" movable="true" parent="UIParent" hidden="false" enableMouse="true">
+	<Frame name="Perl_CombatDisplay_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_CombatDisplay_HealthBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_CombatDisplay_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_CombatDisplay_ManaBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<!--
+	<Frame name="Perl_CombatDisplay_DruidBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_CombatDisplay_DruidBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+	-->
+
+	<Frame name="Perl_CombatDisplay_CPBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_CombatDisplay_CPBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_CombatDisplay_PetHealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_CombatDisplay_PetHealthBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_CombatDisplay_PetManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_CombatDisplay_PetManaBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_CombatDisplay_Target_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_CombatDisplay_Target_HealthBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_CombatDisplay_Target_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_CombatDisplay_Target_ManaBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_CombatDisplay_DruidBar_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
 			<OnUpdate>
 				Perl_CombatDisplay_Update_DruidBar(arg1);

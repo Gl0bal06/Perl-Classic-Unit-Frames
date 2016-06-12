@@ -581,6 +581,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_Player_HealthBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_HealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Player_HealthBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_Player_HealthBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="150" y="10"/>
@@ -592,7 +606,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_Player_HealthBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
 					<Button name="Perl_Player_HealthBar_CastClickOverlay">
@@ -679,6 +693,20 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<StatusBar name="Perl_Player_ManaBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Player_ManaBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0" b="1" a="0.25"/>
+					</StatusBar>
 					<StatusBar name="Perl_Player_ManaBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="150" y="10"/>
@@ -690,7 +718,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_Player_ManaBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
 					<Button name="Perl_Player_ManaBar_CastClickOverlay">
@@ -777,6 +805,22 @@
 							</Layer>
 						</Layers>
 					</StatusBar>
+					<!--
+					<StatusBar name="Perl_Player_DruidBarFadeBar" inherits="TextStatusBar" hidden="true">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_DruidBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Player_DruidBarFadeBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
+					-->
 					<StatusBar name="Perl_Player_DruidBarBG" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="150" y="10"/>
@@ -788,7 +832,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_Player_DruidBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
 					<Button name="Perl_Player_DruidBar_CastClickOverlay">
@@ -866,7 +910,7 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarTexture name="Perl_Player_XPBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.6" b="0.6" a="0.25"/>
 					</StatusBar>
 					<StatusBar name="Perl_Player_XPRestBar" inherits="TextStatusBar">
@@ -921,7 +965,33 @@
 		</Frames>
 	</Frame>
 
-	<Frame name="Perl_Player_DruidBar_OnUpdate_Frame" movable="true" parent="UIParent" hidden="false" enableMouse="true">
+	<Frame name="Perl_Player_HealthBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_Player_HealthBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_Player_ManaBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_Player_ManaBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<!--
+	<Frame name="Perl_Player_DruidBar_Fade_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_Player_DruidBar_Fade(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+	-->
+
+	<Frame name="Perl_Player_DruidBar_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
 			<OnUpdate>
 				Perl_Player_Update_DruidBar(arg1);

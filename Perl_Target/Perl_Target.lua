@@ -37,6 +37,12 @@ local invertbuffs = 0;		-- buffs and debuffs are below the target frame by defau
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 
+-- Fade Bar Variables
+local Perl_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Target_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+
 -- Local variables to save memory
 local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, localizedclass, creatureType, r, g, b, namelengthrestrictor, mobhealththreenumerics;
 
@@ -97,6 +103,8 @@ function Perl_Target_OnLoad()
 	Perl_Target_CPFrame_CastClickOverlay:SetFrameLevel(Perl_Target_CPFrame:GetFrameLevel() + 1);
 	Perl_Target_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Target_StatsFrame:GetFrameLevel() + 1);
 	Perl_Target_RaidIconFrame:SetFrameLevel(Perl_Target_PortraitFrame_CastClickOverlay:GetFrameLevel() - 1);
+	Perl_Target_HealthBarFadeBar:SetFrameLevel(Perl_Target_HealthBar:GetFrameLevel() - 1);
+	Perl_Target_ManaBarFadeBar:SetFrameLevel(Perl_Target_ManaBar:GetFrameLevel() - 1);
 
 	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Target loaded successfully.");
@@ -337,6 +345,10 @@ end
 --------------------------
 function Perl_Target_Update_Once()
 	if (UnitExists("target")) then
+		Perl_Target_HealthBarFadeBar:Hide();	-- Hide the fade bars so we don't see fading bars when we shouldn't
+		Perl_Target_ManaBarFadeBar:Hide();	-- Hide the fade bars so we don't see fading bars when we shouldn't
+		Perl_Target_HealthBar:SetValue(0);	-- Do this so we don't fade the bar on a fresh target switch
+		Perl_Target_ManaBar:SetValue(0);	-- Do this so we don't fade the bar on a fresh target switch
 		Perl_Target_Update_Combo_Points();	-- Do we have any combo points (we shouldn't)
 		Perl_Target_Update_Portrait();		-- Set the target's portrait and adjust the combo point frame
 		Perl_Target_Update_Health();		-- Set the target's health
@@ -461,8 +473,23 @@ function Perl_Target_Update_Health()
 		Perl_Target_DeadStatus:Hide();
 	end
 
+	if (PCUF_FADEBARS == 1) then
+		if (targethealth < Perl_Target_HealthBar:GetValue()) then
+			Perl_Target_HealthBarFadeBar:SetMinMaxValues(0, targethealthmax);
+			Perl_Target_HealthBarFadeBar:SetValue(Perl_Target_HealthBar:GetValue());
+			Perl_Target_HealthBarFadeBar:Show();
+			Perl_Target_HealthBar_Fade_Color = 1;
+			Perl_Target_HealthBar_Fade_Time_Elapsed = 0;
+			Perl_Target_HealthBar_Fade_OnUpdate_Frame:Show();
+		end
+	end
+
 	Perl_Target_HealthBar:SetMinMaxValues(0, targethealthmax);
-	Perl_Target_HealthBar:SetValue(targethealth);
+	if (PCUF_INVERTBARVALUES == 1) then
+		Perl_Target_HealthBar:SetValue(targethealthmax - targethealth);
+	else
+		Perl_Target_HealthBar:SetValue(targethealth);
+	end
 
 	if (PCUF_COLORHEALTH == 1) then
 --		if ((targethealthpercent <= 100) and (targethealthpercent > 75)) then
@@ -768,8 +795,23 @@ function Perl_Target_Update_Mana()
 		targetmana = 0;
 	end
 
+	if (PCUF_FADEBARS == 1) then
+		if (targetmana < Perl_Target_ManaBar:GetValue()) then
+			Perl_Target_ManaBarFadeBar:SetMinMaxValues(0, targetmanamax);
+			Perl_Target_ManaBarFadeBar:SetValue(Perl_Target_ManaBar:GetValue());
+			Perl_Target_ManaBarFadeBar:Show();
+			Perl_Target_ManaBar_Fade_Color = 1;
+			Perl_Target_ManaBar_Fade_Time_Elapsed = 0;
+			Perl_Target_ManaBar_Fade_OnUpdate_Frame:Show();
+		end
+	end
+
 	Perl_Target_ManaBar:SetMinMaxValues(0, targetmanamax);
-	Perl_Target_ManaBar:SetValue(targetmana);
+	if (PCUF_INVERTBARVALUES == 1) then
+		Perl_Target_ManaBar:SetValue(targetmanamax - targetmana);
+	else
+		Perl_Target_ManaBar:SetValue(targetmana);
+	end
 
 	if (framestyle == 1) then
 		Perl_Target_ManaBarTextRight:SetTextColor(1, 1, 1, 1);
@@ -1317,8 +1359,10 @@ function Perl_Target_Frame_Style()
 
 	if (framestyle == 1) then
 		Perl_Target_HealthBar:SetWidth(200);
+		Perl_Target_HealthBarFadeBar:SetWidth(200);
 		Perl_Target_HealthBarBG:SetWidth(200);
 		Perl_Target_ManaBar:SetWidth(200);
+		Perl_Target_ManaBarFadeBar:SetWidth(200);
 		Perl_Target_ManaBarBG:SetWidth(200);
 		Perl_Target_HealthBar:SetPoint("TOP", "Perl_Target_StatsFrame", "TOP", 0, -10);
 		Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
@@ -1338,8 +1382,10 @@ function Perl_Target_Frame_Style()
 		Perl_Target_StatsFrame_CastClickOverlay:SetWidth(221);
 	elseif (framestyle == 2) then
 		Perl_Target_HealthBar:SetWidth(150);
+		Perl_Target_HealthBarFadeBar:SetWidth(150);
 		Perl_Target_HealthBarBG:SetWidth(150);
 		Perl_Target_ManaBar:SetWidth(150);
+		Perl_Target_ManaBarFadeBar:SetWidth(150);
 		Perl_Target_ManaBarBG:SetWidth(150);
 		Perl_Target_HealthBar:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "TOPLEFT", 10, -10);
 		Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
@@ -1392,8 +1438,10 @@ function Perl_Target_Frame_Style()
 				end
 			else
 				Perl_Target_HealthBar:SetWidth(115);
+				Perl_Target_HealthBarFadeBar:SetWidth(115);
 				Perl_Target_HealthBarBG:SetWidth(115);
 				Perl_Target_ManaBar:SetWidth(115);
+				Perl_Target_ManaBarFadeBar:SetWidth(115);
 				Perl_Target_ManaBarBG:SetWidth(115);
 
 				if (compactpercent == 0) then				-- civilian probably needs resizing
@@ -1476,6 +1524,46 @@ function Perl_Target_Set_Localized_ClassIcons()
 		[PERL_LOCALIZED_WARLOCK] = 0.5,
 		[PERL_LOCALIZED_WARRIOR] = 0.25,
 	};
+end
+
+
+------------------------
+-- Fade Bar Functions --
+------------------------
+function Perl_Target_HealthBar_Fade(arg1)
+	Perl_Target_HealthBar_Fade_Color = Perl_Target_HealthBar_Fade_Color - arg1;
+	Perl_Target_HealthBar_Fade_Time_Elapsed = Perl_Target_HealthBar_Fade_Time_Elapsed + arg1;
+
+	Perl_Target_HealthBarFadeBar:SetStatusBarColor(0, Perl_Target_HealthBar_Fade_Color, 0, Perl_Target_HealthBar_Fade_Color);
+
+	if (Perl_Target_HealthBar_Fade_Time_Elapsed > 1) then
+		Perl_Target_HealthBar_Fade_Color = 1;
+		Perl_Target_HealthBar_Fade_Time_Elapsed = 0;
+		Perl_Target_HealthBarFadeBar:Hide();
+		Perl_Target_HealthBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Target_ManaBar_Fade(arg1)
+	Perl_Target_ManaBar_Fade_Color = Perl_Target_ManaBar_Fade_Color - arg1;
+	Perl_Target_ManaBar_Fade_Time_Elapsed = Perl_Target_ManaBar_Fade_Time_Elapsed + arg1;
+
+	if (targetpower == 0) then
+		Perl_Target_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Target_ManaBar_Fade_Color, Perl_Target_ManaBar_Fade_Color);
+	elseif (targetpower == 1) then
+		Perl_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_ManaBar_Fade_Color, 0, 0, Perl_Target_ManaBar_Fade_Color);
+	elseif (targetpower == 2) then
+		Perl_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_ManaBar_Fade_Color, (Perl_Target_ManaBar_Fade_Color-0.5), 0, Perl_Target_ManaBar_Fade_Color);
+	elseif (targetpower == 3) then
+		Perl_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_ManaBar_Fade_Color, Perl_Target_ManaBar_Fade_Color, 0, Perl_Target_ManaBar_Fade_Color);
+	end
+
+	if (Perl_Target_ManaBar_Fade_Time_Elapsed > 1) then
+		Perl_Target_ManaBar_Fade_Color = 1;
+		Perl_Target_ManaBar_Fade_Time_Elapsed = 0;
+		Perl_Target_ManaBarFadeBar:Hide();
+		Perl_Target_ManaBar_Fade_OnUpdate_Frame:Hide();
+	end
 end
 
 
@@ -2454,7 +2542,7 @@ function Perl_Target_MouseClick(button)
 	end								-- Otherwise, it did nothing, so take default action
 
 	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
 			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "target");
 				return;

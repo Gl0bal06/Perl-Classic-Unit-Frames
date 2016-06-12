@@ -375,6 +375,7 @@
 						Perl_Config_Raid_Frame_CheckButton6:SetChecked(1);
 						Perl_Config_Raid_Frame_CheckButton7:SetChecked(1);
 						Perl_Config_Raid_Frame_CheckButton8:SetChecked(1);
+						Perl_Config_Raid_Frame_CheckButton26:SetChecked(1);
 						Perl_Raid_Show_Hide_All_Groups(1);
 					</OnClick>
 				</Scripts>
@@ -401,6 +402,7 @@
 						Perl_Config_Raid_Frame_CheckButton6:SetChecked(nil);
 						Perl_Config_Raid_Frame_CheckButton7:SetChecked(nil);
 						Perl_Config_Raid_Frame_CheckButton8:SetChecked(nil);
+						Perl_Config_Raid_Frame_CheckButton26:SetChecked(nil);
 						Perl_Raid_Show_Hide_All_Groups(0);
 					</OnClick>
 				</Scripts>

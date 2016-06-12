@@ -22,6 +22,12 @@ local compactmode = 0;			-- compact mode is disabled by default
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
 
+-- Fade Bar Variables
+local Perl_Player_Pet_HealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Player_Pet_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Player_Pet_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Player_Pet_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+
 -- Local variables to save memory
 local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext;
 
@@ -61,6 +67,8 @@ function Perl_Player_Pet_OnLoad()
 	Perl_Player_Pet_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_StatsFrame:GetFrameLevel() + 2);
 	Perl_Player_Pet_PortraitFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_PortraitFrame:GetFrameLevel() + 2);
 	Perl_Player_Pet_PortraitTextFrame:SetFrameLevel(Perl_Player_Pet_PortraitFrame:GetFrameLevel() + 1);
+	Perl_Player_Pet_HealthBarFadeBar:SetFrameLevel(Perl_Player_Pet_HealthBar:GetFrameLevel() - 1);
+	Perl_Player_Pet_ManaBarFadeBar:SetFrameLevel(Perl_Player_Pet_ManaBar:GetFrameLevel() - 1);
 
 	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Player_Pet loaded successfully.");
@@ -264,8 +272,23 @@ function Perl_Player_Pet_Update_Health()
 		pethealth = 0;
 	end
 
+	if (PCUF_FADEBARS == 1) then
+		if (pethealth < Perl_Player_Pet_HealthBar:GetValue()) then
+			Perl_Player_Pet_HealthBarFadeBar:SetMinMaxValues(0, pethealthmax);
+			Perl_Player_Pet_HealthBarFadeBar:SetValue(Perl_Player_Pet_HealthBar:GetValue());
+			Perl_Player_Pet_HealthBarFadeBar:Show();
+			Perl_Player_Pet_HealthBar_Fade_Color = 1;
+			Perl_Player_Pet_HealthBar_Fade_Time_Elapsed = 0;
+			Perl_Player_Pet_HealthBar_Fade_OnUpdate_Frame:Show();
+		end
+	end
+
 	Perl_Player_Pet_HealthBar:SetMinMaxValues(0, pethealthmax);
-	Perl_Player_Pet_HealthBar:SetValue(pethealth);
+	if (PCUF_INVERTBARVALUES == 1) then
+		Perl_Player_Pet_HealthBar:SetValue(pethealthmax - pethealth);
+	else
+		Perl_Player_Pet_HealthBar:SetValue(pethealth);
+	end
 
 	if (PCUF_COLORHEALTH == 1) then
 --		local playerpethealthpercent = floor(pethealth/pethealthmax*100+0.5);
@@ -316,8 +339,23 @@ function Perl_Player_Pet_Update_Mana()
 		petmana = 0;
 	end
 
+	if (PCUF_FADEBARS == 1) then
+		if (petmana < Perl_Player_Pet_ManaBar:GetValue()) then
+			Perl_Player_Pet_ManaBarFadeBar:SetMinMaxValues(0, petmanamax);
+			Perl_Player_Pet_ManaBarFadeBar:SetValue(Perl_Player_Pet_ManaBar:GetValue());
+			Perl_Player_Pet_ManaBarFadeBar:Show();
+			Perl_Player_Pet_ManaBar_Fade_Color = 1;
+			Perl_Player_Pet_ManaBar_Fade_Time_Elapsed = 0;
+			Perl_Player_Pet_ManaBar_Fade_OnUpdate_Frame:Show();
+		end
+	end
+
 	Perl_Player_Pet_ManaBar:SetMinMaxValues(0, petmanamax);
-	Perl_Player_Pet_ManaBar:SetValue(petmana);
+	if (PCUF_INVERTBARVALUES == 1) then
+		Perl_Player_Pet_ManaBar:SetValue(petmanamax - petmana);
+	else
+		Perl_Player_Pet_ManaBar:SetValue(petmana);
+	end
 
 	if (UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
 		Perl_Player_Pet_ManaBarText:SetText(petmana.."/"..petmanamax);
@@ -432,8 +470,10 @@ function Perl_Player_Pet_Set_Window_Layout()
 			Perl_Player_Pet_StatsFrame:SetWidth(170);
 			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(170);
 			Perl_Player_Pet_HealthBar:SetWidth(158);
+			Perl_Player_Pet_HealthBarFadeBar:SetWidth(158);
 			Perl_Player_Pet_HealthBarBG:SetWidth(158);
 			Perl_Player_Pet_ManaBar:SetWidth(158);
+			Perl_Player_Pet_ManaBarFadeBar:SetWidth(158);
 			Perl_Player_Pet_ManaBarBG:SetWidth(158);
 			Perl_Player_Pet_XPBar:SetWidth(158);
 			Perl_Player_Pet_XPBarBG:SetWidth(158);
@@ -445,8 +485,10 @@ function Perl_Player_Pet_Set_Window_Layout()
 			Perl_Player_Pet_StatsFrame:SetWidth(135);
 			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(135);
 			Perl_Player_Pet_HealthBar:SetWidth(123);
+			Perl_Player_Pet_HealthBarFadeBar:SetWidth(123);
 			Perl_Player_Pet_HealthBarBG:SetWidth(123);
 			Perl_Player_Pet_ManaBar:SetWidth(123);
+			Perl_Player_Pet_ManaBarFadeBar:SetWidth(123);
 			Perl_Player_Pet_ManaBarBG:SetWidth(123);
 			Perl_Player_Pet_XPBar:SetWidth(123);
 			Perl_Player_Pet_XPBarBG:SetWidth(123);
@@ -460,8 +502,10 @@ function Perl_Player_Pet_Set_Window_Layout()
 			Perl_Player_Pet_StatsFrame:SetWidth(145);
 			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(145);
 			Perl_Player_Pet_HealthBar:SetWidth(133);
+			Perl_Player_Pet_HealthBarFadeBar:SetWidth(133);
 			Perl_Player_Pet_HealthBarBG:SetWidth(133);
 			Perl_Player_Pet_ManaBar:SetWidth(133);
+			Perl_Player_Pet_ManaBarFadeBar:SetWidth(133);
 			Perl_Player_Pet_ManaBarBG:SetWidth(133);
 			Perl_Player_Pet_XPBar:SetWidth(133);
 			Perl_Player_Pet_XPBarBG:SetWidth(133);
@@ -473,12 +517,50 @@ function Perl_Player_Pet_Set_Window_Layout()
 			Perl_Player_Pet_StatsFrame:SetWidth(110);
 			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(110);
 			Perl_Player_Pet_HealthBar:SetWidth(98);
+			Perl_Player_Pet_HealthBarFadeBar:SetWidth(98);
 			Perl_Player_Pet_HealthBarBG:SetWidth(98);
 			Perl_Player_Pet_ManaBar:SetWidth(98);
+			Perl_Player_Pet_ManaBarFadeBar:SetWidth(98);
 			Perl_Player_Pet_ManaBarBG:SetWidth(98);
 			Perl_Player_Pet_XPBar:SetWidth(98);
 			Perl_Player_Pet_XPBarBG:SetWidth(98);
 		end
+	end
+end
+
+
+------------------------
+-- Fade Bar Functions --
+------------------------
+function Perl_Player_Pet_HealthBar_Fade(arg1)
+	Perl_Player_Pet_HealthBar_Fade_Color = Perl_Player_Pet_HealthBar_Fade_Color - arg1;
+	Perl_Player_Pet_HealthBar_Fade_Time_Elapsed = Perl_Player_Pet_HealthBar_Fade_Time_Elapsed + arg1;
+
+	Perl_Player_Pet_HealthBarFadeBar:SetStatusBarColor(0, Perl_Player_Pet_HealthBar_Fade_Color, 0, Perl_Player_Pet_HealthBar_Fade_Color);
+
+	if (Perl_Player_Pet_HealthBar_Fade_Time_Elapsed > 1) then
+		Perl_Player_Pet_HealthBar_Fade_Color = 1;
+		Perl_Player_Pet_HealthBar_Fade_Time_Elapsed = 0;
+		Perl_Player_Pet_HealthBarFadeBar:Hide();
+		Perl_Player_Pet_HealthBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Player_Pet_ManaBar_Fade(arg1)
+	Perl_Player_Pet_ManaBar_Fade_Color = Perl_Player_Pet_ManaBar_Fade_Color - arg1;
+	Perl_Player_Pet_ManaBar_Fade_Time_Elapsed = Perl_Player_Pet_ManaBar_Fade_Time_Elapsed + arg1;
+
+	if (UnitPowerType("pet") == 0) then
+		Perl_Player_Pet_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Player_Pet_ManaBar_Fade_Color, Perl_Player_Pet_ManaBar_Fade_Color);
+	elseif (UnitPowerType("pet") == 2) then
+		Perl_Player_Pet_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_ManaBar_Fade_Color, (Perl_Player_Pet_ManaBar_Fade_Color-0.5), 0, Perl_Player_Pet_ManaBar_Fade_Color);
+	end
+
+	if (Perl_Player_Pet_ManaBar_Fade_Time_Elapsed > 1) then
+		Perl_Player_Pet_ManaBar_Fade_Color = 1;
+		Perl_Player_Pet_ManaBar_Fade_Time_Elapsed = 0;
+		Perl_Player_Pet_ManaBarFadeBar:Hide();
+		Perl_Player_Pet_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
 end
 
@@ -1007,7 +1089,7 @@ function Perl_Player_Pet_MouseClick(button)
 	end								-- Otherwise, it did nothing, so take default action
 
 	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
 			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "pet");
 				return;

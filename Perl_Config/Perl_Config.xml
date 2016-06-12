@@ -3,6 +3,7 @@
 	<Script file="localization.lua"/>
 	<Script file="localization.cn.lua"/>
 	<Script file="localization.de.lua"/>
+	<Script file="localization.es.lua"/>
 	<Script file="localization.fr.lua"/>
 	<Script file="localization.kr.lua"/>
 	<Script file="localization.tw.lua"/>
@@ -247,12 +248,12 @@
 
 			<Button name="Perl_Config_Player_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYER">
 				<Size>
-					<AbsDimension x="100" y="22"/>
+					<AbsDimension x="95" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Config_ArcaneBar_Button">
 						<Offset>
-							<AbsDimension x="0" y="-5"/>
+							<AbsDimension x="-25" y="-5"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -263,14 +264,32 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Player_Pet_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYERPET">
+			<Button name="Perl_Config_Player_Buff_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYERBUFF">
 				<Size>
-					<AbsDimension x="100" y="22"/>
+					<AbsDimension x="95" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Player_Button">
 						<Offset>
-							<AbsDimension x="5" y="0"/>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Config_Player_Buff_Display();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="Perl_Config_Player_Pet_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYERPET">
+				<Size>
+					<AbsDimension x="95" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Player_Buff_Button">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -283,12 +302,12 @@
 
 			<Button name="Perl_Config_Raid_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_RAID">
 				<Size>
-					<AbsDimension x="100" y="22"/>
+					<AbsDimension x="95" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Player_Pet_Button">
 						<Offset>
-							<AbsDimension x="5" y="0"/>
+							<AbsDimension x="0" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -301,12 +320,12 @@
 
 			<Button name="Perl_Config_Target_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_TARGET">
 				<Size>
-					<AbsDimension x="100" y="22"/>
+					<AbsDimension x="95" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Raid_Button">
 						<Offset>
-							<AbsDimension x="5" y="0"/>
+							<AbsDimension x="0" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -319,18 +338,36 @@
 
 			<Button name="Perl_Config_Target_Target_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_TARGETTARGET">
 				<Size>
-					<AbsDimension x="100" y="22"/>
+					<AbsDimension x="95" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Target_Button">
 						<Offset>
-							<AbsDimension x="5" y="0"/>
+							<AbsDimension x="0" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnClick>
 						Perl_Config_Target_Target_Display();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="Perl_Config_ThirdParty_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_THIRDPARTY">
+				<Size>
+					<AbsDimension x="90" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_All_Button">
+						<Offset>
+							<AbsDimension x="65" y="-5"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Config_ThirdParty_Display();
 					</OnClick>
 				</Scripts>
 			</Button>

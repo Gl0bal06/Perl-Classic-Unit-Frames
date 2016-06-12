@@ -59,6 +59,30 @@ function Perl_Config_All_Set_Values()
 	else
 		Perl_Config_All_Frame_CheckButton11:SetChecked(nil);
 	end
+
+	if (vartable["texturedbarbackground"] == 1) then
+		Perl_Config_All_Frame_CheckButton13:SetChecked(1);
+	else
+		Perl_Config_All_Frame_CheckButton13:SetChecked(nil);
+	end
+
+	if (vartable["PCUF_FadeBars"] == 1) then
+		Perl_Config_All_Frame_CheckButton14:SetChecked(1);
+	else
+		Perl_Config_All_Frame_CheckButton14:SetChecked(nil);
+	end
+
+	if (vartable["PCUF_NameFrameClickCast"] == 1) then
+		Perl_Config_All_Frame_CheckButton15:SetChecked(1);
+	else
+		Perl_Config_All_Frame_CheckButton15:SetChecked(nil);
+	end
+
+	if (vartable["PCUF_InvertBarValues"] == 1) then
+		Perl_Config_All_Frame_CheckButton16:SetChecked(1);
+	else
+		Perl_Config_All_Frame_CheckButton16:SetChecked(nil);
+	end
 end
 
 function Perl_Config_All_Texture_Update(texturenum)
@@ -201,5 +225,37 @@ function Perl_Config_All_Set_Color_Health()
 		Perl_Config_Set_Color_Health(1);
 	else
 		Perl_Config_Set_Color_Health(0);
+	end
+end
+
+function Perl_Config_All_Set_Textured_Bar_Background()
+	if (Perl_Config_All_Frame_CheckButton13:GetChecked() == 1) then
+		Perl_Config_Set_Textured_Bar_Background(1);
+	else
+		Perl_Config_Set_Textured_Bar_Background(0);
+	end
+end
+
+function Perl_Config_All_Set_Fade_Bars()
+	if (Perl_Config_All_Frame_CheckButton14:GetChecked() == 1) then
+		Perl_Config_Set_Fade_Bars(1);
+	else
+		Perl_Config_Set_Fade_Bars(0);
+	end
+end
+
+function Perl_Config_All_Set_Name_Frame_Click_Cast()
+	if (Perl_Config_All_Frame_CheckButton15:GetChecked() == 1) then
+		Perl_Config_Set_Name_Frame_Click_Cast(1);
+	else
+		Perl_Config_Set_Name_Frame_Click_Cast(0);
+	end
+end
+
+function Perl_Config_All_Set_Invert_Bar_Values()
+	if (Perl_Config_All_Frame_CheckButton16:GetChecked() == 1) then
+		Perl_Config_Set_Invert_Bar_Values(1);
+	else
+		Perl_Config_Set_Invert_Bar_Values(0);
 	end
 end

@@ -37,6 +37,32 @@ local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mo
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 local mouseoverpethealthflag = 0;	-- is the mouse over the pet health bar for healer mode?
 
+-- Fade Bar Variables
+local Perl_Party_One_HealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_One_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Party_Two_HealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Two_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Party_Three_HealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Party_Three_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Party_Four_HealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Four_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Party_One_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_One_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Party_Two_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Two_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Party_Three_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Three_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Party_Four_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Four_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Party_One_PetHealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_One_PetHealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Party_Two_PetHealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Two_PetHealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Party_Three_PetHealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Three_PetHealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Party_Four_PetHealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+
 -- Local variables to save memory
 local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, partymanapercent, partypethealth, partypethealthmax, partypethealthpercent;
 
@@ -236,6 +262,9 @@ function Perl_Party_Initialize()
 		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):GetFrameLevel() + 2);
 		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):GetFrameLevel() + 2);
 		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):GetFrameLevel() + 2);
+		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):GetFrameLevel() - 1);
+		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):GetFrameLevel() - 1);
+		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):GetFrameLevel() - 1);
 	end
 
 	-- MyAddOns Support
@@ -473,8 +502,34 @@ function Perl_Party_Update_Health()
 		partyhealthpercent = 0;
 	end
 
+	if (PCUF_FADEBARS == 1) then
+		if (partyhealth < getglobal(this:GetName().."_StatsFrame_HealthBar"):GetValue()) then
+			getglobal(this:GetName().."_StatsFrame_HealthBarFadeBar"):SetMinMaxValues(0, partyhealthmax);
+			getglobal(this:GetName().."_StatsFrame_HealthBarFadeBar"):SetValue(getglobal(this:GetName().."_StatsFrame_HealthBar"):GetValue());
+			getglobal(this:GetName().."_StatsFrame_HealthBarFadeBar"):Show();
+			if (this:GetID() == 1) then						-- This makes the bars fade much smoother when lots of change is happening to a given bar
+				Perl_Party_One_HealthBar_Fade_Color = 1;
+				Perl_Party_One_HealthBar_Fade_Time_Elapsed = 0;
+			elseif (this:GetID() == 2) then
+				Perl_Party_Two_HealthBar_Fade_Color = 1;
+				Perl_Party_Two_HealthBar_Fade_Time_Elapsed = 0;
+			elseif (this:GetID() == 3) then
+				Perl_Party_Three_HealthBar_Fade_Color = 1;
+				Perl_Party_Three_HealthBar_Fade_Time_Elapsed = 0;
+			elseif (this:GetID() == 4) then
+				Perl_Party_Four_HealthBar_Fade_Color = 1;
+				Perl_Party_Four_HealthBar_Fade_Time_Elapsed = 0;
+			end
+			getglobal("Perl_Party_"..this:GetID().."_HealthBar_Fade_OnUpdate_Frame"):Show();
+		end
+	end
+
 	getglobal(this:GetName().."_StatsFrame_HealthBar"):SetMinMaxValues(0, partyhealthmax);
-	getglobal(this:GetName().."_StatsFrame_HealthBar"):SetValue(partyhealth);
+	if (PCUF_INVERTBARVALUES == 1) then
+		getglobal(this:GetName().."_StatsFrame_HealthBar"):SetValue(partyhealthmax - partyhealth);
+	else
+		getglobal(this:GetName().."_StatsFrame_HealthBar"):SetValue(partyhealth);
+	end
 
 	if (PCUF_COLORHEALTH == 1) then
 --		if ((partyhealthpercent <= 100) and (partyhealthpercent > 75)) then
@@ -613,8 +668,34 @@ function Perl_Party_Update_Mana()
 		partymanapercent = 0;
 	end
 
+	if (PCUF_FADEBARS == 1) then
+		if (partymana < getglobal(this:GetName().."_StatsFrame_ManaBar"):GetValue()) then
+			getglobal(this:GetName().."_StatsFrame_ManaBarFadeBar"):SetMinMaxValues(0, partymanamax);
+			getglobal(this:GetName().."_StatsFrame_ManaBarFadeBar"):SetValue(getglobal(this:GetName().."_StatsFrame_ManaBar"):GetValue());
+			getglobal(this:GetName().."_StatsFrame_ManaBarFadeBar"):Show();
+			if (this:GetID() == 1) then						-- This makes the bars fade much smoother when lots of change is happening to a given bar
+				Perl_Party_One_ManaBar_Fade_Color = 1;
+				Perl_Party_One_ManaBar_Fade_Time_Elapsed = 0;
+			elseif (this:GetID() == 2) then
+				Perl_Party_Two_ManaBar_Fade_Color = 1;
+				Perl_Party_Two_ManaBar_Fade_Time_Elapsed = 0;
+			elseif (this:GetID() == 3) then
+				Perl_Party_Three_ManaBar_Fade_Color = 1;
+				Perl_Party_Three_ManaBar_Fade_Time_Elapsed = 0;
+			elseif (this:GetID() == 4) then
+				Perl_Party_Four_ManaBar_Fade_Color = 1;
+				Perl_Party_Four_ManaBar_Fade_Time_Elapsed = 0;
+			end
+			getglobal("Perl_Party_"..this:GetID().."_ManaBar_Fade_OnUpdate_Frame"):Show();
+		end
+	end
+
 	getglobal(this:GetName().."_StatsFrame_ManaBar"):SetMinMaxValues(0, partymanamax);
-	getglobal(this:GetName().."_StatsFrame_ManaBar"):SetValue(partymana);
+	if (PCUF_INVERTBARVALUES == 1) then
+		getglobal(this:GetName().."_StatsFrame_ManaBar"):SetValue(partymanamax - partymana);
+	else
+		getglobal(this:GetName().."_StatsFrame_ManaBar"):SetValue(partymana);
+	end
 
 	if (compactmode == 0) then
 		if (healermode == 1) then
@@ -847,7 +928,7 @@ end
 function Perl_Party_Update_Pet_Health()
 	local partypetid = "partypet"..this:GetID();
 
-	if (UnitIsConnected(partypetid) and UnitExists(partypetid)) then
+	if (UnitIsConnected("party"..this:GetID()) and UnitExists(partypetid)) then
 		partypethealth = UnitHealth(partypetid);
 		partypethealthmax = UnitHealthMax(partypetid);
 		partypethealthpercent = floor(partypethealth/partypethealthmax*100+0.5);
@@ -857,8 +938,34 @@ function Perl_Party_Update_Pet_Health()
 			partypethealthpercent = 0;
 		end
 
+		if (PCUF_FADEBARS == 1) then
+			if (partypethealth < getglobal(this:GetName().."_StatsFrame_PetHealthBar"):GetValue()) then
+				getglobal(this:GetName().."_StatsFrame_PetHealthBarFadeBar"):SetMinMaxValues(0, partypethealthmax);
+				getglobal(this:GetName().."_StatsFrame_PetHealthBarFadeBar"):SetValue(getglobal(this:GetName().."_StatsFrame_PetHealthBar"):GetValue());
+				getglobal(this:GetName().."_StatsFrame_PetHealthBarFadeBar"):Show();
+				if (this:GetID() == 1) then						-- This makes the bars fade much smoother when lots of change is happening to a given bar
+					Perl_Party_One_PetHealthBar_Fade_Color = 1;
+					Perl_Party_One_PetHealthBar_Fade_Time_Elapsed = 0;
+				elseif (this:GetID() == 2) then
+					Perl_Party_Two_PetHealthBar_Fade_Color = 1;
+					Perl_Party_Two_PetHealthBar_Fade_Time_Elapsed = 0;
+				elseif (this:GetID() == 3) then
+					Perl_Party_Three_PetHealthBar_Fade_Color = 1;
+					Perl_Party_Three_PetHealthBar_Fade_Time_Elapsed = 0;
+				elseif (this:GetID() == 4) then
+					Perl_Party_Four_PetHealthBar_Fade_Color = 1;
+					Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed = 0;
+				end
+				getglobal("Perl_Party_"..this:GetID().."_PetHealthBar_Fade_OnUpdate_Frame"):Show();
+			end
+		end
+
 		getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetMinMaxValues(0, partypethealthmax);
-		getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetValue(partypethealth);
+		if (PCUF_INVERTBARVALUES == 1) then
+			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetValue(partypethealthmax - partypethealth);
+		else
+			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetValue(partypethealth);
+		end
 
 		if (PCUF_COLORHEALTH == 1) then
 			if ((partypethealthpercent <= 100) and (partypethealthpercent > 75)) then
@@ -1276,11 +1383,25 @@ function Perl_Party_Update_Health_Mana()
 			partypethealthpercent = floor(partypethealth/partypethealthmax*100+0.5);
 
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar"):SetMinMaxValues(0, partyhealthmax);
-			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar"):SetValue(partyhealth);
+			if (PCUF_INVERTBARVALUES == 1) then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar"):SetValue(partyhealthmax - partyhealth);
+			else
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar"):SetValue(partyhealth);
+			end
+
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar"):SetMinMaxValues(0, partymanamax);
-			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar"):SetValue(partymana);
+			if (PCUF_INVERTBARVALUES == 1) then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar"):SetValue(partymanamax - partymana);
+			else
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar"):SetValue(partymana);
+			end
+
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):SetMinMaxValues(0, partypethealthmax);
-			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):SetValue(partypethealth);
+			if (PCUF_INVERTBARVALUES == 1) then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):SetValue(partypethealthmax - partypethealth);
+			else
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):SetValue(partypethealth);
+			end
 
 			if (compactmode == 0) then
 				if (healermode == 1) then
@@ -1710,6 +1831,202 @@ function Perl_Party_Set_Localized_ClassIcons()
 end
 
 
+------------------------
+-- Fade Bar Functions --
+------------------------
+function Perl_Party_One_HealthBar_Fade(arg1)
+	Perl_Party_One_HealthBar_Fade_Color = Perl_Party_One_HealthBar_Fade_Color - arg1;
+	Perl_Party_One_HealthBar_Fade_Time_Elapsed = Perl_Party_One_HealthBar_Fade_Time_Elapsed + arg1;
+
+	Perl_Party_MemberFrame1_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_One_HealthBar_Fade_Color, 0, Perl_Party_One_HealthBar_Fade_Color);
+
+	if (Perl_Party_One_HealthBar_Fade_Time_Elapsed > 1) then
+		Perl_Party_One_HealthBar_Fade_Color = 1;
+		Perl_Party_One_HealthBar_Fade_Time_Elapsed = 0;
+		Perl_Party_MemberFrame1_StatsFrame_HealthBarFadeBar:Hide();
+		Perl_Party_1_HealthBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Party_Two_HealthBar_Fade(arg1)
+	Perl_Party_Two_HealthBar_Fade_Color = Perl_Party_Two_HealthBar_Fade_Color - arg1;
+	Perl_Party_Two_HealthBar_Fade_Time_Elapsed = Perl_Party_Two_HealthBar_Fade_Time_Elapsed + arg1;
+
+	Perl_Party_MemberFrame2_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Two_HealthBar_Fade_Color, 0, Perl_Party_Two_HealthBar_Fade_Color);
+
+	if (Perl_Party_Two_HealthBar_Fade_Time_Elapsed > 1) then
+		Perl_Party_Two_HealthBar_Fade_Color = 1;
+		Perl_Party_Two_HealthBar_Fade_Time_Elapsed = 0;
+		Perl_Party_MemberFrame2_StatsFrame_HealthBarFadeBar:Hide();
+		Perl_Party_2_HealthBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Party_Three_HealthBar_Fade(arg1)
+	Perl_Party_Three_HealthBar_Fade_Color = Perl_Party_Three_HealthBar_Fade_Color - arg1;
+	Perl_Party_Three_HealthBar_Fade_Time_Elapsed = Perl_Party_Three_HealthBar_Fade_Time_Elapsed + arg1;
+
+	Perl_Party_MemberFrame3_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Three_HealthBar_Fade_Color, 0, Perl_Party_Three_HealthBar_Fade_Color);
+
+	if (Perl_Party_Three_HealthBar_Fade_Time_Elapsed > 1) then
+		Perl_Party_Three_HealthBar_Fade_Color = 1;
+		Perl_Party_Three_HealthBar_Fade_Time_Elapsed = 0;
+		Perl_Party_MemberFrame3_StatsFrame_HealthBarFadeBar:Hide();
+		Perl_Party_3_HealthBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Party_Four_HealthBar_Fade(arg1)
+	Perl_Party_Four_HealthBar_Fade_Color = Perl_Party_Four_HealthBar_Fade_Color - arg1;
+	Perl_Party_Four_HealthBar_Fade_Time_Elapsed = Perl_Party_Four_HealthBar_Fade_Time_Elapsed + arg1;
+
+	Perl_Party_MemberFrame4_StatsFrame_HealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Four_HealthBar_Fade_Color, 0, Perl_Party_Four_HealthBar_Fade_Color);
+
+	if (Perl_Party_Four_HealthBar_Fade_Time_Elapsed > 1) then
+		Perl_Party_Four_HealthBar_Fade_Color = 1;
+		Perl_Party_Four_HealthBar_Fade_Time_Elapsed = 0;
+		Perl_Party_MemberFrame4_StatsFrame_HealthBarFadeBar:Hide();
+		Perl_Party_4_HealthBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Party_One_ManaBar_Fade(arg1)
+	Perl_Party_One_ManaBar_Fade_Color = Perl_Party_One_ManaBar_Fade_Color - arg1;
+	Perl_Party_One_ManaBar_Fade_Time_Elapsed = Perl_Party_One_ManaBar_Fade_Time_Elapsed + arg1;
+
+	if (UnitPowerType("party1") == 0) then
+		Perl_Party_MemberFrame1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_One_ManaBar_Fade_Color, Perl_Party_One_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party1") == 1) then
+		Perl_Party_MemberFrame1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_One_ManaBar_Fade_Color, 0, 0, Perl_Party_One_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party1") == 3) then
+		Perl_Party_MemberFrame1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_One_ManaBar_Fade_Color, Perl_Party_One_ManaBar_Fade_Color, 0, Perl_Party_One_ManaBar_Fade_Color);
+	end
+
+	if (Perl_Party_One_ManaBar_Fade_Time_Elapsed > 1) then
+		Perl_Party_One_ManaBar_Fade_Color = 1;
+		Perl_Party_One_ManaBar_Fade_Time_Elapsed = 0;
+		Perl_Party_MemberFrame1_StatsFrame_ManaBarFadeBar:Hide();
+		Perl_Party_1_ManaBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Party_Two_ManaBar_Fade(arg1)
+	Perl_Party_Two_ManaBar_Fade_Color = Perl_Party_Two_ManaBar_Fade_Color - arg1;
+	Perl_Party_Two_ManaBar_Fade_Time_Elapsed = Perl_Party_Two_ManaBar_Fade_Time_Elapsed + arg1;
+
+	if (UnitPowerType("party2") == 0) then
+		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_One_ManaBar_Fade_Color, Perl_Party_One_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party2") == 1) then
+		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_One_ManaBar_Fade_Color, 0, 0, Perl_Party_One_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party2") == 3) then
+		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_One_ManaBar_Fade_Color, Perl_Party_One_ManaBar_Fade_Color, 0, Perl_Party_One_ManaBar_Fade_Color);
+	end
+
+	if (Perl_Party_One_ManaBar_Fade_Time_Elapsed > 1) then
+		Perl_Party_Two_ManaBar_Fade_Color = 1;
+		Perl_Party_Two_ManaBar_Fade_Time_Elapsed = 0;
+		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:Hide();
+		Perl_Party_2_ManaBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Party_Three_ManaBar_Fade(arg1)
+	Perl_Party_Three_ManaBar_Fade_Color = Perl_Party_Three_ManaBar_Fade_Color - arg1;
+	Perl_Party_Three_ManaBar_Fade_Time_Elapsed = Perl_Party_Three_ManaBar_Fade_Time_Elapsed + arg1;
+
+	if (UnitPowerType("party3") == 0) then
+		Perl_Party_MemberFrame3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_Three_ManaBar_Fade_Color, Perl_Party_Three_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party3") == 1) then
+		Perl_Party_MemberFrame3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Three_ManaBar_Fade_Color, 0, 0, Perl_Party_Three_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party3") == 3) then
+		Perl_Party_MemberFrame3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Three_ManaBar_Fade_Color, Perl_Party_Three_ManaBar_Fade_Color, 0, Perl_Party_Three_ManaBar_Fade_Color);
+	end
+
+	if (Perl_Party_Three_ManaBar_Fade_Time_Elapsed > 1) then
+		Perl_Party_Three_ManaBar_Fade_Color = 1;
+		Perl_Party_Three_ManaBar_Fade_Time_Elapsed = 0;
+		Perl_Party_MemberFrame3_StatsFrame_ManaBarFadeBar:Hide();
+		Perl_Party_3_ManaBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Party_Four_ManaBar_Fade(arg1)
+	Perl_Party_Four_ManaBar_Fade_Color = Perl_Party_Four_ManaBar_Fade_Color - arg1;
+	Perl_Party_Four_ManaBar_Fade_Time_Elapsed = Perl_Party_Four_ManaBar_Fade_Time_Elapsed + arg1;
+
+	if (UnitPowerType("party4") == 0) then
+		Perl_Party_MemberFrame4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_Four_ManaBar_Fade_Color, Perl_Party_Four_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party4") == 1) then
+		Perl_Party_MemberFrame4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Four_ManaBar_Fade_Color, 0, 0, Perl_Party_Four_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party4") == 3) then
+		Perl_Party_MemberFrame4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Four_ManaBar_Fade_Color, Perl_Party_Four_ManaBar_Fade_Color, 0, Perl_Party_Four_ManaBar_Fade_Color);
+	end
+
+	if (Perl_Party_Four_ManaBar_Fade_Time_Elapsed > 1) then
+		Perl_Party_Four_ManaBar_Fade_Color = 1;
+		Perl_Party_Four_ManaBar_Fade_Time_Elapsed = 0;
+		Perl_Party_MemberFrame4_StatsFrame_ManaBarFadeBar:Hide();
+		Perl_Party_4_ManaBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Party_One_PetHealthBar_Fade(arg1)
+	Perl_Party_One_PetHealthBar_Fade_Color = Perl_Party_One_PetHealthBar_Fade_Color - arg1;
+	Perl_Party_One_PetHealthBar_Fade_Time_Elapsed = Perl_Party_One_PetHealthBar_Fade_Time_Elapsed + arg1;
+
+	Perl_Party_MemberFrame1_StatsFrame_PetHealthBarFadeBar:SetStatusBarColor(0, Perl_Party_One_PetHealthBar_Fade_Color, 0, Perl_Party_One_PetHealthBar_Fade_Color);
+
+	if (Perl_Party_One_PetHealthBar_Fade_Time_Elapsed > 1) then
+		Perl_Party_One_PetHealthBar_Fade_Color = 1;
+		Perl_Party_One_PetHealthBar_Fade_Time_Elapsed = 0;
+		Perl_Party_MemberFrame1_StatsFrame_PetHealthBarFadeBar:Hide();
+		Perl_Party_1_PetHealthBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Party_Two_PetHealthBar_Fade(arg1)
+	Perl_Party_Two_PetHealthBar_Fade_Color = Perl_Party_Two_PetHealthBar_Fade_Color - arg1;
+	Perl_Party_Two_PetHealthBar_Fade_Time_Elapsed = Perl_Party_Two_PetHealthBar_Fade_Time_Elapsed + arg1;
+
+	Perl_Party_MemberFrame2_StatsFrame_PetHealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Two_PetHealthBar_Fade_Color, 0, Perl_Party_Two_PetHealthBar_Fade_Color);
+
+	if (Perl_Party_Two_PetHealthBar_Fade_Time_Elapsed > 1) then
+		Perl_Party_Two_PetHealthBar_Fade_Color = 1;
+		Perl_Party_Two_PetHealthBar_Fade_Time_Elapsed = 0;
+		Perl_Party_MemberFrame2_StatsFrame_PetHealthBarFadeBar:Hide();
+		Perl_Party_2_PetHealthBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Party_Three_PetHealthBar_Fade(arg1)
+	Perl_Party_Three_PetHealthBar_Fade_Color = Perl_Party_Three_PetHealthBar_Fade_Color - arg1;
+	Perl_Party_Three_PetHealthBar_Fade_Time_Elapsed = Perl_Party_Three_PetHealthBar_Fade_Time_Elapsed + arg1;
+
+	Perl_Party_MemberFrame3_StatsFrame_PetHealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Three_PetHealthBar_Fade_Color, 0, Perl_Party_Three_PetHealthBar_Fade_Color);
+
+	if (Perl_Party_Three_PetHealthBar_Fade_Time_Elapsed > 1) then
+		Perl_Party_Three_PetHealthBar_Fade_Color = 1;
+		Perl_Party_Three_PetHealthBar_Fade_Time_Elapsed = 0;
+		Perl_Party_MemberFrame3_StatsFrame_PetHealthBarFadeBar:Hide();
+		Perl_Party_3_PetHealthBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Party_Four_PetHealthBar_Fade(arg1)
+	Perl_Party_Four_PetHealthBar_Fade_Color = Perl_Party_Four_PetHealthBar_Fade_Color - arg1;
+	Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed = Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed + arg1;
+
+	Perl_Party_MemberFrame4_StatsFrame_PetHealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Four_PetHealthBar_Fade_Color, 0, Perl_Party_Four_PetHealthBar_Fade_Color);
+
+	if (Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed > 1) then
+		Perl_Party_Four_PetHealthBar_Fade_Color = 1;
+		Perl_Party_Four_PetHealthBar_Fade_Time_Elapsed = 0;
+		Perl_Party_MemberFrame4_StatsFrame_PetHealthBarFadeBar:Hide();
+		Perl_Party_4_PetHealthBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+
 --------------------------
 -- GUI Config Functions --
 --------------------------
@@ -1886,14 +2203,17 @@ function Perl_Party_Set_Compact(newvalue)
 			getglobal("Perl_Party_MemberFrame"..num.."_NameFrame_CastClickOverlay"):SetWidth(165);
 
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):SetWidth(115);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"):SetWidth(115);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"):SetWidth(115);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetWidth(115);
 
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):SetWidth(115);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"):SetWidth(115);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"):SetWidth(115);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetWidth(115);
 
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):SetWidth(115);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"):SetWidth(115);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"):SetWidth(115);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetWidth(115);
 		end
@@ -1903,14 +2223,17 @@ function Perl_Party_Set_Compact(newvalue)
 			getglobal("Perl_Party_MemberFrame"..num.."_NameFrame_CastClickOverlay"):SetWidth(200);
 
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):SetWidth(150);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"):SetWidth(150);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"):SetWidth(150);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetWidth(150);
 
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):SetWidth(150);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"):SetWidth(150);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"):SetWidth(150);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetWidth(150);
 
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):SetWidth(150);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"):SetWidth(150);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"):SetWidth(150);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetWidth(150);
 		end
@@ -1925,14 +2248,17 @@ function Perl_Party_Set_Compact(newvalue)
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_CastClickOverlay"):GetWidth() + 30);
 			
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):GetWidth() + 30);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"):GetWidth() + 30);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"):GetWidth() + 30);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):GetWidth() + 30);
 			
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):GetWidth() + 30);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar"):GetWidth() + 30);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"):GetWidth() + 30);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):GetWidth() + 30);
 			
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):GetWidth() + 30);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar"):GetWidth() + 30);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"):GetWidth() + 30);
 			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):GetWidth() + 30);
 		end
@@ -2839,7 +3165,7 @@ function Perl_Party_MouseClick(button)
 	end									-- Otherwise, it did nothing, so take default action
 
 	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
 			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "party"..id);
 				return;

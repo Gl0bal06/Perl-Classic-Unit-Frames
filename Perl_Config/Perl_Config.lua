@@ -11,6 +11,7 @@ Perl_Config_Global_Party_Config = {};
 Perl_Config_Global_Party_Pet_Config = {};
 Perl_Config_Global_Party_Target_Config = {};
 Perl_Config_Global_Player_Config = {};
+Perl_Config_Global_Player_Buff_Config = {};
 Perl_Config_Global_Player_Pet_Config = {};
 Perl_Config_Global_Raid_Config = {};
 Perl_Config_Global_Target_Config = {};
@@ -21,8 +22,12 @@ local texture = 0;			-- no texture is set by default
 local showminimapbutton = 1;		-- minimap button is on by default
 local minimapbuttonpos = 270;		-- default minimap button position
 local transparentbackground = 0;	-- use solid black background as default
+local texturedbarbackground = 0;	-- bar backgrounds are plain by default
 PCUF_CASTPARTYSUPPORT = 0;		-- CastParty support is disabled by default
 PCUF_COLORHEALTH = 0;			-- progressively colored health bars are off by default
+PCUF_FADEBARS = 0;			-- fading status bars is off by default
+PCUF_NAMEFRAMECLICKCAST = 0;		-- name frames will be the one safe spot for menus by default
+PCUF_INVERTBARVALUES = 0;		-- bars deplete when low
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -230,83 +235,181 @@ function Perl_Config_Set_Texture(newvalue)
 
 	if (Perl_CombatDisplay_Frame) then
 		Perl_CombatDisplay_HealthBarTex:SetTexture(texturename);
+		Perl_CombatDisplay_HealthBarFadeBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_ManaBarTex:SetTexture(texturename);
+		Perl_CombatDisplay_ManaBarFadeBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_DruidBarTex:SetTexture(texturename);
+		--Perl_CombatDisplay_DruidBarFadeBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_CPBarTex:SetTexture(texturename);
+		Perl_CombatDisplay_CPBarFadeBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_PetHealthBarTex:SetTexture(texturename);
+		Perl_CombatDisplay_PetHealthBarFadeBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_PetManaBarTex:SetTexture(texturename);
+		Perl_CombatDisplay_PetManaBarFadeBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_Target_HealthBarTex:SetTexture(texturename);
+		Perl_CombatDisplay_Target_HealthBarFadeBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_Target_ManaBarTex:SetTexture(texturename);
+		Perl_CombatDisplay_Target_ManaBarFadeBarTex:SetTexture(texturename);
+		if (texturedbarbackground == 1) then
+			Perl_CombatDisplay_HealthBarBGTex:SetTexture(texturename);
+			Perl_CombatDisplay_ManaBarBGTex:SetTexture(texturename);
+			Perl_CombatDisplay_DruidBarBGTex:SetTexture(texturename);
+			Perl_CombatDisplay_CPBarBGTex:SetTexture(texturename);
+			Perl_CombatDisplay_PetHealthBarBGTex:SetTexture(texturename);
+			Perl_CombatDisplay_PetManaBarBGTex:SetTexture(texturename);
+			Perl_CombatDisplay_Target_HealthBarBGTex:SetTexture(texturename);
+			Perl_CombatDisplay_Target_ManaBarBGTex:SetTexture(texturename);
+		else
+			Perl_CombatDisplay_HealthBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_CombatDisplay_ManaBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_CombatDisplay_DruidBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_CombatDisplay_CPBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_CombatDisplay_PetHealthBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_CombatDisplay_PetManaBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_CombatDisplay_Target_HealthBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_CombatDisplay_Target_ManaBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+		end
 	end
 
 	if (Perl_Party_Frame) then
-		Perl_Party_MemberFrame1_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
-		Perl_Party_MemberFrame1_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
-		Perl_Party_MemberFrame1_StatsFrame_PetHealthBar_PetHealthBarTex:SetTexture(texturename);
-		Perl_Party_MemberFrame2_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
-		Perl_Party_MemberFrame2_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
-		Perl_Party_MemberFrame2_StatsFrame_PetHealthBar_PetHealthBarTex:SetTexture(texturename);
-		Perl_Party_MemberFrame3_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
-		Perl_Party_MemberFrame3_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
-		Perl_Party_MemberFrame3_StatsFrame_PetHealthBar_PetHealthBarTex:SetTexture(texturename);
-		Perl_Party_MemberFrame4_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
-		Perl_Party_MemberFrame4_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
-		Perl_Party_MemberFrame4_StatsFrame_PetHealthBar_PetHealthBarTex:SetTexture(texturename);
+		for num=1,4 do
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_HealthBarTex"):SetTexture(texturename);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar_HealthBarFadeBarTex"):SetTexture(texturename);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_ManaBarTex"):SetTexture(texturename);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarFadeBar_ManaBarFadeBarTex"):SetTexture(texturename);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_PetHealthBarTex"):SetTexture(texturename);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarFadeBar_PetHealthBarFadeBarTex"):SetTexture(texturename);
+			if (texturedbarbackground == 1) then
+				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture(texturename);
+				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture(texturename);
+				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG_PetHealthBarBGTex"):SetTexture(texturename);
+			else
+				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG_PetHealthBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			end
+		end
 	end
 
 	if (Perl_Party_Pet_Script_Frame) then
-		Perl_Party_Pet1_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
-		Perl_Party_Pet1_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
-		Perl_Party_Pet2_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
-		Perl_Party_Pet2_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
-		Perl_Party_Pet3_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
-		Perl_Party_Pet3_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
-		Perl_Party_Pet4_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
-		Perl_Party_Pet4_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
+		for num=1,4 do
+			getglobal("Perl_Party_Pet"..num.."_StatsFrame_HealthBar_HealthBarTex"):SetTexture(texturename);
+			getglobal("Perl_Party_Pet"..num.."_StatsFrame_HealthBarFadeBar_HealthBarFadeBarTex"):SetTexture(texturename);
+			getglobal("Perl_Party_Pet"..num.."_StatsFrame_ManaBar_ManaBarTex"):SetTexture(texturename);
+			getglobal("Perl_Party_Pet"..num.."_StatsFrame_ManaBarFadeBar_ManaBarFadeBarTex"):SetTexture(texturename);
+			if (texturedbarbackground == 1) then
+				getglobal("Perl_Party_Pet"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture(texturename);
+				getglobal("Perl_Party_Pet"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture(texturename);
+			else
+				getglobal("Perl_Party_Pet"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+				getglobal("Perl_Party_Pet"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			end
+		end
 	end
 
 	if (Perl_Party_Target_Script_Frame) then
-		Perl_Party_Target1_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
-		Perl_Party_Target1_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
-		Perl_Party_Target2_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
-		Perl_Party_Target2_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
-		Perl_Party_Target3_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
-		Perl_Party_Target3_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
-		Perl_Party_Target4_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
-		Perl_Party_Target4_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
+		for num=1,4 do
+			getglobal("Perl_Party_Target"..num.."_StatsFrame_HealthBar_HealthBarTex"):SetTexture(texturename);
+			getglobal("Perl_Party_Target"..num.."_StatsFrame_HealthBarFadeBar_HealthBarFadeBarTex"):SetTexture(texturename);
+			getglobal("Perl_Party_Target"..num.."_StatsFrame_ManaBar_ManaBarTex"):SetTexture(texturename);
+			getglobal("Perl_Party_Target"..num.."_StatsFrame_ManaBarFadeBar_ManaBarFadeBarTex"):SetTexture(texturename);
+			if (texturedbarbackground == 1) then
+				getglobal("Perl_Party_Target"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture(texturename);
+				getglobal("Perl_Party_Target"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture(texturename);
+			else
+				getglobal("Perl_Party_Target"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+				getglobal("Perl_Party_Target"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			end
+		end
 	end
 
 	if (Perl_Player_Frame) then
 		Perl_Player_HealthBarTex:SetTexture(texturename);
+		Perl_Player_HealthBarFadeBarTex:SetTexture(texturename);
 		Perl_Player_ManaBarTex:SetTexture(texturename);
+		Perl_Player_ManaBarFadeBarTex:SetTexture(texturename);
 		Perl_Player_DruidBarTex:SetTexture(texturename);
+		--Perl_Player_DruidBarFadeBarTex:SetTexture(texturename);
 		Perl_Player_XPBarTex:SetTexture(texturename);
+		if (texturedbarbackground == 1) then
+			Perl_Player_HealthBarBGTex:SetTexture(texturename);
+			Perl_Player_ManaBarBGTex:SetTexture(texturename);
+			Perl_Player_DruidBarBGTex:SetTexture(texturename);
+			Perl_Player_XPBarBGTex:SetTexture(texturename);
+		else
+			Perl_Player_HealthBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_Player_ManaBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_Player_DruidBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_Player_XPBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+		end
 	end
 
 	if (Perl_Player_Pet_Frame) then
 		Perl_Player_Pet_HealthBarTex:SetTexture(texturename);
+		Perl_Player_Pet_HealthBarFadeBarTex:SetTexture(texturename);
 		Perl_Player_Pet_ManaBarTex:SetTexture(texturename);
+		Perl_Player_Pet_ManaBarFadeBarTex:SetTexture(texturename);
 		Perl_Player_Pet_XPBarTex:SetTexture(texturename);
+		if (texturedbarbackground == 1) then
+			Perl_Player_Pet_HealthBarBGTex:SetTexture(texturename);
+			Perl_Player_Pet_ManaBarBGTex:SetTexture(texturename);
+			Perl_Player_Pet_XPBarBGTex:SetTexture(texturename);
+		else
+			Perl_Player_Pet_HealthBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_Player_Pet_ManaBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_Player_Pet_XPBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+		end
 	end
 
 	if (Perl_Raid_Frame) then
 		for num=1,40 do
 			getglobal("Perl_Raid"..num.."_StatsFrame_HealthBar_HealthBarTex"):SetTexture(texturename);
 			getglobal("Perl_Raid"..num.."_StatsFrame_ManaBar_ManaBarTex"):SetTexture(texturename);
+			if (texturedbarbackground == 1) then
+				getglobal("Perl_Raid"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture(texturename);
+				getglobal("Perl_Raid"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture(texturename);
+			else
+				getglobal("Perl_Raid"..num.."_StatsFrame_HealthBarBG_HealthBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+				getglobal("Perl_Raid"..num.."_StatsFrame_ManaBarBG_ManaBarBGTex"):SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			end
 		end
 	end
 
 	if (Perl_Target_Frame) then
 		Perl_Target_HealthBarTex:SetTexture(texturename);
+		Perl_Target_HealthBarFadeBarTex:SetTexture(texturename);
 		Perl_Target_ManaBarTex:SetTexture(texturename);
+		Perl_Target_ManaBarFadeBarTex:SetTexture(texturename);
 		Perl_Target_NameFrame_CPMeterTex:SetTexture(texturename);
+		if (texturedbarbackground == 1) then
+			Perl_Target_HealthBarBGTex:SetTexture(texturename);
+			Perl_Target_ManaBarBGTex:SetTexture(texturename);
+		else
+			Perl_Target_HealthBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_Target_ManaBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+		end
 	end
 
 	if (Perl_Target_Target_Script_Frame) then
 		Perl_Target_Target_HealthBarTex:SetTexture(texturename);
+		Perl_Target_Target_HealthBarFadeBarTex:SetTexture(texturename);
 		Perl_Target_Target_ManaBarTex:SetTexture(texturename);
+		Perl_Target_Target_ManaBarFadeBarTex:SetTexture(texturename);
 		Perl_Target_Target_Target_HealthBarTex:SetTexture(texturename);
+		Perl_Target_Target_Target_HealthBarFadeBarTex:SetTexture(texturename);
 		Perl_Target_Target_Target_ManaBarTex:SetTexture(texturename);
+		Perl_Target_Target_Target_ManaBarFadeBarTex:SetTexture(texturename);
+		if (texturedbarbackground == 1) then
+			Perl_Target_Target_HealthBarBGTex:SetTexture(texturename);
+			Perl_Target_Target_ManaBarBGTex:SetTexture(texturename);
+			Perl_Target_Target_Target_HealthBarBGTex:SetTexture(texturename);
+			Perl_Target_Target_Target_ManaBarBGTex:SetTexture(texturename);
+		else
+			Perl_Target_Target_HealthBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_Target_Target_ManaBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_Target_Target_Target_HealthBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_Target_Target_Target_ManaBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+		end
 	end
 end
 
@@ -539,6 +642,65 @@ function Perl_Config_Set_Color_Health(newvalue)
 	Perl_Config_UpdateVars();
 end
 
+function Perl_Config_Set_Textured_Bar_Background(newvalue)
+	texturedbarbackground = newvalue;
+	Perl_Config_UpdateVars();
+	Perl_Config_Set_Texture();
+end
+
+function Perl_Config_Set_Fade_Bars(newvalue)
+	PCUF_FADEBARS = newvalue;
+	Perl_Config_UpdateVars();
+end
+
+function Perl_Config_Set_Name_Frame_Click_Cast(newvalue)
+	PCUF_NAMEFRAMECLICKCAST = newvalue;
+	Perl_Config_UpdateVars();
+end
+
+function Perl_Config_Set_Invert_Bar_Values(newvalue)
+	PCUF_INVERTBARVALUES = newvalue;
+	Perl_Config_UpdateVars();
+
+	if (Perl_CombatDisplay_Frame) then
+		Perl_CombatDisplay_Update_Health();
+		Perl_CombatDisplay_Update_Mana();
+		Perl_CombatDisplay_Update_Combo_Points();
+		if (UnitExists("pet")) then
+			Perl_CombatDisplay_Update_PetHealth();
+			Perl_CombatDisplay_Update_PetMana();
+		end
+		if (UnitExists("target")) then
+			Perl_CombatDisplay_Target_Update_Health();
+			Perl_CombatDisplay_Target_Update_Mana();
+		end
+	end
+
+	if (Perl_Party_Frame) then
+		Perl_Party_Update_Health_Mana();
+	end
+
+	if (Perl_Party_Pet_Script_Frame) then
+		Perl_Party_Pet_Update();
+	end
+
+	if (Perl_Player_Frame) then
+		Perl_Player_Update_Health();
+		Perl_Player_Update_Mana();
+	end
+
+	if (Perl_Player_Pet_Frame) then
+		if (UnitExists("pet")) then
+			Perl_Player_Pet_Update_Health();
+			Perl_Player_Pet_Update_Mana();
+		end
+	end
+
+	if (Perl_Target_Frame) then
+		Perl_Target_Update_Once();
+	end
+end
+
 
 -----------------------------------
 -- Reset Frame Position Function --
@@ -616,6 +778,8 @@ function Perl_Config_Global_Save_Settings()
 			["HideOriginal"] = vartable["hideoriginal"],
 			["ShowTimer"] = vartable["showtimer"],
 			["Transparency"] = vartable["transparency"],
+			["NameReplace"] = vartable["namereplace"],
+			["LeftTimer"] = vartable["lefttimer"],
 		};
 	end
 
@@ -651,6 +815,9 @@ function Perl_Config_Global_Save_Settings()
 			["TransparentBackground"] = vartable["transparentbackground"],
 			["PCUF_CastPartySupport"] = vartable["PCUF_CastPartySupport"],
 			["PCUF_ColorHealth"] = vartable["PCUF_ColorHealth"],
+			["TexturedBarBackround"] = vartable["texturedbarbackground"],
+			["PCUF_FadeBars"] = vartable["PCUF_FadeBars"],
+			["PCUF_InvertBarValues"] = vartable["PCUF_InvertBarValues"],
 		};
 	end
 
@@ -763,6 +930,17 @@ function Perl_Config_Global_Save_Settings()
 			["HiddenInRaid"] = vartable["hiddeninraid"],
 			["ShowPvPIcon"] = vartable["showpvpicon"],
 			["ShowBarValues"] = vartable["showbarvalues"],
+		};
+	end
+
+	if (Perl_Player_Buff_Script_Frame) then
+		local vartable = Perl_Player_Buff_GetVars();
+		Perl_Config_Global_Player_Buff_Config["Global Settings"] = {
+			["BuffAlerts"] = vartable["buffalerts"],
+			["ShowBuffs"] = vartable["showbuffs"],
+			["Scale"] = vartable["scale"],
+			["HideSeconds"] = vartable["hideseconds"],
+			["HorizontalSpacing"] = vartable["horizontalspacing"],
 		};
 	end
 
@@ -1066,6 +1244,10 @@ function Perl_Config_GetVars(name, updateflag)
 	transparentbackground = Perl_Config_Config[name]["TransparentBackground"];
 	PCUF_CASTPARTYSUPPORT = Perl_Config_Config[name]["PCUF_CastPartySupport"];
 	PCUF_COLORHEALTH = Perl_Config_Config[name]["PCUF_ColorHealth"];
+	texturedbarbackground = Perl_Config_Config[name]["TexturedBarBackround"];
+	PCUF_FADEBARS = Perl_Config_Config[name]["PCUF_FadeBars"];
+	PCUF_NAMEFRAMECLICKCAST = Perl_Config_Config[name]["PCUF_NameFrameClickCast"];
+	PCUF_INVERTBARVALUES = Perl_Config_Config[name]["PCUF_InvertBarValues"];
 
 	if (texture == nil) then
 		texture = 0;
@@ -1084,6 +1266,18 @@ function Perl_Config_GetVars(name, updateflag)
 	end
 	if (PCUF_COLORHEALTH == nil) then
 		PCUF_COLORHEALTH = 0;
+	end
+	if (texturedbarbackground == nil) then
+		texturedbarbackground = 0;
+	end
+	if (PCUF_FADEBARS == nil) then
+		PCUF_FADEBARS = 0;
+	end
+	if (PCUF_NAMEFRAMECLICKCAST == nil) then
+		PCUF_NAMEFRAMECLICKCAST = 0;
+	end
+	if (PCUF_INVERTBARVALUES == nil) then
+		PCUF_INVERTBARVALUES = 0;
 	end
 
 	if (updateflag == 1) then
@@ -1105,6 +1299,10 @@ function Perl_Config_GetVars(name, updateflag)
 		["transparentbackground"] = transparentbackground,
 		["PCUF_CastPartySupport"] = PCUF_CASTPARTYSUPPORT,
 		["PCUF_ColorHealth"] = PCUF_COLORHEALTH,
+		["texturedbarbackground"] = texturedbarbackground,
+		["PCUF_FadeBars"] = PCUF_FADEBARS,
+		["PCUF_NameFrameClickCast"] = PCUF_NAMEFRAMECLICKCAST,
+		["PCUF_InvertBarValues"] = PCUF_INVERTBARVALUES,
 	}
 	return vars;
 end
@@ -1143,6 +1341,26 @@ function Perl_Config_UpdateVars(vartable)
 			else
 				PCUF_COLORHEALTH = nil;
 			end
+			if (vartable["Global Settings"]["TexturedBarBackround"] ~= nil) then
+				texturedbarbackground = vartable["Global Settings"]["TexturedBarBackround"];
+			else
+				texturedbarbackground = nil;
+			end
+			if (vartable["Global Settings"]["PCUF_FadeBars"] ~= nil) then
+				PCUF_FADEBARS = vartable["Global Settings"]["PCUF_FadeBars"];
+			else
+				PCUF_FADEBARS = nil;
+			end
+			if (vartable["Global Settings"]["PCUF_NameFrameClickCast"] ~= nil) then
+				PCUF_NAMEFRAMECLICKCAST = vartable["Global Settings"]["PCUF_NameFrameClickCast"];
+			else
+				PCUF_NAMEFRAMECLICKCAST = nil;
+			end
+			if (vartable["Global Settings"]["PCUF_InvertBarValues"] ~= nil) then
+				PCUF_INVERTBARVALUES = vartable["Global Settings"]["PCUF_InvertBarValues"];
+			else
+				PCUF_INVERTBARVALUES = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1164,6 +1382,18 @@ function Perl_Config_UpdateVars(vartable)
 		if (PCUF_COLORHEALTH == nil) then
 			PCUF_COLORHEALTH = 0;
 		end
+		if (texturedbarbackground == nil) then
+			texturedbarbackground = 0;
+		end
+		if (PCUF_FADEBARS == nil) then
+			PCUF_FADEBARS = 0;
+		end
+		if (PCUF_NAMEFRAMECLICKCAST == nil) then
+			PCUF_NAMEFRAMECLICKCAST = 0;
+		end
+		if (PCUF_INVERTBARVALUES == nil) then
+			PCUF_INVERTBARVALUES = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Config_Set_Texture(texture);
@@ -1179,6 +1409,10 @@ function Perl_Config_UpdateVars(vartable)
 		["TransparentBackground"] = transparentbackground,
 		["PCUF_CastPartySupport"] = PCUF_CASTPARTYSUPPORT,
 		["PCUF_ColorHealth"] = PCUF_COLORHEALTH,
+		["TexturedBarBackround"] = texturedbarbackground,
+		["PCUF_FadeBars"] = PCUF_FADEBARS,
+		["PCUF_NameFrameClickCast"] = PCUF_NAMEFRAMECLICKCAST,
+		["PCUF_InvertBarValues"] = PCUF_INVERTBARVALUES,
 	};
 end
 
@@ -1207,10 +1441,17 @@ function Perl_Config_Hide_All()
 	Perl_Config_Party_Pet_Frame:Hide();
 	Perl_Config_Party_Target_Frame:Hide();
 	Perl_Config_Player_Frame:Hide();
+	Perl_Config_Player_Buff_Frame:Hide();
 	Perl_Config_Player_Pet_Frame:Hide();
 	Perl_Config_Raid_Frame:Hide();
 	Perl_Config_Target_Frame:Hide();
 	Perl_Config_Target_Target_Frame:Hide();
+	Perl_Config_ThirdParty_Frame:Hide();
+
+	-- All third party frames can be checked for here
+	if (Perl_Config_ColorChange_Frame) then
+		Perl_Config_ColorChange_Frame:Hide();
+	end
 end
 
 function Perl_Config_ShowHide_MiniMap_Button()
@@ -1440,14 +1681,6 @@ function Perl_Config_Button_Tooltip()
 end
 
 function Perl_Config_Button_UpdatePosition()
---	Perl_Config_ButtonFrame:SetPoint(
---		"TOPLEFT",
---		"Minimap",
---		"TOPLEFT",
---		55 - (75 * cos(minimapbuttonpos)),
---		(75 * sin(minimapbuttonpos)) - 55
---	);
-
 	Perl_Config_ButtonFrame:SetPoint(
 		"TOPLEFT",
 		"Minimap",

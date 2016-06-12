@@ -23,10 +23,13 @@ if (GetLocale() == "frFR") then
 
 	-- Status Types
 	PERL_LOCALIZED_STATUS_DEAD = "Mort";
-	PERL_LOCALIZED_STATUS_FEIGNDEATH = "Feign Death";
+	PERL_LOCALIZED_STATUS_FEIGNDEATH = "Feint la Mort";
 	PERL_LOCALIZED_STATUS_OFFLINE = "Offline";
 	PERL_LOCALIZED_STATUS_RESURRECTED = "R\195\169ssucit\195\169";
 	PERL_LOCALIZED_STATUS_SS_AVAILABLE = "SS Available";
+
+	-- Perl ArcaneBar Strings
+	PERL_LOCALIZED_ARCANEBAR_CHANNELING = "Channeling";
 
 	-- Perl Player Strings
 	PERL_LOCALIZED_PLAYER_GROUP = "Groupe ";
@@ -64,6 +67,7 @@ if (GetLocale() == "frFR") then
 	PERL_LOCALIZED_CONFIG_PARTYPET = "Party Pet";
 	PERL_LOCALIZED_CONFIG_PARTYTARGET = "Party Target";
 	PERL_LOCALIZED_CONFIG_PLAYER = "Player";
+	PERL_LOCALIZED_CONFIG_PLAYERBUFF = "Player Buff";
 	PERL_LOCALIZED_CONFIG_PLAYERPET = "Player Pet";
 	PERL_LOCALIZED_CONFIG_RAID = "Raid";
 	PERL_LOCALIZED_CONFIG_TARGET = "Target";
@@ -126,6 +130,7 @@ if (GetLocale() == "frFR") then
 	PERL_LOCALIZED_CONFIG_NOTINSTALLED_EXPLANATION = "Le mod demand\195\169 n\'est pas install\195\169 ou pas charg\195\169.";
 	PERL_LOCALIZED_CONFIG_MINIMAP_LOCK = "Clic-droit VERROUILLERA tous cadres";
 	PERL_LOCALIZED_CONFIG_MINIMAP_UNLOCK = "Clic-droit DEVERROUILLERA tous cadres";
+	PERL_LOCALIZED_CONFIG_THIRDPARTY = "Third Party";
 
 	-- Perl Config All
 	PERL_LOCALIZED_CONFIG_ALL_TEXTURED_BARS = "Texturer les Barres";
@@ -160,6 +165,7 @@ if (GetLocale() == "frFR") then
 	PERL_LOCALIZED_CONFIG_ARCANEBAR_ENABLE = "Activer ArcaneBar";
 	PERL_LOCALIZED_CONFIG_ARCANEBAR_DISPLAY_TIMER = "Afficher le Temps d\'incantation";
 	PERL_LOCALIZED_CONFIG_ARCANEBAR_HIDE_BLIZZARD = "Cacher la Barre de Blizzard";
+	PERL_LOCALIZED_CONFIG_ARCANEBAR_REPLACE_NAME = "Remplace votre nom par le nom du sort";
 
 	-- Perl Config CombatDisplay
 	PERL_LOCALIZED_CONFIG_COMBATDISPLAY_PERSIST_MODES = "Persist Modes";
@@ -195,13 +201,17 @@ if (GetLocale() == "frFR") then
 	PERL_LOCALIZED_CONFIG_PLAYER_RAID_GROUP = "Montrer le Nombre du groupe en Raid";
 	PERL_LOCALIZED_CONFIG_PLAYER_LOCK = "V\195\169rrouiller "..PERL_LOCALIZED_CONFIG_PLAYER.." Cadre";
 
+	-- Perl Config Player Buff
+	PERL_LOCALIZED_CONFIG_PLAYERBUFF_ENABLE = "Activer les PlayerBuffs";
+	PERL_LOCALIZED_CONFIG_PLAYERBUFF_WARNING = "Activer les alertes quand il ne reste que 30sec";
+
 	-- Perl Config Player Pet
 	PERL_LOCALIZED_CONFIG_PLAYERPET_EXPERIENCE = "activer la barre d\'exp\195\169rience";
 	PERL_LOCALIZED_CONFIG_PLAYERPET_LOCK = "V\195\169rrouiller "..PERL_LOCALIZED_CONFIG_PLAYERPET.." Cadre";
 
 	-- Perl Config Raid
 	PERL_LOCALIZED_CONFIG_RAID_GROUP_SETTINGS = "Groupe Configs";
-	PERL_LOCALIZED_CONFIG_RAID_GROUP_ONE = "Afficher Groupe 1 (Warrior)";
+	PERL_LOCALIZED_CONFIG_RAID_GROUP_ONE = "Afficher Groupe 1 (Guerrier)";
 	PERL_LOCALIZED_CONFIG_RAID_GROUP_TWO = "Afficher Groupe 2 (Mage)";
 	PERL_LOCALIZED_CONFIG_RAID_GROUP_THREE = "Afficher Groupe 3 (Pr\195\170tre)";
 	PERL_LOCALIZED_CONFIG_RAID_GROUP_FOUR = "Afficher Groupe 4 (D\195\169moniste)";

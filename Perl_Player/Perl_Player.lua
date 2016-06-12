@@ -34,6 +34,14 @@ local Perl_Player_DruidBar_Time_Update_Rate = 0.2;	-- the update interval
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 
+-- Fade Bar Variables
+local Perl_Player_HealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Player_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Player_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Player_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+--local Perl_Player_DruidBar_Fade_Color = 1;		-- the color fading interval
+--local Perl_Player_DruidBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+
 -- Local variables to save memory
 local playerhealth, playerhealthmax, playerhealthpercent, playermana, playermanamax, playermanapercent, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, playerpower;
 
@@ -91,6 +99,9 @@ function Perl_Player_OnLoad()
 	Perl_Player_ManaBar_CastClickOverlay:SetFrameLevel(Perl_Player_StatsFrame:GetFrameLevel() + 2);
 	Perl_Player_DruidBar_CastClickOverlay:SetFrameLevel(Perl_Player_StatsFrame:GetFrameLevel() + 2);
 	Perl_Player_XPBar_CastClickOverlay:SetFrameLevel(Perl_Player_StatsFrame:GetFrameLevel() + 2);
+	Perl_Player_HealthBarFadeBar:SetFrameLevel(Perl_Player_HealthBar:GetFrameLevel() - 1);
+	Perl_Player_ManaBarFadeBar:SetFrameLevel(Perl_Player_ManaBar:GetFrameLevel() - 1);
+	--Perl_Player_DruidBarFadeBar:SetFrameLevel(Perl_Player_DruidBar:GetFrameLevel() - 1);
 
 	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Player loaded successfully.");
@@ -310,8 +321,23 @@ function Perl_Player_Update_Health()
 		playerhealthpercent = 0;
 	end
 
+	if (PCUF_FADEBARS == 1) then
+		if (playerhealth < Perl_Player_HealthBar:GetValue()) then
+			Perl_Player_HealthBarFadeBar:SetMinMaxValues(0, playerhealthmax);
+			Perl_Player_HealthBarFadeBar:SetValue(Perl_Player_HealthBar:GetValue());
+			Perl_Player_HealthBarFadeBar:Show();
+			Perl_Player_HealthBar_Fade_Color = 1;
+			Perl_Player_HealthBar_Fade_Time_Elapsed = 0;
+			Perl_Player_HealthBar_Fade_OnUpdate_Frame:Show();
+		end
+	end
+
 	Perl_Player_HealthBar:SetMinMaxValues(0, playerhealthmax);
-	Perl_Player_HealthBar:SetValue(playerhealth);
+	if (PCUF_INVERTBARVALUES == 1) then
+		Perl_Player_HealthBar:SetValue(playerhealthmax - playerhealth);
+	else
+		Perl_Player_HealthBar:SetValue(playerhealth);
+	end
 
 	if (PCUF_COLORHEALTH == 1) then
 --		if ((playerhealthpercent <= 100) and (playerhealthpercent > 75)) then
@@ -398,8 +424,23 @@ function Perl_Player_Update_Mana()
 		playermanapercent = 0;
 	end
 
+	if (PCUF_FADEBARS == 1) then
+		if (playermana < Perl_Player_ManaBar:GetValue()) then
+			Perl_Player_ManaBarFadeBar:SetMinMaxValues(0, playermanamax);
+			Perl_Player_ManaBarFadeBar:SetValue(Perl_Player_ManaBar:GetValue());
+			Perl_Player_ManaBarFadeBar:Show();
+			Perl_Player_ManaBar_Fade_Color = 1;
+			Perl_Player_ManaBar_Fade_Time_Elapsed = 0;
+			Perl_Player_ManaBar_Fade_OnUpdate_Frame:Show();
+		end
+	end
+
 	Perl_Player_ManaBar:SetMinMaxValues(0, playermanamax);
-	Perl_Player_ManaBar:SetValue(playermana);
+	if (PCUF_INVERTBARVALUES == 1) then
+		Perl_Player_ManaBar:SetValue(playermanamax - playermana);
+	else
+		Perl_Player_ManaBar:SetValue(playermana);
+	end
 
 	if (compactmode == 0) then
 		if (healermode == 1) then
@@ -565,8 +606,23 @@ function Perl_Player_Update_DruidBar(arg1)
 			playerdruidbarmana = playerdruidbarmanamax;
 		end
 
+--		if (PCUF_FADEBARS == 1) then
+--			if (playerdruidbarmana < Perl_Player_DruidBar:GetValue()) then
+--				Perl_Player_DruidBarFadeBar:SetMinMaxValues(0, playerdruidbarmanamax);
+--				Perl_Player_DruidBarFadeBar:SetValue(Perl_Player_DruidBarFadeBar:GetValue());
+--				Perl_Player_DruidBarFadeBar:Show();
+--				Perl_Player_DruidBar_Fade_Color = 1;
+--				Perl_Player_DruidBar_Fade_Time_Elapsed = 0;
+--				Perl_Player_DruidBar_Fade_OnUpdate_Frame:Show();
+--			end
+--		end
+
 		Perl_Player_DruidBar:SetMinMaxValues(0, playerdruidbarmanamax);
-		Perl_Player_DruidBar:SetValue(playerdruidbarmana);
+		if (PCUF_INVERTBARVALUES == 1) then
+			Perl_Player_DruidBar:SetValue(playerdruidbarmanamax - playerdruidbarmana);
+		else
+			Perl_Player_DruidBar:SetValue(playerdruidbarmana);
+		end
 
 		-- Show the bar and adjust the stats frame
 		Perl_Player_DruidBar:Show();
@@ -649,7 +705,7 @@ function Perl_Player_Update_Experience()
 		local xptextpercent = floor(playerxp/playerxpmax*100+0.5);
 
 		if (playerxprest) then
-			xptext = xptext .."(+"..(playerxprest)..")";
+			xptext = xptext.."(+"..(playerxprest)..")";
 			Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
 			Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 			Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
@@ -870,12 +926,15 @@ function Perl_Player_Set_CompactMode()
 		Perl_Player_Name_CastClickOverlay:SetWidth(165);
 
 		Perl_Player_HealthBar:SetWidth(115);
+		Perl_Player_HealthBarFadeBar:SetWidth(115);
 		Perl_Player_HealthBarBG:SetWidth(115);
 		Perl_Player_HealthBar_CastClickOverlay:SetWidth(115);
 		Perl_Player_ManaBar:SetWidth(115);
+		Perl_Player_ManaBarFadeBar:SetWidth(115);
 		Perl_Player_ManaBarBG:SetWidth(115);
 		Perl_Player_ManaBar_CastClickOverlay:SetWidth(115);
 		Perl_Player_DruidBar:SetWidth(115);
+		--Perl_Player_DruidBarFadeBar:SetWidth(115);
 		Perl_Player_DruidBarBG:SetWidth(115);
 		Perl_Player_DruidBar_CastClickOverlay:SetWidth(115);
 	else
@@ -884,12 +943,15 @@ function Perl_Player_Set_CompactMode()
 		Perl_Player_Name_CastClickOverlay:SetWidth(200);
 
 		Perl_Player_HealthBar:SetWidth(150);
+		Perl_Player_HealthBarFadeBar:SetWidth(150);
 		Perl_Player_HealthBarBG:SetWidth(150);
 		Perl_Player_HealthBar_CastClickOverlay:SetWidth(150);
 		Perl_Player_ManaBar:SetWidth(150);
+		Perl_Player_ManaBarFadeBar:SetWidth(150);
 		Perl_Player_ManaBarBG:SetWidth(150);
 		Perl_Player_ManaBar_CastClickOverlay:SetWidth(150);
 		Perl_Player_DruidBar:SetWidth(150);
+		--Perl_Player_DruidBarFadeBar:SetWidth(150);
 		Perl_Player_DruidBarBG:SetWidth(150);
 		Perl_Player_DruidBar_CastClickOverlay:SetWidth(150);
 	end
@@ -901,14 +963,17 @@ function Perl_Player_Set_CompactMode()
 		Perl_Player_StatsFrame_CastClickOverlay:SetWidth(Perl_Player_StatsFrame_CastClickOverlay:GetWidth() + 30);
 		
 		Perl_Player_HealthBar:SetWidth(Perl_Player_HealthBar:GetWidth() + 30);
+		Perl_Player_HealthBarFadeBar:SetWidth(Perl_Player_HealthBarFadeBar:GetWidth() + 30);
 		Perl_Player_HealthBarBG:SetWidth(Perl_Player_HealthBarBG:GetWidth() + 30);
 		Perl_Player_HealthBar_CastClickOverlay:SetWidth(Perl_Player_HealthBar_CastClickOverlay:GetWidth() + 30);
 		
 		Perl_Player_ManaBar:SetWidth(Perl_Player_ManaBar:GetWidth() + 30);
+		Perl_Player_ManaBarFadeBar:SetWidth(Perl_Player_ManaBarFadeBar:GetWidth() + 30);
 		Perl_Player_ManaBarBG:SetWidth(Perl_Player_ManaBarBG:GetWidth() + 30);
 		Perl_Player_ManaBar_CastClickOverlay:SetWidth(Perl_Player_ManaBar_CastClickOverlay:GetWidth() + 30);
 		
 		Perl_Player_DruidBar:SetWidth(Perl_Player_DruidBar:GetWidth() + 30);
+		--Perl_Player_DruidBarFadeBar:SetWidth(Perl_Player_DruidBarFadeBar:GetWidth() + 30);
 		Perl_Player_DruidBarBG:SetWidth(Perl_Player_DruidBarBG:GetWidth() + 30);
 		Perl_Player_DruidBar_CastClickOverlay:SetWidth(Perl_Player_DruidBar_CastClickOverlay:GetWidth() + 30);
 
@@ -1055,6 +1120,18 @@ function Perl_Player_Update_Portrait()
 	else
 		Perl_Player_PortraitFrame:Hide();					-- Hide the frame and 2d/3d portion
 	end
+
+	if (Perl_Player_Buff_Script_Frame) then
+		if (showportrait == 1) then
+			if (xpbarstate == 3) then
+				Perl_Player_BuffFrame:SetPoint("TOPLEFT", "Perl_Player_PortraitFrame", "BOTTOMLEFT", 0, -2);
+			else
+				Perl_Player_BuffFrame:SetPoint("TOPLEFT", "Perl_Player_PortraitFrame", "BOTTOMLEFT", 0, -10);
+			end
+		else
+			Perl_Player_BuffFrame:SetPoint("TOPLEFT", "Perl_Player_StatsFrame", "BOTTOMLEFT", 0, -2);
+		end
+	end
 end
 
 function Perl_Player_Portrait_Combat_Text()
@@ -1145,6 +1222,58 @@ function Perl_Player_Set_Localized_ClassIcons()
 end
 
 
+------------------------
+-- Fade Bar Functions --
+------------------------
+function Perl_Player_HealthBar_Fade(arg1)
+	Perl_Player_HealthBar_Fade_Color = Perl_Player_HealthBar_Fade_Color - arg1;
+	Perl_Player_HealthBar_Fade_Time_Elapsed = Perl_Player_HealthBar_Fade_Time_Elapsed + arg1;
+
+	Perl_Player_HealthBarFadeBar:SetStatusBarColor(0, Perl_Player_HealthBar_Fade_Color, 0, Perl_Player_HealthBar_Fade_Color);
+
+	if (Perl_Player_HealthBar_Fade_Time_Elapsed > 1) then
+		Perl_Player_HealthBar_Fade_Color = 1;
+		Perl_Player_HealthBar_Fade_Time_Elapsed = 0;
+		Perl_Player_HealthBarFadeBar:Hide();
+		Perl_Player_HealthBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Player_ManaBar_Fade(arg1)
+	Perl_Player_ManaBar_Fade_Color = Perl_Player_ManaBar_Fade_Color - arg1;
+	Perl_Player_ManaBar_Fade_Time_Elapsed = Perl_Player_ManaBar_Fade_Time_Elapsed + arg1;
+
+	if (playerpower == 0) then
+		Perl_Player_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Player_ManaBar_Fade_Color, Perl_Player_ManaBar_Fade_Color);
+	elseif (playerpower == 1) then
+		Perl_Player_ManaBarFadeBar:SetStatusBarColor(Perl_Player_ManaBar_Fade_Color, 0, 0, Perl_Player_ManaBar_Fade_Color);
+	elseif (playerpower == 3) then
+		Perl_Player_ManaBarFadeBar:SetStatusBarColor(Perl_Player_ManaBar_Fade_Color, Perl_Player_ManaBar_Fade_Color, 0, Perl_Player_ManaBar_Fade_Color);
+	end
+
+	if (Perl_Player_ManaBar_Fade_Time_Elapsed > 1) then
+		Perl_Player_ManaBar_Fade_Color = 1;
+		Perl_Player_ManaBar_Fade_Time_Elapsed = 0;
+		Perl_Player_ManaBarFadeBar:Hide();
+		Perl_Player_ManaBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+--function Perl_Player_DruidBar_Fade(arg1)
+--	Perl_Player_DruidBar_Fade_Color = Perl_Player_DruidBar_Fade_Color - arg1;
+--	Perl_Player_DruidBar_Fade_Time_Elapsed = Perl_Player_DruidBar_Fade_Time_Elapsed + arg1;
+--
+--	Perl_Player_DruidBarFadeBar:SetStatusBarColor(0, 0, Perl_Player_DruidBar_Fade_Color, Perl_Player_DruidBar_Fade_Color);
+--
+--	if (Perl_Player_DruidBar_Fade_Time_Elapsed > 1) then
+--		Perl_Player_DruidBar_Fade_Color = 1;
+--		Perl_Player_DruidBar_Fade_Time_Elapsed = 0;
+--		Perl_Player_DruidBarFadeBar:Hide();
+--		Perl_Player_DruidBar_Fade_OnUpdate_Frame:Hide();
+--	end
+--end
+
+
 --------------------------
 -- GUI Config Functions --
 --------------------------
@@ -1205,6 +1334,7 @@ function Perl_Player_XPBar_Display(state)
 		end
 	end
 	xpbarstate = state;
+	Perl_Player_Update_Portrait();		-- Update the Player_Buff position if needed
 	Perl_Player_UpdateVars();
 end
 
@@ -1726,7 +1856,7 @@ function Perl_Player_MouseClick(button)
 	end								-- Otherwise, it did nothing, so take default action
 
 	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
 			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "player");
 				return;
