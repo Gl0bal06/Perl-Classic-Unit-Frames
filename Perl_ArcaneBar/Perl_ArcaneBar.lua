@@ -1,10 +1,10 @@
 --	ArcaneBar
 --		Adds a second casting bar to the player frame.
---	
+--
 --	By: Zlixar
---	
+--
 --	Adds a second casting bar to the player frame.
---	
+--
 --	Modified by Nymbia for Nymbia's Perl Unitframes
 --	Heavily modified again by Global for Perl Classic Unit Frames
 
@@ -244,7 +244,7 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 	elseif (event == "UNIT_SPELLCAST_FAILED") then
 		if (self:IsShown() and not self.channeling) then
 			local _;
-			local text, _, _, _, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(arg1);
+			local text, _, _, _, startTime, endTime, _, _, _ = UnitCastingInfo(arg1);
 			if (text == arg2) then
 				self:SetValue(self.maxValue);
 				self:SetStatusBarColor(Perl_ArcaneBar_Colors.failure.r, Perl_ArcaneBar_Colors.failure.g, Perl_ArcaneBar_Colors.failure.b, transparency);
@@ -258,7 +258,7 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 	elseif (event == "UNIT_SPELLCAST_DELAYED") then
 		if(self:IsShown()) then
 			local _;
-			local _, _, _, _, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(arg1);
+			local _, _, _, _, startTime, endTime, _, _, _ = UnitCastingInfo(arg1);
 
 			if (endTime ~= nil) then
 				self.delaySum = self.delaySum + (endTime - self.maxValue * 1000);
@@ -270,7 +270,7 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 		end
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
 		local _;
-		local text, _, _, _, startTime, endTime, _ = UnitChannelInfo(arg1);
+		local text, _, _, _, startTime, endTime, _, notInterruptible = UnitChannelInfo(arg1);
 
 		if (startTime ~= nil) then
 			self:SetStatusBarColor(Perl_ArcaneBar_Colors.channel.r, Perl_ArcaneBar_Colors.channel.g, Perl_ArcaneBar_Colors.channel.b, transparency);

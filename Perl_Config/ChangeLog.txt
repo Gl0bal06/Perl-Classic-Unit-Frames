@@ -1,10 +1,13 @@
+6.04 - May 30, 2016
+ - ArcaneBar: Cast bar is now grey when an uninterruptible channeled spell is being cast
+
 6.03 - May 28, 2016
  - All: Updated TOC Interface version to 60200
  - ArcaneBar: Cast bar is now grey when an uninterruptible spell is being cast
 
 6.02 - November 22, 2014
  - All: Changed more instances of 1/nil to true/false
- - CombatDisplay: The Click Through Frames option now function correctly
+ - CombatDisplay: The Click Through Frames option now functions correctly
  - Focus/Party/PartyPet/Pet/Player/Target: Changed all 3D portraits from SetCamera to SetPortraitZoom
 
 6.01 - October 15, 2014
@@ -605,7 +608,7 @@
  - Config: Added a profile system for character settings
  - Config: The Global Load button is no longer covered by some text
  - Config: Updated German translations (Thanks archiv)
- - Config: Updated Korean translations (Thanks gygabyte) 
+ - Config: Updated Korean translations (Thanks gygabyte)
  - Config: Updated Simplified Chinese translations (Thanks middle007)
  - Config: Changed the layout on the party frame to be more space efficient
  - Party: Rage will now share the same consistency throughout all options
