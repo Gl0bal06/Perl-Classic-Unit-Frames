@@ -1,3 +1,7 @@
+2.03c - January 30, 2007
+ - Focus/Target: Cast time text locations are now correct
+ - Player: Name text will no longer disappear when using Perl_ArcaneBar
+
 2.03b - January 15, 2007
  - Config: Updated Korean translations (Thanks gygabyte)
  - Focus/Target: Fixed an error caused on the first load with Perl_ArcaneBar

@@ -1486,13 +1486,13 @@ function Perl_Target_ArcaneBar_Support()
 			Perl_ArcaneBar_target:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 5, -5);
 			Perl_ArcaneBar_target_CastTime:ClearAllPoints();
 			if (Perl_ArcaneBar_Config[UnitName("player")]["TargetLeftTimer"] == 0) then
-				Perl_ArcaneBar_target_CastTime:SetPoint("LEFT", "Perl_Target_LevelFrame", "RIGHT", 0, 0);
-			else
 				if (showportrait == 1) then
-					Perl_ArcaneBar_target_CastTime:SetPoint("RIGHT", "Perl_Target_PortraitFrame", "LEFT", 0, 0);
+					Perl_ArcaneBar_target_CastTime:SetPoint("LEFT", "Perl_Target_PortraitFrame", "RIGHT", 0, 0);
 				else
-					Perl_ArcaneBar_target_CastTime:SetPoint("RIGHT", "Perl_Target_NameFrame", "LEFT", 0, 0);
+					Perl_ArcaneBar_target_CastTime:SetPoint("LEFT", "Perl_Target_LevelFrame", "RIGHT", 0, 0);
 				end
+			else
+				Perl_ArcaneBar_target_CastTime:SetPoint("RIGHT", "Perl_Target_NameFrame", "LEFT", 0, 0);
 			end
 
 			Perl_ArcaneBar_target:SetWidth(Perl_Target_NameFrame:GetWidth() - 10);

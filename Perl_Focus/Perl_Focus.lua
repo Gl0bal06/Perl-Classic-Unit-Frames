@@ -1361,13 +1361,13 @@ function Perl_Focus_ArcaneBar_Support()
 		Perl_ArcaneBar_focus:SetPoint("TOPLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 5, -5);
 		Perl_ArcaneBar_focus_CastTime:ClearAllPoints();
 		if (Perl_ArcaneBar_Config[UnitName("player")]["FocusLeftTimer"] == 0) then
-			Perl_ArcaneBar_focus_CastTime:SetPoint("LEFT", "Perl_Focus_LevelFrame", "RIGHT", 0, 0);
-		else
 			if (showportrait == 1) then
-				Perl_ArcaneBar_focus_CastTime:SetPoint("RIGHT", "Perl_Focus_PortraitFrame", "LEFT", 0, 0);
+				Perl_ArcaneBar_focus_CastTime:SetPoint("LEFT", "Perl_Focus_PortraitFrame", "RIGHT", 0, 0);
 			else
-				Perl_ArcaneBar_focus_CastTime:SetPoint("RIGHT", "Perl_Focus_NameFrame", "LEFT", 0, 0);
+				Perl_ArcaneBar_focus_CastTime:SetPoint("LEFT", "Perl_Focus_LevelFrame", "RIGHT", 0, 0);
 			end
+		else
+			Perl_ArcaneBar_focus_CastTime:SetPoint("RIGHT", "Perl_Focus_NameFrame", "LEFT", 0, 0);
 		end
 
 		Perl_ArcaneBar_focus:SetWidth(Perl_Target_NameFrame:GetWidth() - 10);

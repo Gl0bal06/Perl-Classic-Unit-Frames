@@ -322,6 +322,9 @@ function Perl_Player_Update_Once()
 
 	-- Anytime functions
 	Perl_Player_NameBarText:SetText(UnitName("player"));			-- Set the player's name
+	if (Perl_ArcaneBar_Frame_Loaded_Frame) then				-- ArcaneBar Support
+		Perl_ArcaneBar_player.unitname = Perl_Player_NameBarText:GetText();
+	end
 	Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
 	Perl_Player_ClassTexture:SetTexCoord(PCUF_CLASSPOSRIGHT[englishclass], PCUF_CLASSPOSLEFT[englishclass], PCUF_CLASSPOSTOP[englishclass], PCUF_CLASSPOSBOTTOM[englishclass]);	-- Set the player's class icon
 	Perl_Player_Update_Portrait();						-- Set the player's portrait
@@ -802,6 +805,9 @@ function Perl_Player_Update_Raid_Group_Number()
 
 	if (showraidgroupinname == 0) then
 		Perl_Player_NameBarText:SetText(UnitName("player"));
+		if (Perl_ArcaneBar_Frame_Loaded_Frame) then	-- ArcaneBar Support
+			Perl_ArcaneBar_player.unitname = Perl_Player_NameBarText:GetText();
+		end
 		if (showraidgroup == 0) then
 			return;
 		end
@@ -820,6 +826,9 @@ function Perl_Player_Update_Raid_Group_Number()
 				Perl_Player_RaidGroupNumberBarText:SetText(PERL_LOCALIZED_PLAYER_GROUP..subgroup);
 				if (showraidgroupinname == 1) then
 					Perl_Player_NameBarText:SetText(UnitName("player")..":"..subgroup);
+					if (Perl_ArcaneBar_Frame_Loaded_Frame) then	-- ArcaneBar Support
+						Perl_ArcaneBar_player.unitname = Perl_Player_NameBarText:GetText();
+					end
 				end
 				return;
 			end
