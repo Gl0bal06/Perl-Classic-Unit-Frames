@@ -11,7 +11,7 @@ local showclassicon = 1;	-- show the class icon
 local showclassframe = 1;	-- show the class frame
 local showpvpicon = 1;		-- show the pvp icon
 local numbuffsshown = 20;	-- buff row is 2x10
-local numdebuffsshown = 40;	-- debuff row is 4x10
+local numdebuffsshown = 20;	-- debuff row is 4x10
 local mobhealthsupport = 1;	-- mobhealth support is on by default
 local scale = 1;		-- default scale
 local showpvprank = 0;		-- hide the pvp rank by default
@@ -251,6 +251,7 @@ function Perl_Target_Initialize()
 	Perl_Target_Initialize_Frame_Color();		-- Give the borders (and background if applicable) that "Perl" look
 	Perl_Target_Frame_Style();			-- Layout the frame according to our mode
 	Perl_Target_Buff_Debuff_Background();		-- Do the buffs and debuffs have their transparent background frame?
+	Perl_Target_Reset_Buffs();			-- Hide any unnecessary buff/debuff buttons
 
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(TargetFrame);
@@ -1596,7 +1597,7 @@ end
 --------------------------
 function Perl_Target_Set_Buffs(newbuffnumber)
 	if (newbuffnumber == nil) then
-		newbuffnumber = 16;
+		newbuffnumber = 20;
 	end
 	numbuffsshown = newbuffnumber;
 	Perl_Target_UpdateVars();		-- Save the new setting
@@ -1606,7 +1607,7 @@ end
 
 function Perl_Target_Set_Debuffs(newdebuffnumber)
 	if (newdebuffnumber == nil) then
-		newdebuffnumber = 16;
+		newdebuffnumber = 20;
 	end
 	numdebuffsshown = newdebuffnumber;
 	Perl_Target_UpdateVars();		-- Save the new setting
@@ -1953,10 +1954,10 @@ function Perl_Target_GetVars(name, updateflag)
 		showpvpicon = 1;
 	end
 	if (numbuffsshown == nil) then
-		numbuffsshown = 16;
+		numbuffsshown = 20;
 	end
 	if (numdebuffsshown == nil) then
-		numdebuffsshown = 16;
+		numdebuffsshown = 20;
 	end
 	if (mobhealthsupport == nil) then
 		mobhealthsupport = 1;
@@ -2279,10 +2280,10 @@ function Perl_Target_UpdateVars(vartable)
 			showpvpicon = 1;
 		end
 		if (numbuffsshown == nil) then
-			numbuffsshown = 16;
+			numbuffsshown = 20;
 		end
 		if (numdebuffsshown == nil) then
-			numdebuffsshown = 16;
+			numdebuffsshown = 20;
 		end
 		if (mobhealthsupport == nil) then
 			mobhealthsupport = 1;
@@ -2746,17 +2747,19 @@ function Perl_Target_Reset_Buffs()
 	local button, cooldown;
 	for buffnum=1,20 do
 		button = getglobal("Perl_Target_Buff"..buffnum);
-		button:Hide();
+		--button:Hide();
 		cooldown = getglobal(button:GetName().."Cooldown");
 		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 		cooldown:Hide();
+		button:Hide();
 	end
 	for debuffnum=1,40 do
 		button = getglobal("Perl_Target_Debuff"..debuffnum);
-		button:Hide();
+		--button:Hide();
 		cooldown = getglobal(button:GetName().."Cooldown");
 		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 		cooldown:Hide();
+		button:Hide();
 	end
 end
 

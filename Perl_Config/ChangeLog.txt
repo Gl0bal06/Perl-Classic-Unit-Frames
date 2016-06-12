@@ -1,3 +1,9 @@
+2.08d - July 2, 2007
+ - Focus: Fixed a variable issue in the buff reset code
+ - Focus/Target: Buffs and debuffs shown are now correctly set upon login
+ - Pet: Experience bars should now be hidden for everyone but hunters
+ - Target: Default buffs and debuffs shown changed to 20
+
 2.08c - June 21, 2007
  - Focus: Debuffs now correctly display timers
 

@@ -241,6 +241,7 @@ function Perl_Focus_Initialize()
 	Perl_Focus_Initialize_Frame_Color();		-- Give the borders (and background if applicable) that "Perl" look
 	Perl_Focus_Frame_Style();			-- Layout the frame according to our mode
 	Perl_Focus_Buff_Debuff_Background();		-- Do the buffs and debuffs have their transparent background frame?
+	Perl_Focus_Reset_Buffs();			-- Hide any unnecessary buff/debuff buttons
 
 	Perl_Focus_NameFrame_CPMeter:SetMinMaxValues(0, 5);	-- REMOVE THIS LATER
 	Perl_Focus_NameFrame_CPMeter:SetValue(0);		-- REMOVE THIS LATER
@@ -2496,19 +2497,19 @@ function Perl_Focus_Buff_GetApplications(debuffname)
 end
 
 function Perl_Focus_Reset_Buffs()
-	local button;
+	local button, cooldown;
 	for buffnum=1,16 do
 		button = getglobal("Perl_Focus_Buff"..buffnum);
-		button:Hide();
 		cooldown = getglobal(button:GetName().."Cooldown");
 		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 		cooldown:Hide();
+		button:Hide();
 
 		button = getglobal("Perl_Focus_Debuff"..buffnum);
-		button:Hide();
 		cooldown = getglobal(button:GetName().."Cooldown");
 		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 		cooldown:Hide();
+		button:Hide();
 	end
 end
 

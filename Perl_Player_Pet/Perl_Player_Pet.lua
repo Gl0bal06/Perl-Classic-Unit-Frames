@@ -434,10 +434,10 @@ function Perl_Player_Pet_Update_Mana()
 		Perl_Player_Pet_ManaBar:SetValue(petmana);
 	end
 
-	if (UnitClass("player") == PERL_LOCALIZED_WARLOCK or UnitClass("player") == PERL_LOCALIZED_MAGE) then
-		Perl_Player_Pet_ManaBarText:SetText(petmana.."/"..petmanamax);
-	else
+	if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
 		Perl_Player_Pet_ManaBarText:SetText(petmana);
+	else
+		Perl_Player_Pet_ManaBarText:SetText(petmana.."/"..petmanamax);
 	end
 end
 
@@ -475,18 +475,26 @@ function Perl_Player_Pet_ShowXP()
 			Perl_Player_Pet_StatsFrame:SetHeight(34);
 			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(34);
 		else
-			if (UnitLevel("pet") == UnitLevel("player")) then
+			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+				if (UnitLevel("pet") == UnitLevel("player")) then
+					Perl_Player_Pet_XPBar:Hide();
+					Perl_Player_Pet_XPBarBG:Hide();
+					Perl_Player_Pet_XPBarText:SetText();
+					Perl_Player_Pet_StatsFrame:SetHeight(34);
+					Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(34);
+				else
+					Perl_Player_Pet_XPBar:Show();
+					Perl_Player_Pet_XPBarBG:Show();
+					Perl_Player_Pet_StatsFrame:SetHeight(47);
+					Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(47);
+					Perl_Player_Pet_Update_Experience();
+				end
+			else
 				Perl_Player_Pet_XPBar:Hide();
 				Perl_Player_Pet_XPBarBG:Hide();
 				Perl_Player_Pet_XPBarText:SetText();
 				Perl_Player_Pet_StatsFrame:SetHeight(34);
 				Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(34);
-			else
-				Perl_Player_Pet_XPBar:Show();
-				Perl_Player_Pet_XPBarBG:Show();
-				Perl_Player_Pet_StatsFrame:SetHeight(47);
-				Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(47);
-				Perl_Player_Pet_Update_Experience();
 			end
 		end
 	end
@@ -535,39 +543,7 @@ function Perl_Player_Pet_Portrait_Combat_Text()
 end
 
 function Perl_Player_Pet_Set_Window_Layout()
-	if (UnitClass("player") == PERL_LOCALIZED_WARLOCK or UnitClass("player") == PERL_LOCALIZED_MAGE) then
-		if (compactmode == 0) then
-			Perl_Player_Pet_LevelFrame:Hide();
-			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 5);
-			Perl_Player_Pet_NameFrame:SetWidth(170);
-			Perl_Player_Pet_NameFrame_CastClickOverlay:SetWidth(170);
-			Perl_Player_Pet_StatsFrame:SetWidth(170);
-			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(170);
-			Perl_Player_Pet_HealthBar:SetWidth(158);
-			Perl_Player_Pet_HealthBarFadeBar:SetWidth(158);
-			Perl_Player_Pet_HealthBarBG:SetWidth(158);
-			Perl_Player_Pet_ManaBar:SetWidth(158);
-			Perl_Player_Pet_ManaBarFadeBar:SetWidth(158);
-			Perl_Player_Pet_ManaBarBG:SetWidth(158);
-			Perl_Player_Pet_XPBar:SetWidth(158);
-			Perl_Player_Pet_XPBarBG:SetWidth(158);
-		else
-			Perl_Player_Pet_LevelFrame:Hide();
-			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 5);
-			Perl_Player_Pet_NameFrame:SetWidth(135);
-			Perl_Player_Pet_NameFrame_CastClickOverlay:SetWidth(135);
-			Perl_Player_Pet_StatsFrame:SetWidth(135);
-			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(135);
-			Perl_Player_Pet_HealthBar:SetWidth(123);
-			Perl_Player_Pet_HealthBarFadeBar:SetWidth(123);
-			Perl_Player_Pet_HealthBarBG:SetWidth(123);
-			Perl_Player_Pet_ManaBar:SetWidth(123);
-			Perl_Player_Pet_ManaBarFadeBar:SetWidth(123);
-			Perl_Player_Pet_ManaBarBG:SetWidth(123);
-			Perl_Player_Pet_XPBar:SetWidth(123);
-			Perl_Player_Pet_XPBarBG:SetWidth(123);
-		end
-	else	-- Hunter
+	if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
 		if (compactmode == 0) then
 			Perl_Player_Pet_LevelFrame:Show();
 			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 25, 5);
@@ -598,6 +574,38 @@ function Perl_Player_Pet_Set_Window_Layout()
 			Perl_Player_Pet_ManaBarBG:SetWidth(98);
 			Perl_Player_Pet_XPBar:SetWidth(98);
 			Perl_Player_Pet_XPBarBG:SetWidth(98);
+		end
+	else
+		if (compactmode == 0) then
+			Perl_Player_Pet_LevelFrame:Hide();
+			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 5);
+			Perl_Player_Pet_NameFrame:SetWidth(170);
+			Perl_Player_Pet_NameFrame_CastClickOverlay:SetWidth(170);
+			Perl_Player_Pet_StatsFrame:SetWidth(170);
+			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(170);
+			Perl_Player_Pet_HealthBar:SetWidth(158);
+			Perl_Player_Pet_HealthBarFadeBar:SetWidth(158);
+			Perl_Player_Pet_HealthBarBG:SetWidth(158);
+			Perl_Player_Pet_ManaBar:SetWidth(158);
+			Perl_Player_Pet_ManaBarFadeBar:SetWidth(158);
+			Perl_Player_Pet_ManaBarBG:SetWidth(158);
+			Perl_Player_Pet_XPBar:SetWidth(158);
+			Perl_Player_Pet_XPBarBG:SetWidth(158);
+		else
+			Perl_Player_Pet_LevelFrame:Hide();
+			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 5);
+			Perl_Player_Pet_NameFrame:SetWidth(135);
+			Perl_Player_Pet_NameFrame_CastClickOverlay:SetWidth(135);
+			Perl_Player_Pet_StatsFrame:SetWidth(135);
+			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(135);
+			Perl_Player_Pet_HealthBar:SetWidth(123);
+			Perl_Player_Pet_HealthBarFadeBar:SetWidth(123);
+			Perl_Player_Pet_HealthBarBG:SetWidth(123);
+			Perl_Player_Pet_ManaBar:SetWidth(123);
+			Perl_Player_Pet_ManaBarFadeBar:SetWidth(123);
+			Perl_Player_Pet_ManaBarBG:SetWidth(123);
+			Perl_Player_Pet_XPBar:SetWidth(123);
+			Perl_Player_Pet_XPBarBG:SetWidth(123);
 		end
 	end
 
