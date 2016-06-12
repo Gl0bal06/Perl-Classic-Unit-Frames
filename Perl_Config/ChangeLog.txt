@@ -1,3 +1,6 @@
+2.20 - July 11, 2008
+ - All: Implemented another possible fix for MobInfo2 support (Thanks Zek)
+
 2.19 - July 5, 2008
  - All: Implemented a possible fix for MobInfo2 support
  - Player: The PvP icon will now correctly show FFA status

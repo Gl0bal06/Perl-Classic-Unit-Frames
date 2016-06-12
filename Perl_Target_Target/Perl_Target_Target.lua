@@ -1149,48 +1149,39 @@ function Perl_Target_Target_HealthShow()
 					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- Unit not in MobHealth DB
 				end
 			elseif (MobHealthFrame) then
-
-				local index;
-				if UnitIsPlayer("targettarget") then
-					index = UnitName("targettarget");
+				local partyid = "targettarget";
+				local hp = targettargethealth;
+				local hpMax = targettargethealthmax;
+				local index, current, max, table;
+				if (UnitIsPlayer(partyid)) then
+					index = UnitName(partyid);
+					table = MobHealthPlayerDB or MobHealthDB;
 				else
-					index = UnitName("targettarget")..":"..UnitLevel("targettarget");
+					index = UnitName(partyid)..":"..UnitLevel(partyid);
+					table = MobHealthDB or MobHealthPlayerDB;
 				end
-
-				if ((MobHealthDB and MobHealthDB[index]) or (MobHealthPlayerDB and MobHealthPlayerDB[index])) then
-					local s, e;
-					local pts;
-					local pct;
-					local pointsPerPct;
-
-					if MobHealthDB[index] then
-						if (type(MobHealthDB[index]) ~= "string") then
-							Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");
-						end
-						s, e, pts, pct = string.find(MobHealthDB[index], "^(%d+)/(%d+)$");
-					else
-						if (type(MobHealthPlayerDB[index]) ~= "string") then
-							Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");
-						end
-						s, e, pts, pct = string.find(MobHealthPlayerDB[index], "^(%d+)/(%d+)$");
-					end
+				if (table and type(table[index]) == "string") then
+					local pts, pct = strmatch(table[index], "^(%d+)/(%d+)$");
 
 					if (pts and pct) then
 						pts = pts + 0;
 						pct = pct + 0;
-						if (pct ~= 0) then
+						if( pct ~= 0 ) then
 							pointsPerPct = pts / pct;
 						else
 							pointsPerPct = 0;
 						end
-					end
 
-					local currentPct = UnitHealth("targettarget");
-					if (pointsPerPct and pointsPerPct > 0) then
-						Perl_Target_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5));	-- Stored unit info from the DB
-					else
-						Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- Possible MobInfo2 fix
+						local currentPct = hp;
+						if (pointsPerPct > 0) then
+							current = (currentPct * pointsPerPct) + 0.5;
+							max = (100 * pointsPerPct) + 0.5;
+						end
 					end
+				end
+				if (current) then	-- Stored unit info from the DB
+					hp, hpMax = current, max;
+					Perl_Target_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));	-- Stored unit info from the DB
 				else
 					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- Unit not in MobHealth DB
 				end
@@ -1263,48 +1254,39 @@ function Perl_Target_Target_Target_HealthShow()
 					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Unit not in MobHealth DB
 				end
 			elseif (MobHealthFrame) then
-
-				local index;
-				if UnitIsPlayer("targettargettarget") then
-					index = UnitName("targettargettarget");
+				local partyid = "targettargettarget";
+				local hp = targettargettargethealth;
+				local hpMax = targettargettargethealthmax;
+				local index, current, max, table;
+				if (UnitIsPlayer(partyid)) then
+					index = UnitName(partyid);
+					table = MobHealthPlayerDB or MobHealthDB;
 				else
-					index = UnitName("targettargettarget")..":"..UnitLevel("targettargettarget");
+					index = UnitName(partyid)..":"..UnitLevel(partyid);
+					table = MobHealthDB or MobHealthPlayerDB;
 				end
-
-				if ((MobHealthDB and MobHealthDB[index]) or (MobHealthPlayerDB and MobHealthPlayerDB[index])) then
-					local s, e;
-					local pts;
-					local pct;
-					local pointsPerPct;
-
-					if MobHealthDB[index] then
-						if (type(MobHealthDB[index]) ~= "string") then
-							Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");
-						end
-						s, e, pts, pct = string.find(MobHealthDB[index], "^(%d+)/(%d+)$");
-					else
-						if (type(MobHealthPlayerDB[index]) ~= "string") then
-							Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");
-						end
-						s, e, pts, pct = string.find(MobHealthPlayerDB[index], "^(%d+)/(%d+)$");
-					end
+				if (table and type(table[index]) == "string") then
+					local pts, pct = strmatch(table[index], "^(%d+)/(%d+)$");
 
 					if (pts and pct) then
 						pts = pts + 0;
 						pct = pct + 0;
-						if (pct ~= 0) then
+						if( pct ~= 0 ) then
 							pointsPerPct = pts / pct;
 						else
 							pointsPerPct = 0;
 						end
-					end
 
-					local currentPct = UnitHealth("targettargettarget");
-					if (pointsPerPct and pointsPerPct > 0) then
-						Perl_Target_Target_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5));	-- Stored unit info from the DB
-					else
-						Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Possible MobInfo2 fix
+						local currentPct = hp;
+						if (pointsPerPct > 0) then
+							current = (currentPct * pointsPerPct) + 0.5;
+							max = (100 * pointsPerPct) + 0.5;
+						end
 					end
+				end
+				if (current) then	-- Stored unit info from the DB
+					hp, hpMax = current, max;
+					Perl_Target_Target_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));	-- Stored unit info from the DB
 				else
 					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Unit not in MobHealth DB
 				end

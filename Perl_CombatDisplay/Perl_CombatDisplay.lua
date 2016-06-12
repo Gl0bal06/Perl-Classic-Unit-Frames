@@ -878,50 +878,42 @@ function Perl_CombatDisplay_Target_Update_Health()
 					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");
 				end
 			elseif (MobHealthFrame) then
-				local index;
-				if (UnitIsPlayer("target")) then
-					index = UnitName("target");
+				local partyid = "target";
+				local hp = targethealth;
+				local hpMax = targethealthmax;
+				local index, current, max, table;
+				if (UnitIsPlayer(partyid)) then
+					index = UnitName(partyid);
+					table = MobHealthPlayerDB or MobHealthDB;
 				else
-					index = UnitName("target")..":"..UnitLevel("target");
+					index = UnitName(partyid)..":"..UnitLevel(partyid);
+					table = MobHealthDB or MobHealthPlayerDB;
 				end
-
-				if ((MobHealthDB and MobHealthDB[index]) or (MobHealthPlayerDB and MobHealthPlayerDB[index])) then
-					local s, e;
-					local pts;
-					local pct;
-					local pointsPerPct;
-
-					if (MobHealthDB[index]) then
-						if (type(MobHealthDB[index]) ~= "string") then
-							Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");
-						end
-						s, e, pts, pct = string.find(MobHealthDB[index], "^(%d+)/(%d+)$");
-					else
-						if (type(MobHealthPlayerDB[index]) ~= "string") then
-							Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");
-						end
-						s, e, pts, pct = string.find(MobHealthPlayerDB[index], "^(%d+)/(%d+)$");
-					end
+				if (table and type(table[index]) == "string") then
+					local pts, pct = strmatch(table[index], "^(%d+)/(%d+)$");
 
 					if (pts and pct) then
 						pts = pts + 0;
 						pct = pct + 0;
-						if (pct ~= 0) then
+						if( pct ~= 0 ) then
 							pointsPerPct = pts / pct;
 						else
 							pointsPerPct = 0;
 						end
-					end
 
-					local currentPct = UnitHealth("target");
-					if (pointsPerPct and pointsPerPct > 0) then	-- Stored unit info from the DB
-						if (displaypercents == 0) then
-							Perl_CombatDisplay_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5));
-						else
-							Perl_CombatDisplay_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5).." | "..targethealth.."%");
+						local currentPct = hp;
+						if (pointsPerPct > 0) then
+							current = (currentPct * pointsPerPct) + 0.5;
+							max = (100 * pointsPerPct) + 0.5;
 						end
+					end
+				end
+				if (current) then	-- Stored unit info from the DB
+					hp, hpMax = current, max;
+					if (displaypercents == 0) then
+						Perl_CombatDisplay_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
 					else
-						Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");	-- Possible MobInfo2 fix
+						Perl_CombatDisplay_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax).." | "..targethealth.."%");
 					end
 				else
 					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");	-- Unit not in MobHealth DB
