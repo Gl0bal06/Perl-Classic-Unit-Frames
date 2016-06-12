@@ -303,7 +303,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						Perl_Config_All_Lock_Unlock(1);
+						Perl_Config_Lock_Unlock(1);
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -321,7 +321,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						Perl_Config_All_Lock_Unlock(0);
+						Perl_Config_Lock_Unlock(0);
 					</OnClick>
 				</Scripts>
 			</Button>

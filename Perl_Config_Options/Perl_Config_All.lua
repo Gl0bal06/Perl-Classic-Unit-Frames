@@ -96,44 +96,6 @@ function Perl_Config_All_Texture_Update(texturenum)
 	Perl_Config_Set_Texture(texturenum);		-- Go save the value and texture the bars
 end
 
-function Perl_Config_All_Lock_Unlock(value)
-	if (Perl_CombatDisplay_Frame) then
-		Perl_CombatDisplay_Set_Lock(value);
-	end
-
-	if (Perl_Party_Frame) then
-		Perl_Party_Set_Lock(value);
-	end
-
-	if (Perl_Party_Pet_Script_Frame) then
-		Perl_Party_Pet_Set_Lock(value);
-	end
-
-	if (Perl_Party_Target_Script_Frame) then
-		Perl_Party_Target_Set_Lock(value);
-	end
-
-	if (Perl_Player_Frame) then
-		Perl_Player_Set_Lock(value);
-	end
-
-	if (Perl_Player_Pet_Frame) then
-		Perl_Player_Pet_Set_Lock(value);
-	end
-
-	if (Perl_Raid_Frame) then
-		Perl_Raid_Set_Lock(value);
-	end
-
-	if (Perl_Target_Frame) then
-		Perl_Target_Set_Lock(value);
-	end
-
-	if (Perl_Target_Target_Script_Frame) then
-		Perl_Target_Target_Set_Lock(value);
-	end
-end
-
 function Perl_Config_All_Set_Scale(value)
 	if (value == nil) then
 		value = floor(UIParent:GetScale()*100+0.5);

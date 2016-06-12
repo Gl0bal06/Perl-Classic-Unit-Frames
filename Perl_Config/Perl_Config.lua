@@ -708,6 +708,44 @@ function Perl_Config_Set_Invert_Bar_Values(newvalue)
 	end
 end
 
+function Perl_Config_Lock_Unlock(value)
+	if (Perl_CombatDisplay_Frame) then
+		Perl_CombatDisplay_Set_Lock(value);
+	end
+
+	if (Perl_Party_Frame) then
+		Perl_Party_Set_Lock(value);
+	end
+
+	if (Perl_Party_Pet_Script_Frame) then
+		Perl_Party_Pet_Set_Lock(value);
+	end
+
+	if (Perl_Party_Target_Script_Frame) then
+		Perl_Party_Target_Set_Lock(value);
+	end
+
+	if (Perl_Player_Frame) then
+		Perl_Player_Set_Lock(value);
+	end
+
+	if (Perl_Player_Pet_Frame) then
+		Perl_Player_Pet_Set_Lock(value);
+	end
+
+	if (Perl_Raid_Frame) then
+		Perl_Raid_Set_Lock(value);
+	end
+
+	if (Perl_Target_Frame) then
+		Perl_Target_Set_Lock(value);
+	end
+
+	if (Perl_Target_Target_Script_Frame) then
+		Perl_Target_Target_Set_Lock(value);
+	end
+end
+
 
 -----------------------------------
 -- Reset Frame Position Function --
@@ -1541,9 +1579,9 @@ function Perl_Config_Button_OnClick(button)
 		end
 
 		if (unlockedflag == 1) then
-			Perl_Config_All_Lock_Unlock(1);
+			Perl_Config_Lock_Unlock(1);
 		else
-			Perl_Config_All_Lock_Unlock(0);
+			Perl_Config_Lock_Unlock(0);
 		end
 
 		GameTooltip:Hide();

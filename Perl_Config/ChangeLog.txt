@@ -1,3 +1,6 @@
+0.81a - October 23, 2006
+ - Config: Fixed the line 1546 error
+
 0.81 - October 23, 2006
  - All: Changed the event system to a more efficient method (Thanks Zek)
  - All: Changed how certain frame scripts are set up (Thanks Zek)
