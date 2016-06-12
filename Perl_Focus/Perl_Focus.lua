@@ -1841,6 +1841,7 @@ function Perl_Focus_Buff_UpdateAll()
 		end
 
 		local button, buffCount, buffTexture, buffApplications, color, debuffType, duration, timeLeft, cooldown;		-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		local curableDebuffFound = 0;
 
 		local numBuffs = 0;											-- Buff counter for correct layout
 		for buffnum=1,numbuffsshown do										-- Start main buff loop
@@ -1886,6 +1887,22 @@ function Perl_Focus_Buff_UpdateAll()
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
+					if (PCUF_COLORFRAMEDEBUFF == 1) then
+						if (curableDebuffFound == 0) then
+							if (UnitIsFriend("player", "focus")) then
+								if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
+									Perl_Focus_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+									Perl_Focus_LevelFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+									Perl_Focus_PortraitFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+									Perl_Focus_ClassNameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+									Perl_Focus_CivilianFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+									Perl_Focus_RareEliteFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+									Perl_Focus_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+									curableDebuffFound = 1;
+								end
+							end
+						end
+					end
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
@@ -1969,7 +1986,6 @@ function Perl_Focus_Buff_UpdateAll()
 			end
 		end
 
-		local curableDebuffFound = 0;
 		if (numDebuffs == 0) then
 			Perl_Focus_DebuffFrame:Hide();
 		else
@@ -2016,23 +2032,6 @@ function Perl_Focus_Buff_UpdateAll()
 			else
 				Perl_Focus_DebuffFrame:SetWidth(5 + numDebuffs * 27);	-- Dynamically extend the background frame
 				Perl_Focus_DebuffFrame:SetHeight(34);			-- 1 row tall
-			end
-
-			if (PCUF_COLORFRAMEDEBUFF == 1) then
-				if (UnitIsFriend("player", "focus")) then
-					_, _, _, _, debuffType = UnitDebuff("focus", 1, 1);
-					if (debuffType) then
-						color = DebuffTypeColor[debuffType];
-						Perl_Focus_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-						Perl_Focus_LevelFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-						Perl_Focus_PortraitFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-						Perl_Focus_ClassNameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-						Perl_Focus_CivilianFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-						Perl_Focus_RareEliteFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-						Perl_Focus_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-						curableDebuffFound = 1;
-					end
-				end
 			end
 		end
 

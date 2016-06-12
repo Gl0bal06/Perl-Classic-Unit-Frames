@@ -2342,6 +2342,7 @@ end
 function Perl_Party_Buff_UpdateAll(self)
 	if (UnitName(self.unit)) then
 		local button, buffCount, buffTexture, buffApplications, color, debuffType;					-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		local curableDebuffFound = 0;
 
 		for buffnum=1,numbuffsshown do											-- Start main buff loop
 			_, _, buffTexture, buffApplications = UnitBuff(self.unit, buffnum, displaycastablebuffs);		-- Get the texture, buff stacking, and class specific information if any
@@ -2369,6 +2370,17 @@ function Perl_Party_Buff_UpdateAll(self)
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);					-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
+					if (PCUF_COLORFRAMEDEBUFF == 1) then
+						if (curableDebuffFound == 0) then
+							if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
+								getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame"):SetBackdropBorderColor(color.r, color.g, color.b, 1);
+								getglobal("Perl_Party_MemberFrame"..self.id.."_LevelFrame"):SetBackdropBorderColor(color.r, color.g, color.b, 1);
+								getglobal("Perl_Party_MemberFrame"..self.id.."_PortraitFrame"):SetBackdropBorderColor(color.r, color.g, color.b, 1);
+								getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame"):SetBackdropBorderColor(color.r, color.g, color.b, 1);
+								curableDebuffFound = 1;
+							end
+						end
+					end
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
@@ -2387,18 +2399,6 @@ function Perl_Party_Buff_UpdateAll(self)
 			end
 		end														-- End main debuff loop
 
-		local curableDebuffFound = 0;
-		if (PCUF_COLORFRAMEDEBUFF == 1) then
-			_, _, _, _, debuffType = UnitDebuff(self.unit, 1, 1);
-			if (debuffType) then
-				color = DebuffTypeColor[debuffType];
-				getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame"):SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				getglobal("Perl_Party_MemberFrame"..self.id.."_LevelFrame"):SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				getglobal("Perl_Party_MemberFrame"..self.id.."_PortraitFrame"):SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame"):SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				curableDebuffFound = 1;
-			end
-		end
 		if (curableDebuffFound == 0) then
 			getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 			getglobal("Perl_Party_MemberFrame"..self.id.."_LevelFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);

@@ -179,6 +179,18 @@
 							<Color r="1" g="1" b="0"/>
 						</Fontstring>
 
+						<!-- PvP Timer Text -->
+						<Fontstring name="Perl_Player_NameBarPvPTimerText" inherits="GameFontNormal" text="Error!">
+							<Color r="1" g="1" b="1"/>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Player_PVPStatus">
+									<Offset>
+										<AbsDimension x="-28" y="-3"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Fontstring>
+
 						<!-- Threat Icon -->
 						<Texture name="Perl_Player_ThreatIndicator" file="Interface\Minimap\ObjectIcons" hidden="true">
 							<Size>
@@ -1084,6 +1096,14 @@
 		<Scripts>
 			<OnUpdate>
 				Perl_Player_Update_DruidBar(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
+	<Frame name="Perl_Player_PvP_Timer_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_Player_OnUpdate_PvP_Timer(arg1);
 			</OnUpdate>
 		</Scripts>
 	</Frame>

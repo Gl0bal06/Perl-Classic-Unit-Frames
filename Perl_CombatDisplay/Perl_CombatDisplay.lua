@@ -24,6 +24,10 @@ local showenergyticker = 0;	-- energy ticker is off by default
 local InCombat = 0;
 local Initialized = nil;
 local IsAggroed = 0;
+local Perl_CombatDisplay_ManaBar_Time_Elapsed = 0;		-- set the update timer to 0
+local Perl_CombatDisplay_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
+local Perl_CombatDisplay_Target_ManaBar_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_CombatDisplay_Target_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
 local Perl_CombatDisplay_DruidBar_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_CombatDisplay_DruidBar_Time_Update_Rate = 0.2;	-- the update interval
 local healthfull = 0;
@@ -48,7 +52,7 @@ local Perl_CombatDisplay_Target_ManaBar_Fade_Color = 1;			-- the color fading in
 local Perl_CombatDisplay_Target_ManaBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
 
 -- Local variables to save memory
-local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, pethealth, pethealthmax, petmana, petmanamax, targethealth, targethealthmax, targetmana, targetmanamax, targetpowertype, englishclass;
+local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, pethealth, pethealthmax, petmana, petmanamax, targethealth, targethealthmax, targetmana, targetmanamax, targetpowertype, englishclass, playeronupdatemana, targetonupdatemana;
 local energylast = 0;
 local energytime = 0;
 
@@ -482,6 +486,12 @@ function Perl_CombatDisplay_Update_Mana()
 		playermana = 0;
 	end
 
+	if (playermana ~= playermanamax) then
+		Perl_CombatDisplay_ManaBar_OnUpdate_Frame:Show();
+	else
+		Perl_CombatDisplay_ManaBar_OnUpdate_Frame:Hide();
+	end
+
 	if (PCUF_FADEBARS == 1) then
 		if (playermana < Perl_CombatDisplay_ManaBar:GetValue()) then
 			Perl_CombatDisplay_ManaBarFadeBar:SetMinMaxValues(0, playermanamax);
@@ -500,15 +510,7 @@ function Perl_CombatDisplay_Update_Mana()
 		Perl_CombatDisplay_ManaBar:SetValue(playermana);
 	end
 
-	if (playerpower == 1 or playerpower == 6) then
-		Perl_CombatDisplay_ManaBarText:SetText(playermana);
-	else
-		if (displaypercents == 0) then
-			Perl_CombatDisplay_ManaBarText:SetText(playermana.."/"..playermanamax);
-		else
-			Perl_CombatDisplay_ManaBarText:SetText(playermana.."/"..playermanamax.." | "..floor(playermana/playermanamax*100+0.5).."%");
-		end
-	end
+	Perl_CombatDisplay_Update_Mana_Text();
 
 	if (showdruidbar == 1) then
 		_, englishclass = UnitClass("player");
@@ -528,6 +530,32 @@ function Perl_CombatDisplay_Update_Mana()
 			Perl_CombatDisplay_DruidBarText:SetText();
 			Perl_CombatDisplay_DruidBar:SetMinMaxValues(0, 1);
 			Perl_CombatDisplay_DruidBar:SetValue(0);
+		end
+	end
+end
+
+function Perl_CombatDisplay_Update_Mana_Text()
+	if (playerpower == 1 or playerpower == 6) then
+		Perl_CombatDisplay_ManaBarText:SetText(playermana);
+	else
+		if (displaypercents == 0) then
+			Perl_CombatDisplay_ManaBarText:SetText(playermana.."/"..playermanamax);
+		else
+			Perl_CombatDisplay_ManaBarText:SetText(playermana.."/"..playermanamax.." | "..floor(playermana/playermanamax*100+0.5).."%");
+		end
+	end
+end
+
+function Perl_CombatDisplay_OnUpdate_ManaBar(arg1)
+	Perl_CombatDisplay_ManaBar_Time_Elapsed = Perl_CombatDisplay_ManaBar_Time_Elapsed + arg1;
+	if (Perl_CombatDisplay_ManaBar_Time_Elapsed > Perl_CombatDisplay_ManaBar_Time_Update_Rate) then
+		Perl_CombatDisplay_ManaBar_Time_Elapsed = 0;
+
+		playeronupdatemana = UnitPower("player", UnitPowerType("player"));
+		if (playeronupdatemana ~= playermana) then
+			playermana = playeronupdatemana;
+			Perl_CombatDisplay_ManaBar:SetValue(playeronupdatemana);
+			Perl_CombatDisplay_Update_Mana_Text();
 		end
 	end
 end
@@ -860,6 +888,12 @@ function Perl_CombatDisplay_Target_Update_Mana()
 		targetmana = 0;
 	end
 
+	if (targetmana ~= targetmanamax) then
+		Perl_CombatDisplay_Target_ManaBar_OnUpdate_Frame:Show();
+	else
+		Perl_CombatDisplay_Target_ManaBar_OnUpdate_Frame:Hide();
+	end
+
 	if (PCUF_FADEBARS == 1) then
 		if (targetmana < Perl_CombatDisplay_Target_ManaBar:GetValue()) then
 			Perl_CombatDisplay_Target_ManaBarFadeBar:SetMinMaxValues(0, targetmanamax);
@@ -878,6 +912,10 @@ function Perl_CombatDisplay_Target_Update_Mana()
 		Perl_CombatDisplay_Target_ManaBar:SetValue(targetmana);
 	end
 
+	Perl_CombatDisplay_Target_Update_Mana_Text();
+end
+
+function Perl_CombatDisplay_Target_Update_Mana_Text()
 	if (targetpowertype == 1 or targetpowertype == 2 or targetpowertype == 6) then
 		Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana);
 	else
@@ -885,6 +923,20 @@ function Perl_CombatDisplay_Target_Update_Mana()
 			Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
 		else
 			Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax.." | "..floor(targetmana/targetmanamax*100+0.5).."%");
+		end
+	end
+end
+
+function Perl_CombatDisplay_Target_OnUpdate_ManaBar(arg1)
+	Perl_CombatDisplay_Target_ManaBar_Time_Elapsed = Perl_CombatDisplay_Target_ManaBar_Time_Elapsed + arg1;
+	if (Perl_CombatDisplay_Target_ManaBar_Time_Elapsed > Perl_CombatDisplay_Target_ManaBar_Time_Update_Rate) then
+		Perl_CombatDisplay_Target_ManaBar_Time_Elapsed = 0;
+
+		targetonupdatemana = UnitPower("target", UnitPowerType("target"));
+		if (targetonupdatemana ~= targetmana) then
+			targetmana = targetonupdatemana;
+			Perl_CombatDisplay_Target_ManaBar:SetValue(targetonupdatemana);
+			Perl_CombatDisplay_Target_Update_Mana_Text();
 		end
 	end
 end
@@ -1522,16 +1574,23 @@ end
 -- Buff Functions --
 --------------------
 function Perl_CombatDisplay_Buff_UpdateAll(unit, frame)
+	local debuffType;
 	local curableDebuffFound = 0;
 
-	if (PCUF_COLORFRAMEDEBUFF == 1) then
-		if (UnitIsFriend("player", unit)) then
-			local debuffType;
-			_, _, _, _, debuffType = UnitDebuff(unit, 1, 1);
-			if (debuffType) then
-				local color = DebuffTypeColor[debuffType];
-				frame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				curableDebuffFound = 1;
+	for debuffnum=1,40 do											-- Start main debuff loop
+		_, _, _, _, debuffType, _, _ = UnitDebuff(unit, debuffnum, 1);		-- Get the texture and debuff stacking information if any
+		if (PCUF_COLORFRAMEDEBUFF == 1) then
+			if (curableDebuffFound == 0) then
+				if (UnitIsFriend("player", unit)) then
+					if (debuffType) then
+						if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
+							local color = DebuffTypeColor[debuffType];
+							frame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+							curableDebuffFound = 1;
+							break;
+						end
+					end
+				end
 			end
 		end
 	end

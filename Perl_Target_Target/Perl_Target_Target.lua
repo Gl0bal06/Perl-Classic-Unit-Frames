@@ -661,6 +661,7 @@ end
 
 function Perl_Target_Target_Update_Buffs()
 	local button, buffCount, buffTexture, buffApplications, color, debuffType;							-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+	local curableDebuffFound = 0;
 
 	local numBuffs = 0;														-- Buff counter for correct layout
 	if (showtotbuffs == 1) then
@@ -696,6 +697,17 @@ function Perl_Target_Target_Update_Buffs()
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
+					if (PCUF_COLORFRAMEDEBUFF == 1) then
+						if (curableDebuffFound == 0) then
+							if (UnitIsFriend("player", "targettarget")) then
+								if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
+									Perl_Target_Target_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+									Perl_Target_Target_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+									curableDebuffFound = 1;
+								end
+							end
+						end
+					end
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
@@ -718,17 +730,7 @@ function Perl_Target_Target_Update_Buffs()
 		numDebuffs = 0;														-- ToT Debuffs are disabled
 	end
 
-	local curableDebuffFound = 0;
 	if (UnitIsFriend("player", "targettarget")) then										-- Position the buffs according to friendly or enemy status
-		if (PCUF_COLORFRAMEDEBUFF == 1) then
-			_, _, _, _, debuffType = UnitDebuff("targettarget", 1, 1);
-			if (debuffType) then
-				color = DebuffTypeColor[debuffType];
-				Perl_Target_Target_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				Perl_Target_Target_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				curableDebuffFound = 1;
-			end
-		end
 		if (numBuffs < 9) then
 			if (showtotbuffs == 0) then
 				Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
@@ -768,6 +770,7 @@ end
 
 function Perl_Target_Target_Target_Update_Buffs()
 	local button, buffCount, buffTexture, buffApplications, color, debuffType;							-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+	local curableDebuffFound = 0;
 
 	local numBuffs = 0;														-- Buff counter for correct layout
 	if (showtototbuffs == 1) then
@@ -803,6 +806,17 @@ function Perl_Target_Target_Target_Update_Buffs()
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
+					if (PCUF_COLORFRAMEDEBUFF == 1) then
+						if (curableDebuffFound == 0) then
+							if (UnitIsFriend("player", "targettargettarget")) then
+								if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
+									Perl_Target_Target_Target_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+									Perl_Target_Target_Target_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+									curableDebuffFound = 1;
+								end
+							end
+						end
+					end
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
@@ -825,17 +839,7 @@ function Perl_Target_Target_Target_Update_Buffs()
 		numBuffs = 0;														-- ToToT Debuffs are disabled
 	end
 
-	local curableDebuffFound = 0;
 	if (UnitIsFriend("player", "targettargettarget")) then										-- Position the buffs according to friendly or enemy status
-		if (PCUF_COLORFRAMEDEBUFF == 1) then
-			_, _, _, _, debuffType = UnitDebuff("targettargettarget", 1, 1);
-			if (debuffType) then
-				color = DebuffTypeColor[debuffType];
-				Perl_Target_Target_Target_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				Perl_Target_Target_Target_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				curableDebuffFound = 1;
-			end
-		end
 		if (numBuffs < 9) then
 			if (showtototbuffs == 0) then
 				Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);

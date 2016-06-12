@@ -41,6 +41,9 @@ local Initialized = nil;		-- waiting to be initialized
 local currentprofilenumber = 0;		-- easy way to make our profile system work
 local eventqueuetotal = 0;		-- variable to check how many queued events we have
 
+-- Local variables to save memory
+local playerClass;
+
 -- Variables for position of the class icon texture.
 PCUF_CLASSPOSRIGHT = {
 	["DEATHKNIGHT"] = 0.25,
@@ -203,6 +206,9 @@ function Perl_Config_Initialize()
 	-- MyAddOns Support
 	Perl_Config_myAddOns_Support();
 
+	-- Debuff Coloring Support for 3.0+
+	_, playerClass = UnitClass("player");
+
 	-- Set the initialization flag
 	Initialized = 1;
 
@@ -350,6 +356,39 @@ function Perl_Config_PositioningMode_Enable()
 		Perl_Target_Target_NameBarText:SetText("ToT");
 		Perl_Target_Target_Target_NameBarText:SetText("ToToT");
 	end
+end
+
+
+----------------------
+-- Debuff Functions --
+----------------------
+function Perl_Config_Set_Curable_Debuffs(debuffType)
+	if (playerClass == "DRUID") then
+		if (debuffType == PERL_LOCALIZED_BUFF_CURSE or debuffType == PERL_LOCALIZED_BUFF_POISON) then
+			return 1;
+		end
+	elseif (playerClass == "MAGE") then
+		if (debuffType == PERL_LOCALIZED_BUFF_CURSE) then
+			return 1;
+		end
+	elseif (playerClass == "PALADIN") then
+		if (debuffType == PERL_LOCALIZED_BUFF_DISEASE or debuffType == PERL_LOCALIZED_BUFF_MAGIC or debuffType == PERL_LOCALIZED_BUFF_POISON) then
+			return 1;
+		end
+	elseif (playerClass == "PRIEST") then
+		if (debuffType == PERL_LOCALIZED_BUFF_DISEASE or debuffType == PERL_LOCALIZED_BUFF_MAGIC) then
+			return 1;
+		end
+	elseif (playerClass == "SHAMAN") then
+		if (debuffType == PERL_LOCALIZED_BUFF_DISEASE or debuffType == PERL_LOCALIZED_BUFF_POISON) then
+			return 1;
+		end
+	elseif (playerClass == "WARLOCK") then
+		if (debuffType == PERL_LOCALIZED_BUFF_MAGIC) then
+			return 1;
+		end
+	end
+	return 0;
 end
 
 
@@ -1456,6 +1495,7 @@ function Perl_Config_Global_Save_Settings()
 			["FiveSecondRule"] = vartable["fivesecondrule"],
 			["TotemTimers"] = vartable["totemtimers"],
 			["RuneFrame"] = vartable["runeframe"],
+			["PvPTimer"] = vartable["pvptimer"],
 		};
 	end
 

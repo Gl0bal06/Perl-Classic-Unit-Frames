@@ -165,6 +165,12 @@ function Perl_Config_Player_Set_Values()
 		Perl_Config_Player_Frame_CheckButton29:SetChecked(nil);
 	end
 
+	if (vartable["pvptimer"] == 1) then
+		Perl_Config_Player_Frame_CheckButton30:SetChecked(1);
+	else
+		Perl_Config_Player_Frame_CheckButton30:SetChecked(nil);
+	end
+
 	Perl_Config_Player_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_Player_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Player_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -360,6 +366,14 @@ function Perl_Config_Player_Show_Rune_Frame_Update()
 		Perl_Player_Set_Show_Rune_Frame(1);
 	else
 		Perl_Player_Set_Show_Rune_Frame(0);
+	end
+end
+
+function Perl_Config_Player_Show_PvP_Timer_Update()
+	if (Perl_Config_Player_Frame_CheckButton30:GetChecked() == 1) then
+		Perl_Player_Set_Show_PvP_Timer(1);
+	else
+		Perl_Player_Set_Show_PvP_Timer(0);
 	end
 end
 

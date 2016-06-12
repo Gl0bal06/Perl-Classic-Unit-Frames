@@ -60,11 +60,13 @@ function Perl_Player_Pet_OnLoad(self)
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_COMBAT");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
+	self:RegisterEvent("UNIT_ENERGY");
 	self:RegisterEvent("UNIT_FOCUS");
 	self:RegisterEvent("UNIT_HAPPINESS");
 	self:RegisterEvent("UNIT_HEALTH");
 	self:RegisterEvent("UNIT_LEVEL");
 	self:RegisterEvent("UNIT_MANA");
+	self:RegisterEvent("UNIT_MAXENERGY");
 	self:RegisterEvent("UNIT_MAXFOCUS");
 	self:RegisterEvent("UNIT_MAXHEALTH");
 	self:RegisterEvent("UNIT_MAXMANA");
@@ -145,6 +147,8 @@ end
 Perl_Player_Pet_Events.UNIT_MAXFOCUS = Perl_Player_Pet_Events.UNIT_FOCUS;
 Perl_Player_Pet_Events.UNIT_MANA = Perl_Player_Pet_Events.UNIT_FOCUS;
 Perl_Player_Pet_Events.UNIT_MAXMANA = Perl_Player_Pet_Events.UNIT_FOCUS;
+Perl_Player_Pet_Events.UNIT_ENERGY = Perl_Player_Pet_Events.UNIT_FOCUS;
+Perl_Player_Pet_Events.UNIT_MAXENERGY = Perl_Player_Pet_Events.UNIT_FOCUS;
 
 function Perl_Player_Pet_Events:UNIT_HAPPINESS()
 	Perl_Player_PetFrame_SetHappiness();
@@ -1566,6 +1570,7 @@ end
 function Perl_Player_Pet_Buff_UpdateAll()
 	if (UnitName("pet")) then
 		local button, buffCount, buffTexture, buffApplications, color, debuffType;				-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		local curableDebuffFound = 0;
 
 		for buffnum=1,numpetbuffsshown do									-- Start main buff loop
 			_, _, buffTexture, buffApplications = UnitBuff("pet", buffnum);					-- Get the texture and buff stacking information if any
@@ -1593,6 +1598,17 @@ function Perl_Player_Pet_Buff_UpdateAll()
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
+					if (PCUF_COLORFRAMEDEBUFF == 1) then
+						if (curableDebuffFound == 0) then
+							if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
+								Perl_Player_Pet_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+								Perl_Player_Pet_PortraitFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+								Perl_Player_Pet_LevelFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+								Perl_Player_Pet_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+								curableDebuffFound = 1;
+							end
+						end
+					end
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
@@ -1611,18 +1627,6 @@ function Perl_Player_Pet_Buff_UpdateAll()
 			end
 		end													-- End main debuff loop
 
-		local curableDebuffFound = 0;
-		if (PCUF_COLORFRAMEDEBUFF == 1) then
-			_, _, _, _, debuffType = UnitDebuff("pet", 1, 1);
-			if (debuffType) then
-				color = DebuffTypeColor[debuffType];
-				Perl_Player_Pet_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				Perl_Player_Pet_PortraitFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				Perl_Player_Pet_LevelFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				Perl_Player_Pet_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				curableDebuffFound = 1;
-			end
-		end
 		if (curableDebuffFound == 0) then
 			Perl_Player_Pet_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 			Perl_Player_Pet_PortraitFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);

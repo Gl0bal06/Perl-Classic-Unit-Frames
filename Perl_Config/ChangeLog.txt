@@ -1,3 +1,10 @@
+3.03 - December 6, 2008
+ - All: Debuff highlighting works correctly again
+ - CombatDisplay: Added faster power bar updates
+ - Pet/PartyPet: Added energy support for pets
+ - Player: Added a PvP cooldown timer
+ - Player: Power bar percent text now updates at the correct speed
+
 3.02 - November 12, 2008
  - Config: The threat icon is now off by default
  - PartyPet: Fixed the error on line 392

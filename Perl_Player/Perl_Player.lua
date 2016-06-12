@@ -29,6 +29,7 @@ local showenergyticker = 0;	-- energy ticker is off by default
 local fivesecondrule = 0;	-- five second rule is off by default
 local totemtimers = 1;		-- default for totem timers is on by default
 local runeframe = 1;		-- default for rune frame is on by default
+local pvptimer = 0;		-- pvp timer is hidden by default
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -37,6 +38,8 @@ local Perl_Player_ManaBar_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Player_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
 local Perl_Player_DruidBar_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Player_DruidBar_Time_Update_Rate = 0.2;	-- the update interval
+local Perl_Player_PvP_Text_Time_Elapsed = 0;		-- set the update timer to 0
+local Perl_Player_PvP_Text_Time_Update_Rate = 0.1;	-- the update interval
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 
@@ -49,7 +52,7 @@ local Perl_Player_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 --local Perl_Player_DruidBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local playerhealth, playerhealthmax, playerhealthpercent, playermana, playermanamax, playermanapercent, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, playerpower, englishclass, playeronupdatemana;
+local playerhealth, playerhealthmax, playerhealthpercent, playermana, playermanamax, playermanapercent, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, playerpower, englishclass, playeronupdatemana, pvptimeleft;
 local energylast = 0;
 local energytime = 0;
 local fivesecondrulelastmana = 0;
@@ -68,6 +71,7 @@ function Perl_Player_OnLoad(self)
 	self:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
 	self:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
+	self:RegisterEvent("PLAYER_FLAGS_CHANGED");
 	self:RegisterEvent("PLAYER_LOGIN");
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
@@ -267,6 +271,10 @@ function Perl_Player_Events:UNIT_THREAT_SITUATION_UPDATE()
 	end
 end
 
+function Perl_Player_Events:PLAYER_FLAGS_CHANGED()
+	Perl_Player_Update_PvP_Timer();
+end
+
 function Perl_Player_Events:PLAYER_LOGIN()
 	Perl_Player_Initialize();
 end
@@ -341,6 +349,7 @@ function Perl_Player_Update_Once()
 	Perl_Player_ClassTexture:SetTexCoord(PCUF_CLASSPOSRIGHT[englishclass], PCUF_CLASSPOSLEFT[englishclass], PCUF_CLASSPOSTOP[englishclass], PCUF_CLASSPOSBOTTOM[englishclass]);	-- Set the player's class icon
 	Perl_Player_Update_Portrait();						-- Set the player's portrait
 	Perl_Player_Update_PvP_Status();					-- Is the character PvP flagged?
+	Perl_Player_Update_PvP_Timer();						-- Is the PvP timer counting down?
 	Perl_Player_Update_Health();						-- Set the player's health on load or toggle
 	Perl_Player_Update_Mana_Bar();						-- Set the type of mana used
 	Perl_Player_Update_Mana();						-- Set the player's mana/energy on load or toggle
@@ -528,6 +537,8 @@ function Perl_Player_Update_Mana()
 end
 
 function Perl_Player_Update_Mana_Text()
+	playermanapercent = floor(playermana/playermanamax*100+0.5);
+
 	if (compactmode == 0) then
 		if (healermode == 1) then
 			Perl_Player_ManaBarText:SetTextColor(0.5, 0.5, 0.5, 1);
@@ -947,6 +958,31 @@ function Perl_Player_Update_Threat()
 		Perl_Player_ThreatIndicator:Show();
 	else
 		Perl_Player_ThreatIndicator:Hide();
+	end
+end
+
+function Perl_Player_Update_PvP_Timer()
+	if (IsPVPTimerRunning() and pvptimer == 1) then
+		Perl_Player_PvP_Timer_OnUpdate_Frame:Show();
+		Perl_Player_NameBarPvPTimerText:Show();
+	else
+		Perl_Player_PvP_Timer_OnUpdate_Frame:Hide();
+		Perl_Player_NameBarPvPTimerText:Hide();
+		Perl_Player_NameBarPvPTimerText:SetText();
+	end
+end
+
+function Perl_Player_OnUpdate_PvP_Timer()
+	Perl_Player_PvP_Text_Time_Elapsed = Perl_Player_PvP_Text_Time_Elapsed + arg1;
+	if (Perl_Player_PvP_Text_Time_Elapsed > Perl_Player_PvP_Text_Time_Update_Rate) then
+		Perl_Player_PvP_Text_Time_Elapsed = 0;
+
+		pvptimeleft = floor(GetPVPTimer()/1200);
+		if (pvptimeleft > 60) then
+			Perl_Player_NameBarPvPTimerText:SetText(floor(pvptimeleft/60).."m"..(pvptimeleft%60).."s");
+		else
+			Perl_Player_NameBarPvPTimerText:SetText(pvptimeleft.."s");
+		end
 	end
 end
 
@@ -1596,6 +1632,12 @@ function Perl_Player_Set_Show_Rune_Frame(newvalue)
 	Perl_Player_Frame_Style();
 end
 
+function Perl_Player_Set_Show_PvP_Timer(newvalue)
+	pvptimer = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Update_PvP_Timer();
+end
+
 function Perl_Player_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);							-- convert the user input to a wow acceptable value
@@ -1656,6 +1698,7 @@ function Perl_Player_GetVars(name, updateflag)
 	fivesecondrule = Perl_Player_Config[name]["FiveSecondRule"];
 	totemtimers = Perl_Player_Config[name]["TotemTimers"];
 	runeframe = Perl_Player_Config[name]["RuneFrame"];
+	pvptimer = Perl_Player_Config[name]["PvPTimer"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1729,6 +1772,9 @@ function Perl_Player_GetVars(name, updateflag)
 	if (runeframe == nil) then
 		runeframe = 1;
 	end
+	if (pvptimer == nil) then
+		pvptimer = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1766,6 +1812,7 @@ function Perl_Player_GetVars(name, updateflag)
 		["fivesecondrule"] = fivesecondrule,
 		["totemtimers"] = totemtimers,
 		["runeframe"] = runeframe,
+		["pvptimer"] = pvptimer,
 	}
 	return vars;
 end
@@ -1894,6 +1941,11 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				runeframe = nil;
 			end
+			if (vartable["Global Settings"]["PvPTimer"] ~= nil) then
+				pvptimer = vartable["Global Settings"]["PvPTimer"];
+			else
+				pvptimer = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1969,6 +2021,9 @@ function Perl_Player_UpdateVars(vartable)
 		if (runeframe == nil) then
 			runeframe = 1;
 		end
+		if (pvptimer == nil) then
+			pvptimer = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Update_Once();
@@ -2001,6 +2056,7 @@ function Perl_Player_UpdateVars(vartable)
 		["FiveSecondRule"] = fivesecondrule,
 		["TotemTimers"] = totemtimers,
 		["RuneFrame"] = runeframe,
+		["PvPTimer"] = pvptimer,
 	};
 end
 
@@ -2009,20 +2065,27 @@ end
 -- Buff Functions --
 --------------------
 function Perl_Player_BuffUpdateAll()
+	local color, debuffType;
 	local curableDebuffFound = 0;
 
-	if (PCUF_COLORFRAMEDEBUFF == 1) then
-		local debuffType;
-		_, _, _, _, debuffType = UnitDebuff("player", 1, 1);
-		if (debuffType) then
-			local color = DebuffTypeColor[debuffType];
-			Perl_Player_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-			Perl_Player_RaidGroupNumberFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-			Perl_Player_LevelFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-			Perl_Player_PortraitFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-			Perl_Player_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-			curableDebuffFound = 1;
-		end
+	for debuffnum=1,20 do											-- Start main debuff loop
+		_, _, _, _, debuffType, _, _ = UnitDebuff("player", debuffnum, 1);		-- Get the texture and debuff stacking information if any
+			if (debuffType) then
+				if (PCUF_COLORFRAMEDEBUFF == 1) then
+					if (curableDebuffFound == 0) then
+						if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
+							color = DebuffTypeColor[debuffType];
+							Perl_Player_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+							Perl_Player_RaidGroupNumberFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+							Perl_Player_LevelFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+							Perl_Player_PortraitFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+							Perl_Player_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+							curableDebuffFound = 1;
+							break;
+						end
+					end
+				end
+			end
 	end
 
 	if (curableDebuffFound == 0) then

@@ -461,17 +461,22 @@ function Perl_Party_Target_Update_Raid_Icon(self)
 end
 
 function Perl_Party_Target_Update_Buffs(self)
+	local debuffType;
 	local curableDebuffFound = 0;
 
-	if (PCUF_COLORFRAMEDEBUFF == 1) then
-		if (UnitIsFriend("player", self.unit)) then
-			local debuffType;
-			_, _, _, _, debuffType = UnitDebuff(self.unit, 1, 1);
-			if (debuffType) then
-				local color = DebuffTypeColor[debuffType];
-				self.nameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				self.statsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-				curableDebuffFound = 1;
+	for debuffnum=1,40 do											-- Start main debuff loop
+		_, _, _, _, debuffType, _, _ = UnitDebuff(self.unit, debuffnum, 1);		-- Get the texture and debuff stacking information if any
+		if (debuffType) then
+			if (PCUF_COLORFRAMEDEBUFF == 1) then
+				if (curableDebuffFound == 0) then
+					if (UnitIsFriend("player", self.unit)) then
+						local color = DebuffTypeColor[debuffType];
+						self.nameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						self.statsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						curableDebuffFound = 1;
+						break;
+					end
+				end
 			end
 		end
 	end
