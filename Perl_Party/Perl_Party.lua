@@ -63,6 +63,11 @@ function Perl_Party_OnLoad()
 	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame4_DropDown");
 
 	HidePartyFrame();
+	ShowPartyFrame = NewShowPartyFrame;
+end
+
+function NewShowPartyFrame()	-- Thanks Nymbia!
+	return;
 end
 
 
@@ -965,7 +970,7 @@ function Perl_Party_Set_Pets(newvalue)
 		Perl_Party_MemberFrame4_StatsFrame_PetHealthBar:Hide();
 		Perl_Party_MemberFrame4_StatsFrame_PetHealthBarBG:Hide();
 		Perl_Party_MemberFrame4_StatsFrame:SetHeight(42);
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffHiding Pets|cffffff00.");
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffHiding Pets|cffffff00.");
 	else
 		local partypethealth, partypethealthmax, partypethealthpercent;
 		for partynum=1,4 do
@@ -1002,7 +1007,7 @@ function Perl_Party_Set_Pets(newvalue)
 				-- should be hidden, and will correctly adjust later when needed
 			end
 		end
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffShowing Pets|cffffff00.");
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffShowing Pets|cffffff00.");
 	end
 	Perl_Party_Set_Space();
 end
@@ -1560,7 +1565,7 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.29",
+			version = "v0.30",
 			releaseDate = "January 7, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",

@@ -77,7 +77,7 @@ function Perl_Config_Target_Target_MobHealth_Update()
 end
 
 function Perl_Config_Target_Target_Progressive_Color_Update()
-	if (Perl_Config_Target_Target_Frame_CheckButton7:GetChecked() == 1) then
+	if (Perl_Config_Target_Target_Frame_CheckButton4:GetChecked() == 1) then
 		Perl_Target_Target_Set_Progressive_Color(1);
 	else
 		Perl_Target_Target_Set_Progressive_Color(0);
@@ -85,7 +85,7 @@ function Perl_Config_Target_Target_Progressive_Color_Update()
 end
 
 function Perl_Config_Target_Target_Lock_Update()
-	if (Perl_Config_Target_Target_Frame_CheckButton7:GetChecked() == 1) then
+	if (Perl_Config_Target_Target_Frame_CheckButton5:GetChecked() == 1) then
 		Perl_Target_Target_Set_Lock(1);
 	else
 		Perl_Target_Target_Set_Lock(0);

@@ -191,7 +191,7 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.29",
+			version = "v0.30",
 			releaseDate = "January 7, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
