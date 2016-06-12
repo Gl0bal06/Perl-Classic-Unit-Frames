@@ -93,7 +93,7 @@ function Perl_Target_OnLoad()
 
 	table.insert(UnitPopupFrames,"Perl_Target_DropDown");
 
-	if( DEFAULT_CHAT_FRAME ) then
+	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame by Perl loaded successfully.");
 	end
 	UIErrorsFrame:AddMessage("|cffffff00Target Frame by Perl loaded successfully.", 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME);
@@ -107,40 +107,54 @@ function Perl_Target_OnEvent(event)
 	if (Perl_Target_State == 0) then
 		return;
 	else
-		if ( event == "PLAYER_TARGET_CHANGED" or event == "PARTY_MEMBERS_CHANGED" or event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBER_ENABLE" or event == "PARTY_MEMBER_DISABLE") then
-			Perl_Target_Update_Once();		-- Set the unchanging info for the target
+		if ((event == "PLAYER_TARGET_CHANGED") or (event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")) then
+			Perl_Target_Update_Once();			-- Set the unchanging info for the target
 			return;
-		elseif (event == "UNIT_HEALTH" and arg1 == "target") then
-			Perl_Target_Update_Health();		-- Update health values
-			Perl_Target_Update_Dead_Status();	-- Is the target dead?
+		elseif (event == "UNIT_HEALTH") then
+			if (arg1 == "target") then
+				Perl_Target_Update_Health();		-- Update health values
+				Perl_Target_Update_Dead_Status();	-- Is the target dead?
+			end
 			return;
-		elseif ((event == "UNIT_ENERGY" and arg1 == "target") or (event == "UNIT_MANA" and arg1 == "target") or (event == "UNIT_RAGE" and arg1 == "target") or (event == "UNIT_FOCUS" and arg1 == "target")) then
-			Perl_Target_Update_Mana();		-- Update energy/mana/rage values
+		elseif ((event == "UNIT_ENERGY") or (event == "UNIT_MANA") or (event == "UNIT_RAGE") or (event == "UNIT_FOCUS")) then
+			if (arg1 == "target") then
+				Perl_Target_Update_Mana();		-- Update energy/mana/rage values
+			end
 			return;
-		elseif (event == "UNIT_AURA" and arg1 == "target") then
-			Perl_Target_Buff_UpdateAll();		-- Update the buffs
+		elseif (event == "UNIT_AURA") then
+			if (arg1 == "target") then
+				Perl_Target_Buff_UpdateAll();		-- Update the buffs
+			end
 			return;
-		elseif (event == "UNIT_DYNAMIC_FLAGS" and arg1 == "target") then
-			Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
+		elseif (event == "UNIT_DYNAMIC_FLAGS") then
+			if (arg1 == "target") then
+				Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
+			end
 			return;
 		elseif (event == "UNIT_PVP_UPDATE") then
-			Perl_Target_Update_Text_Color();	-- Is the character PvP flagged?
+			Perl_Target_Update_Text_Color();		-- Is the character PvP flagged?
 			return;
-		elseif (event == "UNIT_LEVEL" and arg1 == "target") then
-			Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
+		elseif (event == "UNIT_LEVEL") then
+			if (arg1 == "target") then
+				Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
+			end
 			return;
 		elseif (event == "PLAYER_COMBO_POINTS") then
-			Perl_Target_Update_Combo_Points();	-- How many combo points are we at?
+			Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
 			return;
-		elseif (event == "UNIT_DISPLAYPOWER" and arg1 == "target") then
-			Perl_Target_Update_Mana_Bar();		-- What type of energy are they using now?
-			Perl_Target_Update_Mana();		-- Update the energy info immediately
+		elseif (event == "UNIT_DISPLAYPOWER") then
+			if (arg1 == "target") then
+				Perl_Target_Update_Mana_Bar();		-- What type of energy are they using now?
+				Perl_Target_Update_Mana();		-- Update the energy info immediately
+			end
 			return;
 		elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 			Perl_Target_Initialize();
 			return;
-		elseif (event == "ADDON_LOADED" and arg1 == "Perl_Target") then
-			Perl_Target_myAddOns_Support();
+		elseif (event == "ADDON_LOADED") then
+			if (arg1 == "Perl_Target") then
+				Perl_Target_myAddOns_Support();
+			end
 			return;
 		else
 			Perl_Target_Update_Frequently();
@@ -201,7 +215,7 @@ function Perl_Target_Initialize()
 	if (Initialized) then
 		return;
 	end
-	
+
 	-- Check if a previous exists, if not, enable by default.
 	if (type(Perl_Target_Config[UnitName("player")]) == "table") then
 		Perl_Target_GetVars();
@@ -223,11 +237,10 @@ function Perl_Target_Initialize()
 	Perl_Target_CPFrame:SetBackdropColor(0, 0, 0, transparency);
 	Perl_Target_CPFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
 	Perl_Target_Frame:Hide();
-	
+
 	Perl_Target_HealthBarText:SetTextColor(1,1,1,1);
 	Perl_Target_ManaBarText:SetTextColor(1,1,1,1);
-	
-	
+
 	if (Perl_Target_State == 1) then
 		TargetFrame_Update = Perl_Target_Update_Frequently;
 	else
@@ -287,27 +300,27 @@ function Perl_Target_Update_Health()
 				index = UnitName("target")..":"..UnitLevel("target");
 			end
 
-			if ( (MobHealthDB and MobHealthDB[index]) or (MobHealthPlayerDB and MobHealthPlayerDB[index]) ) then
+			if ((MobHealthDB and MobHealthDB[index]) or (MobHealthPlayerDB and MobHealthPlayerDB[index])) then
 				local s, e;
 				local pts;
 				local pct;
 
 				if MobHealthDB[index] then
-					if ( type(MobHealthDB[index]) ~= "string" ) then
+					if (type(MobHealthDB[index]) ~= "string") then
 						Perl_Target_HealthBarText:SetText(targethealth.."%");
 					end
 					s, e, pts, pct = string.find(MobHealthDB[index], "^(%d+)/(%d+)$");
 				else
-					if ( type(MobHealthPlayerDB[index]) ~= "string" ) then
+					if (type(MobHealthPlayerDB[index]) ~= "string") then
 						Perl_Target_HealthBarText:SetText(targethealth.."%");
 					end
 					s, e, pts, pct = string.find(MobHealthPlayerDB[index], "^(%d+)/(%d+)$");
 				end
 
-				if ( pts and pct ) then
+				if (pts and pct) then
 					pts = pts + 0;
 					pct = pct + 0;
-					if( pct ~= 0 ) then
+					if (pct ~= 0) then
 						pointsPerPct = pts / pct;
 					else
 						pointsPerPct = 0;
@@ -315,7 +328,7 @@ function Perl_Target_Update_Health()
 				end
 
 				local currentPct = UnitHealth("target");
-				if ( pointsPerPct > 0 ) then
+				if (pointsPerPct > 0) then
 					Perl_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5).." | "..targethealth.."%");	-- Stored unit info from the DB
 				end
 			else
@@ -327,7 +340,7 @@ function Perl_Target_Update_Health()
 		end
 	else
 		Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);	-- Self/Party/Raid member
-	end		
+	end
 end
 
 function Perl_Target_Update_Mana()
@@ -417,7 +430,7 @@ end
 function Perl_Target_Update_Dead_Status()
 	-- Set Dead Icon
 	if (UnitIsDead("target")) then
-	--if ( (UnitHealth("target") <= 0) and UnitIsConnected("target") ) then
+	--if ((UnitHealth("target") <= 0) and UnitIsConnected("target")) then
 		Perl_Target_DeadStatus:Show();
 	else
 		Perl_Target_DeadStatus:Hide();
@@ -468,16 +481,16 @@ function Perl_Target_Frame_Set_Level()
 	local targetclassification = UnitClassification("target");
 
 	Perl_Target_LevelBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
-	if ( (targetclassification == "worldboss") or (targetlevel < 0) ) then
+	if ((targetclassification == "worldboss") or (targetlevel < 0)) then
 		Perl_Target_LevelBarText:SetTextColor(1, 0, 0);
 		targetlevel = "??";
 	end
 
-	if ( targetclassification == "rareelite"  ) then
+	if (targetclassification == "rareelite") then
 		targetlevel = targetlevel.."r+";
-	elseif ( targetclassification == "elite"  ) then
+	elseif (targetclassification == "elite") then
 		targetlevel = targetlevel.."+";
-	elseif ( targetclassification == "rare"  ) then
+	elseif (targetclassification == "rare") then
 		targetlevel = targetlevel.."r";
 	end
 
@@ -571,7 +584,7 @@ function Perl_Target_Set_Debuffs(newdebuffnumber)
 end
 
 function Perl_Target_Status()
-  if (Perl_Target_State == 0) then
+	if (Perl_Target_State == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffDisabled|cffffff00.");
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffEnabled|cffffff00.");
@@ -626,12 +639,12 @@ end
 function Perl_Target_Buff_UpdateAll()
 	local friendly;
 	if (UnitName("target")) then
-		if ( UnitIsFriend("player", "target") ) then
+		if (UnitIsFriend("player", "target")) then
 			friendly = 1;
 		else
 			friendly = 0;
 		end
-	  
+
 		local buffmax = 0;
 		for buffnum=1,numbuffsshown do
 			local button = getglobal("Perl_Target_Buff"..buffnum);
@@ -660,25 +673,34 @@ function Perl_Target_Buff_UpdateAll()
 			Perl_Target_BuffFrame:Show();
 			Perl_Target_BuffFrame:SetWidth(5 + buffmax*29);
 		end
-			
-			
+
+
 		local debuffmax = 0;
+		local debuffCount, debuffTexture, debuffApplications;
 		for debuffnum=1,numdebuffsshown do
+			debuffTexture, debuffApplications = UnitDebuff("target", debuffnum);
 			local button = getglobal("Perl_Target_Debuff"..debuffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
-				
+
 			if (UnitDebuff("target", debuffnum)) then
-				icon:SetTexture(UnitDebuff("target", debuffnum));
+				icon:SetTexture(debuffTexture);
 				button.isdebuff = 1;
 				debuff:Show();
 				button:Show();
+				debuffCount = getglobal("Perl_Target_Debuff"..debuffnum.."Count");
+				if (debuffApplications > 1) then
+					debuffCount:SetText(debuffApplications);
+					debuffCount:Show();
+				else
+					debuffCount:Hide();
+				end
 				debuffmax = debuffnum;
 			else
 				button:Hide();
 			end
 		end
-				
+
 		if (debuffmax == 0) then
 			Perl_Target_DebuffFrame:Hide();
 		else
@@ -696,18 +718,7 @@ end
 function Perl_Target_Reset_Buffs()
 	for buffnum=1,20 do
 		local button = getglobal("Perl_Target_Buff"..buffnum);
-		--local icon = getglobal(button:GetName().."Icon");
-		--local debuff = getglobal(button:GetName().."DebuffBorder");
-
---		if (UnitBuff("target", buffnum)) then
---			icon:SetTexture(UnitBuff("target", buffnum));
---			button.isdebuff = 0;
---			debuff:Hide();
---			button:Show();
---			buffmax = buffnum;
---		else
-			button:Hide();
-		--end
+		button:Hide();
 	end
 end
 
@@ -731,34 +742,34 @@ end
 				
 function Perl_TargetDropDown_Initialize()
 	local menu = nil;
-	if ( UnitIsEnemy("target", "player") ) then
+	if (UnitIsEnemy("target", "player")) then
 		return;
 	end
-	if ( UnitIsUnit("target", "player") ) then
+	if (UnitIsUnit("target", "player")) then
 		menu = "SELF";
-	elseif ( UnitIsUnit("target", "pet") ) then
+	elseif (UnitIsUnit("target", "pet")) then
 		menu = "PET";
-	elseif ( UnitIsPlayer("target") ) then
-		if ( UnitInParty("target") ) then
+	elseif (UnitIsPlayer("target")) then
+		if (UnitInParty("target")) then
 			menu = "PARTY";
 		else
 			menu = "PLAYER";
 		end
 	end
-	if ( menu ) then
+	if (menu) then
 		UnitPopup_ShowMenu(Perl_Target_DropDown, menu, "target");
 	end
 end
 
 function Perl_Target_MouseUp(button)
-	if ( SpellIsTargeting() and button == "RightButton" ) then
+	if (SpellIsTargeting() and button == "RightButton") then
 		SpellStopTargeting();
 		return;
 	end
-	if ( button == "LeftButton" ) then
-		if ( SpellIsTargeting() ) then
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
 			SpellTargetUnit("target");
-		elseif ( CursorHasItem() ) then
+		elseif (CursorHasItem()) then
 			DropItemOnUnit("target");
 		end
 	else
@@ -769,7 +780,7 @@ function Perl_Target_MouseUp(button)
 end
 
 function Perl_Target_MouseDown(button)
-	if ( button == "LeftButton" and locked == 0) then
+	if (button == "LeftButton" and locked == 0) then
 		Perl_Target_Frame:StartMoving();
 	end
 end
@@ -789,10 +800,10 @@ end
 ----------------------
 function Perl_Target_myAddOns_Support()
 	-- Register the addon in myAddOns
-	if(myAddOnsFrame_Register) then
+	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.07",
+			version = "v0.08",
 			releaseDate = "October 20, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",

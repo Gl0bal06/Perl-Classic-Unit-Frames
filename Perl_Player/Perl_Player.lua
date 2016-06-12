@@ -7,43 +7,9 @@ Perl_Player_Config = {};
 local Perl_Player_State = 1;
 local locked = 0;
 local InCombat = 0;
-local framefade = 0;
---local showbuffs = 0;
---local buffalerts = 0;
 local BlizzardPlayerFrame_Update = PlayerFrame_UpdateStatus;
 local transparency = 1;  -- general transparency for frames relative to bars/text  default is 0.8
-local idletransparency = 1; -- mouseout transparency.  0.5 default
 local Initialized = nil;
-
--- Buff constants
--- Play with these if you'd like.  It's simply a sine wave of magnitude
--- (BuffAlphaMax - BuffAlphaMin), frequency BuffCycleSpeed, and it will start
--- at BuffWarnTime.  Note that it will clip the function if it goes above 1 or
--- below 0.
-local BuffWarnTime = 31;  -- Onset of flashing.
-local BuffCycleSpeed = 0.75; -- Cycles per second.
-local BuffAlphaMin = 0.25;  -- Minimum alpha for the sine modulation.
-local BuffAlphaMax = 1;  -- Max alpha.
-
--- Special stuff for using hidden tooltips so that money doesn't become hidden.
--- Props to Telo for this trick.
-local lOriginal_GameTooltip_ClearMoney;
-
-local function Perl_Player_MoneyToggle()
-	if( lOriginal_GameTooltip_ClearMoney ) then
-		GameTooltip_ClearMoney = lOriginal_GameTooltip_ClearMoney;
-		lOriginal_GameTooltip_ClearMoney = nil;
-	else
-		lOriginal_GameTooltip_ClearMoney = GameTooltip_ClearMoney;
-		GameTooltip_ClearMoney = Perl_Player_GameTooltip_ClearMoney;
-	end	
-end
-
-function Perl_Player_GameTooltip_ClearMoney()
-	-- Intentionally empty; don't clear money while we use hidden tooltips
-end
-
-
 
 -- Variables for position of the class icon texture.
 local Perl_Target_ClassPosRight = {
@@ -97,28 +63,25 @@ local Perl_Target_ClassPosBottom = {
 ----------------------
 function Perl_Player_OnLoad()
 	-- Events
-	this:RegisterEvent("ADDON_LOADED"); --
-	this:RegisterEvent("PARTY_LEADER_CHANGED"); --
-	--this:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
-	this:RegisterEvent("PARTY_MEMBER_DISABLE"); --
-	this:RegisterEvent("PARTY_MEMBER_ENABLE"); --
-	this:RegisterEvent("PARTY_MEMBERS_CHANGED"); --
-	this:RegisterEvent("PLAYER_ENTERING_WORLD"); --
-	this:RegisterEvent("PLAYER_REGEN_DISABLED"); --
-	this:RegisterEvent("PLAYER_REGEN_ENABLED"); --
-	this:RegisterEvent("PLAYER_UPDATE_RESTING"); --
-	this:RegisterEvent("PLAYER_XP_UPDATE"); --
-	--this:RegisterEvent("UNIT_COMBAT");
-	this:RegisterEvent("UNIT_DISPLAYPOWER"); --
-	this:RegisterEvent("UNIT_ENERGY"); --
-	this:RegisterEvent("UNIT_HEALTH"); --
-	this:RegisterEvent("UNIT_LEVEL"); --
-	this:RegisterEvent("UNIT_MANA"); --
-	--this:RegisterEvent("UNIT_MAXMANA");
-	this:RegisterEvent("UNIT_NAME_UPDATE"); --
-	this:RegisterEvent("UNIT_PVP_UPDATE"); --
-	this:RegisterEvent("UNIT_RAGE"); --
-	this:RegisterEvent("VARIABLES_LOADED"); --
+	this:RegisterEvent("ADDON_LOADED");
+	this:RegisterEvent("PARTY_LEADER_CHANGED");
+	this:RegisterEvent("PARTY_MEMBER_DISABLE");
+	this:RegisterEvent("PARTY_MEMBER_ENABLE");
+	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
+	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_REGEN_DISABLED");
+	this:RegisterEvent("PLAYER_REGEN_ENABLED");
+	this:RegisterEvent("PLAYER_UPDATE_RESTING");
+	this:RegisterEvent("PLAYER_XP_UPDATE");
+	this:RegisterEvent("UNIT_DISPLAYPOWER");
+	this:RegisterEvent("UNIT_ENERGY");
+	this:RegisterEvent("UNIT_HEALTH");
+	this:RegisterEvent("UNIT_LEVEL");
+	this:RegisterEvent("UNIT_MANA");
+	this:RegisterEvent("UNIT_NAME_UPDATE");
+	this:RegisterEvent("UNIT_PVP_UPDATE");
+	this:RegisterEvent("UNIT_RAGE");
+	this:RegisterEvent("VARIABLES_LOADED");
 	
 	-- Slash Commands
 	SlashCmdList["PERL_PLAYER"] = Perl_Player_SlashHandler;
@@ -127,52 +90,63 @@ function Perl_Player_OnLoad()
 	
 	table.insert(UnitPopupFrames,"Perl_Player_DropDown");
 
-	if( DEFAULT_CHAT_FRAME ) then
+	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame by Perl loaded successfully.");
 	end
 	UIErrorsFrame:AddMessage("|cffffff00Player Frame by Perl loaded successfully.", 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME);
 end
 
+
 -------------------
 -- Event Handler --
 -------------------
 function Perl_Player_OnEvent(event)
-	if (event == "UNIT_HEALTH" and arg1 == "player") then
-		Perl_Player_Update_Health();		-- Update health values
+	if (event == "UNIT_HEALTH") then
+		if (arg1 == "player") then
+			Perl_Player_Update_Health();		-- Update health values
+		end
 		return;
-	elseif ((event == "UNIT_ENERGY" and arg1 == "player") or (event == "UNIT_MANA" and arg1 == "player") or (event == "UNIT_RAGE" and arg1 == "player")) then
-		Perl_Player_Update_Mana();		-- Update energy/mana/rage values
+	elseif ((event == "UNIT_ENERGY") or (event == "UNIT_MANA") or (event == "UNIT_RAGE")) then
+		if (arg1 == "player") then
+			Perl_Player_Update_Mana();		-- Update energy/mana/rage values
+		end
 		return;
-	elseif (event == "UNIT_DISPLAYPOWER" and arg1 == "player") then
-		Perl_Player_Update_Mana_Bar();		-- What type of energy are we using now?
-		Perl_Player_Update_Mana();		-- Update the energy info immediately
+	elseif (event == "UNIT_DISPLAYPOWER") then
+		if (arg1 == "player") then
+			Perl_Player_Update_Mana_Bar();		-- What type of energy are we using now?
+			Perl_Player_Update_Mana();		-- Update the energy info immediately
+		end
 		return;
 	elseif ((event == "PLAYER_REGEN_DISABLED") or (event == "PLAYER_REGEN_ENABLED") or (event == "PLAYER_UPDATE_RESTING")) then
 		Perl_Player_Update_Combat_Status(event);	-- Are we fighting, resting, or none?
 		return;
 	elseif (event == "PLAYER_XP_UPDATE") then
-		Perl_Player_Update_Experience();	-- Set the experience bar info
+		Perl_Player_Update_Experience();		-- Set the experience bar info
 		return;
 	elseif (event == "UNIT_PVP_UPDATE") then
-		Perl_Player_Update_PvP_Status();	-- Is the character PvP flagged?
+		Perl_Player_Update_PvP_Status();		-- Is the character PvP flagged?
 		return;
-	elseif (event == "UNIT_LEVEL" and arg1 == "player") then
-		Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
+	elseif (event == "UNIT_LEVEL") then
+		if (arg1 == "player") then
+			Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
+		end
 		return;
-	elseif ( event == "PARTY_MEMBERS_CHANGED" or event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBER_ENABLE" or event == "PARTY_MEMBER_DISABLE") then
-		Perl_Player_Update_Leader();		-- Are we the party leader?
+	elseif ((event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")) then
+		Perl_Player_Update_Leader();			-- Are we the party leader?
 		return;
 	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Player_Initialize();
 		return;
-	elseif (event == "ADDON_LOADED" and arg1 == "Perl_Player") then
-		Perl_Player_myAddOns_Support();
+	elseif (event == "ADDON_LOADED") then
+		if (arg1 == "Perl_Player") then
+			Perl_Player_myAddOns_Support();
+		end
 		return;
-	else	
-		--Perl_Player_UpdateDisplay();
+	else
 		return;
 	end
 end
+
 
 -------------------
 -- Slash Handler --
@@ -194,6 +168,7 @@ function Perl_Player_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 	end
 end
+
 
 -------------------------------
 -- Loading Settings Function --
@@ -224,20 +199,11 @@ function Perl_Player_Initialize()
 	
 	Perl_Player_HealthBarText:SetTextColor(1,1,1,1);
 	Perl_Player_ManaBarText:SetTextColor(1,1,1,1);
-	
---	if (framefade == 1) then
---		Perl_Player_Frame:SetAlpha(idletransparency);
---	end
-
-	-- Bar Art hiding stuff.	
---	ExhaustionTick_Update_Backup = ExhaustionTick_Update;  -- store old function.
---	Perl_Player_HideBarArt();
 
 	if (Perl_Player_State == 1) then
 		PlayerFrame_UpdateStatus = Perl_Player_Update_Once;
 		Perl_Player_Frame:Show();
 		Perl_Player_Update_Once();
-		--Perl_Player_UpdateDisplay();
 	else
 		Perl_Player_Frame:Hide();
 		PlayerFrame_UpdateStatus = BlizzardPlayerFrame_Update;
@@ -268,20 +234,11 @@ function Perl_Player_Update_Once()
 	Perl_Player_Update_Combat_Status();			-- Are we already fighting or resting?
 end
 
-function Perl_Player_UpdateDisplay()
-	if (Perl_Player_State == 0) then
-		Perl_Player_Frame:Hide();
-		PlayerFrame_UpdateStatus = BlizzardPlayerFrame_Update;
-	else
-	
-	end
-end
-
 function Perl_Player_Update_Health()
 	local playerhealth = UnitHealth("player");
 	local playerhealthmax = UnitHealthMax("player");
 	local playerhealthpercent = floor(UnitHealth("player")/UnitHealthMax("player")*100+0.5);
-	
+
 	Perl_Player_HealthBar:SetMinMaxValues(0, playerhealthmax);
 	Perl_Player_HealthBar:SetValue(playerhealth);
 	Perl_Player_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
@@ -344,7 +301,7 @@ function Perl_Player_Update_Experience()
 		Perl_Player_XPBarBG:SetStatusBarColor(0.6, 0, 0.6, 0.25);
 		Perl_Player_XPRestBar:SetValue(playerxp);
 	end
-	
+
 	Perl_Player_XPBarText:SetText(xptextpercent.."%");	
 end
 
@@ -364,8 +321,6 @@ function Perl_Player_Update_Combat_Status(event)
 			Perl_Player_ActivityStatus:SetTexCoord(0, 0.5, 0.0, 0.5);
 			Perl_Player_ActivityStatus:Show();
 		end
-
-		
 	else
 		if (InCombat == 1) then
 			return;
@@ -392,6 +347,7 @@ function Perl_Player_Update_PvP_Status()
 	end
 end
 
+
 ----------------------
 -- Config functions --
 ----------------------
@@ -399,16 +355,15 @@ function Perl_Player_TogglePlayer()
 	if (Perl_Player_State == 0) then
 		Perl_Player_State = 1;
 		PlayerFrame_UpdateStatus = Perl_Player_Update_Once;
-		PlayerFrame:Hide();  -- Hide default frame
+		PlayerFrame:Hide();	-- Hide default frame
 		Perl_Player_Frame:Show();
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now |cffffffffEnabled|cffffff00.");
-		--Perl_Target_UpdateDisplay();
 		Perl_Player_Update_Once();
 	else
 		Perl_Player_State = 0;
 		PlayerFrame_UpdateStatus = BlizzardPlayerFrame_Update;
 		Perl_Player_Frame:Hide();
-		PlayerFrame:Show();  -- Show default frame
+		PlayerFrame:Show();	-- Show default frame
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now |cffffffffDisabled|cffffff00.");
 	end
 	Perl_Target_UpdateVars();
@@ -427,12 +382,12 @@ function Perl_Player_Unlock()
 end
 
 function Perl_Player_Status()
-  if (Perl_Player_State == 0) then
+	if (Perl_Player_State == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisabled|cffffff00.");
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffEnabled|cffffff00.");
 	end
-	
+
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffUnlocked|cffffff00.");
 	else
@@ -450,27 +405,28 @@ function Perl_Player_GetVars()
 	locked = Perl_Player_Config[UnitName("player")]["Locked"];
 end
 
+
 --------------------
 -- Click Handlers --
 --------------------
 function Perl_PlayerDropDown_OnLoad()
 	UIDropDownMenu_Initialize(this, Perl_PlayerDropDown_Initialize, "MENU");
 end
-				
+
 function Perl_PlayerDropDown_Initialize()
 	UnitPopup_ShowMenu(Perl_Player_DropDown, "SELF", "player");
 end
 
 function Perl_Player_MouseUp(button)
-
-	if ( SpellIsTargeting() and button == "RightButton" ) then
+	if (SpellIsTargeting() and button == "RightButton") then
 		SpellStopTargeting();
 		return;
 	end
-	if ( button == "LeftButton" ) then
-		if ( SpellIsTargeting() ) then
+
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
 			SpellTargetUnit("player");
-		elseif ( CursorHasItem() ) then
+		elseif (CursorHasItem()) then
 			DropItemOnUnit("player");
 		else
 			TargetUnit("player");
@@ -478,36 +434,26 @@ function Perl_Player_MouseUp(button)
 	else
 		ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
 	end
-	
+
 	Perl_Player_Frame:StopMovingOrSizing();
 end
 
 function Perl_Player_MouseDown(button)
-	if ( button == "LeftButton" and locked == 0) then
+	if (button == "LeftButton" and locked == 0) then
 		Perl_Player_Frame:StartMoving();
 	end
 end
 
----------------------------------
--- Mouse enter/leave functions --
----------------------------------
-function Perl_Player_MouseEnter()
-	if (framefade == 1) then
-		Perl_Player_Frame:SetAlpha(1);
-	end
-end
 
-function Perl_Player_MouseLeave()
-	if (framefade == 1) then
-		Perl_Player_Frame:SetAlpha(idletransparency);
-	end
-end
-
+------------------------
+-- Experience Tooltip --
+------------------------
 function Perl_Player_XPTooltip()
 	local playerxp = UnitXP("player");
 	local playerxpmax = UnitXPMax("player");
 	local playerxprest = GetXPExhaustion();
 	local xptext = playerxp.."/"..playerxpmax;
+	local xptolevel = playerxpmax - playerxp
 
 	if (playerxprest) then
 		xptext = xptext .."(+"..(playerxprest)..")";
@@ -515,6 +461,7 @@ function Perl_Player_XPTooltip()
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, this);
 	GameTooltip:SetText(xptext, 255/255, 209/255, 0/255);
+	GameTooltip:AddLine(xptolevel.." until level", 255/255, 209/255, 0/255);
 	GameTooltip:Show();
 end
 
@@ -524,10 +471,10 @@ end
 ----------------------
 function Perl_Player_myAddOns_Support()
 	-- Register the addon in myAddOns
-	if(myAddOnsFrame_Register) then
+	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.07",
+			version = "v0.08",
 			releaseDate = "October 20, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",

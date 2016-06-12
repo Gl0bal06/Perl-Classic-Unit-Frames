@@ -436,12 +436,6 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnEnter>
-						Perl_Player_MouseEnter();
-					</OnEnter>
-					<OnLeave>
-						Perl_Player_MouseLeave();
-					</OnLeave>
 					<OnLoad>
 						this:SetFrameLevel(Perl_Player_HealthBar:GetFrameLevel() + 1);
 					</OnLoad>
