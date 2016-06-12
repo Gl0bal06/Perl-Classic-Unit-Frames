@@ -80,7 +80,6 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_LEVEL");
 	this:RegisterEvent("UNIT_MANA");
-	this:RegisterEvent("UNIT_NAME_UPDATE");
 	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
@@ -230,9 +229,9 @@ function Perl_Player_Initialize()
 end
 
 
--------------------------
--- The Update Function --
--------------------------
+----------------------
+-- Update Functions --
+----------------------
 function Perl_Player_Update_Once()
 	-- Variables
 	local PlayerClass = UnitClass("player");
@@ -543,8 +542,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.10",
-			releaseDate = "October 22, 2005",
+			version = "v0.11",
+			releaseDate = "October 23, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

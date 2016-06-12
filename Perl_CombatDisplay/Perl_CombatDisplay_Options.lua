@@ -1,13 +1,11 @@
-
 -----------------------------------
 -- Default options setup for now --
 -----------------------------------
-
 Perl_CombatDisplay_Options_VariableList = {
-	["state"] = 1,
-	["manapersist"] = 0,
-	["healthpersist"] = 0,
-	["locked"] = 0,
+					["state"] = 3,
+					["manapersist"] = 0,
+					["healthpersist"] = 0,
+					["locked"] = 0,
 }
 
 Perl_CombatDisplay_Options_Text = {
@@ -65,55 +63,51 @@ Perl_CombatDisplay_Options_RadioGroups = {
 	[1] = {1, 2, 3},
 }
 
-
 Perl_CombatDisplay_Options_Buttons = {}
-
 -- End Options -- 
+
 
 ---------------------
 -- OnFoo functions --
 ---------------------
-
-function Perl_CombatDisplay_Options_OnLoad ()
+function Perl_CombatDisplay_Options_OnLoad()
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 end
 
-function Perl_CombatDisplay_Options_OnEvent (event)
+function Perl_CombatDisplay_Options_OnEvent(event)
 	if (event == "PLAYER_ENTERING_WORLD") then
 		Perl_CombatDisplay_Options_LoadVars();
 	end
 end
 
+
 -----------------------
 -- Set up Checkboxes --
 -----------------------
-
-function Perl_CombatDisplay_Options_LoadVars ()
-
+function Perl_CombatDisplay_Options_LoadVars()
 	-- Set up checkboxes
 	for i in Perl_CombatDisplay_Options_Text do
 		checkbox = getglobal("Perl_CombatDisplay_Options_CheckOption"..i);
 		checkboxtext = getglobal(checkbox:GetName().."Text");
-		
+
 		checkbox.id = i;
 		checkbox.variable = Perl_CombatDisplay_Options_Text[i]["NAME"];
 		checkbox.group = Perl_CombatDisplay_Options_Text[i]["GROUP"];
 		checkbox.radiogroup = Perl_CombatDisplay_Options_Text[i]["RADIOGROUP"];
 		checkbox.value = Perl_CombatDisplay_Options_Text[i]["VALUE"];
 		checkboxtext:SetText(Perl_CombatDisplay_Options_Text[i]["TEXT"]);
-		
+
 		Perl_CombatDisplay_Options_Buttons[i] = checkbox;
 	end
 end
 
+
 --------------------------------------
 -- Make sure boxes are set properly --
 --------------------------------------
-
 function Perl_CombatDisplay_Options_OnShow()
-		
 		Perl_CombatDisplay_Options_VariableList = Perl_CombatDisplay_GetVars();
-		
+
 		if (Perl_CombatDisplay_Options_VariableList[this.variable] == this.value) then
 			this:SetChecked(1);
 		else
@@ -121,11 +115,11 @@ function Perl_CombatDisplay_Options_OnShow()
 		end
 end
 
+
 ---------------------------
 -- When a box is checked --
 ---------------------------
-
-function Perl_CombatDisplay_Options_BoxChecked ()
+function Perl_CombatDisplay_Options_BoxChecked()
 	if (Perl_CombatDisplay_Options_VariableList[this.variable] == this.value) then
 		this:SetChecked(0);
 		Perl_CombatDisplay_Options_VariableList[this.variable] = 0;
@@ -138,20 +132,19 @@ function Perl_CombatDisplay_Options_BoxChecked ()
 		this:SetChecked(1);
 		Perl_CombatDisplay_Options_VariableList[this.variable] = this.value;
 	end
-	
+
 	Perl_CombatDisplay_SetVars(Perl_CombatDisplay_Options_VariableList);
+	Perl_CombatDisplay_UpdateDisplay();
 end
 
 
 -------------------------
 -- The Toggle Function --
 -------------------------
-
-function Perl_CombatDisplay_Options_Toggle ()
+function Perl_CombatDisplay_Options_Toggle()
 	if (Perl_CombatDisplay_Options_Frame:IsVisible()) then
 		Perl_CombatDisplay_Options_Frame:Hide();
 	else
 		Perl_CombatDisplay_Options_Frame:Show();
 	end
-
 end
