@@ -2256,6 +2256,22 @@ function Perl_Focus_Buff_UpdateAll()
 				else
 					buffCount:Hide();								-- Hide the text if equal to 0
 				end
+				if (displaybufftimers == 1) then
+					cooldown = getglobal(button:GetName().."Cooldown");				-- Handle cooldowns
+					if (duration) then
+						if (duration > 0) then
+							startCooldownTime = GetTime() - (duration - timeLeft);
+							CooldownFrame_SetTimer(cooldown, startCooldownTime, duration, 1);
+							cooldown:Show();
+						else
+							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+							cooldown:Hide();
+						end
+					else
+						CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+						cooldown:Hide();
+					end
+				end
 				numDebuffs = numDebuffs + 1;								-- Increment the debuff counter
 				button:Show();										-- Show the final debuff icon
 			else

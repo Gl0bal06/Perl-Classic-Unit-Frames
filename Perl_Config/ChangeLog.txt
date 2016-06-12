@@ -1,3 +1,6 @@
+2.08c - June 21, 2007
+ - Focus: Debuffs now correctly display timers
+
 2.08b - June 18, 2007
  - CombatDisplay: Fixed an issue with the energy ticker
  - Config: Updated Korean translations (Thanks Sayclub)
