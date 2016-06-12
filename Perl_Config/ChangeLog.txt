@@ -1,3 +1,8 @@
+3.01 Beta 8 - August 30, 2008
+ - All: Added Perl_Config as a dependency in the TOC, this issue appears to be fixed now
+ - All: Updated right click menu code for target related frames
+ - All: Removed remaining references to the Perl_White graphic
+
 3.01 Beta 7 - August 25, 2008
  - CombatDisplay/Target: Combo points now correctly display
 

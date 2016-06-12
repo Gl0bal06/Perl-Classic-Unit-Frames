@@ -1155,7 +1155,7 @@ function Perl_Party_Target1DropDown_Initialize()
 			menu = "PLAYER";
 		end
 	else
-		menu = "RAID_TARGET_ICON";
+		menu = "TARGET";
 		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
@@ -1185,7 +1185,7 @@ function Perl_Party_Target2DropDown_Initialize()
 			menu = "PLAYER";
 		end
 	else
-		menu = "RAID_TARGET_ICON";
+		menu = "TARGET";
 		name = RAID_TARGET_ICON;
 	end
 
@@ -1216,7 +1216,7 @@ function Perl_Party_Target3DropDown_Initialize()
 			menu = "PLAYER";
 		end
 	else
-		menu = "RAID_TARGET_ICON";
+		menu = "TARGET";
 		name = RAID_TARGET_ICON;
 	end
 
@@ -1247,7 +1247,7 @@ function Perl_Party_Target4DropDown_Initialize()
 			menu = "PLAYER";
 		end
 	else
-		menu = "RAID_TARGET_ICON";
+		menu = "TARGET";
 		name = RAID_TARGET_ICON;
 	end
 
@@ -1278,7 +1278,7 @@ function Perl_Party_Target5DropDown_Initialize()
 			menu = "PLAYER";
 		end
 	else
-		menu = "RAID_TARGET_ICON";
+		menu = "TARGET";
 		name = RAID_TARGET_ICON;
 	end
 

@@ -1837,7 +1837,7 @@ function Perl_Player_Pet_Target_DropDown_Initialize()
 			menu = "PLAYER";
 		end
 	else
-		menu = "RAID_TARGET_ICON";
+		menu = "TARGET";
 		name = RAID_TARGET_ICON;
 	end
 	if (menu) then

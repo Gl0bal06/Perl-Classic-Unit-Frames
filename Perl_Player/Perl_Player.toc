@@ -1,7 +1,7 @@
 ## Interface: 30000
 ## Title: Perl Player Frame
 ## Notes: Displays a movable player frame to replace the default.
-## Dependencies: 
+## Dependencies: Perl_Config
 ## OptionalDeps: Clique, DruidBar, GFW_FactionFriend, myAddOns
 ## SavedVariables: Perl_Player_Config
 Perl_Player.xml

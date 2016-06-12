@@ -645,7 +645,7 @@
 						</Scripts>
 					</Button>
 				</Frames>
-				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_White" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>

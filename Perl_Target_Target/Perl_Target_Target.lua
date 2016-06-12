@@ -1874,7 +1874,7 @@ function Perl_TargetTargetDropDown_Initialize()
 			menu = "PLAYER";
 		end
 	else
-		menu = "RAID_TARGET_ICON";
+		menu = "TARGET";
 		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
@@ -1931,7 +1931,7 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 			menu = "PLAYER";
 		end
 	else
-		menu = "RAID_TARGET_ICON";
+		menu = "TARGET";
 		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
