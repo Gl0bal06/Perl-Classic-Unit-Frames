@@ -588,6 +588,7 @@ function Perl_Config_Global_Save_Settings()
 			["YPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Target_Frame:GetScale()) + 0.5),
 			["ShowDruidBar"] = vartable["showdruidbar"],
 			["ShowPetBars"] = vartable["showpetbars"],
+			["RightClickMenu"] = vartable["rightclickmenu"],
 		};
 	end
 
@@ -701,6 +702,7 @@ function Perl_Config_Global_Save_Settings()
 			["DebuffSize"] = vartable["debuffsize"],
 			["ShowPortrait"] = vartable["showportrait"],
 			["ThreeDPortrait"] = vartable["threedportrait"],
+			["PortraitCombatText"] = vartable["portraitcombattext"],
 		};
 	end
 
@@ -1097,8 +1099,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.58",
-			releaseDate = "April 15, 2006",
+			version = "Version 0.59",
+			releaseDate = "April 22, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -85,7 +85,8 @@
 				Perl_Target_OnShow();
 			</OnShow>
 			<OnUpdate>
-				Perl_Target_Portrait_Combat_Text();
+				<!-- Perl_Target_Portrait_Combat_Text(); -->
+				CombatFeedback_OnUpdate(arg1);
 			</OnUpdate>
 		</Scripts>
 

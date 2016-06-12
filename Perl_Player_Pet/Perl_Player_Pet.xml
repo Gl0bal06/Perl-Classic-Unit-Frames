@@ -80,6 +80,9 @@
 			<OnEvent>
 				Perl_Player_Pet_OnEvent(event);
 			</OnEvent>
+			<OnUpdate>
+				CombatFeedback_OnUpdate(arg1);
+			</OnUpdate>
 		</Scripts>
 
 		<Frames>
@@ -253,6 +256,38 @@
 								</Anchor>
 							</Anchors>
 						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+
+
+			<!-- Portrait Text Frame -->
+			<Frame name="Perl_Player_Pet_PortraitTextFrame">
+				<Size>
+					<AbsDimension x="60" y="61"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Player_Pet_PortraitFrame">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Fontstring name="Perl_Player_Pet_HitIndicator" inherits="NumberFontNormalHuge" hidden="true" text="Error!">
+							<FontHeight>
+								<AbsValue val="30"/>
+							</FontHeight>
+							<Color r="1.0" g="1.0" b="1.0"/>
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="CENTER" relativeTo="Perl_Player_Pet_PortraitFrame">
+									<Offset>
+										<AbsDimension x="0" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Fontstring>
 					</Layer>
 				</Layers>
 			</Frame>

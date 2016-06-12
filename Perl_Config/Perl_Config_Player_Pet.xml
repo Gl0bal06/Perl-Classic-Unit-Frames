@@ -194,12 +194,33 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton3" inherits="UICheckButtonTemplate" id="3">
+			<CheckButton name="$parent_CheckButton7" inherits="UICheckButtonTemplate" id="7">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton6">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Combat Text");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Pet_Portrait_Combat_Text_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton3" inherits="UICheckButtonTemplate" id="3">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton7">
 						<Offset>
 							<AbsDimension x="-20" y="-20"/>
 						</Offset>

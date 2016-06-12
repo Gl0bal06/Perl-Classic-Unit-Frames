@@ -71,6 +71,7 @@ function Perl_Player_OnLoad()
 	Perl_Player_RaidGroupNumberFrame_CastClickOverlay:SetFrameLevel(Perl_Player_RaidGroupNumberFrame:GetFrameLevel() + 1);
 	Perl_Player_LevelFrame_CastClickOverlay:SetFrameLevel(Perl_Player_LevelFrame:GetFrameLevel() + 1);
 	Perl_Player_PortraitFrame_CastClickOverlay:SetFrameLevel(Perl_Player_PortraitFrame:GetFrameLevel() + 2);
+	Perl_Player_PortraitTextFrame:SetFrameLevel(Perl_Player_PortraitFrame:GetFrameLevel() + 1);
 	Perl_Player_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Player_StatsFrame:GetFrameLevel() + 1);
 	Perl_Player_HealthBar_CastClickOverlay:SetFrameLevel(Perl_Player_StatsFrame:GetFrameLevel() + 2);
 	Perl_Player_ManaBar_CastClickOverlay:SetFrameLevel(Perl_Player_StatsFrame:GetFrameLevel() + 2);
@@ -233,6 +234,7 @@ function Perl_Player_Update_Once()
 	Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
 	Perl_Player_XPBar_Display(xpbarstate);			-- Set the xp bar mode and update the experience if needed
 	Perl_Player_Update_Raid_Group_Number();			-- Are we in a raid at login?
+	Perl_Player_Portrait_Combat_Text();			-- Are we showing combat text?
 	Perl_Player_Update_Leader();				-- Are we the party leader?
 	Perl_Player_Update_Loot_Method();			-- Are we the master looter?
 	Perl_Player_Update_Combat_Status();			-- Are we already fighting or resting?
@@ -792,30 +794,29 @@ end
 
 function Perl_Player_Update_Portrait()
 	if (showportrait == 1) then
-		Perl_Player_PortraitTextFrame:SetFrameLevel(Perl_Player_PortraitFrame:GetFrameLevel() + 1);	-- Put the combat text above it so the portrait graphic doesn't go on top of it
-		Perl_Player_PortraitFrame:Show();								-- Show the main portrait frame
+		Perl_Player_PortraitFrame:Show();					-- Show the main portrait frame
 
 		if (threedportrait == 0) then
-			SetPortraitTexture(Perl_Player_Portrait, "player");					-- Load the correct 2d graphic
-			Perl_Player_PortraitFrame_PlayerModel:Hide();						-- Hide the 3d graphic
-			Perl_Player_Portrait:Show();								-- Show the 2d graphic
+			SetPortraitTexture(Perl_Player_Portrait, "player");		-- Load the correct 2d graphic
+			Perl_Player_PortraitFrame_PlayerModel:Hide();			-- Hide the 3d graphic
+			Perl_Player_Portrait:Show();					-- Show the 2d graphic
 		else
-			Perl_Player_PortraitFrame_PlayerModel:SetUnit("player");				-- Load the correct 3d graphic
-			Perl_Player_Portrait:Hide();								-- Hide the 2d graphic
-			Perl_Player_PortraitFrame_PlayerModel:Show();						-- Show the 3d graphic
+			Perl_Player_PortraitFrame_PlayerModel:SetUnit("player");	-- Load the correct 3d graphic
+			Perl_Player_Portrait:Hide();					-- Hide the 2d graphic
+			Perl_Player_PortraitFrame_PlayerModel:Show();			-- Show the 3d graphic
 			Perl_Player_PortraitFrame_PlayerModel:SetCamera(0);
 		end
-
-		Perl_Player_PortraitTextFrame:Show();								-- Show the combat text frame
 	else
-		Perl_Player_PortraitFrame:Hide();								-- Hide the frame and 2d/3d portion
-		Perl_Player_PortraitTextFrame:Hide();								-- Hide the combat text
+		Perl_Player_PortraitFrame:Hide();					-- Hide the frame and 2d/3d portion
+		Perl_Player_PortraitTextFrame:Hide();					-- Hide the combat text
 	end
 end
 
 function Perl_Player_Portrait_Combat_Text()
 	if (portraitcombattext == 1) then
-		CombatFeedback_OnUpdate(arg1);
+		Perl_Player_PortraitTextFrame:Show();
+	else
+		Perl_Player_PortraitTextFrame:Hide();
 	end
 end
 
@@ -970,6 +971,7 @@ end
 function Perl_Player_Set_Portrait_Combat_Text(newvalue)
 	portraitcombattext = newvalue;
 	Perl_Player_UpdateVars();
+	Perl_Player_Portrait_Combat_Text();
 end
 
 function Perl_Player_Set_Compact_Percent(newvalue)
@@ -1190,6 +1192,7 @@ function Perl_Player_UpdateVars(vartable)
 		Perl_Player_Update_Health();
 		Perl_Player_Update_Mana();
 		Perl_Player_Update_Portrait();
+		Perl_Player_Portrait_Combat_Text();
 		Perl_Player_Set_Scale();
 		Perl_Player_Set_Transparency();
 	end
@@ -1375,8 +1378,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.58",
-			releaseDate = "April 15, 2006",
+			version = "Version 0.59",
+			releaseDate = "April 22, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

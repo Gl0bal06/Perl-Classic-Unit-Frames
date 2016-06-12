@@ -1,3 +1,10 @@
+0.59 - April 22, 2006
+ - CombatDisplay: Added the ability to toggle right click menu functionality
+ - Party: Removed some safety code regarding pet health
+ - Party/Pet/Target: Added buff stacking support
+ - Pet: Can now toggle combat text display on the portrait
+ - Player/Target: OnUpdate for Combat Text no longer calls a function
+
 0.58 - April 15, 2006
  - CombatDisplay: Will now correctly color focus for targeted pets
  - CombatDisplay: Removed some checks for pet power text formatting

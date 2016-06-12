@@ -459,45 +459,45 @@ function Perl_Party_Update_Pet()
 			getglobal(this:GetName().."_StatsFrame"):SetHeight(54);
 			getglobal(this:GetName().."_StatsFrame_CastClickOverlay"):SetHeight(54);
 
-			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetMinMaxValues(0, 1);		-- Set health to zero in order to keep the bars sane
-			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetValue(0);			-- Info should be updated automatically anyway
-			if (PCUF_COLORHEALTH == 1) then
-				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(1, 0, 0);
-			else
-				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(0, 0.8, 0);
-			end
-			if (compactmode == 0) then
-				if (healermode == 1) then
-					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-0");
-					if (tonumber(mouseoverpethealthflag) == tonumber(id)) then
-						getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0/0");
-					else
-						getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
-					end
-				else
-					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("0/0");
-					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0%");
-				end
-				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText();
-			else
-				if (healermode == 1) then
-					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-0");
-					if (tonumber(mouseoverpethealthflag) == tonumber(id)) then
-						getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0/0");
-					else
-						getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
-					end
-				else
-					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText();
-					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0/0");
-				end
-
-				if (compactpercent == 1) then
-					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText("0%");
-				else
-					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText();
-				end
-			end											-- End waste of code to keep it sane
+--			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetMinMaxValues(0, 1);		-- Set health to zero in order to keep the bars sane
+--			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetValue(0);			-- Info should be updated automatically anyway
+--			if (PCUF_COLORHEALTH == 1) then
+--				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(1, 0, 0);
+--			else
+--				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(0, 0.8, 0);
+--			end
+--			if (compactmode == 0) then
+--				if (healermode == 1) then
+--					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-0");
+--					if (tonumber(mouseoverpethealthflag) == tonumber(id)) then
+--						getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0/0");
+--					else
+--						getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
+--					end
+--				else
+--					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("0/0");
+--					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0%");
+--				end
+--				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText();
+--			else
+--				if (healermode == 1) then
+--					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-0");
+--					if (tonumber(mouseoverpethealthflag) == tonumber(id)) then
+--						getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0/0");
+--					else
+--						getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
+--					end
+--				else
+--					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText();
+--					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0/0");
+--				end
+--
+--				if (compactpercent == 1) then
+--					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText("0%");
+--				else
+--					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText();
+--				end
+--			end											-- End waste of code to keep it sane
 
 			if (verticalalign == 1) then
 				if (partyspacing < 0) then			-- Frames are normal
@@ -1875,7 +1875,9 @@ function Perl_Party_Buff_UpdateAll(partymember)
 	end
 	
 	if (UnitName(partyid)) then
+		local buffCount, buffTexture, buffApplications;
 		for buffnum=1,16 do
+			buffTexture, buffApplications = UnitBuff(partyid, buffnum, displaycastablebuffs);
 			local button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..buffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
@@ -1884,6 +1886,13 @@ function Perl_Party_Buff_UpdateAll(partymember)
 				icon:SetTexture(UnitBuff(partyid, buffnum, displaycastablebuffs));
 				debuff:Hide();
 				button:Show();
+				buffCount = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..(buffnum).."Count");
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);
+					buffCount:Show();
+				else
+					buffCount:Hide();
+				end
 			else
 				button:Hide();
 			end
@@ -2133,8 +2142,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.58",
-			releaseDate = "April 15, 2006",
+			version = "Version 0.59",
+			releaseDate = "April 22, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

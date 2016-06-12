@@ -14,6 +14,7 @@ local showtarget = 0;		-- target frame is disabled by default
 local mobhealthsupport = 1;	-- mobhealth is enabled by default
 local showdruidbar = 1;		-- Druid Bar support is enabled by default
 local showpetbars = 0;		-- Pet info is hidden by default
+local rightclickmenu = 0;	-- The ability to open a menu from CombatDisplay is disabled by default
 
 -- Default Local Variables
 local IsAggroed = 0;
@@ -822,6 +823,11 @@ function Perl_CombatDisplay_Set_PetBars(newvalue)
 	Perl_CombatDisplay_CheckForPets();
 end
 
+function Perl_CombatDisplay_Set_Right_Click(newvalue)
+	rightclickmenu = newvalue;
+	Perl_CombatDisplay_UpdateVars();
+end
+
 function Perl_CombatDisplay_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -857,6 +863,7 @@ function Perl_CombatDisplay_GetVars()
 	mobhealthsupport = Perl_CombatDisplay_Config[UnitName("player")]["MobHealthSupport"];
 	showdruidbar = Perl_CombatDisplay_Config[UnitName("player")]["ShowDruidBar"];
 	showpetbars = Perl_CombatDisplay_Config[UnitName("player")]["ShowPetBars"];
+	rightclickmenu = Perl_CombatDisplay_Config[UnitName("player")]["RightClickMenu"];
 
 	if (state == nil) then
 		state = 3;
@@ -888,6 +895,9 @@ function Perl_CombatDisplay_GetVars()
 	if (showpetbars == nil) then
 		showpetbars = 0;
 	end
+	if (rightclickmenu == nil) then
+		rightclickmenu = 0;
+	end
 
 	local vars = {
 		["state"] = state,
@@ -900,6 +910,7 @@ function Perl_CombatDisplay_GetVars()
 		["mobhealthsupport"] = mobhealthsupport,
 		["showdruidbar"] = showdruidbar,
 		["showpetbars"] = showpetbars,
+		["rightclickmenu"] = rightclickmenu,
 	}
 	return vars;
 end
@@ -958,6 +969,11 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			else
 				showpetbars = nil;
 			end
+			if (vartable["Global Settings"]["RightClickMenu"] ~= nil) then
+				rightclickmenu = vartable["Global Settings"]["RightClickMenu"];
+			else
+				rightclickmenu = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -991,6 +1007,9 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		if (showpetbars == nil) then
 			showpetbars = 0;
 		end
+		if (rightclickmenu == nil) then
+			rightclickmenu = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_CombatDisplay_Set_Target(showtarget)
@@ -1011,6 +1030,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		["MobHealthSupport"] = mobhealthsupport,
 		["ShowDruidBar"] = showdruidbar,
 		["ShowPetBars"] = showpetbars,
+		["RightClickMenu"] = rightclickmenu,
 	};
 end
 
@@ -1060,8 +1080,10 @@ function Perl_CombatDisplay_MouseUp(button)
 		if ((CastPartyConfig or Genesis_MouseHeal) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
 			-- Do nothing
 		else
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-				ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
+			if (rightclickmenu == 1) then
+				if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+					ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
+				end
 			end
 		end
 	end
@@ -1129,8 +1151,10 @@ function Perl_CombatDisplay_Target_MouseUp(button)
 		if ((CastPartyConfig or Genesis_data) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
 			-- Do nothing
 		else
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
-				ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
+			if (rightclickmenu == 1) then
+				if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
+					ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
+				end
 			end
 		end
 	end
@@ -1147,8 +1171,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.58",
-			releaseDate = "April 15, 2006",
+			version = "Version 0.59",
+			releaseDate = "April 22, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

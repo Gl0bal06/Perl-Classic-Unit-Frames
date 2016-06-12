@@ -16,6 +16,7 @@ local buffsize = 12;			-- default buff size is 12
 local debuffsize = 12;			-- default debuff size is 12
 local showportrait = 0;			-- portrait is hidden by default
 local threedportrait = 0;		-- 3d portraits are off by default
+local portraitcombattext = 1;		-- Combat text is enabled by default on the portrait frame
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -25,11 +26,15 @@ local Initialized = nil;		-- waiting to be initialized
 -- Loading Function --
 ----------------------
 function Perl_Player_Pet_OnLoad()
+	-- Combat Text
+	CombatFeedback_Initialize(Perl_Player_Pet_HitIndicator, 30);
+
 	-- Events
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("PLAYER_PET_CHANGED");
 	this:RegisterEvent("UNIT_AURA");
+	this:RegisterEvent("UNIT_COMBAT");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_FOCUS");
 	this:RegisterEvent("UNIT_HAPPINESS");
@@ -44,6 +49,7 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("UNIT_PET");
 	this:RegisterEvent("UNIT_PET_EXPERIENCE");
 	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+	this:RegisterEvent("UNIT_SPELLMISS");
 	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Button Click Overlays (in order of occurrence in XML)
@@ -51,6 +57,7 @@ function Perl_Player_Pet_OnLoad()
 	Perl_Player_Pet_LevelFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_LevelFrame:GetFrameLevel() + 2);
 	Perl_Player_Pet_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_StatsFrame:GetFrameLevel() + 2);
 	Perl_Player_Pet_PortraitFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_PortraitFrame:GetFrameLevel() + 2);
+	Perl_Player_Pet_PortraitTextFrame:SetFrameLevel(Perl_Player_Pet_PortraitFrame:GetFrameLevel() + 1);
 
 	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Player_Pet loaded successfully.");
@@ -74,6 +81,16 @@ function Perl_Player_Pet_OnEvent(event)
 		return;
 	elseif (event == "UNIT_HAPPINESS") then
 		Perl_Player_PetFrame_SetHappiness();
+		return;
+	elseif (event == "UNIT_COMBAT") then
+		if (arg1 == "pet") then
+			CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5);
+		end
+		return;
+	elseif (event == "UNIT_SPELLMISS") then
+		if (arg1 == "pet") then
+			CombatFeedback_OnSpellMissEvent(arg2);
+		end
 		return;
 	elseif (event == "UNIT_NAME_UPDATE") then
 		if (arg1 == "pet") then
@@ -191,6 +208,7 @@ function Perl_Player_Pet_Update_Once()
 		Perl_Player_Pet_Update_Mana_Bar();				-- Set the type of mana
 		Perl_Player_PetFrame_SetHappiness();				-- Set Happiness
 		Perl_Player_Pet_Buff_UpdateAll();				-- Set buff frame
+		Perl_Player_Pet_Portrait_Combat_Text();				-- Set the combat text frame
 		Perl_Player_Pet_Frame:Show();					-- Display the pet frame
 		Perl_Player_Pet_ShowXP();					-- Are we showing the xp bar?
 	else
@@ -332,28 +350,35 @@ end
 
 function Perl_Player_Pet_Update_Portrait()
 	if (showportrait == 1) then
-		local level = Perl_Player_Pet_PortraitFrame:GetFrameLevel();					-- Get the frame level of the main portrait frame
-		Perl_Player_Pet_PortraitFrame:Show();								-- Show the main portrait frame
+		Perl_Player_Pet_PortraitFrame:Show();							-- Show the main portrait frame
 
 		if (threedportrait == 0) then
-			SetPortraitTexture(Perl_Player_Pet_Portrait, "pet");					-- Load the correct 2d graphic
+			SetPortraitTexture(Perl_Player_Pet_Portrait, "pet");				-- Load the correct 2d graphic
 			Perl_Player_Pet_PortraitFrame_PetModel:Hide();					-- Hide the 3d graphic
-			Perl_Player_Pet_Portrait:Show();							-- Show the 2d graphic
+			Perl_Player_Pet_Portrait:Show();						-- Show the 2d graphic
 		else
 			if UnitIsVisible("pet") then
 				Perl_Player_Pet_PortraitFrame_PetModel:SetUnit("pet");			-- Load the correct 3d graphic
-				Perl_Player_Pet_Portrait:Hide();						-- Hide the 2d graphic
+				Perl_Player_Pet_Portrait:Hide();					-- Hide the 2d graphic
 				Perl_Player_Pet_PortraitFrame_PetModel:Show();				-- Show the 3d graphic
 				Perl_Player_Pet_PortraitFrame_PetModel:SetCamera(0);
 			else
-				SetPortraitTexture(Perl_Player_Pet_Portrait, "pet");				-- Load the correct 2d graphic
+				SetPortraitTexture(Perl_Player_Pet_Portrait, "pet");			-- Load the correct 2d graphic
 				Perl_Player_Pet_PortraitFrame_PetModel:Hide();				-- Hide the 3d graphic
-				Perl_Player_Pet_Portrait:Show();						-- Show the 2d graphic
+				Perl_Player_Pet_Portrait:Show();					-- Show the 2d graphic
 			end
 		end
 
 	else
-		Perl_Player_Pet_PortraitFrame:Hide();								-- Hide the frame and 2d/3d portion
+		Perl_Player_Pet_PortraitFrame:Hide();							-- Hide the frame and 2d/3d portion
+	end
+end
+
+function Perl_Player_Pet_Portrait_Combat_Text()
+	if (portraitcombattext == 1) then
+		Perl_Player_Pet_PortraitTextFrame:Show();
+	else
+		Perl_Player_Pet_PortraitTextFrame:Hide();
 	end
 end
 
@@ -464,6 +489,12 @@ function Perl_Player_Pet_Set_3D_Portrait(newvalue)
 	Perl_Player_Pet_Update_Portrait();
 end
 
+function Perl_Player_Pet_Set_Portrait_Combat_Text(newvalue)
+	portraitcombattext = newvalue;
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Portrait_Combat_Text();
+end
+
 function Perl_Player_Pet_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -499,6 +530,7 @@ function Perl_Player_Pet_GetVars()
 	debuffsize = Perl_Player_Pet_Config[UnitName("player")]["DebuffSize"];
 	showportrait = Perl_Player_Pet_Config[UnitName("player")]["ShowPortrait"];
 	threedportrait = Perl_Player_Pet_Config[UnitName("player")]["ThreeDPortrait"];
+	portraitcombattext = Perl_Player_Pet_Config[UnitName("player")]["PortraitCombatText"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -536,6 +568,9 @@ function Perl_Player_Pet_GetVars()
 	if (threedportrait == nil) then
 		threedportrait = 0;
 	end
+	if (portraitcombattext == nil) then
+		portraitcombattext = 1;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -550,6 +585,7 @@ function Perl_Player_Pet_GetVars()
 		["debuffsize"] = debuffsize,
 		["showportrait"] = showportrait,
 		["threedportrait"] = threedportrait,
+		["portraitcombattext"] = portraitcombattext,
 	}
 	return vars;
 end
@@ -618,6 +654,11 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			else
 				threedportrait = nil;
 			end
+			if (vartable["Global Settings"]["PortraitCombatText"] ~= nil) then
+				portraitcombattext = vartable["Global Settings"]["PortraitCombatText"];
+			else
+				portraitcombattext = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -657,12 +698,16 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		if (threedportrait == nil) then
 			threedportrait = 0;
 		end
+		if (portraitcombattext == nil) then
+			portraitcombattext = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
 		Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 		Perl_Player_Pet_Update_Health();	-- Update the health in case progrssive health color was set
 		Perl_Player_Pet_Update_Portrait();
+		Perl_Player_Pet_Portrait_Combat_Text();
 		Perl_Player_Pet_Set_Scale();		-- Set the scale
 		Perl_Player_Pet_Set_Transparency();	-- Set the transparency
 	end
@@ -680,6 +725,7 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		["DebuffSize"] = debuffsize,
 		["ShowPortrait"] = showportrait,
 		["ThreeDPortrait"] = threedportrait,
+		["PortraitCombatText"] = portraitcombattext,
 	};
 end
 
@@ -690,16 +736,25 @@ end
 function Perl_Player_Pet_Buff_UpdateAll()
 	if (UnitName("pet")) then
 		local buffmax = 0;
+		local buffCount, buffTexture, buffApplications;
 		for buffnum=1,numpetbuffsshown do
+			buffTexture, buffApplications = UnitBuff("pet", buffnum);
 			local button = getglobal("Perl_Player_Pet_Buff"..buffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
 
 			if (UnitBuff("pet", buffnum)) then
-				icon:SetTexture(UnitBuff("pet", buffnum));
+				icon:SetTexture(buffTexture);
 				button.isdebuff = 0;
 				debuff:Hide();
 				button:Show();
+				buffCount = getglobal("Perl_Player_Pet_Buff"..buffnum.."Count");
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);
+					buffCount:Show();
+				else
+					buffCount:Hide();
+				end
 				buffmax = buffnum;
 			else
 				button:Hide();
@@ -715,7 +770,7 @@ function Perl_Player_Pet_Buff_UpdateAll()
 			local debuff = getglobal(button:GetName().."DebuffBorder");
 			
 			if (UnitDebuff("pet", debuffnum)) then
-				icon:SetTexture(UnitDebuff("pet", debuffnum));
+				icon:SetTexture(debuffTexture);
 				button.isdebuff = 1;
 				debuff:Show();
 				button:Show();
@@ -891,8 +946,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "Version 0.58",
-			releaseDate = "April 15, 2006",
+			version = "Version 0.59",
+			releaseDate = "April 22, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -27,7 +27,7 @@
 				Perl_Player_OnEvent(event);
 			</OnEvent>
 			<OnUpdate>
-				Perl_Player_Portrait_Combat_Text();
+				CombatFeedback_OnUpdate(arg1);
 			</OnUpdate>
 		</Scripts>
 

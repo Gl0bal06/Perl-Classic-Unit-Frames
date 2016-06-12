@@ -246,6 +246,7 @@ function Perl_Target_Update_Once()
 		Perl_Target_Update_Mana_Bar();		-- What type of mana bar is it?
 		Perl_Target_Update_Mana();		-- Set the target's mana
 		Perl_Target_Update_PvP_Status_Icon();	-- Set pvp status icon
+		Perl_Target_Portrait_Combat_Text();	-- Are we showing combat text?
 		Perl_Target_Frame_Set_PvPRank();	-- Set the pvp rank icon
 		Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
 		Perl_Target_Set_Character_Class_Icon();	-- Draw the class icon?
@@ -846,8 +847,6 @@ function Perl_Target_Update_Portrait()
 				Perl_Target_Portrait:Show();							-- Show the 2d graphic
 			end
 		end
-
-		Perl_Target_PortraitTextFrame:Show();								-- Show the combat text frame
 	else
 		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -4, 0);		-- Reposition the combo point frame
 		Perl_Target_PortraitFrame:Hide();								-- Hide the frame and 2d/3d portion
@@ -857,7 +856,9 @@ end
 
 function Perl_Target_Portrait_Combat_Text()
 	if (portraitcombattext == 1) then
-		CombatFeedback_OnUpdate(arg1);
+		Perl_Target_PortraitTextFrame:Show();
+	else
+		Perl_Target_PortraitTextFrame:Hide();
 	end
 end
 
@@ -1090,6 +1091,7 @@ end
 function Perl_Target_Set_Portrait_Combat_Text(newvalue)
 	portraitcombattext = newvalue;
 	Perl_Target_UpdateVars();
+	Perl_Target_Portrait_Combat_Text();
 end
 
 function Perl_Target_Set_Combo_Name_Frame(newvalue)
@@ -1505,29 +1507,33 @@ end
 -- Buff Functions --
 --------------------
 function Perl_Target_Buff_UpdateAll()
-	local friendly;
 	if (UnitName("target")) then
+		local friendly;
+
 		if (nameframecombopoints == 1 or comboframedebuffs == 1) then
 			Perl_Target_Buff_UpdateCPMeter();
 		end
 
-		if (UnitIsFriend("player", "target")) then
-			friendly = 1;
-		else
-			friendly = 0;
-		end
-
 		local buffmax = 0;
+		local buffCount, buffTexture, buffApplications;
 		for buffnum=1,numbuffsshown do
+			buffTexture, buffApplications = UnitBuff("target", buffnum);
 			local button = getglobal("Perl_Target_Buff"..buffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
 
 			if (UnitBuff("target", buffnum)) then
-				icon:SetTexture(UnitBuff("target", buffnum));
+				icon:SetTexture(buffTexture);
 				button.isdebuff = 0;
 				debuff:Hide();
 				button:Show();
+				buffCount = getglobal("Perl_Target_Buff"..buffnum.."Count");
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);
+					buffCount:Show();
+				else
+					buffCount:Hide();
+				end
 				buffmax = buffnum;
 			else
 				button:Hide();
@@ -1558,6 +1564,12 @@ function Perl_Target_Buff_UpdateAll()
 			else
 				button:Hide();
 			end
+		end
+
+		if (UnitIsFriend("player", "target")) then
+			friendly = 1;
+		else
+			friendly = 0;
 		end
 
 		if (buffmax == 0) then
@@ -1791,9 +1803,9 @@ function Perl_Target_MouseUp(button)
 end
 
 function Perl_Target_OnShow()
-	if ( UnitIsEnemy("target", "player") ) then
+	if (UnitIsEnemy("target", "player")) then
 		PlaySound("igCreatureAggroSelect");
-	elseif ( UnitIsFriend("player", "target") ) then
+	elseif (UnitIsFriend("player", "target")) then
 		PlaySound("igCharacterNPCSelect");
 	else
 		PlaySound("igCreatureNeutralSelect");
@@ -1821,8 +1833,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.58",
-			releaseDate = "April 15, 2006",
+			version = "Version 0.59",
+			releaseDate = "April 22, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
