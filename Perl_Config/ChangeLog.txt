@@ -1,3 +1,10 @@
+2.09 Beta 1 - August 7, 2007
+ - All: Updated TOC Interface version to 20200
+ - All: Updated tooltip code for 2.2
+ - Target: Fixed an issue with class specific debuff counting
+ - Target: Updated code to retrieve the number of applications a specific debuff has
+ - ToT: Removed a redundant if check (Thanks SisterNicky)
+
 2.08d - July 2, 2007
  - Focus: Fixed a variable issue in the buff reset code
  - Focus/Target: Buffs and debuffs shown are now correctly set upon login

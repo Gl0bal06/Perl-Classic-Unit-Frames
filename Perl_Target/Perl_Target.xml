@@ -246,7 +246,7 @@
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Tip();
-								UnitFrame_OnEnter();
+								UnitFrame_OnEnter(self);
 							</OnEnter>
 							<OnLeave>
 								UnitFrame_OnLeave();
@@ -1694,7 +1694,4 @@
 			</OnUpdate>
 		</Scripts>
 	</Frame>
-
-	<GameTooltip name="Perl_Target_Tooltip" hidden="true" parent="Perl_Target_Frame" inherits="GameTooltipTemplate"/>
-
 </Ui>

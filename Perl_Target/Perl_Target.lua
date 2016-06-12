@@ -253,6 +253,10 @@ function Perl_Target_Initialize()
 	Perl_Target_Buff_Debuff_Background();		-- Do the buffs and debuffs have their transparent background frame?
 	Perl_Target_Reset_Buffs();			-- Hide any unnecessary buff/debuff buttons
 
+	Perl_Target_CPText:SetText(0);
+	Perl_Target_NameFrame_CPMeter:SetMinMaxValues(0, 5);
+	Perl_Target_NameFrame_CPMeter:SetValue(0);
+
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(TargetFrame);
 	Perl_clearBlizzardFrameDisable(ComboFrame);
@@ -941,43 +945,46 @@ function Perl_Target_Update_Mana_Bar()
 end
 
 function Perl_Target_Update_Combo_Points()
-	local combopoints = GetComboPoints();				-- How many Combo Points does the player have?
+	local playerclass = UnitClass("player");
+	if (playerclass == PERL_LOCALIZED_ROGUE or playerclass == PERL_LOCALIZED_DRUID) then	-- Noticed in 2.1.3 that this is being called for warriors also...huh?
+		local combopoints = GetComboPoints();				-- How many Combo Points does the player have?
 
-	if (showcp == 1) then
-		Perl_Target_CPText:SetText(combopoints);
-		Perl_Target_CPText:SetTextHeight(20);
-		if (combopoints == 5) then
-			Perl_Target_CPText:SetTextColor(1, 0, 0);	-- red text
-		elseif (combopoints == 4) then
-			Perl_Target_CPText:SetTextColor(1, 0.5, 0);	-- orange text
-		elseif (combopoints == 3) then
-			Perl_Target_CPText:SetTextColor(1, 1, 0);	-- yellow text
-		elseif (combopoints == 2) then
-			Perl_Target_CPText:SetTextColor(0.5, 1, 0);	-- yellow-green text
-		elseif (combopoints == 1) then
-			Perl_Target_CPText:SetTextColor(0, 1, 0);	-- green text
+		if (showcp == 1) then
+			Perl_Target_CPText:SetText(combopoints);
+			Perl_Target_CPText:SetTextHeight(20);
+			if (combopoints == 5) then
+				Perl_Target_CPText:SetTextColor(1, 0, 0);	-- red text
+			elseif (combopoints == 4) then
+				Perl_Target_CPText:SetTextColor(1, 0.5, 0);	-- orange text
+			elseif (combopoints == 3) then
+				Perl_Target_CPText:SetTextColor(1, 1, 0);	-- yellow text
+			elseif (combopoints == 2) then
+				Perl_Target_CPText:SetTextColor(0.5, 1, 0);	-- yellow-green text
+			elseif (combopoints == 1) then
+				Perl_Target_CPText:SetTextColor(0, 1, 0);	-- green text
+			end
 		end
-	end
 
-	if (nameframecombopoints == 1) then				-- this isn't nested since you can have both combo point styles on at the same time
-		Perl_Target_NameFrame_CPMeter:SetMinMaxValues(0, 5);
-		Perl_Target_NameFrame_CPMeter:SetValue(combopoints);
-		if (combopoints == 5) then
-			Perl_Target_NameFrame_CPMeter:Show();
-			
-		elseif (combopoints == 4) then
-			Perl_Target_NameFrame_CPMeter:Show();
-		elseif (combopoints == 3) then
-			Perl_Target_NameFrame_CPMeter:Show();
-		elseif (combopoints == 2) then
-			Perl_Target_NameFrame_CPMeter:Show();
-		elseif (combopoints == 1) then
-			Perl_Target_NameFrame_CPMeter:Show();
+		if (nameframecombopoints == 1) then				-- this isn't nested since you can have both combo point styles on at the same time
+			Perl_Target_NameFrame_CPMeter:SetMinMaxValues(0, 5);
+			Perl_Target_NameFrame_CPMeter:SetValue(combopoints);
+			if (combopoints == 5) then
+				Perl_Target_NameFrame_CPMeter:Show();
+				
+			elseif (combopoints == 4) then
+				Perl_Target_NameFrame_CPMeter:Show();
+			elseif (combopoints == 3) then
+				Perl_Target_NameFrame_CPMeter:Show();
+			elseif (combopoints == 2) then
+				Perl_Target_NameFrame_CPMeter:Show();
+			elseif (combopoints == 1) then
+				Perl_Target_NameFrame_CPMeter:Show();
+			else
+				Perl_Target_NameFrame_CPMeter:Hide();
+			end
 		else
 			Perl_Target_NameFrame_CPMeter:Hide();
 		end
-	else
-		Perl_Target_NameFrame_CPMeter:Hide();
 	end
 end
 
@@ -2724,22 +2731,17 @@ function Perl_Target_Buff_UpdateCPMeter()
 end
 
 function Perl_Target_Buff_GetApplications(debuffname)
-	local debuffApplications;
+	local debuffApplications, name;
 	local i = 1;
 
 	while UnitDebuff("target", i) do
-		Perl_Target_Tooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
-		Perl_Target_Tooltip:SetUnitDebuff("target", i);
-		if (Perl_Target_TooltipTextLeft1:GetText() == debuffname) then
-			_, _, _, debuffApplications = UnitDebuff("target", i);
-			Perl_Target_Tooltip:Hide();
+		name, _, _, debuffApplications, _, _, _ = UnitDebuff("target", i);
+		if (name == debuffname) then
 			return debuffApplications;
 		end
-
 		i = i + 1;
 	end
 
-	Perl_Target_Tooltip:Hide();
 	return 0;
 end
 

@@ -457,10 +457,8 @@ function Perl_Target_Target_OnUpdate()
 							if (UnitName("targettargettarget") == UnitName("player")) then			-- play the warning sound if needed
 								if (aggroWarningCount == 0 and aggroToToTWarningCount == 0) then
 									-- Its coming right for us!
-									if (aggroToToTWarningCount == 0) then
-										aggroToToTWarningCount = 1;
-										Perl_Target_Target_Play_Sound();
-									end
+									aggroToToTWarningCount = 1;
+									Perl_Target_Target_Play_Sound();
 								end
 							else
 								-- Whew it isnt fighting us
@@ -473,7 +471,6 @@ function Perl_Target_Target_OnUpdate()
 					end
 				end
 			end
-			
 
 			-- Begin: Set the name
 			targettargettargetname = UnitName("targettargettarget");

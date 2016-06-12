@@ -286,7 +286,7 @@
 							</OnLoad>
 							<OnEnter>
 								Perl_Focus_Tip();
-								UnitFrame_OnEnter();
+								UnitFrame_OnEnter(self);
 							</OnEnter>
 							<OnLeave>
 								UnitFrame_OnLeave();

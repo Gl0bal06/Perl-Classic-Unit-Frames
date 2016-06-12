@@ -183,7 +183,7 @@
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_Tip();
-								UnitFrame_OnEnter();
+								UnitFrame_OnEnter(self);
 							</OnEnter>
 							<OnLeave>
 								UnitFrame_OnLeave();
@@ -897,7 +897,7 @@
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_Target_Tip();
-								UnitFrame_OnEnter();
+								UnitFrame_OnEnter(self);
 							</OnEnter>
 							<OnLeave>
 								UnitFrame_OnLeave();

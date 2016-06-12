@@ -250,7 +250,7 @@
 							</OnDragStop>
 							<OnEnter>
 								Perl_Party_Tip();
-								UnitFrame_OnEnter();
+								UnitFrame_OnEnter(self);
 							</OnEnter>
 							<OnLeave>
 								UnitFrame_OnLeave();
