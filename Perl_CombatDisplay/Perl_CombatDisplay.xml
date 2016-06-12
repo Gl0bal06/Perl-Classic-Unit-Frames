@@ -134,9 +134,9 @@
 							<AbsDimension x="200" y="10"/>
 						</Size>
 						<Anchors>
-							<Anchor point="TOP" relativePoint="TOP">
+							<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="Perl_CombatDisplay_HealthBar">
 								<Offset>
-									<AbsDimension x="0" y="-22"/>
+									<AbsDimension x="0" y="-2"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -180,15 +180,65 @@
 						<BarColor r="0" g="1" b="0" a="0.25"/>
 					</StatusBar>
 
+					<!-- Druid Mana Bar -->
+					<StatusBar name="Perl_CombatDisplay_DruidBar" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="Perl_CombatDisplay_HealthBar">
+								<Offset>
+									<AbsDimension x="0" y="-2"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnMouseUp>
+								Perl_CombatDisplay_OnMouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+						<BarTexture name="Perl_CombatDisplay_DruidBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0" b="1"/>
+						<Layers>
+							<!-- Text -->
+							<Layer level="OVERLAY">
+								<Fontstring name="Perl_CombatDisplay_DruidBarText" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="TOP" relativePoint="TOP">
+											<Offset>
+												<AbsDimension x="0" y="1"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1"/>
+								</Fontstring>
+							</Layer>
+						</Layers>
+					</StatusBar>
+					<StatusBar name="Perl_CombatDisplay_DruidBarBG" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_CombatDisplay_DruidBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarColor r="0" g="0" b="1" a="0.25"/>
+					</StatusBar>
+
 					<!-- Bar for CPs -->
 					<StatusBar name="Perl_CombatDisplay_CPBar" inherits="TextStatusBar">
 						<Size>
 							<AbsDimension x="200" y="10"/>
 						</Size>
 						<Anchors>
-							<Anchor point="TOP" relativePoint="TOP">
+							<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="Perl_CombatDisplay_ManaBar">
 								<Offset>
-									<AbsDimension x="0" y="-34"/>
+									<AbsDimension x="0" y="-2"/>
 								</Offset>
 							</Anchor>
 						</Anchors>

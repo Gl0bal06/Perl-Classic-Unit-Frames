@@ -16,12 +16,16 @@ local showportrait = 0;		-- portrait is hidden by default
 local compactpercent = 0;	-- percents are not shown in compact mode by default
 local threedportrait = 0;	-- 3d portraits are off by default
 local portraitcombattext = 1;	-- Combat text is enabled by default on the portrait frame
+local showdruidbar = 1;		-- Druid Bar support is enabled by default
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
 local Initialized = nil;	-- waiting to be initialized
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
+
+-- Empty variables used for localization
+local pp_translate_druid;
 
 -- Variables for position of the class icon texture.
 local Perl_Player_ClassPosRight = {};
@@ -345,6 +349,107 @@ function Perl_Player_Update_Mana()
 			Perl_Player_ManaBarTextCompactPercent:SetText();
 		end
 	end
+
+	if (showdruidbar == 1) then
+		if (DruidBarKey and (UnitClass("player") == pp_translate_druid)) then
+			if (UnitPowerType("player") > 0) then
+				-- Show the bars and set the text and reposition the original mana bar below the druid bar
+				local playerdruidbarmana = floor(DruidBarKey.keepthemana);
+				local playerdruidbarmanamax = DruidBarKey.maxmana;
+				local playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
+
+				if (playerdruidbarmanapercent == 100) then		-- This is to ensure the value isn't 1 or 2 mana under max when 100%
+					playerdruidbarmana = playerdruidbarmanamax;
+				end
+
+				Perl_Player_DruidBar:SetMinMaxValues(0, playerdruidbarmanamax);
+				Perl_Player_DruidBar:SetValue(playerdruidbarmana);
+
+				-- Show the bar and adjust the stats frame
+				Perl_Player_DruidBar:Show();
+				Perl_Player_DruidBarBG:Show();
+				Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_DruidBar", "BOTTOM", 0, -2);
+				if (xpbarstate == 3) then
+					Perl_Player_StatsFrame:SetHeight(54);		-- Experience Bar is hidden
+				else
+					Perl_Player_StatsFrame:SetHeight(66);		-- Experience Bar is shown
+				end
+
+				-- Display the needed text
+				if (compactmode == 0) then
+					if (healermode == 1) then
+						if (mouseovermanaflag == 0) then
+							Perl_Player_DruidBarText:SetText();
+							Perl_Player_DruidBarTextPercent:SetText();
+						else
+							Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+						end
+					else
+						Perl_Player_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+						Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmanapercent.."%");
+					end
+					Perl_Player_DruidBarTextCompactPercent:SetText();							-- Hide the compact mode percent text in full mode
+				else
+					if (healermode == 1) then
+						if (mouseovermanaflag == 0) then
+							Perl_Player_DruidBarText:SetText();
+							Perl_Player_DruidBarTextPercent:SetText();
+						else
+							Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+						end
+					else
+						Perl_Player_DruidBarText:SetText();
+						Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+					end
+
+					if (compactpercent == 1) then
+						Perl_Player_DruidBarTextCompactPercent:SetText(playerdruidbarmanapercent.."%");
+					else
+						Perl_Player_DruidBarTextCompactPercent:SetText();
+					end
+				end
+			else
+				-- Hide it all (bars and text)
+				Perl_Player_DruidBarText:SetText();
+				Perl_Player_DruidBarTextPercent:SetText();
+				Perl_Player_DruidBarTextCompactPercent:SetText();
+				Perl_Player_DruidBar:Hide();
+				Perl_Player_DruidBarBG:Hide();
+				Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_HealthBar", "BOTTOM", 0, -2);
+				if (xpbarstate == 3) then
+					Perl_Player_StatsFrame:SetHeight(42);		-- Experience Bar is hidden
+				else
+					Perl_Player_StatsFrame:SetHeight(54);		-- Experience Bar is shown
+				end
+			end
+		else
+			-- Hide it all (bars and text)
+			Perl_Player_DruidBarText:SetText();
+			Perl_Player_DruidBarTextPercent:SetText();
+			Perl_Player_DruidBarTextCompactPercent:SetText();
+			Perl_Player_DruidBar:Hide();
+			Perl_Player_DruidBarBG:Hide();
+			Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_HealthBar", "BOTTOM", 0, -2);
+			if (xpbarstate == 3) then
+				Perl_Player_StatsFrame:SetHeight(42);		-- Experience Bar is hidden
+			else
+				Perl_Player_StatsFrame:SetHeight(54);		-- Experience Bar is shown
+			end
+		end
+	else
+		-- Hide it all (bars and text)
+		Perl_Player_DruidBarText:SetText();
+		Perl_Player_DruidBarTextPercent:SetText();
+		Perl_Player_DruidBarTextCompactPercent:SetText();
+		Perl_Player_DruidBar:Hide();
+		Perl_Player_DruidBarBG:Hide();
+		Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_HealthBar", "BOTTOM", 0, -2);
+		if (xpbarstate == 3) then
+			Perl_Player_StatsFrame:SetHeight(42);		-- Experience Bar is hidden
+		else
+			Perl_Player_StatsFrame:SetHeight(54);		-- Experience Bar is shown
+		end
+	end
 end
 
 function Perl_Player_Update_Mana_Bar()
@@ -525,17 +630,23 @@ function Perl_Player_Set_Text_Positions()
 		Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
 		Perl_Player_ManaBarText:SetPoint("RIGHT", 70, 0);
 		Perl_Player_ManaBarTextPercent:SetPoint("TOP", 0, 1);
+		Perl_Player_DruidBarText:SetPoint("RIGHT", 70, 0);
+		Perl_Player_DruidBarTextPercent:SetPoint("TOP", 0, 1);
 	else
 		if (healermode == 1) then
 			Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
 			Perl_Player_HealthBarTextPercent:SetPoint("TOP", -40, 1);
 			Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
 			Perl_Player_ManaBarTextPercent:SetPoint("TOP", -40, 1);
+			Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
+			Perl_Player_DruidBarTextPercent:SetPoint("TOP", -40, 1);
 		else
 			Perl_Player_HealthBarText:SetPoint("RIGHT", 70, 0);
 			Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
 			Perl_Player_ManaBarText:SetPoint("RIGHT", 70, 0);
 			Perl_Player_ManaBarTextPercent:SetPoint("TOP", 0, 1);
+			Perl_Player_DruidBarText:SetPoint("RIGHT", 70, 0);
+			Perl_Player_DruidBarTextPercent:SetPoint("TOP", 0, 1);
 		end
 	end
 end
@@ -586,6 +697,35 @@ function Perl_Player_ManaHide()
 	end
 end
 
+function Perl_Player_DruidBarManaShow()
+	if (DruidBarKey and (UnitClass("player") == pp_translate_druid)) then
+		if (healermode == 1) then
+			local playerdruidbarmana = floor(DruidBarKey.keepthemana);
+			local playerdruidbarmanamax = DruidBarKey.maxmana;
+			local playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
+
+			if (playerdruidbarmanapercent == 100) then			-- This is to ensure the value isn't 1 or 2 mana under max when 100%
+				playerdruidbarmana = playerdruidbarmanamax;
+			end
+
+			if (UnitIsDead("player") or UnitIsGhost("player")) then		-- This prevents negative mana
+				playerdruidbarmana = 0;
+			end
+
+			Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+
+			mouseovermanaflag = 1;
+		end
+	end
+end
+
+function Perl_Player_DruidBarManaHide()
+	if (healermode == 1) then
+		Perl_Player_DruidBarTextPercent:SetText();
+		mouseovermanaflag = 0;
+	end
+end
+
 function Perl_Player_Update_Portrait()
 	if (showportrait == 1) then
 		local level = Perl_Player_PortraitFrame:GetFrameLevel();					-- Get the frame level of the main portrait frame
@@ -619,7 +759,7 @@ function Perl_Player_Portrait_Combat_Text()
 end
 
 function Perl_Player_Set_Localized_ClassIcons()
-	local pp_translate_druid;
+	--local pp_translate_druid;	-- Declared above for Druid Bar support, left this in strictly for this comment
 	local pp_translate_hunter;
 	local pp_translate_mage;
 	local pp_translate_paladin;
@@ -723,6 +863,13 @@ function Perl_Player_XPBar_Display(state)
 		Perl_Player_XPRestBar:Hide();
 		Perl_Player_StatsFrame:SetHeight(42);
 	end
+	if (DruidBarKey and (UnitClass("player") == pp_translate_druid) and (UnitPowerType("player") > 0)) then		-- Only change the size if the player has Druid Bar, is a Druid, and is morphed currently
+		if (state == 3) then
+			Perl_Player_StatsFrame:SetHeight(54);		-- Experience Bar is hidden
+		else
+			Perl_Player_StatsFrame:SetHeight(66);		-- Experience Bar is shown
+		end
+	end
 	xpbarstate = state;
 	Perl_Player_UpdateVars();
 end
@@ -785,6 +932,13 @@ function Perl_Player_Set_Compact_Percent(newvalue)
 	Perl_Player_Update_Mana();
 end
 
+function Perl_Player_Set_DruidBar(newvalue)
+	showdruidbar = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Set_Text_Positions();
+	Perl_Player_Set_CompactMode();		-- Perl_Player_Update_Mana() called here
+end
+
 function Perl_Player_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -820,6 +974,7 @@ function Perl_Player_GetVars()
 	compactpercent = Perl_Player_Config[UnitName("player")]["CompactPercent"];
 	threedportrait = Perl_Player_Config[UnitName("player")]["ThreeDPortrait"];
 	portraitcombattext = Perl_Player_Config[UnitName("player")]["PortraitCombatText"];
+	showdruidbar = Perl_Player_Config[UnitName("player")]["ShowDruidBar"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -857,6 +1012,9 @@ function Perl_Player_GetVars()
 	if (portraitcombattext == nil) then
 		portraitcombattext = 1;
 	end
+	if (showdruidbar == nil) then
+		showdruidbar = 1;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -871,6 +1029,7 @@ function Perl_Player_GetVars()
 		["compactpercent"] = compactpercent,
 		["threedportrait"] = threedportrait,
 		["portraitcombattext"] = portraitcombattext,
+		["showdruidbar"] = showdruidbar,
 	}
 	return vars;
 end
@@ -939,6 +1098,11 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				portraitcombattext = nil;
 			end
+			if (vartable["Global Settings"]["ShowDruidBar"] ~= nil) then
+				showdruidbar = vartable["Global Settings"]["ShowDruidBar"];
+			else
+				showdruidbar = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -978,6 +1142,9 @@ function Perl_Player_UpdateVars(vartable)
 		if (portraitcombattext == nil) then
 			portraitcombattext = 1;
 		end
+		if (showdruidbar == nil) then
+			showdruidbar = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_XPBar_Display(xpbarstate);
@@ -1004,6 +1171,7 @@ function Perl_Player_UpdateVars(vartable)
 		["CompactPercent"] = compactpercent,
 		["ThreeDPortrait"] = threedportrait,
 		["PortraitCombatText"] = portraitcombattext,
+		["ShowDruidBar"] = showdruidbar,
 	};
 end
 
@@ -1118,8 +1286,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.46",
-			releaseDate = "March 1, 2006",
+			version = "v0.47",
+			releaseDate = "March 3, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

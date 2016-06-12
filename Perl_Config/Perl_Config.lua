@@ -237,6 +237,7 @@ function Perl_Config_Set_Texture(newvalue)
 	if (Perl_CombatDisplay_Frame) then
 		Perl_CombatDisplay_HealthBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_ManaBarTex:SetTexture(texturename);
+		Perl_CombatDisplay_DruidBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_CPBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_Target_HealthBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_Target_ManaBarTex:SetTexture(texturename);
@@ -260,6 +261,7 @@ function Perl_Config_Set_Texture(newvalue)
 	if (Perl_Player_Frame) then
 		Perl_Player_HealthBarTex:SetTexture(texturename);
 		Perl_Player_ManaBarTex:SetTexture(texturename);
+		Perl_Player_DruidBarTex:SetTexture(texturename);
 		Perl_Player_XPBarTex:SetTexture(texturename);
 	end
 
@@ -505,6 +507,7 @@ function Perl_Config_Global_Save_Settings()
 			["YPositionCD"] = floor(Perl_CombatDisplay_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Frame:GetScale()) + 0.5),
 			["XPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetLeft() + 0.5),
 			["YPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Target_Frame:GetScale()) + 0.5),
+			["ShowDruidBar"] = vartable["showdruidbar"],
 		};
 	end
 
@@ -556,6 +559,7 @@ function Perl_Config_Global_Save_Settings()
 			["CompactPercent"] = vartable["compactpercent"],
 			["ThreeDPortrait"] = vartable["threedportrait"],
 			["PortraitCombatText"] = vartable["portraitcombattext"],
+			["ShowDruidBar"] = vartable["showdruidbar"],
 		};
 	end
 
@@ -852,8 +856,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.46",
-			releaseDate = "March 1, 2006",
+			version = "v0.47",
+			releaseDate = "March 3, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -4,22 +4,26 @@
 Perl_CombatDisplay_Config = {};
 
 -- Default Saved Variables (also set in Perl_CombatDisplay_GetVars)
-local state = 3;
-local manapersist = 0;
-local healthpersist = 0;
-local locked = 0;
-local scale = 1;
+local state = 3;		-- hidden unless in combat by default
+local manapersist = 0;		-- mana persist is off by default
+local healthpersist = 0;	-- health persist is off by default
+local locked = 0;		-- unlocked by default
+local scale = 1;		-- default scale
 local colorhealth = 0;		-- progressively colored health bars are off by default
 local transparency = 1;		-- transparency for the frame
-local showtarget = 0;
-local mobhealthsupport = 1;
+local showtarget = 0;		-- target frame is disabled by default
+local mobhealthsupport = 1;	-- mobhealth is enabled by default
+local showdruidbar = 1;		-- Druid Bar support is enabled by default
 
 -- Default Local Variables
-local healthfull = 0;
+local IsAggroed = 0;
 local InCombat = 0;
 local Initialized = nil;
-local IsAggroed = 0;
+local healthfull = 0;
 local manafull = 0;
+
+-- Empty variables used for localization
+local pcd_translate_druid;
 
 
 ----------------------
@@ -221,6 +225,7 @@ function Perl_CombatDisplay_Initialize()
 
 	-- Major config options.
 	Perl_CombatDisplay_Initialize_Frame_Color();
+	Perl_CombatDisplay_Set_Localization();
 	Perl_CombatDisplay_Target_Frame:Hide();
 
 	Perl_CombatDisplay_UpdateBars();	-- Display the bars appropriate to your class
@@ -326,6 +331,7 @@ end
 function Perl_CombatDisplay_Update_Mana()
 	local playermana = UnitMana("player");
 	local playermanamax = UnitManaMax("player");
+	local playerpower = UnitPowerType("player");
 
 	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
 		playermana = 0;
@@ -334,10 +340,74 @@ function Perl_CombatDisplay_Update_Mana()
 	Perl_CombatDisplay_ManaBar:SetMinMaxValues(0, playermanamax);
 	Perl_CombatDisplay_ManaBar:SetValue(playermana);
 
-	if (UnitPowerType("player") == 1) then
+	if (playerpower == 1) then
 		Perl_CombatDisplay_ManaBarText:SetText(playermana);
 	else
 		Perl_CombatDisplay_ManaBarText:SetText(playermana.."/"..playermanamax);
+	end
+
+	if (showdruidbar == 1) then
+		if (DruidBarKey and (UnitClass("player") == pcd_translate_druid)) then
+			if (playerpower > 0) then
+				-- Show the bars and set the text and reposition the original mana bar below the druid bar
+				local playerdruidbarmana = floor(DruidBarKey.keepthemana);
+				local playerdruidbarmanamax = DruidBarKey.maxmana;
+				local playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
+
+				if (playerdruidbarmanapercent == 100) then		-- This is to ensure the value isn't 1 or 2 mana under max when 100%
+					playerdruidbarmana = playerdruidbarmanamax;
+				end
+
+				Perl_CombatDisplay_DruidBar:SetMinMaxValues(0, playerdruidbarmanamax);
+				Perl_CombatDisplay_DruidBar:SetValue(playerdruidbarmana);
+
+				-- Show the bar and adjust the stats frame
+				Perl_CombatDisplay_DruidBar:Show();
+				Perl_CombatDisplay_DruidBarBG:Show();
+				Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_DruidBar", "BOTTOM", 0, -2);
+				if (playerpower == 3) then
+					Perl_CombatDisplay_ManaFrame:SetHeight(66);		-- Energy and Combo Points
+				else
+					Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Rage
+				end
+
+				-- Display the needed text
+				Perl_CombatDisplay_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+			else
+				-- Hide it all (bars and text)
+				Perl_CombatDisplay_DruidBarText:SetText();
+				Perl_CombatDisplay_DruidBar:Hide();
+				Perl_CombatDisplay_DruidBarBG:Hide();
+				Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_HealthBar", "BOTTOM", 0, -2);
+				if (playerpower == 3) then
+					Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Energy and Combo Points
+				else
+					Perl_CombatDisplay_ManaFrame:SetHeight(42);		-- Using mana or rage, use default height
+				end
+			end
+		else
+			-- Hide it all (bars and text)
+			Perl_CombatDisplay_DruidBarText:SetText();
+			Perl_CombatDisplay_DruidBar:Hide();
+			Perl_CombatDisplay_DruidBarBG:Hide();
+			Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_HealthBar", "BOTTOM", 0, -2);
+			if (playerpower == 3) then
+				Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Energy and Combo Points
+			else
+				Perl_CombatDisplay_ManaFrame:SetHeight(42);		-- Using mana or rage, use default height
+			end
+		end
+	else
+		-- Hide it all (bars and text)
+		Perl_CombatDisplay_DruidBarText:SetText();
+		Perl_CombatDisplay_DruidBar:Hide();
+		Perl_CombatDisplay_DruidBarBG:Hide();
+		Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_HealthBar", "BOTTOM", 0, -2);
+		if (playerpower == 3) then
+			Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Energy and Combo Points
+		else
+			Perl_CombatDisplay_ManaFrame:SetHeight(42);		-- Using mana or rage, use default height
+		end
 	end
 end
 
@@ -554,6 +624,12 @@ function Perl_CombatDisplay_Target_Show()
 	end
 end
 
+function Perl_CombatDisplay_Set_Localization()
+	local localization = Perl_Config_Get_Localization();
+
+	pcd_translate_druid = localization["druid"];
+end
+
 
 --------------------------
 -- GUI Config Functions --
@@ -602,6 +678,12 @@ function Perl_CombatDisplay_Set_MobHealth(newvalue)
 	Perl_CombatDisplay_Target_Update_Health();
 end
 
+function Perl_CombatDisplay_Set_DruidBar(newvalue)
+	showdruidbar = newvalue;
+	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_Update_Mana();
+end
+
 function Perl_CombatDisplay_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -636,6 +718,7 @@ function Perl_CombatDisplay_GetVars()
 	transparency = Perl_CombatDisplay_Config[UnitName("player")]["Transparency"];
 	showtarget = Perl_CombatDisplay_Config[UnitName("player")]["ShowTarget"];
 	mobhealthsupport = Perl_CombatDisplay_Config[UnitName("player")]["MobHealthSupport"];
+	showdruidbar = Perl_CombatDisplay_Config[UnitName("player")]["ShowDruidBar"];
 
 	if (state == nil) then
 		state = 3;
@@ -664,6 +747,9 @@ function Perl_CombatDisplay_GetVars()
 	if (mobhealthsupport == nil) then
 		mobhealthsupport = 1;
 	end
+	if (showdruidbar == nil) then
+		showdruidbar = 1;
+	end
 
 	local vars = {
 		["state"] = state,
@@ -675,6 +761,7 @@ function Perl_CombatDisplay_GetVars()
 		["transparency"] = transparency,
 		["showtarget"] = showtarget,
 		["mobhealthsupport"] = mobhealthsupport,
+		["showdruidbar"] = showdruidbar,
 	}
 	return vars;
 end
@@ -728,6 +815,11 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			else
 				mobhealthsupport = nil;
 			end
+			if (vartable["Global Settings"]["ShowDruidBar"] ~= nil) then
+				showdruidbar = vartable["Global Settings"]["ShowDruidBar"];
+			else
+				showdruidbar = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -758,6 +850,9 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		if (mobhealthsupport == nil) then
 			mobhealthsupport = 1;
 		end
+		if (showdruidbar == nil) then
+			showdruidbar = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_CombatDisplay_Set_Target(showtarget)
@@ -777,6 +872,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		["Transparency"] = transparency,
 		["ShowTarget"] = showtarget,
 		["MobHealthSupport"] = mobhealthsupport,
+		["ShowDruidBar"] = showdruidbar,
 	};
 end
 
@@ -881,8 +977,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.46",
-			releaseDate = "March 1, 2006",
+			version = "v0.47",
+			releaseDate = "March 3, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

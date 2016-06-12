@@ -1,3 +1,8 @@
+0.47 - March 3, 2006
+ - CombatDisplay: Changed how the status bars are oriented to be more dynamic
+ - CombatDisplay/Player: Added Druid Bar support
+ - Player: Switching the XP bar from Hidden to PvP will now correctly color the bar
+
 0.46 - March 1, 2006
  - Player/Target: 3D portraits will no longer change views
  - Target: Added a frame to more easily identify the elite, rare, and boss status of your target
@@ -18,7 +23,7 @@
  - ToT: Fixed a bug regarding MobHealth toggling
 
 0.44 - February 17, 2006
- - All: Added another condition do the negative health check
+ - All: Added another condition to the negative health check
  - Config: Fixed a window position bug when scales were not equal (Thanks Vudoo)
  - Party: Fixed a compact mode bug
  - Party: Changed a function name that was clearly wrong
@@ -36,7 +41,7 @@
  - CombatDisplay: Fixed a minor text bug regarding mobhealth support
  - Config: Added a Reset Frame Position button
  - Config: Global settings will now save window position
- - Config: Made some minor text and allignment tweaks to some options
+ - Config: Made some minor text and alignment tweaks to some options
  - Player/Target: Added a toggleable portrait frame and combat text display
  - Target: Combo point frame now adjusts depending on the status of the portrait mode
 

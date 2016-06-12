@@ -370,7 +370,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc2_Text">
 						<Offset>
-							<AbsDimension x="20" y="-20"/>
+							<AbsDimension x="20" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -422,6 +422,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Portrait_Combat_Text_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton14" inherits="UICheckButtonTemplate" id="14">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+						<Offset>
+							<AbsDimension x="0" y="20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Display Druid Bar");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_DruidBar_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

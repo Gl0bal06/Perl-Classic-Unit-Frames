@@ -574,6 +574,82 @@
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
 
+					<!-- Druid Mana Bar -->
+					<StatusBar name="Perl_Player_DruidBar" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="Perl_Player_HealthBar">
+								<Offset>
+									<AbsDimension x="0" y="-2"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnEnter>
+								Perl_Player_DruidBarManaShow();
+							</OnEnter>
+							<OnLeave>
+								Perl_Player_DruidBarManaHide();
+							</OnLeave>
+							<OnMouseUp>
+								Perl_Player_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+						<BarTexture name="Perl_Player_DruidBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0" b="1"/>
+						<Layers>
+							<!-- Text -->
+							<Layer level="OVERLAY">
+								<Fontstring name="Perl_Player_DruidBarText" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="RIGHT">
+											<Offset>
+												<AbsDimension x="70" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1"/>
+								</Fontstring>
+								<Fontstring name="Perl_Player_DruidBarTextPercent" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="TOP" relativePoint="TOP">
+											<Offset>
+												<AbsDimension x="0" y="1"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1"/>
+								</Fontstring>
+								<Fontstring name="Perl_Player_DruidBarTextCompactPercent" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="RIGHT">
+											<Offset>
+												<AbsDimension x="35" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1"/>
+								</Fontstring>
+							</Layer>
+						</Layers>
+					</StatusBar>
+					<StatusBar name="Perl_Player_DruidBarBG" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_DruidBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarColor r="0" g="0" b="1" a="0.25"/>
+					</StatusBar>
+
 					<!-- XP Bar -->
 					<StatusBar name="Perl_Player_XPBar" inherits="TextStatusBar">
 						<Size>
@@ -595,7 +671,7 @@
 							</OnMouseUp>
 						</Scripts>
 						<BarTexture name="Perl_Player_XPBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
-						<BarColor r="0.6" g="0" b="0.6"/>
+						<BarColor r="0" g="0.6" b="0.6"/>
 						<Layers>
 							<!-- Text -->
 							<Layer level="OVERLAY">
@@ -624,7 +700,7 @@
 							</Anchor>
 						</Anchors>
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
-						<BarColor r="0.6" g="0" b="0.6" a="0.25"/>
+						<BarColor r="0" g="0.6" b="0.6" a="0.25"/>
 						<Scripts>
 							<OnLoad>
 								this:SetFrameLevel(this:GetFrameLevel() - 1);
@@ -643,7 +719,7 @@
 							</Anchor>
 						</Anchors>
 						<BarTexture  name="Perl_Player_XPRestBarTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
-						<BarColor r="0.3" g="0.3" b="0.6" a="0.5"/>
+						<BarColor r="0" g="0.6" b="0.6" a="0.5"/>
 					</StatusBar>
 				</Frames>
 			</Frame>

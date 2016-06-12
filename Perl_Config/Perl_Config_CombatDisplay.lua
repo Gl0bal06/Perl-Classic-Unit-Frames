@@ -83,6 +83,12 @@ function Perl_Config_CombatDisplay_Set_Values()
 	else
 		Perl_Config_CombatDisplay_Frame_CheckButton11:SetChecked(nil);
 	end
+
+	if (vartable["showdruidbar"] == 1) then
+		Perl_Config_CombatDisplay_Frame_CheckButton12:SetChecked(1);
+	else
+		Perl_Config_CombatDisplay_Frame_CheckButton12:SetChecked(nil);
+	end
 end
 
 function Perl_Config_CombatDisplay_Mode_Update()
@@ -145,6 +151,14 @@ function Perl_Config_CombatDisplay_MobHealth_Update()
 		Perl_CombatDisplay_Set_MobHealth(1);
 	else
 		Perl_CombatDisplay_Set_MobHealth(0);
+	end
+end
+
+function Perl_Config_CombatDisplay_DruidBar_Update()
+	if (Perl_Config_CombatDisplay_Frame_CheckButton12:GetChecked() == 1) then
+		Perl_CombatDisplay_Set_DruidBar(1);
+	else
+		Perl_CombatDisplay_Set_DruidBar(0);
 	end
 end
 

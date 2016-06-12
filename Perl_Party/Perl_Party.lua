@@ -1798,8 +1798,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.46",
-			releaseDate = "March 1, 2006",
+			version = "v0.47",
+			releaseDate = "March 3, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

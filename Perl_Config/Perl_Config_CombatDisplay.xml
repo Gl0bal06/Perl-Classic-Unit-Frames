@@ -81,6 +81,16 @@
 					</Anchors>
 				</FontString>
 
+				<FontString name="$parent_Misc2_Text" inherits="GameFontNormal" text=" ">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="220" y="-210"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
 				<FontString name="$parent_Target_Text" inherits="GameFontNormal" text="Target Settings">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
@@ -391,6 +401,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_MobHealth_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton12" inherits="UICheckButtonTemplate" id="12">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc2_Text">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Display Druid Bar");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_CombatDisplay_DruidBar_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
