@@ -1,3 +1,10 @@
+0.73 - June 24, 2006
+ - Config: Target class colored names will now global save correctly
+ - Party/Pet/Player: Fixed silent errors in the XML
+ - Target: Class colored names only affect players now
+ - Target: Sound on Target Change now has the correct OnHide sound
+ - Target: Updated raid target icon code to the latest Blizzard version
+
 0.72 - June 20, 2006
  - All: Updated TOC Interface version to 11100
  - CombatDisplay/Target/ToT: Added 1.11 raid target icon menu support

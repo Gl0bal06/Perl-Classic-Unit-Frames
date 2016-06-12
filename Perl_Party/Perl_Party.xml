@@ -236,15 +236,7 @@
 						</Texture>
 
 						<!-- Name Text -->
-						<Fontstring name="$parent_NameBarText" inherits="GameFontNormal" text="Error!">
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="$parent_ClassTexture" relativePoint="RIGHT">
-									<Offset>
-										<AbsDimension x="5" y="0"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</Fontstring>
+						<Fontstring name="$parent_NameBarText" inherits="GameFontNormal" text="Error!"/>
 
 						<!-- F Key Text -->
 						<Fontstring name="$parent_FKeyText" inherits="GameFontNormal" text="Error!">

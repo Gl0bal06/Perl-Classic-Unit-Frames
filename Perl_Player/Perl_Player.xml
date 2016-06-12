@@ -183,13 +183,6 @@
 					<Layer level="OVERLAY">
 						<!-- Name Text -->
 						<Fontstring name="Perl_Player_NameBarText" inherits="GameFontNormal" text="Error!">
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="Perl_Player_ClassTexture" relativePoint="RIGHT">
-									<Offset>
-										<AbsDimension x="5" y="0"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
 							<Color r="1" g="1" b="0"/>
 						</Fontstring>
 					</Layer>

@@ -85,6 +85,9 @@
 			<OnShow>
 				Perl_Target_OnShow();
 			</OnShow>
+			<OnHide>
+				Perl_Target_OnHide();
+			</OnHide>
 			<OnUpdate>
 				CombatFeedback_OnUpdate(arg1);
 			</OnUpdate>

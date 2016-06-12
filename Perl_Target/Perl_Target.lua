@@ -917,24 +917,72 @@ function Perl_Target_Update_Text_Color()
 			
 		end
 	else
-		if (UnitClass("target") == PERL_LOCALIZED_WARRIOR) then
-			Perl_Target_NameBarText:SetTextColor(0.78, 0.61, 0.43);
-		elseif (UnitClass("target") == PERL_LOCALIZED_MAGE) then
-			Perl_Target_NameBarText:SetTextColor(0.41, 0.8, 0.94);
-		elseif (UnitClass("target") == PERL_LOCALIZED_ROGUE) then
-			Perl_Target_NameBarText:SetTextColor(1, 0.96, 0.41);
-		elseif (UnitClass("target") == PERL_LOCALIZED_DRUID) then
-			Perl_Target_NameBarText:SetTextColor(1, 0.49, 0.04);
-		elseif (UnitClass("target") == PERL_LOCALIZED_HUNTER) then
-			Perl_Target_NameBarText:SetTextColor(0.67, 0.83, 0.45);
-		elseif (UnitClass("target") == PERL_LOCALIZED_SHAMAN) then
-			Perl_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
-		elseif (UnitClass("target") == PERL_LOCALIZED_PRIEST) then
-			Perl_Target_NameBarText:SetTextColor(1, 1, 1);
-		elseif (UnitClass("target") == PERL_LOCALIZED_WARLOCK) then
-			Perl_Target_NameBarText:SetTextColor(0.58, 0.51, 0.79);
-		elseif (UnitClass("target") == PERL_LOCALIZED_PALADIN) then
-			Perl_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+		if (UnitIsPlayer("target")) then
+			if (UnitClass("target") == PERL_LOCALIZED_WARRIOR) then
+				Perl_Target_NameBarText:SetTextColor(0.78, 0.61, 0.43);
+			elseif (UnitClass("target") == PERL_LOCALIZED_MAGE) then
+				Perl_Target_NameBarText:SetTextColor(0.41, 0.8, 0.94);
+			elseif (UnitClass("target") == PERL_LOCALIZED_ROGUE) then
+				Perl_Target_NameBarText:SetTextColor(1, 0.96, 0.41);
+			elseif (UnitClass("target") == PERL_LOCALIZED_DRUID) then
+				Perl_Target_NameBarText:SetTextColor(1, 0.49, 0.04);
+			elseif (UnitClass("target") == PERL_LOCALIZED_HUNTER) then
+				Perl_Target_NameBarText:SetTextColor(0.67, 0.83, 0.45);
+			elseif (UnitClass("target") == PERL_LOCALIZED_SHAMAN) then
+				Perl_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+			elseif (UnitClass("target") == PERL_LOCALIZED_PRIEST) then
+				Perl_Target_NameBarText:SetTextColor(1, 1, 1);
+			elseif (UnitClass("target") == PERL_LOCALIZED_WARLOCK) then
+				Perl_Target_NameBarText:SetTextColor(0.58, 0.51, 0.79);
+			elseif (UnitClass("target") == PERL_LOCALIZED_PALADIN) then
+				Perl_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+			end
+		else
+			if (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
+				Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
+			else
+				if (UnitIsVisible("target")) then
+					local reaction = UnitReaction("target", "player");
+					if (reaction) then
+						r = UnitReactionColor[reaction].r;
+						g = UnitReactionColor[reaction].g;
+						b = UnitReactionColor[reaction].b;
+						Perl_Target_NameBarText:SetTextColor(r, g, b);
+					else
+						Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+					end
+				else
+					if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
+						-- Hostile players are red
+						if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
+							r = 0.5;
+							g = 0.5;
+							b = 1.0;
+						else								-- enemy is pvp enabled
+							r = 1.0;
+							g = 0.0;
+							b = 0.0;
+						end
+					elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+						-- Players we can attack but which are not hostile are yellow
+						r = 1.0;
+						g = 1.0;
+						b = 0.0;
+					elseif (UnitIsPVP("target")) then					-- friendly pvp enabled character
+						-- Players we can assist but are PvP flagged are green
+						r = 0.0;
+						g = 1.0;
+						b = 0.0;
+					else									-- friendly non pvp enabled character
+						-- All other players are blue (the usual state on the "blue" server)
+						r = 0.5;
+						g = 0.5;
+						b = 1.0;
+					end
+					Perl_Target_NameBarText:SetTextColor(r, g, b);
+				end
+				
+			end
 		end
 	end
 end
@@ -2042,11 +2090,10 @@ end
 
 function Perl_TargetDropDown_Initialize()
 	local menu, name;
-	if (UnitIsEnemy("target", "player")) then
+	if (UnitExists("target") and (UnitIsEnemy("target", "player") or (UnitReaction("player", "target") and (UnitReaction("player", "target") >= 4) and not UnitIsPlayer("target")))) then
 		menu = "RAID_TARGET_ICON";
 		name = RAID_TARGET_ICON;
-	end
-	if (UnitIsUnit("target", "player")) then
+	elseif (UnitIsUnit("target", "player")) then
 		menu = "SELF";
 	elseif (UnitIsUnit("target", "pet")) then
 		menu = "PET";
@@ -2157,6 +2204,12 @@ function Perl_Target_OnShow()
 	end
 end
 
+function Perl_Target_OnHide()
+	if (soundtargetchange == 1) then
+		PlaySound("INTERFACESOUND_LOSTTARGETUNIT");
+	end
+end
+
 
 -------------
 -- Tooltip --
@@ -2178,8 +2231,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.72",
-			releaseDate = "June 20, 2006",
+			version = "Version 0.73",
+			releaseDate = "June 24, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

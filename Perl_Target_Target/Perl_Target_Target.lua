@@ -1690,11 +1690,10 @@ end
 
 function Perl_TargetTargetDropDown_Initialize()
 	local menu, name;
-	if (UnitIsEnemy("targettarget", "player")) then
+	if (UnitExists("targettarget") and (UnitIsEnemy("targettarget", "player") or (UnitReaction("player", "targettarget") and (UnitReaction("player", "targettarget") >= 4) and not UnitIsPlayer("targettarget")))) then
 		menu = "RAID_TARGET_ICON";
 		name = RAID_TARGET_ICON;
-	end
-	if (UnitIsUnit("targettarget", "player")) then
+	elseif (UnitIsUnit("targettarget", "player")) then
 		menu = "SELF";
 	elseif (UnitIsUnit("targettarget", "pet")) then
 		menu = "PET";
@@ -1803,11 +1802,10 @@ end
 
 function Perl_TargetTargetTargetDropDown_Initialize()
 	local menu, name;
-	if (UnitIsEnemy("targettargettarget", "player")) then
+	if (UnitExists("targettargettarget") and (UnitIsEnemy("targettargettarget", "player") or (UnitReaction("player", "targettargettarget") and (UnitReaction("player", "targettargettarget") >= 4) and not UnitIsPlayer("targettargettarget")))) then
 		menu = "RAID_TARGET_ICON";
 		name = RAID_TARGET_ICON;
-	end
-	if (UnitIsUnit("targettargettarget", "player")) then
+	elseif (UnitIsUnit("targettargettarget", "player")) then
 		menu = "SELF";
 	elseif (UnitIsUnit("targettargettarget", "pet")) then
 		menu = "PET";
@@ -1997,8 +1995,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "Version 0.72",
-			releaseDate = "June 20, 2006",
+			version = "Version 0.73",
+			releaseDate = "June 24, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

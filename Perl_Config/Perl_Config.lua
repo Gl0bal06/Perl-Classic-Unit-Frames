@@ -675,14 +675,6 @@ function Perl_Config_Global_Save_Settings()
 			["BuffLocation"] = vartable["bufflocation"],
 			["DebuffLocation"] = vartable["debufflocation"],
 			["HiddenInRaids"] = vartable["hiddeninraids"],
-			["XPosition1"] = floor(Perl_Party_Pet1:GetLeft() + 0.5),
-			["YPosition1"] = floor(Perl_Party_Pet1:GetTop() - (UIParent:GetTop() / Perl_Party_Pet1:GetScale()) + 0.5),
-			["XPosition2"] = floor(Perl_Party_Pet2:GetLeft() + 0.5),
-			["YPosition2"] = floor(Perl_Party_Pet2:GetTop() - (UIParent:GetTop() / Perl_Party_Pet2:GetScale()) + 0.5),
-			["XPosition3"] = floor(Perl_Party_Pet3:GetLeft() + 0.5),
-			["YPosition3"] = floor(Perl_Party_Pet3:GetTop() - (UIParent:GetTop() / Perl_Party_Pet3:GetScale()) + 0.5),
-			["XPosition4"] = floor(Perl_Party_Pet4:GetLeft() + 0.5),
-			["YPosition4"] = floor(Perl_Party_Pet4:GetTop() - (UIParent:GetTop() / Perl_Party_Pet4:GetScale()) + 0.5),
 		};
 	end
 
@@ -815,6 +807,7 @@ function Perl_Config_Global_Save_Settings()
 			["HealerMode"] = vartable["healermode"],
 			["SoundTargetChange"] = vartable["soundtargetchange"],
 			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
+			["ClassColoredNames"] = vartable["classcolorednames"],
 		};
 	end
 
@@ -1360,8 +1353,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.72",
-			releaseDate = "June 20, 2006",
+			version = "Version 0.73",
+			releaseDate = "June 24, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
