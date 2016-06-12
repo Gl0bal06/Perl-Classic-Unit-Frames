@@ -8,6 +8,7 @@ local Perl_Player_State = 1;	-- enabled by default
 local locked = 0;		-- unlocked by default
 local xpbarstate = 1;		-- show default xp bar by default
 local compactmode = 0;		-- compact mode is disabled by default
+local showraidgroup = 1;	-- show the raid group number by default when in raids
 local scale = 1;		-- default scale
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
 local transparency = 1;		-- general transparency for frames relative to bars/text  default is 0.8
@@ -76,6 +77,7 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("PLAYER_REGEN_ENABLED");
 	this:RegisterEvent("PLAYER_UPDATE_RESTING");
 	this:RegisterEvent("PLAYER_XP_UPDATE");
+	this:RegisterEvent("RAID_ROSTER_UPDATE");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_ENERGY");
 	this:RegisterEvent("UNIT_HEALTH");
@@ -135,8 +137,9 @@ function Perl_Player_OnEvent(event)
 			Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
 		end
 		return;
-	elseif ((event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")) then
-		Perl_Player_Update_Leader();		-- Are we the party leader?
+	elseif ((event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE") or (event == "RAID_ROSTER_UPDATE")) then
+		Perl_Player_Update_Raid_Group_Number();		-- What raid group number are we in?
+		Perl_Player_Update_Leader();			-- Are we the party leader?
 		return;
 	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Player_Initialize();
@@ -164,6 +167,8 @@ function Perl_Player_SlashHandler(msg)
 		Perl_Player_Lock();
 	elseif (string.find(msg, "compact")) then
 		Perl_Player_Toggle_CompactMode();
+	elseif (string.find(msg, "raid")) then
+		Perl_Player_Toggle_RaidGroupNumber();
 	elseif (string.find(msg, "toggle")) then
 		Perl_Player_TogglePlayer();
 	elseif (string.find(msg, "status")) then
@@ -185,6 +190,7 @@ function Perl_Player_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff compact |cffffff00- Toggle compact mode.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff raid |cffffff00- Toggle the displaying of your group number while in a raid.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp # |cffffff00- Set the display mode of the experience bar: 1) default, 2) pvp rank, 3) off");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the player frame on and off.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
@@ -215,10 +221,13 @@ function Perl_Player_Initialize()
 	Perl_Player_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Player_NameFrame:SetBackdropColor(0, 0, 0, transparency);
 	Perl_Player_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Player_RaidGroupNumberFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_RaidGroupNumberFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
 	Perl_Player_Frame:Hide();
 	
 	Perl_Player_HealthBarText:SetTextColor(1,1,1,1);
 	Perl_Player_ManaBarText:SetTextColor(1,1,1,1);
+	Perl_Player_RaidGroupNumberBarText:SetTextColor(1,1,1);
 
 	if (Perl_Player_State == 1) then
 		PlayerFrame_UpdateStatus = Perl_Player_Update_Once;
@@ -250,6 +259,7 @@ function Perl_Player_Update_Once()
 	Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
 	Perl_Player_XPBar_Display(xpbarstate);			-- Set the xp bar mode and update the experience if needed
 	Perl_Player_PVPStatus:Hide();				-- Set pvp status icon (need to remove the xml code eventually)
+	Perl_Player_Update_Raid_Group_Number();			-- Are we in a raid at login?
 	Perl_Player_Update_Leader();				-- Are we the party leader?
 	Perl_Player_Update_Combat_Status();			-- Are we already fighting or resting?
 	Perl_Player_Set_CompactMode();				-- Are we using compact mode?
@@ -363,6 +373,31 @@ function Perl_Player_Update_Combat_Status(event)
 	end
 end
 
+function Perl_Player_Update_Raid_Group_Number()		-- taken from 1.8
+	if (showraidgroup == 1) then
+		Perl_Player_RaidGroupNumberFrame:Hide();
+		local name, rank, subgroup;
+		if (GetNumRaidMembers() == 0) then
+			Perl_Player_RaidGroupNumberFrame:Hide();
+			return;
+		end
+		local numRaidMembers = GetNumRaidMembers();
+		for i=1, MAX_RAID_MEMBERS do
+			if (i <= numRaidMembers) then
+				name, rank, subgroup = GetRaidRosterInfo(i);
+				-- Set the player's group number indicator
+				if (name == UnitName("player")) then
+					Perl_Player_RaidGroupNumberBarText:SetText("Group "..subgroup);
+					--PlayerFrameGroupIndicator:SetWidth(PlayerFrameGroupIndicatorText:GetWidth()+40);
+					Perl_Player_RaidGroupNumberFrame:Show();
+				end
+			end
+		end
+	else
+		Perl_Player_RaidGroupNumberFrame:Hide();
+	end
+end
+
 function Perl_Player_Update_Leader()
 	-- Team Leader Icon setting
 	if (IsPartyLeader()) then
@@ -444,6 +479,18 @@ function Perl_Player_Toggle_CompactMode()
 	Perl_Player_UpdateVars();
 end
 
+function Perl_Player_Toggle_RaidGroupNumber()
+	if (showraidgroup == 0) then
+		showraidgroup = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffDisplaying Raid Group Numbers|cffffff00.");
+	else
+		showraidgroup = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffHiding Raid Group Numbers|cffffff00.");
+	end
+	Perl_Player_Update_Raid_Group_Number();
+	Perl_Player_UpdateVars();
+end
+
 function Perl_Player_XPBar_Display(state)
 	if (state == 1) then
 		Perl_Player_StatsFrame:SetHeight(54);
@@ -505,12 +552,19 @@ function Perl_Player_Status()
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying in |cffffffffCompact Mode|cffffff00.");
 	end
+
+	if (showraidgroup == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffHiding Raid Group Numbers|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisplaying Raid Group Numbers|cffffff00.");
+	end
 end
 
 function Perl_Player_GetVars()
 	locked = Perl_Player_Config[UnitName("player")]["Locked"];
 	xpbarstate = Perl_Player_Config[UnitName("player")]["XPBarState"];
 	compactmode = Perl_Player_Config[UnitName("player")]["CompactMode"];
+	showraidgroup = Perl_Player_Config[UnitName("player")]["ShowRaidGroup"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -521,6 +575,9 @@ function Perl_Player_GetVars()
 	if (compactmode == nil) then
 		compactmode = 0;
 	end
+	if (showraidgroup == nil) then
+		showraidgroup = 1;
+	end
 end
 
 function Perl_Player_UpdateVars()
@@ -528,6 +585,7 @@ function Perl_Player_UpdateVars()
 						["Locked"] = locked,
 						["XPBarState"] = xpbarstate,
 						["CompactMode"] = compactmode,
+						["ShowRaidGroup"] = showraidgroup,
 	};
 end
 
@@ -601,8 +659,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.15",
-			releaseDate = "November 1, 2005",
+			version = "v0.16",
+			releaseDate = "November 7, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

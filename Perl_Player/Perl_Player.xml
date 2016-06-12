@@ -141,6 +141,46 @@
 			</Frame>
 
 
+			<!-- Player Raid Group Number Frame -->
+			<Frame name="Perl_Player_RaidGroupNumberFrame">
+				<Size>
+					<AbsDimension x="65" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Player_NameFrame">
+						<Offset>
+							<AbsDimension x="-0" y="20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Layers>
+					<Layer level="OVERLAY">
+						<!-- Raid Group Number Text -->
+						<Fontstring name="Perl_Player_RaidGroupNumberBarText" inherits="GameFontNormal" text="Error!">
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset>
+										<AbsDimension x="0" y="-5"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Fontstring>
+					</Layer>
+				</Layers>
+			</Frame>
+
+
 			<!-- Level Frame -->
 			<Frame name="Perl_Player_LevelFrame">
 				<Size>

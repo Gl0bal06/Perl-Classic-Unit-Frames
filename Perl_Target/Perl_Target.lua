@@ -10,11 +10,13 @@ local Perl_Target_State = 1;	-- enabled by default
 local locked = 0;		-- unlocked by default
 local showcp = 1;		-- combo points displayed by default
 local showclassicon = 1;	-- show the class icon
+local showpvpicon = 1;		-- show the pvp icon
 local showclassframe = 1;	-- show the class frame
 local numbuffsshown = 20;	-- buff row is 20 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
 local mobhealthsupport = 1;	-- mobhealth support is on by default
 local BlizzardTargetFrame_Update = TargetFrame_Update;	-- backup the original target function in case we toggle the mod off
+local BlizzardUnitFrame_OnEnter = UnitFrame_OnEnter;	-- may not need to back this up
 
 -- Variables for position of the class icon texture.
 local Perl_Target_ClassPosRight = {
@@ -135,6 +137,7 @@ function Perl_Target_OnEvent(event)
 			return;
 		elseif (event == "UNIT_PVP_UPDATE") then
 			Perl_Target_Update_Text_Color();		-- Is the character PvP flagged?
+			Perl_Target_Update_PvP_Status_Icon();		-- Set pvp status icon
 			return;
 		elseif (event == "UNIT_LEVEL") then
 			if (arg1 == "target") then
@@ -180,6 +183,8 @@ function Perl_Target_SlashHandler(msg)
 		Perl_Target_ToggleClassIcon();
 	elseif (string.find(msg, "class")) then
 		Perl_Target_ToggleClassFrame();
+	elseif (string.find(msg, "pvp")) then
+		Perl_Target_TogglePvPIcon();
 	elseif (string.find(msg, "mobhealth")) then
 		Perl_Target_ToggleMobHealth();
 	elseif (string.find(msg, "status")) then
@@ -217,6 +222,8 @@ function Perl_Target_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff combopoints |cffffff00- Toggle the displaying of combo points.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff class |cffffff00- Toggle the displaying of class frame.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff icon |cffffff00- Toggle the displaying of class icon.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff pvp |cffffff00- Toggle the displaying of pvp status icon.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff mobhealth |cffffff00- Toggle the displaying of integrated MobHealth support.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs # |cffffff00- Show the number of buffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuffs # |cffffff00- Show the number of debuffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the target frame on and off.");
@@ -285,7 +292,7 @@ function Perl_Target_Update_Once()
 		Perl_Target_Update_Mana_Bar();		-- What type of mana bar is it?
 		Perl_Target_Update_Mana();		-- Set the target's mana
 		Perl_Target_Update_Dead_Status();	-- Is the target dead?
-		Perl_Target_PVPStatus:Hide();		-- Set pvp status icon (need to remove the xml code eventually)
+		Perl_Target_Update_PvP_Status_Icon();	-- Set pvp status icon
 		Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
 		Perl_Target_Set_Character_Class_Icon();	-- Draw the class icon?
 		Perl_Target_Set_Target_Class();		-- Set the target's class in the class frame
@@ -465,6 +472,26 @@ function Perl_Target_Update_Dead_Status()
 	end
 end
 
+function Perl_Target_Update_PvP_Status_Icon()
+	if (showpvpicon == 1) then
+		-- Set pvp status icon
+		if (UnitIsPVP("target")) then
+			if (UnitFactionGroup("target") == "Alliance") then
+				Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-Alliance");
+			elseif (UnitFactionGroup("target") == "Horde") then
+				Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-Horde");
+			else
+				Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
+			end
+			Perl_Target_PVPStatus:Show();
+		else
+			Perl_Target_PVPStatus:Hide();
+		end
+	else
+		Perl_Target_PVPStatus:Hide();
+	end
+end
+
 function Perl_Target_Update_Text_Color()
 	-- Set Text Color
 	if (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
@@ -472,24 +499,24 @@ function Perl_Target_Update_Text_Color()
 	elseif (UnitIsPlayer("target")) then
 		if (UnitFactionGroup("player") == UnitFactionGroup("target")) then
 			if (UnitIsPVP("target")) then
-				Perl_Target_NameBarText:SetTextColor(0,1,0);
+				Perl_Target_NameBarText:SetTextColor(0,1,0);		-- friendly pvp enabled character
 			else
-				Perl_Target_NameBarText:SetTextColor(0.5,0.5,1);
+				Perl_Target_NameBarText:SetTextColor(0.5,0.5,1);	-- friendly non pvp enabled character
 			end
 		else
 			if (UnitIsPVP("target")) then
-				Perl_Target_NameBarText:SetTextColor(1,1,0);
+				Perl_Target_NameBarText:SetTextColor(1,1,0);		-- hostile pvp enabled character
 			else
-				Perl_Target_NameBarText:SetTextColor(0.5,0.5,1);
+				Perl_Target_NameBarText:SetTextColor(0.5,0.5,1);	-- hostile non pvp enabled character
 			end
 		end
 	else
 		if (UnitFactionGroup("player") == UnitFactionGroup("target")) then
-			Perl_Target_NameBarText:SetTextColor(0,1,0);
-		elseif (UnitIsEnemy("player", "target")) then			
-			Perl_Target_NameBarText:SetTextColor(1,0,0);					
-		else					
-			Perl_Target_NameBarText:SetTextColor(1,1,0);
+			Perl_Target_NameBarText:SetTextColor(0,1,0);			-- friendly npc
+		elseif (UnitIsEnemy("player", "target")) then
+			Perl_Target_NameBarText:SetTextColor(1,0,0);			-- hostile npc
+		else
+			Perl_Target_NameBarText:SetTextColor(1,1,0);			-- everything else
 		end
 	end
 end
@@ -630,6 +657,18 @@ function Perl_Target_ToggleClassFrame()
 	Perl_Target_Update_Once();
 end
 
+function Perl_Target_TogglePvPIcon()
+	if (showpvpicon == 1) then
+		showpvpicon = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame PvP Icon is now |cffffffffHidden|cffffff00.");
+	else
+		showpvpicon = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame PvP Icon is now |cffffffffShown|cffffff00.");
+	end
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
 function Perl_Target_Set_Buffs(newbuffnumber)
 	if (newbuffnumber == nil) then
 		newbuffnumber = 0;
@@ -705,6 +744,7 @@ function Perl_Target_GetVars()
 	showcp = Perl_Target_Config[UnitName("player")]["ComboPoints"];
 	showclassicon = Perl_Target_Config[UnitName("player")]["ClassIcon"];
 	showclassframe = Perl_Target_Config[UnitName("player")]["ClassFrame"];
+	showpvpicon = Perl_Target_Config[UnitName("player")]["PvPIcon"];
 	numbuffsshown = Perl_Target_Config[UnitName("player")]["Buffs"];
 	numdebuffsshown = Perl_Target_Config[UnitName("player")]["Debuffs"];
 
@@ -719,6 +759,9 @@ function Perl_Target_GetVars()
 	end
 	if (showclassicon == nil) then
 		showclassicon = 1;
+	end
+	if (showpvpicon == nil) then
+		showpvpicon = 1;
 	end
 	if (showclassframe == nil) then
 		showclassframe = 1;
@@ -741,6 +784,7 @@ function Perl_Target_UpdateVars()
 						["ComboPoints"] = showcp,
 						["ClassIcon"] = showclassicon,
 						["ClassFrame"] = showclassframe,
+						["PvPIcon"] = showpvpicon,
 						["Buffs"] = numbuffsshown,
 						["Debuffs"] = numdebuffsshown,
 						};
@@ -853,7 +897,7 @@ end
 function Perl_TargetDropDown_OnLoad()
 	UIDropDownMenu_Initialize(this, Perl_TargetDropDown_Initialize, "MENU");
 end
-				
+
 function Perl_TargetDropDown_Initialize()
 	local menu = nil;
 	if (UnitIsEnemy("target", "player")) then
@@ -903,12 +947,55 @@ end
 -------------
 -- Tooltip --
 -------------
-function Perl_Target_Tooltip_OnEnter()
+-- Some of my failed attempt at tooltip support is below
+
+--local Original_UnitFrame_OnEnter = nil;
+--
+--function Perl_Target_Tooltip_Hook()
+--	Original_UnitFrame_OnEnter = UnitFrame_OnEnter;
+--	UnitFrame_OnEnter = Perl_Target_Replacement_UnitFrame_OnEnter;
+--end
+--
+--function Perl_Target_Tooltip_Unhook()
+--	UnitFrame_OnEnter = Original_UnitFrame_OnEnter;
+--end
+--
+--function Perl_Target_Replacement_UnitFrame_OnEnter()	-- Taken from 1.8 UnitFrame_OnEnter()
+--	this.unit = "target";
+--	if ( SpellIsTargeting() ) then
+--		if ( SpellCanTargetUnit(this.unit) ) then
+--			SetCursor("CAST_CURSOR");
+--		else
+--			SetCursor("CAST_ERROR_CURSOR");
+--		end
+--	end
+--
+--	GameTooltip_SetDefaultAnchor(GameTooltip, this);
+--	-- If showing newbie tips then only show the explanation
+--	if ( SHOW_NEWBIE_TIPS == "1" and this:GetName() ~= "PartyMemberFrame1" and this:GetName() ~= "PartyMemberFrame2" and this:GetName() ~= "PartyMemberFrame3" and this:GetName() ~= "PartyMemberFrame4") then
+--		if ( this:GetName() == "PlayerFrame" ) then
+--			GameTooltip_AddNewbieTip(PARTY_OPTIONS_LABEL, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_PARTYOPTIONS);
+--			return;
+--		elseif ( UnitPlayerControlled("target") and not UnitIsUnit("target", "player") and not UnitIsUnit("target", "pet") ) then
+--			GameTooltip_AddNewbieTip(PLAYER_OPTIONS_LABEL, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_PLAYEROPTIONS);
+--			return;
+--		end
+--	end
+--	
+--	if ( GameTooltip:SetUnit(this.unit) ) then
+--		this.updateTooltip = TOOLTIP_UPDATE_TIME;
+--	else
+--		this.updateTooltip = nil;
+--	end
+--
+--	this.r, this.g, this.b = GameTooltip_UnitColor(this.unit);
+--	--GameTooltip:SetBackdropColor(this.r, this.g, this.b);
+--	GameTooltipTextLeft1:SetTextColor(this.r, this.g, this.b);
+--end
+
+function Perl_Target_Tip()
 	GameTooltip_SetDefaultAnchor(GameTooltip, this);
 	GameTooltip:SetUnit("target");
-	--UnitFrame.unit = "target";
-	--UnitFrame:SetUnit("target");
-	--UnitFrame_OnEnter();
 end
 
 
@@ -920,8 +1007,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.15",
-			releaseDate = "November 1, 2005",
+			version = "v0.16",
+			releaseDate = "November 7, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

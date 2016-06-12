@@ -137,7 +137,7 @@ function Perl_Party_OnEvent(event)
 			Perl_Party_Update_Level();		-- Set the player's level
 		end
 		return;
-	elseif ((event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")) then
+	elseif ((event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED")) then	-- or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")
 		Perl_Party_MembersUpdate();			-- How many members are in the group and show the correct frames and do UpdateOnce things
 		Perl_Party_Update_Leader_Loot_Method();		-- Who is the group leader and who is the master looter
 		return;
@@ -227,9 +227,7 @@ function Perl_Party_MembersUpdate()
 			frame:Hide();
 		end
 	end
-	Perl_Party_Set_Name();
 	Perl_Party_Update_PvP_Status();
-	Perl_Party_Set_Class_Icon();
 	Perl_Party_Update_Level();
 	Perl_Party_Update_Health();
 	Perl_Party_Update_Dead_Status();
@@ -237,6 +235,8 @@ function Perl_Party_MembersUpdate()
 	Perl_Party_Update_Mana_Bar();
 	Perl_Party_Update_Leader_Loot_Method();
 	Perl_Party_Buff_UpdateAll();
+	Perl_Party_Set_Name();
+	Perl_Party_Set_Class_Icon();
 	getglobal(this:GetName().."_NameFrame_PVPStatus"):Hide();	-- Set pvp status icon (need to remove the xml code eventually)
 	HidePartyFrame();
 end
@@ -303,11 +303,53 @@ function Perl_Party_Set_Name()
 	-- Set name
 	if (UnitName(partyid) ~= nil) then
 		if (strlen(partyname) > 20) then
-			Partyname = strsub(partyname, 1, 19).."...";
+			partyname = strsub(partyname, 1, 19).."...";
 		end
 		getglobal(this:GetName().."_NameFrame_NameBarText"):SetText(partyname);
 	end
 end
+
+function Perl_Party_Set_Class_Icon()
+	local partyid = "party"..this:GetID();
+	-- Set Class Icon
+	if (UnitIsPlayer(partyid)) then
+		local PlayerClass = UnitClass(partyid);
+		getglobal(this:GetName().."_LevelFrame_ClassTexture"):SetTexCoord(Perl_Party_ClassPosRight[PlayerClass], Perl_Party_ClassPosLeft[PlayerClass], Perl_Party_ClassPosTop[PlayerClass], Perl_Party_ClassPosBottom[PlayerClass]); -- Set the player's class icon
+		getglobal(this:GetName().."_LevelFrame_ClassTexture"):Show();
+	else
+		getglobal(this:GetName().."_LevelFrame_ClassTexture"):Hide();
+	end
+end
+
+--function Perl_Party_Set_Name()	--Failed attempt at the Unknown Entity fix
+--	for partynum=1,4 do
+--		local partyid = "party"..partynum;
+--		local partyname = UnitName(partyid);
+--		-- Set name
+--		if (UnitName(partyid) ~= nil) then
+--			if (strlen(partyname) > 20) then
+--				partyname = strsub(partyname, 1, 19).."...";
+--			end
+--			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetText(partyname);
+--		else
+--			-- do nothing since this should be taken care of by Perl_Party_MembersUpdate
+--		end
+--	end
+--end
+
+--function Perl_Party_Set_Class_Icon()	--Failed attempt at the empty class icon fix
+--	for partynum=1,4 do
+--		local partyid = "party"..partynum;
+--		-- Set Class Icon
+--		if (UnitIsPlayer(partyid)) then
+--			local PlayerClass = UnitClass(partyid);
+--			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):SetTexCoord(Perl_Party_ClassPosRight[PlayerClass], Perl_Party_ClassPosLeft[PlayerClass], Perl_Party_ClassPosTop[PlayerClass], Perl_Party_ClassPosBottom[PlayerClass]); -- Set the player's class icon
+--			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):Show();
+--		else
+--			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):Hide();
+--		end
+--	end
+--end
 
 function Perl_Party_Update_PvP_Status()
 	local partyid = "party"..this:GetID();
@@ -353,18 +395,6 @@ function Perl_Party_Update_Dead_Status()
 		getglobal(this:GetName().."_NameFrame_DeadStatus"):Show();
 	else
 		getglobal(this:GetName().."_NameFrame_DeadStatus"):Hide();
-	end
-end
-
-function Perl_Party_Set_Class_Icon()
-	local partyid = "party"..this:GetID();
-	-- Set Class Icon
-	if (UnitIsPlayer(partyid)) then
-		local PlayerClass = UnitClass(partyid);
-		getglobal(this:GetName().."_LevelFrame_ClassTexture"):SetTexCoord(Perl_Party_ClassPosRight[PlayerClass], Perl_Party_ClassPosLeft[PlayerClass], Perl_Party_ClassPosTop[PlayerClass], Perl_Party_ClassPosBottom[PlayerClass]); -- Set the player's class icon
-		getglobal(this:GetName().."_LevelFrame_ClassTexture"):Show();
-	else
-		getglobal(this:GetName().."_LevelFrame_ClassTexture"):Hide();
 	end
 end
 
@@ -575,6 +605,39 @@ function Perl_Party_MouseDown(button)
 	end
 end
 
+--function UnitFrame_OnEnter()	-- Taken from 1.8
+--	this.unit = ("player"..this:GetID());
+--	if ( SpellIsTargeting() ) then
+--		if ( SpellCanTargetUnit(this.unit) ) then
+--			SetCursor("CAST_CURSOR");
+--		else
+--			SetCursor("CAST_ERROR_CURSOR");
+--		end
+--	end
+--
+--	GameTooltip_SetDefaultAnchor(GameTooltip, this);
+--	-- If showing newbie tips then only show the explanation
+--	if ( SHOW_NEWBIE_TIPS == "1" and this:GetName() ~= "PartyMemberFrame1" and this:GetName() ~= "PartyMemberFrame2" and this:GetName() ~= "PartyMemberFrame3" and this:GetName() ~= "PartyMemberFrame4") then
+--		if ( this:GetName() == "PlayerFrame" ) then
+--			GameTooltip_AddNewbieTip(PARTY_OPTIONS_LABEL, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_PARTYOPTIONS);
+--			return;
+--		elseif ( UnitPlayerControlled("target") and not UnitIsUnit("target", "player") and not UnitIsUnit("target", "pet") ) then
+--			GameTooltip_AddNewbieTip(PLAYER_OPTIONS_LABEL, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_PLAYEROPTIONS);
+--			return;
+--		end
+--	end
+--	
+--	if ( GameTooltip:SetUnit(this.unit) ) then
+--		this.updateTooltip = TOOLTIP_UPDATE_TIME;
+--	else
+--		this.updateTooltip = nil;
+--	end
+--
+--	this.r, this.g, this.b = GameTooltip_UnitColor(this.unit);
+--	--GameTooltip:SetBackdropColor(this.r, this.g, this.b);
+--	GameTooltipTextLeft1:SetTextColor(this.r, this.g, this.b);
+--end
+
 function Perl_Party_PlayerTip()
 	GameTooltip_SetDefaultAnchor(GameTooltip, this);
 	GameTooltip:SetUnit("party"..this:GetID());
@@ -589,8 +652,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.15",
-			releaseDate = "November 1, 2005",
+			version = "v0.16",
+			releaseDate = "November 7, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

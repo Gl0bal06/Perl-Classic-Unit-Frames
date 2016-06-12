@@ -167,8 +167,10 @@ function Perl_CombatDisplay_OnEvent(event)
 		end
 		
 		if (Initialized) then
-			Perl_CombatDisplay_UpdateBars();
-			Perl_CombatDisplay_UpdateDisplay();
+			Perl_CombatDisplay_UpdateBars();	-- what class are we? display the right color bars
+			Perl_CombatDisplay_Update_Health();	-- make sure we dont display 0/0 on load
+			Perl_CombatDisplay_Update_Mana();	-- make sure we dont display 0/0 on load
+			Perl_CombatDisplay_UpdateDisplay();	-- what mode are we in?
 			return;
 		end
 		Perl_CombatDisplay_Initialize();
@@ -214,8 +216,6 @@ function Perl_CombatDisplay_Initialize()
 	Perl_CombatDisplay_CPBarText:SetTextColor(1,1,1,1);
 
 	Perl_CombatDisplay_UpdateBars();	-- Display the bars appropriate to your class
-	Perl_CombatDisplay_Update_Health();	-- Get hp info
-	Perl_CombatDisplay_Update_Mana();	-- Get power info
 	Perl_CombatDisplay_UpdateDisplay();	-- Show or hide the window based on whats happening
 
 	Initialized = 1;
@@ -400,8 +400,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.15",
-			releaseDate = "November 1, 2005",
+			version = "v0.16",
+			releaseDate = "November 7, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -89,9 +89,11 @@
 			</OnMouseUp>
 			<OnEnter>
 				Perl_Party_PlayerTip();
+				<!-- UnitFrame_OnEnter(); -->
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
+				<!-- UnitFrame_OnLeave(); -->
 			</OnLeave>
 			<OnUpdate>
 				<!-- Perl_Party_OnUpdate(); -->
@@ -329,7 +331,7 @@
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<Color r="1" g="1" b="1" />
+									<Color r="1" g="1" b="1"/>
 								</Fontstring>
 							</Layer>
 						</Layers>
@@ -384,7 +386,7 @@
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<Color r="1" g="1" b="1" />
+									<Color r="1" g="1" b="1"/>
 								</Fontstring>
 							</Layer>
 						</Layers>
