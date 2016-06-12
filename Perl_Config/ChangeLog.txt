@@ -1,3 +1,6 @@
+3.01 Beta 5 - August 23, 2008
+ - CombatDisplay/Target: Fixed the error regarding the GetComboPoints() function
+
 3.01 Beta 4 - August 17, 2008
  - All: Added a threat icon
  - Config: The player rest experience bar is now correctly textured

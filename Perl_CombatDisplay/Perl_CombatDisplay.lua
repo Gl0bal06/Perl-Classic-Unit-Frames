@@ -572,7 +572,7 @@ end
 
 function Perl_CombatDisplay_Update_Combo_Points()
 	if (PCUF_FADEBARS == 1) then
-		if (GetComboPoints() < Perl_CombatDisplay_CPBar:GetValue()) then
+		if (GetComboPoints("player") < Perl_CombatDisplay_CPBar:GetValue()) then
 			Perl_CombatDisplay_CPBarFadeBar:SetMinMaxValues(0, 5);
 			Perl_CombatDisplay_CPBarFadeBar:SetValue(Perl_CombatDisplay_CPBar:GetValue());
 			Perl_CombatDisplay_CPBarFadeBar:Show();
@@ -582,11 +582,11 @@ function Perl_CombatDisplay_Update_Combo_Points()
 		end
 	end
 
-	Perl_CombatDisplay_CPBarText:SetText(GetComboPoints()..'/5');
+	Perl_CombatDisplay_CPBarText:SetText(GetComboPoints("player")..'/5');
 	if (PCUF_INVERTBARVALUES == 1) then
-		Perl_CombatDisplay_CPBar:SetValue(5 - GetComboPoints());
+		Perl_CombatDisplay_CPBar:SetValue(5 - GetComboPoints("player"));
 	else
-		Perl_CombatDisplay_CPBar:SetValue(GetComboPoints());
+		Perl_CombatDisplay_CPBar:SetValue(GetComboPoints("player"));
 	end
 end
 

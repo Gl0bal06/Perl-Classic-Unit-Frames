@@ -689,7 +689,7 @@ end
 function Perl_Target_Update_Combo_Points()
 	local _, playerclass = UnitClass("player");
 	if (playerclass == "ROGUE" or playerclass == "DRUID") then		-- Noticed in 2.1.3 that this is being called for warriors also...huh?
-		local combopoints = GetComboPoints();				-- How many Combo Points does the player have?
+		local combopoints = GetComboPoints("player");			-- How many Combo Points does the player have?
 
 		if (showcp == 1) then
 			Perl_Target_CPText:SetText(combopoints);
