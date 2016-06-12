@@ -1,3 +1,6 @@
+4.08 - June 29, 2011
+ - All: Updated TOC Interface version to 40200
+
 4.07 - April 27, 2011
  - All: Updated TOC Interface version to 40100
  - Pet: Removed happiness check
