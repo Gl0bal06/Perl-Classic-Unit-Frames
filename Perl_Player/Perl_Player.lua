@@ -951,21 +951,6 @@ function Perl_Player_Set_Text_Positions()
 			Perl_Player_ManaBarTextPercent:SetPoint("TOPLEFT", 5, 1);
 			Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
 			Perl_Player_DruidBarTextPercent:SetPoint("TOPLEFT", 5, 1);
---			if (shortbars == 0) then
---				Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
---				Perl_Player_HealthBarTextPercent:SetPoint("TOP", -40, 1);
---				Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
---				Perl_Player_ManaBarTextPercent:SetPoint("TOP", -40, 1);
---				Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
---				Perl_Player_DruidBarTextPercent:SetPoint("TOP", -40, 1);
---			else
---				Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
---				Perl_Player_HealthBarTextPercent:SetPoint("TOP", -25, 1);
---				Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
---				Perl_Player_ManaBarTextPercent:SetPoint("TOP", -25, 1);
---				Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
---				Perl_Player_DruidBarTextPercent:SetPoint("TOP", -25, 1);
---			end
 		end
 	end
 end

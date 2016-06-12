@@ -312,12 +312,33 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton11" inherits="UICheckButtonTemplate" id="11">
+			<CheckButton name="$parent_CheckButton28" inherits="UICheckButtonTemplate" id="28">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton13">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_HIDE_EMPTY_HEADERS);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_Hide_Empty_Headers_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton11" inherits="UICheckButtonTemplate" id="11">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton28">
 						<Offset>
 							<AbsDimension  x="0" y="-20"/>
 						</Offset>
@@ -469,16 +490,37 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton9">
 						<Offset>
-							<AbsDimension  x="150" y="20"/>
+							<AbsDimension  x="170" y="20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_SHOW_HEALTHMANA_PERCENTAGES);
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_SHOW_HEALTH_PERCENTAGES);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Raid_Show_Percents_Update();
+						Perl_Config_Raid_Show_Health_Percents_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton27" inherits="UICheckButtonTemplate" id="27">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_SHOW_MANA_PERCENTAGES);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_Show_Mana_Percents_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -488,7 +530,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton27">
 						<Offset>
 							<AbsDimension  x="0" y="-20"/>
 						</Offset>
@@ -542,27 +584,6 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Inverted_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton25" inherits="UICheckButtonTemplate" id="25">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton16">
-						<Offset>
-							<AbsDimension  x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_TOOLTIP);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Raid_CTRA_Style_Tip_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -647,6 +668,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Color_Debuff_Names_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton25" inherits="UICheckButtonTemplate" id="25">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton20">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_TOOLTIP);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_CTRA_Style_Tip_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

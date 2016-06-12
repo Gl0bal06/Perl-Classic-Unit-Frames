@@ -32,7 +32,7 @@ local soundtargetchange = 0;	-- sound when changing targets is off by default
 local displaycastablebuffs = 0;	-- display all buffs by default
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
-local invertbuffs = 1;		-- buffs and debuffs are below the target frame by default
+local invertbuffs = 0;		-- buffs and debuffs are below the target frame by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized

@@ -544,14 +544,17 @@ end
 -- Reset Frame Position Function --
 -----------------------------------
 function Perl_Config_Frame_Reset_Positions()
-	-- Due to a terrible API, CombatDisplay resetting will not be a feature unless someone can unravel the mystery of screen resolution and scaling coordinates
---	if (Perl_CombatDisplay_Frame) then
---		Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 626, -574);
---		Perl_CombatDisplay_Target_Frame:SetPoint("BOTTOMLEFT", Perl_CombatDisplay_Frame, "TOPLEFT", 0, 5);
---	end
+	if (Perl_CombatDisplay_Frame) then
+		Perl_CombatDisplay_Frame:SetUserPlaced(1);		-- All the SetUserPlaced allows us to save the new location set by these functions even if the user has not moved the frames on their own yet.
+		Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
+		Perl_CombatDisplay_Frame:ClearAllPoints();
+		Perl_CombatDisplay_Target_Frame:ClearAllPoints();
+		Perl_CombatDisplay_Frame:SetPoint("BOTTOM", 0, 300);
+		Perl_CombatDisplay_Target_Frame:SetPoint("BOTTOMLEFT", Perl_CombatDisplay_Frame, "TOPLEFT", 0, 5);
+	end
 
 	if (Perl_Party_Frame) then
-		Perl_Party_Frame:SetUserPlaced(1);		-- All the SetUserPlaced allows us to save the new location set by these functions even if the user has not moved the frames on their own yet.
+		Perl_Party_Frame:SetUserPlaced(1);
 		Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -8, -187);
 	end
 
@@ -574,10 +577,18 @@ function Perl_Config_Frame_Reset_Positions()
 	end
 
 	if (Perl_Raid_Frame) then
-		for num=1,8 do
+		for num=1,9 do
 			getglobal("Perl_Raid_Grp"..num):SetUserPlaced(1);
-			getglobal("Perl_Raid_Grp"..num):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 500, -200);
 		end
+		getglobal("Perl_Raid_Grp1"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 300, -150);
+		getglobal("Perl_Raid_Grp2"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 400, -150);
+		getglobal("Perl_Raid_Grp3"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 500, -150);
+		getglobal("Perl_Raid_Grp4"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 600, -150);
+		getglobal("Perl_Raid_Grp5"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 300, -250);
+		getglobal("Perl_Raid_Grp6"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 400, -250);
+		getglobal("Perl_Raid_Grp7"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 500, -250);
+		getglobal("Perl_Raid_Grp8"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 600, -250);
+		getglobal("Perl_Raid_Grp9"):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 300, -350);
 	end
 
 	if (Perl_Target_Frame) then
@@ -627,6 +638,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShowPetBars"] = vartable["showpetbars"],
 			["RightClickMenu"] = vartable["rightclickmenu"],
 			["FiveSecSupport"] = vartable["fivesecsupport"],
+			["DisplayPercents"] = vartable["displaypercents"],
 		};
 	end
 
@@ -789,7 +801,6 @@ function Perl_Config_Global_Save_Settings()
 			["ShowGroup7"] = vartable["showgroup7"],
 			["ShowGroup8"] = vartable["showgroup8"],
 			["ShowGroup9"] = vartable["showgroup9"],
-			["ShowPercents"] = vartable["showpercents"],
 			["SortRaidByClass"] = vartable["sortraidbyclass"],
 			["Transparency"] = vartable["transparency"],
 			["Scale"] = vartable["scale"],
@@ -822,6 +833,9 @@ function Perl_Config_Global_Save_Settings()
 			["RemoveSpace"] = vartable["removespace"],
 			["HidePowerBars"] = vartable["hidepowerbars"],
 			["CTRAStyleTip"] = vartable["ctrastyletip"],
+			["ShowHealthPercents"] = vartable["showhealthpercents"],
+			["ShowManaPercents"] = vartable["showmanapercents"],
+			["HideEmptyHeaders"] = vartable["hideemptyheaders"],
 		};
 	end
 
@@ -903,6 +917,8 @@ function Perl_Config_Global_Load_Settings()
 			if ((Perl_Config_Global_CombatDisplay_Config["Global Settings"]["XPositionCD"] ~= nil) and (Perl_Config_Global_CombatDisplay_Config["Global Settings"]["YPositionCD"] ~= nil) and (Perl_Config_Global_CombatDisplay_Config["Global Settings"]["XPositionCDT"] ~= nil) and (Perl_Config_Global_CombatDisplay_Config["Global Settings"]["YPositionCDT"] ~= nil)) then
 				Perl_CombatDisplay_Frame:SetUserPlaced(1);
 				Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
+				Perl_CombatDisplay_Frame:ClearAllPoints();
+				Perl_CombatDisplay_Target_Frame:ClearAllPoints();
 				Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_CombatDisplay_Config["Global Settings"]["XPositionCD"], Perl_Config_Global_CombatDisplay_Config["Global Settings"]["YPositionCD"]);
 				Perl_CombatDisplay_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_CombatDisplay_Config["Global Settings"]["XPositionCDT"], Perl_Config_Global_CombatDisplay_Config["Global Settings"]["YPositionCDT"]);
 			end
@@ -1175,6 +1191,8 @@ function Perl_Config_Toggle()
 		Perl_Config_Frame:Hide();
 		Perl_Config_Hide_All();
 	else
+		Perl_Config_Frame:ClearAllPoints();
+		Perl_Config_Frame:SetPoint("CENTER", 0, 0);
 		Perl_Config_Frame:Show();
 		Perl_Config_Hide_All();
 	end
@@ -1422,12 +1440,20 @@ function Perl_Config_Button_Tooltip()
 end
 
 function Perl_Config_Button_UpdatePosition()
+--	Perl_Config_ButtonFrame:SetPoint(
+--		"TOPLEFT",
+--		"Minimap",
+--		"TOPLEFT",
+--		55 - (75 * cos(minimapbuttonpos)),
+--		(75 * sin(minimapbuttonpos)) - 55
+--	);
+
 	Perl_Config_ButtonFrame:SetPoint(
 		"TOPLEFT",
 		"Minimap",
 		"TOPLEFT",
-		55 - (75 * cos(minimapbuttonpos)),
-		(75 * sin(minimapbuttonpos)) - 55
+		52 - (80 * cos(minimapbuttonpos)),
+		(80 * sin(minimapbuttonpos)) - 52
 	);
 end
 

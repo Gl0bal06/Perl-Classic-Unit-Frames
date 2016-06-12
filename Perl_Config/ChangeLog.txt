@@ -1,3 +1,14 @@
+0.79 - August 26, 2006
+ - CombatDisplay: Can now toggle the display of percents
+ - CombatDisplay: Changed FiveSec support code slightly
+ - Config: Can now move the options menu
+ - Config: Changed the minimap button positioning formula (Thanks garnerh42)
+ - Config: Added another close button to the top left of the menu
+ - Config: Reset frame positions will now correctly place CombatDisplay and Raid frames
+ - Config: Updated French translations (Thanks namatsar)
+ - Config: Updated options available for Perl_Raid
+ - Target: Inverted buffs are now correctly set to off by default
+
 0.78 - August 22, 2006
  - All: Updated TOC Interface version to 11200
  - CombatDisplay/Player: Changed how Druid Bar support is implemented

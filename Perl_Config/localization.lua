@@ -1,7 +1,7 @@
 --if (GetLocale() == "enUS") then	-- Bypassing this allows us to at least give other languages English since they aren't fully translated
 	-- Generic Globals that do NOT need localizing
-	PERL_LOCALIZED_VERSION_NUMBER = "0.78";
-	PERL_LOCALIZED_DATE = "August 22, 2006";
+	PERL_LOCALIZED_VERSION_NUMBER = "0.79";
+	PERL_LOCALIZED_DATE = "August 29, 2006";
 	PERL_LOCALIZED_BUFF_NONE = "none";
 
 	-- Title and Version
@@ -225,7 +225,8 @@
 	PERL_LOCALIZED_CONFIG_RAID_SHOW_ALL = "Show All Groups";
 	PERL_LOCALIZED_CONFIG_RAID_HIDE_ALL = "Hide All Groups";
 	PERL_LOCALIZED_CONFIG_RAID_CONNECT_FRAMES = "Connect Frames";
-	PERL_LOCALIZED_CONFIG_RAID_SHOW_HEALTHMANA_PERCENTAGES = "Show Health/Mana Percentages";
+	PERL_LOCALIZED_CONFIG_RAID_SHOW_HEALTH_PERCENTAGES = "Show Health Percentages";
+	PERL_LOCALIZED_CONFIG_RAID_SHOW_MANA_PERCENTAGES = "Show Mana Percentages";
 	PERL_LOCALIZED_CONFIG_RAID_SHOW_MISSING_HEALTH = "Show Missing Health";
 	PERL_LOCALIZED_CONFIG_RAID_INVERT_FRAMES = "Invert Frames";
 	PERL_LOCALIZED_CONFIG_RAID_SHOW_BUFFS = "Show Buffs";
@@ -235,6 +236,7 @@
 	PERL_LOCALIZED_CONFIG_RAID_HIDE_BORDER = "Hide Border";
 	PERL_LOCALIZED_CONFIG_RAID_REMOVE_SPACE = "Remove Space";
 	PERL_LOCALIZED_CONFIG_RAID_TOOLTIP = "CTRA Style Tooltip";
+	PERL_LOCALIZED_CONFIG_RAID_HIDE_EMPTY_HEADERS = "Hide Empty Group Headers";
 
 	-- Perl Config Target
 	PERL_LOCALIZED_CONFIG_TARGET_BUFFDEBUFF_SCALING = "Buff/Debuff Scaling (100 is default)";

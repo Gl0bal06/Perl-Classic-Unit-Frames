@@ -454,6 +454,27 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton16" inherits="UICheckButtonTemplate" id="16">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton15">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_DISPLAY_PERCENTS);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_CombatDisplay_Display_Percents_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
 		</Frames>
 
 	</Frame>

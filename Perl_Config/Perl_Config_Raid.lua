@@ -72,7 +72,7 @@ function Perl_Config_Raid_Set_Values()
 		Perl_Config_Raid_Frame_CheckButton9:SetChecked(nil);
 	end
 
-	if (vartable["showpercents"] == 1) then
+	if (vartable["showhealthpercents"] == 1) then
 		Perl_Config_Raid_Frame_CheckButton10:SetChecked(1);
 	else
 		Perl_Config_Raid_Frame_CheckButton10:SetChecked(nil);
@@ -160,6 +160,18 @@ function Perl_Config_Raid_Set_Values()
 		Perl_Config_Raid_Frame_CheckButton25:SetChecked(1);
 	else
 		Perl_Config_Raid_Frame_CheckButton25:SetChecked(nil);
+	end
+
+	if (vartable["showmanapercents"] == 1) then
+		Perl_Config_Raid_Frame_CheckButton27:SetChecked(1);
+	else
+		Perl_Config_Raid_Frame_CheckButton27:SetChecked(nil);
+	end
+
+	if (vartable["hideemptyheaders"] == 1) then
+		Perl_Config_Raid_Frame_CheckButton28:SetChecked(1);
+	else
+		Perl_Config_Raid_Frame_CheckButton28:SetChecked(nil);
 	end
 
 	Perl_Config_Raid_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
@@ -257,11 +269,19 @@ function Perl_Config_Raid_Sort_By_Class_Update()
 	end
 end
 
-function Perl_Config_Raid_Show_Percents_Update()
+function Perl_Config_Raid_Show_Health_Percents_Update()
 	if (Perl_Config_Raid_Frame_CheckButton10:GetChecked() == 1) then
-		Perl_Raid_Set_Show_Percents(1);
+		Perl_Raid_Set_Show_Health_Percents(1);
 	else
-		Perl_Raid_Set_Show_Percents(0);
+		Perl_Raid_Set_Show_Health_Percents(0);
+	end
+end
+
+function Perl_Config_Raid_Show_Mana_Percents_Update()
+	if (Perl_Config_Raid_Frame_CheckButton27:GetChecked() == 1) then
+		Perl_Raid_Set_Show_Mana_Percents(1);
+	else
+		Perl_Raid_Set_Show_Mana_Percents(0);
 	end
 end
 
@@ -374,6 +394,14 @@ function Perl_Config_Raid_CTRA_Style_Tip_Update()
 		Perl_Raid_Set_CTRA_Style_Tip(1);
 	else
 		Perl_Raid_Set_CTRA_Style_Tip(0);
+	end
+end
+
+function Perl_Config_Raid_Hide_Empty_Headers_Update()
+	if (Perl_Config_Raid_Frame_CheckButton28:GetChecked() == 1) then
+		Perl_Raid_Set_Hide_Empty_Headers(1);
+	else
+		Perl_Raid_Set_Hide_Empty_Headers(0);
 	end
 end
 

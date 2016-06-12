@@ -16,6 +16,7 @@ local showdruidbar = 0;		-- Druid Bar support is enabled by default
 local showpetbars = 0;		-- Pet info is hidden by default
 local rightclickmenu = 0;	-- The ability to open a menu from CombatDisplay is disabled by default
 local fivesecsupport = 0;	-- FiveSec support is disabled by default
+local displaypercents = 0;	-- percents are off by default
 
 -- Default Local Variables
 local InCombat = 0;
@@ -428,7 +429,11 @@ function Perl_CombatDisplay_Update_Health()
 
 	Perl_CombatDisplay_HealthBar:SetMinMaxValues(0, playerhealthmax);
 	Perl_CombatDisplay_HealthBar:SetValue(playerhealth);
-	Perl_CombatDisplay_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
+	if (displaypercents == 0) then
+		Perl_CombatDisplay_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
+	else
+		Perl_CombatDisplay_HealthBarText:SetText(playerhealth.."/"..playerhealthmax.." | "..floor(playerhealth/playerhealthmax*100+0.5).."%");
+	end
 end
 
 function Perl_CombatDisplay_Update_Mana()
@@ -446,7 +451,11 @@ function Perl_CombatDisplay_Update_Mana()
 	if (playerpower == 1) then
 		Perl_CombatDisplay_ManaBarText:SetText(playermana);
 	else
-		Perl_CombatDisplay_ManaBarText:SetText(playermana.."/"..playermanamax);
+		if (displaypercents == 0) then
+			Perl_CombatDisplay_ManaBarText:SetText(playermana.."/"..playermanamax);
+		else
+			Perl_CombatDisplay_ManaBarText:SetText(playermana.."/"..playermanamax.." | "..floor(playermana/playermanamax*100+0.5).."%");
+		end
 	end
 
 	if (showdruidbar == 1) then
@@ -508,9 +517,7 @@ function Perl_CombatDisplay_Update_Mana()
 
 	if (fivesecsupport == 1) then
 		if (REGENERATING_MANA ~= nil) then				-- Is FiveSec installed?
-			if (UnitPowerType("player") > 0) then			-- If we aren't in mana mode, bail out
-				-- Do nothing
-			else
+			if (UnitPowerType("player") == 0) then			-- If we aren't in mana mode, bail out
 				if (REGENERATING_MANA == false) then		-- If we aren't in regen mode, color light blue
 					Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0.7, 1, 1);
 					Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0.7, 1, 0.25);
@@ -552,7 +559,11 @@ function Perl_CombatDisplay_Update_DruidBar(arg1)
 		end
 
 		-- Display the needed text
-		Perl_CombatDisplay_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+		if (displaypercents == 0) then
+			Perl_CombatDisplay_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+		else
+			Perl_CombatDisplay_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax.." | "..playerdruidbarmanapercent.."%");
+		end
 	end
 end
 
@@ -677,7 +688,11 @@ function Perl_CombatDisplay_Update_PetHealth()
 
 	Perl_CombatDisplay_PetHealthBar:SetMinMaxValues(0, pethealthmax);
 	Perl_CombatDisplay_PetHealthBar:SetValue(pethealth);
-	Perl_CombatDisplay_PetHealthBarText:SetText(pethealth.."/"..pethealthmax);
+	if (displaypercents == 0) then
+		Perl_CombatDisplay_PetHealthBarText:SetText(pethealth.."/"..pethealthmax);
+	else
+		Perl_CombatDisplay_PetHealthBarText:SetText(pethealth.."/"..pethealthmax.." | "..floor(pethealth/pethealthmax*100+0.5).."%");
+	end
 end
 
 function Perl_CombatDisplay_Update_PetMana()
@@ -694,7 +709,11 @@ function Perl_CombatDisplay_Update_PetMana()
 	if (UnitPowerType("pet") == 2) then
 		Perl_CombatDisplay_PetManaBarText:SetText(petmana);
 	else
-		Perl_CombatDisplay_PetManaBarText:SetText(petmana.."/"..petmanamax);
+		if (displaypercents == 0) then
+			Perl_CombatDisplay_PetManaBarText:SetText(petmana.."/"..petmanamax);
+		else
+			Perl_CombatDisplay_PetManaBarText:SetText(petmana.."/"..petmanamax.." | "..floor(petmana/petmanamax*100+0.5).."%");
+		end
 	end
 end
 
@@ -760,14 +779,18 @@ function Perl_CombatDisplay_Target_Update_Health()
 		if (mobhealthsupport == 1) then
 			if (MobHealth3) then
 				targethealth, targethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("target", UnitHealth("target"), UnitHealthMax("target"), UnitName("target"), UnitLevel("target"));
-				if (mobhealththreenumerics) then
-					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);	-- Stored unit info from the DB
-				else
-					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");	-- Unit not in MobHealth DB
+				if (mobhealththreenumerics) then	-- Stored unit info from the DB
+					if (displaypercents == 0) then
+						Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+					else
+						Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..floor(targethealth/targethealthmax*100+0.5).."%");
+					end
+				else	-- Unit not in MobHealth DB
+					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");
 				end
 			elseif (MobHealthFrame) then
 				local index;
-				if UnitIsPlayer("target") then
+				if (UnitIsPlayer("target")) then
 					index = UnitName("target");
 				else
 					index = UnitName("target")..":"..UnitLevel("target");
@@ -778,7 +801,7 @@ function Perl_CombatDisplay_Target_Update_Health()
 					local pts;
 					local pct;
 
-					if MobHealthDB[index] then
+					if (MobHealthDB[index]) then
 						if (type(MobHealthDB[index]) ~= "string") then
 							Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");
 						end
@@ -801,8 +824,12 @@ function Perl_CombatDisplay_Target_Update_Health()
 					end
 
 					local currentPct = UnitHealth("target");
-					if (pointsPerPct > 0) then
-						Perl_CombatDisplay_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5).." | "..targethealth.."%");	-- Stored unit info from the DB
+					if (pointsPerPct > 0) then	-- Stored unit info from the DB
+						if (displaypercents == 0) then
+							Perl_CombatDisplay_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5));
+						else
+							Perl_CombatDisplay_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5).." | "..targethealth.."%");
+						end
 					end
 				else
 					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");	-- Unit not in MobHealth DB
@@ -814,8 +841,12 @@ function Perl_CombatDisplay_Target_Update_Health()
 		else	-- mobhealthsupport == 0
 			Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");	-- MobHealth support is disabled
 		end
-	else
-		Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);	-- Self/Party/Raid member
+	else	-- Self/Party/Raid member
+		if (displaypercents == 0) then
+			Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+		else
+			Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..floor(targethealth/targethealthmax*100+0.5).."%");
+		end
 	end
 end
 
@@ -834,7 +865,11 @@ function Perl_CombatDisplay_Target_Update_Mana()
 	if (targetpowertype == 1 or targetpowertype == 2) then
 		Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana);
 	else
-		Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
+		if (displaypercents == 0) then
+			Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
+		else
+			Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax.." | "..floor(targetmana/targetmanamax*100+0.5).."%");
+		end
 	end
 end
 
@@ -960,6 +995,15 @@ function Perl_CombatDisplay_Set_Right_Click(newvalue)
 	Perl_CombatDisplay_UpdateVars();
 end
 
+function Perl_CombatDisplay_Set_Display_Percents(newvalue)
+	displaypercents = newvalue;
+	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_Update_Health();
+	Perl_CombatDisplay_Update_Mana();
+	Perl_CombatDisplay_CheckForPets();
+	Perl_CombatDisplay_Target_UpdateAll();
+end
+
 function Perl_CombatDisplay_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1001,6 +1045,7 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 	showpetbars = Perl_CombatDisplay_Config[name]["ShowPetBars"];
 	rightclickmenu = Perl_CombatDisplay_Config[name]["RightClickMenu"];
 	fivesecsupport = Perl_CombatDisplay_Config[name]["FiveSecSupport"];
+	displaypercents = Perl_CombatDisplay_Config[name]["DisplayPercents"];
 
 	if (state == nil) then
 		state = 3;
@@ -1038,6 +1083,9 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 	if (fivesecsupport == nil) then
 		fivesecsupport = 0;
 	end
+	if (displaypercents == nil) then
+		displaypercents = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1066,6 +1114,7 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 		["showpetbars"] = showpetbars,
 		["rightclickmenu"] = rightclickmenu,
 		["fivesecsupport"] = fivesecsupport,
+		["displaypercents"] = displaypercents,
 	}
 	return vars;
 end
@@ -1134,6 +1183,11 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			else
 				fivesecsupport = nil;
 			end
+			if (vartable["Global Settings"]["DisplayPercents"] ~= nil) then
+				displaypercents = vartable["Global Settings"]["DisplayPercents"];
+			else
+				displaypercents = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1173,6 +1227,9 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		if (fivesecsupport == nil) then
 			fivesecsupport = 0;
 		end
+		if (displaypercents == nil) then
+			displaypercents = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_CombatDisplay_Set_Target(showtarget)
@@ -1201,6 +1258,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		["ShowPetBars"] = showpetbars,
 		["RightClickMenu"] = rightclickmenu,
 		["FiveSecSupport"] = fivesecsupport,
+		["DisplayPercents"] = displaypercents,
 	};
 end
 

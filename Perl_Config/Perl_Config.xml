@@ -9,14 +9,21 @@
 	<Script file="Perl_Config.lua"/>
 
 
-	<Frame name="Perl_Config_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
+	<Frame name="Perl_Config_Frame" movable="true" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Scripts>
 			<OnEvent>
 				Perl_Config_OnEvent(event);
 			</OnEvent>
 			<OnLoad>
+				this:RegisterForDrag('LeftButton');
 				Perl_Config_OnLoad();
 			</OnLoad>
+			<OnDragStart>
+				Perl_Config_Frame:StartMoving();
+			</OnDragStart>
+			<OnDragStop>
+				Perl_Config_Frame:StopMovingOrSizing();
+			</OnDragStop>
 		</Scripts>
 		<Size>
 			<AbsDimension x="600" y="500"/>
@@ -105,6 +112,21 @@
 					<Anchor point="TOPRIGHT">
 						<Offset>
 							<AbsDimension x="-4" y="-4"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Config_Toggle();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="Perl_Config_Close_X_Button2" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="6" y="-4"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

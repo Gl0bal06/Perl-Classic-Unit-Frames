@@ -101,6 +101,12 @@ function Perl_Config_CombatDisplay_Set_Values()
 	else
 		Perl_Config_CombatDisplay_Frame_CheckButton15:SetChecked(nil);
 	end
+
+	if (vartable["displaypercents"] == 1) then
+		Perl_Config_CombatDisplay_Frame_CheckButton16:SetChecked(1);
+	else
+		Perl_Config_CombatDisplay_Frame_CheckButton16:SetChecked(nil);
+	end
 end
 
 function Perl_Config_CombatDisplay_Mode_Update()
@@ -187,6 +193,14 @@ function Perl_Config_CombatDisplay_FiveSec_Update()
 		Perl_CombatDisplay_Set_FiveSec(1);
 	else
 		Perl_CombatDisplay_Set_FiveSec(0);
+	end
+end
+
+function Perl_Config_CombatDisplay_Display_Percents_Update()
+	if (Perl_Config_CombatDisplay_Frame_CheckButton16:GetChecked() == 1) then
+		Perl_CombatDisplay_Set_Display_Percents(1);
+	else
+		Perl_CombatDisplay_Set_Display_Percents(0);
 	end
 end
 
