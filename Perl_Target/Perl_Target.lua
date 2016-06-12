@@ -105,8 +105,19 @@ function Perl_Target_OnEvent(event)
 	--end
 	elseif (event == "ADDON_LOADED" and arg1 == "Perl_Target") then
 		Perl_Target_myAddOns_Support();
+		return;
+	elseif ( event == "PLAYER_TARGET_CHANGED" or event == "PARTY_MEMBERS_CHANGED" or event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBER_ENABLE" or event == "PARTY_MEMBER_DISABLE") then
+		Perl_Target_UpdateDisplay();
+--		if ( event == "PARTY_MEMBERS_CHANGED" ) then
+--			TargetFrame_CheckFaction();
+--		end
+		return;
+	elseif (event == "UNIT_AURA" and arg1 == "target") then
+		Perl_Target_Buff_UpdateAll();
+		return;
 	else
 		Perl_Target_UpdateDisplay();
+		return;
 	end
 end
 
@@ -266,8 +277,8 @@ function Perl_Target_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.02",
-			releaseDate = "September 28, 2005",
+			version = "v0.03",
+			releaseDate = "October 6, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
@@ -288,7 +299,8 @@ function Perl_Target_UpdateDisplay()
 		Perl_Target_Frame:Hide();
 		TargetFrame_Update = BlizzardTargetFrame_Update;
 	else
-		if (UnitName("target") ~= nil) then
+		if (UnitExists("target")) then
+		--if (UnitName("target") ~= nil) then
 			-- set common variables
 			local targetname = UnitName("target");
 			local targetmana = UnitMana("target");
@@ -486,7 +498,9 @@ function Perl_Target_UpdateDisplay()
 				Perl_Target_ManaBarText:SetText(targetmana.."%");
 			else
 				Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
-			end	
+			end
+
+			Perl_Target_Buff_UpdateAll();
 			
 			TargetFrame:Hide();  -- Hide default frame
 			ComboFrame:Hide();  -- Hide Combo Points
@@ -497,6 +511,26 @@ function Perl_Target_UpdateDisplay()
 		end
 	end
 end
+
+--function TargetFrame_Update()
+--	if ( UnitExists("target") ) then
+--		this:Show();
+--		UnitFrame_Update();
+--		UnitFrame_UpdateManaType();
+--		TargetFrame_CheckLevel();
+--		TargetFrame_CheckFaction();
+--		TargetFrame_CheckClassification();
+--		TargetFrame_CheckDead();
+--		if ( UnitIsPartyLeader("target") ) then
+--			TargetLeaderIcon:Show();
+--		else
+--			TargetLeaderIcon:Hide();
+--		end
+--		TargetDebuffButton_Update();
+--	else
+--		this:Hide();
+--	end
+--end
 
 ----------------------
 -- Config functions --
@@ -609,16 +643,16 @@ function Perl_Target_Buff_UpdateAll()
 	local friendly;
 	if (UnitName("target")) then
 	  if ( UnitIsFriend("player", "target") ) then
-	    --Perl_Target_Buff(1);
-	    --Perl_Target_Debuff(1);
+--	    Perl_Target_Buff(1);
+--	    Perl_Target_Debuff(1);
 	    friendly = 1;
 	  else
-	    --Perl_Target_Debuff(0);
-	    --Perl_Target_Buff(0);
+--	    Perl_Target_Debuff(0);
+--	    Perl_Target_Buff(0);
 	    friendly = 0;
 	  end
 	  
-	  local buffmax = 0;
+		local buffmax = 0;
 		for buffnum=1,numbuffsshown do
 			local button = getglobal("Perl_Target_Buff"..buffnum);
 			local icon = getglobal(button:GetName().."Icon");

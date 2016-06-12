@@ -1,7 +1,8 @@
 ## Interface: 1700
+## Version: 0.03
 ## Title: Perl Target Frame
 ## Notes: Displays a movable target frame to replace the default.
-## SavedVariables: Perl_Target_Config
-## OptionalDeps: myAddOns
 ## Dependencies: 
+## OptionalDeps: myAddOns
+## SavedVariables: Perl_Target_Config
 Perl_Target.xml

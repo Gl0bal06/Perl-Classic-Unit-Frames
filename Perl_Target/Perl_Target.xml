@@ -74,7 +74,7 @@
 		
 		<Scripts>
 			<OnUpdate>
-				Perl_Target_Buff_UpdateAll();
+				<!-- Perl_Target_Buff_UpdateAll(); -->
 			</OnUpdate>
 			<OnLoad>
 				Perl_Target_OnLoad();

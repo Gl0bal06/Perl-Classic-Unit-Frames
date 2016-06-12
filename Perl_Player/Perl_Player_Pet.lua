@@ -16,9 +16,9 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 		
 	-- Slash Commands
-	SlashCmdList["PERL_PLAYER_PET"] = Perl_Player_Pet_SlashHandler;
-	SLASH_PERL_TARGET1 = "/PerlPlayerPet";
-	SLASH_PERL_TARGET2 = "/PPP";
+--	SlashCmdList["PERL_PLAYER_PET"] = Perl_Player_Pet_SlashHandler;
+--	SLASH_PERL_TARGET1 = "/PerlPlayerPet";
+--	SLASH_PERL_TARGET2 = "/PPP";
 
 	table.insert(UnitPopupFrames,"Perl_Player_Pet_DropDown");
 end
@@ -33,29 +33,29 @@ end
 -------------------
 -- Slash Handler --
 -------------------
-function Perl_Player_Pet_SlashHandler(msg)
-	if (string.find(msg, "unlock")) then
-		Perl_Player_Pet_Lock();
-	elseif (string.find(msg, "lock")) then
-		Perl_Player_Pet_Unlock();
-	elseif (string.find(msg, "status")) then
-		Perl_Player_Pet_Status();
-	--elseif (string.find(msg, "hideart")) then
-		--Perl_Player_ToggleHideBarArt();
-	--elseif (string.find(msg, "buff")) then
-		--Perl_Player_ToggleBuffs();
-	--elseif (string.find(msg, "alert")) then
-		--Perl_Player_ToggleBuffAlerts();
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Player Pet Frame ---");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
-		--DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs |cffffff00- Toggle the built in buff monitor on the player frame.");
-		--DEFAULT_CHAT_FRAME:AddMessage("|cffffffff alerts |cffffff00- Toggle warning messages for buffs (at 30 seconds left).");
-		--DEFAULT_CHAT_FRAME:AddMessage("|cffffffff hideart |cffffff00- Hide most of the art on the bottom bar (cosmetic).");
-	end
-end
+--function Perl_Player_Pet_SlashHandler(msg)
+--	if (string.find(msg, "unlock")) then
+--		Perl_Player_Pet_Lock();
+--	elseif (string.find(msg, "lock")) then
+--		Perl_Player_Pet_Unlock();
+--	elseif (string.find(msg, "status")) then
+--		Perl_Player_Pet_Status();
+--	--elseif (string.find(msg, "hideart")) then
+--		--Perl_Player_ToggleHideBarArt();
+--	--elseif (string.find(msg, "buff")) then
+--		--Perl_Player_ToggleBuffs();
+--	--elseif (string.find(msg, "alert")) then
+--		--Perl_Player_ToggleBuffAlerts();
+--	else
+--		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Player Pet Frame ---");
+--		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
+--		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
+--		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
+--		--DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs |cffffff00- Toggle the built in buff monitor on the player frame.");
+--		--DEFAULT_CHAT_FRAME:AddMessage("|cffffffff alerts |cffffff00- Toggle warning messages for buffs (at 30 seconds left).");
+--		--DEFAULT_CHAT_FRAME:AddMessage("|cffffffff hideart |cffffff00- Hide most of the art on the bottom bar (cosmetic).");
+--	end
+--end
 
 -------------------------
 -- The Update Function --

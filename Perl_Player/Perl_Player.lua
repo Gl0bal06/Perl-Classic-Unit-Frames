@@ -119,6 +119,7 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("VARIABLES_LOADED");
 	this:RegisterEvent("PLAYER_REGEN_ENABLED");
 	this:RegisterEvent("PLAYER_REGEN_DISABLED");
+	this:RegisterEvent("ADDON_LOADED");
 		
 	-- Slash Commands
 	SlashCmdList["PERL_PLAYER"] = Perl_Player_SlashHandler;
@@ -146,15 +147,17 @@ function Perl_Player_OnEvent(event)
 		else 
 			Perl_Player_Initialize();
 		end
+		return;
 	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Player_Initialize();
 		--VariablesLoaded = 1;
 		if (UnitName("pet") and not (UnitName("pet") == "Unknown Entity")) then
 			Perl_Player_Pet_VarInit();
 		end
+		return;
 	elseif (event == "ADDON_LOADED" and arg1 == "Perl_Player") then
 		Perl_Player_myAddOns_Support();
-
+		return;
 --	elseif (event == "PLAYER_ENTERING_WORLD") then
 --		Perl_Player_Initialize();
 --		if (UnitName("pet") and not (UnitName("pet") == "Unknown Entity")) then
@@ -165,11 +168,14 @@ function Perl_Player_OnEvent(event)
 	elseif (event == "PLAYER_REGEN_ENABLED") then
 		InCombat = nil;
 		Perl_Player_UpdateDisplay();
+		return;
 	elseif (event == "PLAYER_REGEN_DISABLED") then
 		InCombat = 1;
 		Perl_Player_UpdateDisplay();
+		return;
 	else	
 		Perl_Player_UpdateDisplay();
+		return;
 	end
 end
 
@@ -279,9 +285,8 @@ function Perl_Player_Initialize()
 	-- Bar Art hiding stuff.	
 --	ExhaustionTick_Update_Backup = ExhaustionTick_Update;  -- store old function.
 --	Perl_Player_HideBarArt();
-		
 	
-
+	
 	
 	if (Perl_Player_State == 1) then
 		PlayerFrame_UpdateStatus = Perl_Player_UpdateDisplay;
@@ -300,8 +305,8 @@ function Perl_Player_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.02",
-			releaseDate = "September 28, 2005",
+			version = "v0.03",
+			releaseDate = "October 6, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
