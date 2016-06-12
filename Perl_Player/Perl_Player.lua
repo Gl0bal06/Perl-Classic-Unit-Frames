@@ -7,6 +7,7 @@ Perl_Player_Config = {};
 local Perl_Player_State = 1;	-- enabled by default
 local locked = 0;		-- unlocked by default
 local xpbarstate = 1;		-- show default xp bar by default
+local compactmode = 0;		-- compact mode is disabled by default
 local scale = 1;		-- default scale
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
 local transparency = 1;		-- general transparency for frames relative to bars/text  default is 0.8
@@ -127,7 +128,7 @@ function Perl_Player_OnEvent(event)
 		end
 		return;
 	elseif (event == "UNIT_PVP_UPDATE") then
-		Perl_Player_Update_PvP_Status();	-- Is the character PvP flagged?
+		Perl_Player_Update_PvP_Status();		-- Is the character PvP flagged?
 		return;
 	elseif (event == "UNIT_LEVEL") then
 		if (arg1 == "player") then
@@ -161,6 +162,8 @@ function Perl_Player_SlashHandler(msg)
 		Perl_Player_Unlock();
 	elseif (string.find(msg, "lock")) then
 		Perl_Player_Lock();
+	elseif (string.find(msg, "compact")) then
+		Perl_Player_Toggle_CompactMode();
 	elseif (string.find(msg, "toggle")) then
 		Perl_Player_TogglePlayer();
 	elseif (string.find(msg, "status")) then
@@ -181,6 +184,7 @@ function Perl_Player_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Player Frame ---");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff compact |cffffff00- Toggle compact mode.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp # |cffffff00- Set the display mode of the experience bar: 1) default, 2) pvp rank, 3) off");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the player frame on and off.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
@@ -248,6 +252,7 @@ function Perl_Player_Update_Once()
 	Perl_Player_PVPStatus:Hide();				-- Set pvp status icon (need to remove the xml code eventually)
 	Perl_Player_Update_Leader();				-- Are we the party leader?
 	Perl_Player_Update_Combat_Status();			-- Are we already fighting or resting?
+	Perl_Player_Set_CompactMode();				-- Are we using compact mode?
 end
 
 function Perl_Player_Update_Health()
@@ -257,8 +262,14 @@ function Perl_Player_Update_Health()
 
 	Perl_Player_HealthBar:SetMinMaxValues(0, playerhealthmax);
 	Perl_Player_HealthBar:SetValue(playerhealth);
-	Perl_Player_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
-	Perl_Player_HealthBarTextPercent:SetText(playerhealthpercent .. "%");
+
+	if (compactmode == 0) then
+		Perl_Player_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
+		Perl_Player_HealthBarTextPercent:SetText(playerhealthpercent .. "%");
+	else
+		Perl_Player_HealthBarText:SetText();
+		Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
+	end
 end
 
 function Perl_Player_Update_Mana()
@@ -268,8 +279,14 @@ function Perl_Player_Update_Mana()
 
 	Perl_Player_ManaBar:SetMinMaxValues(0, playermanamax);
 	Perl_Player_ManaBar:SetValue(playermana);
-	Perl_Player_ManaBarText:SetText(playermana.."/"..playermanamax);
-	Perl_Player_ManaBarTextPercent:SetText(playermanapercent .. "%");
+
+	if (compactmode == 0) then
+		Perl_Player_ManaBarText:SetText(playermana.."/"..playermanamax);
+		Perl_Player_ManaBarTextPercent:SetText(playermanapercent .. "%");
+	else
+		Perl_Player_ManaBarText:SetText();
+		Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+	end
 end
 
 function Perl_Player_Update_Mana_Bar()
@@ -363,9 +380,21 @@ function Perl_Player_Update_PvP_Status()
 	end
 end
 
+function Perl_Player_Set_CompactMode()
+	if (compactmode == 0) then
+		Perl_Player_Update_Health();
+		Perl_Player_Update_Mana();
+		Perl_Player_StatsFrame:SetWidth(240);
+	else
+		Perl_Player_Update_Health();
+		Perl_Player_Update_Mana();
+		Perl_Player_StatsFrame:SetWidth(170);
+	end
+end
+
 
 ----------------------
--- Config functions --
+-- Config Functions --
 ----------------------
 function Perl_Player_TogglePlayer()
 	if (Perl_Player_State == 0) then
@@ -395,6 +424,18 @@ function Perl_Player_Unlock()
 	locked = 0;
 	Perl_Player_UpdateVars();
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffUnlocked|cffffff00.");
+end
+
+function Perl_Player_Toggle_CompactMode()
+	if (compactmode == 0) then
+		compactmode = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now displaying in |cffffffffCompact Mode|cffffff00.");
+	else
+		compactmode = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now displaying in |cffffffffNormal Mode|cffffff00.");
+	end
+	Perl_Player_Set_CompactMode();
+	Perl_Player_UpdateVars();
 end
 
 function Perl_Player_XPBar_Display(state)
@@ -452,11 +493,18 @@ function Perl_Player_Status()
 	elseif (xpbarstate == 3) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffHiding Experience Bar|cffffff00.");
 	end
+
+	if (compactmode == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying in |cffffffffNormal Mode|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying in |cffffffffCompact Mode|cffffff00.");
+	end
 end
 
 function Perl_Player_GetVars()
 	locked = Perl_Player_Config[UnitName("player")]["Locked"];
 	xpbarstate = Perl_Player_Config[UnitName("player")]["XPBarState"];
+	compactmode = Perl_Player_Config[UnitName("player")]["CompactMode"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -464,12 +512,16 @@ function Perl_Player_GetVars()
 	if (xpbarstate == nil) then
 		xpbarstate = 1;
 	end
+	if (compactmode == nil) then
+		compactmode = 0;
+	end
 end
 
 function Perl_Player_UpdateVars()
 	Perl_Player_Config[UnitName("player")] = {
 						["Locked"] = locked,
 						["XPBarState"] = xpbarstate,
+						["CompactMode"] = compactmode,
 	};
 end
 
@@ -542,8 +594,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.12",
-			releaseDate = "October 23, 2005",
+			version = "v0.13",
+			releaseDate = "October 29, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

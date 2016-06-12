@@ -1,14 +1,9 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 	<Script file="Perl_Player.lua"/>
-	
-	
-	<!-- 
 
-		Real frames!
 
-	-->
-	
+	<!-- Real frames! -->
 	<Frame name="Perl_Player_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Size>
 			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. -->
@@ -21,9 +16,9 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
-		
+
+
 		<!-- Script Events -->
-		
 		<Scripts>
 			<OnUpdate>
 				<!-- Perl_Player_Buff_UpdateAll(); -->
@@ -41,13 +36,9 @@
 				Perl_Player_MouseUp(arg1);
 			</OnMouseUp>
 		</Scripts>
-		
+
 		<Frames>
-			<!--
-			
-			Frame for the drop down menu.
-			
-			-->
+			<!-- Frame for the drop down menu. -->
 			<Frame name="Perl_Player_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
 				<Size>
 					<AbsDimension x="10" y="10"/>
@@ -65,12 +56,12 @@
 					</OnLoad>
 				</Scripts>
 			</Frame>
-			
+
+
 			<!-- Player Name -->
-			
-			<Frame name="Perl_Player_NameFrame">				
+			<Frame name="Perl_Player_NameFrame">
 				<Size>
-					<AbsDimension x="180" y="24"/>
+					<AbsDimension x="200" y="24"/>		<!-- 180 default -->
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -78,7 +69,7 @@
 							<AbsDimension x="0" y="0"/>
 						</Offset>
 					</Anchor>
-				</Anchors>		
+				</Anchors>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -92,7 +83,6 @@
 				</Backdrop>
 				<Layers>
 					<Layer level="OVERLAY">
-						
 						<!-- PVP Icon -->
 						<Texture name="Perl_Player_PVPStatus" file="Interface\TargetingFrame\UI-PVP-FFA">
 							<Size>
@@ -106,7 +96,7 @@
 								</Anchor>
 							</Anchors>
 						</Texture>
-						
+
 						<!-- Rest/Combat Icon -->
 						<Texture name="Perl_Player_ActivityStatus" file="Interface\CharacterFrame\UI-StateIcon">
 							<Size>
@@ -120,7 +110,7 @@
 								</Anchor>
 							</Anchors>
 						</Texture>
-						
+
 						<!-- Leader Icon -->
 						<Texture name="Perl_Player_LeaderIcon" file="Interface\GroupFrame\UI-Group-LeaderIcon" hidden="true">
 							<Size>
@@ -134,10 +124,11 @@
 								</Anchor>
 							</Anchors>
 						</Texture>
-						
+
+						<!-- Name Text -->
 						<Fontstring name="Perl_Player_NameBarText" inherits="GameFontNormal" text="Error!">
 							<Anchors>
-								<Anchor point="LEFT" relativeTo="Perl_Player_ClassTexture" relativePoint="RIGHT" >
+								<Anchor point="LEFT" relativeTo="Perl_Player_ClassTexture" relativePoint="RIGHT">
 									<Offset>
 										<AbsDimension x="5" y="0"/>
 									</Offset>
@@ -148,14 +139,10 @@
 					</Layer>
 				</Layers>
 			</Frame>
-			
-			<!-- 
-			
-			Level Frame
-			
-			-->
-			
-			<Frame name="Perl_Player_LevelFrame">				
+
+
+			<!-- Level Frame -->
+			<Frame name="Perl_Player_LevelFrame">
 				<Size>
 					<AbsDimension x="34" y="42"/>
 				</Size>
@@ -165,7 +152,7 @@
 							<AbsDimension x="0" y="5"/>
 						</Offset>
 					</Anchor>
-				</Anchors>		
+				</Anchors>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -192,6 +179,7 @@
 								</Anchor>
 							</Anchors>
 						</Texture>
+
 						<!-- Level Text -->
 						<Fontstring name="Perl_Player_LevelFrame_LevelBarText" inherits="GameFontNormalSmall" text="Error!">
 							<Anchors>
@@ -205,10 +193,9 @@
 					</Layer>
 				</Layers>
 			</Frame>
-			
-					
+
+
 			<!-- Player Stats -->
-			
 			<Frame name="Perl_Player_StatsFrame">
 				<Size>
 					<AbsDimension x="240" y="54"/>
@@ -219,7 +206,7 @@
 							<AbsDimension x="30" y="5"/>
 						</Offset>
 					</Anchor>
-				</Anchors>		
+				</Anchors>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -232,220 +219,189 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
-						<!-- Health Bar -->
-						
-						<StatusBar name="Perl_Player_HealthBar" inherits="TextStatusBar">
-							<Size>
-								<AbsDimension x="150" y="10"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT">
-									<Offset>
-										<AbsDimension x="10" y="-10"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-							<BarTexture name="Perl_Player_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
-							<BarColor r="0" g="0.8" b="0"/>
-							<Layers>
-								<!-- Text -->
-								<Layer level="OVERLAY">
-									<Fontstring name="Perl_Player_HealthBarText" inherits="GameFontNormalSmall" text="Error!">
-										<Anchors>
-											<Anchor point="RIGHT" relativePoint="RIGHT">
-												<Offset>
-													<AbsDimension x="70" y="0"/>
-												</Offset>
-											</Anchor>
-										</Anchors>
-										<Color r="1" g="1" b="1" />
-									</Fontstring>
-									<Fontstring name="Perl_Player_HealthBarTextPercent" inherits="GameFontNormalSmall" text="Error!">
-										<Anchors>
-											<Anchor point="TOP" relativePoint="TOP">
-												<Offset>
-													<AbsDimension x="0" y="1"/>
-												</Offset>
-											</Anchor>
-										</Anchors>
-										<Color r="1" g="1" b="1" />
-									</Fontstring>
-								</Layer>					
-							</Layers>
-						</StatusBar>
-						<StatusBar name="Perl_Player_HealthBarBG" inherits="TextStatusBar">
-							<Size>
-								<AbsDimension x="150" y="10"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_HealthBar">
-									<Offset>
-										<AbsDimension x="0" y="0"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-							<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
-							<BarColor r="0" g="0.8" b="0" a="0.5"/>
-						</StatusBar>
-									
-						<!-- Mana Bar -->
-						
-						<StatusBar name="Perl_Player_ManaBar" inherits="TextStatusBar">
-							<Size>
-								<AbsDimension x="150" y="10"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="Perl_Player_HealthBar">
-									<Offset>
-										<AbsDimension x="0" y="-2"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-							<BarTexture name="Perl_Player_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
-							<BarColor r="0" g="0" b="1"/>
-							<Layers>
-								<!-- Text -->
-								<Layer level="OVERLAY">
-									<Fontstring name="Perl_Player_ManaBarText" inherits="GameFontNormalSmall" text="Error!">
-										<Anchors>
-											<Anchor point="RIGHT" relativePoint="RIGHT">
-												<Offset>
-													<AbsDimension x="70" y="0"/>
-												</Offset>
-											</Anchor>
-										</Anchors>
-										<Color r="1" g="1" b="1" />
-									</Fontstring>
-									<Fontstring name="Perl_Player_ManaBarTextPercent" inherits="GameFontNormalSmall" text="Error!">
-										<Anchors>
-											<Anchor point="TOP" relativePoint="TOP">
-												<Offset>
-													<AbsDimension x="0" y="1"/>
-												</Offset>
-											</Anchor>
-										</Anchors>
-										<Color r="1" g="1" b="1" />
-									</Fontstring>
-								</Layer>
-							</Layers>
-						</StatusBar>
-						<StatusBar name="Perl_Player_ManaBarBG" inherits="TextStatusBar">
-							<Size>
-								<AbsDimension x="150" y="10"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_ManaBar">
-									<Offset>
-										<AbsDimension x="0" y="0"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-							<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
-							<BarColor r="0" g="0" b="1" a="0.5"/>
-						</StatusBar>
-						
-						<!-- XP Bar -->
-						
-						<StatusBar name="Perl_Player_XPBar" inherits="TextStatusBar">
-							<Size>
-								<AbsDimension x="220" y="10"/>
-							</Size>
-							<Scripts>
-								<OnEnter>
-									Perl_Player_XPTooltip();
-								</OnEnter>
-							</Scripts>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Player_ManaBar">
-									<Offset>
-										<AbsDimension x="0" y="-2"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-							<BarTexture name="Perl_Player_XPBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
-							<BarColor r="0.6" g="0" b="0.6"/>
-							<Layers>
-								<!-- Text -->
-								<Layer level="OVERLAY">
-									<Fontstring name="Perl_Player_XPBarText" inherits="GameFontNormalSmall" text="Error!">
-										<Anchors>
-											<Anchor point="TOP" relativePoint="TOP">
-												<Offset>
-													<AbsDimension x="0" y="1"/>
-												</Offset>
-											</Anchor>
-										</Anchors>
-										<Color r="1" g="1" b="1" />
-									</Fontstring>
-								</Layer>
-							</Layers>
-						</StatusBar>
-						<StatusBar name="Perl_Player_XPBarBG" inherits="TextStatusBar">
-							<Size>
-								<AbsDimension x="220" y="10"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_XPBar">
-									<Offset>
-										<AbsDimension x="0" y="0"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-							<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
-							<BarColor r="0.6" g="0" b="0.6" a="0.25"/>
-							<Scripts>
-								<OnLoad>
-									this:SetFrameLevel(this:GetFrameLevel() - 1);
-								</OnLoad>
-							</Scripts>
-						</StatusBar>
-						<StatusBar name="Perl_Player_XPRestBar" inherits="TextStatusBar">
-							<Size>
-								<AbsDimension x="220" y="10"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_XPBar">
-									<Offset>
-										<AbsDimension x="0" y="0"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-							<BarTexture  name="Perl_Player_XPRestBarTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
-							<BarColor r="0.3" g="0.3" b="0.6" a="0.5"/>
-						</StatusBar>
+					<!-- Health Bar -->
+					<StatusBar name="Perl_Player_HealthBar" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="10" y="-10"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Player_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0"/>
+						<Layers>
+							<!-- Text -->
+							<Layer level="OVERLAY">
+								<Fontstring name="Perl_Player_HealthBarText" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="RIGHT">
+											<Offset>
+												<AbsDimension x="70" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1" />
+								</Fontstring>
+								<Fontstring name="Perl_Player_HealthBarTextPercent" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="TOP" relativePoint="TOP">
+											<Offset>
+												<AbsDimension x="0" y="1"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1" />
+								</Fontstring>
+							</Layer>
+						</Layers>
+					</StatusBar>
+					<StatusBar name="Perl_Player_HealthBarBG" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_HealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarColor r="0" g="0.8" b="0" a="0.5"/>
+					</StatusBar>
+
+					<!-- Mana Bar -->
+					<StatusBar name="Perl_Player_ManaBar" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="Perl_Player_HealthBar">
+								<Offset>
+									<AbsDimension x="0" y="-2"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Player_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0" b="1"/>
+						<Layers>
+							<!-- Text -->
+							<Layer level="OVERLAY">
+								<Fontstring name="Perl_Player_ManaBarText" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="RIGHT">
+											<Offset>
+												<AbsDimension x="70" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1" />
+								</Fontstring>
+								<Fontstring name="Perl_Player_ManaBarTextPercent" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="TOP" relativePoint="TOP">
+											<Offset>
+												<AbsDimension x="0" y="1"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1" />
+								</Fontstring>
+							</Layer>
+						</Layers>
+					</StatusBar>
+					<StatusBar name="Perl_Player_ManaBarBG" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarColor r="0" g="0" b="1" a="0.5"/>
+					</StatusBar>
+
+					<!-- XP Bar -->
+					<StatusBar name="Perl_Player_XPBar" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="220" y="10"/>
+						</Size>
+						<Scripts>
+							<OnEnter>
+								Perl_Player_XPTooltip();
+							</OnEnter>
+						</Scripts>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Player_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="-2"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Player_XPBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0.6" g="0" b="0.6"/>
+						<Layers>
+							<!-- Text -->
+							<Layer level="OVERLAY">
+								<Fontstring name="Perl_Player_XPBarText" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="TOP" relativePoint="TOP">
+											<Offset>
+												<AbsDimension x="0" y="1"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1" />
+								</Fontstring>
+							</Layer>
+						</Layers>
+					</StatusBar>
+					<StatusBar name="Perl_Player_XPBarBG" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="220" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_XPBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarColor r="0.6" g="0" b="0.6" a="0.25"/>
+						<Scripts>
+							<OnLoad>
+								this:SetFrameLevel(this:GetFrameLevel() - 1);
+							</OnLoad>
+						</Scripts>
+					</StatusBar>
+					<StatusBar name="Perl_Player_XPRestBar" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="220" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_XPBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture  name="Perl_Player_XPRestBarTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarColor r="0.3" g="0.3" b="0.6" a="0.5"/>
+					</StatusBar>
 				</Frames>
 			</Frame>
-			
-			<!-- 
-			
-			Full coverage frame 
-			
-			-->
-			<!--
-			<Frame name="Perl_Player_CoverageFrame" frameStrata="Artwork">
-				<Anchors>
-					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-					<Anchor point="BOTTOMRIGHT" relativeTo="Perl_Player_StatsFrame">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						this:SetFrameLevel(Perl_Player_HealthBar:GetFrameLevel() + 1);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-			-->
-
 		</Frames>
 	</Frame>
-	
+
 	<GameTooltip name="Perl_Player_Tooltip" hidden="true" parent="Perl_Player_Frame" inherits="GameTooltipTemplate">
 		<Scripts>
 			<OnLoad>
@@ -454,5 +410,4 @@
 			</OnLoad>
 		</Scripts>
 	</GameTooltip>
-	
-</Ui>	
+</Ui>

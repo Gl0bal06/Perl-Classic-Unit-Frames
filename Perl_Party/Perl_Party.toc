@@ -1,0 +1,7 @@
+## Interface: 1800
+## Title: Perl Party Frame
+## Notes: Displays a movable party frame to replace the default.
+## Dependencies: 
+## OptionalDeps: myAddOns
+## SavedVariables: Perl_Party_Config
+Perl_Party.xml

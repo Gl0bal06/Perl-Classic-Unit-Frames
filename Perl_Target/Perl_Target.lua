@@ -10,6 +10,7 @@ local Perl_Target_State = 1;	-- enabled by default
 local locked = 0;		-- unlocked by default
 local showcp = 1;		-- combo points displayed by default
 local showclassicon = 1;	-- show the class icon
+local showclassframe = 1;	-- show the class frame
 local numbuffsshown = 20;	-- buff row is 20 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
 local mobhealthsupport = 1;	-- mobhealth support is on by default
@@ -175,8 +176,10 @@ function Perl_Target_SlashHandler(msg)
 		Perl_Target_Lock();
 	elseif (string.find(msg, "combopoints")) then
 		Perl_Target_ToggleCP();
+	elseif (string.find(msg, "icon")) then
+		Perl_Target_ToggleClassIcon();
 	elseif (string.find(msg, "class")) then
-		Perl_Target_ToggleClass();
+		Perl_Target_ToggleClassFrame();
 	elseif (string.find(msg, "mobhealth")) then
 		Perl_Target_ToggleMobHealth();
 	elseif (string.find(msg, "status")) then
@@ -212,7 +215,8 @@ function Perl_Target_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff combopoints |cffffff00- Toggle the displaying of combo points.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff class |cffffff00- Toggle the displaying of class icon.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff class |cffffff00- Toggle the displaying of class frame.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff icon |cffffff00- Toggle the displaying of class icon.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs # |cffffff00- Show the number of buffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuffs # |cffffff00- Show the number of debuffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the target frame on and off.");
@@ -241,6 +245,8 @@ function Perl_Target_Initialize()
 	Perl_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
 	Perl_Target_NameFrame:SetBackdropColor(0, 0, 0, transparency);
 	Perl_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
+	Perl_Target_ClassNameFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Target_ClassNameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
 	Perl_Target_LevelFrame:SetBackdropColor(0, 0, 0, transparency);
 	Perl_Target_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
 	Perl_Target_BuffFrame:SetBackdropColor(0, 0, 0, transparency);
@@ -253,6 +259,7 @@ function Perl_Target_Initialize()
 
 	Perl_Target_HealthBarText:SetTextColor(1,1,1,1);
 	Perl_Target_ManaBarText:SetTextColor(1,1,1,1);
+	Perl_Target_ClassNameBarText:SetTextColor(1,1,1);
 
 	if (Perl_Target_State == 1) then
 		TargetFrame_Update = Perl_Target_Update_Frequently;
@@ -281,6 +288,7 @@ function Perl_Target_Update_Once()
 		Perl_Target_PVPStatus:Hide();		-- Set pvp status icon (need to remove the xml code eventually)
 		Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
 		Perl_Target_Set_Character_Class_Icon();	-- Draw the class icon?
+		Perl_Target_Set_Target_Class();		-- Set the target's class in the class frame
 		Perl_Target_Buff_UpdateAll();		-- Update the buffs
 	end
 end
@@ -514,7 +522,7 @@ function Perl_Target_Frame_Set_Level()
 		targetlevel = targetlevel.."r";
 	end
 
-	Perl_Target_LevelBarText:SetText(targetlevel);	
+	Perl_Target_LevelBarText:SetText(targetlevel);
 end
 
 function Perl_Target_Set_Character_Class_Icon()
@@ -528,6 +536,16 @@ function Perl_Target_Set_Character_Class_Icon()
 		end
 	else
 		Perl_Target_ClassTexture:Hide();
+	end
+end
+
+function Perl_Target_Set_Target_Class()
+	if (showclassframe == 1) then
+		local PlayerClass = UnitClass("target");
+		Perl_Target_ClassNameBarText:SetText(PlayerClass);
+		Perl_Target_ClassNameFrame:Show();
+	else
+		Perl_Target_ClassNameFrame:Hide();
 	end
 end
 
@@ -576,13 +594,37 @@ function Perl_Target_ToggleCP()
 	Perl_Target_UpdateVars();
 end
 
-function Perl_Target_ToggleClass()
+function Perl_Target_ToggleClassIcon()
 	if (showclassicon == 1) then
 		showclassicon = 0;
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is now |cffffffffHidden|cffffff00.");
 	else
 		showclassicon = 1;
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is now |cffffffffShown|cffffff00.");
+	end
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
+function Perl_Target_ToggleClassIcon()
+	if (showclassicon == 1) then
+		showclassicon = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is now |cffffffffHidden|cffffff00.");
+	else
+		showclassicon = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is now |cffffffffShown|cffffff00.");
+	end
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
+function Perl_Target_ToggleClassFrame()
+	if (showclassframe == 1) then
+		showclassframe = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame is now |cffffffffHidden|cffffff00.");
+	else
+		showclassframe = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame is now |cffffffffShown|cffffff00.");
 	end
 	Perl_Target_UpdateVars();
 	Perl_Target_Update_Once();
@@ -640,6 +682,12 @@ function Perl_Target_Status()
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is |cffffffffShown|cffffff00.");
 	end
+
+	if (showclassframe == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame is |cffffffffHidden|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame is |cffffffffShown|cffffff00.");
+	end
 	
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 buffs.");
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numdebuffsshown.."|cffffff00 debuffs.");
@@ -665,6 +713,9 @@ function Perl_Target_GetVars()
 	if (showclassicon == nil) then
 		showclassicon = 1;
 	end
+	if (showclassframe == nil) then
+		showclassframe = 1;
+	end
 	if (numbuffsshown == nil) then
 		numbuffsshown = 20;
 	end
@@ -682,6 +733,7 @@ function Perl_Target_UpdateVars()
 						["Locked"] = locked,
 						["ComboPoints"] = showcp,
 						["ClassIcon"] = showclassicon,
+						["ClassFrame"] = showclassframe,
 						["Buffs"] = numbuffsshown,
 						["Debuffs"] = numdebuffsshown,
 						};
@@ -847,6 +899,9 @@ end
 function Perl_Target_Tooltip_OnEnter()
 	GameTooltip_SetDefaultAnchor(GameTooltip, this);
 	GameTooltip:SetUnit("target");
+	--UnitFrame.unit = "target";
+	--UnitFrame:SetUnit("target");
+	--UnitFrame_OnEnter();
 end
 
 
@@ -858,8 +913,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.12",
-			releaseDate = "October 23, 2005",
+			version = "v0.13",
+			releaseDate = "October 29, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

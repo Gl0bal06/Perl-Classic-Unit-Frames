@@ -134,7 +134,11 @@ function Perl_CombatDisplay_OnEvent(event)
 			Perl_CombatDisplay_UpdateBars();
 			Perl_CombatDisplay_Update_Mana();
 			if (InCombat == 0 and IsAggroed == 0) then
-				Perl_CombatDisplay_Frame:Hide();
+				if (state == 1) then
+					Perl_CombatDisplay_Frame:Show();
+				else
+					Perl_CombatDisplay_Frame:Hide();
+				end
 			end
 		end
 		return;
@@ -396,8 +400,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.12",
-			releaseDate = "October 23, 2005",
+			version = "v0.13",
+			releaseDate = "October 29, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
