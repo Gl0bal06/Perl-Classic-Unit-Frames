@@ -1,3 +1,7 @@
+2.08b - June 18, 2007
+ - CombatDisplay: Fixed an issue with the energy ticker
+ - Config: Updated Korean translations (Thanks Sayclub)
+
 2.08a - June 14, 2007
  - Pet: Fixed an issue with the reset position button
 

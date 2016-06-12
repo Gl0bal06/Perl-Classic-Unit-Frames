@@ -223,7 +223,7 @@ end
 
 function Perl_CombatDisplay_Events:PLAYER_REGEN_ENABLED()
 	IsAggroed = 0;
-	Perl_Player_EnergyTicker:SetAlpha(0);
+	Perl_CombatDisplay_EnergyTicker:SetAlpha(0);
 	if (state == 3) then
 		Perl_CombatDisplay_UpdateDisplay();
 	end
@@ -231,7 +231,7 @@ end
 
 function Perl_CombatDisplay_Events:PLAYER_REGEN_DISABLED()
 	IsAggroed = 1;
-	Perl_Player_EnergyTicker:SetAlpha(1);
+	Perl_CombatDisplay_EnergyTicker:SetAlpha(1);
 	if (state == 3) then
 		if (not InCombatLockdown()) then		-- REMOVE THIS CHECK WHEN YOU CAN
 			Perl_CombatDisplay_Frame:Show();				-- Show the player frame if needed
