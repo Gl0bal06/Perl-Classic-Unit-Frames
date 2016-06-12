@@ -346,45 +346,11 @@ function Perl_CombatDisplay_Initialize()
 	-- MyAddOns Support
 	Perl_CombatDisplay_myAddOns_Support();
 
-	-- IFrameManager Support
+	-- IFrameManager Support (Deprecated)
 	Perl_CombatDisplay_Frame:SetUserPlaced(1);
 	Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
-	if (IFrameManager) then
-		Perl_CombatDisplay_IFrameManager();
-	end
 
 	Initialized = 1;
-end
-
-function Perl_CombatDisplay_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		if (frame == Perl_CombatDisplay_Frame) then
-			return "Perl CombatDisplay (Player)"
-		else
-			return "Perl CombatDisplay (Target)"
-		end
-	end
-	function iface:getBorder(frame)
-		if (frame == Perl_CombatDisplay_Frame) then
-			_, englishclass = UnitClass("player");
-			local bottom = 0;
-			if (showcp == 1 and (englishclass == "DRUID" or englishclass == "ROGUE")) then
-				bottom = bottom + 12;
-			end
-			if (showdruidbar == 1 and englishclass == "DRUID") then
-				bottom = bottom + 12;
-			end
-			if (showpetbars == 1 and (englishclass == "HUNTER" or englishclass == "WARLOCK")) then
-				bottom = bottom + 24;
-			end
-			return 0, 0, bottom, 0;
-		else
-			return 0, 0, 0, 0;
-		end
-	end
-	IFrameManager:Register(Perl_CombatDisplay_Frame, iface);
-	IFrameManager:Register(Perl_CombatDisplay_Target_Frame, iface);
 end
 
 function Perl_CombatDisplay_Initialize_Frame_Color()
@@ -917,6 +883,17 @@ function Perl_CombatDisplay_Target_Update_Health()
 					end
 				else
 					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");	-- Unit not in MobHealth DB
+				end
+			elseif (LibStub("LibMobHealth-4.0", true)) then
+				targethealth, targethealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth("target")
+				if (mobhealththreenumerics) then	-- Stored unit info from the DB
+					if (displaypercents == 0) then
+						Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+					else
+						Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..floor(targethealth/targethealthmax*100+0.5).."%");
+					end
+				else	-- Unit not in MobHealth DB
+					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");
 				end
 			-- End MobHealth Support
 			else
@@ -1596,18 +1573,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		Perl_CombatDisplay_Set_Scale_Actual()
 		Perl_CombatDisplay_Set_Transparency()
 		Perl_CombatDisplay_UpdateDisplay();
-	end
-
-	-- IFrameManager Support
-	if (IFrameManager) then
-		if (IFrameManagerLayout) then
-			if (IFrameManager.isEnabled) then
-				IFrameManager:Disable();
-				IFrameManager:Enable();
-			end
-		else
-			IFrameManager:Refresh();
-		end
 	end
 
 	Perl_CombatDisplay_Config[UnitName("player")] = {

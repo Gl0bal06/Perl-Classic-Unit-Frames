@@ -1,3 +1,9 @@
+2.22 - July 18, 2008
+ - All: Added support for LibMobHealth-4.0
+ - All: Frame backgrounds now correctly extend to the borders of the frame
+ - All: Removed support for IFrameManager
+ - PartyTarget: Added missing MobHealth3 support
+
 2.21 - July 13, 2008
  - Focus: Fixed an error when setting a focus target with MobInfo2 or MobHealth2 installed
 
@@ -25,7 +31,7 @@
  - All: The name, class, and guild text now truncates more accurately
  - All: Changed the default scale from 100 to 90 to match the default Blizzard UI scale
  - ArcaneBar: Cast times of 100 seconds or higher now display correctly
- - ArcaneBar: Text tunating no longer takes place while casting
+ - ArcaneBar: Text truncating no longer takes place while casting
  - Config: Added support for the Blizzard options menu in the interface options
  - Config: Added an Align Horizontally button for the CombatDisplay
  - Config: The pet target scale slider now shows its correct value
@@ -231,7 +237,7 @@
  - Party: Fixed the error on line 1017
 
 2.02 - December 21, 2006
- - All: Added iFrameManager support
+ - All: Added IFrameManager support
  - All: Added myAddOns support
  - All: Memory improvements by no longer inheriting TextStatusBar
  - All: Updated class colors to the Blizzard RAID_CLASS_COLORS template
@@ -241,7 +247,7 @@
  - CombatDisplay/Target/ToT: Updated menu conditions to the latest Blizzard version
  - Config: Added a radius value to the minimap position for square minimaps
  - Config: Moved all class icon coordinates to one centralized location
- - Config: Commented some Perl_Raid code while attemping to get Perl_Raid working
+ - Config: Commented some Perl_Raid code while attempting to get Perl_Raid working
  - Focus: Raid target icons now work properly
  - Focus: Fixed some silent XML errors
  - Focus: Added sanctuary detection for PvP status name coloring
@@ -253,7 +259,7 @@
  - Target: Added 40 debuff support
  - Target: Added 20 buff support
  - Target: Made some changes to how target changes occur
- - Target: Removed buff sizing from iFrameManager support
+ - Target: Removed buff sizing from IFrameManager support
 
 2.01 - December 5, 2006
  - All: Updated TOC Interface version to 20000
@@ -261,7 +267,7 @@
  - All: Added support for the Clique standard of click casting
  - All: Removed myAddOns support
  - All: Removed IFrameManager support
- - All: Removed click casting support for all mods supported pre expansion
+ - All: Removed click casting support for all addons supported pre expansion
  - CombatDisplay: Can now toggle the combo point bar
  - CombatDisplay: Removed display with auto attack mode
  - CombatDisplay: Fixed a font size inconsistency
@@ -284,14 +290,14 @@
  - Party: Pet support now makes the frame always big enough to house the pet health bar
  - Party: Moved the raid event to a different frame so it's not called 4 times
  - Party: Reworked many functions to allow the removal of the forced update section
- - Party: Fixed an inconsistency in default settings for the pvp status icon
+ - Party: Fixed an inconsistency in default settings for the PvP status icon
  - Party/Pet/Player: Now takes advantage of the queue system when appropriate
  - Pet: Hide name frame is now disabled by default
  - Target: Civilian status is now displayed in the class frame
  - Target: Combo point frame is always displayed if enabled
 
 0.81d - November 3, 2006
- - All: Removed event error messages caused by other mods tampering with my events
+ - All: Removed event error messages caused by other addons tampering with my events
 
 0.81c - November 2, 2006
  - Config: Removed some unused translation strings
@@ -334,7 +340,7 @@
  - All: Can now invert status bars to fill as you lose health or mana
  - All: Added the ability to display textures on background of status bars
  - CombatDisplay/Player: Changed some XML regarding Druid Bar
- - Config: Added support for third party perl mods in the menu
+ - Config: Added support for third party perl addons in the menu
  - Config: Readded support and updated options available for Perl_Player_Buff
  - Config: Updated options available for Perl_ArcaneBar
  - Config: The show and hide all buttons for Perl_Raid now work for Group 9
@@ -386,7 +392,7 @@
  - Config: Added a key binding to toggle the options frame
  - Config: Fixed a typo in the Raid options
  - Config: Party_Pet positions are now saved correctly on a global save
- - Config: Removed Player_Buff from the options (support for this mod is now finished)
+ - Config: Removed Player_Buff from the options (support for this addon is now finished)
  - Config: Updated options available for Perl_Party_Pet
  - Config: Updated options available for Perl_Raid
  - Config: Updated French translations (Thanks namatsar)
@@ -403,7 +409,7 @@
  - Target: Healer mode can now be used in any alternate frame style mode
 
 0.75 - July 14, 2006
- - All: Mod authors can now hook into the click function
+ - All: Addon authors can now hook into the click function
  - All: Cleaned up the OnMouseClick code
  - All: Changed how frames are moved to be less invasive
  - All: myAddOns now uses the localized values for version and date
@@ -517,7 +523,7 @@
  - ToT: Added crude click casting support (only works if it is your current target or yourself)
 
 0.64 - May 6, 2006
- - All: Updated TOC files to reflect currently supported mods
+ - All: Updated TOC files to reflect currently supported addons
  - CombatDisplay: Added FiveSec support
 
 0.63 - May 5, 2006
@@ -533,8 +539,8 @@
  - Player/Target: Combat Text no longer requires the portrait frame to be enabled
 
 0.61 - April 30, 2006
- - CombatDisplay: Clicking on the target frame will no longer select yourself
- - CombatDisplay/Party/Pet/Player/Target: Healing mods no longer affect targetting speed when disabled
+ - CombatDisplay: Clicking on the target frame will no longer select your character
+ - CombatDisplay/Party/Pet/Player/Target: Healing addons no longer affect targeting speed when disabled
  - CombatDisplay/Party/Pet/Player/Target: AceHeal users can now right click on name frames to open menus
  - Config: Updated options available for Perl_Raid
  - Player: Switching the XP bar from Reputation to PvP will now correctly color the bar
@@ -577,7 +583,7 @@
 0.55 - April 9, 2006
  - All: Localization has been converted to global variables
  - CombatDisplay/Party/Pet/Player/Target: Removed menu initializing code from OnLoad
- - Config: Added two menu buttons for future mod releases
+ - Config: Added two menu buttons for future addon releases
  - Config: Added Perl_Raid support
  - Party: Corrected an issue with inverted party frames and pets
  - Pet: Can now drop food on the pet frame to feed the pet
@@ -591,7 +597,7 @@
 0.53 - April 4, 2006
  - CombatDisplay: Added pet support to the player frame
  - CombatDisplay/Party/Pet/Player/Target: Added Genesis support
- - CombatDisplay/Party/Pet/Player/Target: Updated TOC files to reflect the newly supported mods
+ - CombatDisplay/Party/Pet/Player/Target: Updated TOC files to reflect the newly supported addons
 
 0.52 - April 2, 2006
  - All: If Alt, Shift, or Ctrl is held while right clicking on a frame, the menu will not appear
@@ -611,7 +617,7 @@
  - All: Can now only open the menu for a particular frame by right clicking
  - All: New characters will now be welcomed by a much cleaner frame layout
  - CombatDisplay: No longer calls double events due to the target portion
- - CombatDisplay/Pet/ToT: Now behaves like the other mods in regards to left and right clicking
+ - CombatDisplay/Pet/ToT: Now behaves like the other addons in regards to left and right clicking
  - CombatDisplay/Pet/Player/Target: Monitoring more events for more accurate information
  - Config: Changed the minimap button to blend in a bit better
  - Config: Expanded the width of the GUI to allow more options to be added later
@@ -621,7 +627,7 @@
  - Party: Added the option to toggle self castable and curable spells on party members (Thanks SteppinRazor)
  - Party: Added 3D portraits as an option
  - Party: Can now move the party frame by left clicking on any of its frames
- - Party/Pet: Can now indepently size buffs and debuffs
+ - Party/Pet: Can now independently size buffs and debuffs
  - Pet: Experience bar will auto hide when a pet is the same level as the player
  - Player: Can now track a selected faction in place of the experience bar
  - Player: Removed a frame level setting from the XML for the experience bar
@@ -660,7 +666,7 @@
  - Target: Added a frame to more easily identify the elite, rare, and boss status of your target
  - Target: Shortened the name length cut off by one character
  - ToT: Healer mode will now correctly alert when you gain agro from a tank
- - ToT: Healer mode will no longer spam you when an enemy player has you targetted
+ - ToT: Healer mode will no longer spam you when an enemy player has you targeted
 
 0.45 - February 25, 2006
  - Party: Added another check for hidden status
@@ -668,7 +674,7 @@
  - Pet: Removed the happiness frame for warlocks
  - Pet: Warlock pets will now display mana as mana instead of focus
  - Player: Your name will now be above the casting bar if ArcaneBar is being used
- - Player: Clicking on the portrait frame will now target yourself
+ - Player: Clicking on the portrait frame will now target your character
  - Player/Target: Added 3D portraits as an option
  - Player/Target: Can now toggle combat text display on the portrait
  - ToT: Added visual and audio alerts for three different types of situations
@@ -690,7 +696,7 @@
  - Target: Portrait will update without retargeting
 
 0.42 - February 14, 2006
- - CombatDisplay: Fixed a minor text bug regarding mobhealth support
+ - CombatDisplay: Fixed a minor text bug regarding MobHealth support
  - Config: Added a Reset Frame Position button
  - Config: Global settings will now save window position
  - Config: Made some minor text and alignment tweaks to some options
@@ -708,7 +714,7 @@
  - CombatDisplay/Target: Made some very minor tweaks
 
 0.38 - January 26, 2006
- - All: Removed all old slash commands, use "/perl" to configure the mod
+ - All: Removed all old slash commands, use "/perl" to configure the addon
 
 0.37 - January 25, 2006
  - Target: The combo point indicator is now always large as to avoid a blocky looking text
@@ -742,16 +748,16 @@
  - Player: Fixed master looter icon from displaying after disbanding a raid
 
 0.31 - January 11, 2006
- - All: Added transparency settings for all mods requiring it
- - All: Perl_Config is now a required dependency for all mods
+ - All: Added transparency settings for all addons requiring it
+ - All: Perl_Config is now a required dependency for all addons
  - All: Health should no longer be reported as negative when someone is dead
  - All: Frames now have a black background and are no longer semi-transparent
  - Config: Added a close button to the top right of the GUI
  - Config: Fixed the lock button on the Player menu
  - Config: Fixed a bug preventing pet buff and debuffs to be configured if Perl_Target was not installed
  - Config: Can no longer click through the menu to frames behind it
- - Config: Should now correctly place itself on top of other mods for easier use
- - Config: Now displays a notice when you try to view a menu for a mod that is not installed
+ - Config: Should now correctly place itself on top of other addons for easier use
+ - Config: Now displays a notice when you try to view a menu for an addon that is not installed
  - Party: Changed how the default party frames were hidden to hopefully be more effective
  - Party/Pet: Can now customize buff and debuff location via the GUI
  - Player: Added a function to get combat status via the "Perl_Player_InCombat()" function
@@ -940,10 +946,10 @@
  - Target: Added MobHealth support (Thanks Neriak!)
 
 0.05 - October 15, 2005
- - Pet: Made the player's pet window its own mod (also event driven now)
+ - Pet: Made the player's pet window its own addon (also event driven now)
  - Pet: Window is now moveable again
  - Player: Added event driven updates
- - Target: Fixed pvp status updates
+ - Target: Fixed PvP status updates
 
 0.04 - October 10, 2005
  - Target: Almost completely rewrote the target frame

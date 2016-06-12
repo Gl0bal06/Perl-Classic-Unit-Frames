@@ -46,7 +46,7 @@ local Perl_Party_Target_Five_ManaBar_Fade_Color = 1;		-- the color fading interv
 local Perl_Party_Target_Five_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local r, g, b, currentunit, partytargethealth, partytargethealthmax, partytargethealthpercent, partytargetmana, partytargetmanamax, partytargetpower, englishclass, raidpartytargetindex;
+local r, g, b, currentunit, partytargethealth, partytargethealthmax, partytargethealthpercent, partytargetmana, partytargetmanamax, partytargetpower, englishclass, raidpartytargetindex, mobhealththreenumerics;
 
 
 ----------------------
@@ -156,51 +156,12 @@ function Perl_Party_Target_Initialize()
 	-- MyAddOns Support
 	Perl_Party_Target_myAddOns_Support();
 
-	-- IFrameManager Support
+	-- IFrameManager Support (Deprecated)
 	for num=1,5 do
 		getglobal("Perl_Party_Target"..num):SetUserPlaced(1);
 	end
-	if (IFrameManager) then
-		Perl_Party_Target_IFrameManager();
-	end
 
 	Initialized = 1;
-end
-
-function Perl_Party_Target_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		if (frame == Perl_Party_Target1) then
-			return "Perl Party Target 1";
-		elseif (frame == Perl_Party_Target2) then
-			return "Perl Party Target 2";
-		elseif (frame == Perl_Party_Target3) then
-			return "Perl Party Target 3";
-		elseif (frame == Perl_Party_Target4) then
-			return "Perl Party Target 4";
-		elseif (frame == Perl_Party_Target5) then
-			return "Perl Focus Target";
-		end
-	end
-	function iface:getBorder(frame)
-		local bottom = 38;
-		local left = 0;
-		local right = 0;
-		local top = 0;
-		if (hidepowerbars == 1) then
-			bottom = bottom - 12;
-		end
-		if (IFrameManagerLayout) then			-- this isn't in the old version
-			return right, top, bottom, left;	-- new
-		else
-			return top, right, bottom, left;	-- old
-		end
-	end
-	IFrameManager:Register(Perl_Party_Target1, iface);
-	IFrameManager:Register(Perl_Party_Target2, iface);
-	IFrameManager:Register(Perl_Party_Target3, iface);
-	IFrameManager:Register(Perl_Party_Target4, iface);
-	IFrameManager:Register(Perl_Party_Target5, iface);
 end
 
 function Perl_Party_Target_Initialize_Frame_Color()
@@ -460,7 +421,14 @@ function Perl_Party_Target_HealthShow(self)
 	if (partytargethealthmax == 100) then
 		-- Begin Mobhealth support
 		if (mobhealthsupport == 1) then
-			if (MobHealthFrame) then
+			if (MobHealth3) then
+				partytargethealth, partytargethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth(self.unit, UnitHealth(self.unit), UnitHealthMax(self.unit), UnitName(self.unit), UnitLevel(self.unit));
+				if (mobhealththreenumerics) then
+					self.healthBarText:SetText(partytargethealth.."/"..partytargethealthmax);	-- Stored unit info from the DB
+				else
+					self.healthBarText:SetText(partytargethealth.."%");	-- Unit not in MobHealth DB
+				end
+			elseif (MobHealthFrame) then
 				local partyid = self.unit;
 				local hp = partytargethealth;
 				local hpMax = partytargethealthmax;
@@ -494,6 +462,13 @@ function Perl_Party_Target_HealthShow(self)
 				if (current) then	-- Stored unit info from the DB
 					hp, hpMax = current, max;
 					self.healthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));	-- Stored unit info from the DB
+				else
+					self.healthBarText:SetText(partytargethealth.."%");	-- Unit not in MobHealth DB
+				end
+			elseif (LibStub("LibMobHealth-4.0", true)) then
+				partytargethealth, partytargethealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth(self.unit)
+				if (mobhealththreenumerics) then
+					self.healthBarText:SetText(partytargethealth.."/"..partytargethealthmax);	-- Stored unit info from the DB
 				else
 					self.healthBarText:SetText(partytargethealth.."%");	-- Unit not in MobHealth DB
 				end
@@ -899,8 +874,6 @@ function Perl_Party_Target_Allign()
 	else
 		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_LevelFrame, "TOPRIGHT", -2, 0);
 	end
-
-	Perl_Party_Target_UpdateVars();			-- Calling this to update the positions for IFrameManger
 end
 
 function Perl_Party_Target_Set_Enabled(newvalue)
@@ -1172,18 +1145,6 @@ function Perl_Party_Target_UpdateVars(vartable)
 		Perl_Party_Target_Set_Scale_Actual();
 		Perl_Party_Target_Set_Transparency();
 		Perl_Party_Target_Frame_Style();
-	end
-
-	-- IFrameManager Support
-	if (IFrameManager) then
-		if (IFrameManagerLayout) then
-			if (IFrameManager.isEnabled) then
-				IFrameManager:Disable();
-				IFrameManager:Enable();
-			end
-		else
-			IFrameManager:Refresh();
-		end
 	end
 
 	Perl_Party_Target_Config[UnitName("player")] = {

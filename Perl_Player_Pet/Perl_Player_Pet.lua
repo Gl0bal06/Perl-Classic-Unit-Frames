@@ -243,65 +243,14 @@ function Perl_Player_Pet_Initialize()
 	-- MyAddOns Support
 	Perl_Player_Pet_myAddOns_Support();
 
-	-- IFrameManager Support
+	-- IFrameManager Support (Deprecated)
 	Perl_Player_Pet_Frame:SetUserPlaced(1);
 	Perl_Player_Pet_Target_Frame:SetUserPlaced(1);
-	if (IFrameManager) then
-		Perl_Player_Pet_IFrameManager();
-	end
 
 	-- WoW 2.0 Secure API Stuff
 	RegisterUnitWatch(Perl_Player_Pet_Frame);
 
 	Initialized = 1;
-end
-
-function Perl_Player_Pet_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		if (frame == Perl_Player_Pet_Frame) then
-			return "Perl Player Pet";
-		else
-			return "Perl Player Pet Target";
-		end
-	end
-	function iface:getBorder(frame)
-		local bottom, left, right, top;
-		if (frame == Perl_Player_Pet_Frame) then
-			if (showxp == 0) then
-				bottom = 33;
-			else
-				bottom = 46;
-			end
-			if (showportrait == 0) then
-				left = 0;
-			else
-				left = 54;
-			end
-			if (compactmode == 0) then
-				right = 0;
-			else
-				right = -35;
-			end
-			if (hidename == 0) then
-				top = 0;
-			else
-				top = -20;
-			end
-		else
-			top = 0;
-			right = 0;
-			bottom = 33;
-			left = 0;
-		end
-		if (IFrameManagerLayout) then			-- this isn't in the old version
-			return right, top, bottom, left;	-- new
-		else
-			return top, right, bottom, left;	-- old
-		end
-	end
-	IFrameManager:Register(Perl_Player_Pet_Frame, iface);
-	IFrameManager:Register(Perl_Player_Pet_Target_Frame, iface);
 end
 
 function Perl_Player_Pet_Initialize_Frame_Color()
@@ -1004,6 +953,13 @@ function Perl_Player_Pet_Target_HealthShow()
 				else
 					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- Unit not in MobHealth DB
 				end
+			elseif (LibStub("LibMobHealth-4.0", true)) then
+				pettargethealth, pettargethealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth("pettarget")
+				if (mobhealththreenumerics) then
+					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."/"..pettargethealthmax);	-- Stored unit info from the DB
+				else
+					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- Unit not in MobHealth DB
+				end
 			-- End MobHealth Support
 			else
 				Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- MobHealth isn't installed
@@ -1142,8 +1098,6 @@ function Perl_Player_Pet_Allign()
 	end
 	Perl_Player_Pet_Target_Frame:ClearAllPoints();
 	Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", Perl_Player_Pet_Frame, "TOPRIGHT", -2, 0);
-
-	Perl_Party_Target_UpdateVars();			-- Calling this to update the positions for IFrameManager
 end
 
 function Perl_Player_Pet_Set_Buffs(newbuffnumber)
@@ -1621,18 +1575,6 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		Perl_Player_Pet_Set_Window_Layout();
 		Perl_Player_Pet_Set_Scale_Actual();	-- Set the scale
 		Perl_Player_Pet_Set_Transparency();	-- Set the transparency
-	end
-
-	-- IFrameManager Support
-	if (IFrameManager) then
-		if (IFrameManagerLayout) then
-			if (IFrameManager.isEnabled) then
-				IFrameManager:Disable();
-				IFrameManager:Enable();
-			end
-		else
-			IFrameManager:Refresh();
-		end
 	end
 
 	Perl_Player_Pet_Config[UnitName("player")] = {

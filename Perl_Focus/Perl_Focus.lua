@@ -262,96 +262,14 @@ function Perl_Focus_Initialize()
 	-- MyAddOns Support
 	Perl_Focus_myAddOns_Support();
 
-	-- IFrameManager Support
+	-- IFrameManager Support (Deprecated)
 	Perl_Focus_Frame:SetUserPlaced(1);
-	if (IFrameManager) then
-		Perl_Focus_IFrameManager();
-	end
 
 	-- WoW 2.0 Secure API Stuff
 	RegisterUnitWatch(Perl_Focus_Frame);
 
 	-- Set the initialization flag
 	Initialized = 1;
-end
-
-function Perl_Focus_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		return "Perl Focus";
-	end
-	function iface:getBorder(frame)
-		local bottom, left, right, top;
-		left = 0;
-		if (showclassframe == 1 or showrareeliteframe == 1) then
-			top = 23;
-		else
-			top = 0;
-		end
-		if (framestyle == 1) then
-			right = 41;
-		else
-			if (compactmode == 0) then
-				right = 75;
-			else
-				if (compactpercent == 0) then
-					if (shortbars == 0) then
-						right = -10;
-					else
-						right = -45;
-					end
-				else
-					if (shortbars == 0) then
-						right = 25;
-					else
-						right = -10;
-					end
-				end
-			end
-		end
-		if (showportrait == 1) then
-			right = right + 62;
-		end
-		bottom = 0;
---		if (invertbuffs == 0) then
---			if (numbuffsshown == 0) then
---				-- bottom is already 0
---			elseif (numbuffsshown < 9) then
---				bottom = 24;
---			else
---				bottom = 48;
---			end
---			if (numdebuffsshown == 0) then
---				-- add nothing to bottom
---			elseif (numdebuffsshown < 9) then
---				bottom = bottom + 24;
---			else
---				bottom = bottom + 48;
---			end
---		else
---			if (numbuffsshown == 0) then
---				-- top is already set
---			elseif (numbuffsshown < 9) then
---				top = top + 24;
---			else
---				top = top + 48;
---			end
---			if (numdebuffsshown == 0) then
---				-- add nothing to top
---			elseif (numdebuffsshown < 9) then
---				top = top + 24;
---			else
---				top = top + 48;
---			end
---		end
-		bottom = bottom + 38;	-- Offset for the stats frame
-		if (IFrameManagerLayout) then			-- this isn't in the old version
-			return right, top, bottom, left;	-- new
-		else
-			return top, right, bottom, left;	-- old
-		end
-	end
-	IFrameManager:Register(this, iface);
 end
 
 function Perl_Focus_Initialize_Frame_Color()
@@ -560,7 +478,7 @@ function Perl_Focus_Update_Health()
 						end
 					end
 				end
-			elseif (MobHealthFrame) then	-- mobhealth2, telo, and mobinfo
+			elseif (MobHealthFrame) then
 				local partyid = "focus";
 				local hp = focushealth;
 				local hpMax = focushealthmax;
@@ -624,6 +542,61 @@ function Perl_Focus_Update_Health()
 				else
 					-- Unit not in MobHealth DB
 					if (framestyle == 1) then	-- This chunk of code is the same as the next two blocks in case you customize this
+						Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
+						Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
+						Perl_Focus_HealthBarText:SetText(focushealth.."%");
+					elseif (framestyle == 2) then
+						if (compactmode == 0) then
+							Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+							Perl_Focus_HealthBarText:SetText(focushealth.."%");
+							Perl_Focus_HealthBarTextRight:SetText(focushealth.."%");
+						else
+							if (compactpercent == 0) then
+								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+								Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+								Perl_Focus_HealthBarText:SetText(focushealth.."%");
+							else
+								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+								Perl_Focus_HealthBarText:SetText(focushealth.."%");
+								Perl_Focus_HealthBarTextCompactPercent:SetText(focushealth.."%");
+							end
+						end
+					end
+				end
+			elseif (LibStub("LibMobHealth-4.0", true)) then
+				focushealth, focushealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth("focus")
+				if (mobhealththreenumerics) then
+					-- MobHealth4 was successful in getting a numeric value
+					if (framestyle == 1) then
+						Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
+						Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
+						Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax.." | "..focushealthpercent.."%");
+					elseif (framestyle == 2) then
+						if (compactmode == 0) then
+							Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+							if (focushealthmax > 9999) then
+								Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
+								Perl_Focus_HealthBarTextRight:SetText(focushealthpercent.."%");
+							else
+								Perl_Focus_HealthBarText:SetText(focushealthpercent.."%");
+								Perl_Focus_HealthBarTextRight:SetText(focushealth.."/"..focushealthmax);
+							end
+							
+						else
+							if (compactpercent == 0) then
+								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+								Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+								Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
+							else
+								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+								Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
+								Perl_Focus_HealthBarTextCompactPercent:SetText(focushealthpercent.."%");
+							end
+						end
+					end
+				else
+					-- MobHealth4 was unable to give us a numeric value, fall back to percentage
+					if (framestyle == 1) then
 						Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
 						Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
 						Perl_Focus_HealthBarText:SetText(focushealth.."%");
@@ -2058,18 +2031,6 @@ function Perl_Focus_UpdateVars(vartable)
 		Perl_Focus_Set_Transparency();		-- Set the transparency
 		if (UnitExists("focus")) then
 			Perl_Focus_Update_Once();
-		end
-	end
-
-	-- IFrameManager Support
-	if (IFrameManager) then
-		if (IFrameManagerLayout) then
-			if (IFrameManager.isEnabled) then
-				IFrameManager:Disable();
-				IFrameManager:Enable();
-			end
-		else
-			IFrameManager:Refresh();
 		end
 	end
 

@@ -295,99 +295,14 @@ function Perl_Target_Initialize()
 	-- MyAddOns Support
 	Perl_Target_myAddOns_Support();
 
-	-- IFrameManager Support
+	-- IFrameManager Support (Deprecated)
 	Perl_Target_Frame:SetUserPlaced(1);
-	if (IFrameManager) then
-		Perl_Target_IFrameManager();
-	end
 
 	-- WoW 2.0 Secure API Stuff
 	RegisterUnitWatch(Perl_Target_Frame);
 
 	-- Set the initialization flag
 	Initialized = 1;
-end
-
-function Perl_Target_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		return "Perl Target";
-	end
-	function iface:getBorder(frame)
-		local bottom, left, right, top;
-		left = 0;
-		if (showclassframe == 1 or showrareeliteframe == 1 or showguildname == 1) then
-			top = 22;
-		else
-			top = 0;
-		end
-		if (framestyle == 1) then
-			right = 41;
-		else
-			if (compactmode == 0) then
-				right = 75;
-			else
-				if (compactpercent == 0) then
-					if (shortbars == 0) then
-						right = -10;
-					else
-						right = -45;
-					end
-				else
-					if (shortbars == 0) then
-						right = 25;
-					else
-						right = -10;
-					end
-				end
-			end
-		end
-		if (showportrait == 1) then
-			right = right + 62;
-		end
-		if (showcp == 1) then
-			right = right + 23;
-		end
-		bottom = 0;
---		if (invertbuffs == 0) then
---			if (numbuffsshown == 0) then
---				-- bottom is already 0
---			elseif (numbuffsshown < 9) then
---				bottom = 24;
---			else
---				bottom = 48;
---			end
---			if (numdebuffsshown == 0) then
---				-- add nothing to bottom
---			elseif (numdebuffsshown < 9) then
---				bottom = bottom + 24;
---			else
---				bottom = bottom + 48;
---			end
---		else
---			if (numbuffsshown == 0) then
---				-- top is already set
---			elseif (numbuffsshown < 9) then
---				top = top + 24;
---			else
---				top = top + 48;
---			end
---			if (numdebuffsshown == 0) then
---				-- add nothing to top
---			elseif (numdebuffsshown < 9) then
---				top = top + 24;
---			else
---				top = top + 48;
---			end
---		end
-		bottom = bottom + 41;				-- Offset for the stats frame
-		if (IFrameManagerLayout) then			-- this isn't in the old version
-			return right, top, bottom, left;	-- new
-		else
-			return top, right, bottom, left;	-- old
-		end
-	end
-	IFrameManager:Register(this, iface);
 end
 
 function Perl_Target_Initialize_Frame_Color()
@@ -682,6 +597,61 @@ function Perl_Target_Update_Health()
 				else
 					-- Unit not in MobHealth DB
 					if (framestyle == 1) then	-- This chunk of code is the same as the next two blocks in case you customize this
+						Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
+						Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
+						Perl_Target_HealthBarText:SetText(targethealth.."%");
+					elseif (framestyle == 2) then
+						if (compactmode == 0) then
+							Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+							Perl_Target_HealthBarText:SetText(targethealth.."%");
+							Perl_Target_HealthBarTextRight:SetText(targethealth.."%");
+						else
+							if (compactpercent == 0) then
+								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+								Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+								Perl_Target_HealthBarText:SetText(targethealth.."%");
+							else
+								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+								Perl_Target_HealthBarText:SetText(targethealth.."%");
+								Perl_Target_HealthBarTextCompactPercent:SetText(targethealth.."%");
+							end
+						end
+					end
+				end
+			elseif (LibStub("LibMobHealth-4.0", true)) then
+				targethealth, targethealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth("target")
+				if (mobhealththreenumerics) then
+					-- MobHealth4 was successful in getting a numeric value
+					if (framestyle == 1) then
+						Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
+						Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
+						Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..targethealthpercent.."%");
+					elseif (framestyle == 2) then
+						if (compactmode == 0) then
+							Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+							if (targethealthmax > 9999) then
+								Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+								Perl_Target_HealthBarTextRight:SetText(targethealthpercent.."%");
+							else
+								Perl_Target_HealthBarText:SetText(targethealthpercent.."%");
+								Perl_Target_HealthBarTextRight:SetText(targethealth.."/"..targethealthmax);
+							end
+							
+						else
+							if (compactpercent == 0) then
+								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+								Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+								Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+							else
+								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+								Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+								Perl_Target_HealthBarTextCompactPercent:SetText(targethealthpercent.."%");
+							end
+						end
+					end
+				else
+					-- MobHealth4 was unable to give us a numeric value, fall back to percentage
+					if (framestyle == 1) then
 						Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
 						Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
 						Perl_Target_HealthBarText:SetText(targethealth.."%");
@@ -2340,18 +2310,6 @@ function Perl_Target_UpdateVars(vartable)
 		Perl_Target_Set_Transparency();		-- Set the transparency
 		if (UnitExists("target")) then
 			Perl_Target_Update_Once();
-		end
-	end
-
-	-- IFrameManager Support
-	if (IFrameManager) then
-		if (IFrameManagerLayout) then
-			if (IFrameManager.isEnabled) then
-				IFrameManager:Disable();
-				IFrameManager:Enable();
-			end
-		else
-			IFrameManager:Refresh();
 		end
 	end
 

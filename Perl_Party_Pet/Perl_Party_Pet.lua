@@ -188,45 +188,12 @@ function Perl_Party_Pet_Initialize()
 	-- MyAddOns Support
 	Perl_Party_Pet_myAddOns_Support();
 
-	-- IFrameManager Support
+	-- IFrameManager Support (Deprecated)
 	for num=1,4 do
 		getglobal("Perl_Party_Pet"..num):SetUserPlaced(1);
 	end
-	if (IFrameManager) then
-		Perl_Party_Pet_IFrameManager();
-	end
 
 	Initialized = 1;
-end
-
-function Perl_Party_Pet_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		if (frame == Perl_Party_Pet1) then
-			return "Perl Party Pet 1";
-		elseif (frame == Perl_Party_Pet2) then
-			return "Perl Party Pet 2";
-		elseif (frame == Perl_Party_Pet3) then
-			return "Perl Party Pet 3";
-		elseif (frame == Perl_Party_Pet4) then
-			return "Perl Party Pet 4";
-		end
-	end
-	function iface:getBorder(frame)
-		local bottom, left;
-		if (showportrait == 1) then
-			left = 51;
-		else
-			left = 0;
-		end
-		-- Offsets
-		bottom = 33;
-		return 0, 0, bottom, left;
-	end
-	IFrameManager:Register(Perl_Party_Pet1, iface);
-	IFrameManager:Register(Perl_Party_Pet2, iface);
-	IFrameManager:Register(Perl_Party_Pet3, iface);
-	IFrameManager:Register(Perl_Party_Pet4, iface);
 end
 
 function Perl_Party_Pet_Initialize_Frame_Color()
@@ -681,8 +648,6 @@ function Perl_Party_Pet_Allign()
 		Perl_Party_Pet3:SetPoint("TOPLEFT", Perl_Party_MemberFrame3_StatsFrame, "TOPRIGHT", -2, 0);
 		Perl_Party_Pet4:SetPoint("TOPLEFT", Perl_Party_MemberFrame4_StatsFrame, "TOPRIGHT", -2, 0);
 	end
-
-	Perl_Party_Pet_UpdateVars();			-- Calling this to update the positions for IFrameManger
 end
 
 function Perl_Party_Pet_Set_Portrait(newvalue)
@@ -1026,18 +991,6 @@ function Perl_Party_Pet_UpdateVars(vartable)
 		Perl_Party_Pet_Set_Scale_Actual();
 		Perl_Party_Pet_Set_Transparency();
 		Perl_Party_Pet_Update();
-	end
-
-	-- IFrameManager Support
-	if (IFrameManager) then
-		if (IFrameManagerLayout) then
-			if (IFrameManager.isEnabled) then
-				IFrameManager:Disable();
-				IFrameManager:Enable();
-			end
-		else
-			IFrameManager:Refresh();
-		end
 	end
 
 	Perl_Party_Pet_Config[UnitName("player")] = {

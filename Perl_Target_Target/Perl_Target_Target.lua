@@ -138,61 +138,11 @@ function Perl_Target_Target_Initialize()
 	-- MyAddOns Support
 	Perl_Target_Target_myAddOns_Support();
 
-	-- IFrameManager Support
+	-- IFrameManager Support (Deprecated)
 	Perl_Target_Target_Frame:SetUserPlaced(1);
 	Perl_Target_Target_Target_Frame:SetUserPlaced(1);
-	if (IFrameManager) then
-		Perl_Target_Target_IFrameManager();
-	end
 
 	Initialized = 1;
-end
-
-function Perl_Target_Target_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		if (frame == Perl_Target_Target_Frame) then
-			return "Perl Target Target";
-		else
-			return "Perl Target Target Target";
-		end
-	end
-	function iface:getBorder(frame)
-		local bottom = 0;
-		local left = 0;
-		local right = 0;
-		local top = 0;
-		if (frame == Perl_Target_Target_Frame) then
-			if (showtotbuffs == 1 and showtotdebuffs == 1) then
-				bottom = 91;
-			elseif ((showtotbuffs == 0 and showtotdebuffs == 1) or (showtotbuffs == 1 and showtotdebuffs == 0)) then
-				bottom = 61;
-			else
-				bottom = 41;
-			end
-			if (hidepowerbars == 1) then
-				bottom = bottom - 12;
-			end
-		else
-			if (showtototbuffs == 1 and showtototdebuffs == 1) then
-				bottom = 91;
-			elseif ((showtototbuffs == 0 and showtototdebuffs == 1) or (showtototbuffs == 1 and showtototdebuffs == 0)) then
-				bottom = 61;
-			else
-				bottom = 41;
-			end
-			if (hidepowerbars == 1) then
-				bottom = bottom - 12;
-			end
-		end
-		if (IFrameManagerLayout) then			-- this isn't in the old version
-			return right, top, bottom, left;	-- new
-		else
-			return top, right, bottom, left;	-- old
-		end
-	end
-	IFrameManager:Register(Perl_Target_Target_Frame, iface);
-	IFrameManager:Register(Perl_Target_Target_Target_Frame, iface);
 end
 
 function Perl_Target_Target_Initialize_Frame_Color()
@@ -1185,6 +1135,13 @@ function Perl_Target_Target_HealthShow()
 				else
 					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- Unit not in MobHealth DB
 				end
+			elseif (LibStub("LibMobHealth-4.0", true)) then
+				targettargethealth, targettargethealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth("targettarget")
+				if (mobhealththreenumerics) then
+					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."/"..targettargethealthmax);	-- Stored unit info from the DB
+				else
+					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- Unit not in MobHealth DB
+				end
 			-- End MobHealth Support
 			else
 				Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- MobHealth isn't installed
@@ -1287,6 +1244,13 @@ function Perl_Target_Target_Target_HealthShow()
 				if (current) then	-- Stored unit info from the DB
 					hp, hpMax = current, max;
 					Perl_Target_Target_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));	-- Stored unit info from the DB
+				else
+					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Unit not in MobHealth DB
+				end
+			elseif (LibStub("LibMobHealth-4.0", true)) then
+				targettargettargethealth, targettargettargethealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth("targettargettarget")
+				if (mobhealththreenumerics) then
+					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."/"..targettargettargethealthmax);	-- Stored unit info from the DB
 				else
 					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Unit not in MobHealth DB
 				end
@@ -1976,18 +1940,6 @@ function Perl_Target_Target_UpdateVars(vartable)
 		Perl_Target_Target_Frame_Style();
 		Perl_Target_Target_Set_Scale_Actual();
 		Perl_Target_Target_Set_Transparency();
-	end
-
-	-- IFrameManager Support
-	if (IFrameManager) then
-		if (IFrameManagerLayout) then
-			if (IFrameManager.isEnabled) then
-				IFrameManager:Disable();
-				IFrameManager:Enable();
-			end
-		else
-			IFrameManager:Refresh();
-		end
 	end
 
 	Perl_Target_Target_Config[UnitName("player")] = {

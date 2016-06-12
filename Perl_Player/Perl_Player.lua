@@ -287,65 +287,10 @@ function Perl_Player_Initialize()
 	-- MyAddOns Support
 	Perl_Player_myAddOns_Support();
 
-	-- IFrameManager Support
+	-- IFrameManager Support (Deprecated)
 	Perl_Player_Frame:SetUserPlaced(1);
-	if (IFrameManager) then
-		Perl_Player_IFrameManager();
-	end
 
 	Initialized = 1;
-end
-
-function Perl_Player_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		return "Perl Player";
-	end
-	function iface:getBorder(frame)
-		local bottom, left, right, top;
-		if (xpbarstate == 3) then
-			bottom = 41;
-		else
-			bottom = 53;
-		end
-		_, englishclass = UnitClass("player");
-		if (showdruidbar == 1 and englishclass == "DRUID") then
-			bottom = bottom + 12;
-		end
-		if (showraidgroup == 1) then
-			top = 22;
-		else
-			top = 0;
-		end
-		if (compactmode == 0) then
-			right = 85;
-		else
-			if (compactpercent == 0) then
-				if (shortbars == 0) then
-					right = 0;
-				else
-					right = -37;
-				end
-			else
-				if (shortbars == 0) then
-					right = 37;
-				else
-					right = 0;
-				end
-			end
-		end
-		if (showportrait == 0) then
-			left = 0;
-		else
-			left = 62;
-		end
-		if (IFrameManagerLayout) then			-- this isn't in the old version
-			return right, top, bottom, left;	-- new
-		else
-			return top, right, bottom, left;	-- old
-		end
-	end
-	IFrameManager:Register(this, iface);
 end
 
 function Perl_Player_Initialize_Frame_Color()
@@ -1947,18 +1892,6 @@ function Perl_Player_UpdateVars(vartable)
 		Perl_Player_Update_Once();
 		Perl_Player_Set_Scale_Actual();
 		Perl_Player_Set_Transparency();
-	end
-
-	-- IFrameManager Support
-	if (IFrameManager) then
-		if (IFrameManagerLayout) then
-			if (IFrameManager.isEnabled) then
-				IFrameManager:Disable();
-				IFrameManager:Enable();
-			end
-		else
-			IFrameManager:Refresh();
-		end
 	end
 
 	Perl_Player_Config[UnitName("player")] = {

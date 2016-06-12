@@ -369,11 +369,8 @@ function Perl_Party_Initialize()
 	-- MyAddOns Support
 	Perl_Party_myAddOns_Support();
 
-	-- IFrameManager Support
+	-- IFrameManager Support (Deprecated)
 	Perl_Party_Frame:SetUserPlaced(1);
-	if (IFrameManager) then
-		Perl_Party_IFrameManager();
-	end
 
 	-- WoW 2.0 Secure API Stuff
 	Perl_Party_Register_All()
@@ -383,145 +380,6 @@ function Perl_Party_Initialize()
 	Perl_Party_MembersUpdate(Perl_Party_MemberFrame2);
 	Perl_Party_MembersUpdate(Perl_Party_MemberFrame3);
 	Perl_Party_MembersUpdate(Perl_Party_MemberFrame4);
-end
-
-function Perl_Party_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		return "Perl Party";
-	end
-	function iface:getBorder(frame)
-		local bottom, left, right, top;
-		if (verticalalign == 1) then
-			if (partyspacing < 0) then
-				if (showpets == 0) then
-					bottom = -3 * partyspacing + 25;
-					top = -5;
-				else
-					bottom = (-3 * partyspacing) + 25 + (4 * 12);
-					top = -5;
-				end
-			else
-				if (showpets == 0) then
-					top = 3 * partyspacing - 5;
-					bottom = 25;
-				else
-					top = (3 * partyspacing) - 5 + (3 * 12);
-					bottom = 37;
-				end
-			end
-			if (showportrait == 1) then
-				left = 55;
-			else
-				left = 0;
-			end
-			if (compactmode == 0) then
-				right = 85;
-			else
-				if (compactpercent == 0) then
-					if (shortbars == 0) then
-						right = 0;
-					else
-						right = -35;
-					end
-				else
-					if (shortbars == 0) then
-						right = 35;
-					else
-						right = 0;
-					end
-				end
-			end
-			local buffflag;
-			if (bufflocation == 4 or debufflocation == 4) then
-				bottom = bottom + 16;
-				buffflag = 1;
-			end
-			if (bufflocation == 5 or debufflocation == 5) then
-				if (buffflag == 1) then
-					bottom = bottom + 16;
-				else
-					bottom = bottom + 36;
-				end
-			end
-			-- Offsets since the party frame is weird
-			bottom = bottom + 3;
-			left = left - 5;
-			right = right - 18;
-		else
-			if (partyspacing < 0) then
-				left = 3 * (-(partyspacing) + 195);
-				if (compactmode == 0) then
-					right = 85;
-				else
-					if (compactpercent == 0) then
-						if (shortbars == 0) then
-							right = 0;
-						else
-							right = -35;
-						end
-					else
-						if (shortbars == 0) then
-							right = 35;
-						else
-							right = 0;
-						end
-					end
-				end
-			else
-				left = 0;
-				right = 3 * (partyspacing + 195);
-				if (compactmode == 0) then
-					right = right + 85;
-				else
-					if (compactpercent == 0) then
-						if (shortbars == 0) then
-							right = right + 0;
-						else
-							right = right - 35;
-						end
-					else
-						if (shortbars == 0) then
-							right = right + 35;
-						else
-							right = right + 0;
-						end
-					end
-				end
-			end
-			if (showportrait == 1) then
-				left = left + 62;
-			end
-			if (showpets == 0) then
-				bottom = 25;
-			else
-				bottom = 37;
-			end
-			local buffflag;
-			if (bufflocation == 4 or debufflocation == 4) then
-				bottom = bottom + 16;
-				buffflag = 1;
-			end
-			if (bufflocation == 5 or debufflocation == 5) then
-				if (buffflag == 1) then
-					bottom = bottom + 16;
-				else
-					bottom = bottom + 36;
-				end
-			end
-			-- Offsets since the party frame is weird
-			bottom = bottom + 3;
-			left = left - 5;
-			right = right - 18;
-			top = -5;
-		end
-		if (IFrameManagerLayout) then			-- this isn't in the old version
-			return right, top, bottom, left;	-- new
-		else
-			return top, right, bottom, left;	-- old
-		end
-	end
-	IFrameManager:Register(Perl_Party_Frame, iface);
 end
 
 function Perl_Party_Initialize_Frame_Color()
@@ -2408,18 +2266,6 @@ function Perl_Party_UpdateVars(vartable)
 		Perl_Party_Frame_Style();
 		Perl_Party_Set_Scale_Actual();
 		Perl_Party_Set_Transparency();
-	end
-
-	-- IFrameManager Support
-	if (IFrameManager) then
-		if (IFrameManagerLayout) then
-			if (IFrameManager.isEnabled) then
-				IFrameManager:Disable();
-				IFrameManager:Enable();
-			end
-		else
-			IFrameManager:Refresh();
-		end
 	end
 
 	Perl_Party_Config[UnitName("player")] = {
