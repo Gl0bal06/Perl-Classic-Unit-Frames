@@ -767,6 +767,90 @@ function Perl_Target_Set_Localized_ClassIcons()
 end
 
 
+--------------------------
+-- GUI Config Functions --
+--------------------------
+function Perl_Target_Set_Buffs(newbuffnumber)
+	if (newbuffnumber == nil) then
+		newbuffnumber = 16;
+	end
+	numbuffsshown = newbuffnumber;
+	Perl_Target_UpdateVars();
+	Perl_Target_Reset_Buffs();	-- Reset the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
+	--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 buffs.");
+end
+
+function Perl_Target_Set_Debuffs(newdebuffnumber)
+	if (newdebuffnumber == nil) then
+		newdebuffnumber = 16;
+	end
+	numdebuffsshown = newdebuffnumber;
+	Perl_Target_UpdateVars();
+	Perl_Target_Reset_Buffs();	-- Reset the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
+	--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numdebuffsshown.."|cffffff00 debuffs.");
+end
+
+function Perl_Target_Set_Class_Icon(newvalue)
+	showclassicon = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
+function Perl_Target_Set_PvP_Rank_Icon(newvalue)
+	showpvprank = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
+function Perl_Target_Set_PvP_Status_Icon(newvalue)
+	showpvpicon = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
+function Perl_Target_Set_Class_Frame(newvalue)
+	showclassframe = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
+function Perl_Target_Set_Combo_Points(newvalue)
+	showcp = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
+function Perl_Target_Set_MobHealth(newvalue)
+	mobhealthsupport = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
+function Perl_Target_Set_Progressive_Color(newvalue)
+	colorhealth = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
+function Perl_Target_Set_Lock(newvalue)
+	locked = newvalue;
+	Perl_CombatDisplay_UpdateVars();
+end
+
+function Perl_Target_Set_Scale(number)
+	local unsavedscale;
+	if (number ~= nil) then
+		scale = (number / 100);					-- convert the user input to a wow acceptable value
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
+	end
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Target_Frame:SetScale(unsavedscale);
+	Perl_Target_UpdateVars();
+end
+
+
 ----------------------
 -- Config functions --
 ----------------------
@@ -841,28 +925,6 @@ function Perl_Target_TogglePvPIcon()
 	Perl_Target_Update_Once();
 end
 
-function Perl_Target_Set_Buffs(newbuffnumber)
-	if (newbuffnumber == nil) then
-		newbuffnumber = 16;
-	end
-	numbuffsshown = newbuffnumber;
-	Perl_Target_UpdateVars();
-	Perl_Target_Reset_Buffs();	-- Reset the buff icons
-	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 buffs.");
-end
-
-function Perl_Target_Set_Debuffs(newdebuffnumber)
-	if (newdebuffnumber == nil) then
-		newdebuffnumber = 16;
-	end
-	numdebuffsshown = newdebuffnumber;
-	Perl_Target_UpdateVars();
-	Perl_Target_Reset_Buffs();	-- Reset the buff icons
-	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numdebuffsshown.."|cffffff00 debuffs.");
-end
-
 function Perl_Target_ToggleMobHealth()
 	if (mobhealthsupport == 1) then
 		mobhealthsupport = 0;
@@ -881,17 +943,6 @@ function Perl_Target_Set_ParentUI_Scale()
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 	Perl_Target_Frame:SetScale(unsavedscale);
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
-	Perl_Target_UpdateVars();
-end
-
-function Perl_Target_Set_Scale(number)
-	local unsavedscale;
-	if (number ~= nil) then
-		scale = (number / 100);					-- convert the user input to a wow acceptable value
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
-	end
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_Target_Frame:SetScale(unsavedscale);
 	Perl_Target_UpdateVars();
 end
 
@@ -974,6 +1025,10 @@ function Perl_Target_Status()
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying at a scale of |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 end
 
+
+------------------------------
+-- Saved Variable Functions --
+------------------------------
 function Perl_Target_GetVars()
 	locked = Perl_Target_Config[UnitName("player")]["Locked"];
 	showcp = Perl_Target_Config[UnitName("player")]["ComboPoints"];
@@ -996,11 +1051,11 @@ function Perl_Target_GetVars()
 	if (showclassicon == nil) then
 		showclassicon = 1;
 	end
-	if (showpvpicon == nil) then
-		showpvpicon = 1;
-	end
 	if (showclassframe == nil) then
 		showclassframe = 1;
+	end
+	if (showpvpicon == nil) then
+		showpvpicon = 1;
 	end
 	if (numbuffsshown == nil) then
 		numbuffsshown = 16;
@@ -1024,6 +1079,21 @@ function Perl_Target_GetVars()
 	if (showpvprank == nil) then
 		showpvprank = 0;
 	end
+
+	local vars = {
+		["locked"] = locked,
+		["showcp"] = showcp,
+		["showclassicon"] = showclassicon,
+		["showclassframe"] = showclassframe,
+		["showpvpicon"] = showpvpicon,
+		["numbuffsshown"] = numbuffsshown,
+		["numdebuffsshown"] = numdebuffsshown,
+		["mobhealthsupport"] = mobhealthsupport,
+		["scale"] = scale,
+		["colorhealth"] = colorhealth,
+		["showpvprank"] = showpvprank,
+	}
+	return vars;
 end
 
 function Perl_Target_UpdateVars()
@@ -1248,8 +1318,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.28",
-			releaseDate = "January 3, 2006",
+			version = "v0.29",
+			releaseDate = "January 7, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

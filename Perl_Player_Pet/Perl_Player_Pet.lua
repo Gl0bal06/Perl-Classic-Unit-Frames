@@ -373,6 +373,60 @@ function Perl_Player_Pet_Update_Experience()
 end
 
 
+--------------------------
+-- GUI Config Functions --
+--------------------------
+function Perl_Player_Pet_Set_Buffs(newbuffnumber)
+	if (newbuffnumber == nil) then
+		newbuffnumber = 16;
+	end
+	numpetbuffsshown = newbuffnumber;
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Reset_Buffs();	-- Reset the buff icons
+	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetbuffsshown.."|cffffff00 buffs.");
+end
+
+function Perl_Player_Pet_Set_Debuffs(newdebuffnumber)
+	if (newdebuffnumber == nil) then
+		newdebuffnumber = 16;
+	end
+	numpetdebuffsshown = newdebuffnumber;
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Reset_Buffs();	-- Reset the buff icons
+	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetdebuffsshown.."|cffffff00 debuffs.");
+end
+
+function Perl_Player_Pet_Set_ShowXP(newvalue)
+	showxp = newvalue;
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_ShowXP();
+end
+
+function Perl_Player_Pet_Set_Progressive_Color(newvalue)
+	colorhealth = newvalue;
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Update_Health();
+end
+
+function Perl_Player_Pet_Set_Lock(newvalue)
+	locked = newvalue;
+	Perl_Player_Pet_UpdateVars();
+end
+
+function Perl_Player_Pet_Set_Scale(number)
+	local unsavedscale;
+	if (number ~= nil) then
+		scale = (number / 100);					-- convert the user input to a wow acceptable value
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Pet Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
+	end
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Player_Pet_Frame:SetScale(unsavedscale);
+	Perl_Player_Pet_UpdateVars();
+end
+
+
 ----------------------
 -- Config functions --
 ----------------------
@@ -400,45 +454,12 @@ function Perl_Player_Pet_Toggle_XPMode()
 	Perl_Player_Pet_ShowXP();
 end
 
-function Perl_Player_Pet_Set_Buffs(newbuffnumber)
-	if (newbuffnumber == nil) then
-		newbuffnumber = 16;
-	end
-	numpetbuffsshown = newbuffnumber;
-	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_Reset_Buffs();	-- Reset the buff icons
-	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetbuffsshown.."|cffffff00 buffs.");
-end
-
-function Perl_Player_Pet_Set_Debuffs(newdebuffnumber)
-	if (newdebuffnumber == nil) then
-		newdebuffnumber = 16;
-	end
-	numpetdebuffsshown = newdebuffnumber;
-	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_Reset_Buffs();	-- Reset the buff icons
-	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetdebuffsshown.."|cffffff00 debuffs.");
-end
-
 function Perl_Player_Pet_Set_ParentUI_Scale()
 	local unsavedscale;
 	scale = UIParent:GetEffectiveScale();
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 	Perl_Player_Pet_Frame:SetScale(unsavedscale);
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Pet Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
-	Perl_Player_Pet_UpdateVars();
-end
-
-function Perl_Player_Pet_Set_Scale(number)
-	local unsavedscale;
-	if (number ~= nil) then
-		scale = (number / 100);					-- convert the user input to a wow acceptable value
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Pet Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
-	end
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_Player_Pet_Frame:SetScale(unsavedscale);
 	Perl_Player_Pet_UpdateVars();
 end
 
@@ -479,6 +500,10 @@ function Perl_Player_Pet_Status()
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying at a scale of |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 end
 
+
+------------------------------
+-- Saved Variable Functions --
+------------------------------
 function Perl_Player_Pet_GetVars()
 	locked = Perl_Player_Pet_Config[UnitName("player")]["Locked"];
 	showxp = Perl_Player_Pet_Config[UnitName("player")]["ShowXP"];
@@ -505,6 +530,16 @@ function Perl_Player_Pet_GetVars()
 	if (colorhealth == nil) then
 		colorhealth = 0;
 	end
+
+	local vars = {
+		["locked"] = locked,
+		["showxp"] = showxp,
+		["scale"] = scale,
+		["numpetbuffsshown"] = numpetbuffsshown,
+		["numpetdebuffsshown"] = numpetdebuffsshown,
+		["colorhealth"] = colorhealth,
+	}
+	return vars;
 end
 
 function Perl_Player_Pet_UpdateVars()
@@ -653,8 +688,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.28",
-			releaseDate = "January 3, 2006",
+			version = "v0.29",
+			releaseDate = "January 7, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -104,6 +104,7 @@ function Perl_Player_OnEvent(event)
 		return;
 	elseif (event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBERS_CHANGED") then
 		Perl_Player_Update_Leader();			-- Are we the party leader?
+		Perl_Player_Update_Loot_Method();		-- This was added to correctly hide the master loot icon after leaving a party/raid
 		return;
 	elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
 		Perl_Player_Update_Loot_Method();
@@ -705,6 +706,88 @@ function Perl_Player_Set_Localized_ClassIcons()
 end
 
 
+--------------------------
+-- GUI Config Functions --
+--------------------------
+function Perl_Player_XPBar_Display(state)
+	if (state == 1) then
+		Perl_Player_StatsFrame:SetHeight(54);
+		Perl_Player_XPBar:Show();
+		Perl_Player_XPBarBG:Show();
+		Perl_Player_XPRestBar:Show();
+		Perl_Player_Update_Experience();
+	elseif (state == 2) then
+		Perl_Player_StatsFrame:SetHeight(54);
+		Perl_Player_XPBar:Show();
+		Perl_Player_XPBarBG:Show();
+		Perl_Player_XPRestBar:Show();
+		local rankNumber, rankName, rankProgress;
+		rankNumber = UnitPVPRank("player")
+		if (rankNumber < 1) then
+			rankName = "Unranked"
+		else
+			rankName = GetPVPRankInfo(rankNumber, "player");
+		end
+		rankProgress = GetPVPRankProgress();
+		Perl_Player_XPBar:SetMinMaxValues(0, 1);
+		Perl_Player_XPRestBar:SetMinMaxValues(0, 1);
+		Perl_Player_XPBar:SetValue(rankProgress);
+		Perl_Player_XPRestBar:SetValue(rankProgress);
+		Perl_Player_XPBarText:SetText(rankName);
+	elseif (state == 3) then
+		Perl_Player_XPBar:Hide();
+		Perl_Player_XPBarBG:Hide();
+		Perl_Player_XPRestBar:Hide();
+		Perl_Player_StatsFrame:SetHeight(42);
+	end
+	xpbarstate = state;
+	Perl_Player_UpdateVars();
+end
+
+function Perl_Player_Set_Compact(newvalue)
+	compactmode = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Set_Text_Positions();
+	Perl_Player_Set_CompactMode();
+end
+
+function Perl_Player_Set_Healer(newvalue)
+	healermode = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Set_Text_Positions();
+	Perl_Player_Update_Health();
+	Perl_Player_Update_Mana();
+end
+
+function Perl_Player_Set_RaidGroupNumber(newvalue)
+	showraidgroup = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Update_Raid_Group_Number();
+end
+
+function Perl_Player_Set_Progressive_Color(newvalue)
+	colorhealth = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Update_Health();
+end
+
+function Perl_Player_Set_Lock(newvalue)
+	locked = newvalue;
+	Perl_Player_UpdateVars();
+end
+
+function Perl_Player_Set_Scale(number)
+	local unsavedscale;
+	if (number ~= nil) then
+		scale = (number / 100);					-- convert the user input to a wow acceptable value
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
+	end
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Player_Frame:SetScale(unsavedscale);
+	Perl_Player_UpdateVars();
+end
+
+
 ----------------------
 -- Config Functions --
 ----------------------
@@ -745,58 +828,12 @@ function Perl_Player_Toggle_RaidGroupNumber()
 	Perl_Player_UpdateVars();
 end
 
-function Perl_Player_XPBar_Display(state)
-	if (state == 1) then
-		Perl_Player_StatsFrame:SetHeight(54);
-		Perl_Player_XPBar:Show();
-		Perl_Player_XPBarBG:Show();
-		Perl_Player_XPRestBar:Show();
-		Perl_Player_Update_Experience();
-	elseif (state == 2) then
-		Perl_Player_StatsFrame:SetHeight(54);
-		Perl_Player_XPBar:Show();
-		Perl_Player_XPBarBG:Show();
-		Perl_Player_XPRestBar:Show();
-		local rankNumber, rankName, rankProgress;
-		rankNumber = UnitPVPRank("player")
-		if (rankNumber < 1) then
-			rankName = "Unranked"
-		else
-			rankName = GetPVPRankInfo(rankNumber, "player");
-		end
-		rankProgress = GetPVPRankProgress();
-		Perl_Player_XPBar:SetMinMaxValues(0, 1);
-		Perl_Player_XPRestBar:SetMinMaxValues(0, 1);
-		Perl_Player_XPBar:SetValue(rankProgress);
-		Perl_Player_XPRestBar:SetValue(rankProgress);
-		Perl_Player_XPBarText:SetText(rankName);
-	elseif (state == 3) then
-		Perl_Player_XPBar:Hide();
-		Perl_Player_XPBarBG:Hide();
-		Perl_Player_XPRestBar:Hide();
-		Perl_Player_StatsFrame:SetHeight(42);
-	end
-	xpbarstate = state;
-	Perl_Player_UpdateVars();
-end
-
 function Perl_Player_Set_ParentUI_Scale()
 	local unsavedscale;
 	scale = UIParent:GetEffectiveScale();
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 	Perl_Player_Frame:SetScale(unsavedscale);
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
-	Perl_Player_UpdateVars();
-end
-
-function Perl_Player_Set_Scale(number)
-	local unsavedscale;
-	if (number ~= nil) then
-		scale = (number / 100);					-- convert the user input to a wow acceptable value
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
-	end
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_Player_Frame:SetScale(unsavedscale);
 	Perl_Player_UpdateVars();
 end
 
@@ -868,6 +905,10 @@ function Perl_Player_Status()
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying at a scale of |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 end
 
+
+------------------------------
+-- Saved Variable Functions --
+------------------------------
 function Perl_Player_GetVars()
 	locked = Perl_Player_Config[UnitName("player")]["Locked"];
 	xpbarstate = Perl_Player_Config[UnitName("player")]["XPBarState"];
@@ -898,6 +939,17 @@ function Perl_Player_GetVars()
 	if (healermode == nil) then
 		healermode = 0;
 	end
+
+	local vars = {
+		["locked"] = locked,
+		["xpbarstate"] = xpbarstate,
+		["compactmode"] = compactmode,
+		["showraidgroup"] = showraidgroup,
+		["scale"] = scale,
+		["colorhealth"] = colorhealth,
+		["healermode"] = healermode,
+	}
+	return vars;
 end
 
 function Perl_Player_UpdateVars()
@@ -1011,8 +1063,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.28",
-			releaseDate = "January 3, 2006",
+			version = "v0.29",
+			releaseDate = "January 7, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

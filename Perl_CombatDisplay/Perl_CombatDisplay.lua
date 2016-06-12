@@ -38,9 +38,11 @@ function Perl_CombatDisplay_OnLoad()
 	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Slash Commands
-	SlashCmdList["COMBATDISPLAY"] = Perl_CombatDisplay_SlashHandler;
-	SLASH_COMBATDISPLAY1 = "/perlcombatdisplay";
-	SLASH_COMBATDISPLAY2 = "/pcd";
+--	SlashCmdList["COMBATDISPLAY"] = Perl_CombatDisplay_SlashHandler;
+--	SLASH_COMBATDISPLAY1 = "/perlcombatdisplay";
+--	SLASH_COMBATDISPLAY2 = "/pcd";
+
+	table.insert(UnitPopupFrames,"Perl_CombatDisplay_DropDown");
 
 	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Combat Display by Perl loaded successfully.");
@@ -175,7 +177,6 @@ function Perl_CombatDisplay_OnEvent(event)
 			Perl_CombatDisplay_Update_Mana();	-- make sure we dont display 0/0 on load
 			Perl_CombatDisplay_UpdateDisplay();	-- what mode are we in?
 			Perl_CombatDisplay_Set_Scale();		-- set the correct scale
-			return;
 		else
 			Perl_CombatDisplay_Initialize();
 		end
@@ -194,33 +195,33 @@ end
 -------------------
 -- Slash Handler --
 -------------------
-function Perl_CombatDisplay_SlashHandler(msg)
-	if (string.find(msg, "scale")) then
-		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
-		if (arg1 ~= "") then
-			if (arg1 == "ui") then
-				Perl_CombatDisplay_Set_ParentUI_Scale();
-				return;
-			end
-			local number = tonumber(arg1);
-			if (number > 0 and number < 150) then
-				Perl_CombatDisplay_Set_Scale(number);
-				return;
-			else
-				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pcd scale ui' to set to the current UI scale.");
-				return;
-			end
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pcd scale ui' to set to the current UI scale.");
-			return;
-		end
-	elseif (string.find(msg, "health")) then
-		Perl_CombatDisplay_ToggleColoredHealth();
-		return;
-	else
-		Perl_CombatDisplay_Options_Toggle();
-	end
-end
+--function Perl_CombatDisplay_SlashHandler(msg)
+--	if (string.find(msg, "scale")) then
+--		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
+--		if (arg1 ~= "") then
+--			if (arg1 == "ui") then
+--				Perl_CombatDisplay_Set_ParentUI_Scale();
+--				return;
+--			end
+--			local number = tonumber(arg1);
+--			if (number > 0 and number < 150) then
+--				Perl_CombatDisplay_Set_Scale(number);
+--				return;
+--			else
+--				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pcd scale ui' to set to the current UI scale.");
+--				return;
+--			end
+--		else
+--			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pcd scale ui' to set to the current UI scale.");
+--			return;
+--		end
+--	elseif (string.find(msg, "health")) then
+--		Perl_CombatDisplay_ToggleColoredHealth();
+--		return;
+--	else
+--		Perl_CombatDisplay_Options_Toggle();
+--	end
+--end
 
 
 -------------------------------
@@ -366,16 +367,35 @@ function Perl_CombatDisplay_UpdateBars()
 end
 
 
-----------------------
--- Config functions --
-----------------------
-function Perl_CombatDisplay_Set_ParentUI_Scale()
-	local unsavedscale;
-	scale = floor(UIParent:GetScale()*100+0.5);	-- Round the value for the gui
-	scale = scale / 100;				-- Move the decimal for the SetScale function
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_CombatDisplay_Frame:SetScale(unsavedscale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl CombatDisplay is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
+--------------------------
+-- GUI Config Functions --
+--------------------------
+function Perl_CombatDisplay_Set_State(newvalue)
+	state = newvalue;
+	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_UpdateDisplay();
+end
+
+function Perl_CombatDisplay_Set_Health_Persistance(newvalue)
+	healthpersist = newvalue;
+	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_UpdateDisplay();
+end
+
+function Perl_CombatDisplay_Set_Mana_Persistance(newvalue)
+	manapersist = newvalue;
+	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_UpdateDisplay();
+end
+
+function Perl_CombatDisplay_Set_Progressive_Color(newvalue)
+	colorhealth = newvalue;
+	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_UpdateDisplay();
+end
+
+function Perl_CombatDisplay_Set_Lock(newvalue)
+	locked = newvalue;
 	Perl_CombatDisplay_UpdateVars();
 end
 
@@ -383,25 +403,17 @@ function Perl_CombatDisplay_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
 		scale = (number / 100);					-- convert the user input to a wow acceptable value
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl CombatDisplay is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl CombatDisplay is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
 	end
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 	Perl_CombatDisplay_Frame:SetScale(unsavedscale);
 	Perl_CombatDisplay_UpdateVars();
 end
 
-function Perl_CombatDisplay_ToggleColoredHealth()
-	if (colorhealth == 1) then
-		colorhealth = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00CombatDisplay Frame is now displaying |cffffffffSingle Colored Health Bars|cffffff00.");
-	else
-		colorhealth = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00CombatDisplay Frame is now displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
-	end
-	Perl_CombatDisplay_UpdateVars();
-	Perl_CombatDisplay_Update_Health();
-end
 
+------------------------------
+-- Saved Variable Functions --
+------------------------------
 function Perl_CombatDisplay_GetVars()
 	state = Perl_CombatDisplay_Config[UnitName("player")]["State"];
 	locked = Perl_CombatDisplay_Config[UnitName("player")]["Locked"];
@@ -452,32 +464,30 @@ function Perl_CombatDisplay_UpdateVars()
 end
 
 
-------------------------------
--- Common Related Functions --
-------------------------------
-function Perl_CombatDisplay_SetVars(vartable)
-	if (vartable["state"]) then
-		state = vartable["state"];
-	end
-	if (vartable["healthpersist"]) then
-		healthpersist = vartable["healthpersist"];
-	end
-	if (vartable["manapersist"]) then
-		manapersist = vartable["manapersist"];
-	end
-	if (vartable["locked"]) then
-		locked = vartable["locked"];
-	end
-	if (vartable["scale"]) then
-		scale = vartable["scale"];
-	end
-	if (vartable["colorhealth"]) then
-		colorhealth = vartable["colorhealth"];
-	end
-	Perl_CombatDisplay_UpdateVars();
-	Perl_CombatDisplay_UpdateDisplay();
-	Perl_CombatDisplay_Set_Scale();
-end
+----------------------
+-- Config functions --
+----------------------
+--function Perl_CombatDisplay_Set_ParentUI_Scale()
+--	local unsavedscale;
+--	scale = floor(UIParent:GetScale()*100+0.5);	-- Round the value for the gui
+--	scale = scale / 100;				-- Move the decimal for the SetScale function
+--	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+--	Perl_CombatDisplay_Frame:SetScale(unsavedscale);
+--	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl CombatDisplay is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
+--	Perl_CombatDisplay_UpdateVars();
+--end
+
+--function Perl_CombatDisplay_ToggleColoredHealth()
+--	if (colorhealth == 1) then
+--		colorhealth = 0;
+--		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00CombatDisplay Frame is now displaying |cffffffffSingle Colored Health Bars|cffffff00.");
+--	else
+--		colorhealth = 1;
+--		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00CombatDisplay Frame is now displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
+--	end
+--	Perl_CombatDisplay_UpdateVars();
+--	Perl_CombatDisplay_Update_Health();
+--end
 
 
 -------------------
@@ -512,10 +522,6 @@ function Perl_CombatDisplay_OnMouseDown(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_CombatDisplay_Frame:StartMoving();
 	end
-
-	--if (button == "RightButton") then	-- and IsShiftKeyDown()
-	--	ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
-	--end
 end
 
 function Perl_CombatDisplay_OnMouseUp(button)
@@ -531,13 +537,12 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.28",
-			releaseDate = "January 3, 2006",
+			version = "v0.29",
+			releaseDate = "January 7, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS,
-			optionsframe = "Perl_CombatDisplay_Options_Frame"
+			category = MYADDONS_CATEGORY_OTHERS
 		};
 		Perl_CombatDisplay_myAddOns_Help = {};
 		Perl_CombatDisplay_myAddOns_Help[1] = "/perlcombatdisplay\n/pcd\n";

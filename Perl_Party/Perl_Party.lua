@@ -117,7 +117,7 @@ function Perl_Party_OnEvent(event)
 		Perl_Party_MembersUpdate();			-- How many members are in the group and show the correct frames and do UpdateOnce things
 		return;
 	elseif (event == "RAID_ROSTER_UPDATE") then
-		Perl_Party_Check_Raid_Hidden();		-- Who is the master looter if any
+		Perl_Party_Check_Raid_Hidden();			-- Are we running a hidden mode?
 		return;
 	elseif (event == "PARTY_LEADER_CHANGED") then
 		Perl_Party_Update_Leader();			-- Who is the group leader
@@ -127,6 +127,7 @@ function Perl_Party_OnEvent(event)
 		return;
 	elseif (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
 		Perl_Party_Initialize();
+		Perl_Party_Check_Raid_Hidden();			-- Are we running a hidden mode?
 		return;
 	elseif (event == "ADDON_LOADED") then
 		if (arg1 == "Perl_Party") then
@@ -838,6 +839,198 @@ function Perl_Party_Set_Localized_ClassIcons()
 end
 
 
+--------------------------
+-- GUI Config Functions --
+--------------------------
+function Perl_Party_Set_Space(number)
+	if (number ~= nil) then
+		partyspacing = -number;
+	end
+
+	Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partyspacing);
+	Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partyspacing);
+	Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
+
+	if (showpets == 1) then
+		local partypetspacing = partyspacing - 12;
+		for partynum=1,4 do
+			local partyid = "party"..partynum;
+			local frame = getglobal("Perl_Party_MemberFrame"..partynum);
+			if (UnitName(partyid) ~= nil) then
+				if (UnitIsConnected(partyid) and UnitExists("partypet"..partynum)) then
+					if (partynum == 1) then
+						Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partypetspacing);
+					elseif (partynum == 2) then
+						Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partypetspacing);
+					elseif (partynum == 3) then
+						Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partypetspacing);
+					end
+				end
+			else
+				-- should be hidden, and will correctly adjust later when needed
+			end
+		end
+	else
+		-- do nothing, no spacing required
+	end
+
+	Perl_Party_UpdateVars();
+end
+
+function Perl_Target_Set_Hidden(newvalue)
+	partyhidden = newvalue;
+	Perl_Party_UpdateVars();
+
+	if (partyhidden == 1) then		-- copied from below sort of, delete below when slash commands are removed
+		Perl_Party_MemberFrame1:Hide();
+		Perl_Party_MemberFrame2:Hide();
+		Perl_Party_MemberFrame3:Hide();
+		Perl_Party_MemberFrame4:Hide();
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffAlways Hidden|cffffff00.");
+	elseif (partyhidden == 2) then
+		if (UnitInRaid("player")) then
+			Perl_Party_MemberFrame1:Hide();
+			Perl_Party_MemberFrame2:Hide();
+			Perl_Party_MemberFrame3:Hide();
+			Perl_Party_MemberFrame4:Hide();
+		else
+			for partynum=1,4 do
+				local partyid = "party"..partynum;
+				local frame = getglobal("Perl_Party_MemberFrame"..partynum);
+				if (UnitName(partyid) ~= nil) then
+					frame:Show();
+				else
+					frame:Hide();
+				end
+			end
+		end
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffHidden in Raids|cffffff00.");
+	else
+		for partynum=1,4 do
+			local partyid = "party"..partynum;
+			local frame = getglobal("Perl_Party_MemberFrame"..partynum);
+			if (UnitName(partyid) ~= nil) then
+				frame:Show();
+			else
+				frame:Hide();
+			end
+		end
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffAlways Shown|cffffff00.");
+	end
+end
+
+function Perl_Party_Set_Compact(newvalue)
+	compactmode = newvalue;
+	Perl_Party_UpdateVars();
+
+	Perl_Party_Set_Text_Positions();	-- copied from below sort of, delete below when slash commands are removed
+	if (compactmode == 1) then
+		Perl_Party_MemberFrame1_StatsFrame:SetWidth(170);
+		Perl_Party_MemberFrame2_StatsFrame:SetWidth(170);
+		Perl_Party_MemberFrame3_StatsFrame:SetWidth(170);
+		Perl_Party_MemberFrame4_StatsFrame:SetWidth(170);
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying in |cffffffffCompact Mode|cffffff00.");
+	else
+		Perl_Party_MemberFrame1_StatsFrame:SetWidth(240);
+		Perl_Party_MemberFrame2_StatsFrame:SetWidth(240);
+		Perl_Party_MemberFrame3_StatsFrame:SetWidth(240);
+		Perl_Party_MemberFrame4_StatsFrame:SetWidth(240);
+		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying in |cffffffffNormal Mode|cffffff00.");
+	end
+	Perl_Party_Set_Text_Positions();
+	Perl_Party_Update_Health_Mana();
+end
+
+function Perl_Party_Set_Healer(newvalue)
+	healermode = newvalue;
+	Perl_Party_UpdateVars();
+	Perl_Party_Set_Text_Positions();
+	Perl_Party_Update_Health_Mana();
+end
+
+function Perl_Party_Set_Pets(newvalue)
+	showpets = newvalue;
+	Perl_Party_UpdateVars();
+
+	if (showpets == 0) then			-- copied from below sort of, delete below when slash commands are removed
+		Perl_Party_MemberFrame1_StatsFrame_PetHealthBar:Hide();
+		Perl_Party_MemberFrame1_StatsFrame_PetHealthBarBG:Hide();
+		Perl_Party_MemberFrame1_StatsFrame:SetHeight(42);
+		Perl_Party_MemberFrame2_StatsFrame_PetHealthBar:Hide();
+		Perl_Party_MemberFrame2_StatsFrame_PetHealthBarBG:Hide();
+		Perl_Party_MemberFrame2_StatsFrame:SetHeight(42);
+		Perl_Party_MemberFrame3_StatsFrame_PetHealthBar:Hide();
+		Perl_Party_MemberFrame3_StatsFrame_PetHealthBarBG:Hide();
+		Perl_Party_MemberFrame3_StatsFrame:SetHeight(42);
+		Perl_Party_MemberFrame4_StatsFrame_PetHealthBar:Hide();
+		Perl_Party_MemberFrame4_StatsFrame_PetHealthBarBG:Hide();
+		Perl_Party_MemberFrame4_StatsFrame:SetHeight(42);
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffHiding Pets|cffffff00.");
+	else
+		local partypethealth, partypethealthmax, partypethealthpercent;
+		for partynum=1,4 do
+			local partyid = "party"..partynum;
+			local frame = getglobal("Perl_Party_MemberFrame"..partynum);
+			if (UnitName(partyid) ~= nil) then
+				if (UnitIsConnected(partyid) and UnitExists("partypet"..partynum)) then
+					partypethealth = UnitHealth("partypet"..partynum);
+					partypethealthmax = UnitHealthMax("partypet"..partynum);
+					partypethealthpercent = floor(partypethealth/partypethealthmax*100+0.5);
+
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):Show();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBarBG"):Show();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetHeight(54);
+
+					if (partynum == 1 or partynum == 2 or partynum == 3) then
+						local partynumspace = partynum + 1;
+						local partypetspacing = partyspacing - 12;
+						getglobal("Perl_Party_MemberFrame"..partynumspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..partynum, "TOPLEFT", 0, partypetspacing);
+					end
+
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):SetMinMaxValues(0, partypethealthmax);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):SetValue(partypethealth);
+
+					if (compactmode == 0) then
+						getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText(partypethealth.."/"..partypethealthmax);
+						getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealthpercent.."%");
+					else
+						getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText();
+						getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealth.."/"..partypethealthmax);
+					end
+				end
+			else
+				-- should be hidden, and will correctly adjust later when needed
+			end
+		end
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffShowing Pets|cffffff00.");
+	end
+	Perl_Party_Set_Space();
+end
+
+function Perl_Party_Set_Progressive_Color(newvalue)
+	colorhealth = newvalue;
+	Perl_Party_UpdateVars();
+end
+
+function Perl_Party_Set_Lock(newvalue)
+	locked = newvalue;
+	Perl_Party_UpdateVars();
+end
+
+function Perl_Party_Set_Scale(number)
+	local unsavedscale;
+	if (number ~= nil) then
+		scale = (number / 100);
+	end
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Party_MemberFrame1:SetScale(unsavedscale);
+	Perl_Party_MemberFrame2:SetScale(unsavedscale);
+	Perl_Party_MemberFrame3:SetScale(unsavedscale);
+	Perl_Party_MemberFrame4:SetScale(unsavedscale);
+	Perl_Party_UpdateVars();
+end
+
+
 ----------------------
 -- Config Functions --
 ----------------------
@@ -935,41 +1128,6 @@ function Perl_Party_Update_Health_Mana()
 			-- Do nothing since it's hidden anyway
 		end
 	end
-end
-
-function Perl_Party_Set_Space(number)
-	if (number ~= nil) then
-		partyspacing = -number;
-	end
-
-	Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partyspacing);
-	Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partyspacing);
-	Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
-
-	if (showpets == 1) then
-		local partypetspacing = partyspacing - 12;
-		for partynum=1,4 do
-			local partyid = "party"..partynum;
-			local frame = getglobal("Perl_Party_MemberFrame"..partynum);
-			if (UnitName(partyid) ~= nil) then
-				if (UnitIsConnected(partyid) and UnitExists("partypet"..partynum)) then
-					if (partynum == 1) then
-						Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partypetspacing);
-					elseif (partynum == 2) then
-						Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partypetspacing);
-					elseif (partynum == 3) then
-						Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partypetspacing);
-					end
-				end
-			else
-				-- should be hidden, and will correctly adjust later when needed
-			end
-		end
-	else
-		-- do nothing, no spacing required
-	end
-
-	Perl_Party_UpdateVars();
 end
 
 function Perl_Party_Toggle_Hide()
@@ -1085,19 +1243,6 @@ function Perl_Party_Set_ParentUI_Scale()
 	Perl_Party_UpdateVars();
 end
 
-function Perl_Party_Set_Scale(number)
-	local unsavedscale;
-	if (number ~= nil) then
-		scale = (number / 100);
-	end
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_Party_MemberFrame1:SetScale(unsavedscale);
-	Perl_Party_MemberFrame2:SetScale(unsavedscale);
-	Perl_Party_MemberFrame3:SetScale(unsavedscale);
-	Perl_Party_MemberFrame4:SetScale(unsavedscale);
-	Perl_Party_UpdateVars();
-end
-
 function Perl_Party_ToggleColoredHealth()
 	if (colorhealth == 1) then
 		colorhealth = 0;
@@ -1166,6 +1311,10 @@ function Perl_Party_Status()
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is displaying at a scale of |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 end
 
+
+------------------------------
+-- Saved Variable Functions --
+------------------------------
 function Perl_Party_GetVars()
 	locked = Perl_Party_Config[UnitName("player")]["Locked"];
 	compactmode = Perl_Party_Config[UnitName("player")]["CompactMode"];
@@ -1200,6 +1349,18 @@ function Perl_Party_GetVars()
 	if (healermode == nil) then
 		healermode = 0;
 	end
+
+	local vars = {
+		["locked"] = locked,
+		["compactmode"] = compactmode,
+		["partyhidden"] = partyhidden,
+		["partyspacing"] = partyspacing,
+		["scale"] = scale,
+		["showpets"] = showpets,
+		["colorhealth"] = colorhealth,
+		["healermode"] = healermode,
+	}
+	return vars;
 end
 
 function Perl_Party_UpdateVars()
@@ -1399,8 +1560,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.28",
-			releaseDate = "January 3, 2006",
+			version = "v0.29",
+			releaseDate = "January 7, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
