@@ -14,6 +14,7 @@ local transparency = 1;		-- transparency for the frame
 local showtarget = 0;		-- target frame is disabled by default
 local mobhealthsupport = 1;	-- mobhealth is enabled by default
 local showdruidbar = 1;		-- Druid Bar support is enabled by default
+local showpetbars = 0;		-- Pet info is hidden by default
 
 -- Default Local Variables
 local IsAggroed = 0;
@@ -44,12 +45,15 @@ function Perl_CombatDisplay_OnLoad()
 	this:RegisterEvent("PLAYER_TARGET_CHANGED");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_ENERGY");
+	this:RegisterEvent("UNIT_FOCUS");
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_MANA");
 	this:RegisterEvent("UNIT_MAXENERGY");
+	this:RegisterEvent("UNIT_MAXFOCUS");
 	this:RegisterEvent("UNIT_MAXHEALTH");
 	this:RegisterEvent("UNIT_MAXMANA");
 	this:RegisterEvent("UNIT_MAXRAGE");
+	this:RegisterEvent("UNIT_PET");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
@@ -83,6 +87,11 @@ function Perl_CombatDisplay_OnEvent(event)
 			end
 			Perl_CombatDisplay_Update_Health();
 		end
+		if (arg1 == "pet") then
+			if (showpetbars == 1) then
+				Perl_CombatDisplay_Update_PetHealth();
+			end
+		end
 		if (arg1 == "target") then
 			Perl_CombatDisplay_Target_Update_Health();
 		end
@@ -115,6 +124,11 @@ function Perl_CombatDisplay_OnEvent(event)
 			end
 			Perl_CombatDisplay_Update_Mana();
 		end
+		if (arg1 == "pet") then
+			if (showpetbars == 1) then
+				Perl_CombatDisplay_Update_PetMana();
+			end
+		end
 		if (arg1 == "target") then
 			Perl_CombatDisplay_Target_Update_Mana();
 		end
@@ -135,6 +149,12 @@ function Perl_CombatDisplay_OnEvent(event)
 			Perl_CombatDisplay_Target_Update_Mana();
 		end
 		return;
+	elseif (event == "UNIT_FOCUS" or event == "UNIT_MAXFOCUS") then
+		if (arg1 == "pet") then
+			if (showpetbars == 1) then
+				Perl_CombatDisplay_Update_PetMana();
+			end
+		end
 	elseif (event == "PLAYER_TARGET_CHANGED") then
 		Perl_CombatDisplay_UpdateDisplay();
 		return;
@@ -177,6 +197,15 @@ function Perl_CombatDisplay_OnEvent(event)
 				end
 			end
 		end
+		if (arg1 == "pet") then
+			if (showpetbars == 1) then
+				Perl_CombatDisplay_Update_PetManaBarColor();	-- What type of energy are we using now?
+				Perl_CombatDisplay_Update_PetMana();		-- Update the energy info immediately
+			end
+		end
+		return;
+	elseif (event == "UNIT_PET") then
+		Perl_CombatDisplay_CheckForPets();
 		return;
 	elseif ((event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD")) then
 		local powertype = UnitPowerType("player");
@@ -210,6 +239,9 @@ function Perl_CombatDisplay_OnEvent(event)
 			Perl_CombatDisplay_UpdateDisplay();	-- what mode are we in?
 			Perl_CombatDisplay_Set_Scale();		-- set the correct scale
 			Perl_CombatDisplay_Set_Transparency();	-- set the transparency
+			if (showpetbars == 1) then
+				Perl_CombatDisplay_CheckForPets();	-- do we have a pet out?
+			end
 		else
 			Perl_CombatDisplay_Initialize();
 		end
@@ -253,6 +285,8 @@ function Perl_CombatDisplay_Initialize_Frame_Color()
 	Perl_CombatDisplay_HealthBarText:SetTextColor(1, 1, 1, 1);
 	Perl_CombatDisplay_ManaBarText:SetTextColor(1, 1, 1, 1);
 	Perl_CombatDisplay_CPBarText:SetTextColor(1, 1, 1, 1);
+	Perl_CombatDisplay_PetHealthBarText:SetTextColor(1, 1, 1, 1);
+	Perl_CombatDisplay_PetManaBarText:SetTextColor(1, 1, 1, 1);
 
 	Perl_CombatDisplay_Target_ManaFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_CombatDisplay_Target_ManaFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
@@ -430,6 +464,13 @@ function Perl_CombatDisplay_Update_Mana()
 			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
 		end
 	end
+
+	if (showpetbars == 1) then							-- running this check here since all the previous if's will undo it if i don't
+		if (UnitExists("pet")) then
+			Perl_CombatDisplay_ManaFrame:SetHeight(66);			-- health and mana/focus bar
+			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(66);
+		end
+	end
 end
 
 function Perl_CombatDisplay_Update_Combo_Points()
@@ -475,6 +516,96 @@ function Perl_CombatDisplay_UpdateBars()
 		Perl_CombatDisplay_CPBar:SetMinMaxValues(0,5);
 		Perl_CombatDisplay_CPBar:SetValue(GetComboPoints());
 		return;
+	end
+end
+
+function Perl_CombatDisplay_CheckForPets()
+	if (showpetbars == 1 and UnitExists("pet")) then
+		Perl_CombatDisplay_PetHealthBar:Show();
+		Perl_CombatDisplay_PetHealthBarBG:Show();
+		Perl_CombatDisplay_PetManaBar:Show();
+		Perl_CombatDisplay_PetManaBarBG:Show();
+		Perl_CombatDisplay_ManaFrame:SetHeight(66);			-- health and mana/focus bar
+		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(66);
+		Perl_CombatDisplay_Update_PetManaBarColor();
+		Perl_CombatDisplay_Update_PetHealth();
+		Perl_CombatDisplay_Update_PetMana();
+	else
+		Perl_CombatDisplay_PetHealthBar:Hide();
+		Perl_CombatDisplay_PetHealthBarBG:Hide();
+		Perl_CombatDisplay_PetManaBar:Hide();
+		Perl_CombatDisplay_PetManaBarBG:Hide();
+		Perl_CombatDisplay_UpdateBars();
+	end
+end
+
+function Perl_CombatDisplay_Update_PetManaBarColor()
+	local petpower = UnitPowerType("pet");
+	-- Set mana bar color
+	if (petpower == 1) then
+		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(1, 0, 0, 1);
+		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+	elseif (petpower == 2) then
+		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(1, 0.5, 0, 1);
+		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+	elseif (petpower == 3) then
+		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(1, 1, 0, 1);
+		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+	else
+		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(0, 0, 1, 1);
+		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
+	end
+end
+
+function Perl_CombatDisplay_Update_PetHealth()
+	local pethealth = UnitHealth("pet");
+	local pethealthmax = UnitHealthMax("pet");
+
+	if (UnitIsDead("pet") or UnitIsGhost("pet")) then				-- This prevents negative health
+		pethealth = 0;
+	end
+
+	if (colorhealth == 1) then
+		local pethealthpercent = floor(pethealth/pethealthmax*100+0.5);
+		if ((pethealthpercent <= 100) and (pethealthpercent > 75)) then
+			Perl_CombatDisplay_PetHealthBar:SetStatusBarColor(0, 0.8, 0);
+			Perl_CombatDisplay_PetHealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
+		elseif ((pethealthpercent <= 75) and (pethealthpercent > 50)) then
+			Perl_CombatDisplay_PetHealthBar:SetStatusBarColor(1, 1, 0);
+			Perl_CombatDisplay_PetHealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+		elseif ((pethealthpercent <= 50) and (pethealthpercent > 25)) then
+			Perl_CombatDisplay_PetHealthBar:SetStatusBarColor(1, 0.5, 0);
+			Perl_CombatDisplay_PetHealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+		else
+			Perl_CombatDisplay_PetHealthBar:SetStatusBarColor(1, 0, 0);
+			Perl_CombatDisplay_PetHealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+		end
+	else
+		Perl_CombatDisplay_PetHealthBar:SetStatusBarColor(0, 0.8, 0);
+		Perl_CombatDisplay_PetHealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
+	end
+
+	Perl_CombatDisplay_PetHealthBar:SetMinMaxValues(0, pethealthmax);
+	Perl_CombatDisplay_PetHealthBar:SetValue(pethealth);
+	Perl_CombatDisplay_PetHealthBarText:SetText(pethealth.."/"..pethealthmax);
+end
+
+function Perl_CombatDisplay_Update_PetMana()
+	local petmana = UnitMana("pet");
+	local petmanamax = UnitManaMax("pet");
+	local petpower = UnitPowerType("pet");
+
+	if (UnitIsDead("pet") or UnitIsGhost("pet")) then				-- This prevents negative mana
+		petmana = 0;
+	end
+
+	Perl_CombatDisplay_PetManaBar:SetMinMaxValues(0, petmanamax);
+	Perl_CombatDisplay_PetManaBar:SetValue(petmana);
+
+	if (petpower == 1 or petpower == 2) then
+		Perl_CombatDisplay_PetManaBarText:SetText(petmana);
+	else
+		Perl_CombatDisplay_PetManaBarText:SetText(petmana.."/"..petmanamax);
 	end
 end
 
@@ -713,6 +844,12 @@ function Perl_CombatDisplay_Set_DruidBar(newvalue)
 	Perl_CombatDisplay_Update_Mana();
 end
 
+function Perl_CombatDisplay_Set_PetBars(newvalue)
+	showpetbars = newvalue;
+	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_CheckForPets();
+end
+
 function Perl_CombatDisplay_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -748,6 +885,7 @@ function Perl_CombatDisplay_GetVars()
 	showtarget = Perl_CombatDisplay_Config[UnitName("player")]["ShowTarget"];
 	mobhealthsupport = Perl_CombatDisplay_Config[UnitName("player")]["MobHealthSupport"];
 	showdruidbar = Perl_CombatDisplay_Config[UnitName("player")]["ShowDruidBar"];
+	showpetbars = Perl_CombatDisplay_Config[UnitName("player")]["ShowPetBars"];
 
 	if (state == nil) then
 		state = 3;
@@ -779,6 +917,9 @@ function Perl_CombatDisplay_GetVars()
 	if (showdruidbar == nil) then
 		showdruidbar = 1;
 	end
+	if (showpetbars == nil) then
+		showpetbars = 0;
+	end
 
 	local vars = {
 		["state"] = state,
@@ -791,6 +932,7 @@ function Perl_CombatDisplay_GetVars()
 		["showtarget"] = showtarget,
 		["mobhealthsupport"] = mobhealthsupport,
 		["showdruidbar"] = showdruidbar,
+		["showpetbars"] = showpetbars,
 	}
 	return vars;
 end
@@ -849,6 +991,11 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			else
 				showdruidbar = nil;
 			end
+			if (vartable["Global Settings"]["ShowPetBars"] ~= nil) then
+				showpetbars = vartable["Global Settings"]["ShowPetBars"];
+			else
+				showpetbars = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -882,6 +1029,9 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		if (showdruidbar == nil) then
 			showdruidbar = 1;
 		end
+		if (showpetbars == nil) then
+			showpetbars = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_CombatDisplay_Set_Target(showtarget)
@@ -902,6 +1052,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		["ShowTarget"] = showtarget,
 		["MobHealthSupport"] = mobhealthsupport,
 		["ShowDruidBar"] = showdruidbar,
+		["ShowPetBars"] = showpetbars,
 	};
 end
 
@@ -920,6 +1071,8 @@ end
 function Perl_CombatDisplay_MouseClick(button)
 	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
 		CastParty_OnClickByUnit(button, "player");
+	elseif (Genesis_data and PCUF_CASTPARTYSUPPORT == 1) then
+		Genesis_MouseHeal("player", button);
 	else
 		if (SpellIsTargeting() and button == "RightButton") then
 			SpellStopTargeting();
@@ -946,7 +1099,7 @@ end
 
 function Perl_CombatDisplay_MouseUp(button)
 	if (button == "RightButton") then
-		if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty is installed
+		if ((CastPartyConfig or Genesis_MouseHeal) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
 			-- Do nothing
 		else
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
@@ -987,6 +1140,8 @@ end
 function Perl_CombatDisplay_Target_MouseClick(button)
 	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
 		CastParty_OnClickByUnit(button, "target");
+	elseif (Genesis_data and PCUF_CASTPARTYSUPPORT == 1) then
+		Genesis_MouseHeal("target", button);
 	else
 		if (SpellIsTargeting() and button == "RightButton") then
 			SpellStopTargeting();
@@ -1013,7 +1168,7 @@ end
 
 function Perl_CombatDisplay_Target_MouseUp(button)
 	if (button == "RightButton") then
-		if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty is installed
+		if ((CastPartyConfig or Genesis_data) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
 			-- Do nothing
 		else
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
@@ -1034,8 +1189,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.52",
-			releaseDate = "April 2, 2006",
+			version = "v0.53",
+			releaseDate = "April 4, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

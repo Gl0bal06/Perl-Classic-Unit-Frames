@@ -2050,6 +2050,10 @@ function Perl_Party_MouseClick(button)
 		if (not string.find(GetMouseFocus():GetName(), "Name")) then
 			CastParty_OnClickByUnit(button, "party"..id);
 		end
+	elseif (Genesis_data and PCUF_CASTPARTYSUPPORT == 1) then
+		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			Genesis_MouseHeal("party"..id, button);
+		end
 	else
 		if (SpellIsTargeting() and button == "RightButton") then
 			SpellStopTargeting();
@@ -2082,7 +2086,7 @@ function Perl_Party_MouseUp(button)
 	end
 
 	if (button == "RightButton") then
-		if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
+		if ((CastPartyConfig or Genesis_data) and PCUF_CASTPARTYSUPPORT == 1) then
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
 				ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..id.."_DropDown"), "Perl_Party_MemberFrame"..id, 0, 0);
 			end
@@ -2106,6 +2110,10 @@ function Perl_Party_Pet_MouseClick(button)
 	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name")) then
 			CastParty_OnClickByUnit(button, "partypet"..id);
+		end
+	elseif (Genesis_data and PCUF_CASTPARTYSUPPORT == 1) then
+		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			Genesis_MouseHeal("partypet"..id, button);
 		end
 	else
 		if (SpellIsTargeting() and button == "RightButton") then
@@ -2151,8 +2159,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.52",
-			releaseDate = "April 2, 2006",
+			version = "v0.53",
+			releaseDate = "April 4, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

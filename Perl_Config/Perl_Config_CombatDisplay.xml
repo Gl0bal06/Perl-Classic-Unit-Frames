@@ -249,7 +249,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton12" inherits="UICheckButtonTemplate" id="12">
+			<CheckButton name="$parent_CheckButton13" inherits="UICheckButtonTemplate" id="13">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -257,6 +257,27 @@
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
 						<Offset>
 							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Display Pet Bars");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_CombatDisplay_PetBars_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton12" inherits="UICheckButtonTemplate" id="12">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton13">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

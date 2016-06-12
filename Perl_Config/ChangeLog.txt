@@ -1,3 +1,8 @@
+0.53 - April 4, 2006
+ - CombatDisplay: Added pet support to the player frame
+ - CombatDisplay/Party/Pet/Player/Target: Added Genesis support
+ - CombatDisplay/Party/Pet/Player/Target: Updated TOC files to reflect the newly supported mods
+
 0.52 - April 2, 2006
  - All: If Alt, Shift, or Ctrl is held while right clicking on a frame, the menu will not appear
  - CombatDisplay: Can no longer open the menu from the CombatDisplay frames if CastParty is installed

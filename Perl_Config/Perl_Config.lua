@@ -240,6 +240,8 @@ function Perl_Config_Set_Texture(newvalue)
 		Perl_CombatDisplay_ManaBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_DruidBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_CPBarTex:SetTexture(texturename);
+		Perl_CombatDisplay_PetHealthBarTex:SetTexture(texturename);
+		Perl_CombatDisplay_PetManaBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_Target_HealthBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_Target_ManaBarTex:SetTexture(texturename);
 	end
@@ -517,6 +519,7 @@ function Perl_Config_Global_Save_Settings()
 			["XPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetLeft() + 0.5),
 			["YPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Target_Frame:GetScale()) + 0.5),
 			["ShowDruidBar"] = vartable["showdruidbar"],
+			["ShowPetBars"] = vartable["showpetbars"],
 		};
 	end
 
@@ -894,8 +897,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.52",
-			releaseDate = "April 2, 2006",
+			version = "v0.53",
+			releaseDate = "April 4, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

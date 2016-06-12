@@ -89,6 +89,12 @@ function Perl_Config_CombatDisplay_Set_Values()
 	else
 		Perl_Config_CombatDisplay_Frame_CheckButton12:SetChecked(nil);
 	end
+
+	if (vartable["showpetbars"] == 1) then
+		Perl_Config_CombatDisplay_Frame_CheckButton13:SetChecked(1);
+	else
+		Perl_Config_CombatDisplay_Frame_CheckButton13:SetChecked(nil);
+	end
 end
 
 function Perl_Config_CombatDisplay_Mode_Update()
@@ -159,6 +165,14 @@ function Perl_Config_CombatDisplay_DruidBar_Update()
 		Perl_CombatDisplay_Set_DruidBar(1);
 	else
 		Perl_CombatDisplay_Set_DruidBar(0);
+	end
+end
+
+function Perl_Config_CombatDisplay_PetBars_Update()
+	if (Perl_Config_CombatDisplay_Frame_CheckButton13:GetChecked() == 1) then
+		Perl_CombatDisplay_Set_PetBars(1);
+	else
+		Perl_CombatDisplay_Set_PetBars(0);
 	end
 end
 

@@ -274,6 +274,94 @@
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="1" g="0" b="0" a="0.25"/>
 					</StatusBar>
+
+					<!-- Pet Health Bar -->
+					<StatusBar name="Perl_CombatDisplay_PetHealthBar" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="Perl_CombatDisplay_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="-2"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_CombatDisplay_PetHealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0"/>
+						<Layers>
+							<!-- Health Text -->
+							<Layer level="OVERLAY">
+								<Fontstring name="Perl_CombatDisplay_PetHealthBarText" inherits="GameFontNormal" text="Error!">
+									<Anchors>
+										<Anchor point="TOP" relativePoint="TOP">
+											<Offset>
+												<AbsDimension x="0" y="1"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</Fontstring>
+							</Layer>
+						</Layers>
+					</StatusBar>
+					<StatusBar name="Perl_CombatDisplay_PetHealthBarBG" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_CombatDisplay_PetHealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
+					</StatusBar>
+
+					<!-- Pet Mana Bar -->
+					<StatusBar name="Perl_CombatDisplay_PetManaBar" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="Perl_CombatDisplay_PetHealthBar">
+								<Offset>
+									<AbsDimension x="0" y="-2"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_CombatDisplay_PetManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="1" b="0"/>
+						<Layers>
+							<!-- Mana Text -->
+							<Layer level="OVERLAY">
+								<Fontstring name="Perl_CombatDisplay_PetManaBarText" inherits="GameFontNormal" text="Error!">
+									<Anchors>
+										<Anchor point="TOP" relativePoint="TOP">
+											<Offset>
+												<AbsDimension x="0" y="1"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</Fontstring>
+							</Layer>
+						</Layers>
+					</StatusBar>
+					<StatusBar name="Perl_CombatDisplay_PetManaBarBG" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="200" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_CombatDisplay_PetManaBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarColor r="0" g="1" b="0" a="0.25"/>
+					</StatusBar>
 				</Frames>
 			</Frame>
 		</Frames>
