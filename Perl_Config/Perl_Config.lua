@@ -20,7 +20,7 @@ local texture = 0;			-- no texture is set by default
 local showminimapbutton = 1;		-- minimap button is on by default
 local minimapbuttonpos = 270;		-- default minimap button position
 local transparentbackground = 0;	-- use solid black background as default
-PCUF_CASTPARTYSUPPORT = 1;		-- CastParty support is enabled by default (global variable so i don't go insane)
+PCUF_CASTPARTYSUPPORT = 0;		-- CastParty support is disabled by default
 PCUF_COLORHEALTH = 0;			-- progressively colored health bars are off by default
 
 -- Empty variables used for localization
@@ -948,7 +948,7 @@ function Perl_Config_GetVars()
 		transparentbackground = 0;
 	end
 	if (PCUF_CASTPARTYSUPPORT == nil) then
-		PCUF_CASTPARTYSUPPORT = 1;
+		PCUF_CASTPARTYSUPPORT = 0;
 	end
 	if (PCUF_COLORHEALTH == nil) then
 		PCUF_COLORHEALTH = 0;
@@ -1015,7 +1015,7 @@ function Perl_Config_UpdateVars(vartable)
 			transparentbackground = 0;
 		end
 		if (PCUF_CASTPARTYSUPPORT == nil) then
-			PCUF_CASTPARTYSUPPORT = 1;
+			PCUF_CASTPARTYSUPPORT = 0;
 		end
 		if (PCUF_COLORHEALTH == nil) then
 			PCUF_COLORHEALTH = 0;
@@ -1102,8 +1102,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.61",
-			releaseDate = "April 30, 2006",
+			version = "Version 0.62",
+			releaseDate = "May 2, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

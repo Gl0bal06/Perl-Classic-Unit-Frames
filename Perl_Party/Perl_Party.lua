@@ -310,19 +310,33 @@ function Perl_Party_Update_Health()
 	getglobal(this:GetName().."_StatsFrame_HealthBar"):SetValue(partyhealth);
 
 	if (PCUF_COLORHEALTH == 1) then
-		if ((partyhealthpercent <= 100) and (partyhealthpercent > 75)) then
-			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(0, 0.8, 0);
-			getglobal(this:GetName().."_StatsFrame_HealthBarBG"):SetStatusBarColor(0, 0.8, 0, 0.25);
-		elseif ((partyhealthpercent <= 75) and (partyhealthpercent > 50)) then
-			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(1, 1, 0);
-			getglobal(this:GetName().."_StatsFrame_HealthBarBG"):SetStatusBarColor(1, 1, 0, 0.25);
-		elseif ((partyhealthpercent <= 50) and (partyhealthpercent > 25)) then
-			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(1, 0.5, 0);
-			getglobal(this:GetName().."_StatsFrame_HealthBarBG"):SetStatusBarColor(1, 0.5, 0, 0.25);
+--		if ((partyhealthpercent <= 100) and (partyhealthpercent > 75)) then
+--			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(0, 0.8, 0);
+--			getglobal(this:GetName().."_StatsFrame_HealthBarBG"):SetStatusBarColor(0, 0.8, 0, 0.25);
+--		elseif ((partyhealthpercent <= 75) and (partyhealthpercent > 50)) then
+--			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(1, 1, 0);
+--			getglobal(this:GetName().."_StatsFrame_HealthBarBG"):SetStatusBarColor(1, 1, 0, 0.25);
+--		elseif ((partyhealthpercent <= 50) and (partyhealthpercent > 25)) then
+--			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(1, 0.5, 0);
+--			getglobal(this:GetName().."_StatsFrame_HealthBarBG"):SetStatusBarColor(1, 0.5, 0, 0.25);
+--		else
+--			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(1, 0, 0);
+--			getglobal(this:GetName().."_StatsFrame_HealthBarBG"):SetStatusBarColor(1, 0, 0, 0.25);
+--		end
+
+		local rawpercent = partyhealth / partyhealthmax;
+		local red, green;
+
+		if(rawpercent > 0.5) then
+			red = (1.0 - rawpercent) * 2;
+			green = 1.0;
 		else
-			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(1, 0, 0);
-			getglobal(this:GetName().."_StatsFrame_HealthBarBG"):SetStatusBarColor(1, 0, 0, 0.25);
+			red = 1.0;
+			green = rawpercent * 2;
 		end
+
+		getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(red, green, 0, 1);
+		getglobal(this:GetName().."_StatsFrame_HealthBarBG"):SetStatusBarColor(red, green, 0, 0.25);
 	else
 		getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(0, 0.8, 0);
 		getglobal(this:GetName().."_StatsFrame_HealthBarBG"):SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -2224,8 +2238,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.61",
-			releaseDate = "April 30, 2006",
+			version = "Version 0.62",
+			releaseDate = "May 2, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

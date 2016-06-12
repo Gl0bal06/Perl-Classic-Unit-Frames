@@ -342,20 +342,34 @@ function Perl_CombatDisplay_Update_Health()
 	end
 
 	if (PCUF_COLORHEALTH == 1) then
-		local playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
-		if ((playerhealthpercent <= 100) and (playerhealthpercent > 75)) then
-			Perl_CombatDisplay_HealthBar:SetStatusBarColor(0, 0.8, 0);
-			Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
-		elseif ((playerhealthpercent <= 75) and (playerhealthpercent > 50)) then
-			Perl_CombatDisplay_HealthBar:SetStatusBarColor(1, 1, 0);
-			Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-		elseif ((playerhealthpercent <= 50) and (playerhealthpercent > 25)) then
-			Perl_CombatDisplay_HealthBar:SetStatusBarColor(1, 0.5, 0);
-			Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--		local playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
+--		if ((playerhealthpercent <= 100) and (playerhealthpercent > 75)) then
+--			Perl_CombatDisplay_HealthBar:SetStatusBarColor(0, 0.8, 0);
+--			Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
+--		elseif ((playerhealthpercent <= 75) and (playerhealthpercent > 50)) then
+--			Perl_CombatDisplay_HealthBar:SetStatusBarColor(1, 1, 0);
+--			Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+--		elseif ((playerhealthpercent <= 50) and (playerhealthpercent > 25)) then
+--			Perl_CombatDisplay_HealthBar:SetStatusBarColor(1, 0.5, 0);
+--			Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--		else
+--			Perl_CombatDisplay_HealthBar:SetStatusBarColor(1, 0, 0);
+--			Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+--		end
+
+		local rawpercent = playerhealth / playerhealthmax;
+		local red, green;
+
+		if(rawpercent > 0.5) then
+			red = (1.0 - rawpercent) * 2;
+			green = 1.0;
 		else
-			Perl_CombatDisplay_HealthBar:SetStatusBarColor(1, 0, 0);
-			Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+			red = 1.0;
+			green = rawpercent * 2;
 		end
+
+		Perl_CombatDisplay_HealthBar:SetStatusBarColor(red, green, 0, 1);
+		Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(red, green, 0, 0.25);
 	else
 		Perl_CombatDisplay_HealthBar:SetStatusBarColor(0, 0.8, 0);
 		Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -615,20 +629,34 @@ function Perl_CombatDisplay_Target_Update_Health()
 	end
 
 	if (PCUF_COLORHEALTH == 1) then
-		local targethealthpercent = floor(targethealth/targethealthmax*100+0.5);
-		if ((targethealthpercent <= 100) and (targethealthpercent > 75)) then
-			Perl_CombatDisplay_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
-			Perl_CombatDisplay_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
-		elseif ((targethealthpercent <= 75) and (targethealthpercent > 50)) then
-			Perl_CombatDisplay_Target_HealthBar:SetStatusBarColor(1, 1, 0);
-			Perl_CombatDisplay_Target_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-		elseif ((targethealthpercent <= 50) and (targethealthpercent > 25)) then
-			Perl_CombatDisplay_Target_HealthBar:SetStatusBarColor(1, 0.5, 0);
-			Perl_CombatDisplay_Target_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--		local targethealthpercent = floor(targethealth/targethealthmax*100+0.5);
+--		if ((targethealthpercent <= 100) and (targethealthpercent > 75)) then
+--			Perl_CombatDisplay_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
+--			Perl_CombatDisplay_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
+--		elseif ((targethealthpercent <= 75) and (targethealthpercent > 50)) then
+--			Perl_CombatDisplay_Target_HealthBar:SetStatusBarColor(1, 1, 0);
+--			Perl_CombatDisplay_Target_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+--		elseif ((targethealthpercent <= 50) and (targethealthpercent > 25)) then
+--			Perl_CombatDisplay_Target_HealthBar:SetStatusBarColor(1, 0.5, 0);
+--			Perl_CombatDisplay_Target_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--		else
+--			Perl_CombatDisplay_Target_HealthBar:SetStatusBarColor(1, 0, 0);
+--			Perl_CombatDisplay_Target_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+--		end
+
+		local rawpercent = targethealth / targethealthmax;
+		local red, green;
+
+		if(rawpercent > 0.5) then
+			red = (1.0 - rawpercent) * 2;
+			green = 1.0;
 		else
-			Perl_CombatDisplay_Target_HealthBar:SetStatusBarColor(1, 0, 0);
-			Perl_CombatDisplay_Target_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+			red = 1.0;
+			green = rawpercent * 2;
 		end
+
+		Perl_CombatDisplay_Target_HealthBar:SetStatusBarColor(red, green, 0, 1);
+		Perl_CombatDisplay_Target_HealthBarBG:SetStatusBarColor(red, green, 0, 0.25);
 	else
 		Perl_CombatDisplay_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
 		Perl_CombatDisplay_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -1205,8 +1233,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.61",
-			releaseDate = "April 30, 2006",
+			version = "Version 0.62",
+			releaseDate = "May 2, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

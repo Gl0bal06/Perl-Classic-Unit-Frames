@@ -14,7 +14,7 @@ local transparency = 1;		-- transparency for frames
 local showportrait = 0;		-- portrait is hidden by default
 local compactpercent = 0;	-- percents are not shown in compact mode by default
 local threedportrait = 0;	-- 3d portraits are off by default
-local portraitcombattext = 1;	-- Combat text is enabled by default on the portrait frame
+local portraitcombattext = 0;	-- Combat text is disabled by default on the portrait frame
 local showdruidbar = 1;		-- Druid Bar support is enabled by default
 
 -- Default Local Variables
@@ -255,19 +255,33 @@ function Perl_Player_Update_Health()
 	Perl_Player_HealthBar:SetValue(playerhealth);
 
 	if (PCUF_COLORHEALTH == 1) then
-		if ((playerhealthpercent <= 100) and (playerhealthpercent > 75)) then
-			Perl_Player_HealthBar:SetStatusBarColor(0, 0.8, 0);
-			Perl_Player_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
-		elseif ((playerhealthpercent <= 75) and (playerhealthpercent > 50)) then
-			Perl_Player_HealthBar:SetStatusBarColor(1, 1, 0);
-			Perl_Player_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-		elseif ((playerhealthpercent <= 50) and (playerhealthpercent > 25)) then
-			Perl_Player_HealthBar:SetStatusBarColor(1, 0.5, 0);
-			Perl_Player_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--		if ((playerhealthpercent <= 100) and (playerhealthpercent > 75)) then
+--			Perl_Player_HealthBar:SetStatusBarColor(0, 0.8, 0);
+--			Perl_Player_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
+--		elseif ((playerhealthpercent <= 75) and (playerhealthpercent > 50)) then
+--			Perl_Player_HealthBar:SetStatusBarColor(1, 1, 0);
+--			Perl_Player_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+--		elseif ((playerhealthpercent <= 50) and (playerhealthpercent > 25)) then
+--			Perl_Player_HealthBar:SetStatusBarColor(1, 0.5, 0);
+--			Perl_Player_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--		else
+--			Perl_Player_HealthBar:SetStatusBarColor(1, 0, 0);
+--			Perl_Player_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+--		end
+
+		local rawpercent = playerhealth / playerhealthmax;
+		local red, green;
+
+		if(rawpercent > 0.5) then
+			red = (1.0 - rawpercent) * 2;
+			green = 1.0;
 		else
-			Perl_Player_HealthBar:SetStatusBarColor(1, 0, 0);
-			Perl_Player_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+			red = 1.0;
+			green = rawpercent * 2;
 		end
+
+		Perl_Player_HealthBar:SetStatusBarColor(red, green, 0, 1);
+		Perl_Player_HealthBarBG:SetStatusBarColor(red, green, 0, 0.25);
 	else
 		Perl_Player_HealthBar:SetStatusBarColor(0, 0.8, 0);
 		Perl_Player_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -808,7 +822,6 @@ function Perl_Player_Update_Portrait()
 		end
 	else
 		Perl_Player_PortraitFrame:Hide();					-- Hide the frame and 2d/3d portion
-		Perl_Player_PortraitTextFrame:Hide();					-- Hide the combat text
 	end
 end
 
@@ -1060,7 +1073,7 @@ function Perl_Player_GetVars()
 		threedportrait = 0;
 	end
 	if (portraitcombattext == nil) then
-		portraitcombattext = 1;
+		portraitcombattext = 0;
 	end
 	if (showdruidbar == nil) then
 		showdruidbar = 1;
@@ -1181,7 +1194,7 @@ function Perl_Player_UpdateVars(vartable)
 			threedportrait = 0;
 		end
 		if (portraitcombattext == nil) then
-			portraitcombattext = 1;
+			portraitcombattext = 0;
 		end
 		if (showdruidbar == nil) then
 			showdruidbar = 1;
@@ -1398,8 +1411,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.61",
-			releaseDate = "April 30, 2006",
+			version = "Version 0.62",
+			releaseDate = "May 2, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -197,19 +197,33 @@ function Perl_Target_Target_OnUpdate(arg1)
 			Perl_Target_Target_HealthBar:SetValue(targettargethealth);
 
 			if (PCUF_COLORHEALTH == 1) then
-				if ((targettargethealthpercent <= 100) and (targettargethealthpercent > 75)) then
-					Perl_Target_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
-					Perl_Target_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
-				elseif ((targettargethealthpercent <= 75) and (targettargethealthpercent > 50)) then
-					Perl_Target_Target_HealthBar:SetStatusBarColor(1, 1, 0);
-					Perl_Target_Target_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-				elseif ((targettargethealthpercent <= 50) and (targettargethealthpercent > 25)) then
-					Perl_Target_Target_HealthBar:SetStatusBarColor(1, 0.5, 0);
-					Perl_Target_Target_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--				if ((targettargethealthpercent <= 100) and (targettargethealthpercent > 75)) then
+--					Perl_Target_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
+--					Perl_Target_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
+--				elseif ((targettargethealthpercent <= 75) and (targettargethealthpercent > 50)) then
+--					Perl_Target_Target_HealthBar:SetStatusBarColor(1, 1, 0);
+--					Perl_Target_Target_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+--				elseif ((targettargethealthpercent <= 50) and (targettargethealthpercent > 25)) then
+--					Perl_Target_Target_HealthBar:SetStatusBarColor(1, 0.5, 0);
+--					Perl_Target_Target_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--				else
+--					Perl_Target_Target_HealthBar:SetStatusBarColor(1, 0, 0);
+--					Perl_Target_Target_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+--				end
+
+				local rawpercent = targettargethealth / targettargethealthmax;
+				local red, green;
+
+				if(rawpercent > 0.5) then
+					red = (1.0 - rawpercent) * 2;
+					green = 1.0;
 				else
-					Perl_Target_Target_HealthBar:SetStatusBarColor(1, 0, 0);
-					Perl_Target_Target_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+					red = 1.0;
+					green = rawpercent * 2;
 				end
+
+				Perl_Target_Target_HealthBar:SetStatusBarColor(red, green, 0, 1);
+				Perl_Target_Target_HealthBarBG:SetStatusBarColor(red, green, 0, 0.25);
 			else
 				Perl_Target_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
 				Perl_Target_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -393,19 +407,33 @@ function Perl_Target_Target_OnUpdate(arg1)
 			Perl_Target_Target_Target_HealthBar:SetValue(targettargettargethealth);
 
 			if (PCUF_COLORHEALTH == 1) then
-				if ((targettargettargethealthpercent <= 100) and (targettargettargethealthpercent > 75)) then
-					Perl_Target_Target_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
-					Perl_Target_Target_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
-				elseif ((targettargettargethealthpercent <= 75) and (targettargettargethealthpercent > 50)) then
-					Perl_Target_Target_Target_HealthBar:SetStatusBarColor(1, 1, 0);
-					Perl_Target_Target_Target_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-				elseif ((targettargettargethealthpercent <= 50) and (targettargettargethealthpercent > 25)) then
-					Perl_Target_Target_Target_HealthBar:SetStatusBarColor(1, 0.5, 0);
-					Perl_Target_Target_Target_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--				if ((targettargettargethealthpercent <= 100) and (targettargettargethealthpercent > 75)) then
+--					Perl_Target_Target_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
+--					Perl_Target_Target_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
+--				elseif ((targettargettargethealthpercent <= 75) and (targettargettargethealthpercent > 50)) then
+--					Perl_Target_Target_Target_HealthBar:SetStatusBarColor(1, 1, 0);
+--					Perl_Target_Target_Target_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+--				elseif ((targettargettargethealthpercent <= 50) and (targettargettargethealthpercent > 25)) then
+--					Perl_Target_Target_Target_HealthBar:SetStatusBarColor(1, 0.5, 0);
+--					Perl_Target_Target_Target_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--				else
+--					Perl_Target_Target_Target_HealthBar:SetStatusBarColor(1, 0, 0);
+--					Perl_Target_Target_Target_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+--				end
+
+				local rawpercent = targettargettargethealth / targettargettargethealthmax;
+				local red, green;
+
+				if(rawpercent > 0.5) then
+					red = (1.0 - rawpercent) * 2;
+					green = 1.0;
 				else
-					Perl_Target_Target_Target_HealthBar:SetStatusBarColor(1, 0, 0);
-					Perl_Target_Target_Target_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+					red = 1.0;
+					green = rawpercent * 2;
 				end
+
+				Perl_Target_Target_Target_HealthBar:SetStatusBarColor(red, green, 0, 1);
+				Perl_Target_Target_Target_HealthBarBG:SetStatusBarColor(red, green, 0, 0.25);
 			else
 				Perl_Target_Target_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
 				Perl_Target_Target_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -1292,8 +1320,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "Version 0.61",
-			releaseDate = "April 30, 2006",
+			version = "Version 0.62",
+			releaseDate = "May 2, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

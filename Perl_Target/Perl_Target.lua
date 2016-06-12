@@ -18,7 +18,7 @@ local transparency = 1;		-- transparency for frames
 local buffdebuffscale = 1;	-- default scale for buffs and debuffs
 local showportrait = 0;		-- portrait is hidden by default
 local threedportrait = 0;	-- 3d portraits are off by default
-local portraitcombattext = 1;	-- Combat text is enabled by default on the portrait frame
+local portraitcombattext = 0;	-- Combat text is disabled by default on the portrait frame
 local showrareeliteframe = 0;	-- rare/elite frame is hidden by default
 local nameframecombopoints = 0;	-- combo points are not displayed in the name frame by default
 local comboframedebuffs = 0;	-- combo point frame will not be used for debuffs by default
@@ -79,6 +79,7 @@ function Perl_Target_OnLoad()
 	Perl_Target_LevelFrame_CastClickOverlay:SetFrameLevel(Perl_Target_LevelFrame:GetFrameLevel() + 1);
 	Perl_Target_RareEliteFrame_CastClickOverlay:SetFrameLevel(Perl_Target_RareEliteFrame:GetFrameLevel() + 1);
 	Perl_Target_PortraitFrame_CastClickOverlay:SetFrameLevel(Perl_Target_PortraitFrame:GetFrameLevel() + 2);
+	Perl_Target_PortraitTextFrame:SetFrameLevel(Perl_Target_PortraitFrame:GetFrameLevel() + 1);
 	Perl_Target_ClassNameFrame_CastClickOverlay:SetFrameLevel(Perl_Target_ClassNameFrame:GetFrameLevel() + 1);
 	Perl_Target_CivilianFrame_CastClickOverlay:SetFrameLevel(Perl_Target_CivilianFrame:GetFrameLevel() + 1);
 	Perl_Target_CPFrame_CastClickOverlay:SetFrameLevel(Perl_Target_CPFrame:GetFrameLevel() + 1);
@@ -276,19 +277,33 @@ function Perl_Target_Update_Health()
 	Perl_Target_HealthBar:SetValue(targethealth);
 
 	if (PCUF_COLORHEALTH == 1) then
-		if ((targethealthpercent <= 100) and (targethealthpercent > 75)) then
-			Perl_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
-			Perl_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
-		elseif ((targethealthpercent <= 75) and (targethealthpercent > 50)) then
-			Perl_Target_HealthBar:SetStatusBarColor(1, 1, 0);
-			Perl_Target_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-		elseif ((targethealthpercent <= 50) and (targethealthpercent > 25)) then
-			Perl_Target_HealthBar:SetStatusBarColor(1, 0.5, 0);
-			Perl_Target_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--		if ((targethealthpercent <= 100) and (targethealthpercent > 75)) then
+--			Perl_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
+--			Perl_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
+--		elseif ((targethealthpercent <= 75) and (targethealthpercent > 50)) then
+--			Perl_Target_HealthBar:SetStatusBarColor(1, 1, 0);
+--			Perl_Target_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+--		elseif ((targethealthpercent <= 50) and (targethealthpercent > 25)) then
+--			Perl_Target_HealthBar:SetStatusBarColor(1, 0.5, 0);
+--			Perl_Target_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--		else
+--			Perl_Target_HealthBar:SetStatusBarColor(1, 0, 0);
+--			Perl_Target_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+--		end
+
+		local rawpercent = targethealth / targethealthmax;
+		local red, green;
+
+		if(rawpercent > 0.5) then
+			red = (1.0 - rawpercent) * 2;
+			green = 1.0;
 		else
-			Perl_Target_HealthBar:SetStatusBarColor(1, 0, 0);
-			Perl_Target_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+			red = 1.0;
+			green = rawpercent * 2;
 		end
+
+		Perl_Target_HealthBar:SetStatusBarColor(red, green, 0, 1);
+		Perl_Target_HealthBarBG:SetStatusBarColor(red, green, 0, 0.25);
 	else
 		Perl_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
 		Perl_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -825,9 +840,6 @@ end
 
 function Perl_Target_Update_Portrait()
 	if (showportrait == 1) then
-		local level = Perl_Target_PortraitFrame:GetFrameLevel();					-- Get the frame level of the main portrait frame
-		Perl_Target_PortraitTextFrame:SetFrameLevel(level + 1);						-- Put the combat text above it so the portrait graphic doesn't go on top of it
-
 		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -4, -31);	-- Reposition the combo point frame
 		Perl_Target_PortraitFrame:Show();								-- Show the main portrait frame
 
@@ -850,7 +862,6 @@ function Perl_Target_Update_Portrait()
 	else
 		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -4, 0);		-- Reposition the combo point frame
 		Perl_Target_PortraitFrame:Hide();								-- Hide the frame and 2d/3d portion
-		Perl_Target_PortraitTextFrame:Hide();								-- Hide the combat text
 	end
 end
 
@@ -1234,7 +1245,7 @@ function Perl_Target_GetVars()
 		threedportrait = 0;
 	end
 	if (portraitcombattext == nil) then
-		portraitcombattext = 1;
+		portraitcombattext = 0;
 	end
 	if (showrareeliteframe == nil) then
 		showrareeliteframe = 0;
@@ -1445,7 +1456,7 @@ function Perl_Target_UpdateVars(vartable)
 			threedportrait = 0;
 		end
 		if (portraitcombattext == nil) then
-			portraitcombattext = 1;
+			portraitcombattext = 0;
 		end
 		if (showrareeliteframe == nil) then
 			showrareeliteframe = 0;
@@ -1848,8 +1859,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.61",
-			releaseDate = "April 30, 2006",
+			version = "Version 0.62",
+			releaseDate = "May 2, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

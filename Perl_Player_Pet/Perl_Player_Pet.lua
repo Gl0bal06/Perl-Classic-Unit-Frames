@@ -16,7 +16,7 @@ local buffsize = 12;			-- default buff size is 12
 local debuffsize = 12;			-- default debuff size is 12
 local showportrait = 0;			-- portrait is hidden by default
 local threedportrait = 0;		-- 3d portraits are off by default
-local portraitcombattext = 1;		-- Combat text is enabled by default on the portrait frame
+local portraitcombattext = 0;		-- Combat text is disabled by default on the portrait frame
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -228,20 +228,34 @@ function Perl_Player_Pet_Update_Health()
 	Perl_Player_Pet_HealthBar:SetValue(pethealth);
 
 	if (PCUF_COLORHEALTH == 1) then
-		local playerpethealthpercent = floor(pethealth/pethealthmax*100+0.5);
-		if ((playerpethealthpercent <= 100) and (playerpethealthpercent > 75)) then
-			Perl_Player_Pet_HealthBar:SetStatusBarColor(0, 0.8, 0);
-			Perl_Player_Pet_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
-		elseif ((playerpethealthpercent <= 75) and (playerpethealthpercent > 50)) then
-			Perl_Player_Pet_HealthBar:SetStatusBarColor(1, 1, 0);
-			Perl_Player_Pet_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-		elseif ((playerpethealthpercent <= 50) and (playerpethealthpercent > 25)) then
-			Perl_Player_Pet_HealthBar:SetStatusBarColor(1, 0.5, 0);
-			Perl_Player_Pet_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--		local playerpethealthpercent = floor(pethealth/pethealthmax*100+0.5);
+--		if ((playerpethealthpercent <= 100) and (playerpethealthpercent > 75)) then
+--			Perl_Player_Pet_HealthBar:SetStatusBarColor(0, 0.8, 0);
+--			Perl_Player_Pet_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
+--		elseif ((playerpethealthpercent <= 75) and (playerpethealthpercent > 50)) then
+--			Perl_Player_Pet_HealthBar:SetStatusBarColor(1, 1, 0);
+--			Perl_Player_Pet_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+--		elseif ((playerpethealthpercent <= 50) and (playerpethealthpercent > 25)) then
+--			Perl_Player_Pet_HealthBar:SetStatusBarColor(1, 0.5, 0);
+--			Perl_Player_Pet_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--		else
+--			Perl_Player_Pet_HealthBar:SetStatusBarColor(1, 0, 0);
+--			Perl_Player_Pet_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+--		end
+
+		local rawpercent = pethealth / pethealthmax;
+		local red, green;
+
+		if(rawpercent > 0.5) then
+			red = (1.0 - rawpercent) * 2;
+			green = 1.0;
 		else
-			Perl_Player_Pet_HealthBar:SetStatusBarColor(1, 0, 0);
-			Perl_Player_Pet_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+			red = 1.0;
+			green = rawpercent * 2;
 		end
+
+		Perl_Player_Pet_HealthBar:SetStatusBarColor(red, green, 0, 1);
+		Perl_Player_Pet_HealthBarBG:SetStatusBarColor(red, green, 0, 0.25);
 	else
 		Perl_Player_Pet_HealthBar:SetStatusBarColor(0, 0.8, 0);
 		Perl_Player_Pet_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -569,7 +583,7 @@ function Perl_Player_Pet_GetVars()
 		threedportrait = 0;
 	end
 	if (portraitcombattext == nil) then
-		portraitcombattext = 1;
+		portraitcombattext = 0;
 	end
 
 	local vars = {
@@ -699,7 +713,7 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			threedportrait = 0;
 		end
 		if (portraitcombattext == nil) then
-			portraitcombattext = 1;
+			portraitcombattext = 0;
 		end
 
 		-- Call any code we need to activate them
@@ -963,8 +977,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "Version 0.61",
-			releaseDate = "April 30, 2006",
+			version = "Version 0.62",
+			releaseDate = "May 2, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
