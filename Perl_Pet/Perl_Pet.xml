@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-	<Script file="Perl_Player_Pet.lua"/>
+	<Script file="Perl_Pet.lua"/>
 	
 	<!-- Virtual buffs template -->
 	
@@ -54,7 +54,7 @@
 	
 	-->
 	
-	<Frame name="Perl_Player_Pet_Frame" parent="UIParent" hidden="true" enableMouse="true" movable="true">
+	<Frame name="Perl_Player_Pet_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Size>
 			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. -->
 			<AbsDimension x="100" y="24"/>
@@ -70,15 +70,14 @@
 		<!-- Script Events -->
 		
 		<Scripts>
-
 			<OnUpdate>
-				Perl_Player_Pet_Buff_UpdateAll();
+				<!-- Perl_Player_Pet_Buff_UpdateAll(); -->
 			</OnUpdate>
 			<OnLoad>
-				Perl_Player_Pet_OnLoad();
+				Perl_Pet_OnLoad();
 			</OnLoad>
 			<OnEvent>
-				Perl_Player_Pet_OnEvent(event);
+				Perl_Pet_OnEvent(event);
 			</OnEvent>
 			<OnMouseDown>
 				Perl_Player_Pet_MouseDown(arg1);
@@ -86,7 +85,6 @@
 			<OnMouseUp>
 				Perl_Player_Pet_MouseUp(arg1);
 			</OnMouseUp>
-
 		</Scripts>
 		
 		<Frames>
@@ -95,7 +93,7 @@
 			Frame for the drop down menu.
 			
 			-->
-			<Frame name="Perl_Player_Pet_DropDown" inherits="UIDropDownMenuTemplate" hidden="true">
+			<Frame name="Perl_Player_Pet_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
 				<Size>
 					<AbsDimension x="10" y="10"/>
 				</Size>

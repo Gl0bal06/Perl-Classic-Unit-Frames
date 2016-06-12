@@ -60,6 +60,7 @@ local Perl_Target_ClassPosBottom = {
 	["Paladin"] = 0.75,
 };
 
+
 ----------------------
 -- Loading Function --
 ----------------------
@@ -80,6 +81,7 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_LEVEL");
 	this:RegisterEvent("UNIT_MANA");
+	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
@@ -95,6 +97,7 @@ function Perl_Target_OnLoad()
 	end
 	UIErrorsFrame:AddMessage("|cffffff00Target Frame by Perl loaded successfully.", 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME);
 end
+
 
 -------------------
 -- Event Handler --
@@ -119,6 +122,9 @@ function Perl_Target_OnEvent(event)
 		elseif (event == "UNIT_DYNAMIC_FLAGS" and arg1 == "target") then
 			Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
 			return;
+		elseif (event == "UNIT_PVP_UPDATE") then
+			Perl_Target_Update_Text_Color();	-- Is the character PvP flagged?
+			return;
 		elseif (event == "UNIT_LEVEL" and arg1 == "target") then
 			Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
 			return;
@@ -141,6 +147,7 @@ function Perl_Target_OnEvent(event)
 		end
 	end
 end
+
 
 -------------------
 -- Slash Handler --
@@ -185,6 +192,7 @@ function Perl_Target_SlashHandler(msg)
 	end
 end
 
+
 -------------------------------
 -- Loading Settings Function --
 -------------------------------
@@ -227,24 +235,6 @@ function Perl_Target_Initialize()
 	end
 
 	Initialized = 1;
-end
-
-function Perl_Target_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if(myAddOnsFrame_Register) then
-		local Perl_Target_myAddOns_Details = {
-			name = "Perl_Target",
-			version = "v0.04",
-			releaseDate = "October 10, 2005",
-			author = "Perl; Maintained by Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_Target_myAddOns_Help = {};
-		Perl_Target_myAddOns_Help[1] = "/perltarget\n/pt\n";
-		myAddOnsFrame_Register(Perl_Target_myAddOns_Details, Perl_Target_myAddOns_Help);
-	end	
 end
 
 
@@ -720,4 +710,26 @@ end
 function Perl_Target_Tooltip_OnEnter()
 	GameTooltip_SetDefaultAnchor(GameTooltip, this);
 	GameTooltip:SetUnit("target");
+end
+
+
+----------------------
+-- myAddOns Support --
+----------------------
+function Perl_Target_myAddOns_Support()
+	-- Register the addon in myAddOns
+	if(myAddOnsFrame_Register) then
+		local Perl_Target_myAddOns_Details = {
+			name = "Perl_Target",
+			version = "v0.05",
+			releaseDate = "October 15, 2005",
+			author = "Perl; Maintained by Global",
+			email = "global@g-ball.com",
+			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+			category = MYADDONS_CATEGORY_OTHERS
+		};
+		Perl_Target_myAddOns_Help = {};
+		Perl_Target_myAddOns_Help[1] = "/perltarget\n/pt\n";
+		myAddOnsFrame_Register(Perl_Target_myAddOns_Details, Perl_Target_myAddOns_Help);
+	end	
 end
