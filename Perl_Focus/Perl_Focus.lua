@@ -318,6 +318,7 @@ function Perl_Focus_Update_Once()
 		-- Begin: Draw the class icon?
 		if (showclassicon == 1) then
 			if (UnitIsPlayer("focus")) then
+				local _;
 				_, englishclass = UnitClass("focus");
 				Perl_Focus_ClassTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));
 				Perl_Focus_ClassTexture:Show();
@@ -459,6 +460,7 @@ function Perl_Focus_Update_Health()
 
 	if (UnitIsDead("focus")) then
 		if (UnitIsPlayer("focus")) then
+			local _;
 			_, englishclass = UnitClass("focus");
 			if (englishclass == "HUNTER") then							-- If the dead is a hunter, check for Feign Death
 				local buffnum = 1;
@@ -669,6 +671,7 @@ end
 function Perl_Focus_Update_Text_Color()
 	if (classcolorednames == 1) then
 		if (UnitIsPlayer("focus")) then
+			local _;
 			_, englishclass = UnitClass("focus");
 			Perl_Focus_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
 			return;
@@ -1894,6 +1897,7 @@ function Perl_Focus_Buff_UpdateAll()
 		local curableDebuffFound = 0;
 
 		local numBuffs = 0;												-- Buff counter for correct layout
+		local _;
 		for buffnum=1,numbuffsshown do									-- Start main buff loop
 			if (displaycastablebuffs == 0) then							-- Which buff filter mode are we in?
 				bufffilter = "HELPFUL";
@@ -2189,6 +2193,7 @@ end
 function Perl_Focus_Buff_GetApplications(debuffname)
 	local debuffApplications;
 	local i = 1;
+	local _;
 
 	while UnitDebuff("focus", i) do
 		Perl_Focus_Tooltip:SetOwner(Perl_Focus_Frame, "ANCHOR_BOTTOMRIGHT");

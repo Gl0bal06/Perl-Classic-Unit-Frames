@@ -514,6 +514,7 @@ function Perl_Party_Update_Health(self)
 	-- Handle death state
 	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then
 		self.deadStatus:Show();
+		local _;
 		_, englishclass = UnitClass(self.unit);
 		if (englishclass == "HUNTER") then						-- If the dead is a hunter, check for Feign Death
 			local buffnum = 1;
@@ -843,6 +844,7 @@ function Perl_Party_Set_Name(self)
 
 	-- Set Class Icon
 	if (UnitIsPlayer(self.unit)) then
+		local _;
 		_, englishclass = UnitClass(self.unit);
 		if (CLASS_ICON_TCOORDS[englishclass] ~= nil) then
 			self.classTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));	-- Set the party member's class icon
@@ -893,6 +895,7 @@ function Perl_Party_Update_PvP_Status(self)						-- Modeled after 1.9 code
 	end
 
 	if (classcolorednames == 1) then
+		local _;
 		_, englishclass = UnitClass(self.unit);
 		if (englishclass) then
 			self.nameText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
@@ -916,6 +919,7 @@ end
 
 function Perl_Party_Update_Loot_Method(self)
 	local lootMaster;
+	local _;
 	_, lootMaster = GetLootMethod();
 	if (self.id == lootMaster) then
 		self.masterLootIcon:Show();
@@ -1028,6 +1032,7 @@ function Perl_Party_HealthHide(self)
 
 			if (compactmode == 1) then
 				if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then
+					local _;
 					_, englishclass = UnitClass(self.unit);
 					if (englishclass == "HUNTER") then
 						local buffnum = 1;
@@ -2404,6 +2409,7 @@ function Perl_Party_Buff_UpdateAll(self)
 	if (UnitName(self.unit)) then
 		local button, buffCount, buffTexture, buffApplications, color, debuffType, cooldown, duration, timeLeft;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 		local curableDebuffFound = 0;
+		local _;
 
 		for buffnum=1,numbuffsshown do									-- Start main buff loop
 			if (displaycastablebuffs == 0) then							-- Which buff filter mode are we in?

@@ -1,6 +1,7 @@
 ---------------
 -- Variables --
 ---------------
+local _;
 Perl_Player_Config = {};
 local Perl_Player_Events = {};	-- event manager
 
@@ -319,6 +320,7 @@ end
 -- Update Functions --
 ----------------------
 function Perl_Player_Update_Once()
+	local _;
 	_, englishclass = UnitClass("player");
 
 	-- Anytime functions
@@ -493,6 +495,7 @@ function Perl_Player_Update_Mana()
 	Perl_Player_Update_Mana_Text()
 
 	if (showdruidbar == 1) then
+		local _;
 		_, englishclass = UnitClass("player");
 		if (englishclass == "DRUID" or englishclass == "MONK") then								-- Are we a Druid?
 			if (UnitPowerType("player") > 0) then						-- Are we in a manaless form?
@@ -914,6 +917,7 @@ function Perl_Player_Update_Leader()
 end
 
 function Perl_Player_Update_Loot_Method()
+	local _;
 	local _, lootMaster = GetLootMethod();
 	if (lootMaster == 0) then
 		Perl_Player_MasterIcon:Show();
@@ -965,6 +969,7 @@ function Perl_Player_Update_PvP_Status()
 	end
 
 	if (classcolorednames == 1) then									-- Color by class
+		local _;
 		_, englishclass = UnitClass("player");
 		Perl_Player_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
 	end
@@ -1066,6 +1071,7 @@ function Perl_Player_ManaHide()
 end
 
 function Perl_Player_DruidBarManaShow()
+	local _;
 	_, englishclass = UnitClass("player");
 	if (DruidBarKey and (englishclass == "DRUID")) then
 		if (healermode == 1) then
@@ -1229,6 +1235,7 @@ function Perl_Player_Frame_Style()
 		-- End: Set the xp bar mode and update the experience if needed
 
 		-- Begin: Set the druid bar and tweak the experience bar if needed
+		local _;
 		_, englishclass = UnitClass("player");
 		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK")) then
 			Perl_Player_DruidBar:Show();
@@ -2242,6 +2249,7 @@ end
 function Perl_Player_BuffUpdateAll()
 	local color, debuffType;
 	local curableDebuffFound = 0;
+	local _;
 
 	for debuffnum=1,20 do													-- Start main debuff loop
 		_, _, _, _, debuffType, _, _ = UnitDebuff("player", debuffnum, 1);	-- Get the texture and debuff stacking information if any

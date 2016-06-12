@@ -272,6 +272,7 @@ function Perl_Target_Initialize()
 	Perl_Target_Buff_Debuff_Background();	-- Do the buffs and debuffs have their transparent background frame?
 	Perl_Target_Reset_Buffs();				-- Hide any unnecessary buff/debuff buttons
 
+	local _;
 	local _, class = UnitClass("player");
 	if (not (class == "ROGUE" or class == "DRUID" or class == "WARRIOR" or class == "PRIEST" or class == "PALADIN" or class == "MAGE")) then
 		showcp = 0;
@@ -358,6 +359,7 @@ function Perl_Target_Update_Once()
 		-- Begin: Draw the class icon?
 		if (showclassicon == 1) then
 			if (UnitIsPlayer("target")) then
+				local _;
 				_, englishclass = UnitClass("target");
 				Perl_Target_ClassTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));
 				Perl_Target_ClassTexture:Show();
@@ -513,6 +515,7 @@ function Perl_Target_Update_Health()
 
 	if (UnitIsDead("target")) then
 		if (UnitIsPlayer("target")) then
+			local _;
 			_, englishclass = UnitClass("target");
 			if (englishclass == "HUNTER") then									-- If the dead is a hunter, check for Feign Death
 				local buffnum = 1;
@@ -694,6 +697,7 @@ function Perl_Target_OnUpdate_ManaBar(self, elapsed)
 end
 
 function Perl_Target_Update_Mana_Bar()
+	local _;
 	targetpower, _ = UnitPowerType("target");
 
 	-- Set mana bar color
@@ -729,6 +733,7 @@ function Perl_Target_Update_Mana_Bar()
 end
 
 function Perl_Target_Update_Combo_Points()
+	local _;
 	local _, playerclass = UnitClass("player");
 	if (playerclass == "ROGUE" or playerclass == "DRUID" or CanExitVehicle()) then	-- Noticed in 2.1.3 that this is being called for warriors also...huh?
 		local combopoints = GetComboPoints("vehicle","target");						-- How many Combo Points does the player have in their vehicle?
@@ -823,6 +828,7 @@ end
 function Perl_Target_Update_Text_Color()
 	if (classcolorednames == 1) then
 		if (UnitIsPlayer("target")) then
+			local _;
 			_, englishclass = UnitClass("target");
 			Perl_Target_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
 			return;
@@ -1029,6 +1035,7 @@ function Perl_Target_Update_Threat()
 		end
 	end
 
+	local _;
 	local _, statustwo, threatpct, _, _ = UnitDetailedThreatSituation("player", "target")
 	if (statustwo ~= nil and displaynumbericthreat == 1) then
 		Perl_Target_RareEliteBarText:SetVertexColor(GetThreatStatusColor(status));
@@ -2331,6 +2338,7 @@ function Perl_Target_Buff_UpdateAll()
 
 		local button, buffCount, buffTexture, buffApplications, color, debuffType, duration, timeLeft, cooldown;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 		local curableDebuffFound = 0;
+		local _;
 
 		local numBuffs = 0;													-- Buff counter for correct layout
 		for buffnum=1,numbuffsshown do										-- Start main buff loop
@@ -2577,6 +2585,7 @@ end
 
 function Perl_Target_Buff_UpdateCPMeter()
 	local debuffapplications;
+	local _;
 	local _, playerclass = UnitClass("player");
 
 	if (playerclass == "MAGE") then
@@ -2640,6 +2649,7 @@ end
 function Perl_Target_Buff_GetApplications(debuffname)
 	local debuffApplications, name;
 	local i = 1;
+	local _;
 
 	while UnitDebuff("target", i) do
 		name, _, _, debuffApplications, _, _, _ = UnitDebuff("target", i);

@@ -126,6 +126,7 @@ end
 Perl_CombatDisplay_Events.UNIT_MAXHEALTH = Perl_CombatDisplay_Events.UNIT_HEALTH;
 
 function Perl_CombatDisplay_Events:UNIT_POWER(arg1)
+	local _;
 	local powertype, _ = UnitPowerType("arg1");
 
 	if (powertype == 0) then -- mana
@@ -1120,6 +1121,7 @@ end
 -- Style Show/Hide Functions --
 -------------------------------
 function Perl_CombatDisplay_Frame_Style()
+	local _;
 	_, englishclass = UnitClass("player");
 
 	Perl_CombatDisplay_ManaFrame:SetHeight(42);
@@ -1627,6 +1629,7 @@ end
 -- Buff Functions --
 --------------------
 function Perl_CombatDisplay_Buff_UpdateAll(unit, frame)
+	local _;
 	local debuffType;
 	local curableDebuffFound = 0;
 

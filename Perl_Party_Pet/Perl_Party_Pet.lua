@@ -324,6 +324,7 @@ function Perl_Party_Pet_Update_Mana(unit)
 		_G["Perl_Party_Pet"..id.."_StatsFrame_ManaBar"]:SetValue(partypetmana);
 	end
 
+	local _;
 	_, englishclass = UnitClass("party"..id);
 	if (englishclass == "WARLOCK") then
 		_G["Perl_Party_Pet"..id.."_StatsFrame_ManaBar_ManaBarText"]:SetText(partypetmana.."/"..partypetmanamax);
@@ -1226,6 +1227,7 @@ function Perl_Party_Pet_Buff_UpdateAll(unit)
 		local id = string.sub(unit, 9, 9);
 		local button, buffCount, buffTexture, buffApplications, color, debuffType;		-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 		local curableDebuffFound = 0;
+		local _;
 
 		for buffnum=1,numpetbuffsshown do												-- Start main buff loop
 			if (displaycastablebuffs == 0) then											-- Which buff filter mode are we in?

@@ -3,7 +3,7 @@
 ---------------
 Perl_Target_Target_Config = {};
 local Perl_Target_Target_Events = {};	-- event manager
-
+local _;
 -- Default Saved Variables (also set in Perl_Target_Target_GetVars)
 local locked = 0;						-- unlocked by default
 local scale = 1.0;						-- default scale
@@ -250,6 +250,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 
 			if (classcolorednames == 1) then
 				if (UnitIsPlayer("targettarget")) then
+					local _;
 					_, englishclass = UnitClass("targettarget");
 					Perl_Target_Target_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
 				end
@@ -496,6 +497,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 
 			if (classcolorednames == 1) then
 				if (UnitIsPlayer("targettargettarget")) then
+					local _;
 					_, englishclass = UnitClass("targettargettarget");
 					Perl_Target_Target_Target_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
 				end
@@ -659,6 +661,7 @@ end
 function Perl_Target_Target_Update_Buffs()
 	local button, buffCount, buffTexture, buffApplications, color, debuffType;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 	local curableDebuffFound = 0;
+	local _;
 
 	local numBuffs = 0;															-- Buff counter for correct layout
 	if (showtotbuffs == 1) then
@@ -774,6 +777,7 @@ end
 function Perl_Target_Target_Target_Update_Buffs()
 	local button, buffCount, buffTexture, buffApplications, color, debuffType;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 	local curableDebuffFound = 0;
+	local _;
 
 	local numBuffs = 0;															-- Buff counter for correct layout
 	if (showtototbuffs == 1) then

@@ -3,7 +3,7 @@
 ---------------
 Perl_Player_Pet_Config = {};
 local Perl_Player_Pet_Events = {};	-- event manager
-
+local _;
 -- Default Saved Variables (also set in Perl_Player_Pet_GetVars)
 local locked = 0;					-- unlocked by default
 local showxp = 0;					-- xp bar is hidden by default
@@ -400,6 +400,7 @@ function Perl_Player_Pet_Update_Mana()
 		Perl_Player_Pet_ManaBar:SetValue(petmana);
 	end
 
+	local _;
 	_, englishclass = UnitClass("player");
 	if (englishclass == "HUNTER") then
 		Perl_Player_Pet_ManaBarText:SetText(petmana);
@@ -451,6 +452,7 @@ function Perl_Player_Pet_ShowXP()
 			Perl_Player_Pet_StatsFrame:SetHeight(34);
 			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(34);
 		else
+			local _;
 			_, englishclass = UnitClass("player");
 			if (englishclass == "HUNTER") then
 				if (UnitLevel("pet") == UnitLevel("player")) then
@@ -542,6 +544,7 @@ end
 function Perl_Player_Pet_Set_Window_Layout()
 	Perl_Player_Pet_StatsFrame:ClearAllPoints();
 	Perl_Player_Pet_LevelFrame:ClearAllPoints();
+	local _;
 	_, englishclass = UnitClass("player");
 	if (englishclass == "HUNTER") then
 		if (hidename == 1) then
@@ -746,6 +749,7 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 
 			if (classcolorednames == 1) then
 				if (UnitIsPlayer("pettarget")) then
+					local _;
 					_, englishclass = UnitClass("pettarget");
 					Perl_Player_Pet_Target_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
 				end
@@ -884,6 +888,7 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 			local curableDebuffFound = 0;
 			if (PCUF_COLORFRAMEDEBUFF == 1) then
 				local debuffType;
+				local _;
 				_, _, _, _, debuffType = UnitDebuff("pettarget", 1, 1);
 				if (debuffType) then
 					local color = DebuffTypeColor[debuffType];
@@ -1689,6 +1694,7 @@ function Perl_Player_Pet_Buff_UpdateAll()
 	if (UnitName("pet")) then
 		local button, buffCount, buffTexture, buffApplications, color, debuffType;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 		local curableDebuffFound = 0;
+		local _;
 
 		for buffnum=1,numpetbuffsshown do											-- Start main buff loop
 			if (displaycastablebuffs == 0) then										-- Which buff filter mode are we in?
@@ -1766,6 +1772,7 @@ end
 
 function Perl_Player_Pet_Buff_Position_Update()
 	Perl_Player_Pet_Buff1:ClearAllPoints();
+	local _;
 	if (bufflocation == 1) then
 		if (hidename == 0) then
 			Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_NameFrame", "TOPLEFT", 5, 15);

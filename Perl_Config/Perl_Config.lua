@@ -6,7 +6,7 @@ Perl_Config_Config = {};
 Perl_Config_Profiles = {};
 local Perl_Config_Events = {};		-- event manager
 local Perl_Config_Queue = {};		-- queue manager
-
+local _;
 Perl_Config_Global_ArcaneBar_Config = {};
 Perl_Config_Global_CombatDisplay_Config = {};
 Perl_Config_Global_Config_Config = {};
@@ -51,8 +51,8 @@ local playerClass;
 ----------------------
 function Perl_Config_OnLoad(self)
 	-- Events
-	self:RegisterEvent("PET_BATTLE_CLOSE");
-	self:RegisterEvent("PET_BATTLE_OPENING_START");
+	--self:RegisterEvent("PET_BATTLE_CLOSE");
+	--self:RegisterEvent("PET_BATTLE_OPENING_START");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
@@ -231,6 +231,7 @@ function Perl_Config_Initialize()
 	Perl_Config_Profile_Work();
 
 	-- Debuff Coloring Support for 3.0+
+	local _;
 	_, playerClass = UnitClass("player");
 
 	-- Set the initialization flag

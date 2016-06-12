@@ -121,6 +121,7 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 	end
 
 	if (event == "UNIT_SPELLCAST_START") then
+		local _;
 		local text, _, _, _, startTime, endTime, _ = UnitCastingInfo(arg1);
 
 		self:SetStatusBarColor(Perl_ArcaneBar_Colors.main.r, Perl_ArcaneBar_Colors.main.g, Perl_ArcaneBar_Colors.main.b, transparency);
@@ -232,6 +233,7 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 		end
 	elseif (event == "UNIT_SPELLCAST_FAILED") then
 		if (self:IsShown() and not self.channeling) then
+			local _;
 			local text, _, _, _, startTime, endTime, _ = UnitCastingInfo(arg1);
 			if (text == arg2) then
 				self:SetValue(self.maxValue);
@@ -245,6 +247,7 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 		end
 	elseif (event == "UNIT_SPELLCAST_DELAYED") then
 		if(self:IsShown()) then
+			local _;
 			local _, _, _, _, startTime, endTime, _ = UnitCastingInfo(arg1);
 
 			if (endTime ~= nil) then
@@ -256,6 +259,7 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 			end
 		end
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
+		local _;
 		local text, _, _, _, startTime, endTime, _ = UnitChannelInfo(arg1);
 
 		if (startTime ~= nil) then
@@ -315,6 +319,7 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 		end
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_UPDATE") then
 		if (self:IsShown()) then
+			local _;
 			local _, _, _, _, startTime, endTime, _ = UnitChannelInfo(arg1);
 
 			self.delaySum = self.delaySum + (endTime - self.maxValue * 1000);

@@ -280,6 +280,7 @@ function Perl_Party_Target_Work(self)
 
 	if (classcolorednames == 1) then
 		if (UnitIsPlayer(self.unit)) then
+			local _;
 			_, englishclass = UnitClass(self.unit);
 			self.nameText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
 		end
@@ -465,6 +466,7 @@ end
 function Perl_Party_Target_Update_Buffs(self)
 	local debuffType;
 	local curableDebuffFound = 0;
+	local _;
 
 	for debuffnum=1,40 do													-- Start main debuff loop
 		_, _, _, _, debuffType, _, _ = UnitDebuff(self.unit, debuffnum, 1);	-- Get the texture and debuff stacking information if any
