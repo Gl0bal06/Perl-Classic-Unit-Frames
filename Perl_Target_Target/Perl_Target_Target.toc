@@ -1,4 +1,4 @@
-## Interface: 1800
+## Interface: 10900
 ## Title: Perl Target Target Frame
 ## Notes: Displays a movable target of target frame.
 ## Dependencies: 

@@ -6,8 +6,8 @@ Perl_CombatDisplay_Options_VariableList = {
 					["manapersist"] = 0,
 					["healthpersist"] = 0,
 					["locked"] = 0,
-					["partyspacing"] = -80,
-					["scale"] = 1,
+					["colorhealth"] = 0,
+					--["scale"] = 1,
 }
 
 Perl_CombatDisplay_Options_Text = {
@@ -108,7 +108,15 @@ end
 -- Make sure boxes are set properly --
 --------------------------------------
 function Perl_CombatDisplay_Options_OnShow()
-		Perl_CombatDisplay_Options_VariableList = Perl_CombatDisplay_GetVars();
+		vartable = Perl_CombatDisplay_GetVars();
+		--Perl_CombatDisplay_Options_VariableList = Perl_CombatDisplay_GetVars();
+
+		Perl_CombatDisplay_Options_VariableList["state"] = vartable["state"];
+		Perl_CombatDisplay_Options_VariableList["manapersist"] = vartable["manapersist"];
+		Perl_CombatDisplay_Options_VariableList["healthpersist"] = vartable["healthpersist"];
+		Perl_CombatDisplay_Options_VariableList["locked"] = vartable["locked"];
+		Perl_CombatDisplay_Options_VariableList["colorhealth"] = vartable["colorhealth"];
+		--Perl_CombatDisplay_Options_VariableList["scale"] = vartable["scale"];
 
 		if (Perl_CombatDisplay_Options_VariableList[this.variable] == this.value) then
 			this:SetChecked(1);

@@ -208,6 +208,7 @@ end
 function Perl_Party_Initialize()
 	-- Check if we loaded the mod already.
 	if (Initialized) then
+		Perl_Party_Set_Scale();
 		return;
 	end
 
@@ -1074,24 +1075,26 @@ function Perl_Party_Toggle_Pets()
 end
 
 function Perl_Party_Set_ParentUI_Scale()
-	scale = UIParent:GetScale();
-	Perl_Party_MemberFrame1:SetScale(scale);
-	Perl_Party_MemberFrame2:SetScale(scale);
-	Perl_Party_MemberFrame3:SetScale(scale);
-	Perl_Party_MemberFrame4:SetScale(scale);
+	local unsavedscale;
+	scale = UIParent:GetEffectiveScale();
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Party_MemberFrame1:SetScale(unsavedscale);
+	Perl_Party_MemberFrame2:SetScale(unsavedscale);
+	Perl_Party_MemberFrame3:SetScale(unsavedscale);
+	Perl_Party_MemberFrame4:SetScale(unsavedscale);
 	Perl_Party_UpdateVars();
 end
 
 function Perl_Party_Set_Scale(number)
-	if (number == nil) then
-		-- use predefined scale
-	else
+	local unsavedscale;
+	if (number ~= nil) then
 		scale = (number / 100);
 	end
-	Perl_Party_MemberFrame1:SetScale(scale);
-	Perl_Party_MemberFrame2:SetScale(scale);
-	Perl_Party_MemberFrame3:SetScale(scale);
-	Perl_Party_MemberFrame4:SetScale(scale);
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Party_MemberFrame1:SetScale(unsavedscale);
+	Perl_Party_MemberFrame2:SetScale(unsavedscale);
+	Perl_Party_MemberFrame3:SetScale(unsavedscale);
+	Perl_Party_MemberFrame4:SetScale(unsavedscale);
 	Perl_Party_UpdateVars();
 end
 
@@ -1160,7 +1163,7 @@ function Perl_Party_Status()
 
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is displaying with a distance gap of |cffffffff"..-partyspacing);
 
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is displaying at a scale of |cffffffff"..(scale * 100).."%|cffffff00.");
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is displaying at a scale of |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 end
 
 function Perl_Party_GetVars()
@@ -1396,8 +1399,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.27",
-			releaseDate = "December 21, 2005",
+			version = "v0.28",
+			releaseDate = "January 3, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

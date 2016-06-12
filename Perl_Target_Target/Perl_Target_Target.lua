@@ -124,6 +124,7 @@ end
 -------------------------------
 function Perl_Target_Target_Initialize()
 	if (Initialized) then
+		Perl_Target_Target_Set_Scale();		-- Set the scale
 		return;
 	end
 
@@ -165,7 +166,6 @@ function Perl_Target_Target_OnUpdate(arg1)
 
 		if (UnitExists("targettarget") and totsupport == 1) then
 			Perl_Target_Target_Frame:Show();			-- Show the frame
-			Perl_Target_Target_Frame:SetScale(scale);		-- Set the scale
 
 			-- Begin: Set the name
 			local targettargetname = UnitName("targettarget");
@@ -315,7 +315,6 @@ function Perl_Target_Target_OnUpdate(arg1)
 
 		if (UnitExists("targettargettarget") and tototsupport == 1) then
 			Perl_Target_Target_Target_Frame:Show();			-- Show the frame
-			Perl_Target_Target_Target_Frame:SetScale(scale);	-- Set the scale
 
 			-- Begin: Set the name
 			local targettargettargetname = UnitName("targettargettarget");
@@ -709,18 +708,24 @@ function Perl_Target_Target_ToggleColoredHealth()
 end
 
 function Perl_Target_Target_Set_ParentUI_Scale()
-	scale = UIParent:GetScale();
-	Perl_Target_Target_Frame:SetScale(scale);
-	Perl_Target_Target_Target_Frame:SetScale(scale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Display is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	local unsavedscale;
+	scale = UIParent:GetEffectiveScale();
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Target_Target_Frame:SetScale(unsavedscale);
+	Perl_Target_Target_Target_Frame:SetScale(unsavedscale);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 	Perl_Target_Target_UpdateVars();
 end
 
 function Perl_Target_Target_Set_Scale(number)
-	scale = (number / 100);
-	Perl_Target_Target_Frame:SetScale(scale);
-	Perl_Target_Target_Target_Frame:SetScale(scale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Display is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	local unsavedscale;
+	if (number ~= nil) then
+		scale = (number / 100);					-- convert the user input to a wow acceptable value
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
+	end
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Target_Target_Frame:SetScale(unsavedscale);
+	Perl_Target_Target_Target_Frame:SetScale(unsavedscale);
 	Perl_Target_Target_UpdateVars();
 end
 
@@ -755,7 +760,7 @@ function Perl_Target_Target_Status()
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame Class Frame has MobHealth support |cffffffffEnabled|cffffff00.");
 	end
 
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is displaying at a scale of |cffffffff"..(scale * 100).."%|cffffff00.");
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is displaying at a scale of |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 end
 
 function Perl_Target_Target_GetVars()
@@ -932,8 +937,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.27",
-			releaseDate = "December 21, 2005",
+			version = "v0.28",
+			releaseDate = "January 3, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

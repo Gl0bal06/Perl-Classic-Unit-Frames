@@ -195,6 +195,7 @@ end
 function Perl_Player_Initialize()
 	-- Check if we loaded the mod already.
 	if (Initialized) then
+		Perl_Player_Set_Scale();
 		return;
 	end
 
@@ -269,7 +270,7 @@ function Perl_Player_Update_Once()
 	local PlayerClass = UnitClass("player");
 
 	PlayerFrame:Hide();					-- Hide default frame
-	Perl_Player_Frame:SetScale(scale);			-- Set the scale
+	Perl_Player_Set_Scale();				-- Set the scale
 	Perl_Player_NameBarText:SetText(UnitName("player"));	-- Set the player's name
 	Perl_Player_Update_PvP_Status();			-- Is the character PvP flagged?
 	Perl_Player_ClassTexture:SetTexCoord(Perl_Player_ClassPosRight[PlayerClass], Perl_Player_ClassPosLeft[PlayerClass], Perl_Player_ClassPosTop[PlayerClass], Perl_Player_ClassPosBottom[PlayerClass]);	-- Set the player's class icon
@@ -780,16 +781,22 @@ function Perl_Player_XPBar_Display(state)
 end
 
 function Perl_Player_Set_ParentUI_Scale()
-	scale = UIParent:GetScale();
-	Perl_Player_Frame:SetScale(scale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	local unsavedscale;
+	scale = UIParent:GetEffectiveScale();
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Player_Frame:SetScale(unsavedscale);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 	Perl_Player_UpdateVars();
 end
 
 function Perl_Player_Set_Scale(number)
-	scale = (number / 100);
-	Perl_Player_Frame:SetScale(scale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	local unsavedscale;
+	if (number ~= nil) then
+		scale = (number / 100);					-- convert the user input to a wow acceptable value
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
+	end
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Player_Frame:SetScale(unsavedscale);
 	Perl_Player_UpdateVars();
 end
 
@@ -858,7 +865,7 @@ function Perl_Player_Status()
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisplaying in Healer Mode|cffffff00.");
 	end
 
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying at a scale of |cffffffff"..(scale * 100).."%|cffffff00.");
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying at a scale of |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 end
 
 function Perl_Player_GetVars()
@@ -1004,8 +1011,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.27",
-			releaseDate = "December 21, 2005",
+			version = "v0.28",
+			releaseDate = "January 3, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

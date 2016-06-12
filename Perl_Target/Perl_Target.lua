@@ -236,6 +236,7 @@ end
 -------------------------------
 function Perl_Target_Initialize()
 	if (Initialized) then
+		Perl_Target_Set_Scale();
 		return;
 	end
 
@@ -315,7 +316,7 @@ end
 function Perl_Target_Update_Once()
 	if (UnitExists("target")) then
 		Perl_Target_Frame:Show();		-- Show frame
-		Perl_Target_Frame:SetScale(scale);	-- Set the scale (easier ways exist, but this is the safest)
+		Perl_Target_Set_Scale();		-- Set the scale (easier ways exist, but this is the safest)
 		ComboFrame:Hide();			-- Hide default Combo Points
 		Perl_Target_Frame_Set_Name();		-- Set the target's name
 		Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
@@ -875,16 +876,22 @@ function Perl_Target_ToggleMobHealth()
 end
 
 function Perl_Target_Set_ParentUI_Scale()
-	scale = UIParent:GetScale();
-	Perl_Target_Frame:SetScale(scale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	local unsavedscale;
+	scale = UIParent:GetEffectiveScale();
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Target_Frame:SetScale(unsavedscale);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 	Perl_Target_UpdateVars();
 end
 
 function Perl_Target_Set_Scale(number)
-	scale = (number / 100);
-	Perl_Target_Frame:SetScale(scale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	local unsavedscale;
+	if (number ~= nil) then
+		scale = (number / 100);					-- convert the user input to a wow acceptable value
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
+	end
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Target_Frame:SetScale(unsavedscale);
 	Perl_Target_UpdateVars();
 end
 
@@ -964,7 +971,7 @@ function Perl_Target_Status()
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame has MobHealth support |cffffffffEnabled|cffffff00.");
 	end
 
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying at a scale of |cffffffff"..(scale * 100).."%|cffffff00.");
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying at a scale of |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 end
 
 function Perl_Target_GetVars()
@@ -1241,8 +1248,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.27",
-			releaseDate = "December 21, 2005",
+			version = "v0.28",
+			releaseDate = "January 3, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

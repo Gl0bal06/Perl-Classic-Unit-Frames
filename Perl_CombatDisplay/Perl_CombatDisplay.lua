@@ -168,15 +168,17 @@ function Perl_CombatDisplay_OnEvent(event)
 			end
 		end
 
+		-- Check if we loaded the mod already.
 		if (Initialized) then
 			Perl_CombatDisplay_UpdateBars();	-- what class are we? display the right color bars
 			Perl_CombatDisplay_Update_Health();	-- make sure we dont display 0/0 on load
 			Perl_CombatDisplay_Update_Mana();	-- make sure we dont display 0/0 on load
 			Perl_CombatDisplay_UpdateDisplay();	-- what mode are we in?
-			Perl_CombatDisplay_Frame:SetScale(scale);	-- set the correct scale
+			Perl_CombatDisplay_Set_Scale();		-- set the correct scale
 			return;
+		else
+			Perl_CombatDisplay_Initialize();
 		end
-		Perl_CombatDisplay_Initialize();
 		return;
 	elseif (event == "ADDON_LOADED") then
 		if (arg1 == "Perl_CombatDisplay") then
@@ -225,11 +227,6 @@ end
 -- Loading Settings Function --
 -------------------------------
 function Perl_CombatDisplay_Initialize()
-	-- Check if we loaded the mod already.
-	if (Initialized) then
-		return;
-	end
-
 	-- Check if a previous exists, if not, enable by default.
 	if (type(Perl_CombatDisplay_Config[UnitName("player")]) == "table") then
 		Perl_CombatDisplay_GetVars();
@@ -373,16 +370,23 @@ end
 -- Config functions --
 ----------------------
 function Perl_CombatDisplay_Set_ParentUI_Scale()
-	scale = UIParent:GetScale();
-	Perl_CombatDisplay_Frame:SetScale(scale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl CombatDisplay is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	local unsavedscale;
+	scale = floor(UIParent:GetScale()*100+0.5);	-- Round the value for the gui
+	scale = scale / 100;				-- Move the decimal for the SetScale function
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_CombatDisplay_Frame:SetScale(unsavedscale);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl CombatDisplay is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 	Perl_CombatDisplay_UpdateVars();
 end
 
 function Perl_CombatDisplay_Set_Scale(number)
-	scale = (number / 100);
-	Perl_CombatDisplay_Frame:SetScale(scale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl CombatDisplay is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	local unsavedscale;
+	if (number ~= nil) then
+		scale = (number / 100);					-- convert the user input to a wow acceptable value
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl CombatDisplay is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
+	end
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+	Perl_CombatDisplay_Frame:SetScale(unsavedscale);
 	Perl_CombatDisplay_UpdateVars();
 end
 
@@ -472,7 +476,7 @@ function Perl_CombatDisplay_SetVars(vartable)
 	end
 	Perl_CombatDisplay_UpdateVars();
 	Perl_CombatDisplay_UpdateDisplay();
-	Perl_CombatDisplay_Frame:SetScale(scale);
+	Perl_CombatDisplay_Set_Scale();
 end
 
 
@@ -527,8 +531,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.27",
-			releaseDate = "December 21, 2005",
+			version = "v0.28",
+			releaseDate = "January 3, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
