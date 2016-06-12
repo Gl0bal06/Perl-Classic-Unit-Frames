@@ -1,6 +1,6 @@
 if (GetLocale() == "deDE") then
 	-- Class Names
-	PERL_LOCALIZED_DEATHKNIGHT = "Death Knight";
+	PERL_LOCALIZED_DEATHKNIGHT = "Todesritter";
 	PERL_LOCALIZED_DRUID = "Druide";
 	PERL_LOCALIZED_HUNTER = "J\195\164ger";
 	PERL_LOCALIZED_MAGE = "Magier";
@@ -29,11 +29,13 @@ if (GetLocale() == "deDE") then
 	PERL_LOCALIZED_STATUS_SS_AVAILABLE = "SS verf\195\188gbar";
 
 	-- Perl ArcaneBar Strings
-	PERL_LOCALIZED_ARCANEBAR_CHANNELING = "Channeling";
+	PERL_LOCALIZED_ARCANEBAR_CHANNELING = "Kanalisieren";
 
 	-- Perl Config Strings
-	PERL_LOCALIZED_CONFIG_MINIMAP_LOCK = "Rechts-Klick um alle Frames zu fixieren";
-	PERL_LOCALIZED_CONFIG_MINIMAP_UNLOCK = "Rechts-Klick um alle Frames freigeben";
+	PERL_LOCALIZED_CONFIG_MINIMAP_LOCK = "Rechts-Klick, um alle Fenster zu fixieren";
+	PERL_LOCALIZED_CONFIG_MINIMAP_UNLOCK = "Rechts-Klick, um alle Fenster frei zu geben";
+	PERL_LOCALIZED_CONFIG_OPTIONS_UNAVAILABLE = PERL_LOCALIZED_NAME..": Optionen k\195\182nnen nicht im Kampf ver\195\164ndert werden.";
+	PERL_LOCALIZED_CONFIG_BLIZZARD_BUTTON = "Optionen \195\182ffnen"
 
 	-- Perl Player Strings
 	PERL_LOCALIZED_PLAYER_GROUP = "Gruppe ";
@@ -49,8 +51,9 @@ if (GetLocale() == "deDE") then
 	PERL_LOCALIZED_PLAYER_REACTIONNAME_EIGHT = "Ehrf\195\188rchtig";
 	PERL_LOCALIZED_PLAYER_NO_REPUTATION = "Es wurde kein Ruf ausgew\195\164hlt.";
 	PERL_LOCALIZED_PLAYER_SELECT_REPUTATION = "W\195\164hle einen Ruf";
-	PERL_LOCALIZED_PLAYER_UNRANKED = "Du bist Unranked.";
+	PERL_LOCALIZED_PLAYER_UNRANKED = "Du hast keinen Rang.";
 	PERL_LOCALIZED_PLAYER_STEALTH = "Verstohlenheit";
+	PERL_LOCALIZED_PLAYER_PROWL = "Schleichen";
 
 	-- Perl Target Strings
 	PERL_LOCALIZED_TARGET_BOSS = "Boss";
@@ -60,9 +63,12 @@ if (GetLocale() == "deDE") then
 	PERL_LOCALIZED_TARGET_FIRE_VULNERABILITY = "Feuerverwundbarkeit";
 	PERL_LOCALIZED_TARGET_SHADOW_VULNERABILITY = "Schattenverwundbarkeit";
 	PERL_LOCALIZED_TARGET_SUNDER_ARMOR = "R\195\188stungszerrei\195\159en";
+	PERL_LOCALIZED_TARGET_HOLY_VENGEANCE = "Tadel";
+	PERL_LOCALIZED_TARGET_NA = "N/A";
+	PERL_LOCALIZED_TARGET_UNGUILDED = "Keine Gilde";
 
 	-- Perl Target Target Strings
-	PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU = " hat sein Ziel zu dir gewechselt";
+	PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU = " hat Dich anvisiert!";
 
 	-- Perl Config Key Binging Strings
 	BINDING_HEADER_PERLCONFIG = PERL_LOCALIZED_NAME;

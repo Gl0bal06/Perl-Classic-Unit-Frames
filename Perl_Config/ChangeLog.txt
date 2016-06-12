@@ -1,3 +1,7 @@
+4.03 - October 15, 2010
+ - Config: Updated German translations (Thanks archiv)
+ - Pet: Updated OnDragStart code on the pet target frame for Cataclysm
+
 4.02 - October 15, 2010
  - Config: Changed the default position of the minimap icon
  - Pet: The happiness icon now updates correctly

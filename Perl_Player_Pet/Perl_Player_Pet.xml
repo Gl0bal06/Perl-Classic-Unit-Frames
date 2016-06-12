@@ -1028,10 +1028,10 @@
 								Perl_Player_Pet_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Player_Pet_Target_DragStart(arg1);
+								Perl_Player_Pet_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_Pet_Target_DragStop(arg1);
+								Perl_Player_Pet_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -1129,10 +1129,10 @@
 								Perl_Player_Pet_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Player_Pet_Target_DragStart(arg1);
+								Perl_Player_Pet_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_Pet_Target_DragStop(arg1);
+								Perl_Player_Pet_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -1218,10 +1218,10 @@
 								Perl_Player_Pet_Target_HealthHide();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Player_Pet_Target_DragStart(arg1);
+								Perl_Player_Pet_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_Pet_Target_DragStop(arg1);
+								Perl_Player_Pet_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -1307,10 +1307,10 @@
 								Perl_Player_Pet_Target_ManaHide();
 							</OnLeave>
 							<OnDragStart>
-								Perl_Player_Pet_Target_DragStart(arg1);
+								Perl_Player_Pet_Target_DragStart(button);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Player_Pet_Target_DragStop(arg1);
+								Perl_Player_Pet_Target_DragStop();
 							</OnDragStop>
 						</Scripts>
 					</Button>

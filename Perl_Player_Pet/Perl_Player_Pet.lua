@@ -1907,7 +1907,7 @@ function Perl_Player_Pet_Target_DragStart(button)
 	end
 end
 
-function Perl_Player_Pet_Target_DragStop(button)
+function Perl_Player_Pet_Target_DragStop()
 	Perl_Player_Pet_Target_Frame:StopMovingOrSizing();
 end
 
