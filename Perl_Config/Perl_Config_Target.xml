@@ -433,6 +433,48 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton11" inherits="UICheckButtonTemplate" id="11">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+						<Offset>
+							<AbsDimension  x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("3D Portrait Frame");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_3D_Portrait_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton12" inherits="UICheckButtonTemplate" id="12">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton11">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Combat Text");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Portrait_Combat_Text_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
 		</Frames>
 
 	</Frame>

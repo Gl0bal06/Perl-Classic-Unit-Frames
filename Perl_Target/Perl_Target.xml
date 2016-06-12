@@ -98,7 +98,7 @@
 				UnitFrame_OnLeave();
 			</OnLeave>
 			<OnUpdate>
-				CombatFeedback_OnUpdate(arg1);
+				Perl_Target_Portrait_Combat_Text();
 			</OnUpdate>
 		</Scripts>
 
@@ -282,6 +282,27 @@
 						<AbsInset left="5" right="5" top="5" bottom="5"/>
 					</BackgroundInsets>
 				</Backdrop>
+				<Frames>
+					<PlayerModel name="$parent_TargetModel" hidden="true">
+						<Size>
+							<AbsDimension x="50" y="50"/>
+						</Size>
+						<Anchors>
+							<Anchor point="CENTER">
+								<Offset>
+									<AbsDimension x="1" y="-1"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:SetScale(1);
+								this.scale = this:GetScale();
+								Perl_Target_PortraitFrame_TargetModel:SetSequence(30);
+							</OnLoad>
+						</Scripts>
+					</PlayerModel>
+				</Frames>
 				<Layers>
 					<!-- Portrait -->
 					<Layer level="ARTWORK">
@@ -298,6 +319,23 @@
 							</Anchors>
 						</Texture>
 					</Layer>
+				</Layers>
+			</Frame>
+
+
+			<!-- Portrait Text Frame -->
+			<Frame name="Perl_Target_PortraitTextFrame">
+				<Size>
+					<AbsDimension x="60" y="61"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_PortraitFrame">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
 					<Layer level="OVERLAY">
 						<Fontstring name="Perl_Target_HitIndicator" inherits="NumberFontNormalHuge" hidden="true" text="Error!">
 							<FontHeight>

@@ -26,12 +26,8 @@
 				<AbsInset left="11" right="12" top="12" bottom="11"/>
 			</BackgroundInsets>
 		</Backdrop>
-		
-		<Scripts>
-			<OnLoad>
-				Perl_Config_Target_Target_Set_Values();
-			</OnLoad>
-		</Scripts>-->
+		-->
+
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="Perl_Config_Target_Target_Header" file="Interface\DialogFrame\UI-DialogBox-Header">
@@ -66,11 +62,41 @@
 					</Anchors>
 				</FontString>
 
+				<FontString name="$parent_ToT_Text" inherits="GameFontNormal" text="Target of Target">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="20" y="-100"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_ToToT_Text" inherits="GameFontNormal" text="">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="200" y="-100"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
 				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="Misc">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-130"/>
+								<AbsDimension x="20" y="-180"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Alert_Text" inherits="GameFontNormal" text="Alert Size">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="240" y="-180"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -125,7 +151,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton1" >
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton1">
 						<Offset>
 							<AbsDimension  x="0" y="-20"/>
 						</Offset>
@@ -141,14 +167,35 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton3" inherits="UICheckButtonTemplate" id="3">
+			<CheckButton name="$parent_CheckButton7" inherits="UICheckButtonTemplate" id="7">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
 						<Offset>
-							<AbsDimension x="20" y="-20"/>
+							<AbsDimension  x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Audio Alert on Agro");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Sound_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton3" inherits="UICheckButtonTemplate" id="3">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton7">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -262,6 +309,144 @@
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
+
+			<CheckButton name="$parent_CheckButton8" inherits="UICheckButtonTemplate" id="8">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_ToT_Text">
+						<Offset>
+							<AbsDimension  x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("DPS Mode");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Frame_CheckButton9:SetChecked(nil);	<!-- We need to uncheck Button 9 -->
+						Perl_Config_Target_Target_Frame_CheckButton10:SetChecked(nil);	<!-- We need to uncheck Button 10 -->
+						Perl_Config_Target_Target_Mode_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton9" inherits="UICheckButtonTemplate" id="9">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton8" >
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Tank Mode");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(nil);	<!-- We need to uncheck Button 8 -->
+						Perl_Config_Target_Target_Frame_CheckButton10:SetChecked(nil);	<!-- We need to uncheck Button 10 -->
+						Perl_Config_Target_Target_Mode_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton9">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Healer Mode");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(nil);	<!-- We need to uncheck Button 8 -->
+						Perl_Config_Target_Target_Frame_CheckButton9:SetChecked(nil);	<!-- We need to uncheck Button 9 -->
+						Perl_Config_Target_Target_Mode_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton11" inherits="UICheckButtonTemplate" id="11">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Alert_Text">
+						<Offset>
+							<AbsDimension  x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Small Text");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Frame_CheckButton12:SetChecked(nil);	<!-- We need to uncheck Button 12 -->
+						Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(nil);	<!-- We need to uncheck Button 13 -->
+						Perl_Config_Target_Target_Alert_Size_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton12" inherits="UICheckButtonTemplate" id="12">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton11">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Large Text");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(nil);	<!-- We need to uncheck Button 11 -->
+						Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(nil);	<!-- We need to uncheck Button 13 -->
+						Perl_Config_Target_Target_Alert_Size_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton13" inherits="UICheckButtonTemplate" id="13">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton12">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("No Text");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(nil);	<!-- We need to uncheck Button 11 -->
+						Perl_Config_Target_Target_Frame_CheckButton12:SetChecked(nil);	<!-- We need to uncheck Button 12 -->
+						Perl_Config_Target_Target_Alert_Size_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
 		</Frames>
 
 	</Frame>

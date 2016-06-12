@@ -18,6 +18,8 @@ local showpvprank = 0;		-- hide the pvp rank by default
 local transparency = 1;		-- transparency for frames
 local buffdebuffscale = 1;	-- default scale for buffs and debuffs
 local showportrait = 0;		-- portrait is hidden by default
+local threedportrait = 0;	-- 3d portraits are off by default
+local portraitcombattext = 1;	-- Combat text is enabled by default on the portrait frame
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -225,18 +227,6 @@ function Perl_Target_Update_Once()
 		Perl_Target_Set_Character_Class_Icon();	-- Draw the class icon?
 		Perl_Target_Set_Target_Class();		-- Set the target's class in the class frame
 		Perl_Target_Buff_UpdateAll();		-- Update the buffs
-
---		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetTop(): "..UIParent:GetTop());
---		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetBottom(): "..UIParent:GetBottom());
---		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetLeft(): "..UIParent:GetLeft());
---		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetRight(): "..UIParent:GetRight());
---		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetWidth(): "..UIParent:GetWidth());
---		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetHeight(): "..UIParent:GetHeight());
---		DEFAULT_CHAT_FRAME:AddMessage("UIParent:GetCenter(): "..UIParent:GetCenter());
---		Perl_CombatDisplay_Frame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 300);
---		Perl_CombatDisplay_Frame:SetUserPlaced(1);
---		Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 626, -574);
---		Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 466, -574);
 	end
 end
 
@@ -589,12 +579,35 @@ end
 
 function Perl_Target_Update_Portrait()
 	if (showportrait == 1) then
-		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -4, -31);
-		SetPortraitTexture(Perl_Target_Portrait, "target");
-		Perl_Target_PortraitFrame:Show();
+		local level = Perl_Target_PortraitFrame:GetFrameLevel();					-- Get the frame level of the main portrait frame
+		Perl_Target_PortraitTextFrame:SetFrameLevel(level + 1);						-- Put the combat text above it so the portrait graphic doesn't go on top of it
+
+		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -4, -31);	-- Reposition the combo point frame
+		Perl_Target_PortraitFrame:Show();								-- Show the main portrait frame
+
+		if (threedportrait == 0) then
+			SetPortraitTexture(Perl_Target_Portrait, "target");					-- Load the correct 2d graphic
+			Perl_Target_PortraitFrame_TargetModel:Hide();						-- Hide the 3d graphic
+			Perl_Target_Portrait:Show();								-- Show the 2d graphic
+		else
+			Perl_Target_PortraitFrame_TargetModel:SetUnit("target");				-- Load the correct 3d graphic
+			Perl_Target_Portrait:Hide();								-- Hide the 2d graphic
+			Perl_Target_PortraitFrame_TargetModel:Show();						-- Show the 3d graphic
+			Perl_Target_PortraitFrame_TargetModel:SetCamera(0);
+			Perl_Target_PortraitFrame_TargetModel:SetPosition(0, 0, 0);
+		end
+
+		Perl_Target_PortraitTextFrame:Show();								-- Show the combat text frame
 	else
-		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -4, 0);
-		Perl_Target_PortraitFrame:Hide();
+		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -4, 0);		-- Reposition the combo point frame
+		Perl_Target_PortraitFrame:Hide();								-- Hide the frame and 2d/3d portion
+		Perl_Target_PortraitTextFrame:Hide();								-- Hide the combat text
+	end
+end
+
+function Perl_Target_Portrait_Combat_Text()
+	if (portraitcombattext == 1) then
+		CombatFeedback_OnUpdate(arg1);
 	end
 end
 
@@ -749,6 +762,17 @@ function Perl_Target_Set_Portrait(newvalue)
 	Perl_Target_Update_Once();
 end
 
+function Perl_Target_Set_3D_Portrait(newvalue)
+	threedportrait = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
+function Perl_Target_Set_Portrait_Combat_Text(newvalue)
+	portraitcombattext = newvalue;
+	Perl_Target_UpdateVars();
+end
+
 function Perl_Target_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -798,6 +822,8 @@ function Perl_Target_GetVars()
 	transparency = Perl_Target_Config[UnitName("player")]["Transparency"];
 	buffdebuffscale = Perl_Target_Config[UnitName("player")]["BuffDebuffScale"];
 	showportrait = Perl_Target_Config[UnitName("player")]["ShowPortrait"];
+	threedportrait = Perl_Target_Config[UnitName("player")]["ThreeDPortrait"];
+	portraitcombattext = Perl_Target_Config[UnitName("player")]["PortraitCombatText"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -845,6 +871,12 @@ function Perl_Target_GetVars()
 	if (showportrait == nil) then
 		showportrait = 0;
 	end
+	if (threedportrait == nil) then
+		threedportrait = 0;
+	end
+	if (portraitcombattext == nil) then
+		portraitcombattext = 1;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -861,6 +893,8 @@ function Perl_Target_GetVars()
 		["transparency"] = transparency,
 		["buffdebuffscale"] = buffdebuffscale,
 		["showportrait"] = showportrait,
+		["threedportrait"] = threedportrait,
+		["portraitcombattext"] = portraitcombattext,
 	}
 	return vars;
 end
@@ -939,6 +973,16 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				showportrait = nil;
 			end
+			if (vartable["Global Settings"]["ThreeDPortrait"] ~= nil) then
+				threedportrait = vartable["Global Settings"]["ThreeDPortrait"];
+			else
+				threedportrait = nil;
+			end
+			if (vartable["Global Settings"]["PortraitCombatText"] ~= nil) then
+				portraitcombattext = vartable["Global Settings"]["PortraitCombatText"];
+			else
+				portraitcombattext = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -984,6 +1028,12 @@ function Perl_Target_UpdateVars(vartable)
 		if (showportrait == nil) then
 			showportrait = 0;
 		end
+		if (threedportrait == nil) then
+			threedportrait = 0;
+		end
+		if (portraitcombattext == nil) then
+			portraitcombattext = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();	-- Reset the buff icons
@@ -1005,6 +1055,8 @@ function Perl_Target_UpdateVars(vartable)
 		["Transparency"] = transparency,
 		["BuffDebuffScale"] = buffdebuffscale,
 		["ShowPortrait"] = showportrait,
+		["ThreeDPortrait"] = threedportrait,
+		["PortraitCombatText"] = portraitcombattext,
 	};
 end
 
@@ -1214,8 +1266,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.44",
-			releaseDate = "February 17, 2006",
+			version = "v0.45",
+			releaseDate = "February 25, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

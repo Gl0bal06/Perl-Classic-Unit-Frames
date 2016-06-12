@@ -50,6 +50,7 @@ function Perl_Party_OnLoad()
 	this:RegisterEvent("PARTY_MEMBER_DISABLE");
 	this:RegisterEvent("PARTY_MEMBER_ENABLE");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
+	this:RegisterEvent("PLAYER_ALIVE");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("RAID_ROSTER_UPDATE");
 	this:RegisterEvent("UNIT_AURA");
@@ -80,7 +81,7 @@ end
 function Perl_Party_Script_OnEvent(event)				-- All this just to ensure party frames are hidden/shown on zoning
 	if (event == "PLAYER_ENTERING_WORLD") then
 		if (Initialized) then
-			Perl_Party_Set_Hidden();			-- Are we running a hidden mode?
+			Perl_Party_Set_Hidden();			-- Are we running a hidden mode? (Another redundancy check because Blizzard sucks)
 		end
 		return;
 	else
@@ -144,9 +145,11 @@ function Perl_Party_OnEvent(event)
 	elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
 		Perl_Party_Update_Loot_Method();		-- Who is the master looter if any
 		return;
+	elseif (event == "PLAYER_ALIVE") then
+		Perl_Party_Set_Hidden();			-- Are we running a hidden mode? (Hopefully the last check we need to add for this)
+		return;
 	elseif (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
-		Perl_Party_Initialize();
-		Perl_Party_Set_Hidden();			-- Are we running a hidden mode?
+		Perl_Party_Initialize();			-- We also force update info here in case of a /console reloadui
 		return;
 	elseif (event == "ADDON_LOADED") then
 		if (arg1 == "Perl_Party") then
@@ -166,6 +169,11 @@ function Perl_Party_Initialize()
 	-- Check if we loaded the mod already.
 	if (Initialized) then
 		Perl_Party_Set_Scale();
+		Perl_Party_Force_Update()				-- Attempt to forcefully update information
+		Perl_Party_Set_Text_Positions();			-- Not called in the above
+		Perl_Party_Set_Pets();					-- Also not called
+		Perl_Party_Update_Health_Mana();			-- You know the drill
+		Perl_Party_Set_Hidden();				-- Are we running a hidden mode?
 		return;
 	end
 
@@ -646,10 +654,8 @@ function Perl_Party_Update_PvP_Status()
 end
 
 function Perl_Party_Update_Level()
-	local partyid = "party"..this:GetID();
-	local partylevel = UnitLevel(partyid);
 	-- Set Level
-	getglobal(this:GetName().."_LevelFrame_LevelBarText"):SetText(partylevel);
+	getglobal(this:GetName().."_LevelFrame_LevelBarText"):SetText(UnitLevel("party"..this:GetID()));
 end
 
 function Perl_Party_Update_Leader()
@@ -889,6 +895,156 @@ function Perl_Party_Update_Health_Mana()
 	end
 end
 
+function Perl_Party_Force_Update()
+	for partynum=1,4 do
+		local partyid = "party"..partynum;
+		local partyname = UnitName(partyid);
+
+		-- Set name
+		if (UnitName(partyid) ~= nil) then
+			if (strlen(partyname) > 20) then
+				partyname = strsub(partyname, 1, 19).."...";
+			end
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetText(partyname);
+		end
+
+		-- Set Class Icon
+		if (UnitIsPlayer(partyid)) then
+			local PlayerClass = UnitClass(partyid);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):SetTexCoord(Perl_Party_ClassPosRight[PlayerClass], Perl_Party_ClassPosLeft[PlayerClass], Perl_Party_ClassPosTop[PlayerClass], Perl_Party_ClassPosBottom[PlayerClass]); -- Set the player's class icon
+			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):Show();
+		else
+			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):Hide();
+		end
+
+		-- Set Level
+		getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_LevelBarText"):SetText(UnitLevel(partyid));
+
+		-- Handle disconnected state
+		if (UnitIsConnected(partyid)) then
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_DisconnectStatus"):Hide();
+		else
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_DisconnectStatus"):Show();
+		end
+
+		-- Handle death state
+		if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_DeadStatus"):Show();
+		else
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_DeadStatus"):Hide();
+		end
+
+		-- Set PvP info
+		local factionGroup = UnitFactionGroup(partyid);
+		if (factionGroup == nil) then
+			factionGroup = UnitFactionGroup("player");
+		end
+		-- Color their name if PvP flagged
+		if (UnitIsPVP(partyid)) then
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0,1,0);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_PVPStatus"):SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_PVPStatus"):Show();
+		else
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.5,0.5,1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_PVPStatus"):Hide();
+		end
+
+		-- Set mana bar color
+		local partypower = UnitPowerType(partyid);
+		if (partypower == 1) then
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar"):SetStatusBarColor(1, 0, 0, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBarBG"):SetStatusBarColor(1, 0, 0, 0.25);
+		elseif (partypower == 2) then
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar"):SetStatusBarColor(1, 0.5, 0, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBarBG"):SetStatusBarColor(1, 0.5, 0, 0.25);
+		elseif (partypower == 3) then
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar"):SetStatusBarColor(1, 1, 0, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBarBG"):SetStatusBarColor(1, 1, 0, 0.25);
+		else
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar"):SetStatusBarColor(0, 0, 1, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBarBG"):SetStatusBarColor(0, 0, 1, 0.25);
+		end
+
+		-- Set pet bars
+		local id = partynum;	-- Easier than changing all variables below, I'll do it later
+		if (showpets == 1) then
+			if (UnitIsConnected("party"..id) and UnitExists("partypet"..id)) then
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):Show();
+				getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):Show();
+				getglobal(this:GetName().."_StatsFrame"):SetHeight(54);
+
+				if (verticalalign == 1) then
+					local idspace = id + 1;
+					local partypetspacing = partyspacing - 12;
+					if (id == 1 or id == 2 or id == 3) then
+						local idspace = id + 1;
+						local partypetspacing = partyspacing - 12;
+						getglobal("Perl_Party_MemberFrame"..idspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id, "TOPLEFT", 0, partypetspacing);
+					end
+				else
+					local horizontalspacing;
+					if (partyspacing < 0) then
+						horizontalspacing = partyspacing - 195;
+					else
+						horizontalspacing = partyspacing + 195;
+					end
+					Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", horizontalspacing, 0);
+					Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", horizontalspacing, 0);
+					Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", horizontalspacing, 0);
+				end
+			else
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):Hide();
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBarBG"):Hide();
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetHeight(42);
+
+				if (verticalalign == 1) then
+					if (id == 1) then
+						Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partyspacing);
+					elseif (id == 2) then
+						Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partyspacing);
+					elseif (id == 3) then
+						Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
+					end
+				else
+					local horizontalspacing;
+					if (partyspacing < 0) then
+						horizontalspacing = partyspacing - 195;
+					else
+						horizontalspacing = partyspacing + 195;
+					end
+					Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", horizontalspacing, 0);
+					Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", horizontalspacing, 0);
+					Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", horizontalspacing, 0);
+				end
+			end
+		else
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):Hide();
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBarBG"):Hide();
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetHeight(42);
+			
+			if (verticalalign == 1) then
+				if (id == 1) then
+					Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partyspacing);
+				elseif (id == 2) then
+					Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partyspacing);
+				elseif (id == 3) then
+					Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
+				end
+			else
+				local horizontalspacing;
+				if (partyspacing < 0) then
+					horizontalspacing = partyspacing - 195;
+				else
+					horizontalspacing = partyspacing + 195;
+				end
+				Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", horizontalspacing, 0);
+				Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", horizontalspacing, 0);
+				Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", horizontalspacing, 0);
+			end
+		end
+	end
+end
+
 function Perl_Party_Set_Localized_ClassIcons()
 	local ppty_translate_druid;
 	local ppty_translate_hunter;
@@ -1093,8 +1249,10 @@ function Perl_Party_Set_Healer(newvalue)
 end
 
 function Perl_Party_Set_Pets(newvalue)
-	showpets = newvalue;
-	Perl_Party_UpdateVars();
+	if (newvalue ~= nil) then
+		showpets = newvalue;
+		Perl_Party_UpdateVars();
+	end
 
 	if (showpets == 0) then			-- copied from below sort of, delete below when slash commands are removed
 		Perl_Party_MemberFrame1_StatsFrame_PetHealthBar:Hide();
@@ -1640,8 +1798,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.44",
-			releaseDate = "February 17, 2006",
+			version = "v0.45",
+			releaseDate = "February 25, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

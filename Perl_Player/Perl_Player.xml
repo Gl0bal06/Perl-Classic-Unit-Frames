@@ -33,7 +33,7 @@
 				Perl_Player_MouseUp(arg1);
 			</OnMouseUp>
 			<OnUpdate>
-				CombatFeedback_OnUpdate(arg1);
+				Perl_Player_Portrait_Combat_Text();
 			</OnUpdate>
 		</Scripts>
 
@@ -139,7 +139,37 @@
 							</Anchors>
 						</Texture>
 
-						<!-- Name Text -->
+						<!-- Name Text 
+						<Fontstring name="Perl_Player_NameBarText" inherits="GameFontNormal" text="Error!">
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="Perl_Player_ClassTexture" relativePoint="RIGHT">
+									<Offset>
+										<AbsDimension x="5" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<Color r="1" g="1" b="0"/>
+						</Fontstring>
+						-->
+					</Layer>
+				</Layers>
+			</Frame>
+
+
+			<!-- Player Name Frame for ArcaneBar improvement -->
+			<Frame name="Perl_Player_Name">
+				<Size>
+					<AbsDimension x="200" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Player_NameFrame">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
 						<Fontstring name="Perl_Player_NameBarText" inherits="GameFontNormal" text="Error!">
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="Perl_Player_ClassTexture" relativePoint="RIGHT">
@@ -271,6 +301,11 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
+				<Scripts>
+					<OnMouseUp>
+						Perl_Player_MouseUp(arg1);
+					</OnMouseUp>
+				</Scripts>
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -282,6 +317,27 @@
 						<AbsInset left="5" right="5" top="5" bottom="5"/>
 					</BackgroundInsets>
 				</Backdrop>
+				<Frames>
+					<PlayerModel name="$parent_PlayerModel" hidden="true">
+						<Size>
+							<AbsDimension x="50" y="50"/>
+						</Size>
+						<Anchors>
+							<Anchor point="CENTER">
+								<Offset>
+									<AbsDimension x="1" y="-1"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:SetScale(1);
+								this.scale = this:GetScale();
+								Perl_Player_PortraitFrame_PlayerModel:SetSequence(30);
+							</OnLoad>
+						</Scripts>
+					</PlayerModel>
+				</Frames>
 				<Layers>
 					<!-- Portrait -->
 					<Layer level="ARTWORK">
@@ -298,6 +354,23 @@
 							</Anchors>
 						</Texture>
 					</Layer>
+				</Layers>
+			</Frame>
+
+
+			<!-- Portrait Text Frame -->
+			<Frame name="Perl_Player_PortraitTextFrame">
+				<Size>
+					<AbsDimension x="60" y="61"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Player_PortraitFrame">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
 					<Layer level="OVERLAY">
 						<Fontstring name="Perl_Player_HitIndicator" inherits="NumberFontNormalHuge" hidden="true" text="Error!">
 							<FontHeight>

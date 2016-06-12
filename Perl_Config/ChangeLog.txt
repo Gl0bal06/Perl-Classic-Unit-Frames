@@ -1,3 +1,15 @@
+0.45 - February 25, 2006
+ - Party: Added another check for hidden status
+ - Party: Fixed incorrect data being shown when reloading the interface without relogging
+ - Pet: Removed the happiness frame for warlocks
+ - Pet: Warlock pets will now display mana as mana instead of focus
+ - Player: Your name will now be above the casting bar if ArcaneBar is being used
+ - Player: Clicking on the portrait frame will now target yourself
+ - Player/Target: Added 3D portraits as an option
+ - Player/Target: Can now toggle combat text display on the portrait
+ - ToT: Added visual and audio alerts for three different types of situations
+ - ToT: Fixed a bug regarding MobHealth toggling
+
 0.44 - February 17, 2006
  - All: Added another condition do the negative health check
  - Config: Fixed a window position bug when scales were not equal (Thanks Vudoo)
@@ -16,7 +28,7 @@
 0.42 - February 14, 2006
  - CombatDisplay: Fixed a minor text bug regarding mobhealth support
  - Config: Added a Reset Frame Position button
- - Config: Global settings will now save window position
+ - Config: Global settings will now save window position
  - Config: Made some minor text and allignment tweaks to some options
  - Player/Target: Added a toggleable portrait frame and combat text display
  - Target: Combo point frame now adjusts depending on the status of the portrait mode

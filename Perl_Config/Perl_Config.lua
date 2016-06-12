@@ -552,6 +552,8 @@ function Perl_Config_Global_Save_Settings()
 			["YPosition"] = floor(Perl_Player_Frame:GetTop() - (UIParent:GetTop() / Perl_Player_Frame:GetScale()) + 0.5),
 			["ShowPortrait"] = vartable["showportrait"],
 			["CompactPercent"] = vartable["compactpercent"],
+			["ThreeDPortrait"] = vartable["threedportrait"],
+			["PortraitCombatText"] = vartable["portraitcombattext"],
 		};
 	end
 
@@ -600,6 +602,8 @@ function Perl_Config_Global_Save_Settings()
 			["XPosition"] = floor(Perl_Target_Frame:GetLeft() + 0.5),
 			["YPosition"] = floor(Perl_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Frame:GetScale()) + 0.5),
 			["ShowPortrait"] = vartable["showportrait"],
+			["ThreeDPortrait"] = vartable["threedportrait"],
+			["PortraitCombatText"] = vartable["portraitcombattext"],
 		};
 	end
 
@@ -617,6 +621,9 @@ function Perl_Config_Global_Save_Settings()
 			["YPositionToT"] = floor(Perl_Target_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Target_Frame:GetScale()) + 0.5),
 			["XPositionToToT"] = floor(Perl_Target_Target_Target_Frame:GetLeft() + 0.5),
 			["YPositionToToT"] = floor(Perl_Target_Target_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Target_Target_Frame:GetScale()) + 0.5),
+			["AlertSound"] = vartable["alertsound"],
+			["AlertMode"] = vartable["alertmode"],
+			["AlertSize"] = vartable["alertsize"],
 		};
 	end
 end
@@ -842,8 +849,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.44",
-			releaseDate = "February 17, 2006",
+			version = "v0.45",
+			releaseDate = "February 25, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

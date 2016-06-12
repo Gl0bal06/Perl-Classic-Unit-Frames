@@ -11,11 +11,17 @@ local scale = 1;		-- default scale
 local totsupport = 1;		-- target of target support enabled by default
 local tototsupport = 1;		-- target of target of target support enabled by default
 local transparency = 1;		-- transparency for frames
+local alertsound = 0;		-- audible alert disabled by default
+local alertmode = 0;		-- DPS, Tank, Healer modes
+local alertsize = 0;		-- Variable which controls the size of the text
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
 local Perl_Target_Target_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Target_Target_Time_Update_Rate = 0.2;	-- the update interval
+local aggroWarningCount = 0;				-- the check to see if we have alerted the player of a ToT event
+local aggroToToTWarningCount = 0;			-- the check to see if we have alerted the player of a ToToT event
+local startTime = 0;					-- used to keep track of fading the big alert text
 local mouseovertargettargethealthflag = 0;		-- is the mouse over the health bar for healer mode?
 local mouseovertargettargetmanaflag = 0;		-- is the mouse over the mana bar for healer mode?
 local mouseovertargettargettargethealthflag = 0;	-- is the mouse over the health bar for healer mode?
@@ -29,6 +35,7 @@ function Perl_Target_Target_OnLoad()
 	-- Events
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_REGEN_ENABLED");
 	this:RegisterEvent("VARIABLES_LOADED");
 
 	if (DEFAULT_CHAT_FRAME) then
@@ -41,7 +48,9 @@ end
 -- Event Handler --
 -------------------
 function Perl_Target_Target_OnEvent(event)
-	if (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
+	if (event == "PLAYER_REGEN_ENABLED") then
+		aggroWarningCount = 0;
+	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Target_Target_Initialize();
 		return;
 	elseif (event == "ADDON_LOADED") then
@@ -106,6 +115,7 @@ function Perl_Target_Target_OnUpdate(arg1)
 		Perl_Target_Target_Time_Elapsed = 0;
 
 		if (UnitExists("targettarget") and totsupport == 1) then
+			Perl_Target_Target_Warn();				-- Display any warnings if needed
 			Perl_Target_Target_Frame:Show();			-- Show the frame
 
 			-- Begin: Set the name
@@ -266,6 +276,34 @@ function Perl_Target_Target_OnUpdate(arg1)
 		if (UnitExists("targettargettarget") and tototsupport == 1) then
 			Perl_Target_Target_Target_Frame:Show();			-- Show the frame
 
+			if (UnitAffectingCombat("targettarget")) then
+				if (UnitIsDead("targettargettarget") or UnitIsCorpse("targettargettarget")) then
+					-- Im thinking targetting something that is targetting a corpse or dead thing is causing crashes
+					-- Hence this safety check. If it is, we do nothing.
+				else
+					if (UnitName("targettargettarget")) then
+						if (UnitIsEnemy("targettarget", "player")) then
+							if (UnitName("targettargettarget") == UnitName("player")) then			-- play the warning sound if needed
+								if (aggroWarningCount == 0) then
+									-- Its coming right for us!
+									if (aggroToToTWarningCount == 0) then
+										aggroToToTWarningCount = 1;
+										Perl_Target_Target_Play_Sound();
+									end
+								end
+							else
+								-- Whew it isnt fighting us
+								aggroToToTWarningCount = 0;
+							end
+						else
+							-- Friendly target
+							aggroToToTWarningCount = 0;
+						end
+					end
+				end
+			end
+			
+
 			-- Begin: Set the name
 			local targettargettargetname = UnitName("targettargettarget");
 			if (strlen(targettargettargetname) > 11) then
@@ -421,6 +459,142 @@ function Perl_Target_Target_OnUpdate(arg1)
 			Perl_Target_Target_Target_Frame:Hide();			-- Hide the frame
 		end
 
+	end
+end
+
+function Perl_Target_Target_Warn()
+	-- Player has something targetted
+	if (UnitAffectingCombat("target")) then		-- Target is in an active combat situation
+		if (UnitIsDead("targettarget") or UnitIsCorpse("targettarget")) then
+			-- Im thinking targetting something that is targetting a corpse or dead thing is causing crashes
+			-- Hence this safety check. If it is, we do nothing.
+		else
+			if (not UnitIsFriend("target", "player")) then
+				-- Stupid mobs dont have targets when they are trapped/polyd/sapped/stunned, check for this
+				if (alertmode == 0) then	-- Disabled but still have audible alert enabled
+					if (UnitName("targettarget") == UnitName("player")) then		-- play the warning sound if needed
+						-- Its coming right for us!
+						if (aggroWarningCount == 0) then
+							aggroWarningCount = 1;
+							Perl_Target_Target_Play_Sound();
+						end
+					else
+						-- Whew it isnt fighting us
+						aggroWarningCount = 0;
+					end
+				end
+				if (alertmode == 1) then	-- DPS Mode
+					if (UnitName("targettarget") == UnitName("player")) then
+						-- Its coming right for us!
+						if (aggroWarningCount == 0) then
+							if (alertsize == 0) then
+								UIErrorsFrame:AddMessage(UnitName("target").." has changed targets to you!",1,0,0,1,3);
+							elseif (alertsize == 1) then
+								Perl_Target_Target_BigWarning_Show(UnitName("target").." has changed targets to you!");
+							elseif (alertsize == 2) then
+								-- Warning disabled
+							end
+							aggroWarningCount = 1;
+							Perl_Target_Target_Play_Sound();
+						end
+					else
+						-- Whew it isnt fighting us
+						aggroWarningCount = 0;
+					end
+				elseif (alertmode == 2) then	-- Tank mode
+					if (UnitName("targettarget") == UnitName("player")) then
+						-- Its coming right for us! (A good thing, im tanking it)
+						aggroWarningCount = 0;
+					else
+						-- Some dumb hunter pulled aggro
+						if (aggroWarningCount == 0) then
+							if (alertsize == 0) then
+								UIErrorsFrame:AddMessage("You have lost aggro to "..UnitName("targettarget").."!",1,0,0,1,3);
+							elseif (alertsize == 1) then
+								Perl_Target_Target_BigWarning_Show("You have lost aggro to "..UnitName("targettarget").."!");
+							elseif (alertsize == 2) then
+								-- Warning disabled
+							end
+							aggroWarningCount = 1;
+							Perl_Target_Target_Play_Sound();
+						end
+					end
+				end
+			else
+				if (alertmode == 3) then	-- Healer Mode (Do this check down here for sanity reasons)
+					if (UnitIsPlayer("target")) then
+						if (UnitIsFriend("player", "target")) then
+							if (UnitIsUnit("target", "targettargettarget")) then	-- The target and the targets target target (whew) are the same
+								if (aggroWarningCount == 0) then
+									if (alertsize == 0) then
+										UIErrorsFrame:AddMessage(UnitName("target").." is now tanking "..UnitName("targettarget"),1,0,0,1,3);
+									elseif (alertsize == 1) then
+										if ((UnitName("player") == UnitName("target")) or (UnitName("target") == UnitName("targettarget"))) then
+											-- Do nothing
+										else
+											Perl_Target_Target_BigWarning_Show(UnitName("target").." is now tanking "..UnitName("targettarget"));
+										end
+									elseif (alertsize == 2) then
+										-- Warning disabled
+									end
+									aggroWarningCount = 1;
+								end
+							else
+								-- Lazy warrior isnt tanking anything!
+								aggroWarningCount = 0;
+							end
+						else
+							if (UnitName("targettarget") == UnitName("player")) then
+								-- Its coming right for us!
+								Perl_Target_Target_Play_Sound();
+								if (aggroWarningCount == 0) then
+									if (alertsize == 0) then
+										UIErrorsFrame:AddMessage(UnitName("target").." has changed targets to you!",1,0,0,1,3);
+									elseif (alertsize == 1) then
+										Perl_Target_Target_BigWarning_Show(UnitName("target").." has changed targets to you!");
+									elseif (alertsize == 2) then
+										-- Warning disabled
+									end
+									aggroWarningCount = 1;
+									Perl_Target_Target_Play_Sound();
+								end
+							else
+								-- Whew it isnt fighting us
+								aggroWarningCount = 0;
+							end
+						end
+					else
+						if (UnitName("targettarget") == UnitName("player")) then
+							-- Its coming right for us!
+							Perl_Target_Target_Play_Sound();
+							if (aggroWarningCount == 0) then
+								if (alertsize == 0) then
+									UIErrorsFrame:AddMessage(UnitName("target").." has changed targets to you!",1,0,0,1,3);
+								elseif (alertsize == 1) then
+									Perl_Target_Target_BigWarning_Show(UnitName("target").." has changed targets to you!");
+								elseif (alertsize == 2) then
+									-- Warning disabled
+								end
+								aggroWarningCount = 1;
+								Perl_Target_Target_Play_Sound();
+							end
+						else
+							-- Whew it isnt fighting us
+							aggroWarningCount = 0;
+						end
+					end
+				else
+					-- Friendly target
+					aggroWarningCount = 0;
+				end
+			end
+		end
+	end
+end
+
+function Perl_Target_Target_Play_Sound()
+	if (alertsound == 1) then
+		PlaySoundFile("Sound\\Spells\\PVPFlagTakenHorde.wav");
 	end
 end
 
@@ -650,6 +824,21 @@ function Perl_Target_Target_Set_ToToT(newvalue)
 	Perl_Target_Target_UpdateVars();
 end
 
+function Perl_Target_Target_Set_Mode(newvalue)
+	alertmode = newvalue;
+	Perl_Target_Target_UpdateVars();
+end
+
+function Perl_Target_Target_Set_Sound_Alert(newvalue)
+	alertsound = newvalue;
+	Perl_Target_Target_UpdateVars();
+end
+
+function Perl_Target_Target_Set_Alert_Size(newvalue)
+	alertsize = newvalue;
+	Perl_Target_Target_UpdateVars();
+end
+
 function Perl_Target_Target_Set_MobHealth(newvalue)
 	mobhealthsupport = newvalue;
 	Perl_Target_Target_UpdateVars();
@@ -698,6 +887,9 @@ function Perl_Target_Target_GetVars()
 	totsupport = Perl_Target_Target_Config[UnitName("player")]["ToTSupport"];
 	tototsupport = Perl_Target_Target_Config[UnitName("player")]["ToToTSupport"];
 	transparency = Perl_Target_Target_Config[UnitName("player")]["Transparency"];
+	alertsound = Perl_Target_Target_Config[UnitName("player")]["AlertSound"];
+	alertmode = Perl_Target_Target_Config[UnitName("player")]["AlertMode"];
+	alertsize = Perl_Target_Target_Config[UnitName("player")]["AlertSize"];
 
 	if (colorhealth == nil) then
 		colorhealth = 0;
@@ -720,6 +912,15 @@ function Perl_Target_Target_GetVars()
 	if (transparency == nil) then
 		transparency = 1;
 	end
+	if (alertsound == nil) then
+		alertsound = 0;
+	end
+	if (alertmode == nil) then
+		alertmode = 0;
+	end
+	if (alertsize == nil) then
+		alertsize = 0;
+	end
 
 	local vars = {
 		["colorhealth"] = colorhealth,
@@ -729,6 +930,9 @@ function Perl_Target_Target_GetVars()
 		["totsupport"] = totsupport,
 		["tototsupport"] = tototsupport,
 		["transparency"] = transparency,
+		["alertsound"] = alertsound,
+		["alertmode"] = alertmode,
+		["alertsize"] = alertsize,
 	}
 	return vars;
 end
@@ -772,6 +976,21 @@ function Perl_Target_Target_UpdateVars(vartable)
 			else
 				transparency = nil;
 			end
+			if (vartable["Global Settings"]["AlertSound"] ~= nil) then
+				alertsound = vartable["Global Settings"]["AlertSound"];
+			else
+				alertsound = nil;
+			end
+			if (vartable["Global Settings"]["AlertMode"] ~= nil) then
+				alertmode = vartable["Global Settings"]["AlertMode"];
+			else
+				alertmode = nil;
+			end
+			if (vartable["Global Settings"]["AlertSize"] ~= nil) then
+				alertsize = vartable["Global Settings"]["AlertSize"];
+			else
+				alertsize = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -796,6 +1015,15 @@ function Perl_Target_Target_UpdateVars(vartable)
 		if (transparency == nil) then
 			transparency = 1;
 		end
+		if (alertsound == nil) then
+			alertsound = 0;
+		end
+		if (alertmode == nil) then
+			alertmode = 0;
+		end
+		if (alertsize == nil) then
+			alertsize = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Target_Set_Scale();
@@ -810,6 +1038,9 @@ function Perl_Target_Target_UpdateVars(vartable)
 		["ToTSupport"] = totsupport,
 		["ToToTSupport"] = tototsupport,
 		["Transparency"] = transparency,
+		["AlertSound"] = alertsound,
+		["AlertMode"] = alertmode,
+		["AlertSize"] = alertsize,
 	};
 end
 
@@ -924,6 +1155,49 @@ end
 -- Target of Target of Target End
 
 
+----------------------------
+-- Big Warning Text Frame --
+----------------------------
+-- Fade in/out frame stuff
+-- Ripped/modified from FadingFrame from Blizzard
+-- Ripped from AggroAlert 1.5
+
+function Perl_Target_Target_BigWarning_OnLoad()
+	Perl_Target_Target_BigWarning:Hide();
+end
+
+function Perl_Target_Target_BigWarning_Show(message)
+	startTime = GetTime();
+	if (message) then
+		Perl_Target_Target_BigWarning_Text:SetText(message);
+	end
+	Perl_Target_Target_BigWarning:Show();
+end
+
+
+function Perl_Target_Target_BigWarning_OnUpdate()
+	local elapsed = GetTime() - startTime;
+	local fadeInTime = 0.2;
+	if (elapsed < fadeInTime) then
+		local alpha = (elapsed / fadeInTime);
+		Perl_Target_Target_BigWarning:SetAlpha(alpha);
+		return;
+	end
+	local holdTime = 2.5;
+	if (elapsed < (fadeInTime + holdTime)) then
+		Perl_Target_Target_BigWarning:SetAlpha(1.0);
+		return;
+	end
+	local fadeOutTime = 2;
+	if (elapsed < (fadeInTime + holdTime + fadeOutTime)) then
+		local alpha = 1.0 - ((elapsed - holdTime - fadeInTime) / fadeOutTime);
+		Perl_Target_Target_BigWarning:SetAlpha(alpha);
+		return;
+	end
+	Perl_Target_Target_BigWarning:Hide();
+end
+
+
 -------------
 -- Tooltip --
 -------------
@@ -948,8 +1222,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.44",
-			releaseDate = "February 17, 2006",
+			version = "v0.45",
+			releaseDate = "February 25, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

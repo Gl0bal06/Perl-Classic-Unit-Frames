@@ -86,6 +86,16 @@
 					</Anchors>
 				</FontString>
 
+				<FontString name="$parent_Misc2_Text" inherits="GameFontNormal" text="">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="240" y="-150"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
 				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="Scaling">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
@@ -231,33 +241,12 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton5">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Display Portrait Frame");
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Player_Portrait_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
 			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton5">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>
@@ -373,6 +362,69 @@
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
+
+			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc2_Text">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Display Portrait Frame");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Portrait_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton12" inherits="UICheckButtonTemplate" id="12">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("3D Portrait Frame");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_3D_Portrait_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton13" inherits="UICheckButtonTemplate" id="13">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton12">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Combat Text");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Portrait_Combat_Text_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
 		</Frames>
 
 	</Frame>

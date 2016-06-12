@@ -72,6 +72,18 @@ function Perl_Config_Player_Set_Values()
 		Perl_Config_Player_Frame_CheckButton11:SetChecked(nil);
 	end
 
+	if (vartable["threedportrait"] == 1) then
+		Perl_Config_Player_Frame_CheckButton12:SetChecked(1);
+	else
+		Perl_Config_Player_Frame_CheckButton12:SetChecked(nil);
+	end
+
+	if (vartable["portraitcombattext"] == 1) then
+		Perl_Config_Player_Frame_CheckButton13:SetChecked(1);
+	else
+		Perl_Config_Player_Frame_CheckButton13:SetChecked(nil);
+	end
+
 	Perl_Config_Player_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Player_Frame_Slider1High:SetText("Big");
 	Perl_Config_Player_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -153,6 +165,22 @@ function Perl_Config_Player_Compact_Percent_Update()
 		Perl_Player_Set_Compact_Percent(1);
 	else
 		Perl_Player_Set_Compact_Percent(0);
+	end
+end
+
+function Perl_Config_Player_3D_Portrait_Update()
+	if (Perl_Config_Player_Frame_CheckButton12:GetChecked() == 1) then
+		Perl_Player_Set_3D_Portrait(1);
+	else
+		Perl_Player_Set_3D_Portrait(0);
+	end
+end
+
+function Perl_Config_Player_Portrait_Combat_Text_Update()
+	if (Perl_Config_Player_Frame_CheckButton13:GetChecked() == 1) then
+		Perl_Player_Set_Portrait_Combat_Text(1);
+	else
+		Perl_Player_Set_Portrait_Combat_Text(0);
 	end
 end
 

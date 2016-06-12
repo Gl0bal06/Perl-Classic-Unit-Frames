@@ -74,6 +74,18 @@ function Perl_Config_Target_Set_Values()
 		Perl_Config_Target_Frame_CheckButton10:SetChecked(nil);
 	end
 
+	if (vartable["threedportrait"] == 1) then
+		Perl_Config_Target_Frame_CheckButton11:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton11:SetChecked(nil);
+	end
+
+	if (vartable["portraitcombattext"] == 1) then
+		Perl_Config_Target_Frame_CheckButton12:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton12:SetChecked(nil);
+	end
+
 	Perl_Config_Target_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Target_Frame_Slider1High:SetText("Big");
 	Perl_Config_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -174,6 +186,22 @@ function Perl_Config_Target_Portrait_Update()
 		Perl_Target_Set_Portrait(1);
 	else
 		Perl_Target_Set_Portrait(0);
+	end
+end
+
+function Perl_Config_Target_3D_Portrait_Update()
+	if (Perl_Config_Target_Frame_CheckButton11:GetChecked() == 1) then
+		Perl_Target_Set_3D_Portrait(1);
+	else
+		Perl_Target_Set_3D_Portrait(0);
+	end
+end
+
+function Perl_Config_Target_Portrait_Combat_Text_Update()
+	if (Perl_Config_Target_Frame_CheckButton12:GetChecked() == 1) then
+		Perl_Target_Set_Portrait_Combat_Text(1);
+	else
+		Perl_Target_Set_Portrait_Combat_Text(0);
 	end
 end
 

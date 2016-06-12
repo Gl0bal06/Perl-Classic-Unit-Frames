@@ -17,6 +17,9 @@ local debufflocation = 2;		-- default debuff location
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
 
+-- Empty variables used for localization
+local ppp_translate_warlock;
+
 
 ----------------------
 -- Loading Function --
@@ -99,6 +102,7 @@ function Perl_Player_Pet_OnEvent(event)
 		return;
 	elseif (event == "VARIABLES_LOADED") or (event == "PLAYER_ENTERING_WORLD") then
 		Perl_Player_Pet_Initialize();
+		Perl_Player_Pet_Set_Window_Layout();		-- Warlocks don't need the happiness frame
 		Perl_Player_Pet_Update_Once();
 		return;
 	elseif (event == "ADDON_LOADED") then
@@ -131,6 +135,7 @@ function Perl_Player_Pet_Initialize()
 
 	-- Major config options.
 	Perl_Player_Pet_Initialize_Frame_Color();
+	Perl_Player_Pet_Set_Localization();
 
 	-- Unregister the Blizzard frames via the 1.8 function
 	PetFrame:UnregisterAllEvents();
@@ -225,7 +230,11 @@ function Perl_Player_Pet_Update_Mana()
 	Perl_Player_Pet_ManaBar:SetMinMaxValues(0, petmanamax);
 	Perl_Player_Pet_ManaBar:SetValue(petmana);
 
-	Perl_Player_Pet_ManaBarText:SetText(petmana);
+	if (UnitClass("player") == ppp_translate_warlock) then
+		Perl_Player_Pet_ManaBarText:SetText(petmana.."/"..petmanamax);
+	else
+		Perl_Player_Pet_ManaBarText:SetText(petmana);
+	end
 end
 
 function Perl_Player_Pet_Update_Mana_Bar()
@@ -300,6 +309,36 @@ function Perl_Player_Pet_Update_Experience()
 	Perl_Player_Pet_XPBarText:SetText(xptext);
 end
 
+function Perl_Player_Pet_Set_Window_Layout()
+	if (UnitClass("player") == ppp_translate_warlock) then
+		Perl_Player_Pet_LevelFrame:Hide();
+		Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 5);
+		Perl_Player_Pet_StatsFrame:SetWidth(165);
+		Perl_Player_Pet_HealthBar:SetWidth(153);
+		Perl_Player_Pet_HealthBarBG:SetWidth(153);
+		Perl_Player_Pet_ManaBar:SetWidth(153);
+		Perl_Player_Pet_ManaBarBG:SetWidth(153);
+		Perl_Player_Pet_XPBar:SetWidth(153);
+		Perl_Player_Pet_XPBarBG:SetWidth(153);
+	else
+		Perl_Player_Pet_LevelFrame:Show();
+		Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 25, 5);
+		Perl_Player_Pet_StatsFrame:SetWidth(140);
+		Perl_Player_Pet_HealthBar:SetWidth(128);
+		Perl_Player_Pet_HealthBarBG:SetWidth(128);
+		Perl_Player_Pet_ManaBar:SetWidth(128);
+		Perl_Player_Pet_ManaBarBG:SetWidth(128);
+		Perl_Player_Pet_XPBar:SetWidth(128);
+		Perl_Player_Pet_XPBarBG:SetWidth(128);
+	end
+end
+
+function Perl_Player_Pet_Set_Localization()
+	local localization = Perl_Config_Get_Localization();
+
+	ppp_translate_warlock = localization["warlock"];
+end
+
 
 --------------------------
 -- GUI Config Functions --
@@ -312,7 +351,6 @@ function Perl_Player_Pet_Set_Buffs(newbuffnumber)
 	Perl_Player_Pet_UpdateVars();
 	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
-	--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetbuffsshown.."|cffffff00 buffs.");
 end
 
 function Perl_Player_Pet_Set_Debuffs(newdebuffnumber)
@@ -323,7 +361,6 @@ function Perl_Player_Pet_Set_Debuffs(newdebuffnumber)
 	Perl_Player_Pet_UpdateVars();
 	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
-	--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetdebuffsshown.."|cffffff00 debuffs.");
 end
 
 function Perl_Player_Pet_Set_Buff_Location(newvalue)
@@ -365,7 +402,6 @@ function Perl_Player_Pet_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
 		scale = (number / 100);					-- convert the user input to a wow acceptable value
-		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Pet Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
 	end
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 	Perl_Player_Pet_Frame:SetScale(unsavedscale);
@@ -520,9 +556,9 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		-- Call any code we need to activate them
 		Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
 		Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
-		Perl_Player_Pet_Update_Health();
-		Perl_Player_Pet_Set_Scale();
-		Perl_Player_Pet_Set_Transparency();
+		Perl_Player_Pet_Update_Health();	-- Update the health in case progrssive health color was set
+		Perl_Player_Pet_Set_Scale();		-- Set the scale
+		Perl_Player_Pet_Set_Transparency();	-- Set the transparency
 	end
 
 	Perl_Player_Pet_Config[UnitName("player")] = {
@@ -693,8 +729,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.44",
-			releaseDate = "February 17, 2006",
+			version = "v0.45",
+			releaseDate = "February 25, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

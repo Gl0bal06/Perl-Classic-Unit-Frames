@@ -479,4 +479,44 @@
 		</Frames>
 	</Frame>
 
+	<FontString name="Perl_Target_Target_Font" font="Fonts\ARIALN.TTF" outline="NORMAL" virtual="true">
+		<FontHeight>
+			<AbsValue val="30"/>
+		</FontHeight>
+		<Color r="1" g="0.2" b="0"/>
+	</FontString>
+
+	<Frame name="Perl_Target_Target_BigWarning" toplevel="true" parent="UIParent" hidden="false">
+		<Size>
+			<AbsDimension x="512" y="128"/>
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER">
+				<Offset>
+					<AbsDimension x="0" y="284"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="Perl_Target_Target_BigWarning_Text" inherits="Perl_Target_Target_Font" text="Error!">
+					<Size>
+						<AbsDimension x="512" y="128"/>
+					</Size>
+					<Anchors>
+						<Anchor point="CENTER" relativeTo="Perl_Target_Target_BigWarning" relativePoint="CENTER"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				Perl_Target_Target_BigWarning_OnLoad();
+			</OnLoad>
+			<OnUpdate>
+				Perl_Target_Target_BigWarning_OnUpdate();
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+
 </Ui>

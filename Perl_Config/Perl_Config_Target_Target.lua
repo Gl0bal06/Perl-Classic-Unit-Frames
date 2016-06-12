@@ -24,6 +24,48 @@ function Perl_Config_Target_Target_Set_Values()
 		Perl_Config_Target_Target_Frame_CheckButton2:SetChecked(nil);
 	end
 
+	if (vartable["alertmode"] == 1) then
+		Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(1);
+		Perl_Config_Target_Target_Frame_CheckButton9:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton10:SetChecked(nil);
+	elseif (vartable["alertmode"] == 2) then
+		Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton9:SetChecked(1);
+		Perl_Config_Target_Target_Frame_CheckButton10:SetChecked(nil);
+	elseif (vartable["alertmode"] == 3) then
+		Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton9:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton10:SetChecked(1);
+	else
+		Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton9:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton10:SetChecked(nil);
+	end
+
+	if (vartable["alertsound"] == 1) then
+		Perl_Config_Target_Target_Frame_CheckButton7:SetChecked(1);
+	else
+		Perl_Config_Target_Target_Frame_CheckButton7:SetChecked(nil);
+	end
+
+	if (vartable["alertsize"] == 0) then
+		Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(1);
+		Perl_Config_Target_Target_Frame_CheckButton12:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(nil);
+	elseif (vartable["alertsize"] == 1) then
+		Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton12:SetChecked(1);
+		Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(nil);
+	elseif (vartable["alertsize"] == 2) then
+		Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton12:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(1);
+	else
+		Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton12:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(1);
+	end
+
 	if (vartable["mobhealthsupport"] == 1) then
 		Perl_Config_Target_Target_Frame_CheckButton3:SetChecked(1);
 	else
@@ -73,8 +115,41 @@ function Perl_Config_Target_Target_ToToT_Update()
 	end
 end
 
+function Perl_Config_Target_Target_Mode_Update()
+	if (Perl_Config_Target_Target_Frame_CheckButton8:GetChecked() == 1) then
+		Perl_Target_Target_Set_Mode(1);
+	elseif (Perl_Config_Target_Target_Frame_CheckButton9:GetChecked() == 1) then
+		Perl_Target_Target_Set_Mode(2);
+	elseif (Perl_Config_Target_Target_Frame_CheckButton10:GetChecked() == 1) then
+		Perl_Target_Target_Set_Mode(3);
+	else
+		Perl_Target_Target_Set_Mode(0);
+	end
+end
+
+function Perl_Config_Target_Target_Sound_Update()
+	if (Perl_Config_Target_Target_Frame_CheckButton7:GetChecked() == 1) then
+		Perl_Target_Target_Set_Sound_Alert(1);
+	else
+		Perl_Target_Target_Set_Sound_Alert(0);
+	end
+end
+
+function Perl_Config_Target_Target_Alert_Size_Update()
+	if (Perl_Config_Target_Target_Frame_CheckButton11:GetChecked() == 1) then
+		Perl_Target_Target_Set_Alert_Size(0);
+	elseif (Perl_Config_Target_Target_Frame_CheckButton12:GetChecked() == 1) then
+		Perl_Target_Target_Set_Alert_Size(1);
+	elseif (Perl_Config_Target_Target_Frame_CheckButton13:GetChecked() == 1) then
+		Perl_Target_Target_Set_Alert_Size(2);
+	else
+		Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(1);
+		Perl_Target_Target_Set_Alert_Size(2);
+	end
+end
+
 function Perl_Config_Target_Target_MobHealth_Update()
-	if (Perl_Config_Target_Frame_CheckButton3:GetChecked() == 1) then
+	if (Perl_Config_Target_Target_Frame_CheckButton3:GetChecked() == 1) then
 		Perl_Target_Target_Set_MobHealth(1);
 	else
 		Perl_Target_Target_Set_MobHealth(0);

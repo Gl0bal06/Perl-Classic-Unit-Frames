@@ -14,6 +14,8 @@ local healermode = 0;		-- nurfed unit frame style
 local transparency = 1;		-- transparency for frames
 local showportrait = 0;		-- portrait is hidden by default
 local compactpercent = 0;	-- percents are not shown in compact mode by default
+local threedportrait = 0;	-- 3d portraits are off by default
+local portraitcombattext = 1;	-- Combat text is enabled by default on the portrait frame
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -50,6 +52,7 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_LEVEL");
 	this:RegisterEvent("UNIT_MANA");
+	this:RegisterEvent("UNIT_MODEL_CHANGED");
 	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_RAGE");
@@ -119,7 +122,7 @@ function Perl_Player_OnEvent(event)
 	elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
 		Perl_Player_Update_Loot_Method();
 		return;
-	elseif (event == "UNIT_PORTRAIT_UPDATE") then
+	elseif (event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED") then
 		if (arg1 == "player") then
 			Perl_Player_Update_Portrait();
 		end
@@ -585,10 +588,33 @@ end
 
 function Perl_Player_Update_Portrait()
 	if (showportrait == 1) then
-		SetPortraitTexture(Perl_Player_Portrait, "player");
-		Perl_Player_PortraitFrame:Show();
+		local level = Perl_Player_PortraitFrame:GetFrameLevel();					-- Get the frame level of the main portrait frame
+		Perl_Player_PortraitTextFrame:SetFrameLevel(level + 1);						-- Put the combat text above it so the portrait graphic doesn't go on top of it
+
+		Perl_Player_PortraitFrame:Show();								-- Show the main portrait frame
+
+		if (threedportrait == 0) then
+			SetPortraitTexture(Perl_Player_Portrait, "player");					-- Load the correct 2d graphic
+			Perl_Player_PortraitFrame_PlayerModel:Hide();						-- Hide the 3d graphic
+			Perl_Player_Portrait:Show();								-- Show the 2d graphic
+		else
+			Perl_Player_PortraitFrame_PlayerModel:SetUnit("player");				-- Load the correct 3d graphic
+			Perl_Player_Portrait:Hide();								-- Hide the 2d graphic
+			Perl_Player_PortraitFrame_PlayerModel:Show();						-- Show the 3d graphic
+			Perl_Player_PortraitFrame_PlayerModel:SetCamera(0);
+			Perl_Player_PortraitFrame_PlayerModel:SetPosition(0, 0, 0);
+		end
+
+		Perl_Player_PortraitTextFrame:Show();								-- Show the combat text frame
 	else
-		Perl_Player_PortraitFrame:Hide();
+		Perl_Player_PortraitFrame:Hide();								-- Hide the frame and 2d/3d portion
+		Perl_Player_PortraitTextFrame:Hide();								-- Hide the combat text
+	end
+end
+
+function Perl_Player_Portrait_Combat_Text()
+	if (portraitcombattext == 1) then
+		CombatFeedback_OnUpdate(arg1);
 	end
 end
 
@@ -739,6 +765,17 @@ function Perl_Player_Set_Portrait(newvalue)
 	Perl_Player_Update_Portrait();
 end
 
+function Perl_Player_Set_3D_Portrait(newvalue)
+	threedportrait = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Update_Portrait();
+end
+
+function Perl_Player_Set_Portrait_Combat_Text(newvalue)
+	portraitcombattext = newvalue;
+	Perl_Player_UpdateVars();
+end
+
 function Perl_Player_Set_Compact_Percent(newvalue)
 	compactpercent = newvalue;
 	Perl_Player_UpdateVars();
@@ -752,7 +789,6 @@ function Perl_Player_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
 		scale = (number / 100);					-- convert the user input to a wow acceptable value
-		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
 	end
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 	Perl_Player_Frame:SetScale(unsavedscale);
@@ -782,6 +818,8 @@ function Perl_Player_GetVars()
 	transparency = Perl_Player_Config[UnitName("player")]["Transparency"];
 	showportrait = Perl_Player_Config[UnitName("player")]["ShowPortrait"];
 	compactpercent = Perl_Player_Config[UnitName("player")]["CompactPercent"];
+	threedportrait = Perl_Player_Config[UnitName("player")]["ThreeDPortrait"];
+	portraitcombattext = Perl_Player_Config[UnitName("player")]["PortraitCombatText"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -813,6 +851,12 @@ function Perl_Player_GetVars()
 	if (compactpercent == nil) then
 		compactpercent = 0;
 	end
+	if (threedportrait == nil) then
+		threedportrait = 0;
+	end
+	if (portraitcombattext == nil) then
+		portraitcombattext = 1;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -825,6 +869,8 @@ function Perl_Player_GetVars()
 		["transparency"] = transparency,
 		["showportrait"] = showportrait,
 		["compactpercent"] = compactpercent,
+		["threedportrait"] = threedportrait,
+		["portraitcombattext"] = portraitcombattext,
 	}
 	return vars;
 end
@@ -883,6 +929,16 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				compactpercent = nil;
 			end
+			if (vartable["Global Settings"]["ThreeDPortrait"] ~= nil) then
+				threedportrait = vartable["Global Settings"]["ThreeDPortrait"];
+			else
+				threedportrait = nil;
+			end
+			if (vartable["Global Settings"]["PortraitCombatText"] ~= nil) then
+				portraitcombattext = vartable["Global Settings"]["PortraitCombatText"];
+			else
+				portraitcombattext = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -916,6 +972,12 @@ function Perl_Player_UpdateVars(vartable)
 		if (compactpercent == nil) then
 			compactpercent = 0;
 		end
+		if (threedportrait == nil) then
+			threedportrait = 0;
+		end
+		if (portraitcombattext == nil) then
+			portraitcombattext = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_XPBar_Display(xpbarstate);
@@ -940,6 +1002,8 @@ function Perl_Player_UpdateVars(vartable)
 		["Transparency"] = transparency,
 		["ShowPortrait"] = showportrait,
 		["CompactPercent"] = compactpercent,
+		["ThreeDPortrait"] = threedportrait,
+		["PortraitCombatText"] = portraitcombattext,
 	};
 end
 
@@ -1054,8 +1118,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.44",
-			releaseDate = "February 17, 2006",
+			version = "v0.45",
+			releaseDate = "February 25, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
