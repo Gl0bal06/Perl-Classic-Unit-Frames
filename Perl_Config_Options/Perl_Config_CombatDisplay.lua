@@ -108,12 +108,6 @@ function Perl_Config_CombatDisplay_Set_Values()
 	else
 		Perl_Config_CombatDisplay_Frame_CheckButton18:SetChecked(nil);
 	end
-
-	if (vartable["showenergyticker"] == 1) then
-		Perl_Config_CombatDisplay_Frame_CheckButton19:SetChecked(1);
-	else
-		Perl_Config_CombatDisplay_Frame_CheckButton19:SetChecked(nil);
-	end
 end
 
 function Perl_Config_CombatDisplay_Mode_Update()
@@ -208,14 +202,6 @@ function Perl_Config_CombatDisplay_Click_Through_Update()
 		Perl_CombatDisplay_Set_Click_Through(1);
 	else
 		Perl_CombatDisplay_Set_Click_Through(0);
-	end
-end
-
-function Perl_Config_CombatDisplay_Show_Energy_Ticker_Update()
-	if (Perl_Config_CombatDisplay_Frame_CheckButton19:GetChecked() == 1) then
-		Perl_CombatDisplay_Set_Show_Energy_Ticker(1);
-	else
-		Perl_CombatDisplay_Set_Show_Energy_Ticker(0);
 	end
 end
 

@@ -25,7 +25,6 @@ local hiddeninraid = 0;		-- player frame is shown in a raid by default
 local showpvpicon = 1;		-- show the pvp icon
 local showbarvalues = 0;	-- healer mode will have the bar values hidden by default
 local showraidgroupinname = 0;	-- raid number is not shown in the name by default
-local showenergyticker = 0;	-- energy ticker is off by default
 local fivesecondrule = 0;	-- five second rule is off by default
 local totemtimers = 1;		-- default for totem timers is on by default
 local runeframe = 1;		-- default for rune frame is on by default
@@ -53,8 +52,6 @@ local Perl_Player_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
 local playerhealth, playerhealthmax, playerhealthpercent, playermana, playermanamax, playermanapercent, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, playerpower, englishclass, playeronupdatemana, pvptimeleft;
-local energylast = 0;
-local energytime = 0;
 local fivesecondrulelastmana = 0;
 local fivesecondruletime = nil;
 
@@ -166,12 +163,6 @@ Perl_Player_Events.UNIT_MAXRUNIC_POWER = Perl_Player_Events.UNIT_MAXMANA;
 function Perl_Player_Events:UNIT_ENERGY()
 	if (arg1 == "player") then
 		Perl_Player_Update_Mana();		-- Update energy values
-
-		local e = UnitMana("player");
-		if (e == energylast + 1) then
-			energytime = GetTime();
-		end
-		energylast = e;
 	end
 end
 Perl_Player_Events.UNIT_MAXENERGY = Perl_Player_Events.UNIT_ENERGY;
@@ -180,7 +171,6 @@ function Perl_Player_Events:UNIT_DISPLAYPOWER()
 	if (arg1 == "player") then
 		Perl_Player_Update_Mana_Bar();		-- What type of energy are we using now?
 		Perl_Player_Update_Mana();		-- Update the energy info immediately
-		Perl_Player_EnergyTicker_Display();	-- Are we using the energy ticker?
 	end
 end
 
@@ -507,12 +497,89 @@ function Perl_Player_Update_Mana()
 
 	if (showdruidbar == 1) then
 		_, englishclass = UnitClass("player");
-		if (DruidBarKey and (englishclass == "DRUID")) then			-- Is Druid Bar installed and are we a Druid?
-			if (UnitPowerType("player") > 0) then				-- Are we in a manaless form?
-				Perl_Player_DruidBar_OnUpdate_Frame:Show();		-- Do all our work here (OnUpdate since it's very random if it works with just the UNIT_MANA event)
+		if (englishclass == "DRUID") then				-- Are we a Druid?
+			if (UnitPowerType("player") > 0) then		-- Are we in a manaless form?
+				playerdruidbarmana = UnitPower("player", 0);
+				playerdruidbarmanamax = UnitPowerMax("player", 0);
+				playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
+
+				if (playerdruidbarmanapercent == 100) then			-- This is to ensure the value isn't 1 or 2 mana under max when 100%
+					playerdruidbarmana = playerdruidbarmanamax;
+				end
+
+		--		if (PCUF_FADEBARS == 1) then
+		--			if (playerdruidbarmana < Perl_Player_DruidBar:GetValue()) then
+		--				Perl_Player_DruidBarFadeBar:SetMinMaxValues(0, playerdruidbarmanamax);
+		--				Perl_Player_DruidBarFadeBar:SetValue(Perl_Player_DruidBarFadeBar:GetValue());
+		--				Perl_Player_DruidBarFadeBar:Show();
+		--				Perl_Player_DruidBar_Fade_Color = 1;
+		--				Perl_Player_DruidBar_Fade_Time_Elapsed = 0;
+		--				Perl_Player_DruidBar_Fade_OnUpdate_Frame:Show();
+		--			end
+		--		end
+
+				Perl_Player_DruidBar:SetMinMaxValues(0, playerdruidbarmanamax);
+				if (PCUF_INVERTBARVALUES == 1) then
+					Perl_Player_DruidBar:SetValue(playerdruidbarmanamax - playerdruidbarmana);
+				else
+					Perl_Player_DruidBar:SetValue(playerdruidbarmana);
+				end
+
+				-- Display the needed text
+				if (compactmode == 0) then
+					if (healermode == 1) then
+						Perl_Player_DruidBarText:SetTextColor(0.5, 0.5, 0.5, 1);
+						if (showmanadeficit == 1) then
+							Perl_Player_DruidBarText:SetText("-"..playerdruidbarmanamax - playerdruidbarmana);
+						else
+							Perl_Player_DruidBarText:SetText();
+						end
+						if (showbarvalues == 0) then
+							if (mouseovermanaflag == 0) then
+								Perl_Player_DruidBarTextPercent:SetText();
+							else
+								Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+							end
+						else
+							Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+						end
+					else
+						Perl_Player_DruidBarText:SetTextColor(1, 1, 1, 1);
+						Perl_Player_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+						Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmanapercent.."%");
+					end
+					Perl_Player_DruidBarTextCompactPercent:SetText();	-- Hide the compact mode percent text in full mode
+				else
+					if (healermode == 1) then
+						Perl_Player_DruidBarText:SetTextColor(0.5, 0.5, 0.5, 1);
+						if (showmanadeficit == 1) then
+							Perl_Player_DruidBarText:SetText("-"..playermanamax - playermana);
+						else
+							Perl_Player_DruidBarText:SetText();
+						end
+						if (showbarvalues == 0) then
+							if (mouseovermanaflag == 0) then
+								Perl_Player_DruidBarTextPercent:SetText();
+							else
+								Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+							end
+						else
+							Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+						end
+					else
+						Perl_Player_DruidBarText:SetTextColor(1, 1, 1, 1);
+						Perl_Player_DruidBarText:SetText();
+						Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+					end
+
+					if (compactpercent == 1) then
+						Perl_Player_DruidBarTextCompactPercent:SetText(playerdruidbarmanapercent.."%");
+					else
+						Perl_Player_DruidBarTextCompactPercent:SetText();
+					end
+				end
 			else
 				-- Hide it all (bars and text)
-				Perl_Player_DruidBar_OnUpdate_Frame:Hide();
 				Perl_Player_DruidBarText:SetText();
 				Perl_Player_DruidBarTextPercent:SetText();
 				Perl_Player_DruidBarTextCompactPercent:SetText();
@@ -520,7 +587,7 @@ function Perl_Player_Update_Mana()
 				Perl_Player_DruidBar:SetValue(0);
 			end
 		else
-			Perl_Player_DruidBar_OnUpdate_Frame:Hide();
+			-- Hide it all (bars and text)
 			Perl_Player_DruidBarText:SetText();
 			Perl_Player_DruidBarTextPercent:SetText();
 			Perl_Player_DruidBarTextCompactPercent:SetText();
@@ -637,93 +704,6 @@ function Perl_Player_OnUpdate_ManaBar(arg1)
 	end
 end
 
-function Perl_Player_Update_DruidBar(arg1)
-	Perl_Player_DruidBar_Time_Elapsed = Perl_Player_DruidBar_Time_Elapsed + arg1;
-	if (Perl_Player_DruidBar_Time_Elapsed > Perl_Player_DruidBar_Time_Update_Rate) then
-		Perl_Player_DruidBar_Time_Elapsed = 0;
-		-- Show the bars and set the text and reposition the original mana bar below the druid bar
-		playerdruidbarmana = floor(DruidBarKey.keepthemana);
-		playerdruidbarmanamax = DruidBarKey.maxmana;
-		playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
-
-		if (playerdruidbarmanapercent == 100) then			-- This is to ensure the value isn't 1 or 2 mana under max when 100%
-			playerdruidbarmana = playerdruidbarmanamax;
-		end
-
---		if (PCUF_FADEBARS == 1) then
---			if (playerdruidbarmana < Perl_Player_DruidBar:GetValue()) then
---				Perl_Player_DruidBarFadeBar:SetMinMaxValues(0, playerdruidbarmanamax);
---				Perl_Player_DruidBarFadeBar:SetValue(Perl_Player_DruidBarFadeBar:GetValue());
---				Perl_Player_DruidBarFadeBar:Show();
---				Perl_Player_DruidBar_Fade_Color = 1;
---				Perl_Player_DruidBar_Fade_Time_Elapsed = 0;
---				Perl_Player_DruidBar_Fade_OnUpdate_Frame:Show();
---			end
---		end
-
-		Perl_Player_DruidBar:SetMinMaxValues(0, playerdruidbarmanamax);
-		if (PCUF_INVERTBARVALUES == 1) then
-			Perl_Player_DruidBar:SetValue(playerdruidbarmanamax - playerdruidbarmana);
-		else
-			Perl_Player_DruidBar:SetValue(playerdruidbarmana);
-		end
-
-		-- Display the needed text
-		if (compactmode == 0) then
-			if (healermode == 1) then
-				Perl_Player_DruidBarText:SetTextColor(0.5, 0.5, 0.5, 1);
-				if (showmanadeficit == 1) then
-					Perl_Player_DruidBarText:SetText("-"..playerdruidbarmanamax - playerdruidbarmana);
-				else
-					Perl_Player_DruidBarText:SetText();
-				end
-				if (showbarvalues == 0) then
-					if (mouseovermanaflag == 0) then
-						Perl_Player_DruidBarTextPercent:SetText();
-					else
-						Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
-					end
-				else
-					Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
-				end
-			else
-				Perl_Player_DruidBarText:SetTextColor(1, 1, 1, 1);
-				Perl_Player_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
-				Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmanapercent.."%");
-			end
-			Perl_Player_DruidBarTextCompactPercent:SetText();	-- Hide the compact mode percent text in full mode
-		else
-			if (healermode == 1) then
-				Perl_Player_DruidBarText:SetTextColor(0.5, 0.5, 0.5, 1);
-				if (showmanadeficit == 1) then
-					Perl_Player_DruidBarText:SetText("-"..playermanamax - playermana);
-				else
-					Perl_Player_DruidBarText:SetText();
-				end
-				if (showbarvalues == 0) then
-					if (mouseovermanaflag == 0) then
-						Perl_Player_DruidBarTextPercent:SetText();
-					else
-						Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
-					end
-				else
-					Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
-				end
-			else
-				Perl_Player_DruidBarText:SetTextColor(1, 1, 1, 1);
-				Perl_Player_DruidBarText:SetText();
-				Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
-			end
-
-			if (compactpercent == 1) then
-				Perl_Player_DruidBarTextCompactPercent:SetText(playerdruidbarmanapercent.."%");
-			else
-				Perl_Player_DruidBarTextCompactPercent:SetText();
-			end
-		end
-	end
-end
-
 function Perl_Player_Update_Mana_Bar()
 	playerpower = UnitPowerType("player");
 
@@ -822,7 +802,6 @@ function Perl_Player_Update_Combat_Status(event)
 		InCombat = 1;
 		Perl_Player_ActivityStatus:SetTexCoord(0.5, 1.0, 0.0, 0.5);
 		Perl_Player_ActivityStatus:Show();
-		Perl_Player_EnergyTicker:SetAlpha(1);
 	elseif (event == "PLAYER_REGEN_ENABLED") then
 		InCombat = 0;
 		if (IsResting()) then
@@ -830,7 +809,6 @@ function Perl_Player_Update_Combat_Status(event)
 			Perl_Player_ActivityStatus:Show();
 		else
 			Perl_Player_ActivityStatus:Hide();
-			Perl_Player_EnergyTicker:SetAlpha(0);
 		end
 	elseif (IsResting()) then
 		if (InCombat == 1) then
@@ -1108,22 +1086,6 @@ function Perl_Player_Update_Portrait()
 	end
 end
 
-function Perl_Player_EnergyTicker_Display()
-	if (showenergyticker == 1 and UnitPowerType("player") == 3) then
-		Perl_Player_EnergyTicker:SetWidth(Perl_Player_ManaBar:GetWidth());
-		Perl_Player_EnergyTicker:Show();
-	else
-		Perl_Player_EnergyTicker:Hide();
-	end
-end
-
-function Perl_Player_EnergyTicker_OnUpdate()
-	-- Based on code by Zek
-	local remainder = mod((GetTime() - energytime), 2);
-	Perl_Player_EnergyTicker:SetValue(remainder);
-	Perl_Player_EnergyTickerSpark:SetPoint("CENTER", Perl_Player_EnergyTicker, "LEFT", Perl_Player_EnergyTicker:GetWidth() * (remainder / 2), 0);
-end
-
 function Perl_Player_FiveSecondRule_OnUpdate(self, elapsed)
 	local bartime = GetTime() - fivesecondruletime;
 	Perl_Player_FiveSecondRuleSpark:SetPoint("CENTER", self, "LEFT", self:GetWidth() * (bartime / 5), 0);
@@ -1261,7 +1223,6 @@ function Perl_Player_Frame_Style()
 			end
 		else
 			-- Hide it all (bars and text)
-			Perl_Player_DruidBar_OnUpdate_Frame:Hide();
 			Perl_Player_DruidBarText:SetText();
 			Perl_Player_DruidBarTextPercent:SetText();
 			Perl_Player_DruidBarTextCompactPercent:SetText();
@@ -1474,8 +1435,6 @@ function Perl_Player_Frame_Style()
 			RuneFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
-		Perl_Player_EnergyTicker_Display();	-- Update the energy ticker
-
 		-- Update the five second rule
 		Perl_Player_FiveSecondRule:SetWidth(Perl_Player_ManaBar:GetWidth());
 
@@ -1635,12 +1594,6 @@ function Perl_Player_Set_Show_Raid_Group_In_Name(newvalue)
 	Perl_Player_Update_Raid_Group_Number();
 end
 
-function Perl_Player_Set_Show_Energy_Ticker(newvalue)
-	showenergyticker = newvalue;
-	Perl_Player_UpdateVars();
-	Perl_Player_Frame_Style();
-end
-
 function Perl_Player_Set_Show_Five_second_Rule(newvalue)
 	fivesecondrule = newvalue;
 	Perl_Player_UpdateVars();
@@ -1721,7 +1674,6 @@ function Perl_Player_GetVars(name, updateflag)
 	showpvpicon = Perl_Player_Config[name]["ShowPvPIcon"];
 	showbarvalues = Perl_Player_Config[name]["ShowBarValues"];
 	showraidgroupinname = Perl_Player_Config[name]["ShowRaidGroupInName"];
-	showenergyticker = Perl_Player_Config[name]["ShowEnergyTicker"];
 	fivesecondrule = Perl_Player_Config[name]["FiveSecondRule"];
 	totemtimers = Perl_Player_Config[name]["TotemTimers"];
 	runeframe = Perl_Player_Config[name]["RuneFrame"];
@@ -1787,9 +1739,6 @@ function Perl_Player_GetVars(name, updateflag)
 	if (showraidgroupinname == nil) then
 		showraidgroupinname = 0;
 	end
-	if (showenergyticker == nil) then
-		showenergyticker = 0;
-	end
 	if (fivesecondrule == nil) then
 		fivesecondrule = 0;
 	end
@@ -1835,7 +1784,6 @@ function Perl_Player_GetVars(name, updateflag)
 		["showpvpicon"] = showpvpicon,
 		["showbarvalues"] = showbarvalues,
 		["showraidgroupinname"] = showraidgroupinname,
-		["showenergyticker"] = showenergyticker,
 		["fivesecondrule"] = fivesecondrule,
 		["totemtimers"] = totemtimers,
 		["runeframe"] = runeframe,
@@ -1948,11 +1896,6 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				showraidgroupinname = nil;
 			end
-			if (vartable["Global Settings"]["ShowEnergyTicker"] ~= nil) then
-				showenergyticker = vartable["Global Settings"]["ShowEnergyTicker"];
-			else
-				showenergyticker = nil;
-			end
 			if (vartable["Global Settings"]["FiveSecondRule"] ~= nil) then
 				fivesecondrule = vartable["Global Settings"]["FiveSecondRule"];
 			else
@@ -2036,9 +1979,6 @@ function Perl_Player_UpdateVars(vartable)
 		if (showraidgroupinname == nil) then
 			showraidgroupinname = 0;
 		end
-		if (showenergyticker == nil) then
-			showenergyticker = 0;
-		end
 		if (fivesecondrule == nil) then
 			fivesecondrule = 0;
 		end
@@ -2079,7 +2019,6 @@ function Perl_Player_UpdateVars(vartable)
 		["ShowPvPIcon"] = showpvpicon,
 		["ShowBarValues"] = showbarvalues,
 		["ShowRaidGroupInName"] = showraidgroupinname,
-		["ShowEnergyTicker"] = showenergyticker,
 		["FiveSecondRule"] = fivesecondrule,
 		["TotemTimers"] = totemtimers,
 		["RuneFrame"] = runeframe,
@@ -2121,22 +2060,6 @@ function Perl_Player_BuffUpdateAll()
 		Perl_Player_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 		Perl_Player_PortraitFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 		Perl_Player_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	end
-
-	if (showenergyticker == 1) then
-		if (not InCombatLockdown()) then
-			local buffName;
-			for buffnum=1, 20 do
-				buffName, _, _, _ = UnitBuff("player", buffnum, 0);
-				if (buffName == PERL_LOCALIZED_PLAYER_STEALTH or buffName == PERL_LOCALIZED_PLAYER_PROWL) then
-					Perl_Player_EnergyTicker:SetAlpha(1);
-					return;
-				end
-			end
-			Perl_Player_EnergyTicker:SetAlpha(0);
-		else
-			Perl_Player_EnergyTicker:SetAlpha(1);
-		end
 	end
 end
 

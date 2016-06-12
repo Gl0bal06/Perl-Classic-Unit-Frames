@@ -1,3 +1,9 @@
+3.11 - June 4, 2010
+ - All: Texture code tweaked for patch 3.3.3, still needs work
+ - CombatDisplay/Player: Druid Bar functionality no longer requires the Druid Bar addon
+ - CombatDisplay/Player: Removed the energy ticker
+ - Config: Updated Korean translations (Thanks mrgyver)
+
 3.10 - January 6, 2010
  - Party/Player: Added LFG role icon support
  - Party/Player: Added a custom LFG role icon (Thanks Kudane)
@@ -134,7 +140,7 @@
  - Pet: The combat text is now correctly centered for the pet portrait frame
  - Pet: Buffs and debuffs in positions 6 and 7 now show up correctly for warlocks
  - Pet: There is now less space below the experience bar when it is visible
- - Focus/Pet/Player/Target: There is no longer a dead zone to the right of the name frame in compact mode
+ - Focus/Pet/Player/Target: There is no longer a dead zone to the right of the name frame in compact modmode
  - Player: Added support for the Blizzard totem timers
  - Player: Added support for the five second rule
  - Player: The master looter icon will now correctly hide when leaving a party or raid

@@ -1,6 +1,6 @@
 if (GetLocale() == "koKR") then
 	-- Class Names
-	PERL_LOCALIZED_DEATHKNIGHT = "Death Knight";
+	PERL_LOCALIZED_DEATHKNIGHT = "죽음의 기사";
 	PERL_LOCALIZED_DRUID = "드루이드";
 	PERL_LOCALIZED_HUNTER = "사냥꾼";
 	PERL_LOCALIZED_MAGE = "마법사";
@@ -35,6 +35,7 @@ if (GetLocale() == "koKR") then
 	PERL_LOCALIZED_CONFIG_MINIMAP_LOCK = "오른쪽 클릭 : 잠금";
 	PERL_LOCALIZED_CONFIG_MINIMAP_UNLOCK = "오른쪽 클릭 : 풀림";
 	PERL_LOCALIZED_CONFIG_OPTIONS_UNAVAILABLE = PERL_LOCALIZED_NAME..": 전투중에는 설정을 변경할 수 없습니다.";
+	PERL_LOCALIZED_CONFIG_BLIZZARD_BUTTON = "설정창 열기"
 
 	-- Perl Player Strings
 	PERL_LOCALIZED_PLAYER_GROUP = "파티 ";

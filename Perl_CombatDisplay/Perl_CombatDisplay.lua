@@ -18,7 +18,6 @@ local rightclickmenu = 0;	-- The ability to open a menu from CombatDisplay is di
 local displaypercents = 0;	-- percents are off by default
 local showcp = 0;		-- combo points are hidden by default
 local clickthrough = 0;		-- frames are clickable by default
-local showenergyticker = 0;	-- energy ticker is off by default
 
 -- Default Local Variables
 local InCombat = 0;
@@ -53,8 +52,6 @@ local Perl_CombatDisplay_Target_ManaBar_Fade_Time_Elapsed = 0;		-- set the updat
 
 -- Local variables to save memory
 local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, pethealth, pethealthmax, petmana, petmanamax, targethealth, targethealthmax, targetmana, targetmanamax, targetpowertype, englishclass, playeronupdatemana, targetonupdatemana;
-local energylast = 0;
-local energytime = 0;
 
 
 ----------------------
@@ -155,12 +152,6 @@ function Perl_CombatDisplay_Events:UNIT_ENERGY()
 			manafull = 0;
 		end
 		Perl_CombatDisplay_Update_Mana();
-
-		local e = UnitMana("player");
-		if (e == energylast + 20) then
-			energytime = GetTime();
-		end
-		energylast = e;
 	elseif (arg1 == "target") then
 		Perl_CombatDisplay_Target_Update_Mana();
 	elseif (arg1 == "pet") then
@@ -233,7 +224,6 @@ end
 
 function Perl_CombatDisplay_Events:PLAYER_REGEN_ENABLED()
 	IsAggroed = 0;
-	Perl_CombatDisplay_EnergyTicker:SetAlpha(0);
 	if (state == 3) then
 		Perl_CombatDisplay_UpdateDisplay();
 	end
@@ -241,7 +231,6 @@ end
 
 function Perl_CombatDisplay_Events:PLAYER_REGEN_DISABLED()
 	IsAggroed = 1;
-	Perl_CombatDisplay_EnergyTicker:SetAlpha(1);
 	if (state == 3) then
 		if (not InCombatLockdown()) then		-- REMOVE THIS CHECK WHEN YOU CAN
 			Perl_CombatDisplay_Frame:Show();				-- Show the player frame if needed
@@ -258,7 +247,6 @@ function Perl_CombatDisplay_Events:UNIT_DISPLAYPOWER()
 	if (arg1 == "player") then
 		Perl_CombatDisplay_UpdateBars();
 		Perl_CombatDisplay_Update_Mana();
-		Perl_CombatDisplay_EnergyTicker_Display();
 		if (InCombat == 0 and IsAggroed == 0) then
 			if (state == 1) then
 				Perl_CombatDisplay_Frame:Show();
@@ -515,19 +503,48 @@ function Perl_CombatDisplay_Update_Mana()
 
 	if (showdruidbar == 1) then
 		_, englishclass = UnitClass("player");
-		if (DruidBarKey and (englishclass == "DRUID")) then
+		if (englishclass == "DRUID") then
 			if (playerpower > 0) then
-				Perl_CombatDisplay_DruidBar_OnUpdate_Frame:Show();		-- Do all our work here (OnUpdate since it's very random if it works with just the UNIT_MANA event)
+				playerdruidbarmana = UnitPower("player", 0);
+				playerdruidbarmanamax = UnitPowerMax("player", 0);
+				playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
+
+				if (playerdruidbarmanapercent == 100) then		-- This is to ensure the value isn't 1 or 2 mana under max when 100%
+					playerdruidbarmana = playerdruidbarmanamax;
+				end
+
+		--		if (PCUF_FADEBARS == 1) then
+		--			if (playerdruidbarmana < Perl_CombatDisplay_DruidBar:GetValue()) then
+		--				Perl_CombatDisplay_DruidBarFadeBar:SetMinMaxValues(0, playerdruidbarmanamax);
+		--				Perl_CombatDisplay_DruidBarFadeBar:SetValue(Perl_CombatDisplay_DruidBar:GetValue());
+		--				Perl_CombatDisplay_DruidBarFadeBar:Show();
+		--				Perl_CombatDisplay_DruidBar_Fade_Color = 1;
+		--				Perl_CombatDisplay_DruidBar_Fade_Time_Elapsed = 0;
+		--				Perl_CombatDisplay_DruidBar_Fade_OnUpdate_Frame:Show();
+		--			end
+		--		end
+
+				Perl_CombatDisplay_DruidBar:SetMinMaxValues(0, playerdruidbarmanamax);
+				if (PCUF_INVERTBARVALUES == 1) then
+					Perl_CombatDisplay_DruidBar:SetValue(playerdruidbarmanamax - playerdruidbarmana);
+				else
+					Perl_CombatDisplay_DruidBar:SetValue(playerdruidbarmana);
+				end
+
+				-- Display the needed text
+				if (displaypercents == 0) then
+					Perl_CombatDisplay_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+				else
+					Perl_CombatDisplay_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax.." | "..playerdruidbarmanapercent.."%");
+				end
 			else
 				-- Hide it all (bars and text)
-				Perl_CombatDisplay_DruidBar_OnUpdate_Frame:Hide();
 				Perl_CombatDisplay_DruidBarText:SetText();
 				Perl_CombatDisplay_DruidBar:SetMinMaxValues(0, 1);
 				Perl_CombatDisplay_DruidBar:SetValue(0);
 			end
 		else
 			-- Hide it all (bars and text)
-			Perl_CombatDisplay_DruidBar_OnUpdate_Frame:Hide();
 			Perl_CombatDisplay_DruidBarText:SetText();
 			Perl_CombatDisplay_DruidBar:SetMinMaxValues(0, 1);
 			Perl_CombatDisplay_DruidBar:SetValue(0);
@@ -561,46 +578,6 @@ function Perl_CombatDisplay_OnUpdate_ManaBar(arg1)
 				Perl_CombatDisplay_ManaBar:SetValue(playeronupdatemana);
 			end
 			Perl_CombatDisplay_Update_Mana_Text();
-		end
-	end
-end
-
-function Perl_CombatDisplay_Update_DruidBar(arg1)
-	Perl_CombatDisplay_DruidBar_Time_Elapsed = Perl_CombatDisplay_DruidBar_Time_Elapsed + arg1;
-	if (Perl_CombatDisplay_DruidBar_Time_Elapsed > Perl_CombatDisplay_DruidBar_Time_Update_Rate) then
-		Perl_CombatDisplay_DruidBar_Time_Elapsed = 0;
-		-- Show the bars and set the text and reposition the original mana bar below the druid bar
-		playerdruidbarmana = floor(DruidBarKey.keepthemana);
-		playerdruidbarmanamax = DruidBarKey.maxmana;
-		playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
-
-		if (playerdruidbarmanapercent == 100) then		-- This is to ensure the value isn't 1 or 2 mana under max when 100%
-			playerdruidbarmana = playerdruidbarmanamax;
-		end
-
---		if (PCUF_FADEBARS == 1) then
---			if (playerdruidbarmana < Perl_CombatDisplay_DruidBar:GetValue()) then
---				Perl_CombatDisplay_DruidBarFadeBar:SetMinMaxValues(0, playerdruidbarmanamax);
---				Perl_CombatDisplay_DruidBarFadeBar:SetValue(Perl_CombatDisplay_DruidBar:GetValue());
---				Perl_CombatDisplay_DruidBarFadeBar:Show();
---				Perl_CombatDisplay_DruidBar_Fade_Color = 1;
---				Perl_CombatDisplay_DruidBar_Fade_Time_Elapsed = 0;
---				Perl_CombatDisplay_DruidBar_Fade_OnUpdate_Frame:Show();
---			end
---		end
-
-		Perl_CombatDisplay_DruidBar:SetMinMaxValues(0, playerdruidbarmanamax);
-		if (PCUF_INVERTBARVALUES == 1) then
-			Perl_CombatDisplay_DruidBar:SetValue(playerdruidbarmanamax - playerdruidbarmana);
-		else
-			Perl_CombatDisplay_DruidBar:SetValue(playerdruidbarmana);
-		end
-
-		-- Display the needed text
-		if (displaypercents == 0) then
-			Perl_CombatDisplay_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
-		else
-			Perl_CombatDisplay_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax.." | "..playerdruidbarmanapercent.."%");
 		end
 	end
 end
@@ -787,21 +764,6 @@ function Perl_CombatDisplay_Update_PetMana()
 			Perl_CombatDisplay_PetManaBarText:SetText(petmana.."/"..petmanamax.." | "..floor(petmana/petmanamax*100+0.5).."%");
 		end
 	end
-end
-
-function Perl_CombatDisplay_EnergyTicker_Display()
-	if (showenergyticker == 1 and UnitPowerType("player") == 3) then
-		Perl_CombatDisplay_EnergyTicker:Show();
-	else
-		Perl_CombatDisplay_EnergyTicker:Hide();
-	end
-end
-
-function Perl_CombatDisplay_EnergyTicker_OnUpdate()
-	-- Based on code by Zek
-	local remainder = mod((GetTime() - energytime), 2);
-	Perl_CombatDisplay_EnergyTicker:SetValue(remainder);
-	Perl_CombatDisplay_EnergyTickerSpark:SetPoint("CENTER", Perl_CombatDisplay_EnergyTicker, "LEFT", Perl_CombatDisplay_EnergyTicker:GetWidth() * (remainder / 2), 0);
 end
 
 
@@ -1220,7 +1182,6 @@ function Perl_CombatDisplay_Frame_Style()
 	end
 
 	Perl_CombatDisplay_Update_Mana();
-	Perl_CombatDisplay_EnergyTicker_Display();
 	Perl_CombatDisplay_Update_Combo_Points();
 	Perl_CombatDisplay_CheckForPets();
 	Perl_CombatDisplay_UpdateDisplay();
@@ -1305,12 +1266,6 @@ function Perl_CombatDisplay_Set_Click_Through(newvalue)
 	Perl_CombatDisplay_Frame_Style();
 end
 
-function Perl_CombatDisplay_Set_Show_Energy_Ticker(newvalue)
-	showenergyticker = newvalue;
-	Perl_CombatDisplay_UpdateVars();
-	Perl_CombatDisplay_Frame_Style();
-end
-
 function Perl_CombatDisplay_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);					-- convert the user input to a wow acceptable value
@@ -1360,7 +1315,6 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 	displaypercents = Perl_CombatDisplay_Config[name]["DisplayPercents"];
 	showcp = Perl_CombatDisplay_Config[name]["ShowCP"];
 	clickthrough = Perl_CombatDisplay_Config[name]["ClickThrough"];
-	showenergyticker = Perl_CombatDisplay_Config[name]["ShowEnergyTicker"];
 
 	if (state == nil) then
 		state = 3;
@@ -1401,9 +1355,6 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 	if (clickthrough == nil) then
 		clickthrough = 0;
 	end
-	if (showenergyticker == nil) then
-		showenergyticker = 0;
-	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1433,7 +1384,6 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 		["displaypercents"] = displaypercents,
 		["showcp"] = showcp,
 		["clickthrough"] = clickthrough,
-		["showenergyticker"] = showenergyticker,
 	}
 	return vars;
 end
@@ -1507,11 +1457,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			else
 				clickthrough = nil;
 			end
-			if (vartable["Global Settings"]["ShowEnergyTicker"] ~= nil) then
-				showenergyticker = vartable["Global Settings"]["ShowEnergyTicker"];
-			else
-				showenergyticker = nil;
-			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1554,9 +1499,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		if (clickthrough == nil) then
 			clickthrough = 0;
 		end
-		if (showenergyticker == nil) then
-			showenergyticker = 0;
-		end
 
 		-- Call any code we need to activate them
 		Perl_CombatDisplay_Set_Target(showtarget)
@@ -1581,7 +1523,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		["DisplayPercents"] = displaypercents,
 		["ShowCP"] = showcp,
 		["ClickThrough"] = clickthrough,
-		["ShowEnergyTicker"] = showenergyticker,
 	};
 end
 
@@ -1613,24 +1554,6 @@ function Perl_CombatDisplay_Buff_UpdateAll(unit, frame)
 
 	if (curableDebuffFound == 0) then
 		frame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	end
-
-	if (showenergyticker == 1) then
-		if (unit == "player") then
-			if (not InCombatLockdown()) then
-				local buffName;
-				for buffnum=1, 20 do
-					buffName, _, _, _ = UnitBuff("player", buffnum, 0);
-					if (buffName == PERL_LOCALIZED_PLAYER_STEALTH or buffName == PERL_LOCALIZED_PLAYER_PROWL) then
-						Perl_CombatDisplay_EnergyTicker:SetAlpha(1);
-						return;
-					end
-				end
-				Perl_CombatDisplay_EnergyTicker:SetAlpha(0);
-			else
-				Perl_CombatDisplay_EnergyTicker:SetAlpha(1);
-			end
-		end
 	end
 end
 
