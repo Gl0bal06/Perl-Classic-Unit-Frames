@@ -19,15 +19,6 @@ local showpvprank = 0;		-- hide the pvp rank by default
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 local transparency = 1;		-- 0.8 default from perl
-local UnitReactionColor = {	-- agro color table for npcs
-	{ r = 1.0, g = 0.0, b = 0.0 },
-	{ r = 1.0, g = 0.0, b = 0.0 },
-	{ r = 1.0, g = 0.5, b = 0.0 },
-	{ r = 1.0, g = 1.0, b = 0.0 },
-	{ r = 0.0, g = 1.0, b = 0.0 },
-	{ r = 0.0, g = 1.0, b = 0.0 },
-	{ r = 0.0, g = 1.0, b = 0.0 },
-};
 
 -- Empty variables used for localization
 local pt_localized_creature, pt_localized_notspecified;
@@ -83,7 +74,7 @@ end
 function Perl_Target_OnEvent(event)
 	if ((event == "PLAYER_TARGET_CHANGED") or (event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")) then
 		if (UnitExists("target")) then
-			Perl_Target_Update_Once();			-- Set the unchanging info for the target
+			Perl_Target_Update_Once();		-- Set the unchanging info for the target
 		else
 			Perl_Target_Frame:Hide();
 		end
@@ -351,15 +342,20 @@ function Perl_Target_Update_Health()
 	if (colorhealth == 1) then
 		if ((targethealthpercent <= 100) and (targethealthpercent > 75)) then
 			Perl_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
+			Perl_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
 		elseif ((targethealthpercent <= 75) and (targethealthpercent > 50)) then
 			Perl_Target_HealthBar:SetStatusBarColor(1, 1, 0);
+			Perl_Target_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 		elseif ((targethealthpercent <= 50) and (targethealthpercent > 25)) then
 			Perl_Target_HealthBar:SetStatusBarColor(1, 0.5, 0);
+			Perl_Target_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 		else
 			Perl_Target_HealthBar:SetStatusBarColor(1, 0, 0);
+			Perl_Target_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
 		end
 	else
 		Perl_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
+		Perl_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
 	end
 
 	if (targethealthmax == 100) then
@@ -1288,8 +1284,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.25",
-			releaseDate = "December 9, 2005",
+			version = "v0.26",
+			releaseDate = "December 19, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

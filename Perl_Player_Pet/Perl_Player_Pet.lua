@@ -266,15 +266,20 @@ function Perl_Player_Pet_Update_Health()
 		local playerpethealthpercent = floor(pethealth/pethealthmax*100+0.5);
 		if ((playerpethealthpercent <= 100) and (playerpethealthpercent > 75)) then
 			Perl_Player_Pet_HealthBar:SetStatusBarColor(0, 0.8, 0);
+			Perl_Player_Pet_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
 		elseif ((playerpethealthpercent <= 75) and (playerpethealthpercent > 50)) then
 			Perl_Player_Pet_HealthBar:SetStatusBarColor(1, 1, 0);
+			Perl_Player_Pet_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 		elseif ((playerpethealthpercent <= 50) and (playerpethealthpercent > 25)) then
 			Perl_Player_Pet_HealthBar:SetStatusBarColor(1, 0.5, 0);
+			Perl_Player_Pet_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 		else
 			Perl_Player_Pet_HealthBar:SetStatusBarColor(1, 0, 0);
+			Perl_Player_Pet_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
 		end
 	else
 		Perl_Player_Pet_HealthBar:SetStatusBarColor(0, 0.8, 0);
+		Perl_Player_Pet_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
 	end
 
 	if (pethealthmax == 100) then
@@ -641,8 +646,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.25",
-			releaseDate = "December 9, 2005",
+			version = "v0.26",
+			releaseDate = "December 19, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

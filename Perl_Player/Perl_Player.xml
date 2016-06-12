@@ -348,7 +348,7 @@
 							</Anchor>
 						</Anchors>
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
-						<BarColor r="0" g="0.8" b="0" a="0.5"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
 
 					<!-- Mana Bar -->
@@ -414,7 +414,7 @@
 							</Anchor>
 						</Anchors>
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
-						<BarColor r="0" g="0" b="1" a="0.5"/>
+						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
 
 					<!-- XP Bar -->

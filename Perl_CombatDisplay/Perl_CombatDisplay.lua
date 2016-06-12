@@ -293,15 +293,20 @@ function Perl_CombatDisplay_Update_Health()
 		local playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
 		if ((playerhealthpercent <= 100) and (playerhealthpercent > 75)) then
 			Perl_CombatDisplay_HealthBar:SetStatusBarColor(0, 0.8, 0);
+			Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
 		elseif ((playerhealthpercent <= 75) and (playerhealthpercent > 50)) then
 			Perl_CombatDisplay_HealthBar:SetStatusBarColor(1, 1, 0);
+			Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 		elseif ((playerhealthpercent <= 50) and (playerhealthpercent > 25)) then
 			Perl_CombatDisplay_HealthBar:SetStatusBarColor(1, 0.5, 0);
+			Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 		else
 			Perl_CombatDisplay_HealthBar:SetStatusBarColor(1, 0, 0);
+			Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
 		end
 	else
 		Perl_CombatDisplay_HealthBar:SetStatusBarColor(0, 0.8, 0);
+		Perl_CombatDisplay_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
 	end
 
 	Perl_CombatDisplay_HealthBar:SetMinMaxValues(0, playerhealthmax);
@@ -522,8 +527,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.25",
-			releaseDate = "December 9, 2005",
+			version = "v0.26",
+			releaseDate = "December 19, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

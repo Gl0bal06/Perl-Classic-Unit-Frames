@@ -15,6 +15,8 @@ local healermode = 0;		-- nurfed unit frame style
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
 local Initialized = nil;	-- waiting to be initialized
+local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
+local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 local transparency = 1;		-- general transparency for frames relative to bars/text  default is 0.8
 
 -- Variables for position of the class icon texture.
@@ -295,21 +297,30 @@ function Perl_Player_Update_Health()
 	if (colorhealth == 1) then
 		if ((playerhealthpercent <= 100) and (playerhealthpercent > 75)) then
 			Perl_Player_HealthBar:SetStatusBarColor(0, 0.8, 0);
+			Perl_Player_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
 		elseif ((playerhealthpercent <= 75) and (playerhealthpercent > 50)) then
 			Perl_Player_HealthBar:SetStatusBarColor(1, 1, 0);
+			Perl_Player_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 		elseif ((playerhealthpercent <= 50) and (playerhealthpercent > 25)) then
 			Perl_Player_HealthBar:SetStatusBarColor(1, 0.5, 0);
+			Perl_Player_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 		else
 			Perl_Player_HealthBar:SetStatusBarColor(1, 0, 0);
+			Perl_Player_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
 		end
 	else
 		Perl_Player_HealthBar:SetStatusBarColor(0, 0.8, 0);
+		Perl_Player_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
 	end
 
 	if (compactmode == 0) then
 		if (healermode == 1) then
 			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
-			Perl_Player_HealthBarTextPercent:SetText();
+			if (mouseoverhealthflag == 0) then
+				Perl_Player_HealthBarTextPercent:SetText();
+			else
+				Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
+			end
 		else
 			Perl_Player_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
 			Perl_Player_HealthBarTextPercent:SetText(playerhealthpercent .. "%");
@@ -317,7 +328,11 @@ function Perl_Player_Update_Health()
 	else
 		if (healermode == 1) then
 			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
-			Perl_Player_HealthBarTextPercent:SetText();
+			if (mouseoverhealthflag == 0) then
+				Perl_Player_HealthBarTextPercent:SetText();
+			else
+				Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
+			end
 		else
 			Perl_Player_HealthBarText:SetText();
 			Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
@@ -335,8 +350,16 @@ function Perl_Player_Update_Mana()
 
 	if (compactmode == 0) then
 		if (healermode == 1) then
-			Perl_Player_ManaBarText:SetText();
-			Perl_Player_ManaBarTextPercent:SetText();
+			if (mouseovermanaflag == 0) then
+				Perl_Player_ManaBarText:SetText();
+				Perl_Player_ManaBarTextPercent:SetText();
+			else
+				if (UnitPowerType("player") == 1) then
+					Perl_Player_ManaBarTextPercent:SetText(playermana);
+				else
+					Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+				end
+			end
 		else
 			Perl_Player_ManaBarText:SetText(playermana.."/"..playermanamax);
 			if (UnitPowerType("player") == 1) then
@@ -347,8 +370,16 @@ function Perl_Player_Update_Mana()
 		end
 	else
 		if (healermode == 1) then
-			Perl_Player_ManaBarText:SetText();
-			Perl_Player_ManaBarTextPercent:SetText();
+			if (mouseovermanaflag == 0) then
+				Perl_Player_ManaBarText:SetText();
+				Perl_Player_ManaBarTextPercent:SetText();
+			else
+				if (UnitPowerType("player") == 1) then
+					Perl_Player_ManaBarTextPercent:SetText(playermana);
+				else
+					Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+				end
+			end
 		else
 			Perl_Player_ManaBarText:SetText();
 			if (UnitPowerType("player") == 1) then
@@ -547,12 +578,14 @@ function Perl_Player_HealthShow()
 		local playerhealth = UnitHealth("player");
 		local playerhealthmax = UnitHealthMax("player");
 		Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
+		mouseoverhealthflag = 1;
 	end
 end
 
 function Perl_Player_HealthHide()
 	if (healermode == 1) then
 		Perl_Player_HealthBarTextPercent:SetText();
+		mouseoverhealthflag = 0;
 	end
 end
 
@@ -565,12 +598,14 @@ function Perl_Player_ManaShow()
 		else
 			Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
 		end
+		mouseovermanaflag = 1;
 	end
 end
 
 function Perl_Player_ManaHide()
 	if (healermode == 1) then
 		Perl_Player_ManaBarTextPercent:SetText();
+		mouseovermanaflag = 0;
 	end
 end
 
@@ -969,8 +1004,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.25",
-			releaseDate = "December 9, 2005",
+			version = "v0.26",
+			releaseDate = "December 19, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
