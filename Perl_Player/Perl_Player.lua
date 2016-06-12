@@ -122,7 +122,7 @@ function Perl_Player_OnLoad(self)
 	TotemFrame:SetParent(Perl_Player_Frame);
 	RuneFrame:SetParent(Perl_Player_Frame);
 	PaladinPowerBar:SetParent(Perl_Player_Frame);
-	ShardBarFrame:SetParent(Perl_Player_Frame);
+	WarlockPowerFrame:SetParent(Perl_Player_Frame);
 	EclipseBarFrame:SetParent(Perl_Player_Frame);
 	MonkHarmonyBar:SetParent(Perl_Player_Frame);
 	PriestBarFrame:SetParent(Perl_Player_Frame);
@@ -1462,9 +1462,9 @@ function Perl_Player_Frame_Style()
 
 		-- Hi-jack the Blizzard Warlock shard bar frame
 		if (shardbarframe == 1) then
-			ShardBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 28, 0);
+			WarlockPowerFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 28, 0);
 		else
-			ShardBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+			WarlockPowerFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
 		-- Hi-jack the Blizzard Druid eclipse bar frame

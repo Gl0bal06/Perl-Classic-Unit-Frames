@@ -1,3 +1,7 @@
+5.01 Beta 5 - July 7, 2012
+ - Config: Changed some option names regarding the new power bars
+ - Player: Added support for additional Warlock power bars
+
 5.01 Beta 4 - July 2, 2012
  - Focus: Fixed a variable name causing a dividing by zero error
  - Party: Added some sanity checks for dividing by zero
