@@ -655,7 +655,8 @@ function Perl_Target_Update_Health()
 					end
 
 					local currentPct = UnitHealth("target");
-					if (pointsPerPct > 0) then
+					pointsPerPct = nil
+					if (pointsPerPct and pointsPerPct > 0) then
 						-- Stored unit info from the DB
 						if (framestyle == 1) then
 							Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
@@ -680,6 +681,29 @@ function Perl_Target_Update_Health()
 								else
 									Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
 									Perl_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5));
+									Perl_Target_HealthBarTextCompactPercent:SetText(targethealth.."%");
+								end
+							end
+						end
+					else
+						-- Possible MobInfo2 fix
+						if (framestyle == 1) then	-- This chunk of code is the same as the next two blocks in case you customize this
+							Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
+							Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
+							Perl_Target_HealthBarText:SetText(targethealth.."%");
+						elseif (framestyle == 2) then
+							if (compactmode == 0) then
+								Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+								Perl_Target_HealthBarText:SetText(targethealth.."%");
+								Perl_Target_HealthBarTextRight:SetText(targethealth.."%");
+							else
+								if (compactpercent == 0) then
+									Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+									Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+									Perl_Target_HealthBarText:SetText(targethealth.."%");
+								else
+									Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+									Perl_Target_HealthBarText:SetText(targethealth.."%");
 									Perl_Target_HealthBarTextCompactPercent:SetText(targethealth.."%");
 								end
 							end

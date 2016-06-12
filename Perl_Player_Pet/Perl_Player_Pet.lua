@@ -1005,8 +1005,10 @@ function Perl_Player_Pet_Target_HealthShow()
 					end
 
 					local currentPct = UnitHealth("pettarget");
-					if (pointsPerPct > 0) then
+					if (pointsPerPct and pointsPerPct > 0) then
 						Perl_Player_Pet_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5));	-- Stored unit info from the DB
+					else
+						Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- Possible MobInfo2 fix
 					end
 				else
 					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- Unit not in MobHealth DB

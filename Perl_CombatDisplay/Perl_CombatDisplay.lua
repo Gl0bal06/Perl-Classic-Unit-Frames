@@ -914,12 +914,14 @@ function Perl_CombatDisplay_Target_Update_Health()
 					end
 
 					local currentPct = UnitHealth("target");
-					if (pointsPerPct > 0) then	-- Stored unit info from the DB
+					if (pointsPerPct and pointsPerPct > 0) then	-- Stored unit info from the DB
 						if (displaypercents == 0) then
 							Perl_CombatDisplay_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5));
 						else
 							Perl_CombatDisplay_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5).." | "..targethealth.."%");
 						end
+					else
+						Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");	-- Possible MobInfo2 fix
 					end
 				else
 					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");	-- Unit not in MobHealth DB

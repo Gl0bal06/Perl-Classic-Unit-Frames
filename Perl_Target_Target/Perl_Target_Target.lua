@@ -1186,8 +1186,10 @@ function Perl_Target_Target_HealthShow()
 					end
 
 					local currentPct = UnitHealth("targettarget");
-					if (pointsPerPct > 0) then
+					if (pointsPerPct and pointsPerPct > 0) then
 						Perl_Target_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5));	-- Stored unit info from the DB
+					else
+						Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- Possible MobInfo2 fix
 					end
 				else
 					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- Unit not in MobHealth DB
@@ -1298,8 +1300,10 @@ function Perl_Target_Target_Target_HealthShow()
 					end
 
 					local currentPct = UnitHealth("targettargettarget");
-					if (pointsPerPct > 0) then
+					if (pointsPerPct and pointsPerPct > 0) then
 						Perl_Target_Target_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5));	-- Stored unit info from the DB
+					else
+						Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Possible MobInfo2 fix
 					end
 				else
 					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Unit not in MobHealth DB

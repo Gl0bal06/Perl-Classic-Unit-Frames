@@ -921,7 +921,14 @@ end
 
 function Perl_Player_Update_PvP_Status()
 	if (UnitIsPVP("player") and not UnitIsPVPSanctuary("player")) then
-		if (UnitFactionGroup("player")) then
+		if (UnitIsPVPFreeForAll("player")) then
+			if (showpvpicon == 1) then
+				Perl_Player_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
+				Perl_Player_PVPStatus:Show();
+			else
+				Perl_Player_PVPStatus:Hide();
+			end
+		elseif (UnitFactionGroup("player")) then
 			Perl_Player_NameBarText:SetTextColor(0, 1, 0);		-- Green if PvP flagged
 			if (showpvpicon == 1) then
 				Perl_Player_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..UnitFactionGroup("player"));

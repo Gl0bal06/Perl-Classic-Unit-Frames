@@ -1,3 +1,7 @@
+2.19 - July 5, 2008
+ - All: Implemented a possible fix for MobInfo2 support
+ - Player: The PvP icon will now correctly show FFA status
+
 2.18 - May 14, 2008
  - All: Fixed a possible scope issue in the MobHealth and MobInfo support code
  - All: Cleaned up some code syntax and file uniformity

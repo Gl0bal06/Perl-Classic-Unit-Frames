@@ -597,7 +597,7 @@ function Perl_Focus_Update_Health()
 					end
 
 					local currentPct = UnitHealth("focus");
-					if (pointsPerPct > 0) then
+					if (pointsPerPct and pointsPerPct > 0) then
 						-- Stored unit info from the DB
 						if (framestyle == 1) then
 							Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
@@ -622,6 +622,29 @@ function Perl_Focus_Update_Health()
 								else
 									Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
 									Perl_Focus_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5));
+									Perl_Focus_HealthBarTextCompactPercent:SetText(focushealth.."%");
+								end
+							end
+						end
+					else
+						-- Possible MobInfo2 fix
+						if (framestyle == 1) then	-- This chunk of code is the same as the next two blocks in case you customize this
+							Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
+							Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
+							Perl_Focus_HealthBarText:SetText(focushealth.."%");
+						elseif (framestyle == 2) then
+							if (compactmode == 0) then
+								Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+								Perl_Focus_HealthBarText:SetText(focushealth.."%");
+								Perl_Focus_HealthBarTextRight:SetText(focushealth.."%");
+							else
+								if (compactpercent == 0) then
+									Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+									Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+									Perl_Focus_HealthBarText:SetText(focushealth.."%");
+								else
+									Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+									Perl_Focus_HealthBarText:SetText(focushealth.."%");
 									Perl_Focus_HealthBarTextCompactPercent:SetText(focushealth.."%");
 								end
 							end

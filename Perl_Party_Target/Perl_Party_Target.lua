@@ -498,8 +498,10 @@ function Perl_Party_Target_HealthShow(self)
 					end
 
 					local currentPct = UnitHealth(self.unit);
-					if (pointsPerPct > 0) then
+					if (pointsPerPct and pointsPerPct > 0) then
 						self.healthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5));	-- Stored unit info from the DB
+					else
+						self.healthBarText:SetText(partytargethealth.."%");	-- Possible MobInfo2 fix
 					end
 				else
 					self.healthBarText:SetText(partytargethealth.."%");	-- Unit not in MobHealth DB
