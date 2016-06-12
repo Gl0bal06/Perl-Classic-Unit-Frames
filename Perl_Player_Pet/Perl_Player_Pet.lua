@@ -20,22 +20,34 @@ local threedportrait = 0;		-- 3d portraits are off by default
 local portraitcombattext = 0;		-- Combat text is disabled by default on the portrait frame
 local compactmode = 0;			-- compact mode is disabled by default
 local hidename = 0;			-- name and level frame is enabled by default
+local displaypettarget = 0;		-- pet's target is off by default
+local classcolorednames = 0;		-- names are colored based on pvp status by default
+local showfriendlyhealth = 0;		-- show numerical friendly health is disbaled by default
+local mobhealthsupport = 1;		-- mobhealth support is on by default
 
 -- Default Local Variables
-local Initialized = nil;		-- waiting to be initialized
+local Initialized = nil;				-- waiting to be initialized
+local Perl_Player_Pet_Target_Time_Elapsed = 0;		-- set the update timer to 0
+local Perl_Player_Pet_Target_Time_Update_Rate = 0.2;	-- the update interval
+local mouseoverpettargethealthflag = 0;			-- are we showing detailed health info?
+local mouseoverpettargetmanaflag = 0;			-- are we showing detailed mana info?
 
 -- Fade Bar Variables
-local Perl_Player_Pet_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Player_Pet_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_Player_Pet_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Player_Pet_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Player_Pet_HealthBar_Fade_Color = 1;			-- the color fading interval
+local Perl_Player_Pet_HealthBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
+local Perl_Player_Pet_ManaBar_Fade_Color = 1;			-- the color fading interval
+local Perl_Player_Pet_ManaBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
+local Perl_Player_Pet_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Player_Pet_Target_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext;
+local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext, pettargetname, r, g, b, reaction, pettargethealth, pettargethealthmax, pettargethealthpercent, mobhealththreenumerics, pettargetmana, pettargetmanamax, pettargetpower, raidpettargetindex;
 
 
 ----------------------
--- Loading Function --
+-- Loading Functions --
 ----------------------
 function Perl_Player_Pet_OnLoad()
 	-- Combat Text
@@ -78,6 +90,22 @@ function Perl_Player_Pet_OnLoad()
 
 	-- WoW 2.0 Secure API Stuff
 	this:SetAttribute("unit", "pet");
+end
+
+function Perl_Player_Pet_Target_OnLoad()
+	-- Scripts
+	this:SetScript("OnUpdate", Perl_Player_Pet_Target_OnUpdate);
+
+	-- Button Click Overlays (in order of occurrence in XML)
+	Perl_Player_Pet_Target_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_Target_NameFrame:GetFrameLevel() + 1);
+	Perl_Player_Pet_Target_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_Target_StatsFrame:GetFrameLevel() + 1);
+	Perl_Player_Pet_Target_HealthBar_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_Target_StatsFrame:GetFrameLevel() + 2);
+	Perl_Player_Pet_Target_ManaBar_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_Target_StatsFrame:GetFrameLevel() + 2);
+	Perl_Player_Pet_Target_HealthBarFadeBar:SetFrameLevel(Perl_Player_Pet_Target_HealthBar:GetFrameLevel() - 1);
+	Perl_Player_Pet_Target_ManaBarFadeBar:SetFrameLevel(Perl_Player_Pet_Target_ManaBar:GetFrameLevel() - 1);
+
+	-- WoW 2.0 Secure API Stuff
+	this:SetAttribute("unit", "pettarget");
 end
 
 
@@ -228,33 +256,42 @@ end
 function Perl_Player_Pet_IFrameManager()
 	local iface = IFrameManager:Interface();
 	function iface:getName(frame)
-		return "Perl Player Pet";
+		if (frame == Perl_Player_Pet_Frame) then
+			return "Perl Player Pet";
+		else
+			return "Perl Player Pet Target";
+		end
 	end
 	function iface:getBorder(frame)
 		local bottom, left, right, top;
-		if (showxp == 0) then
-			bottom = 30;
+		if (frame == Perl_Player_Pet_Frame) then
+			if (showxp == 0) then
+				bottom = 30;
+			else
+				bottom = 43;
+			end
+			if (showportrait == 0) then
+				left = 0;
+			else
+				left = 48;
+			end
+			if (compactmode == 0) then
+				right = 0;
+			else
+				right = -35;
+			end
+			if (hidename == 0) then
+				top = 0;
+			else
+				top = -20;
+			end
+			return top, right, bottom, left;
 		else
-			bottom = 43;
+			return 0, 0, 30, 0;
 		end
-		if (showportrait == 0) then
-			left = 0;
-		else
-			left = 48;
-		end
-		if (compactmode == 0) then
-			right = 0;
-		else
-			right = -35;
-		end
-		if (hidename == 0) then
-			top = 0;
-		else
-			top = -20;
-		end
-		return top, right, bottom, left;
 	end
-	IFrameManager:Register(this, iface);
+	IFrameManager:Register(Perl_Player_Pet_Frame, iface);
+	IFrameManager:Register(Perl_Player_Pet_Target_Frame, iface);
 end
 
 function Perl_Player_Pet_Initialize_Frame_Color()
@@ -273,6 +310,15 @@ function Perl_Player_Pet_Initialize_Frame_Color()
 
 	Perl_Player_Pet_HealthBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Player_Pet_ManaBarText:SetTextColor(1, 1, 1, 1);
+
+
+	Perl_Player_Pet_Target_StatsFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Player_Pet_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Player_Pet_Target_NameFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Player_Pet_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+
+	Perl_Player_Pet_Target_HealthBarText:SetTextColor(1, 1, 1, 1);
+	Perl_Player_Pet_Target_ManaBarText:SetTextColor(1, 1, 1, 1);
 end
 
 
@@ -570,6 +616,405 @@ function Perl_Player_Pet_Set_Window_Layout()
 	else
 		Perl_Player_Pet_PortraitFrame:Hide();
 	end
+
+	if (displaypettarget == 1) then
+		RegisterUnitWatch(Perl_Player_Pet_Target_Frame);
+	else
+		Perl_Player_Pet_Target_Frame:Hide();
+		UnregisterUnitWatch(Perl_Player_Pet_Target_Frame);
+	end
+end
+
+
+--------------------------
+-- Pet Target Functions --
+--------------------------
+function Perl_Player_Pet_Target_OnUpdate()
+	Perl_Player_Pet_Target_Time_Elapsed = Perl_Player_Pet_Target_Time_Elapsed + arg1;
+	if (Perl_Player_Pet_Target_Time_Elapsed > Perl_Player_Pet_Target_Time_Update_Rate) then
+		Perl_Player_Pet_Target_Time_Elapsed = 0;
+
+		if (UnitExists(Perl_Player_Pet_Target_Frame:GetAttribute("unit"))) then
+			-- Begin: Set the name
+			pettargetname = UnitName("pettarget");
+			if (strlen(pettargetname) > 20) then
+				pettargetname = strsub(pettargetname, 1, 19).."...";
+			end
+			Perl_Player_Pet_Target_NameBarText:SetText(pettargetname);
+			-- End: Set the name
+
+			-- Begin: Set the name text color
+			if (UnitPlayerControlled("pettarget")) then						-- is it a player
+				if (UnitCanAttack("pettarget", "player")) then				-- are we in an enemy controlled zone
+					-- Hostile players are red
+					if (not UnitCanAttack("player", "pettarget")) then			-- enemy is not pvp enabled
+						r = 0.5;
+						g = 0.5;
+						b = 1.0;
+					else									-- enemy is pvp enabled
+						r = 1.0;
+						g = 0.0;
+						b = 0.0;
+					end
+				elseif (UnitCanAttack("player", "pettarget")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+					-- Players we can attack but which are not hostile are yellow
+					r = 1.0;
+					g = 1.0;
+					b = 0.0;
+				elseif (UnitIsPVP("pettarget") and not UnitIsPVPSanctuary("pettarget") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
+					-- Players we can assist but are PvP flagged are green
+					r = 0.0;
+					g = 1.0;
+					b = 0.0;
+				else										-- friendly non pvp enabled character
+					-- All other players are blue (the usual state on the "blue" server)
+					r = 0.5;
+					g = 0.5;
+					b = 1.0;
+				end
+				Perl_Player_Pet_Target_NameBarText:SetTextColor(r, g, b);
+			elseif (UnitIsTapped("pettarget") and not UnitIsTappedByPlayer("pettarget")) then
+				Perl_Player_Pet_Target_NameBarText:SetTextColor(0.5,0.5,0.5);			-- not our tap
+			else
+				if (UnitIsVisible("pettarget")) then
+					reaction = UnitReaction("pettarget", "player");
+					if (reaction) then
+						r = UnitReactionColor[reaction].r;
+						g = UnitReactionColor[reaction].g;
+						b = UnitReactionColor[reaction].b;
+						Perl_Player_Pet_Target_NameBarText:SetTextColor(r, g, b);
+					else
+						Perl_Player_Pet_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+					end
+				else
+					if (UnitCanAttack("pettarget", "player")) then					-- are we in an enemy controlled zone
+						-- Hostile players are red
+						if (not UnitCanAttack("player", "pettarget")) then			-- enemy is not pvp enabled
+							r = 0.5;
+							g = 0.5;
+							b = 1.0;
+						else									-- enemy is pvp enabled
+							r = 1.0;
+							g = 0.0;
+							b = 0.0;
+						end
+					elseif (UnitCanAttack("player", "pettarget")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+						-- Players we can attack but which are not hostile are yellow
+						r = 1.0;
+						g = 1.0;
+						b = 0.0;
+					elseif (UnitIsPVP("pettarget") and not UnitIsPVPSanctuary("pettarget") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
+						-- Players we can assist but are PvP flagged are green
+						r = 0.0;
+						g = 1.0;
+						b = 0.0;
+					else										-- friendly non pvp enabled character
+						-- All other players are blue (the usual state on the "blue" server)
+						r = 0.5;
+						g = 0.5;
+						b = 1.0;
+					end
+					Perl_Player_Pet_Target_NameBarText:SetTextColor(r, g, b);
+				end
+			end
+
+			if (classcolorednames == 1) then
+				if (UnitIsPlayer("pettarget")) then
+					_, englishclass = UnitClass("pettarget");
+					Perl_Player_Pet_Target_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+				end
+			end
+			-- End: Set the name text color
+
+			-- Begin: Update the health bar
+			pettargethealth = UnitHealth("pettarget");
+			pettargethealthmax = UnitHealthMax("pettarget");
+			pettargethealthpercent = floor(pettargethealth/pettargethealthmax*100+0.5);
+
+			if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then				-- This prevents negative health
+				pettargethealth = 0;
+				pettargethealthpercent = 0;
+			end
+
+			Perl_Player_Pet_Target_HealthBar_Fade_Check();
+
+			Perl_Player_Pet_Target_HealthBar:SetMinMaxValues(0, pettargethealthmax);
+			if (PCUF_INVERTBARVALUES == 1) then
+				Perl_Player_Pet_Target_HealthBar:SetValue(pettargethealthmax - pettargethealth);
+			else
+				Perl_Player_Pet_Target_HealthBar:SetValue(pettargethealth);
+			end
+
+			if (PCUF_COLORHEALTH == 1) then
+--				if ((pettargethealthpercent <= 100) and (pettargethealthpercent > 75)) then
+--					Perl_Player_Pet_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
+--					Perl_Player_Pet_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
+--				elseif ((pettargethealthpercent <= 75) and (pettargethealthpercent > 50)) then
+--					Perl_Player_Pet_Target_HealthBar:SetStatusBarColor(1, 1, 0);
+--					Perl_Player_Pet_Target_HealthBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+--				elseif ((pettargethealthpercent <= 50) and (pettargethealthpercent > 25)) then
+--					Perl_Player_Pet_Target_HealthBar:SetStatusBarColor(1, 0.5, 0);
+--					Perl_Player_Pet_Target_HealthBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+--				else
+--					Perl_Player_Pet_Target_HealthBar:SetStatusBarColor(1, 0, 0);
+--					Perl_Player_Pet_Target_HealthBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+--				end
+
+				local rawpercent = pettargethealth / pettargethealthmax;
+				local red, green;
+
+				if(rawpercent > 0.5) then
+					red = (1.0 - rawpercent) * 2;
+					green = 1.0;
+				else
+					red = 1.0;
+					green = rawpercent * 2;
+				end
+
+				Perl_Player_Pet_Target_HealthBar:SetStatusBarColor(red, green, 0, 1);
+				Perl_Player_Pet_Target_HealthBarBG:SetStatusBarColor(red, green, 0, 0.25);
+			else
+				Perl_Player_Pet_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
+				Perl_Player_Pet_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
+			end
+
+			if (mouseoverpettargethealthflag == 1) then
+				Perl_Player_Pet_Target_HealthShow();
+			else
+				if (showfriendlyhealth == 1) then
+					if (pettargethealthmax == 100) then
+						Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealthpercent.."%");
+					else
+						Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."/"..pettargethealthmax);
+					end
+				else
+					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealthpercent.."%");
+				end
+			end
+			-- End: Update the health bar
+
+			-- Begin: Update the mana bar
+			pettargetmana = UnitMana("pettarget");
+			pettargetmanamax = UnitManaMax("pettarget");
+
+			if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then				-- This prevents negative mana
+				pettargetmana = 0;
+			end
+
+			Perl_Player_Pet_Target_ManaBar_Fade_Check();
+
+			Perl_Player_Pet_Target_ManaBar:SetMinMaxValues(0, pettargetmanamax);
+			if (PCUF_INVERTBARVALUES == 1) then
+				Perl_Player_Pet_Target_ManaBar:SetValue(pettargetmanamax - pettargetmana);
+			else
+				Perl_Player_Pet_Target_ManaBar:SetValue(pettargetmana);
+			end
+
+			if (mouseoverpettargetmanaflag == 1) then
+				if (UnitPowerType("pettarget") == 1 or UnitPowerType("pettarget") == 2) then
+					Perl_Player_Pet_Target_ManaBarText:SetText(pettargetmana);
+				else
+					Perl_Player_Pet_Target_ManaBarText:SetText(pettargetmana.."/"..pettargetmanamax);
+				end
+			else
+				Perl_Player_Pet_Target_ManaBarText:Hide();
+			end
+			-- End: Update the mana bar
+
+			-- Begin: Update the mana bar color
+			pettargetpower = UnitPowerType("pettarget");
+			if (UnitManaMax("pettarget") == 0) then
+				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(0, 0, 0, 1);
+				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(0, 0, 0, 0.25);
+			elseif (pettargetpower == 1) then
+				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
+				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+			elseif (pettargetpower == 2) then
+				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
+				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+			elseif (pettargetpower == 3) then
+				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
+				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+			else
+				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
+				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
+			end
+			-- End: Update the mana bar color
+
+			-- Begin: Raid Icon
+			raidpettargetindex = GetRaidTargetIndex("pettarget");
+			if (raidpettargetindex) then
+				SetRaidTargetIconTexture(Perl_Player_Pet_Target_RaidTargetIcon, raidpettargetindex);
+				Perl_Player_Pet_Target_RaidTargetIcon:Show();
+			else
+				Perl_Player_Pet_Target_RaidTargetIcon:Hide();
+			end
+			-- End: Raid Icon
+
+			-- Begin: Debuff Frame Coloring
+			local curableDebuffFound = 0;
+			if (PCUF_COLORFRAMEDEBUFF == 1) then
+				local debuffType;
+				_, _, _, _, debuffType = UnitDebuff("pettarget", 1, 1);
+				if (debuffType) then
+					local color = DebuffTypeColor[debuffType];
+					Perl_Player_Pet_Target_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+					Perl_Player_Pet_Target_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+					curableDebuffFound = 1;
+				end
+			end
+			if (curableDebuffFound == 0) then
+				Perl_Player_Pet_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+				Perl_Player_Pet_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			end
+			-- End: Debuff Frame Coloring
+		end
+	end
+end
+
+function Perl_Player_Pet_Target_HealthBar_Fade_Check()
+	if (PCUF_FADEBARS == 1) then
+		if (pettargethealth < Perl_Player_Pet_Target_HealthBar:GetValue()) then
+			Perl_Player_Pet_Target_HealthBarFadeBar:SetMinMaxValues(0, pettargethealthmax);
+			Perl_Player_Pet_Target_HealthBarFadeBar:SetValue(Perl_Player_Pet_Target_HealthBar:GetValue());
+			Perl_Player_Pet_Target_HealthBarFadeBar:Show();
+			Perl_Player_Pet_Target_HealthBar_Fade_Color = 1;
+			Perl_Player_Pet_Target_HealthBar_Fade_Time_Elapsed = 0;
+			Perl_Player_Pet_Target_HealthBarFadeBar:SetStatusBarColor(0, Perl_Player_Pet_Target_HealthBar_Fade_Color, 0, Perl_Player_Pet_Target_HealthBar_Fade_Color);
+			Perl_Player_Pet_Target_HealthBar_Fade_OnUpdate_Frame:Show();
+		end
+	end
+end
+
+function Perl_Player_Pet_Target_ManaBar_Fade_Check()
+	if (PCUF_FADEBARS == 1) then
+		if (pettargetmana < Perl_Player_Pet_Target_ManaBar:GetValue()) then
+			Perl_Player_Pet_Target_ManaBarFadeBar:SetMinMaxValues(0, pettargetmanamax);
+			Perl_Player_Pet_Target_ManaBarFadeBar:SetValue(Perl_Player_Pet_Target_ManaBar:GetValue());
+			Perl_Player_Pet_Target_ManaBarFadeBar:Show();
+			Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;
+			Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed = 0;
+			if (pettargetpower == 0) then			-- Forcing an initial value will prevent the fade from starting incorrectly
+				Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color);
+			elseif (pettargetpower == 1) then
+				Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_Target_ManaBar_Fade_Color, 0, 0, Perl_Player_Pet_Target_ManaBar_Fade_Color);
+			elseif (pettargetpower == 2) then
+				Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_Target_ManaBar_Fade_Color, (Perl_Player_Pet_Target_ManaBar_Fade_Color-0.5), 0, Perl_Player_Pet_Target_ManaBar_Fade_Color);
+			elseif (pettargetpower == 3) then
+				Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color, 0, Perl_Player_Pet_Target_ManaBar_Fade_Color);
+			end
+			Perl_Player_Pet_Target_ManaBar_Fade_OnUpdate_Frame:Show();
+		end
+	end
+end
+
+function Perl_Player_Pet_Target_HealthShow()
+	pettargethealth = UnitHealth("pettarget");
+	pettargethealthmax = UnitHealthMax("pettarget");
+
+	if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then				-- This prevents negative health
+		pettargethealth = 0;
+		pettargethealthpercent = 0;
+	end
+
+	if (pettargethealthmax == 100) then
+		-- Begin Mobhealth support
+		if (mobhealthsupport == 1) then
+			if (MobHealth3) then
+				pettargethealth, pettargethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("pettarget", UnitHealth("pettarget"), UnitHealthMax("pettarget"), UnitName("pettarget"), UnitLevel("pettarget"));
+				if (mobhealththreenumerics) then
+					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."/"..pettargethealthmax);	-- Stored unit info from the DB
+				else
+					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- Unit not in MobHealth DB
+				end
+			elseif (MobHealthFrame) then
+
+				local index;
+				if UnitIsPlayer("pettarget") then
+					index = UnitName("pettarget");
+				else
+					index = UnitName("pettarget")..":"..UnitLevel("pettarget");
+				end
+
+				if ((MobHealthDB and MobHealthDB[index]) or (MobHealthPlayerDB and MobHealthPlayerDB[index])) then
+					local s, e;
+					local pts;
+					local pct;
+
+					if MobHealthDB[index] then
+						if (type(MobHealthDB[index]) ~= "string") then
+							Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");
+						end
+						s, e, pts, pct = string.find(MobHealthDB[index], "^(%d+)/(%d+)$");
+					else
+						if (type(MobHealthPlayerDB[index]) ~= "string") then
+							Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");
+						end
+						s, e, pts, pct = string.find(MobHealthPlayerDB[index], "^(%d+)/(%d+)$");
+					end
+
+					if (pts and pct) then
+						pts = pts + 0;
+						pct = pct + 0;
+						if (pct ~= 0) then
+							pointsPerPct = pts / pct;
+						else
+							pointsPerPct = 0;
+						end
+					end
+
+					local currentPct = UnitHealth("pettarget");
+					if (pointsPerPct > 0) then
+						Perl_Player_Pet_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5));	-- Stored unit info from the DB
+					end
+				else
+					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- Unit not in MobHealth DB
+				end
+			-- End MobHealth Support
+			else
+				Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- MobHealth isn't installed
+			end
+		else	-- mobhealthsupport == 0
+			Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- MobHealth support is disabled
+		end
+	else
+		Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."/"..pettargethealthmax);	-- Self/Party/Raid member
+	end
+
+	mouseoverpettargethealthflag = 1;
+end
+
+function Perl_Player_Pet_Target_HealthHide()
+	pettargethealthpercent = floor(UnitHealth("pettarget")/UnitHealthMax("pettarget")*100+0.5);
+
+	if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then				-- This prevents negative health
+		pettargethealthpercent = 0;
+	end
+
+	Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealthpercent.."%");
+	mouseoverpettargethealthflag = 0;
+end
+
+function Perl_Player_Pet_Target_ManaShow()
+	pettargetmana = UnitMana("pettarget");
+	pettargetmanamax = UnitManaMax("pettarget");
+
+	if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then				-- This prevents negative mana
+		pettargetmana = 0;
+	end
+
+	if (UnitPowerType("pettarget") == 1) then
+		Perl_Player_Pet_Target_ManaBarText:SetText(pettargetmana);
+	else
+		Perl_Player_Pet_Target_ManaBarText:SetText(pettargetmana.."/"..pettargetmanamax);
+	end
+	Perl_Player_Pet_Target_ManaBarText:Show();
+	mouseoverpettargetmanaflag = 1;
+end
+
+function Perl_Player_Pet_Target_ManaHide()
+	Perl_Player_Pet_Target_ManaBarText:Hide();
+	mouseoverpettargetmanaflag = 0;
 end
 
 
@@ -608,10 +1053,60 @@ function Perl_Player_Pet_ManaBar_Fade(arg1)
 	end
 end
 
+function Perl_Player_Pet_Target_HealthBar_Fade(arg1)
+	Perl_Player_Pet_Target_HealthBar_Fade_Color = Perl_Player_Pet_Target_HealthBar_Fade_Color - arg1;
+	Perl_Player_Pet_Target_HealthBar_Fade_Time_Elapsed = Perl_Player_Pet_Target_HealthBar_Fade_Time_Elapsed + arg1;
+
+	Perl_Player_Pet_Target_HealthBarFadeBar:SetStatusBarColor(0, Perl_Player_Pet_Target_HealthBar_Fade_Color, 0, Perl_Player_Pet_Target_HealthBar_Fade_Color);
+
+	if (Perl_Player_Pet_Target_HealthBar_Fade_Time_Elapsed > 1) then
+		Perl_Player_Pet_Target_HealthBar_Fade_Color = 1;
+		Perl_Player_Pet_Target_HealthBar_Fade_Time_Elapsed = 0;
+		Perl_Player_Pet_Target_HealthBarFadeBar:Hide();
+		Perl_Player_Pet_Target_HealthBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
+function Perl_Player_Pet_Target_ManaBar_Fade(arg1)
+	Perl_Player_Pet_Target_ManaBar_Fade_Color = Perl_Player_Pet_Target_ManaBar_Fade_Color - arg1;
+	Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed = Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed + arg1;
+
+	if (pettargetpower == 0) then
+		Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color);
+	elseif (pettargetpower == 1) then
+		Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_Target_ManaBar_Fade_Color, 0, 0, Perl_Player_Pet_Target_ManaBar_Fade_Color);
+	elseif (pettargetpower == 2) then
+		Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_Target_ManaBar_Fade_Color, (Perl_Player_Pet_Target_ManaBar_Fade_Color-0.5), 0, Perl_Player_Pet_Target_ManaBar_Fade_Color);
+	elseif (pettargetpower == 3) then
+		Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color, 0, Perl_Player_Pet_Target_ManaBar_Fade_Color);
+	end
+
+	if (Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed > 1) then
+		Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;
+		Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed = 0;
+		Perl_Player_Pet_Target_ManaBarFadeBar:Hide();
+		Perl_Player_Pet_Target_ManaBar_Fade_OnUpdate_Frame:Hide();
+	end
+end
+
 
 --------------------------
 -- GUI Config Functions --
 --------------------------
+function Perl_Player_Pet_Allign()
+	Perl_Player_Pet_Frame:SetUserPlaced(1);
+	Perl_Player_Pet_Target_Frame:SetUserPlaced(1);
+	Perl_Player_Pet_Frame:ClearAllPoints();
+	Perl_Player_Pet_Target_Frame:ClearAllPoints();
+
+	if (Perl_Player_Frame) then
+		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMRIGHT", 0, 4);
+	end
+	Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", Perl_Player_Pet_Frame, "TOPRIGHT", -4, 0);
+
+	Perl_Party_Target_UpdateVars();			-- Calling this to update the positions for IFrameManger
+end
+
 function Perl_Player_Pet_Set_Buffs(newbuffnumber)
 	if (newbuffnumber == nil) then
 		newbuffnumber = 16;
@@ -721,6 +1216,27 @@ function Perl_Player_Pet_Set_Portrait_Combat_Text(newvalue)
 	Perl_Player_Pet_Portrait_Combat_Text();
 end
 
+function Perl_Player_Pet_Set_Pet_Target(newvalue)
+	displaypettarget = newvalue;
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Set_Window_Layout();
+end
+
+function Perl_Player_Pet_Set_Class_Colored_Names(newvalue)
+	classcolorednames = newvalue;
+	Perl_Player_Pet_UpdateVars();
+end
+
+function Perl_Player_Pet_Set_Friendly_Health(newvalue)
+	showfriendlyhealth = newvalue;
+	Perl_Player_Pet_UpdateVars();
+end
+
+function Perl_Player_Pet_Set_MobHealth_Support(newvalue)
+	mobhealthsupport = newvalue;
+	Perl_Player_Pet_UpdateVars();
+end
+
 function Perl_Player_Pet_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);						-- convert the user input to a wow acceptable value
@@ -735,6 +1251,7 @@ function Perl_Player_Pet_Set_Scale_Actual()
 	else
 		local unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 		Perl_Player_Pet_Frame:SetScale(unsavedscale);
+		Perl_Player_Pet_Target_Frame:SetScale(unsavedscale);
 	end
 end
 
@@ -743,6 +1260,7 @@ function Perl_Player_Pet_Set_Transparency(number)
 		transparency = (number / 100);					-- convert the user input to a wow acceptable value
 	end
 	Perl_Player_Pet_Frame:SetAlpha(transparency);
+	Perl_Player_Pet_Target_Frame:SetAlpha(transparency);
 	Perl_Player_Pet_UpdateVars();
 end
 
@@ -770,6 +1288,10 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 	portraitcombattext = Perl_Player_Pet_Config[name]["PortraitCombatText"];
 	compactmode = Perl_Player_Pet_Config[name]["CompactMode"];
 	hidename = Perl_Player_Pet_Config[name]["HideName"];
+	displaypettarget = Perl_Player_Pet_Config[name]["DisplayPetTarget"];
+	classcolorednames = Perl_Player_Pet_Config[name]["ClassColoredNames"];
+	showfriendlyhealth = Perl_Player_Pet_Config[name]["ShowFriendlyHealth"];
+	mobhealthsupport = Perl_Player_Pet_Config[name]["MobHealthSupport"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -816,6 +1338,18 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 	if (hidename == nil) then
 		hidename = 0;
 	end
+	if (displaypettarget == nil) then
+		displaypettarget = 0;
+	end
+	if (classcolorednames == nil) then
+		classcolorednames = 0;
+	end
+	if (showfriendlyhealth == nil) then
+		showfriendlyhealth = 0;
+	end
+	if (mobhealthsupport == nil) then
+		mobhealthsupport = 1;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -849,6 +1383,10 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 		["portraitcombattext"] = portraitcombattext,
 		["compactmode"] = compactmode,
 		["hidename"] = hidename,
+		["displaypettarget"] = displaypettarget,
+		["classcolorednames"] = classcolorednames,
+		["showfriendlyhealth"] = showfriendlyhealth,
+		["mobhealthsupport"] = mobhealthsupport,
 	}
 	return vars;
 end
@@ -932,6 +1470,26 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			else
 				hidename = nil;
 			end
+			if (vartable["Global Settings"]["DisplayPetTarget"] ~= nil) then
+				displaypettarget = vartable["Global Settings"]["DisplayPetTarget"];
+			else
+				displaypettarget = nil;
+			end
+			if (vartable["Global Settings"]["ClassColoredNames"] ~= nil) then
+				classcolorednames = vartable["Global Settings"]["ClassColoredNames"];
+			else
+				classcolorednames = nil;
+			end
+			if (vartable["Global Settings"]["ShowFriendlyHealth"] ~= nil) then
+				showfriendlyhealth = vartable["Global Settings"]["ShowFriendlyHealth"];
+			else
+				showfriendlyhealth = nil;
+			end
+			if (vartable["Global Settings"]["MobHealthSupport"] ~= nil) then
+				mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
+			else
+				mobhealthsupport = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -980,6 +1538,18 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		if (hidename == nil) then
 			hidename = 0;
 		end
+		if (displaypettarget == nil) then
+			displaypettarget = 0;
+		end
+		if (classcolorednames == nil) then
+			classcolorednames = 0;
+		end
+		if (showfriendlyhealth == nil) then
+			showfriendlyhealth = 0;
+		end
+		if (mobhealthsupport == nil) then
+			mobhealthsupport = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
@@ -1013,6 +1583,10 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		["PortraitCombatText"] = portraitcombattext,
 		["CompactMode"] = compactmode,
 		["HideName"] = hidename,
+		["DisplayPetTarget"] = displaypettarget,
+		["ClassColoredNames"] = classcolorednames,
+		["ShowFriendlyHealth"] = showfriendlyhealth,
+		["MobHealthSupport"] = mobhealthsupport,
 	};
 end
 
@@ -1243,6 +1817,59 @@ end
 
 function Perl_Player_Pet_DragStop(button)
 	Perl_Player_Pet_Frame:StopMovingOrSizing();
+end
+
+function Perl_Player_Pet_Target_CastClickOverlay_OnLoad()
+	local showmenu = function()
+		ToggleDropDownMenu(1, nil, Perl_Player_Pet_Target_DropDown, "Perl_Player_Pet_Target_NameFrame", 40, 0);
+	end
+	SecureUnitButton_OnLoad(this, "pettarget", showmenu);
+
+	this:SetAttribute("unit", "pettarget");
+	if (not ClickCastFrames) then
+		ClickCastFrames = {};
+	end
+	ClickCastFrames[this] = true;
+end
+
+function Perl_Player_Pet_Target_DropDown_OnLoad()
+	UIDropDownMenu_Initialize(this, Perl_Player_Pet_Target_DropDown_Initialize, "MENU");
+end
+
+function Perl_Player_Pet_Target_DropDown_Initialize()
+	local menu, name;
+	local id = nil;
+	if (UnitIsUnit("pettarget", "player")) then
+		menu = "SELF";
+	elseif (UnitIsUnit("pettarget", "pet")) then
+		menu = "PET";
+	elseif (UnitIsPlayer("pettarget")) then
+		id = UnitInRaid("pettarget");
+		if (id) then
+			menu = "RAID_PLAYER";
+			name = GetRaidRosterInfo(id + 1);
+		elseif (UnitInParty("pettarget")) then
+			menu = "PARTY";
+		else
+			menu = "PLAYER";
+		end
+	else
+		menu = "RAID_TARGET_ICON";
+		name = RAID_TARGET_ICON;
+	end
+	if (menu) then
+		UnitPopup_ShowMenu(Perl_Player_Pet_Target_DropDown, menu, "pettarget", name, id);
+	end
+end
+
+function Perl_Player_Pet_Target_DragStart(button)
+	if (button == "LeftButton" and locked == 0) then
+		Perl_Player_Pet_Target_Frame:StartMoving();
+	end
+end
+
+function Perl_Player_Pet_Target_DragStop(button)
+	Perl_Player_Pet_Target_Frame:StopMovingOrSizing();
 end
 
 

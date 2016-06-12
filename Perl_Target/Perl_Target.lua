@@ -2444,7 +2444,7 @@ function Perl_Target_Buff_UpdateAll()
 					buffCount:Hide();								-- Hide the text if equal to 0
 				end
 				if (displaybufftimers == 1) then
-					cooldown = getglobal(button:GetName().."Cooldown");					-- Handle cooldowns
+					cooldown = getglobal(button:GetName().."Cooldown");				-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
 							startCooldownTime = GetTime() - (duration - timeLeft);
@@ -2490,7 +2490,7 @@ function Perl_Target_Buff_UpdateAll()
 					cooldown = getglobal(button:GetName().."Cooldown");					-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
-							startCooldownTime = GetTime()-(duration-timeLeft);
+							startCooldownTime = GetTime() - (duration - timeLeft);
 							CooldownFrame_SetTimer(cooldown, startCooldownTime, duration, 1);
 							cooldown:Show();
 						else

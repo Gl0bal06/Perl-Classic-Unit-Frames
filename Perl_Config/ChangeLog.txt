@@ -1,3 +1,11 @@
+2.08 - June 13, 2007
+ - CombatDisplay: Added an energy ticker
+ - Config: Removed the remaining Perl_Raid code
+ - Focus: Added support for buff and debuff timers
+ - PartyTarget: Reseting the position will now handle the focus portrait correctly
+ - Pet: Added a pet target frame
+ - Player: The rest icon will now be restored if you leave combat while in a city or inn
+
 2.07a - June 3, 2007
  - CombatDisplay: Fixed an issue with the target frame appearing when disabled
  - Config: Updated Korean translations (Thanks gygabyte)

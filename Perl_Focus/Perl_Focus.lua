@@ -33,6 +33,7 @@ local classcolorednames = 0;	-- names are colored based on pvp status by default
 local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
 local invertbuffs = 0;		-- buffs and debuffs are below the Focus frame by default
 local displaycurabledebuff = 0;	-- display all debuffs by default
+local displaybufftimers = 1;	-- buff/debuff timers are on by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -1479,6 +1480,15 @@ function Perl_Focus_Set_Class_Buffs(newvalue)
 	Perl_Focus_Buff_UpdateAll();		-- Repopulate the buff icons
 end
 
+function Perl_Focus_Set_Buff_Timers(newvalue)
+	if (newvalue ~= nil) then
+		displaybufftimers = newvalue;
+	end
+	Perl_Focus_UpdateVars();		-- Save the new setting
+	Perl_Focus_Reset_Buffs();		-- Reset the buff icons
+	Perl_Focus_Buff_UpdateAll();		-- Repopulate the buff icons
+end
+
 function Perl_Focus_Set_Class_Debuffs(newvalue)
 	if (newvalue ~= nil) then
 		displaycurabledebuff = newvalue;
@@ -1747,6 +1757,7 @@ function Perl_Focus_GetVars(name, updateflag)
 	showmanadeficit = Perl_Focus_Config[name]["ShowManaDeficit"];
 	invertbuffs = Perl_Focus_Config[name]["InvertBuffs"];
 	displaycurabledebuff = Perl_Focus_Config[name]["DisplayCurableDebuff"];
+	displaybufftimers = Perl_Focus_Config[name]["DisplayBuffTimers"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1832,6 +1843,9 @@ function Perl_Focus_GetVars(name, updateflag)
 	if (displaycurabledebuff == nil) then
 		displaycurabledebuff = 0;
 	end
+	if (displaybufftimers == nil) then
+		displaybufftimers = 1;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1878,6 +1892,7 @@ function Perl_Focus_GetVars(name, updateflag)
 		["showmanadeficit"] = showmanadeficit,
 		["invertbuffs"] = invertbuffs,
 		["displaycurabledebuff"] = displaycurabledebuff,
+		["displaybufftimers"] = displaybufftimers,
 	}
 	return vars;
 end
@@ -2026,6 +2041,11 @@ function Perl_Focus_UpdateVars(vartable)
 			else
 				displaycurabledebuff = nil;
 			end
+			if (vartable["Global Settings"]["DisplayBuffTimers"] ~= nil) then
+				displaybufftimers = vartable["Global Settings"]["DisplayBuffTimers"];
+			else
+				displaybufftimers = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2113,6 +2133,9 @@ function Perl_Focus_UpdateVars(vartable)
 		if (displaycurabledebuff == nil) then
 			displaycurabledebuff = 0;
 		end
+		if (displaybufftimers == nil) then
+			displaybufftimers = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Focus_Reset_Buffs();		-- Reset the buff icons
@@ -2159,6 +2182,7 @@ function Perl_Focus_UpdateVars(vartable)
 		["ShowManaDeficit"] = showmanadeficit,
 		["InvertBuffs"] = invertbuffs,
 		["DisplayCurableDebuff"] = displaycurabledebuff,
+		["DisplayBuffTimers"] = displaybufftimers,
 	};
 end
 
@@ -2173,11 +2197,11 @@ function Perl_Focus_Buff_UpdateAll()
 			Perl_Focus_Buff_UpdateCPMeter();
 		end
 
-		local button, buffCount, buffTexture, buffApplications, color, debuffType;				-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		local button, buffCount, buffTexture, buffApplications, color, debuffType, duration, timeLeft, cooldown, startCooldownTime;		-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 
 		local numBuffs = 0;											-- Buff counter for correct layout
 		for buffnum=1,numbuffsshown do										-- Start main buff loop
-			_, _, buffTexture, buffApplications = UnitBuff("focus", buffnum, displaycastablebuffs);		-- Get the texture and buff stacking information if any
+			_, _, buffTexture, buffApplications, duration, timeLeft = UnitBuff("focus", buffnum, displaycastablebuffs);	-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Focus_Buff"..buffnum);						-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -2189,6 +2213,22 @@ function Perl_Focus_Buff_UpdateAll()
 				else
 					buffCount:Hide();								-- Hide the text if equal to 0
 				end
+				if (displaybufftimers == 1) then
+					cooldown = getglobal(button:GetName().."Cooldown");				-- Handle cooldowns
+					if (duration) then
+						if (duration > 0) then
+							startCooldownTime = GetTime() - (duration - timeLeft);
+							CooldownFrame_SetTimer(cooldown, startCooldownTime, duration, 1);
+							cooldown:Show();
+						else
+							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+							cooldown:Hide();
+						end
+					else
+						CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+						cooldown:Hide();
+					end
+				end
 				numBuffs = numBuffs + 1;								-- Increment the buff counter
 				button:Show();										-- Show the final buff icon
 			else
@@ -2198,7 +2238,7 @@ function Perl_Focus_Buff_UpdateAll()
 
 		local numDebuffs = 0;											-- Debuff counter for correct layout
 		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
-			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("focus", debuffnum, displaycurabledebuff);	-- Get the texture and debuff stacking information if any
+			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft = UnitDebuff("focus", debuffnum, displaycurabledebuff);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Focus_Debuff"..debuffnum);						-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -2444,8 +2484,15 @@ function Perl_Focus_Reset_Buffs()
 	for buffnum=1,16 do
 		button = getglobal("Perl_Focus_Buff"..buffnum);
 		button:Hide();
+		cooldown = getglobal(button:GetName().."Cooldown");
+		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+		cooldown:Hide();
+
 		button = getglobal("Perl_Focus_Debuff"..buffnum);
 		button:Hide();
+		cooldown = getglobal(button:GetName().."Cooldown");
+		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+		cooldown:Hide();
 	end
 end
 

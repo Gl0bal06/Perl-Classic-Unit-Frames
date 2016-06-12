@@ -792,8 +792,13 @@ function Perl_Player_Update_Combat_Status(event)
 		Perl_Player_EnergyTicker:SetAlpha(1);
 	elseif (event == "PLAYER_REGEN_ENABLED") then
 		InCombat = 0;
-		Perl_Player_ActivityStatus:Hide();
-		Perl_Player_EnergyTicker:SetAlpha(0);
+		if (IsResting()) then
+			Perl_Player_ActivityStatus:SetTexCoord(0, 0.5, 0.0, 0.5);
+			Perl_Player_ActivityStatus:Show();
+		else
+			Perl_Player_ActivityStatus:Hide();
+			Perl_Player_EnergyTicker:SetAlpha(0);
+		end
 	elseif (IsResting()) then
 		if (InCombat == 1) then
 			return;

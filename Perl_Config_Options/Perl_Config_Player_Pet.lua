@@ -91,6 +91,30 @@ function Perl_Config_Player_Pet_Set_Values()
 	else
 		Perl_Config_Player_Pet_Frame_CheckButton9:SetChecked(nil);
 	end
+
+	if (vartable["displaypettarget"] == 1) then
+		Perl_Config_Player_Pet_Frame_CheckButton10:SetChecked(1);
+	else
+		Perl_Config_Player_Pet_Frame_CheckButton10:SetChecked(nil);
+	end
+
+	if (vartable["classcolorednames"] == 1) then
+		Perl_Config_Player_Pet_Frame_CheckButton11:SetChecked(1);
+	else
+		Perl_Config_Player_Pet_Frame_CheckButton11:SetChecked(nil);
+	end
+
+	if (vartable["showfriendlyhealth"] == 1) then
+		Perl_Config_Player_Pet_Frame_CheckButton12:SetChecked(1);
+	else
+		Perl_Config_Player_Pet_Frame_CheckButton12:SetChecked(nil);
+	end
+
+	if (vartable["mobhealthsupport"] == 1) then
+		Perl_Config_Player_Pet_Frame_CheckButton13:SetChecked(1);
+	else
+		Perl_Config_Player_Pet_Frame_CheckButton13:SetChecked(nil);
+	end
 end
 
 function Perl_Config_Player_Pet_Set_Buffs(value)
@@ -182,6 +206,38 @@ function Perl_Config_Player_Pet_Hide_Name_Update()
 		Perl_Player_Pet_Set_Hide_Name(1);
 	else
 		Perl_Player_Pet_Set_Hide_Name(0);
+	end
+end
+
+function Perl_Config_Player_Pet_Pet_Target_Update()
+	if (Perl_Config_Player_Pet_Frame_CheckButton10:GetChecked() == 1) then
+		Perl_Player_Pet_Set_Pet_Target(1);
+	else
+		Perl_Player_Pet_Set_Pet_Target(0);
+	end
+end
+
+function Perl_Config_Player_Pet_Class_Colored_Names_Update()
+	if (Perl_Config_Player_Pet_Frame_CheckButton11:GetChecked() == 1) then
+		Perl_Player_Pet_Set_Class_Colored_Names(1);
+	else
+		Perl_Player_Pet_Set_Class_Colored_Names(0);
+	end
+end
+
+function Perl_Config_Player_Pet_Friendly_Health_Update()
+	if (Perl_Config_Player_Pet_Frame_CheckButton12:GetChecked() == 1) then
+		Perl_Player_Pet_Set_Friendly_Health(1);
+	else
+		Perl_Player_Pet_Set_Friendly_Health(0);
+	end
+end
+
+function Perl_Config_Player_Pet_MobHealth_Support_Update()
+	if (Perl_Config_Player_Pet_Frame_CheckButton13:GetChecked() == 1) then
+		Perl_Player_Pet_Set_MobHealth_Support(1);
+	else
+		Perl_Player_Pet_Set_MobHealth_Support(0);
 	end
 end
 

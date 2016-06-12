@@ -210,6 +210,37 @@
 						<BarColor r="0" g="1" b="0" a="0.25"/>
 					</StatusBar>
 
+					<!-- Energy Ticker -->
+					<StatusBar name="Perl_CombatDisplay_EnergyTicker" hidden="false">
+						<Size>
+							<AbsDimension x="200" y="2"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_CombatDisplay_ManaBar"/>
+						</Anchors>
+						<BarColor r="1" g="1" b="0.5" a="1"/>
+						<Layers>
+							<Layer level="OVERLAY">
+								<Texture name="Perl_CombatDisplay_EnergyTickerSpark" file="Interface\CastingBar\UI-CastingBar-Spark" alphaMode="ADD">
+									<Size>
+										<AbsDimension x="12" y="12"/>
+									</Size>
+									<Anchors>
+										<Anchor point="CENTER"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								Perl_CombatDisplay_EnergyTicker:SetMinMaxValues(0, 2);
+							</OnLoad>
+							<OnUpdate>
+								Perl_CombatDisplay_EnergyTicker_OnUpdate()
+							</OnUpdate>
+						</Scripts>
+					</StatusBar>
+
 					<!-- Druid Mana Bar -->
 					<StatusBar name="Perl_CombatDisplay_DruidBar">
 						<Size>

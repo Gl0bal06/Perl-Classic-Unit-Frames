@@ -896,7 +896,11 @@ function Perl_Party_Target_Allign()
 	Perl_Party_Target2:SetPoint("TOPLEFT", Perl_Party_MemberFrame2_StatsFrame, "TOPRIGHT", -4, 20);
 	Perl_Party_Target3:SetPoint("TOPLEFT", Perl_Party_MemberFrame3_StatsFrame, "TOPRIGHT", -4, 20);
 	Perl_Party_Target4:SetPoint("TOPLEFT", Perl_Party_MemberFrame4_StatsFrame, "TOPRIGHT", -4, 20);
-	Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_StatsFrame, "TOPRIGHT", -4, 20);
+	if (Perl_Focus_PortraitFrame:IsShown()) then
+		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_StatsFrame, "TOPRIGHT", 51, 20);
+	else
+		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_StatsFrame, "TOPRIGHT", -4, 20);
+	end
 
 	Perl_Party_Target_UpdateVars();			-- Calling this to update the positions for IFrameManger
 end
