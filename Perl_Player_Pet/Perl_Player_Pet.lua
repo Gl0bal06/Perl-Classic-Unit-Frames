@@ -242,9 +242,6 @@ function Perl_Player_Pet_Initialize()
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(PetFrame);
 
-	-- MyAddOns Support
-	Perl_Player_Pet_myAddOns_Support();
-
 	-- IFrameManager Support (Deprecated)
 	Perl_Player_Pet_Frame:SetUserPlaced(1);
 	Perl_Player_Pet_Target_Frame:SetUserPlaced(1);
@@ -1909,26 +1906,4 @@ end
 
 function Perl_Player_Pet_Target_DragStop()
 	Perl_Player_Pet_Target_Frame:StopMovingOrSizing();
-end
-
-
-----------------------
--- myAddOns Support --
-----------------------
-function Perl_Player_Pet_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if(myAddOnsFrame_Register) then
-		local Perl_Player_Pet_myAddOns_Details = {
-			name = "Perl_Player_Pet",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Perl; Maintained by Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_Player_Pet_myAddOns_Help = {};
-		Perl_Player_Pet_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_Player_Pet_myAddOns_Details, Perl_Player_Pet_myAddOns_Help);
-	end
 end

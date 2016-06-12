@@ -196,9 +196,6 @@ function Perl_Config_Initialize()
 	-- Profile Support
 	Perl_Config_Profile_Work();
 
-	-- MyAddOns Support
-	Perl_Config_myAddOns_Support();
-
 	-- Debuff Coloring Support for 3.0+
 	_, playerClass = UnitClass("player");
 
@@ -373,7 +370,7 @@ function Perl_Config_Set_Curable_Debuffs(debuffType)
 			return 1;
 		end
 	elseif (playerClass == "SHAMAN") then
-		if (debuffType == PERL_LOCALIZED_BUFF_DISEASE or debuffType == PERL_LOCALIZED_BUFF_POISON) then
+		if (debuffType == PERL_LOCALIZED_BUFF_CURSE) then
 			return 1;
 		end
 	elseif (playerClass == "WARLOCK") then
@@ -2281,28 +2278,5 @@ function Perl_clearBlizzardFrameDisable(frameObject)
 		frameObject:ClearAllPoints();
 		frameObject:SetPoint("TOPLEFT", UIParent, "BOTTOMRIGHT", 1000, -1000);
 		frameObject:Hide();
-	end
-end
-
-
-----------------------
--- myAddOns Support --
-----------------------
-function Perl_Config_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if (myAddOnsFrame_Register) then
-		local Perl_Config_myAddOns_Details = {
-			name = "Perl_Config",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS,
-			optionsframe = "Perl_Config_Frame",
-		};
-		Perl_Config_myAddOns_Help = {};
-		Perl_Config_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_Config_myAddOns_Details, Perl_Config_myAddOns_Help);
 	end
 end

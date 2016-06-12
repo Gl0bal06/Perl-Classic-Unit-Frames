@@ -1,3 +1,10 @@
+4.05 - January 8, 2011
+ - All: Updated curable debuff list for Cataclysm
+ - All: Removed myAddOns support
+ - PartyTarget: Now properly checks for curable debuffs instead of highlighting based on any current debuff
+ - Target: The guild name frame no longer clips into the numeric threat frame or rare/elite frame
+ - Target: The guild name frame now positions and sizes better depending on other target frame options
+
 4.04 - December 25, 2010
  - Party: Fixed some leftover old OnUpdate code in the pet fadebars
 

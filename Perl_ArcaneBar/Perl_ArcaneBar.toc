@@ -2,6 +2,6 @@
 ## Title: Perl ArcaneBar
 ## Notes: Displays a cast bar inside the Player Frame.
 ## Dependencies: Perl_Config, Perl_Player
-## OptionalDeps: myAddOns
+## OptionalDeps: 
 ## SavedVariables: Perl_ArcaneBar_Config
 Perl_ArcaneBar.xml

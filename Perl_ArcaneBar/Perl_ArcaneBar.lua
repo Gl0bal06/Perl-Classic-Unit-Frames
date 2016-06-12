@@ -393,9 +393,6 @@ function Perl_ArcaneBar_Initialize()
 	-- Major config options.
 	Perl_ArcaneBar_Frame_Style();
 
-	-- MyAddOns Support
-	Perl_ArcaneBar_myAddOns_Support();
-
 	Initialized = 1;
 end
 
@@ -1165,26 +1162,4 @@ function Perl_ArcaneBar_UpdateVars(vartable)
 		["HideOriginal"] = hideoriginal,
 		["Transparency"] = transparency,
 	};
-end
-
-
-----------------------
--- myAddOns Support --
-----------------------
-function Perl_ArcaneBar_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if(myAddOnsFrame_Register) then
-		local Perl_ArcaneBar_myAddOns_Details = {
-			name = "Perl_ArcaneBar",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Zlixar; Maintained by Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_ArcaneBar_myAddOns_Help = {};
-		Perl_ArcaneBar_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_ArcaneBar_myAddOns_Details, Perl_ArcaneBar_myAddOns_Help);
-	end
 end

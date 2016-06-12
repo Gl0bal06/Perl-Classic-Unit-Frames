@@ -342,9 +342,6 @@ function Perl_Party_Initialize()
 		_G["Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBarFadeBar"]:SetFrameLevel(_G["Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar"]:GetFrameLevel() - 1);
 	end
 
-	-- MyAddOns Support
-	Perl_Party_myAddOns_Support();
-
 	-- IFrameManager Support (Deprecated)
 	Perl_Party_Frame:SetUserPlaced(1);
 
@@ -2672,26 +2669,4 @@ function Perl_Party_Pet_CastClickOverlay_OnLoad(self)
 		ClickCastFrames = {};
 	end
 	ClickCastFrames[self] = true;
-end
-
-
-----------------------
--- myAddOns Support --
-----------------------
-function Perl_Party_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if (myAddOnsFrame_Register) then
-		local Perl_Party_myAddOns_Details = {
-			name = "Perl_Party",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Perl; Maintained by Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_Party_myAddOns_Help = {};
-		Perl_Party_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_Party_myAddOns_Details, Perl_Party_myAddOns_Help);
-	end
 end

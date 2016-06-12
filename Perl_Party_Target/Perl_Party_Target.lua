@@ -137,9 +137,6 @@ function Perl_Party_Target_Initialize()
 		_G["Perl_Party_Target"..num.."_StatsFrame_ManaBarFadeBar"]:SetFrameLevel(_G["Perl_Party_Target"..num.."_StatsFrame_ManaBar"]:GetFrameLevel() - 1);
 	end
 
-	-- MyAddOns Support
-	Perl_Party_Target_myAddOns_Support();
-
 	-- IFrameManager Support (Deprecated)
 	for num=1,5 do
 		_G["Perl_Party_Target"..num]:SetUserPlaced(1);
@@ -455,11 +452,13 @@ function Perl_Party_Target_Update_Buffs(self)
 			if (PCUF_COLORFRAMEDEBUFF == 1) then
 				if (curableDebuffFound == 0) then
 					if (UnitIsFriend("player", self.unit)) then
-						local color = DebuffTypeColor[debuffType];
-						self.nameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-						self.statsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
-						curableDebuffFound = 1;
-						break;
+						if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
+							local color = DebuffTypeColor[debuffType];
+							self.nameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+							self.statsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+							curableDebuffFound = 1;
+							break;
+						end
 					end
 				end
 			end
@@ -1286,26 +1285,4 @@ end
 function Perl_Party_Target_DragStop(self)
 	_G["Perl_Party_Target"..self:GetID()]:SetUserPlaced(1);
 	_G["Perl_Party_Target"..self:GetID()]:StopMovingOrSizing();
-end
-
-
-----------------------
--- myAddOns Support --
-----------------------
-function Perl_Party_Target_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if(myAddOnsFrame_Register) then
-		local Perl_Party_Target_myAddOns_Details = {
-			name = "Perl_Party_Target",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_Party_Target_myAddOns_Help = {};
-		Perl_Party_Target_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_Party_Target_myAddOns_Details, Perl_Party_Target_myAddOns_Help);
-	end
 end

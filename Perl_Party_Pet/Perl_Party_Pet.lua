@@ -176,9 +176,6 @@ function Perl_Party_Pet_Initialize()
 		_G["Perl_Party_Pet"..num.."_StatsFrame_ManaBarFadeBar"]:SetFrameLevel(_G["Perl_Party_Pet"..num.."_StatsFrame_ManaBar"]:GetFrameLevel() - 1);
 	end
 
-	-- MyAddOns Support
-	Perl_Party_Pet_myAddOns_Support();
-
 	-- IFrameManager Support (Deprecated)
 	for num=1,4 do
 		_G["Perl_Party_Pet"..num]:SetUserPlaced(1);
@@ -1298,26 +1295,4 @@ end
 function Perl_Party_Pet_DragStop(self)
 	_G["Perl_Party_Pet"..self:GetID()]:SetUserPlaced(1);
 	_G["Perl_Party_Pet"..self:GetID()]:StopMovingOrSizing();
-end
-
-
-----------------------
--- myAddOns Support --
-----------------------
-function Perl_Party_Pet_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if(myAddOnsFrame_Register) then
-		local Perl_Party_Pet_myAddOns_Details = {
-			name = "Perl_Party_Pet",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Nymbia; Maintained by Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_Party_Pet_myAddOns_Help = {};
-		Perl_Party_Pet_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_Party_Pet_myAddOns_Details, Perl_Party_Pet_myAddOns_Help);
-	end
 end

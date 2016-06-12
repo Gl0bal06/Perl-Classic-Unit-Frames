@@ -254,9 +254,6 @@ function Perl_Focus_Initialize()
 	Perl_clearBlizzardFrameDisable(FocusFrameSpellBar);
 	Perl_clearBlizzardFrameDisable(FocusFrameToT);
 
-	-- MyAddOns Support
-	Perl_Focus_myAddOns_Support();
-
 	-- IFrameManager Support (Deprecated)
 	Perl_Focus_Frame:SetUserPlaced(1);
 
@@ -2246,26 +2243,4 @@ end
 
 function Perl_Focus_DragStop()
 	Perl_Focus_Frame:StopMovingOrSizing();
-end
-
-
-----------------------
--- myAddOns Support --
-----------------------
-function Perl_Focus_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if (myAddOnsFrame_Register) then
-		local Perl_Focus_myAddOns_Details = {
-			name = "Perl_Focus",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Perl; Maintained by Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_Focus_myAddOns_Help = {};
-		Perl_Focus_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_Focus_myAddOns_Details, Perl_Focus_myAddOns_Help);
-	end
 end

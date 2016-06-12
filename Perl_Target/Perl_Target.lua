@@ -290,9 +290,6 @@ function Perl_Target_Initialize()
 	--TargetFrameSpellBar:UnregisterEvent("CVAR_UPDATE");
 	--TargetFrameSpellBar:UnregisterEvent("PLAYER_TARGET_CHANGED");
 
-	-- MyAddOns Support
-	Perl_Target_myAddOns_Support();
-
 	-- IFrameManager Support (Deprecated)
 	Perl_Target_Frame:SetUserPlaced(1);
 
@@ -1077,10 +1074,22 @@ function Perl_Target_Main_Style()
 			Perl_Target_HealthBar:SetPoint("TOP", "Perl_Target_StatsFrame", "TOP", 0, -10);
 			Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
 
-			if (showrareeliteframe == 1) then	-- wtf is going on here, why is this working?!?
-				Perl_Target_GuildFrame:SetWidth(125);
+			if (showrareeliteframe == 1 or displaynumbericthreat == 1) then
+				if (showclassframe == 1) then
+					Perl_Target_GuildFrame:SetWidth(125);
+				else
+					Perl_Target_GuildFrame:ClearAllPoints();
+					Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
+					Perl_Target_GuildFrame:SetWidth(218);
+				end
 			else
-				Perl_Target_GuildFrame:SetWidth(128);
+				if (showclassframe == 1) then
+					Perl_Target_GuildFrame:SetWidth(128);
+				else
+					Perl_Target_GuildFrame:ClearAllPoints();
+					Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
+					Perl_Target_GuildFrame:SetWidth(221);
+				end
 			end
 			Perl_Target_ClassNameFrame:SetWidth(95);
 			Perl_Target_LevelFrame:SetWidth(46);
@@ -1102,10 +1111,22 @@ function Perl_Target_Main_Style()
 			Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
 
 			if (compactmode == 0) then
-				if (showrareeliteframe == 1) then	-- wtf is going on here, why is this working?!?
-					Perl_Target_GuildFrame:SetWidth(159);
+				if (showrareeliteframe == 1 or displaynumbericthreat == 1) then
+					if (showclassframe == 1) then
+						Perl_Target_GuildFrame:SetWidth(159);
+					else
+						Perl_Target_GuildFrame:ClearAllPoints();
+						Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
+						Perl_Target_GuildFrame:SetWidth(252);
+					end
 				else
-					Perl_Target_GuildFrame:SetWidth(162);
+					if (showclassframe == 1) then
+						Perl_Target_GuildFrame:SetWidth(162);
+					else
+						Perl_Target_GuildFrame:ClearAllPoints();
+						Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
+						Perl_Target_GuildFrame:SetWidth(255);
+					end
 				end
 				Perl_Target_ClassNameFrame:SetWidth(95);
 				Perl_Target_LevelFrame:SetWidth(46);
@@ -1119,12 +1140,25 @@ function Perl_Target_Main_Style()
 			else
 				if (shortbars == 0) then
 					if (compactpercent == 0) then
-						if (showrareeliteframe == 1) then
-							Perl_Target_GuildFrame:SetWidth(74);
+						if (showrareeliteframe == 1 or displaynumbericthreat == 1) then
+							if (showclassframe == 1) then
+								Perl_Target_GuildFrame:ClearAllPoints();
+								Perl_Target_GuildFrame:SetPoint("BOTTOMLEFT", "Perl_Target_ClassNameFrame", "TOPLEFT", 0, -2);
+								Perl_Target_GuildFrame:SetWidth(136);
+							else
+								Perl_Target_GuildFrame:ClearAllPoints();
+								Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
+								Perl_Target_GuildFrame:SetWidth(167);
+							end
 						else
-							Perl_Target_GuildFrame:SetWidth(77);
+							if (showclassframe == 1) then
+								Perl_Target_GuildFrame:SetWidth(77);
+							else
+								Perl_Target_GuildFrame:ClearAllPoints();
+								Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
+								Perl_Target_GuildFrame:SetWidth(170);
+							end
 						end
-						
 						Perl_Target_ClassNameFrame:SetWidth(95);
 						Perl_Target_LevelFrame:SetWidth(46);
 						Perl_Target_Frame:SetWidth(126);
@@ -1135,10 +1169,22 @@ function Perl_Target_Main_Style()
 
 						Perl_Target_NameFrame_CPMeter:SetWidth(119);
 					else
-						if (showrareeliteframe == 1) then
-							Perl_Target_GuildFrame:SetWidth(109);
+						if (showrareeliteframe == 1 or displaynumbericthreat == 1) then
+							if (showclassframe == 1) then
+								Perl_Target_GuildFrame:SetWidth(109);
+							else
+								Perl_Target_GuildFrame:ClearAllPoints();
+								Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
+								Perl_Target_GuildFrame:SetWidth(202);
+							end
 						else
-							Perl_Target_GuildFrame:SetWidth(112);
+							if (showclassframe == 1) then
+								Perl_Target_GuildFrame:SetWidth(112);
+							else
+								Perl_Target_GuildFrame:ClearAllPoints();
+								Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
+								Perl_Target_GuildFrame:SetWidth(205);
+							end
 						end
 						Perl_Target_ClassNameFrame:SetWidth(95);
 						Perl_Target_LevelFrame:SetWidth(46);
@@ -1159,10 +1205,26 @@ function Perl_Target_Main_Style()
 					Perl_Target_ManaBarBG:SetWidth(115);
 
 					if (compactpercent == 0) then
-						if (showrareeliteframe == 1) then
-							Perl_Target_GuildFrame:SetWidth(43);
+						if (showrareeliteframe == 1 or displaynumbericthreat == 1) then
+							if (showclassframe == 1) then
+								Perl_Target_GuildFrame:ClearAllPoints();
+								Perl_Target_GuildFrame:SetPoint("BOTTOMLEFT", "Perl_Target_ClassNameFrame", "TOPLEFT", 0, -2);
+								Perl_Target_GuildFrame:SetWidth(135);
+							else
+								Perl_Target_GuildFrame:ClearAllPoints();
+								Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
+								Perl_Target_GuildFrame:SetWidth(91);
+							end
 						else
-							Perl_Target_GuildFrame:SetWidth(46);
+							if (showclassframe == 1) then
+								Perl_Target_GuildFrame:ClearAllPoints();
+								Perl_Target_GuildFrame:SetPoint("BOTTOMLEFT", "Perl_Target_ClassNameFrame", "TOPLEFT", 0, -2);
+								Perl_Target_GuildFrame:SetWidth(91);
+							else
+								Perl_Target_GuildFrame:ClearAllPoints();
+								Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
+								Perl_Target_GuildFrame:SetWidth(135);
+							end
 						end
 						Perl_Target_ClassNameFrame:SetWidth(91);
 						Perl_Target_LevelFrame:SetWidth(46);
@@ -1173,17 +1235,25 @@ function Perl_Target_Main_Style()
 						Perl_Target_StatsFrame:SetWidth(135);
 
 						Perl_Target_NameFrame_CPMeter:SetWidth(84);
-
-						if (showguildname == 1 and showrareeliteframe == 1) then
-							Perl_Target_GuildFrame:ClearAllPoints();
-							Perl_Target_GuildFrame:SetPoint("BOTTOMLEFT", "Perl_Target_ClassNameFrame", "TOPLEFT", 0, -2);
-							Perl_Target_GuildFrame:SetWidth(135);
-						end
 					else
-						if (showrareeliteframe == 1) then
-							Perl_Target_GuildFrame:SetWidth(74);
+						if (showrareeliteframe == 1 or displaynumbericthreat == 1) then
+							if (showclassframe == 1) then
+								Perl_Target_GuildFrame:ClearAllPoints();
+								Perl_Target_GuildFrame:SetPoint("BOTTOMLEFT", "Perl_Target_ClassNameFrame", "TOPLEFT", 0, -2);
+								Perl_Target_GuildFrame:SetWidth(136);
+							else
+								Perl_Target_GuildFrame:ClearAllPoints();
+								Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
+								Perl_Target_GuildFrame:SetWidth(167);
+							end
 						else
-							Perl_Target_GuildFrame:SetWidth(77);
+							if (showclassframe == 1) then
+								Perl_Target_GuildFrame:SetWidth(77);
+							else
+								Perl_Target_GuildFrame:ClearAllPoints();
+								Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
+								Perl_Target_GuildFrame:SetWidth(170);
+							end
 						end
 						Perl_Target_ClassNameFrame:SetWidth(95);
 						Perl_Target_LevelFrame:SetWidth(46);
@@ -1237,10 +1307,8 @@ function Perl_Target_Main_Style()
 
 		if (showclassframe == 1) then
 			Perl_Target_ClassNameFrame:Show();
-			Perl_Target_GuildFrame:Hide();	-- Hide is normally Show here, but we are changing what this frame does later to guild names
 		else
 			Perl_Target_ClassNameFrame:Hide();
-			Perl_Target_GuildFrame:Hide();
 		end
 
 		if (showclassicon == 0) then																		-- Are we showing the class icon?
@@ -1254,7 +1322,7 @@ function Perl_Target_Main_Style()
 		end
 
 		if (showguildname == 1) then
-			if (showrareeliteframe == 1) then
+			if (showrareeliteframe == 1 or displaynumbericthreat == 1) then
 				if (not (framestyle == 2 and compactmode == 1 and shortbars == 1 and compactpercent == 0)) then
 					Perl_Target_GuildFrame:SetWidth(Perl_Target_GuildFrame:GetWidth() - 41);
 					Perl_Target_GuildFrame_CastClickOverlay:SetWidth(Perl_Target_GuildFrame:GetWidth());
@@ -2643,27 +2711,5 @@ end
 function Perl_Target_OnHide()
 	if (soundtargetchange == 1) then
 		PlaySound("INTERFACESOUND_LOSTTARGETUNIT");
-	end
-end
-
-
-----------------------
--- myAddOns Support --
-----------------------
-function Perl_Target_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if (myAddOnsFrame_Register) then
-		local Perl_Target_myAddOns_Details = {
-			name = "Perl_Target",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Perl; Maintained by Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_Target_myAddOns_Help = {};
-		Perl_Target_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_Target_myAddOns_Details, Perl_Target_myAddOns_Help);
 	end
 end

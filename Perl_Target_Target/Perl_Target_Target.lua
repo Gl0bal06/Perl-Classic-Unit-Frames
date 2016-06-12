@@ -127,9 +127,6 @@ function Perl_Target_Target_Initialize()
 	Perl_Target_Target_Reset_Buffs();
 	Perl_Target_Target_Target_Reset_Buffs();
 
-	-- MyAddOns Support
-	Perl_Target_Target_myAddOns_Support();
-
 	-- IFrameManager Support (Deprecated)
 	Perl_Target_Target_Frame:SetUserPlaced(1);
 	Perl_Target_Target_Target_Frame:SetUserPlaced(1);
@@ -2071,27 +2068,5 @@ function Perl_Target_Target_Target_SetBuffTooltip(self)
 		GameTooltip:SetUnitDebuff("targettargettarget", self:GetID()-16, displaycurabledebuff);	-- 16 being the number of buffs before debuffs in the xml
 	else
 		GameTooltip:SetUnitBuff("targettargettarget", self:GetID(), displaycastablebuffs);
-	end
-end
-
-
-----------------------
--- myAddOns Support --
-----------------------
-function Perl_Target_Target_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if (myAddOnsFrame_Register) then
-		local Perl_Target_Target_myAddOns_Details = {
-			name = "Perl_Target_Target",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_Target_Target_myAddOns_Help = {};
-		Perl_Target_Target_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_Target_Target_myAddOns_Details, Perl_Target_Target_myAddOns_Help);
 	end
 end

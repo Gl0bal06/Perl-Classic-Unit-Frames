@@ -308,9 +308,6 @@ function Perl_CombatDisplay_Initialize()
 	Perl_CombatDisplay_Frame_Style();
 	Perl_CombatDisplay_Buff_UpdateAll("player", Perl_CombatDisplay_ManaFrame);	-- call this so the energy ticker doesn't show up prematurely
 
-	-- MyAddOns Support
-	Perl_CombatDisplay_myAddOns_Support();
-
 	-- IFrameManager Support (Deprecated)
 	Perl_CombatDisplay_Frame:SetUserPlaced(1);
 	Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
@@ -1670,26 +1667,4 @@ end
 
 function Perl_CombatDisplay_Target_DragStop()
 	Perl_CombatDisplay_Target_Frame:StopMovingOrSizing();
-end
-
-
-----------------------
--- myAddOns Support --
-----------------------
-function Perl_CombatDisplay_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if(myAddOnsFrame_Register) then
-		local Perl_CombatDisplay_myAddOns_Details = {
-			name = "Perl_CombatDisplay",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Perl; Maintained by Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_CombatDisplay_myAddOns_Help = {};
-		Perl_CombatDisplay_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_CombatDisplay_myAddOns_Details, Perl_CombatDisplay_myAddOns_Help);
-	end
 end
