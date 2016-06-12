@@ -5,6 +5,7 @@ function Perl_Config_Target_Target_Display()
 		Perl_Config_Target_Target_Set_Values();
 	else
 		Perl_Config_Target_Target_Frame:Hide();
+		Perl_Config_NotInstalled_Frame:Show();
 	end
 end
 
@@ -50,6 +51,10 @@ function Perl_Config_Target_Target_Set_Values()
 	else
 		Perl_Config_Target_Target_Frame_CheckButton6:SetChecked(nil);
 	end
+
+	Perl_Config_Target_Target_Frame_Slider2Low:SetText("0");
+	Perl_Config_Target_Target_Frame_Slider2High:SetText("100");
+	Perl_Config_Target_Target_Frame_Slider2:SetValue(vartable["transparency"]*100);
 end
 
 function Perl_Config_Target_Target_ToT_Update()
@@ -93,7 +98,7 @@ function Perl_Config_Target_Target_Lock_Update()
 end
 
 function Perl_Config_Target_Target_Set_Scale(value)
-	if (Perl_Target_Target_Frame) then	-- this check is to prevent errors if you aren't using Target_Target
+	if (Perl_Target_Target_Script_Frame) then	-- this check is to prevent errors if you aren't using Target_Target
 		if (value == nil) then
 			value = floor(UIParent:GetScale()*100+0.5);
 			Perl_Config_Target_Target_Frame_Slider1Text:SetText(value);
@@ -107,5 +112,11 @@ function Perl_Config_Target_Target_Set_Scale(value)
 		else
 			Perl_Config_Target_Target_Frame_CheckButton6:SetChecked(nil);
 		end
+	end
+end
+
+function Perl_Config_Target_Target_Set_Transparency(value)
+	if (Perl_Target_Target_Script_Frame) then	-- this check is to prevent errors if you aren't using Player
+		Perl_Target_Target_Set_Transparency(value);
 	end
 end

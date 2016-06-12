@@ -5,6 +5,7 @@ function Perl_Config_Target_Display()
 		Perl_Config_Target_Set_Values();
 	else
 		Perl_Config_Target_Frame:Hide();
+		Perl_Config_NotInstalled_Frame:Show();
 	end
 end
 
@@ -76,6 +77,10 @@ function Perl_Config_Target_Set_Values()
 	else
 		Perl_Config_Target_Frame_CheckButton9:SetChecked(nil);
 	end
+
+	Perl_Config_Target_Frame_Slider4Low:SetText("0");
+	Perl_Config_Target_Frame_Slider4High:SetText("100");
+	Perl_Config_Target_Frame_Slider4:SetValue(vartable["transparency"]*100);
 end
 
 function Perl_Config_Target_Set_Buffs(value)
@@ -169,5 +174,11 @@ function Perl_Config_Target_Set_Scale(value)
 		else
 			Perl_Config_Target_Frame_CheckButton9:SetChecked(nil);
 		end
+	end
+end
+
+function Perl_Config_Target_Set_Transparency(value)
+	if (Perl_Target_Frame) then	-- this check is to prevent errors if you aren't using Player
+		Perl_Target_Set_Transparency(value);
 	end
 end

@@ -5,6 +5,7 @@ function Perl_Config_Player_Display()
 		Perl_Config_Player_Set_Values();
 	else
 		Perl_Config_Player_Frame:Hide();
+		Perl_Config_NotInstalled_Frame:Show();
 	end
 end
 
@@ -68,6 +69,10 @@ function Perl_Config_Player_Set_Values()
 	else
 		Perl_Config_Player_Frame_CheckButton9:SetChecked(nil);
 	end
+
+	Perl_Config_Player_Frame_Slider2Low:SetText("0");
+	Perl_Config_Player_Frame_Slider2High:SetText("100");
+	Perl_Config_Player_Frame_Slider2:SetValue(vartable["transparency"]*100);
 end
 
 function Perl_Config_Player_XPMode_Update()
@@ -116,7 +121,7 @@ function Perl_Config_Player_Progressive_Color_Update()
 end
 
 function Perl_Config_Player_Lock_Update()
-	if (Perl_Config_Player_Frame_CheckButton7:GetChecked() == 1) then
+	if (Perl_Config_Player_Frame_CheckButton8:GetChecked() == 1) then
 		Perl_Player_Set_Lock(1);
 	else
 		Perl_Player_Set_Lock(0);
@@ -138,5 +143,11 @@ function Perl_Config_Player_Set_Scale(value)
 		else
 			Perl_Config_Player_Frame_CheckButton9:SetChecked(nil);
 		end
+	end
+end
+
+function Perl_Config_Player_Set_Transparency(value)
+	if (Perl_Player_Frame) then	-- this check is to prevent errors if you aren't using Player
+		Perl_Player_Set_Transparency(value);
 	end
 end

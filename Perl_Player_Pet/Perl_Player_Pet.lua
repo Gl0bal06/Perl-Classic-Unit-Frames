@@ -10,10 +10,13 @@ local scale = 1;			-- default scale
 local numpetbuffsshown = 16;		-- buff row is 16 long
 local numpetdebuffsshown = 16;		-- debuff row is 16 long
 local colorhealth = 0;			-- progressively colored health bars are off by default
+local transparency = 1;			-- transparency for frames
+local bufflocation = 1;			-- default buff location
+local debufflocation = 2;		-- default debuff location
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
-local transparency = 1;			-- 0.8 default from perl
+
 
 ----------------------
 -- Loading Function --
@@ -207,19 +210,19 @@ function Perl_Player_Pet_Initialize()
 	end
 
 	-- Major config options.
-	Perl_Player_Pet_StatsFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_Pet_StatsFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Player_Pet_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	Perl_Player_Pet_LevelFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_Pet_LevelFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Player_Pet_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	Perl_Player_Pet_NameFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_Pet_NameFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Player_Pet_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	Perl_Player_Pet_BuffFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_Pet_BuffFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Player_Pet_BuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	Perl_Player_Pet_DebuffFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_Pet_DebuffFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Player_Pet_DebuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 
-	Perl_Player_Pet_HealthBarText:SetTextColor(1,1,1,1);
-	Perl_Player_Pet_ManaBarText:SetTextColor(1,1,1,1);
+	Perl_Player_Pet_HealthBarText:SetTextColor(1, 1, 1, 1);
+	Perl_Player_Pet_ManaBarText:SetTextColor(1, 1, 1, 1);
 
 	-- The following UnregisterEvent calls were taken from Nymbia's Perl
 	-- Blizz Pet Frame Events
@@ -244,6 +247,7 @@ function Perl_Player_Pet_Update_Once()
 		Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));		-- Set name
 		Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
 		Perl_Player_Pet_Set_Scale();					-- Set the scale
+		Perl_Player_Pet_Set_Transparency();				-- Set transparency
 		Perl_Player_Pet_Update_Health();				-- Set health
 		Perl_Player_Pet_Update_Mana();					-- Set mana values
 		Perl_Player_Pet_Update_Mana_Bar();				-- Set the type of mana
@@ -259,6 +263,10 @@ end
 function Perl_Player_Pet_Update_Health()
 	local pethealth = UnitHealth("pet");
 	local pethealthmax = UnitHealthMax("pet");
+
+	if (pethealth < 0) then			-- This prevents negative health
+		pethealth = 0;
+	end
 
 	Perl_Player_Pet_HealthBar:SetMinMaxValues(0, pethealthmax);
 	Perl_Player_Pet_HealthBar:SetValue(pethealth);
@@ -393,9 +401,27 @@ function Perl_Player_Pet_Set_Debuffs(newdebuffnumber)
 	end
 	numpetdebuffsshown = newdebuffnumber;
 	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_Reset_Buffs();	-- Reset the buff icons
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 	--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetdebuffsshown.."|cffffff00 debuffs.");
+end
+
+function Perl_Player_Pet_Set_Buff_Location(newvalue)
+	if (newvalue ~= nil) then
+		bufflocation = newvalue;
+	end
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
+	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+end
+
+function Perl_Player_Pet_Set_Debuff_Location(newvalue)
+	if (newvalue ~= nil) then
+		debufflocation = newvalue;
+	end
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
+	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Player_Pet_Set_ShowXP(newvalue)
@@ -423,6 +449,14 @@ function Perl_Player_Pet_Set_Scale(number)
 	end
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 	Perl_Player_Pet_Frame:SetScale(unsavedscale);
+	Perl_Player_Pet_UpdateVars();
+end
+
+function Perl_Player_Pet_Set_Transparency(number)
+	if (number ~= nil) then
+		transparency = (number / 100);				-- convert the user input to a wow acceptable value
+	end
+	Perl_Player_Pet_Frame:SetAlpha(transparency);
 	Perl_Player_Pet_UpdateVars();
 end
 
@@ -511,6 +545,9 @@ function Perl_Player_Pet_GetVars()
 	numpetbuffsshown = Perl_Player_Pet_Config[UnitName("player")]["Buffs"];
 	numpetdebuffsshown = Perl_Player_Pet_Config[UnitName("player")]["Debuffs"];
 	colorhealth = Perl_Player_Pet_Config[UnitName("player")]["ColorHealth"];
+	transparency = Perl_Player_Pet_Config[UnitName("player")]["Transparency"];
+	bufflocation = Perl_Player_Pet_Config[UnitName("player")]["BuffLocation"];
+	debufflocation = Perl_Player_Pet_Config[UnitName("player")]["DebuffLocation"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -530,6 +567,15 @@ function Perl_Player_Pet_GetVars()
 	if (colorhealth == nil) then
 		colorhealth = 0;
 	end
+	if (transparency == nil) then
+		transparency = 1;
+	end
+	if (bufflocation == nil) then
+		bufflocation = 1;
+	end
+	if (debufflocation == nil) then
+		debufflocation = 2;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -538,6 +584,9 @@ function Perl_Player_Pet_GetVars()
 		["numpetbuffsshown"] = numpetbuffsshown,
 		["numpetdebuffsshown"] = numpetdebuffsshown,
 		["colorhealth"] = colorhealth,
+		["transparency"] = transparency,
+		["bufflocation"] = bufflocation,
+		["debufflocation"] = debufflocation,
 	}
 	return vars;
 end
@@ -550,6 +599,9 @@ function Perl_Player_Pet_UpdateVars()
 		["Buffs"] = numpetbuffsshown,
 		["Debuffs"] = numpetdebuffsshown,
 		["ColorHealth"] = colorhealth,
+		["Transparency"] = transparency,
+		["BuffLocation"] = bufflocation,
+		["DebuffLocation"] = debufflocation,
 	};
 end
 
@@ -614,6 +666,26 @@ function Perl_Player_Pet_Buff_UpdateAll()
 		else
 			Perl_Player_Pet_DebuffFrame:Show();
 			Perl_Player_Pet_DebuffFrame:SetWidth(5 + debuffmax * 17);
+		end
+
+		if (bufflocation == 1) then
+			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
+		elseif (bufflocation == 2) then
+			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
+		elseif (bufflocation == 3) then
+			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, 0);
+		else
+			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, -15);
+		end
+
+		if (debufflocation == 1) then
+			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
+		elseif (debufflocation == 2) then
+			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
+		elseif (debufflocation == 3) then
+			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, 0);
+		else
+			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, -15);
 		end
 	end
 end
@@ -688,8 +760,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.30",
-			releaseDate = "January 7, 2006",
+			version = "v0.31",
+			releaseDate = "January 11, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

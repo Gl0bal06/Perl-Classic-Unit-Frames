@@ -12,13 +12,15 @@ local scale = 1;		-- default scale
 local showpets = 1;		-- show pets by default
 local colorhealth = 0;		-- progressively colored health bars are off by default
 local healermode = 0;		-- nurfed unit frame style
+local transparency = 1.0;	-- transparency for frames
+local bufflocation = 4;			-- default buff location
+local debufflocation = 1;		-- default debuff location
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 local mouseoverpethealthflag = 0;	-- is the mouse over the pet health bar for healer mode?
-local transparency = 1.0;	-- general transparency for frames relative to bars/text  default is 0.8
 
 -- Variables for position of the class icon texture.
 local Perl_Party_ClassPosRight = {};
@@ -63,11 +65,7 @@ function Perl_Party_OnLoad()
 	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame4_DropDown");
 
 	HidePartyFrame();
-	ShowPartyFrame = NewShowPartyFrame;
-end
-
-function NewShowPartyFrame()	-- Thanks Nymbia!
-	return;
+	ShowPartyFrame = HidePartyFrame;	-- This is to fix the annoyance 1.9 introduced
 end
 
 
@@ -226,14 +224,15 @@ function Perl_Party_Initialize()
 	end
 
 	-- Major config options.
-	getglobal(this:GetName().."_NameFrame"):SetBackdropColor(0, 0, 0, transparency);
-	getglobal(this:GetName().."_NameFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	getglobal(this:GetName().."_LevelFrame"):SetBackdropColor(0, 0, 0, transparency);
-	getglobal(this:GetName().."_LevelFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	getglobal(this:GetName().."_StatsFrame"):SetBackdropColor(0, 0, 0, transparency);
-	getglobal(this:GetName().."_StatsFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
+	getglobal(this:GetName().."_NameFrame"):SetBackdropColor(0, 0, 0, 1);
+	getglobal(this:GetName().."_NameFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	getglobal(this:GetName().."_LevelFrame"):SetBackdropColor(0, 0, 0, 1);
+	getglobal(this:GetName().."_LevelFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	getglobal(this:GetName().."_StatsFrame"):SetBackdropColor(0, 0, 0, 1);
+	getglobal(this:GetName().."_StatsFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 
 	Perl_Party_Set_Localized_ClassIcons();
+	Perl_Party_Set_Transparency();
 
 	if (compactmode == 0) then	-- I'd usually put this in a method, but this is just easier for the party frames
 		getglobal(this:GetName().."_StatsFrame"):SetWidth(240);
@@ -327,6 +326,10 @@ function Perl_Party_Update_Health()
 	local partyhealth = UnitHealth(partyid);
 	local partyhealthmax = UnitHealthMax(partyid);
 	local partyhealthpercent = floor(partyhealth/partyhealthmax*100+0.5);
+
+	if (partyhealth < 0) then			-- This prevents negative health
+		partyhealth = 0;
+	end
 
 	getglobal(this:GetName().."_StatsFrame_HealthBar"):SetMinMaxValues(0, partyhealthmax);
 	getglobal(this:GetName().."_StatsFrame_HealthBar"):SetValue(partyhealth);
@@ -944,6 +947,7 @@ function Perl_Party_Set_Compact(newvalue)
 	end
 	Perl_Party_Set_Text_Positions();
 	Perl_Party_Update_Health_Mana();
+	Perl_Party_Update_Buffs();
 end
 
 function Perl_Party_Set_Healer(newvalue)
@@ -1010,6 +1014,7 @@ function Perl_Party_Set_Pets(newvalue)
 		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffShowing Pets|cffffff00.");
 	end
 	Perl_Party_Set_Space();
+	Perl_Party_Update_Buffs();
 end
 
 function Perl_Party_Set_Progressive_Color(newvalue)
@@ -1022,6 +1027,24 @@ function Perl_Party_Set_Lock(newvalue)
 	Perl_Party_UpdateVars();
 end
 
+function Perl_Party_Set_Buff_Location(newvalue)
+	if (newvalue ~= nil) then
+		bufflocation = newvalue;
+	end
+	Perl_Party_UpdateVars();
+	Perl_Party_Reset_Buffs();		-- Reset the buff icons
+	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+end
+
+function Perl_Party_Set_Debuff_Location(newvalue)
+	if (newvalue ~= nil) then
+		debufflocation = newvalue;
+	end
+	Perl_Party_UpdateVars();
+	Perl_Party_Reset_Buffs();		-- Reset the buff icons
+	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+end
+
 function Perl_Party_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1032,6 +1055,17 @@ function Perl_Party_Set_Scale(number)
 	Perl_Party_MemberFrame2:SetScale(unsavedscale);
 	Perl_Party_MemberFrame3:SetScale(unsavedscale);
 	Perl_Party_MemberFrame4:SetScale(unsavedscale);
+	Perl_Party_UpdateVars();
+end
+
+function Perl_Party_Set_Transparency(number)
+	if (number ~= nil) then
+		transparency = (number / 100);
+	end
+	Perl_Party_MemberFrame1:SetAlpha(transparency);
+	Perl_Party_MemberFrame2:SetAlpha(transparency);
+	Perl_Party_MemberFrame3:SetAlpha(transparency);
+	Perl_Party_MemberFrame4:SetAlpha(transparency);
 	Perl_Party_UpdateVars();
 end
 
@@ -1133,6 +1167,13 @@ function Perl_Party_Update_Health_Mana()
 			-- Do nothing since it's hidden anyway
 		end
 	end
+end
+
+function Perl_Party_Update_Buffs()
+	Perl_Party_Buff_UpdateAll(1);
+	Perl_Party_Buff_UpdateAll(2);
+	Perl_Party_Buff_UpdateAll(3);
+	Perl_Party_Buff_UpdateAll(4);
 end
 
 function Perl_Party_Toggle_Hide()
@@ -1329,6 +1370,9 @@ function Perl_Party_GetVars()
 	showpets = Perl_Party_Config[UnitName("player")]["ShowPets"];
 	colorhealth = Perl_Party_Config[UnitName("player")]["ColorHealth"];
 	healermode = Perl_Party_Config[UnitName("player")]["HealerMode"];
+	transparency = Perl_Party_Config[UnitName("player")]["Transparency"];
+	bufflocation = Perl_Party_Config[UnitName("player")]["BuffLocation"];
+	debufflocation = Perl_Party_Config[UnitName("player")]["DebuffLocation"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1354,6 +1398,15 @@ function Perl_Party_GetVars()
 	if (healermode == nil) then
 		healermode = 0;
 	end
+	if (transparency == nil) then
+		transparency = 1;
+	end
+	if (bufflocation == nil) then
+		bufflocation = 4;
+	end
+	if (debufflocation == nil) then
+		debufflocation = 1;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1364,6 +1417,9 @@ function Perl_Party_GetVars()
 		["showpets"] = showpets,
 		["colorhealth"] = colorhealth,
 		["healermode"] = healermode,
+		["transparency"] = transparency,
+		["bufflocation"] = bufflocation,
+		["debufflocation"] = debufflocation,
 	}
 	return vars;
 end
@@ -1378,45 +1434,29 @@ function Perl_Party_UpdateVars()
 					["ShowPets"] = showpets,
 					["ColorHealth"] = colorhealth,
 					["HealerMode"] = healermode,
+					["Transparency"] = transparency,
+					["BuffLocation"] = bufflocation,
+					["DebuffLocation"] = debufflocation,
 	};
-end
-
-
-------------------------------
--- Common Related Functions --
-------------------------------
-function Perl_Party_SetVars(vartable)
-	if (vartable["locked"]) then
-		state = vartable["locked"];
-	end
-	if (vartable["compactmode"]) then
-		healthpersist = vartable["compactmode"];
-	end
-	if (vartable["partyhidden"]) then
-		manapersist = vartable["partyhidden"];
-	end
-	if (vartable["partyspacing"]) then
-		locked = vartable["partyspacing"];
-	end
-	if (vartable["scale"]) then
-		locked = vartable["scale"];
-	end
-	if (vartable["showpets"]) then
-		locked = vartable["showpets"];
-	end
-	Perl_Party_UpdateVars();
 end
 
 
 --------------------
 -- Buff Functions --
 --------------------
-function Perl_Party_Buff_UpdateAll()
-	local id = this:GetID();
-	local partyid = "party"..id;
+function Perl_Party_Buff_UpdateAll(partymember)
+	local id, partyid;
+	if (partymember == nil) then
+		id = this:GetID();
+		partyid = "party"..id;
+	else
+		id = partymember;
+		partyid = "party"..id;
+	end
+	
 	if (UnitName(partyid)) then
 		for buffnum=1,12 do
-			local button = getglobal(this:GetName().."_BuffFrame_Buff"..buffnum);
+			local button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..buffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
 
@@ -1429,16 +1469,10 @@ function Perl_Party_Buff_UpdateAll()
 			end
 		end
 
-		if (showpets == 1 and UnitIsConnected(partyid) and UnitExists("partypet"..id)) then
-			getglobal(this:GetName().."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "$parent_Buff1", "BOTTOMLEFT", 197, 86);
-		else
-			getglobal(this:GetName().."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "$parent_Buff1", "BOTTOMLEFT", 197, 74);
-		end
-
 		local debuffCount, debuffTexture, debuffApplications;
 		for buffnum=1,8 do
 			debuffTexture, debuffApplications = UnitDebuff(partyid, buffnum);
-			local button = getglobal(this:GetName().."_BuffFrame_Debuff"..(buffnum));
+			local button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..buffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
 
@@ -1446,7 +1480,7 @@ function Perl_Party_Buff_UpdateAll()
 				icon:SetTexture(UnitDebuff(partyid, buffnum));
 				debuff:Show();
 				button:Show();
-				debuffCount = getglobal(this:GetName().."_BuffFrame_Debuff"..(buffnum).."Count");
+				debuffCount = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..(buffnum).."Count");
 				if (debuffApplications > 1) then
 					debuffCount:SetText(debuffApplications);
 					debuffCount:Show();
@@ -1457,6 +1491,46 @@ function Perl_Party_Buff_UpdateAll()
 				button:Hide();
 			end
 		end
+
+		Perl_Party_Buff_Position_Update(id, partyid);
+	end
+end
+
+function Perl_Party_Buff_Position_Update(id, partyid)
+	if (bufflocation == 1) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPRIGHT", 0, -3);
+	elseif (bufflocation == 2) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -3);
+	elseif (bufflocation == 3) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -23);
+	elseif (bufflocation == 4) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, 0);
+	elseif (bufflocation == 5) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, -20);
+	end
+
+	if (debufflocation == 1) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPRIGHT", 0, -3);
+	elseif (debufflocation == 2) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -3);
+	elseif (debufflocation == 3) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -23);
+	elseif (debufflocation == 4) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, 0);
+	elseif (debufflocation == 5) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, -20);
+	end
+end
+
+function Perl_Party_Reset_Buffs()
+	local button;
+	for buffnum=1,12 do
+		button = getglobal("Perl_Party_MemberFrame1_BuffFrame_Buff"..buffnum)
+		button:Hide();
+	end
+	for buffnum=1,8 do
+		button = getglobal("Perl_Party_MemberFrame1_BuffFrame_Debuff"..buffnum)
+		button:Hide();
 	end
 end
 
@@ -1565,8 +1639,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.30",
-			releaseDate = "January 7, 2006",
+			version = "v0.31",
+			releaseDate = "January 11, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

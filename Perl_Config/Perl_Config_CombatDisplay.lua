@@ -5,6 +5,7 @@ function Perl_Config_CombatDisplay_Display()
 		Perl_Config_CombatDisplay_Set_Values();
 	else
 		Perl_Config_CombatDisplay_Frame:Hide();
+		Perl_Config_NotInstalled_Frame:Show();
 	end
 end
 
@@ -66,6 +67,10 @@ function Perl_Config_CombatDisplay_Set_Values()
 	else
 		Perl_Config_CombatDisplay_Frame_CheckButton9:SetChecked(nil);
 	end
+
+	Perl_Config_CombatDisplay_Frame_Slider2Low:SetText("0");
+	Perl_Config_CombatDisplay_Frame_Slider2High:SetText("100");
+	Perl_Config_CombatDisplay_Frame_Slider2:SetValue(vartable["transparency"]*100);
 end
 
 function Perl_Config_CombatDisplay_Mode_Update()
@@ -130,5 +135,11 @@ function Perl_Config_CombatDisplay_Set_Scale(value)
 		else
 			Perl_Config_CombatDisplay_Frame_CheckButton9:SetChecked(nil);
 		end
+	end
+end
+
+function Perl_Config_CombatDisplay_Set_Transparency(value)
+	if (Perl_CombatDisplay_Frame) then	-- this check is to prevent errors if you aren't using CombatDisplay
+		Perl_CombatDisplay_Set_Transparency(value);
 	end
 end

@@ -5,6 +5,7 @@ function Perl_Config_Player_Pet_Display()
 		Perl_Config_Player_Pet_Set_Values();
 	else
 		Perl_Config_Player_Pet_Frame:Hide();
+		Perl_Config_NotInstalled_Frame:Show();
 	end
 end
 
@@ -46,17 +47,41 @@ function Perl_Config_Player_Pet_Set_Values()
 	else
 		Perl_Config_Player_Pet_Frame_CheckButton4:SetChecked(nil);
 	end
+
+	Perl_Config_Player_Pet_Frame_Slider4Low:SetText("0");
+	Perl_Config_Player_Pet_Frame_Slider4High:SetText("100");
+	Perl_Config_Player_Pet_Frame_Slider4:SetValue(vartable["transparency"]*100);
+
+	Perl_Config_Player_Pet_Frame_Slider5Low:SetText("1");
+	Perl_Config_Player_Pet_Frame_Slider5High:SetText("4");
+	Perl_Config_Player_Pet_Frame_Slider5:SetValue(vartable["bufflocation"]);
+
+	Perl_Config_Player_Pet_Frame_Slider6Low:SetText("1");
+	Perl_Config_Player_Pet_Frame_Slider6High:SetText("4");
+	Perl_Config_Player_Pet_Frame_Slider6:SetValue(vartable["debufflocation"]);
 end
 
 function Perl_Config_Player_Pet_Set_Buffs(value)
-	if (Perl_Target_Frame) then	-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
 		Perl_Player_Pet_Set_Buffs(value);
 	end
 end
 
 function Perl_Config_Player_Pet_Set_Debuffs(value)
-	if (Perl_Target_Frame) then	-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
 		Perl_Player_Pet_Set_Debuffs(value);
+	end
+end
+
+function Perl_Config_Player_Pet_Set_Buff_Location(value)
+	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+		Perl_Player_Pet_Set_Buff_Location(value);
+	end
+end
+
+function Perl_Config_Player_Pet_Set_Debuff_Location(value)
+	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+		Perl_Player_Pet_Set_Debuff_Location(value);
 	end
 end
 
@@ -85,7 +110,7 @@ function Perl_Config_Player_Pet_Lock_Update()
 end
 
 function Perl_Config_Player_Pet_Set_Scale(value)
-	if (Perl_Player_Pet_Frame) then	-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
 		if (value == nil) then
 			value = floor(UIParent:GetScale()*100+0.5);
 			Perl_Config_Player_Pet_Frame_Slider1Text:SetText(value);
@@ -99,5 +124,11 @@ function Perl_Config_Player_Pet_Set_Scale(value)
 		else
 			Perl_Config_Player_Pet_Frame_CheckButton4:SetChecked(nil);
 		end
+	end
+end
+
+function Perl_Config_Player_Pet_Set_Transparency(value)
+	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player
+		Perl_Player_Pet_Set_Transparency(value);
 	end
 end

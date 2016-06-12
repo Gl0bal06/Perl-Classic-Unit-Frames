@@ -132,7 +132,7 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>
@@ -228,7 +228,7 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>
@@ -268,7 +268,7 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>
@@ -296,6 +296,46 @@
 			</Frame>
 
 
+			<!-- Target Civilian Frame -->
+			<Frame name="Perl_Target_CivilianFrame">
+				<Size>
+					<AbsDimension x="135" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Target_NameFrame">
+						<Offset>
+							<AbsDimension x="86" y="20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_White" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Layers>
+					<Layer level="OVERLAY">
+						<!-- Class Text -->
+						<Fontstring name="Perl_Target_CivilianBarText" inherits="GameFontNormal" text="Error!">
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset>
+										<AbsDimension x="0" y="-5"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Fontstring>
+					</Layer>
+				</Layers>
+			</Frame>
+
+
 			<!-- Combo Points Frame -->
 			<Frame name="Perl_Target_CPFrame" hidden="true">
 				<Size>
@@ -304,11 +344,11 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Target_NameFrame">
 						<Offset>
-							<AbsDimension x="215" y="5"/>
+							<AbsDimension x="217" y="5"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>
@@ -344,11 +384,11 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Target_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="5"/> <!-- 20, 5 -->
+							<AbsDimension x="0" y="5"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>

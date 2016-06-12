@@ -5,6 +5,7 @@ function Perl_Config_Player_Buff_Display()
 		Perl_Config_Player_Buff_Set_Values();
 	else
 		Perl_Config_Player_Buff_Frame:Hide();
+		Perl_Config_NotInstalled_Frame:Show();
 	end
 end
 

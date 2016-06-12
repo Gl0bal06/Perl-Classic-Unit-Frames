@@ -5,6 +5,7 @@ function Perl_Config_ArcaneBar_Display()
 		Perl_Config_ArcaneBar_Set_Values();
 	else
 		Perl_Config_ArcaneBar_Frame:Hide();
+		Perl_Config_NotInstalled_Frame:Show();
 	end
 end
 
@@ -28,6 +29,10 @@ function Perl_Config_ArcaneBar_Set_Values()
 	else
 		Perl_Config_ArcaneBar_Frame_CheckButton3:SetChecked(nil);
 	end
+
+	Perl_Config_ArcaneBar_Frame_Slider1Low:SetText("0");
+	Perl_Config_ArcaneBar_Frame_Slider1High:SetText("100");
+	Perl_Config_ArcaneBar_Frame_Slider1:SetValue(vartable["transparency"]*100);
 end
 
 function Perl_Config_ArcaneBar_Enabled_Update()
@@ -51,5 +56,11 @@ function Perl_Config_ArcaneBar_Hide_Original_Update()
 		Perl_ArcaneBar_Set_Hide(1);
 	else
 		Perl_ArcaneBar_Set_Hide(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Set_Transparency(value)
+	if (Perl_ArcaneBar_Frame_Loaded_Frame) then	-- this check is to prevent errors if you aren't using Player
+		Perl_ArcaneBar_Set_Transparency(value);
 	end
 end

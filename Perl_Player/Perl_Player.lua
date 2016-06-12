@@ -11,13 +11,13 @@ local showraidgroup = 1;	-- show the raid group number by default when in raids
 local scale = 1;		-- default scale
 local colorhealth = 0;		-- progressively colored health bars are off by default
 local healermode = 0;		-- nurfed unit frame style
+local transparency = 1;		-- transparency for frames
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
 local Initialized = nil;	-- waiting to be initialized
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
-local transparency = 1;		-- general transparency for frames relative to bars/text  default is 0.8
 
 -- Variables for position of the class icon texture.
 local Perl_Player_ClassPosRight = {};
@@ -208,18 +208,18 @@ function Perl_Player_Initialize()
 	end
 
 	-- Major config options.
-	Perl_Player_StatsFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_StatsFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Player_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	Perl_Player_LevelFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_LevelFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Player_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	Perl_Player_NameFrame:SetBackdropColor(0, 0, 0, transparency);
+	Perl_Player_NameFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Player_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	Perl_Player_RaidGroupNumberFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Player_RaidGroupNumberFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
+	Perl_Player_RaidGroupNumberFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Player_RaidGroupNumberFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 
-	Perl_Player_HealthBarText:SetTextColor(1,1,1,1);
-	Perl_Player_ManaBarText:SetTextColor(1,1,1,1);
-	Perl_Player_RaidGroupNumberBarText:SetTextColor(1,1,1);
+	Perl_Player_HealthBarText:SetTextColor(1, 1, 1, 1);
+	Perl_Player_ManaBarText:SetTextColor(1, 1, 1, 1);
+	Perl_Player_RaidGroupNumberBarText:SetTextColor(1, 1, 1);
 
 	Perl_Player_Set_Localized_ClassIcons();
 
@@ -272,6 +272,7 @@ function Perl_Player_Update_Once()
 
 	PlayerFrame:Hide();					-- Hide default frame
 	Perl_Player_Set_Scale();				-- Set the scale
+	Perl_Player_Set_Transparency();				-- Set the transparency
 	Perl_Player_NameBarText:SetText(UnitName("player"));	-- Set the player's name
 	Perl_Player_Update_PvP_Status();			-- Is the character PvP flagged?
 	Perl_Player_ClassTexture:SetTexCoord(Perl_Player_ClassPosRight[PlayerClass], Perl_Player_ClassPosLeft[PlayerClass], Perl_Player_ClassPosTop[PlayerClass], Perl_Player_ClassPosBottom[PlayerClass]);	-- Set the player's class icon
@@ -292,6 +293,10 @@ function Perl_Player_Update_Health()
 	local playerhealth = UnitHealth("player");
 	local playerhealthmax = UnitHealthMax("player");
 	local playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
+
+	if (playerhealth < 0) then				-- This prevents negative health
+		playerhealth = 0;
+	end
 
 	Perl_Player_HealthBar:SetMinMaxValues(0, playerhealthmax);
 	Perl_Player_HealthBar:SetValue(playerhealth);
@@ -787,6 +792,14 @@ function Perl_Player_Set_Scale(number)
 	Perl_Player_UpdateVars();
 end
 
+function Perl_Player_Set_Transparency(number)
+	if (number ~= nil) then
+		transparency = (number / 100);				-- convert the user input to a wow acceptable value
+	end
+	Perl_Player_Frame:SetAlpha(transparency);
+	Perl_Player_UpdateVars();
+end
+
 
 ----------------------
 -- Config Functions --
@@ -917,6 +930,7 @@ function Perl_Player_GetVars()
 	scale = Perl_Player_Config[UnitName("player")]["Scale"];
 	colorhealth = Perl_Player_Config[UnitName("player")]["ColorHealth"];
 	healermode = Perl_Player_Config[UnitName("player")]["HealerMode"];
+	transparency = Perl_Player_Config[UnitName("player")]["Transparency"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -939,6 +953,9 @@ function Perl_Player_GetVars()
 	if (healermode == nil) then
 		healermode = 0;
 	end
+	if (transparency == nil) then
+		transparency = 1;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -948,6 +965,7 @@ function Perl_Player_GetVars()
 		["scale"] = scale,
 		["colorhealth"] = colorhealth,
 		["healermode"] = healermode,
+		["transparency"] = transparency,
 	}
 	return vars;
 end
@@ -961,6 +979,7 @@ function Perl_Player_UpdateVars()
 						["Scale"] = scale,
 						["ColorHealth"] = colorhealth,
 						["HealerMode"] = healermode,
+						["Transparency"] = transparency,
 	};
 end
 
@@ -1055,6 +1074,18 @@ function Perl_Player_XPTooltip()
 end
 
 
+-----------------------
+-- Scripting Support --
+-----------------------
+function Perl_Player_InCombat()
+	if (InCombat == 1) then
+		return 1;
+	else
+		return nil;
+	end
+end
+
+
 ----------------------
 -- myAddOns Support --
 ----------------------
@@ -1063,8 +1094,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.30",
-			releaseDate = "January 7, 2006",
+			version = "v0.31",
+			releaseDate = "January 11, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

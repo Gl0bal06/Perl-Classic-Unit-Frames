@@ -58,7 +58,7 @@
 			<!-- Player Name -->
 			<Frame name="Perl_Player_NameFrame">
 				<Size>
-					<AbsDimension x="200" y="24"/>		<!-- 180 default -->
+					<AbsDimension x="200" y="24"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -67,7 +67,7 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>
@@ -169,7 +169,7 @@
 						Perl_Player_MouseUp(arg1);
 					</OnMouseUp>
 				</Scripts>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>
@@ -214,7 +214,7 @@
 						Perl_Player_MouseUp(arg1);
 					</OnMouseUp>
 				</Scripts>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>
@@ -273,7 +273,7 @@
 						Perl_Player_MouseUp(arg1);
 					</OnMouseUp>
 				</Scripts>
-				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>

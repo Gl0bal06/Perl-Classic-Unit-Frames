@@ -3,7 +3,7 @@
 	<Script file="Perl_Config_Player_Buff.lua"/>
 
 
-	<Frame name="Perl_Config_Player_Buff_Frame" hidden="true">
+	<Frame name="Perl_Config_Player_Buff_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Size>
 			<AbsDimension x="450" y="380"/>
 		</Size>
@@ -102,7 +102,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton1" >
 						<Offset>
-							<AbsDimension  x="0" y="-20"/>
+							<AbsDimension  x="20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

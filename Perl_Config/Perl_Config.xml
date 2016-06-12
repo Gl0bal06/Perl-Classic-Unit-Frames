@@ -3,7 +3,7 @@
 	<Script file="Perl_Config.lua"/>
 
 
-	<Frame name="Perl_Config_Frame" hidden="true">
+	<Frame name="Perl_Config_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Scripts>
 			<OnEvent>
 				Perl_Config_OnEvent(event);
@@ -65,6 +65,21 @@
 					<Anchor point="BOTTOMRIGHT">
 						<Offset>
 							<AbsDimension x="-20" y="20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Config_Toggle();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="Perl_Config_Close_X_Button" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="-4" y="-4"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -236,31 +251,89 @@
 					</OnClick>
 				</Scripts>
 			</Button>
+		</Frames>
+	</Frame>
 
-			
 
-			<!--
-			<CheckButton name="$parent_CheckButton1" inherits="UICheckButtonTemplate" text="Hello">
+	<Frame name="Perl_Config_NotInstalled_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
+		<Size>
+			<AbsDimension x="450" y="380"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Config_Frame">
+				<Offset>
+					<AbsDimension x="0" y="-120"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<!--
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<TileSize>
+				<AbsValue val="32"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="32"/>
+			</EdgeSize>
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11"/>
+			</BackgroundInsets>
+		</Backdrop>
+		-->
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture name="Perl_Config_NotInstalled_Header" file="Interface\DialogFrame\UI-DialogBox-Header">
+					<Size>
+						<AbsDimension x="256" y="64"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset>
+								<AbsDimension x="0" y="12"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString inherits="GameFontNormal" text="Not Installed">
+					<Anchors>
+						<Anchor point="TOP" relativeTo="Perl_Config_NotInstalled_Header">
+							<Offset>
+								<AbsDimension x="0" y="-14"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString inherits="GameFontNormal" text="The requested mod is not installed or enabled.">
+					<Anchors>
+						<Anchor point="TOP" relativeTo="Perl_Config_NotInstalled_Header">
+							<Offset>
+								<AbsDimension x="0" y="-80"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+
+		<Frames>
+			<Button name="Perl_Config_Close_Button" inherits="UIPanelButtonTemplate" text="Close">
 				<Size>
-					<AbsDimension x="20" y="20"/>
+					<AbsDimension x="80" y="22"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT">
+					<Anchor point="BOTTOMRIGHT">
 						<Offset>
-							<AbsDimension x="10" y="-210"/>
+							<AbsDimension x="-20" y="20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnShow>
-						getglobal(this:GetName().."Text"):SetText("CheckButton1");
-					</OnShow>
+					<OnClick>
+						Perl_Config_Toggle();
+					</OnClick>
 				</Scripts>
-			</CheckButton>
-			-->
-
+			</Button>
 		</Frames>
-
 	</Frame>
 
 </Ui>

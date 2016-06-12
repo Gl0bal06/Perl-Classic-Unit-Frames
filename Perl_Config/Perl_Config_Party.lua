@@ -5,6 +5,7 @@ function Perl_Config_Party_Display()
 		Perl_Config_Party_Set_Values();
 	else
 		Perl_Config_Party_Frame:Hide();
+		Perl_Config_NotInstalled_Frame:Show();
 	end
 end
 
@@ -72,11 +73,35 @@ function Perl_Config_Party_Set_Values()
 	else
 		Perl_Config_Party_Frame_CheckButton9:SetChecked(nil);
 	end
+
+	Perl_Config_Party_Frame_Slider3Low:SetText("0");
+	Perl_Config_Party_Frame_Slider3High:SetText("100");
+	Perl_Config_Party_Frame_Slider3:SetValue(vartable["transparency"]*100);
+
+	Perl_Config_Party_Frame_Slider4Low:SetText("1");
+	Perl_Config_Party_Frame_Slider4High:SetText("5");
+	Perl_Config_Party_Frame_Slider4:SetValue(vartable["bufflocation"]);
+
+	Perl_Config_Party_Frame_Slider5Low:SetText("1");
+	Perl_Config_Party_Frame_Slider5High:SetText("5");
+	Perl_Config_Party_Frame_Slider5:SetValue(vartable["debufflocation"]);
 end
 
 function Perl_Config_Party_Set_Space(value)
 	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Space(value);
+	end
+end
+
+function Perl_Config_Party_Set_Buff_Location(value)
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+		Perl_Party_Set_Buff_Location(value);
+	end
+end
+
+function Perl_Config_Party_Set_Debuff_Location(value)
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+		Perl_Party_Set_Debuff_Location(value);
 	end
 end
 
@@ -148,5 +173,11 @@ function Perl_Config_Party_Set_Scale(value)
 		else
 			Perl_Config_Party_Frame_CheckButton9:SetChecked(nil);
 		end
+	end
+end
+
+function Perl_Config_Party_Set_Transparency(value)
+	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Player
+		Perl_Party_Set_Transparency(value);
 	end
 end

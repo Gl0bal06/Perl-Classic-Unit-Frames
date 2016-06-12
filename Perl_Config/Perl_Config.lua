@@ -133,6 +133,36 @@ function Perl_Config_Set_Texture(newvalue)
 	end
 end
 
+function Perl_Config_Set_Transparency(newvalue)
+	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+		Perl_ArcaneBar_Set_Transparency(newvalue);
+	end
+
+	if (Perl_CombatDisplay_Frame) then
+		Perl_CombatDisplay_Set_Transparency(newvalue);
+	end
+
+	if (Perl_Party_Frame) then
+		Perl_Party_Set_Transparency(newvalue);
+	end
+
+	if (Perl_Player_Frame) then
+		Perl_Player_Set_Transparency(newvalue);
+	end
+
+	if (Perl_Player_Pet_Frame) then
+		Perl_Player_Pet_Set_Transparency(newvalue);
+	end
+
+	if (Perl_Target_Frame) then
+		Perl_Target_Set_Transparency(newvalue);
+	end
+
+	if (Perl_Target_Target_Script_Frame) then
+		Perl_Target_Target_Set_Transparency(newvalue);
+	end
+end
+
 
 ------------------------------
 -- Saved Variable Functions --
@@ -174,6 +204,7 @@ function Perl_Config_Hide_All()
 	Perl_Config_All_Frame:Hide();
 	Perl_Config_ArcaneBar_Frame:Hide();
 	Perl_Config_CombatDisplay_Frame:Hide();
+	Perl_Config_NotInstalled_Frame:Hide();
 	Perl_Config_Party_Frame:Hide();
 	Perl_Config_Player_Frame:Hide();
 	Perl_Config_Player_Buff_Frame:Hide();
@@ -191,8 +222,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.30",
-			releaseDate = "January 7, 2006",
+			version = "v0.31",
+			releaseDate = "January 11, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

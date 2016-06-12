@@ -15,13 +15,13 @@ local mobhealthsupport = 1;	-- mobhealth support is on by default
 local scale = 1;		-- default scale
 local colorhealth = 0;		-- progressively colored health bars are off by default
 local showpvprank = 0;		-- hide the pvp rank by default
+local transparency = 1;		-- transparency for frames
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
-local transparency = 1;		-- 0.8 default from perl
 
 -- Empty variables used for localization
-local pt_localized_creature, pt_localized_notspecified;
+local pt_localized_civilian, pt_localized_creature, pt_localized_notspecified;
 
 -- Variables for position of the class icon texture.
 local Perl_Target_ClassPosRight = {};
@@ -248,25 +248,27 @@ function Perl_Target_Initialize()
 	end
 
 	-- Major config options.
-	Perl_Target_StatsFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	Perl_Target_NameFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	Perl_Target_ClassNameFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Target_ClassNameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	Perl_Target_LevelFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Target_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	Perl_Target_BuffFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Target_BuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	Perl_Target_DebuffFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Target_DebuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	Perl_Target_CPFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Target_CPFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
+	Perl_Target_StatsFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_NameFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_ClassNameFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_ClassNameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_CivilianFrame:SetBackdropColor(1, 1, 1, 1);
+	Perl_Target_CivilianFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_LevelFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_BuffFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_BuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_DebuffFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_DebuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_CPFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_CPFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Target_Frame:Hide();
 
-	Perl_Target_HealthBarText:SetTextColor(1,1,1,1);
-	Perl_Target_ManaBarText:SetTextColor(1,1,1,1);
-	Perl_Target_ClassNameBarText:SetTextColor(1,1,1);
+	Perl_Target_HealthBarText:SetTextColor(1, 1, 1, 1);
+	Perl_Target_ManaBarText:SetTextColor(1, 1, 1, 1);
+	Perl_Target_ClassNameBarText:SetTextColor(1, 1, 1);
 
 	Perl_Target_Set_Localized_ClassIcons();
 
@@ -317,6 +319,7 @@ function Perl_Target_Update_Once()
 	if (UnitExists("target")) then
 		Perl_Target_Frame:Show();		-- Show frame
 		Perl_Target_Set_Scale();		-- Set the scale (easier ways exist, but this is the safest)
+		Perl_Target_Set_Transparency();		-- Set the transparency (fix this method along with scale)
 		ComboFrame:Hide();			-- Hide default Combo Points
 		Perl_Target_Frame_Set_Name();		-- Set the target's name
 		Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
@@ -336,6 +339,10 @@ function Perl_Target_Update_Health()
 	local targethealth = UnitHealth("target");
 	local targethealthmax = UnitHealthMax("target");
 	local targethealthpercent = floor(targethealth/targethealthmax*100+0.5);
+
+	if (targethealth < 0) then			-- This prevents negative health
+		targethealth = 0;
+	end
 
 	Perl_Target_HealthBar:SetMinMaxValues(0, targethealthmax);
 	Perl_Target_HealthBar:SetValue(targethealth);
@@ -650,6 +657,7 @@ function Perl_Target_Set_Target_Class()
 			local targetClass = UnitClass("target");
 			Perl_Target_ClassNameBarText:SetText(targetClass);
 			Perl_Target_ClassNameFrame:Show();
+			Perl_Target_CivilianFrame:Hide();
 		else
 			local targetCreatureType = UnitCreatureType("target");
 			if (targetCreatureType == pt_localized_notspecified) then
@@ -657,9 +665,18 @@ function Perl_Target_Set_Target_Class()
 			end
 			Perl_Target_ClassNameBarText:SetText(targetCreatureType);
 			Perl_Target_ClassNameFrame:Show();
+
+			if (UnitIsCivilian("target")) then
+				Perl_Target_CivilianBarText:SetText(pt_localized_civilian);
+				Perl_Target_CivilianBarText:SetTextColor(1, 0, 0);
+				Perl_Target_CivilianFrame:Show();
+			else
+				Perl_Target_CivilianFrame:Hide();
+			end
 		end
 	else
 		Perl_Target_ClassNameFrame:Hide();
+		Perl_Target_CivilianFrame:Hide();
 	end
 end
 
@@ -685,6 +702,7 @@ function Perl_Target_Set_Localized_ClassIcons()
 		pt_translate_warlock = "Hexenmeister";
 		pt_translate_warrior = "Krieger";
 
+		pt_localized_civilian = "Zivilist";
 		pt_localized_creature = "Kreatur";
 		pt_localized_notspecified = "Nicht spezifiziert";
 	end
@@ -700,6 +718,7 @@ function Perl_Target_Set_Localized_ClassIcons()
 		pt_translate_warlock = "Warlock";
 		pt_translate_warrior = "Warrior";
 
+		pt_localized_civilian = "Civilian";
 		pt_localized_creature = "Creature";
 		pt_localized_notspecified = "Not specified";
 	end
@@ -715,6 +734,7 @@ function Perl_Target_Set_Localized_ClassIcons()
 		pt_translate_warlock = "D\195\169moniste";
 		pt_translate_warrior = "Guerrier";
 
+		pt_localized_civilian = "Civil";
 		pt_localized_creature = "Cr\195\169ature";
 		pt_localized_notspecified = "Non indiqu\195\169";
 	end
@@ -847,6 +867,14 @@ function Perl_Target_Set_Scale(number)
 	end
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 	Perl_Target_Frame:SetScale(unsavedscale);
+	Perl_Target_UpdateVars();
+end
+
+function Perl_Target_Set_Transparency(number)
+	if (number ~= nil) then
+		transparency = (number / 100);				-- convert the user input to a wow acceptable value
+	end
+	Perl_Target_Frame:SetAlpha(transparency);
 	Perl_Target_UpdateVars();
 end
 
@@ -1041,6 +1069,7 @@ function Perl_Target_GetVars()
 	scale = Perl_Target_Config[UnitName("player")]["Scale"];
 	colorhealth = Perl_Target_Config[UnitName("player")]["ColorHealth"];
 	showpvprank = Perl_Target_Config[UnitName("player")]["ShowPvPRank"];
+	transparency = Perl_Target_Config[UnitName("player")]["Transparency"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1079,6 +1108,9 @@ function Perl_Target_GetVars()
 	if (showpvprank == nil) then
 		showpvprank = 0;
 	end
+	if (transparency == nil) then
+		transparency = 1;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1092,6 +1124,7 @@ function Perl_Target_GetVars()
 		["scale"] = scale,
 		["colorhealth"] = colorhealth,
 		["showpvprank"] = showpvprank,
+		["transparency"] = transparency,
 	}
 	return vars;
 end
@@ -1109,6 +1142,7 @@ function Perl_Target_UpdateVars()
 						["Scale"] = scale,
 						["ColorHealth"] = colorhealth,
 						["ShowPvPRank"] = showpvprank,
+						["Transparency"] = transparency,
 						};
 end
 
@@ -1318,8 +1352,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.30",
-			releaseDate = "January 7, 2006",
+			version = "v0.31",
+			releaseDate = "January 11, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

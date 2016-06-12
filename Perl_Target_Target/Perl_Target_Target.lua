@@ -10,6 +10,7 @@ local mobhealthsupport = 1;	-- mobhealth support is on by default
 local scale = 1;		-- default scale
 local totsupport = 1;		-- target of target support enabled by default
 local tototsupport = 1;		-- target of target of target support enabled by default
+local transparency = 1;		-- transparency for frames
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
@@ -19,7 +20,6 @@ local mouseovertargettargethealthflag = 0;		-- is the mouse over the health bar 
 local mouseovertargettargetmanaflag = 0;		-- is the mouse over the mana bar for healer mode?
 local mouseovertargettargettargethealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovertargettargettargetmanaflag = 0;		-- is the mouse over the mana bar for healer mode?
-local transparency = 1;					-- 0.8 default from perl
 
 
 ----------------------
@@ -125,6 +125,7 @@ end
 function Perl_Target_Target_Initialize()
 	if (Initialized) then
 		Perl_Target_Target_Set_Scale();		-- Set the scale
+		Perl_Target_Target_Set_Transparency();	-- Set the transparency
 		return;
 	end
 
@@ -136,20 +137,20 @@ function Perl_Target_Target_Initialize()
 	end
 
 	-- Major config options.
-	Perl_Target_Target_StatsFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Target_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	Perl_Target_Target_NameFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Target_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	Perl_Target_Target_HealthBarText:SetTextColor(1,1,1,1);
-	Perl_Target_Target_ManaBarText:SetTextColor(1,1,1,1);
+	Perl_Target_Target_StatsFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_Target_NameFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_Target_HealthBarText:SetTextColor(1, 1, 1, 1);
+	Perl_Target_Target_ManaBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Target_Target_Frame:Hide();
 
-	Perl_Target_Target_Target_StatsFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Target_Target_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	Perl_Target_Target_Target_NameFrame:SetBackdropColor(0, 0, 0, transparency);
-	Perl_Target_Target_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	Perl_Target_Target_Target_HealthBarText:SetTextColor(1,1,1,1);
-	Perl_Target_Target_Target_ManaBarText:SetTextColor(1,1,1,1);
+	Perl_Target_Target_Target_StatsFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_Target_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_Target_Target_NameFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_Target_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_Target_Target_HealthBarText:SetTextColor(1, 1, 1, 1);
+	Perl_Target_Target_Target_ManaBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Target_Target_Target_Frame:Hide();
 
 	Initialized = 1;
@@ -474,6 +475,10 @@ function Perl_Target_Target_HealthShow()
 	local targettargethealth = UnitHealth("targettarget");
 	local targettargethealthmax = UnitHealthMax("targettarget");
 
+	if (targettargethealth < 0) then			-- This prevents negative health
+		targettargethealth = 0;
+	end
+
 	if (targettargethealthmax == 100) then
 		-- Begin Mobhealth support
 		if (mobhealthsupport == 1) then
@@ -562,6 +567,10 @@ end
 function Perl_Target_Target_Target_HealthShow()
 	local targettargettargethealth = UnitHealth("targettargettarget");
 	local targettargettargethealthmax = UnitHealthMax("targettargettarget");
+
+	if (targettargettargethealth < 0) then			-- This prevents negative health
+		targettargettargethealth = 0;
+	end
 
 	if (targettargettargethealthmax == 100) then
 		-- Begin Mobhealth support
@@ -688,6 +697,15 @@ function Perl_Target_Target_Set_Scale(number)
 	Perl_Target_Target_UpdateVars();
 end
 
+function Perl_Target_Target_Set_Transparency(number)
+	if (number ~= nil) then
+		transparency = (number / 100);				-- convert the user input to a wow acceptable value
+	end
+	Perl_Target_Target_Frame:SetAlpha(transparency);
+	Perl_Target_Target_Target_Frame:SetAlpha(transparency);
+	Perl_Target_Target_UpdateVars();
+end
+
 
 ----------------------
 -- Config functions --
@@ -803,6 +821,7 @@ function Perl_Target_Target_GetVars()
 	scale = Perl_Target_Target_Config[UnitName("player")]["Scale"];
 	totsupport = Perl_Target_Target_Config[UnitName("player")]["ToTSupport"];
 	tototsupport = Perl_Target_Target_Config[UnitName("player")]["ToToTSupport"];
+	transparency = Perl_Target_Target_Config[UnitName("player")]["Transparency"];
 
 	if (colorhealth == nil) then
 		colorhealth = 0;
@@ -822,6 +841,9 @@ function Perl_Target_Target_GetVars()
 	if (tototsupport == nil) then
 		tototsupport = 1;
 	end
+	if (transparency == nil) then
+		transparency = 1;
+	end
 
 	local vars = {
 		["colorhealth"] = colorhealth,
@@ -830,6 +852,7 @@ function Perl_Target_Target_GetVars()
 		["scale"] = scale,
 		["totsupport"] = totsupport,
 		["tototsupport"] = tototsupport,
+		["transparency"] = transparency,
 	}
 	return vars;
 end
@@ -842,6 +865,7 @@ function Perl_Target_Target_UpdateVars()
 						["Scale"] = scale,
 						["ToTSupport"] = totsupport,
 						["ToToTSupport"] = tototsupport,
+						["Transparency"] = transparency,
 	};
 end
 
@@ -980,8 +1004,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.30",
-			releaseDate = "January 7, 2006",
+			version = "v0.31",
+			releaseDate = "January 11, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

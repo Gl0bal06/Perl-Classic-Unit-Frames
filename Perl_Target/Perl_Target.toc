@@ -1,7 +1,7 @@
 ## Interface: 10900
 ## Title: Perl Target Frame
 ## Notes: Displays a movable target frame to replace the default.
-## Dependencies: 
+## Dependencies: Perl_Config
 ## OptionalDeps: MobHealth, myAddOns
 ## SavedVariables: Perl_Target_Config
 Perl_Target.xml

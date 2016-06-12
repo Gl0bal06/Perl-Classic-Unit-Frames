@@ -3,7 +3,7 @@
 	<Script file="Perl_Config_All.lua"/>
 
 
-	<Frame name="Perl_Config_All_Frame" hidden="true">
+	<Frame name="Perl_Config_All_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Size>
 			<AbsDimension x="450" y="380"/>
 		</Size>
@@ -56,6 +56,16 @@
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
 								<AbsDimension x="20" y="-30"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="Transparency">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="200" y="-30"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -315,6 +325,25 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
+			<Slider name="$parent_Slider2" inherits="OptionsSliderTemplate" minValue="0" maxValue="100" valueStep="1">
+				<Size>
+					<AbsDimension x="200" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Transparency_Text">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Config_All_Set_Transparency(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
 		</Frames>
 
 	</Frame>

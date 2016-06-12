@@ -10,6 +10,7 @@ local healthpersist = 0;
 local locked = 0;
 local scale = 1;
 local colorhealth = 0;		-- progressively colored health bars are off by default
+local transparency = 1;		-- transparency for the frame
 
 -- Default Local Variables
 local healthfull = 0;
@@ -177,6 +178,7 @@ function Perl_CombatDisplay_OnEvent(event)
 			Perl_CombatDisplay_Update_Mana();	-- make sure we dont display 0/0 on load
 			Perl_CombatDisplay_UpdateDisplay();	-- what mode are we in?
 			Perl_CombatDisplay_Set_Scale();		-- set the correct scale
+			Perl_CombatDisplay_Set_Transparency();	-- set the transparency
 		else
 			Perl_CombatDisplay_Initialize();
 		end
@@ -192,38 +194,6 @@ function Perl_CombatDisplay_OnEvent(event)
 end
 
 
--------------------
--- Slash Handler --
--------------------
---function Perl_CombatDisplay_SlashHandler(msg)
---	if (string.find(msg, "scale")) then
---		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
---		if (arg1 ~= "") then
---			if (arg1 == "ui") then
---				Perl_CombatDisplay_Set_ParentUI_Scale();
---				return;
---			end
---			local number = tonumber(arg1);
---			if (number > 0 and number < 150) then
---				Perl_CombatDisplay_Set_Scale(number);
---				return;
---			else
---				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pcd scale ui' to set to the current UI scale.");
---				return;
---			end
---		else
---			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pcd scale ui' to set to the current UI scale.");
---			return;
---		end
---	elseif (string.find(msg, "health")) then
---		Perl_CombatDisplay_ToggleColoredHealth();
---		return;
---	else
---		Perl_CombatDisplay_Options_Toggle();
---	end
---end
-
-
 -------------------------------
 -- Loading Settings Function --
 -------------------------------
@@ -236,11 +206,11 @@ function Perl_CombatDisplay_Initialize()
 	end
 
 	-- Major config options.
-	Perl_CombatDisplay_ManaFrame:SetBackdropColor(0, 0, 0, 0.5);
-	Perl_CombatDisplay_ManaFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 0.5);
-	Perl_CombatDisplay_HealthBarText:SetTextColor(1,1,1,1);
-	Perl_CombatDisplay_ManaBarText:SetTextColor(1,1,1,1);
-	Perl_CombatDisplay_CPBarText:SetTextColor(1,1,1,1);
+	Perl_CombatDisplay_ManaFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_CombatDisplay_ManaFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_CombatDisplay_HealthBarText:SetTextColor(1, 1, 1, 1);
+	Perl_CombatDisplay_ManaBarText:SetTextColor(1, 1, 1, 1);
+	Perl_CombatDisplay_CPBarText:SetTextColor(1, 1, 1, 1);
 
 	Perl_CombatDisplay_UpdateBars();	-- Display the bars appropriate to your class
 	Perl_CombatDisplay_UpdateDisplay();	-- Show or hide the window based on whats happening
@@ -286,6 +256,10 @@ end
 function Perl_CombatDisplay_Update_Health()
 	local playerhealth = UnitHealth("player");
 	local playerhealthmax = UnitHealthMax("player");
+
+	if (playerhealth < 0) then			-- This prevents negative health
+		playerhealth = 0;
+	end
 
 	if (colorhealth == 1) then
 		local playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
@@ -410,6 +384,14 @@ function Perl_CombatDisplay_Set_Scale(number)
 	Perl_CombatDisplay_UpdateVars();
 end
 
+function Perl_CombatDisplay_Set_Transparency(number)
+	if (number ~= nil) then
+		transparency = (number / 100);				-- convert the user input to a wow acceptable value
+	end
+	Perl_CombatDisplay_Frame:SetAlpha(transparency);
+	Perl_CombatDisplay_UpdateVars();
+end
+
 
 ------------------------------
 -- Saved Variable Functions --
@@ -421,6 +403,7 @@ function Perl_CombatDisplay_GetVars()
 	manapersist = Perl_CombatDisplay_Config[UnitName("player")]["ManaPersist"];
 	scale = Perl_CombatDisplay_Config[UnitName("player")]["Scale"];
 	colorhealth = Perl_CombatDisplay_Config[UnitName("player")]["ColorHealth"];
+	transparency = Perl_CombatDisplay_Config[UnitName("player")]["Transparency"];
 
 	if (state == nil) then
 		state = 3;
@@ -440,6 +423,9 @@ function Perl_CombatDisplay_GetVars()
 	if (colorhealth == nil) then
 		colorhealth = 0;
 	end
+	if (transparency == nil) then
+		transparency = 1;
+	end
 
 	local vars = {
 		["state"] = state,
@@ -448,6 +434,7 @@ function Perl_CombatDisplay_GetVars()
 		["locked"] = locked,
 		["scale"] = scale,
 		["colorhealth"] = colorhealth,
+		["transparency"] = transparency,
 	}
 	return vars;
 end
@@ -460,34 +447,9 @@ function Perl_CombatDisplay_UpdateVars()
 							["ManaPersist"] = manapersist,
 							["Scale"] = scale,
 							["ColorHealth"] = colorhealth,
+							["Transparency"] = transparency,
 	};
 end
-
-
-----------------------
--- Config functions --
-----------------------
---function Perl_CombatDisplay_Set_ParentUI_Scale()
---	local unsavedscale;
---	scale = floor(UIParent:GetScale()*100+0.5);	-- Round the value for the gui
---	scale = scale / 100;				-- Move the decimal for the SetScale function
---	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
---	Perl_CombatDisplay_Frame:SetScale(unsavedscale);
---	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl CombatDisplay is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
---	Perl_CombatDisplay_UpdateVars();
---end
-
---function Perl_CombatDisplay_ToggleColoredHealth()
---	if (colorhealth == 1) then
---		colorhealth = 0;
---		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00CombatDisplay Frame is now displaying |cffffffffSingle Colored Health Bars|cffffff00.");
---	else
---		colorhealth = 1;
---		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00CombatDisplay Frame is now displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
---	end
---	Perl_CombatDisplay_UpdateVars();
---	Perl_CombatDisplay_Update_Health();
---end
 
 
 -------------------
@@ -537,8 +499,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.30",
-			releaseDate = "January 7, 2006",
+			version = "v0.31",
+			releaseDate = "January 11, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

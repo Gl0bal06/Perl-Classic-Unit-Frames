@@ -3,7 +3,7 @@
 	<Script file="Perl_Config_Party.lua"/>
 
 
-	<Frame name="Perl_Config_Party_Frame" hidden="true">
+	<Frame name="Perl_Config_Party_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Size>
 			<AbsDimension x="450" y="380"/>
 		</Size>
@@ -81,6 +81,36 @@
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
 								<AbsDimension x="20" y="-160"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="Transparency">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="200" y="-80"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Buff_Location_Text" inherits="GameFontNormal" text="Buff Location">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="250" y="-140"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Debuff_Location_Text" inherits="GameFontNormal" text="Debuff Location">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="250" y="-200"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -328,6 +358,63 @@
 					<OnValueChanged>
 						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
 						Perl_Config_Party_Set_Space(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+
+			<Slider name="$parent_Slider3" inherits="OptionsSliderTemplate" minValue="0" maxValue="100" valueStep="1">
+				<Size>
+					<AbsDimension x="200" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Transparency_Text">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Config_Party_Set_Transparency(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+
+			<Slider name="$parent_Slider4" inherits="OptionsSliderTemplate" minValue="1" maxValue="5" valueStep="1">
+				<Size>
+					<AbsDimension x="150" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Buff_Location_Text">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Config_Party_Set_Buff_Location(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+
+			<Slider name="$parent_Slider5" inherits="OptionsSliderTemplate" minValue="1" maxValue="5" valueStep="1">
+				<Size>
+					<AbsDimension x="150" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Debuff_Location_Text">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Config_Party_Set_Debuff_Location(getglobal(this:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
