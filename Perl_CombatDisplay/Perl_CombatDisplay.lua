@@ -39,7 +39,7 @@ function Perl_CombatDisplay_OnLoad()
 	SLASH_COMBATDISPLAY1 = "/perlcombatdisplay";
 	SLASH_COMBATDISPLAY2 = "/pcd";
 
-	if( DEFAULT_CHAT_FRAME ) then
+	if(DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Combat Display by Perl loaded successfully.");
 	end
 end
@@ -164,7 +164,7 @@ function Perl_CombatDisplay_OnEvent(event)
 				manafull = 0;
 			end
 		end
-		
+
 		if (Initialized) then
 			Perl_CombatDisplay_UpdateBars();	-- what class are we? display the right color bars
 			Perl_CombatDisplay_Update_Health();	-- make sure we dont display 0/0 on load
@@ -399,8 +399,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.18",
-			releaseDate = "November 9, 2005",
+			version = "v0.19",
+			releaseDate = "November 14, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

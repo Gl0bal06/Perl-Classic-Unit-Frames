@@ -12,9 +12,10 @@ local buffmapping = {
 	["buffmapping3"] = 0,
 	["buffmapping4"] = 0,
 };
-local locked = 0;
+local locked = 0;		-- unlocked by default
 local compactmode = 0;		-- compact mode is disabled by default
-local partyhidden = 0;
+local partyhidden = 0;		-- party frame is set to always show by default
+local partyspacing = -80;	-- default spacing between party member frames
 
 -- Variables for position of the class icon texture.
 local Perl_Party_ClassPosRight = {
@@ -75,6 +76,7 @@ function Perl_Party_OnLoad()
 	this:RegisterEvent("PARTY_MEMBER_ENABLE");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("RAID_ROSTER_UPDATE");
 	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_ENERGY");
@@ -91,12 +93,12 @@ function Perl_Party_OnLoad()
 	SlashCmdList["PERL_PARTY"] = Perl_Party_SlashHandler;
 	SLASH_PERL_PARTY1 = "/perlparty";
 	SLASH_PERL_PARTY2 = "/ppty";
-	
+
 	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame1_DropDown");
 	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame2_DropDown");
 	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame3_DropDown");
 	table.insert(UnitPopupFrames,"Perl_PartyMemberFrame4_DropDown");
-	
+
 	HidePartyFrame();
 end
 
@@ -143,7 +145,7 @@ function Perl_Party_OnEvent(event)
 			Perl_Party_Update_Level();		-- Set the player's level
 		end
 		return;
-	elseif ((event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED")) then	-- or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")
+	elseif ((event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "RAID_ROSTER_UPDATE")) then	-- or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")
 		Perl_Party_MembersUpdate();			-- How many members are in the group and show the correct frames and do UpdateOnce things
 		Perl_Party_Update_Leader_Loot_Method();		-- Who is the group leader and who is the master looter
 		return;
@@ -173,6 +175,14 @@ function Perl_Party_SlashHandler(msg)
 		Perl_Party_Toggle_CompactMode();
 	elseif (string.find(msg, "hide")) then
 		Perl_Party_Toggle_Hide();
+	elseif (string.find(msg, "space")) then
+		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
+		if (arg1 ~= "") then
+			local number = tonumber(arg1);
+			Perl_Party_Set_Space(number);
+		else
+			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number.");
+		end
 	elseif (string.find(msg, "status")) then
 		Perl_Party_Status();
 	else
@@ -180,7 +190,8 @@ function Perl_Party_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff compact |cffffff00- Toggle compact mode.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff hide |cffffff00- Toggle hidden mode.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff space # |cffffff00- Set the distance between the party member frames (80 is default)");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff hide |cffffff00- Toggle hidden modes.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 	end
 end
@@ -228,13 +239,25 @@ function Perl_Party_MembersUpdate()
 		local partyid = "party"..partynum;
 		local frame = getglobal("Perl_Party_MemberFrame"..partynum);
 		if (UnitName(partyid) ~= nil) then
-			frame:Show();
-			
+			if (partyhidden == 0) then
+				frame:Show();
+			else
+				if (partyhidden == 1) then
+					frame:Hide();
+				end
+				if (partyhidden == 2) then
+					if (UnitInRaid("player")) then
+						frame:Hide();
+					else
+						frame:Show();
+					end
+				end
+			end
 		else
 			frame:Hide();
 		end
 	end
-	Perl_Party_Set_Name();			-- All this is here just in case a "/console reloadui" is called and you are already in a group
+	Perl_Party_Set_Name();
 	Perl_Party_Update_PvP_Status();
 	Perl_Party_Set_Class_Icon();
 	Perl_Party_Update_Level();
@@ -243,6 +266,7 @@ function Perl_Party_MembersUpdate()
 	Perl_Party_Update_Mana();
 	Perl_Party_Update_Mana_Bar();
 	Perl_Party_Update_Leader_Loot_Method();
+	Perl_Party_Set_Space();
 	Perl_Party_Buff_UpdateAll();
 	getglobal(this:GetName().."_NameFrame_PVPStatus"):Hide();	-- Set pvp status icon (need to remove the xml code eventually)
 	HidePartyFrame();
@@ -349,7 +373,7 @@ function Perl_Party_Update_Leader_Loot_Method()
 	-- Set Leader Icon / Master
 	local id = this:GetID();
 	local icon = getglobal(this:GetName().."_NameFrame_LeaderIcon");
-	if (GetPartyLeaderIndex() == id ) then
+	if (GetPartyLeaderIndex() == id) then
 		icon:Show();
 	else
 		icon:Hide();
@@ -392,6 +416,7 @@ function Perl_Party_Unlock()
 end
 
 function Perl_Party_Toggle_CompactMode()
+	local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, partymanapercent;
 	if (compactmode == 0) then
 		compactmode = 1;
 		Perl_Party_MemberFrame1_StatsFrame:SetWidth(170);
@@ -407,7 +432,46 @@ function Perl_Party_Toggle_CompactMode()
 		Perl_Party_MemberFrame4_StatsFrame:SetWidth(240);
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying in |cffffffffNormal Mode|cffffff00.");
 	end
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Health and Mana values will show correctly on the next update given to your client.");
+	for partynum=1,4 do
+		local partyid = "party"..partynum;
+		if (UnitName(partyid) ~= nil) then
+			partyhealth = UnitHealth(partyid);
+			partyhealthmax = UnitHealthMax(partyid);
+			partyhealthpercent = floor(partyhealth/partyhealthmax*100+0.5);
+			partymana = UnitMana(partyid);
+			partymanamax = UnitManaMax(partyid);
+			partymanapercent = floor(partymana/partymanamax*100+0.5);
+
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar"):SetMinMaxValues(0, partyhealthmax);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar"):SetValue(partyhealth);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar"):SetMinMaxValues(0, partymanamax);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar"):SetValue(partymana);
+
+			if (compactmode == 0) then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText(partyhealth.."/"..partyhealthmax);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealthpercent.."%");
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetText(partymana.."/"..partymanamax);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymanapercent.."%");
+			else
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText();
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealth.."/"..partyhealthmax);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetText();
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana.."/"..partymanamax);
+			end
+		else
+			-- Do nothing since it's hidden anyway
+		end
+	end
+	Perl_Party_UpdateVars();
+end
+
+function Perl_Party_Set_Space(number)
+	if (number ~= nil) then
+		partyspacing = -number;
+	end
+	Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partyspacing);
+	Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partyspacing);
+	Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
 	Perl_Party_UpdateVars();
 end
 
@@ -418,7 +482,26 @@ function Perl_Party_Toggle_Hide()
 		Perl_Party_MemberFrame2:Hide();
 		Perl_Party_MemberFrame3:Hide();
 		Perl_Party_MemberFrame4:Hide();
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffHidden|cffffff00.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffAlways Hidden|cffffff00.");
+	elseif (partyhidden == 1) then
+		partyhidden = 2;
+		if (UnitInRaid("player")) then
+			Perl_Party_MemberFrame1:Hide();
+			Perl_Party_MemberFrame2:Hide();
+			Perl_Party_MemberFrame3:Hide();
+			Perl_Party_MemberFrame4:Hide();
+		else
+			for partynum=1,4 do
+				local partyid = "party"..partynum;
+				local frame = getglobal("Perl_Party_MemberFrame"..partynum);
+				if (UnitName(partyid) ~= nil) then
+					frame:Show();
+				else
+					frame:Hide();
+				end
+			end
+		end
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffHidden in Raids|cffffff00.");
 	else
 		partyhidden = 0;
 		for partynum=1,4 do
@@ -430,21 +513,24 @@ function Perl_Party_Toggle_Hide()
 				frame:Hide();
 			end
 		end
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying in |cffffffffShown|cffffff00.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffAlways Shown|cffffff00.");
 	end
+	Perl_Party_UpdateVars();
 end
 
 function Perl_Party_Status()
-	if (partyhidden == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffShown|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffHidden|cffffff00.");
-	end
-
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffUnlocked|cffffff00.");
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffLocked|cffffff00.");
+	end
+
+	if (partyhidden == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffAlways Shown|cffffff00.");
+	elseif (partyhidden == 1) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffAlways Hidden|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffHidden in Raids|cffffff00.");
 	end
 
 	if (compactmode == 0) then
@@ -452,11 +538,15 @@ function Perl_Party_Status()
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is displaying in |cffffffffCompact Mode|cffffff00.");
 	end
+
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is displaying with a distance gap of |cffffffff"..-partyspacing);
 end
 
 function Perl_Party_GetVars()
 	locked = Perl_Party_Config[UnitName("player")]["Locked"];
 	compactmode = Perl_Party_Config[UnitName("player")]["CompactMode"];
+	partyhidden = Perl_Party_Config[UnitName("player")]["PartyHidden"];
+	partyspacing = Perl_Party_Config[UnitName("player")]["PartySpacing"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -464,12 +554,20 @@ function Perl_Party_GetVars()
 	if (compactmode == nil) then
 		compactmode = 0;
 	end
+	if (partyhidden == nil) then
+		partyhidden = 0;
+	end
+	if (partyspacing == nil) then
+		partyspacing = -80;
+	end
 end
 
 function Perl_Party_UpdateVars()
 	Perl_Party_Config[UnitName("player")] = {
 					["Locked"] = locked,
 					["CompactMode"] = compactmode,
+					["PartyHidden"] = partyhidden,
+					["PartySpacing"] = partyspacing,
 	};
 end
 
@@ -541,7 +639,7 @@ end
 
 function Perl_PartyDropDown_Initialize()
 	local dropdown;
-	if ( UIDROPDOWNMENU_OPEN_MENU ) then
+	if (UIDROPDOWNMENU_OPEN_MENU) then
 		dropdown = getglobal(UIDROPDOWNMENU_OPEN_MENU);
 	else
 		dropdown = this;
@@ -551,27 +649,35 @@ end
 
 function Perl_Party_MouseUp(button)
 	local id = this:GetID();
-	if ( SpellIsTargeting() and button == "RightButton" ) then
+	if (id == 0) then
+		local name=this:GetName();
+		id = string.sub(name, 23, 23);
+	end
+	if (SpellIsTargeting() and button == "RightButton") then
 		SpellStopTargeting();
 		return;
 	end
-	if ( button == "LeftButton" ) then
-		if ( SpellIsTargeting() ) then
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
 			SpellTargetUnit("party"..id);
-		elseif ( CursorHasItem() ) then
+		elseif (CursorHasItem()) then
 			DropItemOnUnit("party"..id);
 		else
 			TargetUnit("party"..id);
 		end
 	else
-		ToggleDropDownMenu(1, nil, getglobal(this:GetName().."_DropDown"), this:GetName(), 0, 0);
+		if (this:GetID() == 0) then
+			return;
+		else
+			ToggleDropDownMenu(1, nil, getglobal(this:GetName().."_DropDown"), this:GetName(), 0, 0);
+		end
 	end
-	
+
 	Perl_Party_Frame:StopMovingOrSizing();
 end
 
 function Perl_Party_MouseDown(button)
-	if ( button == "LeftButton" and locked == 0 and this:GetID() == 1) then
+	if (button == "LeftButton" and locked == 0 and this:GetID() == 1) then
 		Perl_Party_Frame:StartMoving();
 	end
 end
@@ -590,8 +696,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.18",
-			releaseDate = "November 9, 2005",
+			version = "v0.19",
+			releaseDate = "November 14, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

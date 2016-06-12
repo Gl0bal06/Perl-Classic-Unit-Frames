@@ -86,7 +86,7 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
-	
+
 	-- Slash Commands
 	SlashCmdList["PERL_PLAYER"] = Perl_Player_SlashHandler;
 	SLASH_PERL_PLAYER1 = "/perlplayer";
@@ -223,7 +223,7 @@ function Perl_Player_Initialize()
 	Perl_Player_RaidGroupNumberFrame:SetBackdropColor(0, 0, 0, transparency);
 	Perl_Player_RaidGroupNumberFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
 	Perl_Player_Frame:Hide();
-	
+
 	Perl_Player_HealthBarText:SetTextColor(1,1,1,1);
 	Perl_Player_ManaBarText:SetTextColor(1,1,1,1);
 	Perl_Player_RaidGroupNumberBarText:SetTextColor(1,1,1);
@@ -267,7 +267,7 @@ end
 function Perl_Player_Update_Health()
 	local playerhealth = UnitHealth("player");
 	local playerhealthmax = UnitHealthMax("player");
-	local playerhealthpercent = floor(UnitHealth("player")/UnitHealthMax("player")*100+0.5);
+	local playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
 
 	Perl_Player_HealthBar:SetMinMaxValues(0, playerhealthmax);
 	Perl_Player_HealthBar:SetValue(playerhealth);
@@ -284,7 +284,7 @@ end
 function Perl_Player_Update_Mana()
 	local playermana = UnitMana("player");
 	local playermanamax = UnitManaMax("player");
-	local playermanapercent = floor(UnitMana("player")/UnitManaMax("player")*100+0.5);
+	local playermanapercent = floor(playermana/playermanamax*100+0.5);
 
 	Perl_Player_ManaBar:SetMinMaxValues(0, playermanamax);
 	Perl_Player_ManaBar:SetValue(playermana);
@@ -658,8 +658,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.18",
-			releaseDate = "November 9, 2005",
+			version = "v0.19",
+			releaseDate = "November 14, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

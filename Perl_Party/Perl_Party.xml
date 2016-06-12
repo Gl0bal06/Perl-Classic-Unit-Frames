@@ -229,6 +229,11 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
+				<Scripts>
+					<OnMouseUp>
+						Perl_Party_MouseUp(arg1);
+					</OnMouseUp>
+				</Scripts>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -283,7 +288,11 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				
+				<Scripts>
+					<OnMouseUp>
+						Perl_Party_MouseUp(arg1);
+					</OnMouseUp>
+				</Scripts>
 				<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -308,6 +317,11 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnMouseUp>
+								Perl_Party_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
 						<BarTexture name="$parent_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0"/>
 						<Layers>
@@ -363,6 +377,11 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnMouseUp>
+								Perl_Party_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
 						<BarTexture name="$parent_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0" b="1"/>
 						<Layers>
@@ -404,6 +423,7 @@
 						</Anchors>
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
+						
 					</StatusBar>
 				</Frames>
 			</Frame>
@@ -679,7 +699,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame1">
 						<Offset>
-							<AbsDimension x="0" y="-80"/> <!-- -60 default -->
+							<AbsDimension x="0" y="-80"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

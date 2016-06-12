@@ -12,7 +12,7 @@ local showcp = 1;		-- combo points displayed by default
 local showclassicon = 1;	-- show the class icon
 local showpvpicon = 1;		-- show the pvp icon
 local showclassframe = 1;	-- show the class frame
-local numbuffsshown = 20;	-- buff row is 20 long
+local numbuffsshown = 16;	-- buff row is 20 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
 local mobhealthsupport = 1;	-- mobhealth support is on by default
 local BlizzardTargetFrame_Update = TargetFrame_Update;	-- backup the original target function in case we toggle the mod off
@@ -311,7 +311,7 @@ end
 function Perl_Target_Update_Health()
 	local targethealth = UnitHealth("target");
 	local targethealthmax = UnitHealthMax("target");
-	
+
 	Perl_Target_HealthBar:SetMinMaxValues(0, targethealthmax);
 	Perl_Target_HealthBar:SetValue(targethealth);
 
@@ -405,25 +405,25 @@ function Perl_Target_Update_Mana_Bar()
 		Perl_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
 		Perl_Target_ManaBar:Show();
 		Perl_Target_ManaBarBG:Show();
-		Perl_Target_StatsFrame:SetHeight(40);
+		Perl_Target_StatsFrame:SetHeight(42);
 	elseif (targetpower == 2) then
 		Perl_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 		Perl_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 		Perl_Target_ManaBar:Show();
 		Perl_Target_ManaBarBG:Show();
-		Perl_Target_StatsFrame:SetHeight(40);
+		Perl_Target_StatsFrame:SetHeight(42);
 	elseif (targetpower == 3) then
 		Perl_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 		Perl_Target_ManaBar:Show();
 		Perl_Target_ManaBarBG:Show();
-		Perl_Target_StatsFrame:SetHeight(40);
+		Perl_Target_StatsFrame:SetHeight(42);
 	else
 		Perl_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
 		Perl_Target_ManaBar:Show();
 		Perl_Target_ManaBarBG:Show();
-		Perl_Target_StatsFrame:SetHeight(40);
+		Perl_Target_StatsFrame:SetHeight(42);
 	end
 end
 
@@ -573,6 +573,9 @@ function Perl_Target_Set_Target_Class()
 			Perl_Target_ClassNameFrame:Show();
 		else
 			local targetCreatureType = UnitCreatureType("target");
+			if (targetCreatureType == "Not specified") then
+				targetCreatureType = "Creature";
+			end
 			Perl_Target_ClassNameBarText:SetText(targetCreatureType);
 			Perl_Target_ClassNameFrame:Show();
 		end
@@ -714,13 +717,13 @@ function Perl_Target_Status()
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffEnabled|cffffff00.");
 	end
-	
+
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffUnlocked|cffffff00.");
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffLocked|cffffff00.");
 	end
-	
+
 	if (showcp == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Combo Points are |cffffffffHidden|cffffff00.");
 	else
@@ -738,7 +741,7 @@ function Perl_Target_Status()
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame is |cffffffffShown|cffffff00.");
 	end
-	
+
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 buffs.");
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numdebuffsshown.."|cffffff00 debuffs.");
 end
@@ -774,7 +777,7 @@ function Perl_Target_GetVars()
 	if (numbuffsshown == nil) then
 		numbuffsshown = 16;
 	end
-	if (numbuffsshown < 16) then
+	if (numbuffsshown > 16) then
 		numbuffsshown = 16;
 	end
 	if (numdebuffsshown == nil) then
@@ -827,7 +830,7 @@ function Perl_Target_Buff_UpdateAll()
 				button:Hide();
 			end
 		end
-		
+
 		if (buffmax == 0) then
 			Perl_Target_BuffFrame:Hide();
 		else
@@ -941,7 +944,7 @@ function Perl_Target_MouseUp(button)
 	else
 		ToggleDropDownMenu(1, nil, Perl_Target_DropDown, "Perl_Target_NameFrame", 40, 0);
 	end
-	
+
 	Perl_Target_Frame:StopMovingOrSizing();
 end
 
@@ -970,8 +973,8 @@ end
 --
 --function Perl_Target_Replacement_UnitFrame_OnEnter()	-- Taken from 1.8 UnitFrame_OnEnter()
 --	this.unit = "target";
---	if ( SpellIsTargeting() ) then
---		if ( SpellCanTargetUnit(this.unit) ) then
+--	if (SpellIsTargeting()) then
+--		if (SpellCanTargetUnit(this.unit)) then
 --			SetCursor("CAST_CURSOR");
 --		else
 --			SetCursor("CAST_ERROR_CURSOR");
@@ -980,17 +983,17 @@ end
 --
 --	GameTooltip_SetDefaultAnchor(GameTooltip, this);
 --	-- If showing newbie tips then only show the explanation
---	if ( SHOW_NEWBIE_TIPS == "1" and this:GetName() ~= "PartyMemberFrame1" and this:GetName() ~= "PartyMemberFrame2" and this:GetName() ~= "PartyMemberFrame3" and this:GetName() ~= "PartyMemberFrame4") then
---		if ( this:GetName() == "PlayerFrame" ) then
+--	if (SHOW_NEWBIE_TIPS == "1" and this:GetName() ~= "PartyMemberFrame1" and this:GetName() ~= "PartyMemberFrame2" and this:GetName() ~= "PartyMemberFrame3" and this:GetName() ~= "PartyMemberFrame4") then
+--		if (this:GetName() == "PlayerFrame") then
 --			GameTooltip_AddNewbieTip(PARTY_OPTIONS_LABEL, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_PARTYOPTIONS);
 --			return;
---		elseif ( UnitPlayerControlled("target") and not UnitIsUnit("target", "player") and not UnitIsUnit("target", "pet") ) then
+--		elseif (UnitPlayerControlled("target") and not UnitIsUnit("target", "player") and not UnitIsUnit("target", "pet")) then
 --			GameTooltip_AddNewbieTip(PLAYER_OPTIONS_LABEL, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_PLAYEROPTIONS);
 --			return;
 --		end
 --	end
---	
---	if ( GameTooltip:SetUnit(this.unit) ) then
+--
+--	if (GameTooltip:SetUnit(this.unit)) then
 --		this.updateTooltip = TOOLTIP_UPDATE_TIME;
 --	else
 --		this.updateTooltip = nil;
@@ -1015,8 +1018,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.18",
-			releaseDate = "November 9, 2005",
+			version = "v0.19",
+			releaseDate = "November 14, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
@@ -1025,5 +1028,5 @@ function Perl_Target_myAddOns_Support()
 		Perl_Target_myAddOns_Help = {};
 		Perl_Target_myAddOns_Help[1] = "/perltarget\n/pt\n";
 		myAddOnsFrame_Register(Perl_Target_myAddOns_Details, Perl_Target_myAddOns_Help);
-	end	
+	end
 end
