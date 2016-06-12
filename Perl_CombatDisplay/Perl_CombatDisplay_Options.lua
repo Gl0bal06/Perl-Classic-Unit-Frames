@@ -6,6 +6,8 @@ Perl_CombatDisplay_Options_VariableList = {
 					["manapersist"] = 0,
 					["healthpersist"] = 0,
 					["locked"] = 0,
+					["partyspacing"] = -80,
+					["scale"] = 1,
 }
 
 Perl_CombatDisplay_Options_Text = {

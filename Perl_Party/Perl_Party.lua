@@ -11,63 +11,24 @@ local partyspacing = -80;	-- default spacing between party member frames
 local scale = 1;		-- default scale
 local showpets = 1;		-- show pets by default
 local colorhealth = 0;		-- progressively colored health bars are off by default
+local healermode = 0;		-- nurfed unit frame style
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 local transparency = 1.0;
 
 -- Variables for position of the class icon texture.
-local Perl_Party_ClassPosRight = {
-	["Warrior"] = 0,
-	["Mage"] = 0.25,
-	["Rogue"] = 0.5,
-	["Druid"] = 0.75,
-	["Hunter"] = 0,
-	["Shaman"] = 0.25,
-	["Priest"] = 0.5,
-	["Warlock"] = 0.75,
-	["Paladin"] = 0,
-};
-local Perl_Party_ClassPosLeft = {
-	["Warrior"] = 0.25,
-	["Mage"] = 0.5,
-	["Rogue"] = 0.75,
-	["Druid"] = 1,
-	["Hunter"] = 0.25,
-	["Shaman"] = 0.5,
-	["Priest"] = 0.75,
-	["Warlock"] = 1,
-	["Paladin"] = 0.25,
-};
-local Perl_Party_ClassPosTop = {
-	["Warrior"] = 0,
-	["Mage"] = 0,
-	["Rogue"] = 0,
-	["Druid"] = 0,
-	["Hunter"] = 0.25,
-	["Shaman"] = 0.25,
-	["Priest"] = 0.25,
-	["Warlock"] = 0.25,
-	["Paladin"] = 0.5,
-};
-local Perl_Party_ClassPosBottom = {
-	["Warrior"] = 0.25,
-	["Mage"] = 0.25,
-	["Rogue"] = 0.25,
-	["Druid"] = 0.25,
-	["Hunter"] = 0.5,
-	["Shaman"] = 0.5,
-	["Priest"] = 0.5,
-	["Warlock"] = 0.5,
-	["Paladin"] = 0.75,
-};
+local Perl_Party_ClassPosRight = {};
+local Perl_Party_ClassPosLeft = {};
+local Perl_Party_ClassPosTop = {};
+local Perl_Party_ClassPosBottom = {};
 
 
 ----------------------
 -- Loading Function --
 ----------------------
 function Perl_Party_OnLoad()
-	--Events
+	-- Events
 	this:RegisterEvent("ADDON_LOADED"); 
 	this:RegisterEvent("PARTY_LEADER_CHANGED");
 	this:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
@@ -75,7 +36,6 @@ function Perl_Party_OnLoad()
 	this:RegisterEvent("PARTY_MEMBER_ENABLE");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	this:RegisterEvent("RAID_ROSTER_UPDATE");
 	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_ENERGY");
@@ -109,7 +69,6 @@ function Perl_Party_OnEvent(event)
 	if (event == "UNIT_HEALTH") then
 		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
 			Perl_Party_Update_Health();
-			Perl_Party_Update_Dead_Status();	-- Is the target dead?
 		elseif ((arg1 == "partypet1") or (arg1 == "partypet2") or (arg1 == "partypet3") or (arg1 == "partypet4")) then
 			Perl_Party_Update_Pet_Health();
 		end
@@ -137,8 +96,7 @@ function Perl_Party_OnEvent(event)
 		return;
 	elseif (event == "UNIT_NAME_UPDATE") then
 		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
-			Perl_Party_Set_Name();			-- Set the player's name
-			Perl_Party_Set_Class_Icon();		-- Set the player's class icon
+			Perl_Party_Set_Name();			-- Set the player's name and class icon
 		end
 		return;
 	elseif (event == "UNIT_PET") then
@@ -151,9 +109,14 @@ function Perl_Party_OnEvent(event)
 			Perl_Party_Update_Level();		-- Set the player's level
 		end
 		return;
-	elseif ((event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "RAID_ROSTER_UPDATE")) then	-- or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")
+	elseif (event == "PARTY_LEADER_CHANGED") then
+		Perl_Party_Update_Leader();			-- Who is the group leader
+		return;
+	elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
+		Perl_Party_Update_Loot_Method();		-- Who is the master looter if any
+		return;
+	elseif (event == "PARTY_MEMBERS_CHANGED") then	-- or (event == "RAID_ROSTER_UPDATE") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")
 		Perl_Party_MembersUpdate();			-- How many members are in the group and show the correct frames and do UpdateOnce things
-		Perl_Party_Update_Leader_Loot_Method();		-- Who is the group leader and who is the master looter
 		return;
 	elseif (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
 		Perl_Party_Initialize();
@@ -185,6 +148,8 @@ function Perl_Party_SlashHandler(msg)
 		Perl_Party_Toggle_Hide();
 	elseif (string.find(msg, "pets")) then
 		Perl_Party_Toggle_Pets();
+	elseif (string.find(msg, "healer")) then
+		Perl_Party_ToggleHealerMode();
 	elseif (string.find(msg, "scale")) then
 		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
 		if (arg1 ~= "") then
@@ -221,6 +186,7 @@ function Perl_Party_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff compact |cffffff00- Toggle compact mode.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff health |cffffff00- Toggle the displaying of progressively colored health bars.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff pets |cffffff00- Toggle the display of party pets.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff healer |cffffff00- Toggle the 'healer' mode.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff space # |cffffff00- Set the distance between the party member frames (80 is default)");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/ppty scale ui' to set to the current UI scale.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff hide |cffffff00- Toggle hidden modes.");
@@ -252,6 +218,8 @@ function Perl_Party_Initialize()
 	getglobal(this:GetName().."_LevelFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
 	getglobal(this:GetName().."_StatsFrame"):SetBackdropColor(0, 0, 0, transparency);
 	getglobal(this:GetName().."_StatsFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
+
+	Perl_Party_Set_Localized_ClassIcons();
 
 	if (compactmode == 0) then	-- I'd usually put this in a method, but this is just easier for the party frames
 		getglobal(this:GetName().."_StatsFrame"):SetWidth(240);
@@ -326,17 +294,16 @@ function Perl_Party_MembersUpdate()
 	Perl_Party_Set_Name();
 	Perl_Party_Set_Scale();
 	Perl_Party_Update_PvP_Status();
-	Perl_Party_Set_Class_Icon();
 	Perl_Party_Update_Level();
+	Perl_Party_Set_Text_Positions();
 	Perl_Party_Update_Health();
-	Perl_Party_Update_Dead_Status();
 	Perl_Party_Update_Mana();
 	Perl_Party_Update_Mana_Bar();
-	Perl_Party_Update_Leader_Loot_Method();
+	Perl_Party_Update_Leader();
+	Perl_Party_Update_Loot_Method();
 	Perl_Party_Update_Pet();		-- Call instead of Perl_Party_Set_Space to ensure spacing is correctly set for pets
 	Perl_Party_Update_Pet_Health();
 	Perl_Party_Buff_UpdateAll();
-	getglobal(this:GetName().."_NameFrame_PVPStatus"):Hide();	-- Set pvp status icon (need to remove the xml code eventually)
 	HidePartyFrame();
 end
 
@@ -364,11 +331,35 @@ function Perl_Party_Update_Health()
 	end
 
 	if (compactmode == 0) then
-		getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText(partyhealth.."/"..partyhealthmax);
-		getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealthpercent.."%");
+		if (healermode == 1) then
+			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText("-"..partyhealthmax - partyhealth);
+			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText();
+		else
+			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText(partyhealth.."/"..partyhealthmax);
+			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealthpercent.."%");
+		end
 	else
-		getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText();
-		getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealth.."/"..partyhealthmax);
+		if (healermode == 1) then
+			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText("-"..partyhealthmax - partyhealth);
+			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText();
+		else
+			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText();
+			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealth.."/"..partyhealthmax);
+		end
+	end
+
+	-- Handle disconnected state
+	if (UnitIsConnected(partyid)) then
+		getglobal(this:GetName().."_NameFrame_DisconnectStatus"):Hide();
+	else
+		getglobal(this:GetName().."_NameFrame_DisconnectStatus"):Show();
+	end
+
+	-- Handle death state
+	if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then
+		getglobal(this:GetName().."_NameFrame_DeadStatus"):Show();
+	else
+		getglobal(this:GetName().."_NameFrame_DeadStatus"):Hide();
 	end
 end
 
@@ -382,17 +373,29 @@ function Perl_Party_Update_Mana()
 	getglobal(this:GetName().."_StatsFrame_ManaBar"):SetValue(partymana);
 
 	if (compactmode == 0) then
-		getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarText"):SetText(partymana.."/"..partymanamax);
-		if (UnitPowerType(partyid) == 0) then
-			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymanapercent.."%");
+		if (healermode == 1) then
+			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarText"):SetText();
+			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText();
 		else
-			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana);
-			--Perl_Player_ManaBarTextPercent:SetText(playermana);
+			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarText"):SetText(partymana.."/"..partymanamax);
+			if (UnitPowerType(partyid) == 1) then
+				getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana);
+			else
+				getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymanapercent.."%");
+			end
 		end
-		--getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymanapercent.."%");
 	else
-		getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarText"):SetText();
-		getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana.."/"..partymanamax);
+		if (healermode == 1) then
+			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarText"):SetText();
+			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText();
+		else
+			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarText"):SetText();
+			if (UnitPowerType(partyid) == 1) then
+				getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana);
+			else
+				getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana.."/"..partymanamax);
+			end
+		end
 	end
 end
 
@@ -486,11 +489,21 @@ function Perl_Party_Update_Pet_Health()
 		end
 
 		if (compactmode == 0) then
-			getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText(partypethealth.."/"..partypethealthmax);
-			getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealthpercent.."%");
+			if (healermode == 1) then
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-"..partypethealthmax - partypethealth);
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
+			else
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText(partypethealth.."/"..partypethealthmax);
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealthpercent.."%");
+			end
 		else
-			getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText();
-			getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealth.."/"..partypethealthmax);
+			if (healermode == 1) then
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-"..partypethealthmax - partypethealth);
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
+			else
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText();
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealth.."/"..partypethealthmax);
+			end
 		end
 
 	else
@@ -501,6 +514,7 @@ end
 function Perl_Party_Set_Name()
 	local partyid = "party"..this:GetID();
 	local partyname = UnitName(partyid);
+
 	-- Set name
 	if (UnitName(partyid) ~= nil) then
 		if (strlen(partyname) > 20) then
@@ -508,10 +522,7 @@ function Perl_Party_Set_Name()
 		end
 		getglobal(this:GetName().."_NameFrame_NameBarText"):SetText(partyname);
 	end
-end
 
-function Perl_Party_Set_Class_Icon()
-	local partyid = "party"..this:GetID();
 	-- Set Class Icon
 	if (UnitIsPlayer(partyid)) then
 		local PlayerClass = UnitClass(partyid);
@@ -524,11 +535,15 @@ end
 
 function Perl_Party_Update_PvP_Status()
 	local partyid = "party"..this:GetID();
+	local factionGroup = UnitFactionGroup(partyid);
 	-- Color their name if PvP flagged
 	if (UnitIsPVP(partyid)) then
 		getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0,1,0);
+		getglobal(this:GetName().."_NameFrame_PVPStatus"):SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
+		getglobal(this:GetName().."_NameFrame_PVPStatus"):Show();
 	else
 		getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.5,0.5,1);
+		getglobal(this:GetName().."_NameFrame_PVPStatus"):Hide();
 	end
 end
 
@@ -539,8 +554,7 @@ function Perl_Party_Update_Level()
 	getglobal(this:GetName().."_LevelFrame_LevelBarText"):SetText(partylevel);
 end
 
-function Perl_Party_Update_Leader_Loot_Method()
-	-- Set Leader Icon / Master
+function Perl_Party_Update_Leader()
 	local id = this:GetID();
 	local icon = getglobal(this:GetName().."_NameFrame_LeaderIcon");
 	if (GetPartyLeaderIndex() == id) then
@@ -548,24 +562,273 @@ function Perl_Party_Update_Leader_Loot_Method()
 	else
 		icon:Hide();
 	end
-	icon = getglobal(this:GetName().."_NameFrame_MasterIcon");
-	local lootMethod;
-	local lootMaster;
+end
+
+function Perl_Party_Update_Loot_Method()
+	local lootMethod, lootMaster;
 	lootMethod, lootMaster = GetLootMethod();
-	if (id == lootMaster) then
-		icon:Show();
+	if (this:GetID() == lootMaster) then
+		getglobal(this:GetName().."_NameFrame_MasterIcon"):Show();
 	else
-		icon:Hide();
+		getglobal(this:GetName().."_NameFrame_MasterIcon"):Hide();
 	end
 end
 
-function Perl_Party_Update_Dead_Status()
-	local partyid = "party"..this:GetID();
-	-- Set Dead Icon
-	if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then
-		getglobal(this:GetName().."_NameFrame_DeadStatus"):Show();
+function Perl_Party_Set_Text_Positions()
+	if (compactmode == 0) then
+		for partynum=1,4 do
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetPoint("RIGHT", 70, 0);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetPoint("TOP", 0, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetPoint("RIGHT", 70, 0);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetPoint("TOP", 0, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetPoint("RIGHT", 70, 0);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetPoint("TOP", 0, 1);
+		end
 	else
-		getglobal(this:GetName().."_NameFrame_DeadStatus"):Hide();
+		if (healermode == 1) then
+			for partynum=1,4 do
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetPoint("RIGHT", -10, 0);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetPoint("TOP", -40, 1);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetPoint("RIGHT", -10, 0);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetPoint("TOP", -40, 1);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetPoint("RIGHT", -10, 0);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetPoint("TOP", -40, 1);
+			end
+		else
+			for partynum=1,4 do
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetPoint("RIGHT", 70, 0);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetPoint("TOP", 0, 1);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetPoint("RIGHT", 70, 1);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetPoint("TOP", 0, 1);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetPoint("RIGHT", 70, 0);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetPoint("TOP", 0, 1);
+			end
+		end
+	end
+end
+
+function Perl_Party_HealthShow()
+	if (healermode == 1) then
+		local id = this:GetID();
+		if (id == 0) then
+			local name=this:GetName();
+			id = string.sub(name, 23, 23);
+		end
+		local partyid = "party"..id;
+		local partyhealth = UnitHealth(partyid);
+		local partyhealthmax = UnitHealthMax(partyid);
+		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealth.."/"..partyhealthmax);
+	end
+end
+
+function Perl_Party_HealthHide()
+	if (healermode == 1) then
+		local id = this:GetID();
+		if (id == 0) then
+			local name=this:GetName();
+			id = string.sub(name, 23, 23);
+		end
+		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText();
+	end
+end
+
+function Perl_Party_ManaShow()
+	if (healermode == 1) then
+		local id = this:GetID();
+		if (id == 0) then
+			local name=this:GetName();
+			id = string.sub(name, 23, 23);
+		end
+		local partyid = "party"..id;
+		local partymana = UnitMana(partyid);
+		local partymanamax = UnitManaMax(partyid);
+		if (UnitPowerType(partyid) == 1) then
+			getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana);
+		else
+			getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana.."/"..partymanamax);
+		end
+	end
+end
+
+function Perl_Party_ManaHide()
+	if (healermode == 1) then
+		local id = this:GetID();
+		if (id == 0) then
+			local name=this:GetName();
+			id = string.sub(name, 23, 23);
+		end
+		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText();
+	end
+end
+
+function Perl_Party_Pet_HealthShow()
+	if (healermode == 1) then
+		local id = this:GetID();
+		if (id == 0) then
+			local name=this:GetName();
+			id = string.sub(name, 23, 23);
+		end
+		local partyid = "partypet"..id;
+		local partypethealth = UnitHealth("partypet"..id);
+		local partypethealthmax = UnitHealthMax("partypet"..id);
+		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealth.."/"..partypethealthmax);
+	end
+end
+
+function Perl_Party_Pet_HealthHide()
+	if (healermode == 1) then
+		local id = this:GetID();
+		if (id == 0) then
+			local name=this:GetName();
+			id = string.sub(name, 23, 23);
+		end
+		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
+	end
+end
+
+function Perl_Party_Set_Localized_ClassIcons()
+	if (GetLocale() == "deDE") then
+		Perl_Party_ClassPosRight = {
+			["Druide"] = 0.75,
+			["J\195\164ger"] = 0,
+			["Magier"] = 0.25,
+			["Paladin"] = 0,
+			["Priester"] = 0.5,
+			["Schurke"] = 0.5,
+			["Schamane"] = 0.25,
+			["Hexenmeister"] = 0.75,
+			["Krieger"] = 0,
+		};
+		Perl_Party_ClassPosLeft = {
+			["Druide"] = 1,
+			["J\195\164ger"] = 0.25,
+			["Magier"] = 0.5,
+			["Paladin"] = 0.25,
+			["Priester"] = 0.75,
+			["Schurke"] = 0.75,
+			["Schamane"] = 0.5,
+			["Hexenmeister"] = 1,
+			["Krieger"] = 0.25,
+		};
+		Perl_Party_ClassPosTop = {
+			["Druide"] = 0,
+			["J\195\164ger"] = 0.25,
+			["Magier"] = 0,
+			["Paladin"] = 0.5,
+			["Priester"] = 0.25,
+			["Schurke"] = 0,
+			["Schamane"] = 0.25,
+			["Hexenmeister"] = 0.25,
+			["Krieger"] = 0,
+			
+		};
+		Perl_Party_ClassPosBottom = {
+			["Druide"] = 0.25,
+			["J\195\164ger"] = 0.5,
+			["Magier"] = 0.25,
+			["Paladin"] = 0.75,
+			["Priester"] = 0.5,
+			["Schurke"] = 0.25,
+			["Schamane"] = 0.5,
+			["Hexenmeister"] = 0.5,
+			["Krieger"] = 0.25,
+		};
+	end
+
+	if (GetLocale() == "enUS") then
+		Perl_Party_ClassPosRight = {
+			["Druid"] = 0.75,
+			["Hunter"] = 0,
+			["Mage"] = 0.25,
+			["Paladin"] = 0,
+			["Priest"] = 0.5,
+			["Rogue"] = 0.5,
+			["Shaman"] = 0.25,
+			["Warlock"] = 0.75,
+			["Warrior"] = 0,
+		};
+		Perl_Party_ClassPosLeft = {
+			["Druid"] = 1,
+			["Hunter"] = 0.25,
+			["Mage"] = 0.5,
+			["Paladin"] = 0.25,
+			["Priest"] = 0.75,
+			["Rogue"] = 0.75,
+			["Shaman"] = 0.5,
+			["Warlock"] = 1,
+			["Warrior"] = 0.25,
+		};
+		Perl_Party_ClassPosTop = {
+			["Druid"] = 0,
+			["Hunter"] = 0.25,
+			["Mage"] = 0,
+			["Paladin"] = 0.5,
+			["Priest"] = 0.25,
+			["Rogue"] = 0,
+			["Shaman"] = 0.25,
+			["Warlock"] = 0.25,
+			["Warrior"] = 0,
+			
+		};
+		Perl_Party_ClassPosBottom = {
+			["Druid"] = 0.25,
+			["Hunter"] = 0.5,
+			["Mage"] = 0.25,
+			["Paladin"] = 0.75,
+			["Priest"] = 0.5,
+			["Rogue"] = 0.25,
+			["Shaman"] = 0.5,
+			["Warlock"] = 0.5,
+			["Warrior"] = 0.25,
+		};
+	end
+
+	if (GetLocale() == "frFR") then
+		Perl_Party_ClassPosRight = {
+			["Druide"] = 0.75,
+			["Chasseur"] = 0,
+			["Mage"] = 0.25,
+			["Paladin"] = 0,
+			["Prêtre"] = 0.5,
+			["Voleur"] = 0.5,
+			["Chaman"] = 0.25,
+			["Démoniste"] = 0.75,
+			["Guerrier"] = 0,
+		};
+		Perl_Party_ClassPosLeft = {
+			["Druide"] = 1,
+			["Chasseur"] = 0.25,
+			["Mage"] = 0.5,
+			["Paladin"] = 0.25,
+			["Prêtre"] = 0.75,
+			["Voleur"] = 0.75,
+			["Chaman"] = 0.5,
+			["Démoniste"] = 1,
+			["Guerrier"] = 0.25,
+		};
+		Perl_Party_ClassPosTop = {
+			["Druide"] = 0,
+			["Chasseur"] = 0.25,
+			["Mage"] = 0,
+			["Paladin"] = 0.5,
+			["Prêtre"] = 0.25,
+			["Voleur"] = 0,
+			["Chaman"] = 0.25,
+			["Démoniste"] = 0.25,
+			["Guerrier"] = 0,
+			
+		};
+		Perl_Party_ClassPosBottom = {
+			["Druide"] = 0.25,
+			["Chasseur"] = 0.5,
+			["Mage"] = 0.25,
+			["Paladin"] = 0.75,
+			["Prêtre"] = 0.5,
+			["Voleur"] = 0.25,
+			["Chaman"] = 0.5,
+			["Démoniste"] = 0.5,
+			["Guerrier"] = 0.25,
+		};
 	end
 end
 
@@ -586,7 +849,7 @@ function Perl_Party_Unlock()
 end
 
 function Perl_Party_Toggle_CompactMode()
-	local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, partymanapercent, partypethealth, partypethealthmax, partypethealthpercent;
+	Perl_Party_Set_Text_Positions();
 	if (compactmode == 0) then
 		compactmode = 1;
 		Perl_Party_MemberFrame1_StatsFrame:SetWidth(170);
@@ -602,6 +865,14 @@ function Perl_Party_Toggle_CompactMode()
 		Perl_Party_MemberFrame4_StatsFrame:SetWidth(240);
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying in |cffffffffNormal Mode|cffffff00.");
 	end
+	Perl_Party_UpdateVars();
+	Perl_Party_Set_Text_Positions();
+	Perl_Party_Update_Health_Mana();
+end
+
+function Perl_Party_Update_Health_Mana()
+	local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, partymanapercent, partypethealth, partypethealthmax, partypethealthpercent;
+
 	for partynum=1,4 do
 		local partyid = "party"..partynum;
 		if (UnitName(partyid) ~= nil) then
@@ -623,25 +894,42 @@ function Perl_Party_Toggle_CompactMode()
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):SetValue(partypethealth);
 
 			if (compactmode == 0) then
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText(partyhealth.."/"..partyhealthmax);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealthpercent.."%");
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetText(partymana.."/"..partymanamax);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymanapercent.."%");
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText(partypethealth.."/"..partypethealthmax);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealthpercent.."%");
+				if (healermode == 1) then
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText("-"..partyhealthmax - partyhealth);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetText();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-"..partypethealthmax - partypethealth);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
+				else
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText(partyhealth.."/"..partyhealthmax);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealthpercent.."%");
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetText(partymana.."/"..partymanamax);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymanapercent.."%");
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText(partypethealth.."/"..partypethealthmax);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealthpercent.."%");
+				end
 			else
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText();
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealth.."/"..partyhealthmax);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetText();
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana.."/"..partymanamax);
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText();
-				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealth.."/"..partypethealthmax);
+				if (healermode == 1) then
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText("-"..partyhealthmax - partyhealth);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetText();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-"..partypethealthmax - partypethealth);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
+				else
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealth.."/"..partyhealthmax);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"):SetText();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana.."/"..partymanamax);
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealth.."/"..partypethealthmax);
+				end
 			end
 		else
 			-- Do nothing since it's hidden anyway
 		end
 	end
-	Perl_Party_UpdateVars();
 end
 
 function Perl_Party_Set_Space(number)
@@ -814,6 +1102,19 @@ function Perl_Party_ToggleColoredHealth()
 	Perl_Party_UpdateVars();
 end
 
+function Perl_Party_ToggleHealerMode()
+	if (healermode == 1) then
+		healermode = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffNot Displaying in Healer Mode|cffffff00.");
+	else
+		healermode = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffDisplaying in Healer Mode|cffffff00.");
+	end
+	Perl_Party_UpdateVars();
+	Perl_Party_Set_Text_Positions();
+	Perl_Party_Update_Health_Mana();
+end
+
 function Perl_Party_Status()
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffUnlocked|cffffff00.");
@@ -841,6 +1142,12 @@ function Perl_Party_Status()
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is displaying in |cffffffffCompact Mode|cffffff00.");
 	end
 
+	if (healermode == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffNot Displaying in Healer Mode|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffDisplaying in Healer Mode|cffffff00.");
+	end
+
 	if (showpets == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffHiding Pets|cffffff00.");
 	else
@@ -860,6 +1167,7 @@ function Perl_Party_GetVars()
 	scale = Perl_Party_Config[UnitName("player")]["Scale"];
 	showpets = Perl_Party_Config[UnitName("player")]["ShowPets"];
 	colorhealth = Perl_Party_Config[UnitName("player")]["ColorHealth"];
+	healermode = Perl_Party_Config[UnitName("player")]["HealerMode"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -882,6 +1190,9 @@ function Perl_Party_GetVars()
 	if (colorhealth == nil) then
 		colorhealth = 0;
 	end
+	if (healermode == nil) then
+		healermode = 0;
+	end
 end
 
 function Perl_Party_UpdateVars()
@@ -893,6 +1204,7 @@ function Perl_Party_UpdateVars()
 					["Scale"] = scale,
 					["ShowPets"] = showpets,
 					["ColorHealth"] = colorhealth,
+					["HealerMode"] = healermode,
 	};
 end
 
@@ -919,7 +1231,6 @@ function Perl_Party_SetVars(vartable)
 	if (vartable["showpets"]) then
 		locked = vartable["showpets"];
 	end
-	--Perl_CombatDisplay_UpdateDisplay();
 	Perl_Party_UpdateVars();
 end
 
@@ -1074,8 +1385,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.23",
-			releaseDate = "November 28, 2005",
+			version = "v0.24",
+			releaseDate = "December 7, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

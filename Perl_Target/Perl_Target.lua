@@ -14,11 +14,12 @@ local numdebuffsshown = 16;	-- debuff row is 16 long
 local mobhealthsupport = 1;	-- mobhealth support is on by default
 local scale = 1;		-- default scale
 local colorhealth = 0;		-- progressively colored health bars are off by default
+local showpvprank = 0;		-- hide the pvp rank by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 local transparency = 1;		-- 0.8 default from perl
-local UnitReactionColor = {
+local UnitReactionColor = {	-- agro color table for npcs
 	{ r = 1.0, g = 0.0, b = 0.0 },
 	{ r = 1.0, g = 0.0, b = 0.0 },
 	{ r = 1.0, g = 0.5, b = 0.0 },
@@ -29,50 +30,10 @@ local UnitReactionColor = {
 };
 
 -- Variables for position of the class icon texture.
-local Perl_Target_ClassPosRight = {
-	["Warrior"] = 0,
-	["Mage"] = 0.25,
-	["Rogue"] = 0.5,
-	["Druid"] = 0.75,
-	["Hunter"] = 0,
-	["Shaman"] = 0.25,
-	["Priest"] = 0.5,
-	["Warlock"] = 0.75,
-	["Paladin"] = 0,
-};
-local Perl_Target_ClassPosLeft = {
-	["Warrior"] = 0.25,
-	["Mage"] = 0.5,
-	["Rogue"] = 0.75,
-	["Druid"] = 1,
-	["Hunter"] = 0.25,
-	["Shaman"] = 0.5,
-	["Priest"] = 0.75,
-	["Warlock"] = 1,
-	["Paladin"] = 0.25,
-};
-local Perl_Target_ClassPosTop = {
-	["Warrior"] = 0,
-	["Mage"] = 0,
-	["Rogue"] = 0,
-	["Druid"] = 0,
-	["Hunter"] = 0.25,
-	["Shaman"] = 0.25,
-	["Priest"] = 0.25,
-	["Warlock"] = 0.25,
-	["Paladin"] = 0.5,
-};
-local Perl_Target_ClassPosBottom = {
-	["Warrior"] = 0.25,
-	["Mage"] = 0.25,
-	["Rogue"] = 0.25,
-	["Druid"] = 0.25,
-	["Hunter"] = 0.5,
-	["Shaman"] = 0.5,
-	["Priest"] = 0.5,
-	["Warlock"] = 0.5,
-	["Paladin"] = 0.75,
-};
+local Perl_Target_ClassPosRight = {};
+local Perl_Target_ClassPosLeft = {};
+local Perl_Target_ClassPosTop = {};
+local Perl_Target_ClassPosBottom = {};
 
 
 ----------------------
@@ -127,7 +88,6 @@ function Perl_Target_OnEvent(event)
 	elseif (event == "UNIT_HEALTH") then
 		if (arg1 == "target") then
 			Perl_Target_Update_Health();		-- Update health values
-			Perl_Target_Update_Dead_Status();	-- Is the target dead?
 		end
 		return;
 	elseif ((event == "UNIT_ENERGY") or (event == "UNIT_MANA") or (event == "UNIT_RAGE") or (event == "UNIT_FOCUS")) then
@@ -205,6 +165,9 @@ function Perl_Target_SlashHandler(msg)
 	elseif (string.find(msg, "health")) then
 		Perl_Target_ToggleColoredHealth();
 		return;
+	elseif (string.find(msg, "rank")) then
+		Perl_Target_TogglePvPRank();
+		return;
 	elseif (string.find(msg, "status")) then
 		Perl_Target_Status();
 		return;
@@ -263,6 +226,7 @@ function Perl_Target_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff class |cffffff00- Toggle the displaying of class frame.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff icon |cffffff00- Toggle the displaying of class icon.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff pvp |cffffff00- Toggle the displaying of pvp status icon.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff rank |cffffff00- Toggle the displaying of pvp rank icon.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff mobhealth |cffffff00- Toggle the displaying of integrated MobHealth support.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs # |cffffff00- Show the number of buffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuffs # |cffffff00- Show the number of debuffs to display.");
@@ -308,6 +272,8 @@ function Perl_Target_Initialize()
 	Perl_Target_HealthBarText:SetTextColor(1,1,1,1);
 	Perl_Target_ManaBarText:SetTextColor(1,1,1,1);
 	Perl_Target_ClassNameBarText:SetTextColor(1,1,1);
+
+	Perl_Target_Set_Localized_ClassIcons();
 
 	-- The following UnregisterEvent calls were taken from Nymbia's Perl
 	-- Blizz Target Frame Events
@@ -362,8 +328,8 @@ function Perl_Target_Update_Once()
 		Perl_Target_Update_Health();		-- Set the target's health
 		Perl_Target_Update_Mana_Bar();		-- What type of mana bar is it?
 		Perl_Target_Update_Mana();		-- Set the target's mana
-		Perl_Target_Update_Dead_Status();	-- Is the target dead?
 		Perl_Target_Update_PvP_Status_Icon();	-- Set pvp status icon
+		Perl_Target_Frame_Set_PvPRank();	-- Set the pvp rank icon
 		Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
 		Perl_Target_Set_Character_Class_Icon();	-- Draw the class icon?
 		Perl_Target_Set_Target_Class();		-- Set the target's class in the class frame
@@ -453,6 +419,13 @@ function Perl_Target_Update_Health()
 	else
 		Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);	-- Self/Party/Raid member
 	end
+
+	-- Set Dead Icon (for pve)
+	if (UnitIsDead("target")) then
+		Perl_Target_DeadStatus:Show();
+	else
+		Perl_Target_DeadStatus:Hide();
+	end
 end
 
 function Perl_Target_Update_Mana()
@@ -539,16 +512,6 @@ function Perl_Target_Update_Combo_Points()
 	end
 end
 
-function Perl_Target_Update_Dead_Status()
-	-- Set Dead Icon
-	if (UnitIsDead("target")) then
-	--if ((UnitHealth("target") <= 0) and UnitIsConnected("target")) then
-		Perl_Target_DeadStatus:Show();
-	else
-		Perl_Target_DeadStatus:Hide();
-	end
-end
-
 function Perl_Target_Update_PvP_Status_Icon()
 	if (showpvpicon == 1) then
 		local factionGroup = UnitFactionGroup("target");
@@ -622,6 +585,29 @@ function Perl_Target_Frame_Set_Name()
 	Perl_Target_NameBarText:SetText(targetname);
 end
 
+function Perl_Target_Frame_Set_PvPRank()
+	if (showpvprank == 1) then
+		if (UnitIsPlayer("target")) then
+			local rankNumber = UnitPVPRank("target");
+			if (rankNumber == 0) then
+				Perl_Target_PVPRank:Hide();
+			elseif (rankNumber < 14) then
+				rankNumber = rankNumber - 4;
+				Perl_Target_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber);
+				Perl_Target_PVPRank:Show();
+			else
+				rankNumber = rankNumber - 4;
+				Perl_Target_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
+				Perl_Target_PVPRank:Show();
+			end
+		else
+			Perl_Target_PVPRank:Hide();
+		end
+	else
+		Perl_Target_PVPRank:Hide();
+	end
+end
+
 function Perl_Target_Frame_Set_Level()
 	local targetlevel = UnitLevel("target");
 	local targetlevelcolor = GetDifficultyColor(targetlevel);
@@ -674,6 +660,152 @@ function Perl_Target_Set_Target_Class()
 		end
 	else
 		Perl_Target_ClassNameFrame:Hide();
+	end
+end
+
+function Perl_Target_Set_Localized_ClassIcons()
+	if (GetLocale() == "deDE") then
+		Perl_Target_ClassPosRight = {
+			["Druide"] = 0.75,
+			["J\195\164ger"] = 0,
+			["Magier"] = 0.25,
+			["Paladin"] = 0,
+			["Priester"] = 0.5,
+			["Schurke"] = 0.5,
+			["Schamane"] = 0.25,
+			["Hexenmeister"] = 0.75,
+			["Krieger"] = 0,
+		};
+		Perl_Target_ClassPosLeft = {
+			["Druide"] = 1,
+			["J\195\164ger"] = 0.25,
+			["Magier"] = 0.5,
+			["Paladin"] = 0.25,
+			["Priester"] = 0.75,
+			["Schurke"] = 0.75,
+			["Schamane"] = 0.5,
+			["Hexenmeister"] = 1,
+			["Krieger"] = 0.25,
+		};
+		Perl_Target_ClassPosTop = {
+			["Druide"] = 0,
+			["J\195\164ger"] = 0.25,
+			["Magier"] = 0,
+			["Paladin"] = 0.5,
+			["Priester"] = 0.25,
+			["Schurke"] = 0,
+			["Schamane"] = 0.25,
+			["Hexenmeister"] = 0.25,
+			["Krieger"] = 0,
+			
+		};
+		Perl_Target_ClassPosBottom = {
+			["Druide"] = 0.25,
+			["J\195\164ger"] = 0.5,
+			["Magier"] = 0.25,
+			["Paladin"] = 0.75,
+			["Priester"] = 0.5,
+			["Schurke"] = 0.25,
+			["Schamane"] = 0.5,
+			["Hexenmeister"] = 0.5,
+			["Krieger"] = 0.25,
+		};
+	end
+
+	if (GetLocale() == "enUS") then
+		Perl_Target_ClassPosRight = {
+			["Druid"] = 0.75,
+			["Hunter"] = 0,
+			["Mage"] = 0.25,
+			["Paladin"] = 0,
+			["Priest"] = 0.5,
+			["Rogue"] = 0.5,
+			["Shaman"] = 0.25,
+			["Warlock"] = 0.75,
+			["Warrior"] = 0,
+		};
+		Perl_Target_ClassPosLeft = {
+			["Druid"] = 1,
+			["Hunter"] = 0.25,
+			["Mage"] = 0.5,
+			["Paladin"] = 0.25,
+			["Priest"] = 0.75,
+			["Rogue"] = 0.75,
+			["Shaman"] = 0.5,
+			["Warlock"] = 1,
+			["Warrior"] = 0.25,
+		};
+		Perl_Target_ClassPosTop = {
+			["Druid"] = 0,
+			["Hunter"] = 0.25,
+			["Mage"] = 0,
+			["Paladin"] = 0.5,
+			["Priest"] = 0.25,
+			["Rogue"] = 0,
+			["Shaman"] = 0.25,
+			["Warlock"] = 0.25,
+			["Warrior"] = 0,
+			
+		};
+		Perl_Target_ClassPosBottom = {
+			["Druid"] = 0.25,
+			["Hunter"] = 0.5,
+			["Mage"] = 0.25,
+			["Paladin"] = 0.75,
+			["Priest"] = 0.5,
+			["Rogue"] = 0.25,
+			["Shaman"] = 0.5,
+			["Warlock"] = 0.5,
+			["Warrior"] = 0.25,
+		};
+	end
+
+	if (GetLocale() == "frFR") then
+		Perl_Target_ClassPosRight = {
+			["Druide"] = 0.75,
+			["Chasseur"] = 0,
+			["Mage"] = 0.25,
+			["Paladin"] = 0,
+			["Prêtre"] = 0.5,
+			["Voleur"] = 0.5,
+			["Chaman"] = 0.25,
+			["Démoniste"] = 0.75,
+			["Guerrier"] = 0,
+		};
+		Perl_Target_ClassPosLeft = {
+			["Druide"] = 1,
+			["Chasseur"] = 0.25,
+			["Mage"] = 0.5,
+			["Paladin"] = 0.25,
+			["Prêtre"] = 0.75,
+			["Voleur"] = 0.75,
+			["Chaman"] = 0.5,
+			["Démoniste"] = 1,
+			["Guerrier"] = 0.25,
+		};
+		Perl_Target_ClassPosTop = {
+			["Druide"] = 0,
+			["Chasseur"] = 0.25,
+			["Mage"] = 0,
+			["Paladin"] = 0.5,
+			["Prêtre"] = 0.25,
+			["Voleur"] = 0,
+			["Chaman"] = 0.25,
+			["Démoniste"] = 0.25,
+			["Guerrier"] = 0,
+			
+		};
+		Perl_Target_ClassPosBottom = {
+			["Druide"] = 0.25,
+			["Chasseur"] = 0.5,
+			["Mage"] = 0.25,
+			["Paladin"] = 0.75,
+			["Prêtre"] = 0.5,
+			["Voleur"] = 0.25,
+			["Chaman"] = 0.5,
+			["Démoniste"] = 0.5,
+			["Guerrier"] = 0.25,
+		};
 	end
 end
 
@@ -812,6 +944,18 @@ function Perl_Target_ToggleColoredHealth()
 	Perl_Target_Update_Once();
 end
 
+function Perl_Target_TogglePvPRank()
+	if (showpvprank == 1) then
+		showpvprank = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is now |cffffffffHiding PvP Rank|cffffff00.");
+	else
+		showpvprank = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is now |cffffffffDisplaying PvP Rank|cffffff00.");
+	end
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
 function Perl_Target_Status()
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffUnlocked|cffffff00.");
@@ -843,6 +987,18 @@ function Perl_Target_Status()
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame is |cffffffffShown|cffffff00.");
 	end
 
+	if (showpvpicon == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame PvP Icon is |cffffffffHidden|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame PvP Icon is |cffffffffShown|cffffff00.");
+	end
+
+	if (showpvprank == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffHiding PvP Rank|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffDisplaying PvP Rank|cffffff00.");
+	end
+
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 buffs.");
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numdebuffsshown.."|cffffff00 debuffs.");
 
@@ -860,12 +1016,13 @@ function Perl_Target_GetVars()
 	showcp = Perl_Target_Config[UnitName("player")]["ComboPoints"];
 	showclassicon = Perl_Target_Config[UnitName("player")]["ClassIcon"];
 	showclassframe = Perl_Target_Config[UnitName("player")]["ClassFrame"];
-	showpvpicon = Perl_Target_Config[UnitName("player")]["PvPIcon"];
+	showpvpicon = Perl_Target_Config[UnitName("player")]["PvPIcon"]; 
 	numbuffsshown = Perl_Target_Config[UnitName("player")]["Buffs"];
 	numdebuffsshown = Perl_Target_Config[UnitName("player")]["Debuffs"];
 	mobhealthsupport = Perl_Target_Config[UnitName("player")]["MobHealthSupport"];
 	scale = Perl_Target_Config[UnitName("player")]["Scale"];
 	colorhealth = Perl_Target_Config[UnitName("player")]["ColorHealth"];
+	showpvprank = Perl_Target_Config[UnitName("player")]["ShowPvPRank"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -901,6 +1058,9 @@ function Perl_Target_GetVars()
 	if (colorhealth == nil) then
 		colorhealth = 0;
 	end
+	if (showpvprank == nil) then
+		showpvprank = 0;
+	end
 end
 
 function Perl_Target_UpdateVars()
@@ -915,6 +1075,7 @@ function Perl_Target_UpdateVars()
 						["MobHealthSupport"] = mobhealthsupport,
 						["Scale"] = scale,
 						["ColorHealth"] = colorhealth,
+						["ShowPvPRank"] = showpvprank,
 						};
 end
 
@@ -1167,8 +1328,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.23",
-			releaseDate = "November 28, 2005",
+			version = "v0.24",
+			releaseDate = "December 7, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

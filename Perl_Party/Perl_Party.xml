@@ -165,7 +165,7 @@
 							<Anchors>
 								<Anchor point="TOPLEFT">
 									<Offset>
-										<AbsDimension x="45" y="7"/>
+										<AbsDimension x="65" y="7"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -174,12 +174,12 @@
 						<!-- PVP Icon -->
 						<Texture name="$parent_PVPStatus" file="Interface\TargetingFrame\UI-PVP-FFA">
 							<Size>
-								<AbsDimension x="64" y="64"/>
+								<AbsDimension x="32" y="32"/>
 							</Size>
 							<Anchors>
 								<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
 									<Offset>
-										<AbsDimension x="-30" y="0"/>
+										<AbsDimension x="2" y="-2"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -194,6 +194,20 @@
 								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
 									<Offset>
 										<AbsDimension x="-5" y="-5"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+
+						<!-- Disconnected Icon -->
+						<Texture name="$parent_DisconnectStatus" file="Interface\CharacterFrame\Disconnect-Icon" visible="false">
+							<Size>
+								<AbsDimension x="32" y="32"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+									<Offset>
+										<AbsDimension x="-15" y="3"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -315,6 +329,12 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
+							<OnEnter>
+								Perl_Party_HealthShow();
+							</OnEnter>
+							<OnLeave>
+								Perl_Party_HealthHide();
+							</OnLeave>
 							<OnMouseUp>
 								Perl_Party_MouseUp(arg1);
 							</OnMouseUp>
@@ -375,6 +395,12 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
+							<OnEnter>
+								Perl_Party_ManaShow();
+							</OnEnter>
+							<OnLeave>
+								Perl_Party_ManaHide();
+							</OnLeave>
 							<OnMouseUp>
 								Perl_Party_MouseUp(arg1);
 							</OnMouseUp>
@@ -435,6 +461,12 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
+							<OnEnter>
+								Perl_Party_Pet_HealthShow();
+							</OnEnter>
+							<OnLeave>
+								Perl_Party_Pet_HealthHide();
+							</OnLeave>
 							<OnMouseUp>
 								Perl_Party_Pet_MouseUp(arg1);
 							</OnMouseUp>

@@ -315,7 +315,11 @@ function Perl_CombatDisplay_Update_Mana()
 
 	Perl_CombatDisplay_ManaBar:SetMinMaxValues(0, playermanamax);
 	Perl_CombatDisplay_ManaBar:SetValue(playermana);
-	Perl_CombatDisplay_ManaBarText:SetText(playermana.."/"..playermanamax);
+	if (UnitPowerType("player") == 1) then
+		Perl_CombatDisplay_ManaBarText:SetText(playermana);
+	else
+		Perl_CombatDisplay_ManaBarText:SetText(playermana.."/"..playermanamax);
+	end
 end
 
 function Perl_CombatDisplay_Update_Combo_Points()
@@ -422,6 +426,7 @@ function Perl_CombatDisplay_GetVars()
 		["healthpersist"] = healthpersist,
 		["locked"] = locked,
 		["scale"] = scale,
+		["colorhealth"] = colorhealth,
 	}
 	return vars;
 end
@@ -454,8 +459,15 @@ function Perl_CombatDisplay_SetVars(vartable)
 	if (vartable["locked"]) then
 		locked = vartable["locked"];
 	end
-	Perl_CombatDisplay_UpdateDisplay();
+	if (vartable["scale"]) then
+		scale = vartable["scale"];
+	end
+	if (vartable["colorhealth"]) then
+		colorhealth = vartable["colorhealth"];
+	end
 	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_UpdateDisplay();
+	Perl_CombatDisplay_Frame:SetScale(scale);
 end
 
 
@@ -481,8 +493,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.23",
-			releaseDate = "November 28, 2005",
+			version = "v0.24",
+			releaseDate = "December 7, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
@@ -492,5 +504,5 @@ function Perl_CombatDisplay_myAddOns_Support()
 		Perl_CombatDisplay_myAddOns_Help = {};
 		Perl_CombatDisplay_myAddOns_Help[1] = "/perlcombatdisplay\n/pcd\n";
 		myAddOnsFrame_Register(Perl_CombatDisplay_myAddOns_Details, Perl_CombatDisplay_myAddOns_Help);
-	end	
+	end
 end

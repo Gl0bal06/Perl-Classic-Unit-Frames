@@ -291,11 +291,7 @@ function Perl_Player_Pet_Update_Mana()
 	Perl_Player_Pet_ManaBar:SetMinMaxValues(0, petmanamax);
 	Perl_Player_Pet_ManaBar:SetValue(petmana);
 
-	if (petmanamax == 100) then
-		Perl_Player_Pet_ManaBarText:SetText(petmana.."%");
-	else
-		Perl_Player_Pet_ManaBarText:SetText(petmana.."/"..petmanamax);
-	end
+	Perl_Player_Pet_ManaBarText:SetText(petmana);
 end
 
 function Perl_Player_Pet_Update_Mana_Bar()
@@ -645,8 +641,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.23",
-			releaseDate = "November 28, 2005",
+			version = "v0.24",
+			releaseDate = "December 7, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

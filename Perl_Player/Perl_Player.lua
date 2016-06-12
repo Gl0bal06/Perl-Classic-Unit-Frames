@@ -10,6 +10,7 @@ local compactmode = 0;		-- compact mode is disabled by default
 local showraidgroup = 1;	-- show the raid group number by default when in raids
 local scale = 1;		-- default scale
 local colorhealth = 0;		-- progressively colored health bars are off by default
+local healermode = 0;		-- nurfed unit frame style
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -17,50 +18,10 @@ local Initialized = nil;	-- waiting to be initialized
 local transparency = 1;		-- general transparency for frames relative to bars/text  default is 0.8
 
 -- Variables for position of the class icon texture.
-local Perl_Player_ClassPosRight = {
-	["Warrior"] = 0,
-	["Mage"] = 0.25,
-	["Rogue"] = 0.5,
-	["Druid"] = 0.75,
-	["Hunter"] = 0,
-	["Shaman"] = 0.25,
-	["Priest"] = 0.5,
-	["Warlock"] = 0.75,
-	["Paladin"] = 0,
-};
-local Perl_Player_ClassPosLeft = {
-	["Warrior"] = 0.25,
-	["Mage"] = 0.5,
-	["Rogue"] = 0.75,
-	["Druid"] = 1,
-	["Hunter"] = 0.25,
-	["Shaman"] = 0.5,
-	["Priest"] = 0.75,
-	["Warlock"] = 1,
-	["Paladin"] = 0.25,
-};
-local Perl_Player_ClassPosTop = {
-	["Warrior"] = 0,
-	["Mage"] = 0,
-	["Rogue"] = 0,
-	["Druid"] = 0,
-	["Hunter"] = 0.25,
-	["Shaman"] = 0.25,
-	["Priest"] = 0.25,
-	["Warlock"] = 0.25,
-	["Paladin"] = 0.5,
-};
-local Perl_Player_ClassPosBottom = {
-	["Warrior"] = 0.25,
-	["Mage"] = 0.25,
-	["Rogue"] = 0.25,
-	["Druid"] = 0.25,
-	["Hunter"] = 0.5,
-	["Shaman"] = 0.5,
-	["Priest"] = 0.5,
-	["Warlock"] = 0.5,
-	["Paladin"] = 0.75,
-};
+local Perl_Player_ClassPosRight = {};
+local Perl_Player_ClassPosLeft = {};
+local Perl_Player_ClassPosTop = {};
+local Perl_Player_ClassPosBottom = {};
 
 
 ----------------------
@@ -70,8 +31,7 @@ function Perl_Player_OnLoad()
 	-- Events
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PARTY_LEADER_CHANGED");
-	this:RegisterEvent("PARTY_MEMBER_DISABLE");
-	this:RegisterEvent("PARTY_MEMBER_ENABLE");
+	this:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("PLAYER_REGEN_DISABLED");
@@ -137,9 +97,14 @@ function Perl_Player_OnEvent(event)
 			Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
 		end
 		return;
-	elseif ((event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE") or (event == "RAID_ROSTER_UPDATE")) then
+	elseif (event == "RAID_ROSTER_UPDATE") then
 		Perl_Player_Update_Raid_Group_Number();		-- What raid group number are we in?
+		return;
+	elseif (event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBERS_CHANGED") then
 		Perl_Player_Update_Leader();			-- Are we the party leader?
+		return;
+	elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
+		Perl_Player_Update_Loot_Method();
 		return;
 	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Player_Initialize();
@@ -172,6 +137,8 @@ function Perl_Player_SlashHandler(msg)
 		return;
 	elseif (string.find(msg, "raid")) then
 		Perl_Player_Toggle_RaidGroupNumber();
+	elseif (string.find(msg, "healer")) then
+		Perl_Player_ToggleHealerMode();
 	elseif (string.find(msg, "scale")) then
 		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
 		if (arg1 ~= "") then
@@ -212,6 +179,7 @@ function Perl_Player_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff compact |cffffff00- Toggle compact mode.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff health |cffffff00- Toggle the displaying of progressively colored health bars.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff raid |cffffff00- Toggle the displaying of your group number while in a raid.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff healer |cffffff00- Toggle the 'healer' mode.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp # |cffffff00- Set the display mode of the experience bar: 1) default, 2) pvp rank, 3) off");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/pp scale ui' to set to the current UI scale.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
@@ -222,7 +190,7 @@ end
 -------------------------------
 -- Loading Settings Function --
 -------------------------------
-function Perl_Player_Initialize() 
+function Perl_Player_Initialize()
 	-- Check if we loaded the mod already.
 	if (Initialized) then
 		return;
@@ -248,6 +216,8 @@ function Perl_Player_Initialize()
 	Perl_Player_HealthBarText:SetTextColor(1,1,1,1);
 	Perl_Player_ManaBarText:SetTextColor(1,1,1,1);
 	Perl_Player_RaidGroupNumberBarText:SetTextColor(1,1,1);
+
+	Perl_Player_Set_Localized_ClassIcons();
 
 	-- The following UnregisterEvent calls were taken from Nymbia's Perl
 	-- Blizz Player Frame Events
@@ -285,7 +255,6 @@ function Perl_Player_Initialize()
 	PlayerFrame:UnregisterEvent("UNIT_DISPLAYPOWER");
 
 	Perl_Player_Frame:Show();
-	--Perl_Player_Update_Once();
 
 	Initialized = 1;
 end
@@ -295,22 +264,22 @@ end
 -- Update Functions --
 ----------------------
 function Perl_Player_Update_Once()
-	-- Variables
 	local PlayerClass = UnitClass("player");
 
 	PlayerFrame:Hide();					-- Hide default frame
 	Perl_Player_Frame:SetScale(scale);			-- Set the scale
 	Perl_Player_NameBarText:SetText(UnitName("player"));	-- Set the player's name
 	Perl_Player_Update_PvP_Status();			-- Is the character PvP flagged?
-	Perl_Player_ClassTexture:SetTexCoord(Perl_Player_ClassPosRight[PlayerClass], Perl_Player_ClassPosLeft[PlayerClass], Perl_Player_ClassPosTop[PlayerClass], Perl_Player_ClassPosBottom[PlayerClass]); -- Set the player's class icon
+	Perl_Player_ClassTexture:SetTexCoord(Perl_Player_ClassPosRight[PlayerClass], Perl_Player_ClassPosLeft[PlayerClass], Perl_Player_ClassPosTop[PlayerClass], Perl_Player_ClassPosBottom[PlayerClass]);	-- Set the player's class icon
+	Perl_Player_Set_Text_Positions();			-- Align the text according to compact and healer mode
 	Perl_Player_Update_Health();				-- Set the player's health on load or toggle
 	Perl_Player_Update_Mana();				-- Set the player's mana/energy on load or toggle
 	Perl_Player_Update_Mana_Bar();				-- Set the type of mana used
 	Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
 	Perl_Player_XPBar_Display(xpbarstate);			-- Set the xp bar mode and update the experience if needed
-	Perl_Player_PVPStatus:Hide();				-- Set pvp status icon (need to remove the xml code eventually)
 	Perl_Player_Update_Raid_Group_Number();			-- Are we in a raid at login?
 	Perl_Player_Update_Leader();				-- Are we the party leader?
+	Perl_Player_Update_Loot_Method();			-- Are we the master looter?
 	Perl_Player_Update_Combat_Status();			-- Are we already fighting or resting?
 	Perl_Player_Set_CompactMode();				-- Are we using compact mode?
 end
@@ -338,11 +307,21 @@ function Perl_Player_Update_Health()
 	end
 
 	if (compactmode == 0) then
-		Perl_Player_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
-		Perl_Player_HealthBarTextPercent:SetText(playerhealthpercent .. "%");
+		if (healermode == 1) then
+			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
+			Perl_Player_HealthBarTextPercent:SetText();
+		else
+			Perl_Player_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
+			Perl_Player_HealthBarTextPercent:SetText(playerhealthpercent .. "%");
+		end
 	else
-		Perl_Player_HealthBarText:SetText();
-		Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
+		if (healermode == 1) then
+			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
+			Perl_Player_HealthBarTextPercent:SetText();
+		else
+			Perl_Player_HealthBarText:SetText();
+			Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
+		end
 	end
 end
 
@@ -355,15 +334,29 @@ function Perl_Player_Update_Mana()
 	Perl_Player_ManaBar:SetValue(playermana);
 
 	if (compactmode == 0) then
-		Perl_Player_ManaBarText:SetText(playermana.."/"..playermanamax);
-		if (UnitPowerType("player") == 0) then
-			Perl_Player_ManaBarTextPercent:SetText(playermanapercent .. "%");
+		if (healermode == 1) then
+			Perl_Player_ManaBarText:SetText();
+			Perl_Player_ManaBarTextPercent:SetText();
 		else
-			Perl_Player_ManaBarTextPercent:SetText(playermana);
+			Perl_Player_ManaBarText:SetText(playermana.."/"..playermanamax);
+			if (UnitPowerType("player") == 1) then
+				Perl_Player_ManaBarTextPercent:SetText(playermana);
+			else
+				Perl_Player_ManaBarTextPercent:SetText(playermanapercent.."%");
+			end
 		end
 	else
-		Perl_Player_ManaBarText:SetText();
-		Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+		if (healermode == 1) then
+			Perl_Player_ManaBarText:SetText();
+			Perl_Player_ManaBarTextPercent:SetText();
+		else
+			Perl_Player_ManaBarText:SetText();
+			if (UnitPowerType("player") == 1) then
+				Perl_Player_ManaBarTextPercent:SetText(playermana);
+			else
+				Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+			end
+		end
 	end
 end
 
@@ -470,8 +463,8 @@ function Perl_Player_Update_Raid_Group_Number()		-- taken from 1.8
 				-- Set the player's group number indicator
 				if (name == UnitName("player")) then
 					Perl_Player_RaidGroupNumberBarText:SetText("Group "..subgroup);
-					--PlayerFrameGroupIndicator:SetWidth(PlayerFrameGroupIndicatorText:GetWidth()+40);
 					Perl_Player_RaidGroupNumberFrame:Show();
+					return;
 				end
 			end
 		end
@@ -481,7 +474,6 @@ function Perl_Player_Update_Raid_Group_Number()		-- taken from 1.8
 end
 
 function Perl_Player_Update_Leader()
-	-- Team Leader Icon setting
 	if (IsPartyLeader()) then
 		Perl_Player_LeaderIcon:Show();
 	else
@@ -489,11 +481,25 @@ function Perl_Player_Update_Leader()
 	end
 end
 
+function Perl_Player_Update_Loot_Method()
+	local lootMethod, lootMaster;
+	lootMethod, lootMaster = GetLootMethod();
+	if (lootMaster == 0) then
+		Perl_Player_MasterIcon:Show();
+	else
+		Perl_Player_MasterIcon:Hide();
+	end
+end
+
 function Perl_Player_Update_PvP_Status()
 	if (UnitIsPVP("player")) then
+		local factionGroup = UnitFactionGroup("player");
 		Perl_Player_NameBarText:SetTextColor(0,1,0);
+		Perl_Player_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
+		Perl_Player_PVPStatus:Show();
 	else
 		Perl_Player_NameBarText:SetTextColor(0.5,0.5,1);
+		Perl_Player_PVPStatus:Hide();
 	end
 end
 
@@ -512,6 +518,205 @@ function Perl_Player_Set_CompactMode()
 		Perl_Player_XPRestBar:SetWidth(150);
 		Perl_Player_XPBarBG:SetWidth(150);
 		Perl_Player_StatsFrame:SetWidth(170);
+	end
+end
+
+function Perl_Player_Set_Text_Positions()
+	if (compactmode == 0) then
+		Perl_Player_HealthBarText:SetPoint("RIGHT", 70, 0);
+		Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
+		Perl_Player_ManaBarText:SetPoint("RIGHT", 70, 0);
+		Perl_Player_ManaBarTextPercent:SetPoint("TOP", 0, 1);
+	else
+		if (healermode == 1) then
+			Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
+			Perl_Player_HealthBarTextPercent:SetPoint("TOP", -40, 1);
+			Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
+			Perl_Player_ManaBarTextPercent:SetPoint("TOP", -40, 1);
+		else
+			Perl_Player_HealthBarText:SetPoint("RIGHT", 70, 0);
+			Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
+			Perl_Player_ManaBarText:SetPoint("RIGHT", 70, 0);
+			Perl_Player_ManaBarTextPercent:SetPoint("TOP", 0, 1);
+		end
+	end
+end
+
+function Perl_Player_HealthShow()
+	if (healermode == 1) then
+		local playerhealth = UnitHealth("player");
+		local playerhealthmax = UnitHealthMax("player");
+		Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
+	end
+end
+
+function Perl_Player_HealthHide()
+	if (healermode == 1) then
+		Perl_Player_HealthBarTextPercent:SetText();
+	end
+end
+
+function Perl_Player_ManaShow()
+	if (healermode == 1) then
+		local playermana = UnitMana("player");
+		local playermanamax = UnitManaMax("player");
+		if (UnitPowerType("player") == 1) then
+			Perl_Player_ManaBarTextPercent:SetText(playermana);
+		else
+			Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+		end
+	end
+end
+
+function Perl_Player_ManaHide()
+	if (healermode == 1) then
+		Perl_Player_ManaBarTextPercent:SetText();
+	end
+end
+
+function Perl_Player_Set_Localized_ClassIcons()
+	if (GetLocale() == "deDE") then
+		Perl_Player_ClassPosRight = {
+			["Druide"] = 0.75,
+			["J\195\164ger"] = 0,
+			["Magier"] = 0.25,
+			["Paladin"] = 0,
+			["Priester"] = 0.5,
+			["Schurke"] = 0.5,
+			["Schamane"] = 0.25,
+			["Hexenmeister"] = 0.75,
+			["Krieger"] = 0,
+		};
+		Perl_Player_ClassPosLeft = {
+			["Druide"] = 1,
+			["J\195\164ger"] = 0.25,
+			["Magier"] = 0.5,
+			["Paladin"] = 0.25,
+			["Priester"] = 0.75,
+			["Schurke"] = 0.75,
+			["Schamane"] = 0.5,
+			["Hexenmeister"] = 1,
+			["Krieger"] = 0.25,
+		};
+		Perl_Player_ClassPosTop = {
+			["Druide"] = 0,
+			["J\195\164ger"] = 0.25,
+			["Magier"] = 0,
+			["Paladin"] = 0.5,
+			["Priester"] = 0.25,
+			["Schurke"] = 0,
+			["Schamane"] = 0.25,
+			["Hexenmeister"] = 0.25,
+			["Krieger"] = 0,
+			
+		};
+		Perl_Player_ClassPosBottom = {
+			["Druide"] = 0.25,
+			["J\195\164ger"] = 0.5,
+			["Magier"] = 0.25,
+			["Paladin"] = 0.75,
+			["Priester"] = 0.5,
+			["Schurke"] = 0.25,
+			["Schamane"] = 0.5,
+			["Hexenmeister"] = 0.5,
+			["Krieger"] = 0.25,
+		};
+	end
+
+	if (GetLocale() == "enUS") then
+		Perl_Player_ClassPosRight = {
+			["Druid"] = 0.75,
+			["Hunter"] = 0,
+			["Mage"] = 0.25,
+			["Paladin"] = 0,
+			["Priest"] = 0.5,
+			["Rogue"] = 0.5,
+			["Shaman"] = 0.25,
+			["Warlock"] = 0.75,
+			["Warrior"] = 0,
+		};
+		Perl_Player_ClassPosLeft = {
+			["Druid"] = 1,
+			["Hunter"] = 0.25,
+			["Mage"] = 0.5,
+			["Paladin"] = 0.25,
+			["Priest"] = 0.75,
+			["Rogue"] = 0.75,
+			["Shaman"] = 0.5,
+			["Warlock"] = 1,
+			["Warrior"] = 0.25,
+		};
+		Perl_Player_ClassPosTop = {
+			["Druid"] = 0,
+			["Hunter"] = 0.25,
+			["Mage"] = 0,
+			["Paladin"] = 0.5,
+			["Priest"] = 0.25,
+			["Rogue"] = 0,
+			["Shaman"] = 0.25,
+			["Warlock"] = 0.25,
+			["Warrior"] = 0,
+			
+		};
+		Perl_Player_ClassPosBottom = {
+			["Druid"] = 0.25,
+			["Hunter"] = 0.5,
+			["Mage"] = 0.25,
+			["Paladin"] = 0.75,
+			["Priest"] = 0.5,
+			["Rogue"] = 0.25,
+			["Shaman"] = 0.5,
+			["Warlock"] = 0.5,
+			["Warrior"] = 0.25,
+		};
+	end
+
+	if (GetLocale() == "frFR") then
+		Perl_Player_ClassPosRight = {
+			["Druide"] = 0.75,
+			["Chasseur"] = 0,
+			["Mage"] = 0.25,
+			["Paladin"] = 0,
+			["Prêtre"] = 0.5,
+			["Voleur"] = 0.5,
+			["Chaman"] = 0.25,
+			["Démoniste"] = 0.75,
+			["Guerrier"] = 0,
+		};
+		Perl_Player_ClassPosLeft = {
+			["Druide"] = 1,
+			["Chasseur"] = 0.25,
+			["Mage"] = 0.5,
+			["Paladin"] = 0.25,
+			["Prêtre"] = 0.75,
+			["Voleur"] = 0.75,
+			["Chaman"] = 0.5,
+			["Démoniste"] = 1,
+			["Guerrier"] = 0.25,
+		};
+		Perl_Player_ClassPosTop = {
+			["Druide"] = 0,
+			["Chasseur"] = 0.25,
+			["Mage"] = 0,
+			["Paladin"] = 0.5,
+			["Prêtre"] = 0.25,
+			["Voleur"] = 0,
+			["Chaman"] = 0.25,
+			["Démoniste"] = 0.25,
+			["Guerrier"] = 0,
+			
+		};
+		Perl_Player_ClassPosBottom = {
+			["Druide"] = 0.25,
+			["Chasseur"] = 0.5,
+			["Mage"] = 0.25,
+			["Paladin"] = 0.75,
+			["Prêtre"] = 0.5,
+			["Voleur"] = 0.25,
+			["Chaman"] = 0.5,
+			["Démoniste"] = 0.5,
+			["Guerrier"] = 0.25,
+		};
 	end
 end
 
@@ -539,8 +744,9 @@ function Perl_Player_Toggle_CompactMode()
 		compactmode = 0;
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now displaying in |cffffffffNormal Mode|cffffff00.");
 	end
-	Perl_Player_Set_CompactMode();
 	Perl_Player_UpdateVars();
+	Perl_Player_Set_Text_Positions();
+	Perl_Player_Set_CompactMode();
 end
 
 function Perl_Player_Toggle_RaidGroupNumber()
@@ -616,6 +822,20 @@ function Perl_Player_ToggleColoredHealth()
 	Perl_Player_Update_Health();
 end
 
+function Perl_Player_ToggleHealerMode()
+	if (healermode == 1) then
+		healermode = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffNot Displaying in Healer Mode|cffffff00.");
+	else
+		healermode = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffDisplaying in Healer Mode|cffffff00.");
+	end
+	Perl_Player_UpdateVars();
+	Perl_Player_Set_Text_Positions();
+	Perl_Player_Update_Health();
+	Perl_Player_Update_Mana();
+end
+
 function Perl_Player_Status()
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffUnlocked|cffffff00.");
@@ -649,6 +869,12 @@ function Perl_Player_Status()
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisplaying Raid Group Numbers|cffffff00.");
 	end
 
+	if (healermode == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffNot Displaying in Healer Mode|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisplaying in Healer Mode|cffffff00.");
+	end
+
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying at a scale of |cffffffff"..(scale * 100).."%|cffffff00.");
 end
 
@@ -659,6 +885,7 @@ function Perl_Player_GetVars()
 	showraidgroup = Perl_Player_Config[UnitName("player")]["ShowRaidGroup"];
 	scale = Perl_Player_Config[UnitName("player")]["Scale"];
 	colorhealth = Perl_Player_Config[UnitName("player")]["ColorHealth"];
+	healermode = Perl_Player_Config[UnitName("player")]["HealerMode"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -678,6 +905,9 @@ function Perl_Player_GetVars()
 	if (colorhealth == nil) then
 		colorhealth = 0;
 	end
+	if (healermode == nil) then
+		healermode = 0;
+	end
 end
 
 function Perl_Player_UpdateVars()
@@ -688,6 +918,7 @@ function Perl_Player_UpdateVars()
 						["ShowRaidGroup"] = showraidgroup,
 						["Scale"] = scale,
 						["ColorHealth"] = colorhealth,
+						["HealerMode"] = healermode,
 	};
 end
 
@@ -790,8 +1021,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.23",
-			releaseDate = "November 28, 2005",
+			version = "v0.24",
+			releaseDate = "December 7, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

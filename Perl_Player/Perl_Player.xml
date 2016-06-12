@@ -80,20 +80,6 @@
 				</Backdrop>
 				<Layers>
 					<Layer level="OVERLAY">
-						<!-- PVP Icon -->
-						<Texture name="Perl_Player_PVPStatus" file="Interface\TargetingFrame\UI-PVP-FFA">
-							<Size>
-								<AbsDimension x="64" y="64"/>
-							</Size>
-							<Anchors>
-								<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
-									<Offset>
-										<AbsDimension x="-20" y="5"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</Texture>
-
 						<!-- Rest/Combat Icon -->
 						<Texture name="Perl_Player_ActivityStatus" file="Interface\CharacterFrame\UI-StateIcon">
 							<Size>
@@ -108,6 +94,20 @@
 							</Anchors>
 						</Texture>
 
+						<!-- PVP Icon -->
+						<Texture name="Perl_Player_PVPStatus" file="Interface\TargetingFrame\UI-PVP-FFA">
+							<Size>
+								<AbsDimension x="32" y="32"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+									<Offset>
+										<AbsDimension x="2" y="-2"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+
 						<!-- Leader Icon -->
 						<Texture name="Perl_Player_LeaderIcon" file="Interface\GroupFrame\UI-Group-LeaderIcon" hidden="true">
 							<Size>
@@ -117,6 +117,20 @@
 								<Anchor point="TOP">
 									<Offset>
 										<AbsDimension x="0" y="7"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+
+						<!-- Master Icon -->
+						<Texture name="Perl_Player_MasterIcon" file="Interface\GroupFrame\UI-Group-MasterLooter" hidden="true">
+							<Size>
+								<AbsDimension x="16" y="16"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset>
+										<AbsDimension x="65" y="7"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -284,6 +298,12 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
+							<OnEnter>
+								Perl_Player_HealthShow();
+							</OnEnter>
+							<OnLeave>
+								Perl_Player_HealthHide();
+							</OnLeave>
 							<OnMouseUp>
 								Perl_Player_MouseUp(arg1);
 							</OnMouseUp>
@@ -344,6 +364,12 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
+							<OnEnter>
+								Perl_Player_ManaShow();
+							</OnEnter>
+							<OnLeave>
+								Perl_Player_ManaHide();
+							</OnLeave>
 							<OnMouseUp>
 								Perl_Player_MouseUp(arg1);
 							</OnMouseUp>

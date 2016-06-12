@@ -149,6 +149,7 @@
 				</Backdrop>
 				<Layers>
 					<Layer level="OVERLAY">
+						<!-- Class Icon -->
 						<Texture name="Perl_Target_ClassTexture" file="Interface\Glues\CharacterCreate\UI-CharacterCreate-Classes">
 							<Size>
 								<AbsDimension x="15" y="15"/>	<!-- Class Icon 24, 24 default-->
@@ -171,6 +172,20 @@
 								<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
 									<Offset>
 										<AbsDimension x="157" y="-2"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+
+						<!-- PVP Rank Icon -->
+						<Texture name="Perl_Target_PVPRank">
+							<Size>
+								<AbsDimension x="16" y="16"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+									<Offset>
+										<AbsDimension x="140" y="-4"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
