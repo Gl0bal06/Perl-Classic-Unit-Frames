@@ -4,16 +4,15 @@
 Perl_Target_Config = {};
 
 -- Defaults
-local Initialized = nil;
-local transparency = 1; --0.8 default
-local Perl_Target_State = 1;
-local buffmapping = 0;
-local locked = 0;
-local showcp = 1;
-local numbuffsshown = 20
-local numdebuffsshown = 16
-local BlizzardTargetFrame_Update = TargetFrame_Update;
-
+local Initialized = nil;	-- waiting to be initialized
+local transparency = 1;		-- 0.8 default from perl
+local Perl_Target_State = 1;	-- enabled by default
+local locked = 0;		-- unlocked by default
+local showcp = 1;		-- combo points displayed by default
+local showclassicon = 1;	-- show the class icon
+local numbuffsshown = 20	-- buff row is 20 long
+local numdebuffsshown = 16	-- debuff row is 16 long
+local BlizzardTargetFrame_Update = TargetFrame_Update;	-- backup the original target function in case we toggle the mod off
 
 -- Variables for position of the class icon texture.
 local Perl_Target_ClassPosRight = {
@@ -65,24 +64,30 @@ local Perl_Target_ClassPosBottom = {
 -- Loading Function --
 ----------------------
 function Perl_Target_OnLoad()
-
 	-- Events
+	this:RegisterEvent("ADDON_LOADED");
+	this:RegisterEvent("PARTY_LEADER_CHANGED");
+	this:RegisterEvent("PARTY_MEMBER_DISABLE");
+	this:RegisterEvent("PARTY_MEMBER_ENABLE");
+	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
+	this:RegisterEvent("PLAYER_COMBO_POINTS");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_TARGET_CHANGED");
+	this:RegisterEvent("UNIT_AURA");
+	this:RegisterEvent("UNIT_DISPLAYPOWER");
+	this:RegisterEvent("UNIT_DYNAMIC_FLAGS");
+	this:RegisterEvent("UNIT_ENERGY"); 
 	this:RegisterEvent("UNIT_HEALTH");
-	this:RegisterEvent("UNIT_ENERGY");
+	this:RegisterEvent("UNIT_LEVEL");
 	this:RegisterEvent("UNIT_MANA");
 	this:RegisterEvent("UNIT_RAGE");
-	this:RegisterEvent("UNIT_AURA");
-	this:RegisterEvent("UNIT_PVP_UPDATE");
-	this:RegisterEvent("UNIT_DISPLAYPOWER");
-	this:RegisterEvent("PLAYER_COMBO_POINTS");
-	this:RegisterEvent("ADDON_LOADED");
-		
+	this:RegisterEvent("VARIABLES_LOADED");
+
 	-- Slash Commands
 	SlashCmdList["PERL_TARGET"] = Perl_Target_SlashHandler;
 	SLASH_PERL_TARGET1 = "/PerlTarget";
 	SLASH_PERL_TARGET2 = "/PT";
-	
+
 	table.insert(UnitPopupFrames,"Perl_Target_DropDown");
 
 	if( DEFAULT_CHAT_FRAME ) then
@@ -95,29 +100,45 @@ end
 -- Event Handler --
 -------------------
 function Perl_Target_OnEvent(event)
-	--if (event == "PLAYER_ENTERING_WORLD") then
-		--Perl_Target_Initialize();
-	--elseif (event == "ADDON_LOADED") then
-		--Perl_Target_Initialize();
-	if (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
-		Perl_Target_Initialize();
-		return;
-	--end
-	elseif (event == "ADDON_LOADED" and arg1 == "Perl_Target") then
-		Perl_Target_myAddOns_Support();
-		return;
-	elseif ( event == "PLAYER_TARGET_CHANGED" or event == "PARTY_MEMBERS_CHANGED" or event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBER_ENABLE" or event == "PARTY_MEMBER_DISABLE") then
-		Perl_Target_UpdateDisplay();
---		if ( event == "PARTY_MEMBERS_CHANGED" ) then
---			TargetFrame_CheckFaction();
---		end
-		return;
-	elseif (event == "UNIT_AURA" and arg1 == "target") then
-		Perl_Target_Buff_UpdateAll();
+	if (Perl_Target_State == 0) then
 		return;
 	else
-		Perl_Target_UpdateDisplay();
-		return;
+		if ( event == "PLAYER_TARGET_CHANGED" or event == "PARTY_MEMBERS_CHANGED" or event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBER_ENABLE" or event == "PARTY_MEMBER_DISABLE") then
+			Perl_Target_Update_Once();		-- Set the unchanging info for the target
+			return;
+		elseif (event == "UNIT_HEALTH" and arg1 == "target") then
+			Perl_Target_Update_Health();		-- Update health values
+			Perl_Target_Update_Dead_Status();	-- Is the target dead?
+			return;
+		elseif ((event == "UNIT_ENERGY" and arg1 == "target") or (event == "UNIT_MANA" and arg1 == "target") or (event == "UNIT_RAGE" and arg1 == "target")) then
+			Perl_Target_Update_Mana();		-- Update energy/mana/rage values
+			return;
+		elseif (event == "UNIT_AURA" and arg1 == "target") then
+			Perl_Target_Buff_UpdateAll();		-- Update the buffs
+			return;
+		elseif (event == "UNIT_DYNAMIC_FLAGS" and arg1 == "target") then
+			Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
+			return;
+		elseif (event == "UNIT_LEVEL" and arg1 == "target") then
+			Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
+			return;
+		elseif (event == "PLAYER_COMBO_POINTS") then
+			Perl_Target_Update_Combo_Points();	-- How many combo points are we at?
+			return;
+		elseif (event == "UNIT_DISPLAYPOWER" and arg1 == "target") then
+			Perl_Target_Update_Mana_Bar();		-- What type of energy are they using now?
+			Perl_Target_Update_Mana();		-- Update the energy info immediately
+			return;
+		elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
+			Perl_Target_Initialize();
+			return;
+		elseif (event == "ADDON_LOADED" and arg1 == "Perl_Target") then
+			Perl_Target_myAddOns_Support();
+			return;
+		else
+			Perl_Target_Update_Frequently();
+			return;
+		end
 	end
 end
 
@@ -131,6 +152,8 @@ function Perl_Target_SlashHandler(msg)
 		Perl_Target_Lock();
 	elseif (string.find(msg, "combopoints")) then
 		Perl_Target_ToggleCP();
+	elseif (string.find(msg, "class")) then
+		Perl_Target_ToggleClass();
 	elseif (string.find(msg, "status")) then
 		Perl_Target_Status();
 	elseif (string.find(msg, "toggle")) then
@@ -154,6 +177,7 @@ function Perl_Target_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff combopoints |cffffff00- Toggle the displaying of combo points.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff class |cffffff00- Toggle the displaying of class icon.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buff # |cffffff00- Show the number of buffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuff # |cffffff00- Toggle the displaying of combo points.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the target frame on and off.");
@@ -165,7 +189,6 @@ end
 -- Loading Settings Function --
 -------------------------------
 function Perl_Target_Initialize()
-	
 	if (Initialized) then
 		return;
 	end
@@ -192,80 +215,14 @@ function Perl_Target_Initialize()
 	Perl_Target_CPFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
 	Perl_Target_Frame:Hide();
 	
-	
 	Perl_Target_HealthBarText:SetTextColor(1,1,1,1);
 	Perl_Target_ManaBarText:SetTextColor(1,1,1,1);
 	
 	
-
-	
---	-- Check if a previous exists, if not, enable by default.
---	if (Perl_Target_Config[UnitName("player")]["State"] == nil) then
---		Perl_Target_Config[UnitName("player")]["State"] = 1;
---	else
---	  Perl_Target_State = Perl_Target_Config[UnitName("player")]["State"];  -- Move value to internal variable.
---	end
-
-	
-
---	if (type(Perl_Target_Config[UnitName("player")]["Locked"]) == "table") then
---		Perl_Target_Config[UnitName("player")]["Locked"] = 0;
---	else
---		locked = Perl_Target_Config[UnitName("player")]["Locked"];  -- Move value to internal variable.
---	end
---	
---	if (type(Perl_Target_Config[UnitName("player")]["ComboPoints"]) == "table") then
---		Perl_Target_Config[UnitName("player")]["ComboPoints"] = 1;
---	else
---		showcp = Perl_Target_Config[UnitName("player")]["ComboPoints"];  -- Move value to internal variable.
---	end
-
-	
-		-- Load Variables
---	local strcombo;
---	local strlocked;
---	local strstate;
-	
-	-- Set locked state and strings.
-	--if (Perl_Target_State > 1) then
-		--locked = 1;
-		--strlocked = "|cfffffffflocked|cffffff00";
-		--Perl_Target_State = Perl_Target_State - 2;
-	--else
-		--strlocked = "|cffffffffunlocked|cffffff00";
-	--end
---	if (Perl_Target_State == 1) then
---		strstate = "|cffffffffEnabled|cffffff00";
---	else
---		strstate = "|cffffffffDisabled|cffffff00";
---	end
---	
---	if (locked == 1) then
---	  strlocked = "|cffffffffLocked|cffffff00";
---	else
---		strlocked = "|cffffffffUnlocked|cffffff00";
---	end
---	
---	if (showcp == 1) then
---		strcombo = "|cffffffffShown|cffffff00";
---	else
---		strcombo = "|cffffffffHidden|cffffff00";
---	end
-	
-	--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame by Perl loaded successfully. "..strstate..", "..strlocked..", and CP "..strcombo..".");
-
-	--if (getglobal('PERL_COMMON')) then
-		--Perl_Target_HealthBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
-		--Perl_Target_ManaBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
-	--end
-
-	
-	
 	if (Perl_Target_State == 1) then
-		TargetFrame_Update = Perl_Target_UpdateDisplay;
-		Perl_Target_UpdateDisplay();
+		TargetFrame_Update = Perl_Target_Update_Frequently;
 	else
-	  Perl_Target_Frame:Hide();
+		Perl_Target_Frame:Hide();
 		TargetFrame_Update = BlizzardTargetFrame_Update;
 	end
 
@@ -277,8 +234,8 @@ function Perl_Target_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.03",
-			releaseDate = "October 6, 2005",
+			version = "v0.04",
+			releaseDate = "October 10, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
@@ -291,246 +248,217 @@ function Perl_Target_myAddOns_Support()
 end
 
 
--------------------------
--- The Update Function --
--------------------------
-function Perl_Target_UpdateDisplay()
-	if (Perl_Target_State == 0) then
-		Perl_Target_Frame:Hide();
-		TargetFrame_Update = BlizzardTargetFrame_Update;
-	else
-		if (UnitExists("target")) then
-		--if (UnitName("target") ~= nil) then
-			-- set common variables
-			local targetname = UnitName("target");
-			local targetmana = UnitMana("target");
-			local targetmanamax = UnitManaMax("target");
-			local targethealth = UnitHealth("target");
-			local targethealthmax = UnitHealthMax("target");
-			local targetlevel = UnitLevel("target");
-			local targetlevelcolor = GetDifficultyColor(targetlevel);
-			local targetclassification = UnitClassification("target");
-			local targetpower = UnitPowerType("target");
-			
-			-- show it
-			Perl_Target_Frame:Show();
-			
-			-- Set name
-			if (strlen(targetname) > 20) then
-				targetname = strsub(targetname, 1, 19).."...";
-			end
-			Perl_Target_NameBarText:SetText(targetname);  
-			
-			-- Set Text Color
-			if (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
-				Perl_Target_NameBarText:SetTextColor(0.5,0.5,0.5);
-			elseif (UnitIsPlayer("target")) then
-				if (UnitFactionGroup("player") == UnitFactionGroup("target")) then
-					if (UnitIsPVP("target")) then
-						Perl_Target_NameBarText:SetTextColor(0,1,0);
-					else
-						Perl_Target_NameBarText:SetTextColor(0.5,0.5,1);
-					end
-				else
-					if (UnitIsPVP("target")) then
-						Perl_Target_NameBarText:SetTextColor(1,1,0);
-					else
-						Perl_Target_NameBarText:SetTextColor(0.5,0.5,1);
-					end
-				end
-			else
-				if (UnitFactionGroup("player") == UnitFactionGroup("target")) then
-					Perl_Target_NameBarText:SetTextColor(0,1,0);
-				elseif (UnitIsEnemy("player", "target")) then			
-					Perl_Target_NameBarText:SetTextColor(1,0,0);					
-				else					
-					Perl_Target_NameBarText:SetTextColor(1,1,0);
-				end
-			end
-			
-			-- Set pvp status icon
-			Perl_Target_PVPStatus:Hide();
-			--if (UnitIsPVP("target")) then
-				--if (UnitFactionGroup("target") == "Alliance") then
-					--Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-Alliance");
-				--elseif (UnitFactionGroup("target") == "Horde") then
-					--Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-Horde");
-				--else
-					--Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
-				--end
-				--Perl_Target_PVPStatus:Show();
-				--Perl_Target_PVPStatus:Hide();
-			--else
-				--Perl_Target_PVPStatus:Hide();
-			--end
-			
-			-- Set Dead Icon
-			if (UnitIsDead("target")) then
-				Perl_Target_DeadStatus:Show();
-			else
-				Perl_Target_DeadStatus:Hide();
-			end
-			
-			
-			-- Set Level
-			
-			
-			--elseif (targetlevel > UnitLevel("player") + 4) then
-				--Perl_Target_LevelBarText:SetTextColor(1, 0, 0);
-			--elseif (targetlevel > UnitLevel("player") + 2) then
-				--Perl_Target_LevelBarText:SetTextColor(1, 0.5, 0);
-			--elseif (UnitIsTrivial("target")) then
-				--Perl_Target_LevelBarText:SetTextColor(0.6, 0.6, 0.6);
-			--elseif (targetlevel < UnitLevel("player") - 2) then
-				--Perl_Target_LevelBarText:SetTextColor(0.5, 1, 0);
-			--else
-				--Perl_Target_LevelBarText:SetTextColor(1, 1, 0);
-			--end
-				
-			Perl_Target_LevelBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
-			
-			if ( targetclassification == "worldboss" ) then
-			  Perl_Target_LevelBarText:SetTextColor(1, 0, 0);
-			  targetlevel = "??";
-			elseif (targetlevel < 0) then
-				Perl_Target_LevelBarText:SetTextColor(1, 0, 0);
-				targetlevel = "??";
-			end
-			
-			if (UnitIsPlusMob("target")) then
-				targetlevel = targetlevel.."+";
-			end
-			
-			Perl_Target_LevelBarText:SetText(targetlevel);
-			
-			
-			
-			-- Set Class Icon
-			if (UnitIsPlayer("target")) then
-				local PlayerClass = UnitClass("target");
-				Perl_Target_ClassTexture:SetTexCoord(Perl_Target_ClassPosRight[PlayerClass], Perl_Target_ClassPosLeft[PlayerClass], Perl_Target_ClassPosTop[PlayerClass], Perl_Target_ClassPosBottom[PlayerClass]);							
-				Perl_Target_ClassTexture:Show();
-			else
-				Perl_Target_ClassTexture:Hide();
-			end
-			
-			-- Set combo points
-			if (showcp == 1) then
-				local combopoints = GetComboPoints();
-				Perl_Target_CPText:SetText(combopoints);
-				if (combopoints == 5) then
-					Perl_Target_CPFrame:Show();
-					Perl_Target_CPText:SetTextColor(1, 0, 0); -- red text
-					Perl_Target_CPText:SetTextHeight(20);
-				elseif (combopoints == 4) then
-					Perl_Target_CPFrame:Show();
-					Perl_Target_CPText:SetTextColor(1, 0.5, 0); -- orange text
-					Perl_Target_CPText:SetTextHeight(15);
-				elseif (combopoints == 3) then
-					Perl_Target_CPFrame:Show();
-					Perl_Target_CPText:SetTextColor(1, 1, 0); -- yellow text
-					Perl_Target_CPText:SetTextHeight(12);
-				elseif (combopoints == 2) then
-					Perl_Target_CPFrame:Show();
-					Perl_Target_CPText:SetTextColor(0.5, 1, 0); -- yellow-green text
-					Perl_Target_CPText:SetTextHeight(11);
-				elseif (combopoints == 1) then
-					Perl_Target_CPFrame:Show();
-					Perl_Target_CPText:SetTextColor(0, 1, 0); -- green text
-					Perl_Target_CPText:SetTextHeight(8);
-				else
-					Perl_Target_CPFrame:Hide();
-				end
-			else
-				Perl_Target_CPFrame:Hide();
-			end
-			
-			-- Set mana bar color
-			if (targetmanamax == 0) then
-				Perl_Target_ManaBar:Hide();
-				Perl_Target_ManaBarBG:Hide();
-				Perl_Target_StatsFrame:SetHeight(30);
-			elseif (targetpower == 1) then
-				Perl_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-				Perl_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-				Perl_Target_ManaBar:Show();
-				Perl_Target_ManaBarBG:Show();
-				Perl_Target_StatsFrame:SetHeight(40);
-			elseif (targetpower == 2) then
-				Perl_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-				Perl_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-				Perl_Target_ManaBar:Show();
-				Perl_Target_ManaBarBG:Show();
-				Perl_Target_StatsFrame:SetHeight(40);
-			elseif (targetpower == 3) then
-				Perl_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-				Perl_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-				Perl_Target_ManaBar:Show();
-				Perl_Target_ManaBarBG:Show();
-				Perl_Target_StatsFrame:SetHeight(40);
-			else
-				Perl_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
-				Perl_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-				Perl_Target_ManaBar:Show();
-				Perl_Target_ManaBarBG:Show();
-				Perl_Target_StatsFrame:SetHeight(40);
-			end
-			
-			
-			-- Set Statistics
-			Perl_Target_HealthBar:SetMinMaxValues(0, targethealthmax);
-			Perl_Target_ManaBar:SetMinMaxValues(0, targetmanamax);
-			Perl_Target_HealthBar:SetValue(targethealth);
-			Perl_Target_ManaBar:SetValue(targetmana);
-			
-			--if (getglobal('PERL_COMMON')) then
-				--Perl_SetSmoothBarColor(Perl_Target_HealthBar);
-				--Perl_SetSmoothBarColor(Perl_Target_HealthBarBG, Perl_Target_HealthBar, 0.25);
-			--end
-			
-			if (targethealthmax == 100) then
-				Perl_Target_HealthBarText:SetText(targethealth.."%");
-			else
-				Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-			end	
-			
-			if (targetmanamax == 100) then
-				Perl_Target_ManaBarText:SetText(targetmana.."%");
-			else
-				Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
-			end
+--------------------------
+-- The Update Functions --
+--------------------------
+function Perl_Target_Update_Once()
+	if (UnitExists("target")) then
+		Perl_Target_Frame:Show();		-- Show frame
+		ComboFrame:Hide();			-- Hide default Combo Points
+		Perl_Target_Frame_Set_Name();		-- Set the target's name
+		Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
+		Perl_Target_Update_Health();		-- Set the target's health
+		Perl_Target_Update_Mana_Bar();		-- What type of mana bar is it?
+		Perl_Target_Update_Mana();		-- Set the target's mana
+		Perl_Target_Update_Dead_Status();	-- Is the target dead?
+		Perl_Target_PVPStatus:Hide();		-- Set pvp status icon (need to remove the xml code eventually)
+		Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
+		Perl_Target_Set_Character_Class_Icon();	-- Draw the class icon?
+		Perl_Target_Buff_UpdateAll();		-- Update the buffs
+	end
+end
 
-			Perl_Target_Buff_UpdateAll();
-			
-			TargetFrame:Hide();  -- Hide default frame
-			ComboFrame:Hide();  -- Hide Combo Points
-			
+function Perl_Target_Update_Frequently()
+	if (UnitExists("target")) then
+		return;
+	else
+		Perl_Target_Frame:Hide();
+		Perl_Target_Frame:StopMovingOrSizing();
+	end
+end
+
+function Perl_Target_Update_Health()
+	local targethealth = UnitHealth("target");
+	local targethealthmax = UnitHealthMax("target");
+	
+	Perl_Target_HealthBar:SetMinMaxValues(0, targethealthmax);
+	Perl_Target_HealthBar:SetValue(targethealth);
+
+	if (targethealthmax == 100) then
+		Perl_Target_HealthBarText:SetText(targethealth.."%");
+	else
+		Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+	end
+end
+
+function Perl_Target_Update_Mana()
+	local targetmana = UnitMana("target");
+	local targetmanamax = UnitManaMax("target");
+
+	Perl_Target_ManaBar:SetMinMaxValues(0, targetmanamax);
+	Perl_Target_ManaBar:SetValue(targetmana);
+
+	if (targetmanamax == 100) then
+		Perl_Target_ManaBarText:SetText(targetmana.."%");
+	else
+		Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
+	end
+end
+
+function Perl_Target_Update_Mana_Bar()
+	local targetmanamax = UnitManaMax("target");
+	local targetpower = UnitPowerType("target");
+
+	-- Set mana bar color
+	if (targetmanamax == 0) then
+		Perl_Target_ManaBar:Hide();
+		Perl_Target_ManaBarBG:Hide();
+		Perl_Target_StatsFrame:SetHeight(30);
+	elseif (targetpower == 1) then
+		Perl_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
+		Perl_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+		Perl_Target_ManaBar:Show();
+		Perl_Target_ManaBarBG:Show();
+		Perl_Target_StatsFrame:SetHeight(40);
+	elseif (targetpower == 2) then
+		Perl_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
+		Perl_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+		Perl_Target_ManaBar:Show();
+		Perl_Target_ManaBarBG:Show();
+		Perl_Target_StatsFrame:SetHeight(40);
+	elseif (targetpower == 3) then
+		Perl_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
+		Perl_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+		Perl_Target_ManaBar:Show();
+		Perl_Target_ManaBarBG:Show();
+		Perl_Target_StatsFrame:SetHeight(40);
+	else
+		Perl_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
+		Perl_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
+		Perl_Target_ManaBar:Show();
+		Perl_Target_ManaBarBG:Show();
+		Perl_Target_StatsFrame:SetHeight(40);
+	end
+end
+
+function Perl_Target_Update_Combo_Points()
+	-- Set combo points
+	ComboFrame:Hide();	-- Hide default Combo Points
+	if (showcp == 1) then
+		local combopoints = GetComboPoints();
+		Perl_Target_CPText:SetText(combopoints);
+		if (combopoints == 5) then
+			Perl_Target_CPFrame:Show();
+			Perl_Target_CPText:SetTextColor(1, 0, 0); -- red text
+			Perl_Target_CPText:SetTextHeight(20);
+		elseif (combopoints == 4) then
+			Perl_Target_CPFrame:Show();
+			Perl_Target_CPText:SetTextColor(1, 0.5, 0); -- orange text
+			Perl_Target_CPText:SetTextHeight(15);
+		elseif (combopoints == 3) then
+			Perl_Target_CPFrame:Show();
+			Perl_Target_CPText:SetTextColor(1, 1, 0); -- yellow text
+			Perl_Target_CPText:SetTextHeight(12);
+		elseif (combopoints == 2) then
+			Perl_Target_CPFrame:Show();
+			Perl_Target_CPText:SetTextColor(0.5, 1, 0); -- yellow-green text
+			Perl_Target_CPText:SetTextHeight(11);
+		elseif (combopoints == 1) then
+			Perl_Target_CPFrame:Show();
+			Perl_Target_CPText:SetTextColor(0, 1, 0); -- green text
+			Perl_Target_CPText:SetTextHeight(8);
 		else
-			Perl_Target_Frame:Hide();
-			Perl_Target_Frame:StopMovingOrSizing();
+			Perl_Target_CPFrame:Hide();
+		end
+	else
+		Perl_Target_CPFrame:Hide();
+	end
+end
+
+function Perl_Target_Update_Dead_Status()
+	-- Set Dead Icon
+	if (UnitIsDead("target")) then
+	--if ( (UnitHealth("target") <= 0) and UnitIsConnected("target") ) then
+		Perl_Target_DeadStatus:Show();
+	else
+		Perl_Target_DeadStatus:Hide();
+	end
+end
+
+function Perl_Target_Update_Text_Color()
+	-- Set Text Color
+	if (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
+		Perl_Target_NameBarText:SetTextColor(0.5,0.5,0.5);
+	elseif (UnitIsPlayer("target")) then
+		if (UnitFactionGroup("player") == UnitFactionGroup("target")) then
+			if (UnitIsPVP("target")) then
+				Perl_Target_NameBarText:SetTextColor(0,1,0);
+			else
+				Perl_Target_NameBarText:SetTextColor(0.5,0.5,1);
+			end
+		else
+			if (UnitIsPVP("target")) then
+				Perl_Target_NameBarText:SetTextColor(1,1,0);
+			else
+				Perl_Target_NameBarText:SetTextColor(0.5,0.5,1);
+			end
+		end
+	else
+		if (UnitFactionGroup("player") == UnitFactionGroup("target")) then
+			Perl_Target_NameBarText:SetTextColor(0,1,0);
+		elseif (UnitIsEnemy("player", "target")) then			
+			Perl_Target_NameBarText:SetTextColor(1,0,0);					
+		else					
+			Perl_Target_NameBarText:SetTextColor(1,1,0);
 		end
 	end
 end
 
---function TargetFrame_Update()
---	if ( UnitExists("target") ) then
---		this:Show();
---		UnitFrame_Update();
---		UnitFrame_UpdateManaType();
---		TargetFrame_CheckLevel();
---		TargetFrame_CheckFaction();
---		TargetFrame_CheckClassification();
---		TargetFrame_CheckDead();
---		if ( UnitIsPartyLeader("target") ) then
---			TargetLeaderIcon:Show();
---		else
---			TargetLeaderIcon:Hide();
---		end
---		TargetDebuffButton_Update();
---	else
---		this:Hide();
---	end
---end
+function Perl_Target_Frame_Set_Name()
+	local targetname = UnitName("target");
+	-- Set name
+	if (strlen(targetname) > 20) then
+		targetname = strsub(targetname, 1, 19).."...";
+	end
+	Perl_Target_NameBarText:SetText(targetname);
+end
+
+function Perl_Target_Frame_Set_Level()
+	local targetlevel = UnitLevel("target");
+	local targetlevelcolor = GetDifficultyColor(targetlevel);
+	local targetclassification = UnitClassification("target");
+
+	Perl_Target_LevelBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
+	if ( (targetclassification == "worldboss") or (targetlevel < 0) ) then
+		Perl_Target_LevelBarText:SetTextColor(1, 0, 0);
+		targetlevel = "??";
+	end
+
+	if ( targetclassification == "rareelite"  ) then
+		targetlevel = targetlevel.."r+";
+	elseif ( targetclassification == "elite"  ) then
+		targetlevel = targetlevel.."+";
+	elseif ( targetclassification == "rare"  ) then
+		targetlevel = targetlevel.."r";
+	end
+
+	Perl_Target_LevelBarText:SetText(targetlevel);	
+end
+
+function Perl_Target_Set_Character_Class_Icon()
+	if (showclassicon == 1) then
+		if (UnitIsPlayer("target")) then
+			local PlayerClass = UnitClass("target");
+			Perl_Target_ClassTexture:SetTexCoord(Perl_Target_ClassPosRight[PlayerClass], Perl_Target_ClassPosLeft[PlayerClass], Perl_Target_ClassPosTop[PlayerClass], Perl_Target_ClassPosBottom[PlayerClass]);							
+			Perl_Target_ClassTexture:Show();
+		else
+			Perl_Target_ClassTexture:Hide();
+		end
+	else
+		Perl_Target_ClassTexture:Hide();
+	end
+end
+
 
 ----------------------
 -- Config functions --
@@ -538,10 +466,12 @@ end
 function Perl_Target_ToggleTarget()
 	if (Perl_Target_State == 0) then
 		Perl_Target_State = 1;
-		TargetFrame_Update = Perl_Target_UpdateDisplay;
+		TargetFrame:Hide();
+		ComboFrame:Hide();
+		TargetFrame_Update = Perl_Target_Update_Frequently;
 		Perl_Target_Frame:Show();
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now |cffffffffEnabled|cffffff00.");
-		Perl_Target_UpdateDisplay();
+		Perl_Target_Update_Frequently();
 	else
 		Perl_Target_State = 0;
 		TargetFrame_Update = BlizzardTargetFrame_Update;
@@ -570,6 +500,17 @@ function Perl_Target_ToggleCP()
 	else
 		showcp = 1;
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Combo Points are now |cffffffffShown|cffffff00.");
+	end
+	Perl_Target_UpdateVars();
+end
+
+function Perl_Target_ToggleClass()
+	if (showclassicon == 1) then
+		showclassicon = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is now |cffffffffHidden|cffffff00.");
+	else
+		showclassicon = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is now |cffffffffShown|cffffff00.");
 	end
 	Perl_Target_UpdateVars();
 end
@@ -604,6 +545,12 @@ function Perl_Target_Status()
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Combo Points are |cffffffffShown|cffffff00.");
 	end
+
+	if (showclassicon == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is |cffffffffHidden|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is |cffffffffShown|cffffff00.");
+	end
 	
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 buffs.");
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numdebuffsshown.."|cffffff00 debuffs.");
@@ -613,6 +560,7 @@ function Perl_Target_GetVars()
 	Perl_Target_State = Perl_Target_Config[UnitName("player")]["State"];
 	locked = Perl_Target_Config[UnitName("player")]["Locked"];
 	showcp = Perl_Target_Config[UnitName("player")]["ComboPoints"];
+	showclassicon = Perl_Target_Config[UnitName("player")]["ClassIcon"];
 	numbuffsshown = Perl_Target_Config[UnitName("player")]["Buffs"];
 	numdebuffsshown = Perl_Target_Config[UnitName("player")]["Debuffs"];
 end
@@ -622,19 +570,12 @@ function Perl_Target_UpdateVars()
 						["State"] = Perl_Target_State,
 						["Locked"] = locked,
 						["ComboPoints"] = showcp,
+						["ClassIcon"] = showclassicon,
 						["Buffs"] = numbuffsshown,
 						["Debuffs"] = numdebuffsshown
 						};
 end
 
---function Perl_Target_UpdateVars()
---	--Perl_Target_Config[UnitName("player")] = Perl_Target_State + 2*locked;
---	Perl_Target_Config[UnitName("player")] = Perl_Target_State;
---	Perl_Target_Config.Locked = locked;
---	Perl_Target_Config.ComboPoints = showcp;
---	Perl_Target_Config.Buffs = numbuffsshown;
---	Perl_Target_Config.Debuffs = numdebuffsshown;
---end
 
 --------------------
 -- Buff Functions --
@@ -642,15 +583,11 @@ end
 function Perl_Target_Buff_UpdateAll()
 	local friendly;
 	if (UnitName("target")) then
-	  if ( UnitIsFriend("player", "target") ) then
---	    Perl_Target_Buff(1);
---	    Perl_Target_Debuff(1);
-	    friendly = 1;
-	  else
---	    Perl_Target_Debuff(0);
---	    Perl_Target_Buff(0);
-	    friendly = 0;
-	  end
+		if ( UnitIsFriend("player", "target") ) then
+			friendly = 1;
+		else
+			friendly = 0;
+		end
 	  
 		local buffmax = 0;
 		for buffnum=1,numbuffsshown do
@@ -672,111 +609,49 @@ function Perl_Target_Buff_UpdateAll()
 		if (buffmax == 0) then
 			Perl_Target_BuffFrame:Hide();
 		else
-		  if (friendly == 1) then
-		    Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
-		  else
-		    Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
-		  end
+			if (friendly == 1) then
+				Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
+			else
+				Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
+			end
 			Perl_Target_BuffFrame:Show();
 			Perl_Target_BuffFrame:SetWidth(5 + buffmax*29);
 		end
-		
-		
-	local debuffmax = 0;
-	for debuffnum=1,numdebuffsshown do
-		local button = getglobal("Perl_Target_Debuff"..debuffnum);
-		local icon = getglobal(button:GetName().."Icon");
-		local debuff = getglobal(button:GetName().."DebuffBorder");
 			
-		if (UnitDebuff("target", debuffnum)) then
-			icon:SetTexture(UnitDebuff("target", debuffnum));
-			button.isdebuff = 1;
-			debuff:Show();
-			button:Show();
-			debuffmax = debuffnum;
-		else
-			button:Hide();
-		end
-	end
 			
-	if (debuffmax == 0) then
-		Perl_Target_DebuffFrame:Hide();
-	else
-		if (friendly == 1) then
-		  Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
-		else
-		  Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
-		end
-		Perl_Target_DebuffFrame:Show();
-		Perl_Target_DebuffFrame:SetWidth(5 + debuffmax*29);
-	end
-		
-	end
-end
-
-function Perl_Target_Buff(friendly)
-  local buffmax = 0;
-		for buffnum=1,numbuffsshown do
-			local button = getglobal("Perl_Target_Buff"..buffnum);
+		local debuffmax = 0;
+		for debuffnum=1,numdebuffsshown do
+			local button = getglobal("Perl_Target_Debuff"..debuffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
-
-			if (UnitBuff("target", buffnum)) then
-				icon:SetTexture(UnitBuff("target", buffnum));
-				button.isdebuff = 0;
-				debuff:Hide();
+				
+			if (UnitDebuff("target", debuffnum)) then
+				icon:SetTexture(UnitDebuff("target", debuffnum));
+				button.isdebuff = 1;
+				debuff:Show();
 				button:Show();
-				buffmax = buffnum;
+				debuffmax = debuffnum;
 			else
 				button:Hide();
 			end
 		end
-		
-		if (buffmax == 0) then
-			Perl_Target_BuffFrame:Hide();
+				
+		if (debuffmax == 0) then
+			Perl_Target_DebuffFrame:Hide();
 		else
-		  if (friendly == 1) then
-		    Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
-		  else
-		    Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
-		  end
-			Perl_Target_BuffFrame:Show();
-			Perl_Target_BuffFrame:SetWidth(5 + buffmax*29);
+			if (friendly == 1) then
+				Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
+			else
+				Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
+			end
+			Perl_Target_DebuffFrame:Show();
+			Perl_Target_DebuffFrame:SetWidth(5 + debuffmax*29);
 		end
-end
-
-function Perl_Target_Debuff(friendly)
-  local debuffmax = 0;
-	for debuffnum=1,numdebuffsshown do
-		local button = getglobal("Perl_Target_Debuff"..debuffnum);
-		local icon = getglobal(button:GetName().."Icon");
-		local debuff = getglobal(button:GetName().."DebuffBorder");
-			
-		if (UnitDebuff("target", debuffnum)) then
-			icon:SetTexture(UnitDebuff("target", debuffnum));
-			button.isdebuff = 1;
-			debuff:Show();
-			button:Show();
-			debuffmax = debuffnum;
-		else
-			button:Hide();
-		end
-	end
-			
-	if (debuffmax == 0) then
-		Perl_Target_DebuffFrame:Hide();
-	else
-		if (friendly == 1) then
-		  Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
-		else
-		  Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
-		end
-		Perl_Target_DebuffFrame:Show();
-		Perl_Target_DebuffFrame:SetWidth(5 + debuffmax*29);
 	end
 end
 
 function Perl_Target_SetBuffTooltip()
+	local buffmapping = 0;
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMLEFT");
 	if (this.isdebuff == 1) then
 		GameTooltip:SetUnitDebuff("target", this:GetID()-buffmapping);
@@ -784,6 +659,7 @@ function Perl_Target_SetBuffTooltip()
 		GameTooltip:SetUnitBuff("target", this:GetID());
 	end
 end
+
 
 --------------------
 -- Click Handlers --
@@ -814,7 +690,6 @@ function Perl_TargetDropDown_Initialize()
 end
 
 function Perl_Target_MouseUp(button)
-
 	if ( SpellIsTargeting() and button == "RightButton" ) then
 		SpellStopTargeting();
 		return;
@@ -837,6 +712,7 @@ function Perl_Target_MouseDown(button)
 		Perl_Target_Frame:StartMoving();
 	end
 end
+
 
 -------------
 -- Tooltip --

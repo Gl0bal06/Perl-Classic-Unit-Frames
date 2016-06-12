@@ -1,5 +1,5 @@
 ## Interface: 1700
-## Version: 0.03
+## Version: 0.04
 ## Title: Perl Combat Display
 ## Notes: Displays a movable bar that displays rage/energy/mana and combo points.
 ## Dependencies: 

@@ -47,12 +47,12 @@ function Perl_CombatDisplay_OnLoad()
 	this:RegisterEvent("UNIT_NAME_UPDATE");
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-		
+
 	-- Slash Commands
 	SlashCmdList["COMBATDISPLAY"] = Perl_CombatDisplay_SlashHandler;
 	SLASH_COMBATDISPLAY1 = "/PerlCombatDisplay";
 	SLASH_COMBATDISPLAY2 = "/pcd";
-	
+
 	Perl_CombatDisplay_DebugPrint("OnLoad function run.");
 end
 
@@ -504,8 +504,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.03",
-			releaseDate = "October 6, 2005",
+			version = "v0.04",
+			releaseDate = "October 10, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

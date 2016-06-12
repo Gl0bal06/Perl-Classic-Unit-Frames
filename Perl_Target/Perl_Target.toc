@@ -1,5 +1,5 @@
 ## Interface: 1700
-## Version: 0.03
+## Version: 0.04
 ## Title: Perl Target Frame
 ## Notes: Displays a movable target frame to replace the default.
 ## Dependencies: 
