@@ -1,5 +1,11 @@
+0.66 - May 19, 2006
+ - Config: Can now lock and unlock all frames by right clicking on the minimap icon
+ - Config: Updated options available for Perl_Raid
+ - Party: Can now display names by their appropriate class color
+ - Party: Uses less memory for health and mana updates
+
 0.65 - May 12, 2006
- - CombatDisplay/Party/Pet/Player/Target: Added ClickHeal support
+ - All: Added ClickHeal support
  - Target: Load Global Settings will now correctly set transparency and scale
  - ToT: Added crude click casting support (only works if it is your current target or yourself)
 

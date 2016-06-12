@@ -13,6 +13,7 @@ local transparency = 1;		-- transparency for frames
 local alertsound = 0;		-- audible alert disabled by default
 local alertmode = 0;		-- DPS, Tank, Healer modes
 local alertsize = 0;		-- Variable which controls the size of the text
+--local showbuffs = 1;		-- buffs/debuffs are off by default (uncomment if this is ever supported in the future by blizzard)
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
@@ -303,6 +304,51 @@ function Perl_Target_Target_OnUpdate(arg1)
 				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 			end
 			-- End: Update the mana bar color
+
+			-- Begin: Update buffs and debuffs		ToToT portion of this code is NOT made yet
+--			if (showbuffs == 1) then
+--				local buffCount, buffTexture, buffApplications;
+--				for buffnum=1,8 do
+--					buffTexture, buffApplications = UnitBuff("targettarget", buffnum);
+--					local button = getglobal("Perl_Target_Target_BuffFrame_Buff"..buffnum);
+--					local icon = getglobal(button:GetName().."Icon");
+--					if (UnitBuff("targettarget", buffnum)) then
+--						icon:SetTexture(UnitBuff("targettarget", buffnum));
+--						button:Show();
+--						buffCount = getglobal("Perl_Target_Target_BuffFrame_Buff"..buffnum.."Count");
+--						if (buffApplications > 1) then
+--							buffCount:SetText(buffApplications);
+--							buffCount:Show();
+--						else
+--							buffCount:Hide();
+--						end
+--					else
+--						button:Hide();
+--					end
+--				end
+--
+--				local debuffCount, debuffTexture, debuffApplications;
+--				for debuffnum=1,8 do
+--					debuffTexture, debuffApplications = UnitDebuff("targettarget", debuffnum);
+--					local button = getglobal("Perl_Target_Target_BuffFrame_Debuff"..debuffnum);
+--					local icon = getglobal(button:GetName().."Icon");
+--					if (UnitDebuff("targettarget", debuffnum)) then
+--						icon:SetTexture(debuffTexture);
+--						button:Show();
+--						debuffCount = getglobal("Perl_Target_Target_BuffFrame_Debuff"..debuffnum.."Count");
+--						if (debuffApplications > 1) then
+--							debuffCount:SetText(debuffApplications);
+--							debuffCount:Show();
+--						else
+--							debuffCount:Hide();
+--						end
+--					else
+--						button:Hide();
+--					end
+--				end
+--				Perl_Target_Target_BuffFrame:Show();
+--			end
+			-- End: Update buffs and debuffs
 		else
 			Perl_Target_Target_Frame:Hide();			-- Hide the frame
 		end
@@ -1398,8 +1444,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "Version 0.65",
-			releaseDate = "May 12, 2006",
+			version = "Version 0.66",
+			releaseDate = "May 19, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -630,6 +630,7 @@ function Perl_Config_Global_Save_Settings()
 			["DebuffSize"] = vartable["debuffsize"],
 			["Buffs"] = vartable["numbuffsshown"],
 			["Debuffs"] = vartable["numdebuffsshown"],
+			["ClassColoredNames"] = vartable["classcolorednames"],
 		};
 	end
 
@@ -746,6 +747,8 @@ function Perl_Config_Global_Save_Settings()
 			["ShowMissingHealth"] = vartable["showmissinghealth"],
 			["VerticalAlign"] = vartable["verticalalign"],
 			["InvertedGroups"] = vartable["invertedgroups"],
+			["ShowBuffs"] = vartable["showraiddebuffs"],
+			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
 		};
 	end
 
@@ -1083,8 +1086,158 @@ end
 ---------------------------
 -- The Minimap Functions --
 ---------------------------
-function Perl_Config_Button_OnClick()
-	Perl_Config_Toggle();
+function Perl_Config_Button_OnClick(button)
+	if (button == "LeftButton") then
+		Perl_Config_Toggle();
+	elseif (button == "RightButton") then
+		local unlockedflag = 0;
+
+		if (Perl_CombatDisplay_Frame) then
+			if (Perl_CombatDisplay_Config[UnitName("player")]["Locked"] == 0) then
+				unlockedflag = 1;
+			end
+		end
+
+		if (Perl_Party_Frame) then
+			if (Perl_Party_Config[UnitName("player")]["Locked"] == 0) then
+				unlockedflag = 1;
+			end
+		end
+
+		if (Perl_Party_Pet_Script_Frame) then
+			if (Perl_Party_Pet_Config[UnitName("player")]["Locked"] == 0) then
+				unlockedflag = 1;
+			end
+		end
+
+		if (Perl_Player_Frame) then
+			if (Perl_Player_Config[UnitName("player")]["Locked"] == 0) then
+				unlockedflag = 1;
+			end
+		end
+
+		if (Perl_Player_Pet_Frame) then
+			if (Perl_Player_Pet_Config[UnitName("player")]["Locked"] == 0) then
+				unlockedflag = 1;
+			end
+		end
+
+		if (Perl_Raid_Frame) then
+			if (Perl_Raid_Config[UnitName("player")]["Locked"] == 0) then
+				unlockedflag = 1;
+			end
+		end
+
+		if (Perl_Target_Frame) then
+			if (Perl_Target_Config[UnitName("player")]["Locked"] == 0) then
+				unlockedflag = 1;
+			end
+		end
+
+		if (Perl_Target_Target_Script_Frame) then
+			if (Perl_Target_Target_Config[UnitName("player")]["Locked"] == 0) then
+				unlockedflag = 1;
+			end
+		end
+
+		if (unlockedflag == 1) then
+			Perl_Config_All_Lock_Unlock(1);
+		else
+			Perl_Config_All_Lock_Unlock(0);
+		end
+
+		GameTooltip:Hide();
+		Perl_Config_Button_Tooltip();
+	end
+end
+
+function Perl_Config_Button_Tooltip()
+	local unlockedflag = 0;
+
+	GameTooltip_SetDefaultAnchor(GameTooltip, this);
+	GameTooltip:SetText("Perl Classic Options");
+
+	if (Perl_CombatDisplay_Frame) then
+		if (Perl_CombatDisplay_Config[UnitName("player")]["Locked"] == 0) then
+			GameTooltip:AddLine("Perl_CombatDisplay is unlocked");
+			unlockedflag = 1;
+		else
+			GameTooltip:AddLine("Perl_CombatDisplay is locked");
+		end
+	end
+
+	if (Perl_Party_Frame) then
+		if (Perl_Party_Config[UnitName("player")]["Locked"] == 0) then
+			GameTooltip:AddLine("Perl_Party is unlocked");
+			unlockedflag = 1;
+		else
+			GameTooltip:AddLine("Perl_Party is locked");
+		end
+	end
+
+	if (Perl_Party_Pet_Script_Frame) then
+		if (Perl_Party_Pet_Config[UnitName("player")]["Locked"] == 0) then
+			GameTooltip:AddLine("Perl_Party_Pet is unlocked");
+			unlockedflag = 1;
+		else
+			GameTooltip:AddLine("Perl_Party_Pet is locked");
+		end
+	end
+
+	if (Perl_Player_Frame) then
+		if (Perl_Player_Config[UnitName("player")]["Locked"] == 0) then
+			GameTooltip:AddLine("Perl_Player is unlocked");
+			unlockedflag = 1;
+		else
+			GameTooltip:AddLine("Perl_Player is locked");
+		end
+	end
+
+	if (Perl_Player_Pet_Frame) then
+		if (Perl_Player_Pet_Config[UnitName("player")]["Locked"] == 0) then
+			GameTooltip:AddLine("Perl_Player_Pet is unlocked");
+			unlockedflag = 1;
+		else
+			GameTooltip:AddLine("Perl_Player_Pet is locked");
+		end
+	end
+
+	if (Perl_Raid_Frame) then
+		if (Perl_Raid_Config[UnitName("player")]["Locked"] == 0) then
+			GameTooltip:AddLine("Perl_Raid is unlocked");
+			unlockedflag = 1;
+		else
+			GameTooltip:AddLine("Perl_Raid is locked");
+		end
+	end
+
+	if (Perl_Target_Frame) then
+		if (Perl_Target_Config[UnitName("player")]["Locked"] == 0) then
+			GameTooltip:AddLine("Perl_Target is unlocked");
+			unlockedflag = 1;
+		else
+			GameTooltip:AddLine("Perl_Target is locked");
+		end
+	end
+
+	if (Perl_Target_Target_Script_Frame) then
+		if (Perl_Target_Target_Config[UnitName("player")]["Locked"] == 0) then
+			GameTooltip:AddLine("Perl_Target_Target is unlocked");
+			unlockedflag = 1;
+		else
+			GameTooltip:AddLine("Perl_Target_Target is locked");
+		end
+	end
+
+	GameTooltip:AddLine(" ");
+
+	if (unlockedflag == 1) then
+		GameTooltip:AddLine("Right clicking will lock all frames");
+	else
+		GameTooltip:AddLine("Right clicking will unlock all frames");
+	end
+
+	GameTooltip:Show();
 end
 
 function Perl_Config_Button_UpdatePosition()
@@ -1124,8 +1277,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.65",
-			releaseDate = "May 12, 2006",
+			version = "Version 0.66",
+			releaseDate = "May 19, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

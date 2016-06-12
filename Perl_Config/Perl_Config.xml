@@ -63,7 +63,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Version_Text" inherits="GameFontNormal" text="Version 0.65">
+				<FontString name="$parent_Version_Text" inherits="GameFontNormal" text="Version 0.66">
 					<Anchors>
 						<Anchor point="TOPRIGHT">
 							<Offset>
@@ -405,12 +405,14 @@
 				<NormalTexture file="Interface\AddOns\Perl_Config\Perl_Minimap_Button"/>
 				<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
 				<Scripts>
+					<OnLoad>
+						this:RegisterForClicks('LeftButtonUp', 'RightButtonUp');
+					</OnLoad>
 					<OnClick>
-						Perl_Config_Button_OnClick();
+						Perl_Config_Button_OnClick(arg1);
 					</OnClick>
 					<OnEnter>
-						GameTooltip:SetOwner(this, "ANCHOR_LEFT");
-						GameTooltip:SetText("Perl Options");
+						Perl_Config_Button_Tooltip();
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();

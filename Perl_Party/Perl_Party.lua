@@ -24,12 +24,16 @@ local buffsize = 16;		-- default buff size is 16
 local debuffsize = 16;		-- default debuff size is 16
 local numbuffsshown = 16;	-- buff row is 16 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
+local classcolorednames = 0;	-- names are colored based on pvp status by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 local mouseoverpethealthflag = 0;	-- is the mouse over the pet health bar for healer mode?
+
+-- Local variables to save memory
+local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, partymanapercent, partypethealth, partypethealthmax, partypethealthpercent;
 
 -- Variables for position of the class icon texture.
 local Perl_Party_ClassPosRight = {};
@@ -296,9 +300,13 @@ end
 function Perl_Party_Update_Health()
 	local id = this:GetID();
 	local partyid = "party"..id;
-	local partyhealth = UnitHealth(partyid);
-	local partyhealthmax = UnitHealthMax(partyid);
-	local partyhealthpercent = floor(partyhealth/partyhealthmax*100+0.5);
+
+	partyhealth = nil;
+	partyhealthmax = nil;
+	partyhealthpercent = nil;
+	partyhealth = UnitHealth(partyid);
+	partyhealthmax = UnitHealthMax(partyid);
+	partyhealthpercent = floor(partyhealth/partyhealthmax*100+0.5);
 
 	if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then				-- This prevents negative health
 		partyhealth = 0;
@@ -392,9 +400,13 @@ end
 function Perl_Party_Update_Mana()
 	local id = this:GetID();
 	local partyid = "party"..id;
-	local partymana = UnitMana(partyid);
-	local partymanamax = UnitManaMax(partyid);
-	local partymanapercent = floor(partymana/partymanamax*100+0.5);
+
+	partymana = nil;
+	partymanamax = nil;
+	partymanapercent = nil;
+	partymana = UnitMana(partyid);
+	partymanamax = UnitManaMax(partyid);
+	partymanapercent = floor(partymana/partymanamax*100+0.5);
 
 	if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then				-- This prevents negative mana
 		partymana = 0;
@@ -601,9 +613,12 @@ function Perl_Party_Update_Pet_Health()
 	local id = this:GetID();
 
 	if (UnitIsConnected("party"..id) and UnitExists("partypet"..id)) then
-		local partypethealth = UnitHealth("partypet"..id);
-		local partypethealthmax = UnitHealthMax("partypet"..id);
-		local partypethealthpercent = floor(partypethealth/partypethealthmax*100+0.5);
+		partypethealth = nil;
+		partypethealthmax = nil;
+		partypethealthpercent = nil;
+		partypethealth = UnitHealth("partypet"..id);
+		partypethealthmax = UnitHealthMax("partypet"..id);
+		partypethealthpercent = floor(partypethealth/partypethealthmax*100+0.5);
 
 		if (UnitIsDead("partypet"..id) or UnitIsGhost("partypet"..id)) then				-- This prevents negative health
 			partypethealth = 0;
@@ -700,6 +715,8 @@ end
 
 function Perl_Party_Update_PvP_Status()				-- Modeled after 1.9 code
 	local partyid = "party"..this:GetID();
+
+	
 	local factionGroup = UnitFactionGroup(partyid);
 	if (factionGroup == nil) then				-- This check probably isn't needed since the changes in the code below in 0.48
 		factionGroup = UnitFactionGroup("player");
@@ -716,6 +733,28 @@ function Perl_Party_Update_PvP_Status()				-- Modeled after 1.9 code
 	else
 		getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.5,0.5,1);						-- Set the non PvP name color
 		getglobal(this:GetName().."_NameFrame_PVPStatus"):Hide();								-- Hide the icon
+	end
+
+	if (classcolorednames == 1) then
+		if UnitClass(partyid) == PERL_LOCALIZED_WARRIOR then
+			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.78, 0.61, 0.43);
+		elseif UnitClass(partyid) == PERL_LOCALIZED_MAGE then
+			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.41, 0.8, 0.94);
+		elseif UnitClass(partyid) == PERL_LOCALIZED_ROGUE then
+			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(1, 0.96, 0.41);
+		elseif UnitClass(partyid) == PERL_LOCALIZED_DRUID then
+			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(1, 0.49, 0.04);
+		elseif UnitClass(partyid) == PERL_LOCALIZED_HUNTER then
+			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.67, 0.83, 0.45);
+		elseif UnitClass(partyid) == PERL_LOCALIZED_SHAMAN then
+			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.96, 0.55, 0.73);
+		elseif UnitClass(partyid) == PERL_LOCALIZED_PRIEST then
+			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(1, 1, 1);
+		elseif UnitClass(partyid) == PERL_LOCALIZED_WARLOCK then
+			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.58, 0.51, 0.79);
+		elseif UnitClass(partyid) == PERL_LOCALIZED_PALADIN then
+			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.96, 0.55, 0.73);
+		end
 	end
 end
 
@@ -1056,6 +1095,29 @@ function Perl_Party_Force_Update()
 		else
 			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.5,0.5,1);
 			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_PVPStatus"):Hide();
+		end
+
+		-- Color their name if Class Colored Names is on
+		if (classcolorednames == 1) then
+			if UnitClass(partyid) == PERL_LOCALIZED_WARRIOR then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.78, 0.61, 0.43);
+			elseif UnitClass(partyid) == PERL_LOCALIZED_MAGE then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.41, 0.8, 0.94);
+			elseif UnitClass(partyid) == PERL_LOCALIZED_ROGUE then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(1, 0.96, 0.41);
+			elseif UnitClass(partyid) == PERL_LOCALIZED_DRUID then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(1, 0.49, 0.04);
+			elseif UnitClass(partyid) == PERL_LOCALIZED_HUNTER then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.67, 0.83, 0.45);
+			elseif UnitClass(partyid) == PERL_LOCALIZED_SHAMAN then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.96, 0.55, 0.73);
+			elseif UnitClass(partyid) == PERL_LOCALIZED_PRIEST then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(1, 1, 1);
+			elseif UnitClass(partyid) == PERL_LOCALIZED_WARLOCK then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.58, 0.51, 0.79);
+			elseif UnitClass(partyid) == PERL_LOCALIZED_PALADIN then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.96, 0.55, 0.73);
+			end
 		end
 
 		-- Set mana bar color
@@ -1581,6 +1643,12 @@ function Perl_Party_Set_Debuffs(newvalue)
 	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
 end
 
+function Perl_Party_Set_Class_Colored_Names(newvalue)
+	classcolorednames = newvalue;
+	Perl_Party_UpdateVars();
+	Perl_Party_Force_Update();
+end
+
 function Perl_Party_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1630,6 +1698,7 @@ function Perl_Party_GetVars()
 	debuffsize = Perl_Party_Config[UnitName("player")]["DebuffSize"];
 	numbuffsshown = Perl_Party_Config[UnitName("player")]["Buffs"];
 	numdebuffsshown = Perl_Party_Config[UnitName("player")]["Debuffs"];
+	classcolorednames = Perl_Party_Config[UnitName("player")]["ClassColoredNames"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1691,6 +1760,9 @@ function Perl_Party_GetVars()
 	if (numdebuffsshown == nil) then
 		numdebuffsshown = 16;
 	end
+	if (classcolorednames == nil) then
+		classcolorednames = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1713,6 +1785,7 @@ function Perl_Party_GetVars()
 		["debuffsize"] = debuffsize,
 		["numbuffsshown"] = numbuffsshown,
 		["numdebuffsshown"] = numdebuffsshown,
+		["classcolorednames"] = classcolorednames,
 	}
 	return vars;
 end
@@ -1821,6 +1894,11 @@ function Perl_Party_UpdateVars(vartable)
 			else
 				numdebuffsshown = nil;
 			end
+			if (vartable["Global Settings"]["ClassColoredNames"] ~= nil) then
+				classcolorednames = vartable["Global Settings"]["ClassColoredNames"];
+			else
+				classcolorednames = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1884,6 +1962,9 @@ function Perl_Party_UpdateVars(vartable)
 		if (numdebuffsshown == nil) then
 			numdebuffsshown = 16;
 		end
+		if (classcolorednames == nil) then
+			classcolorednames = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Party_Set_Space();				-- This probably isn't needed, but one extra call for this won't matter
@@ -1918,6 +1999,7 @@ function Perl_Party_UpdateVars(vartable)
 		["DebuffSize"] = debuffsize,
 		["Buffs"] = numbuffsshown,
 		["Debuffs"] = numdebuffsshown,
+		["ClassColoredNames"] = classcolorednames,
 	};
 end
 
@@ -2249,8 +2331,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.65",
-			releaseDate = "May 12, 2006",
+			version = "Version 0.66",
+			releaseDate = "May 19, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
