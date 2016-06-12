@@ -315,7 +315,7 @@ function Perl_Party_Initialize()
 	end
 
 	Initialized = 1;
---	Perl_Party_MembersUpdate();
+	Perl_Party_MembersUpdate();
 end
 
 function Perl_Party_IFrameManager()
@@ -1014,7 +1014,9 @@ function Perl_Party_Update_PvP_Status(id)				-- Modeled after 1.9 code
 
 	if (classcolorednames == 1) then
 		_, englishclass = UnitClass(partyid);
-		getglobal("Perl_Party_MemberFrame"..id.."_NameFrame_NameBarText"):SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+		if (englishclass) then
+			getglobal("Perl_Party_MemberFrame"..id.."_NameFrame_NameBarText"):SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+		end
 	end
 end
 
