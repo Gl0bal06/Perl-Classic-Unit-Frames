@@ -205,7 +205,7 @@
 							<Anchors>
 								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
 									<Offset>
-										<AbsDimension x="-5" y="-5"/>
+										<AbsDimension x="-25" y="-4"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -219,7 +219,7 @@
 							<Anchors>
 								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
 									<Offset>
-										<AbsDimension x="-15" y="3"/>
+										<AbsDimension x="-35" y="3"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -231,6 +231,17 @@
 								<Anchor point="LEFT" relativeTo="$parent_ClassTexture" relativePoint="RIGHT">
 									<Offset>
 										<AbsDimension x="5" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Fontstring>
+
+						<!-- F Key Text -->
+						<Fontstring name="$parent_FKeyText" inherits="GameFontNormal" text="Error!">
+							<Anchors>
+								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+									<Offset>
+										<AbsDimension x="-8" y="-6"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -294,6 +305,79 @@
 								</Anchor>
 							</Anchors>
 						</Fontstring>
+					</Layer>
+				</Layers>
+			</Frame>
+
+
+			<!-- Portrait Frame -->
+			<Frame name="$parent_PortraitFrame">
+				<Size>
+					<AbsDimension x="60" y="61"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="TOPLEFT" relativeTo="$parent_NameFrame">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnMouseUp>
+						Perl_Party_MouseUp(arg1);
+					</OnMouseUp>
+				</Scripts>
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Frames>
+					<PlayerModel name="$parent_PartyModel" hidden="true">
+						<Size>
+							<AbsDimension x="50" y="50"/>
+						</Size>
+						<Anchors>
+							<Anchor point="CENTER">
+								<Offset>
+									<AbsDimension x="1" y="-1"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								<!-- this:SetScale(1); -->
+								<!-- this.scale = this:GetScale(); -->
+								<!-- $parent_PortraitFrame_PartyModel:SetSequence(30); -->
+							</OnLoad>
+							<OnUpdate>
+								<!-- DEFAULT_CHAT_FRAME:AddMessage(this.GetName()); -->
+								<!-- $parent_PortraitFrame_PartyModel:SetCamera(0); -->
+							</OnUpdate>
+						</Scripts>
+					</PlayerModel>
+				</Frames>
+				<Layers>
+					<!-- Portrait -->
+					<Layer level="ARTWORK">
+						<Texture name="$parent_Portrait">
+							<Size>
+								<AbsDimension x="48" y="48"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOP" relativePoint="TOP">
+									<Offset>
+										<AbsDimension x="0" y="-6"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
 					</Layer>
 				</Layers>
 			</Frame>

@@ -17,12 +17,15 @@ local bufflocation = 4;		-- default buff location
 local debufflocation = 1;	-- default debuff location
 local verticalalign = 1;	-- default alignment is vertically
 local compactpercent = 0;	-- percents are not shown in compact mode by default
+local showportrait = 1;		-- portrait is hidden by default
+local showfkeys = 0;		-- hide appropriate F key in the name frame by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 local mouseoverpethealthflag = 0;	-- is the mouse over the pet health bar for healer mode?
+local threedportrait = 0;	-- 3d portraits are off by default
 
 -- Variables for position of the class icon texture.
 local Perl_Party_ClassPosRight = {};
@@ -59,8 +62,14 @@ function Perl_Party_OnLoad()
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_LEVEL");
 	this:RegisterEvent("UNIT_MANA");
+	this:RegisterEvent("UNIT_MAXENERGY");
+	this:RegisterEvent("UNIT_MAXHEALTH");
+	this:RegisterEvent("UNIT_MAXMANA");
+	this:RegisterEvent("UNIT_MAXRAGE");
+	this:RegisterEvent("UNIT_MODEL_CHANGED");--
 	this:RegisterEvent("UNIT_NAME_UPDATE");
 	this:RegisterEvent("UNIT_PET");
+	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");--
 	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
@@ -90,14 +99,14 @@ function Perl_Party_Script_OnEvent(event)				-- All this just to ensure party fr
 end
 
 function Perl_Party_OnEvent(event)
-	if (event == "UNIT_HEALTH") then
+	if (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH") then
 		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
 			Perl_Party_Update_Health();
 		elseif ((arg1 == "partypet1") or (arg1 == "partypet2") or (arg1 == "partypet3") or (arg1 == "partypet4")) then
 			Perl_Party_Update_Pet_Health();
 		end
 		return;
-	elseif ((event == "UNIT_MANA") or (event == "UNIT_ENERGY") or (event == "UNIT_RAGE")) then
+	elseif ((event == "UNIT_MANA") or (event == "UNIT_ENERGY") or (event == "UNIT_RAGE") or (event == "UNIT_MAXMANA") or (event == "UNIT_MAXENERGY") or (event == "UNIT_MAXRAGE")) then
 		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
 			Perl_Party_Update_Mana();
 		end
@@ -141,6 +150,11 @@ function Perl_Party_OnEvent(event)
 		return;
 	elseif (event == "PARTY_LEADER_CHANGED") then
 		Perl_Party_Update_Leader();			-- Who is the group leader
+		return;
+	elseif (event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED") then
+		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+			Perl_Party_Update_Portrait();
+		end
 		return;
 	elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
 		Perl_Party_Update_Loot_Method();		-- Who is the master looter if any
@@ -210,6 +224,8 @@ function Perl_Party_Initialize_Frame_Color(flag)
 		getglobal(this:GetName().."_NameFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 		getglobal(this:GetName().."_LevelFrame"):SetBackdropColor(0, 0, 0, 1);
 		getglobal(this:GetName().."_LevelFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		getglobal(this:GetName().."_PortraitFrame"):SetBackdropColor(0, 0, 0, 1);
+		getglobal(this:GetName().."_PortraitFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 		getglobal(this:GetName().."_StatsFrame"):SetBackdropColor(0, 0, 0, 1);
 		getglobal(this:GetName().."_StatsFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	else
@@ -218,6 +234,8 @@ function Perl_Party_Initialize_Frame_Color(flag)
 			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame"):SetBackdropColor(0, 0, 0, 1);
 			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame"):SetBackdropColor(0, 0, 0, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetBackdropColor(0, 0, 0, 1);
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 		end
@@ -263,6 +281,7 @@ function Perl_Party_MembersUpdate()
 	Perl_Party_Update_Pet_Health();
 	Perl_Party_Update_Leader();
 	Perl_Party_Update_Loot_Method();
+	Perl_Party_Update_Portrait();
 	Perl_Party_Buff_UpdateAll();
 	HidePartyFrame();
 end
@@ -476,11 +495,16 @@ function Perl_Party_Update_Pet()
 			end											-- End waste of code to keep it sane
 
 			if (verticalalign == 1) then
-				local idspace = id + 1;
-				local partypetspacing = partyspacing - 12;
+				--local idspace = id + 1;
+				--local partypetspacing = partyspacing - 12;
 				if (id == 1 or id == 2 or id == 3) then
 					local idspace = id + 1;
-					local partypetspacing = partyspacing - 12;
+					local partypetspacing;
+					if (partyspacing < 0) then			-- Frames are normal
+						partypetspacing = partyspacing - 12;
+					else						-- Frames are inverted
+						partypetspacing = partyspacing + 12;
+					end
 					getglobal("Perl_Party_MemberFrame"..idspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id, "TOPLEFT", 0, partypetspacing);
 				end
 			else
@@ -621,7 +645,12 @@ function Perl_Party_Set_Name()
 	-- Set name
 	if (UnitName(partyid) ~= nil) then
 		if (strlen(partyname) > 20) then
-			Partyname = strsub(partyname, 1, 19).."...";
+			partyname = strsub(partyname, 1, 19).."...";
+		end
+		if (showfkeys == 1) then
+			getglobal(this:GetName().."_NameFrame_FKeyText"):SetText("F"..this:GetID());
+		else
+			getglobal(this:GetName().."_NameFrame_FKeyText"):SetText();
 		end
 		getglobal(this:GetName().."_NameFrame_NameBarText"):SetText(partyname);
 	end
@@ -636,26 +665,32 @@ function Perl_Party_Set_Name()
 	end
 end
 
-function Perl_Party_Update_PvP_Status()
+function Perl_Party_Update_PvP_Status()				-- Modeled after 1.9 code
 	local partyid = "party"..this:GetID();
 	local factionGroup = UnitFactionGroup(partyid);
-	if (factionGroup == nil) then
+	if (factionGroup == nil) then				-- This check probably isn't needed since the changes in the code below in 0.48
 		factionGroup = UnitFactionGroup("player");
 	end
 	-- Color their name if PvP flagged
-	if (UnitIsPVP(partyid)) then
-		getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0,1,0);
-		getglobal(this:GetName().."_NameFrame_PVPStatus"):SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
-		getglobal(this:GetName().."_NameFrame_PVPStatus"):Show();
+	if (UnitIsPVPFreeForAll(partyid)) then
+		getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0,1,0);						-- FFA PvP will still use normal PvP coloring since you're grouped
+		getglobal(this:GetName().."_NameFrame_PVPStatus"):SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");			-- Set the FFA PvP icon
+		getglobal(this:GetName().."_NameFrame_PVPStatus"):Show();								-- Show the icon
+	elseif (factionGroup and UnitIsPVP(partyid)) then
+		getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0,1,0);						-- Color the name for PvP
+		getglobal(this:GetName().."_NameFrame_PVPStatus"):SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);	-- Set the correct team icon
+		getglobal(this:GetName().."_NameFrame_PVPStatus"):Show();								-- Show the icon
 	else
-		getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.5,0.5,1);
-		getglobal(this:GetName().."_NameFrame_PVPStatus"):Hide();
+		getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.5,0.5,1);						-- Set the non PvP name color
+		getglobal(this:GetName().."_NameFrame_PVPStatus"):Hide();								-- Hide the icon
 	end
 end
 
 function Perl_Party_Update_Level()
-	-- Set Level
-	getglobal(this:GetName().."_LevelFrame_LevelBarText"):SetText(UnitLevel("party"..this:GetID()));
+	local id = this:GetID();
+	if (id ~= 0) then		-- Do this check to prevent showing a player level of zero when the player is zoning or dead or cant have info received (linkdead)
+		getglobal(this:GetName().."_LevelFrame_LevelBarText"):SetText(UnitLevel("party"..id));
+	end
 end
 
 function Perl_Party_Update_Leader()
@@ -820,6 +855,38 @@ function Perl_Party_Pet_HealthHide()
 	end
 end
 
+function Perl_Party_Update_Portrait(partymember)
+	local id;
+
+	if (partymember == nil) then
+		id = this:GetID();
+	else
+		id = partymember;
+	end
+
+	if (showportrait == 1) then
+		local partyid = "party"..id;
+
+		getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame"):Show();				-- Show the main portrait frame
+
+		if (threedportrait == 0) then
+			SetPortraitTexture(getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"), partyid);		-- Load the correct 2d graphic
+			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):Hide();					-- Hide the 3d graphic
+			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"):Show();					-- Show the 2d graphic
+		else
+			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):SetUnit(partyid);				-- Load the correct 3d graphic
+			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"):Hide();					-- Hide the 2d graphic
+			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):Show();					-- Show the 3d graphic
+			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):SetSequence(30);				-- This needs to be in the OnLoad in the XML
+			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):SetCamera(0);				-- This needs to be in the OnUpdate in the XML
+			getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"):SetPosition(0, 0, 0);
+		end
+
+	else
+		getglobal("Perl_Party_MemberFrame"..id.."_PortraitFrame"):Hide();				-- Hide the frame and 2d/3d portion
+	end
+end
+
 function Perl_Party_Update_Health_Mana()
 	local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, partymanapercent, partypethealth, partypethealthmax, partypethealthpercent;
 
@@ -905,6 +972,11 @@ function Perl_Party_Force_Update()
 			if (strlen(partyname) > 20) then
 				partyname = strsub(partyname, 1, 19).."...";
 			end
+			if (showfkeys == 1) then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_FKeyText"):SetText("F"..partynum);
+			else
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_FKeyText"):SetText();
+			end
 			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetText(partyname);
 		end
 
@@ -963,6 +1035,27 @@ function Perl_Party_Force_Update()
 		else
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar"):SetStatusBarColor(0, 0, 1, 1);
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBarBG"):SetStatusBarColor(0, 0, 1, 0.25);
+		end
+
+		-- Set portraits
+		if (showportrait == 1) then
+			getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame"):Show();				-- Show the main portrait frame
+
+			if (threedportrait == 0) then
+				SetPortraitTexture(getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_Portrait"), partyid);		-- Load the correct 2d graphic
+				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):Hide();					-- Hide the 3d graphic
+				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_Portrait"):Show();					-- Show the 2d graphic
+			else
+				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):SetUnit(partyid);				-- Load the correct 3d graphic
+				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_Portrait"):Hide();					-- Hide the 2d graphic
+				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):Show();					-- Show the 3d graphic
+				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):SetSequence(30);				-- This needs to be in the OnLoad in the XML
+				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):SetCamera(0);				-- This needs to be in the OnUpdate in the XML
+				getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame_PartyModel"):SetPosition(0, 0, 0);
+			end
+
+		else
+			getglobal("Perl_Party_MemberFrame"..partynum.."_PortraitFrame"):Hide();				-- Hide the frame and 2d/3d portion
 		end
 
 		-- Set pet bars
@@ -1131,7 +1224,12 @@ function Perl_Party_Set_Space(number)
 		Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
 
 		if (showpets == 1) then
-			local partypetspacing = partyspacing - 12;
+			local partypetspacing;
+			if (partyspacing < 0) then			-- Frames are normal
+				partypetspacing = partyspacing - 12;
+			else						-- Frames are inverted
+				partypetspacing = partyspacing + 12;
+			end
 			for partynum=1,4 do
 				local partyid = "party"..partynum;
 				local frame = getglobal("Perl_Party_MemberFrame"..partynum);
@@ -1332,6 +1430,21 @@ function Perl_Party_Set_Compact_Percent(newvalue)
 	Perl_Party_Set_Compact();
 end
 
+function Perl_Party_Set_Portrait(newvalue)
+	showportrait = newvalue;
+	Perl_Party_UpdateVars();
+	Perl_Party_Update_Portrait(1);
+	Perl_Party_Update_Portrait(2);
+	Perl_Party_Update_Portrait(3);
+	Perl_Party_Update_Portrait(4);
+end
+
+function Perl_Party_Set_FKeys(newvalue)
+	showfkeys = newvalue;
+	Perl_Party_UpdateVars();
+	Perl_Party_Force_Update();
+end
+
 function Perl_Party_Set_Buff_Location(newvalue)
 	if (newvalue ~= nil) then
 		bufflocation = newvalue;
@@ -1392,6 +1505,8 @@ function Perl_Party_GetVars()
 	debufflocation = Perl_Party_Config[UnitName("player")]["DebuffLocation"];
 	verticalalign = Perl_Party_Config[UnitName("player")]["VerticalAlign"];
 	compactpercent = Perl_Party_Config[UnitName("player")]["CompactPercent"];
+	showportrait = Perl_Party_Config[UnitName("player")]["ShowPortrait"];
+	showfkeys = Perl_Party_Config[UnitName("player")]["ShowFKeys"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1432,6 +1547,12 @@ function Perl_Party_GetVars()
 	if (compactpercent == nil) then
 		compactpercent = 0;
 	end
+	if (showportrait == nil) then
+		showportrait = 0;
+	end
+	if (showfkeys == nil) then
+		showfkeys = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1447,6 +1568,8 @@ function Perl_Party_GetVars()
 		["debufflocation"] = debufflocation,
 		["verticalalign"] = verticalalign,
 		["compactpercent"] = compactpercent,
+		["showportrait"] = showportrait,
+		["showfkeys"] = showfkeys,
 	}
 	return vars;
 end
@@ -1520,6 +1643,16 @@ function Perl_Party_UpdateVars(vartable)
 			else
 				compactpercent = nil;
 			end
+			if (vartable["Global Settings"]["ShowPortrait"] ~= nil) then
+				showportrait = vartable["Global Settings"]["ShowPortrait"];
+			else
+				showportrait = nil;
+			end
+			if (vartable["Global Settings"]["ShowFKeys"] ~= nil) then
+				showfkeys = vartable["Global Settings"]["ShowFKeys"];
+			else
+				showfkeys = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1562,6 +1695,12 @@ function Perl_Party_UpdateVars(vartable)
 		if (compactpercent == nil) then
 			compactpercent = 0;
 		end
+		if (showportrait == nil) then
+			showportrait = 0;
+		end
+		if (showfkeys == nil) then
+			showfkeys = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Party_Set_Space();				-- This probably isn't needed, but one extra call for this won't matter
@@ -1589,6 +1728,8 @@ function Perl_Party_UpdateVars(vartable)
 		["DebuffLocation"] = debufflocation,
 		["VerticalAlign"] = verticalalign,
 		["CompactPercent"] = compactpercent,
+		["ShowPortrait"] = showportrait,
+		["ShowFKeys"] = showfkeys,
 	};
 end
 
@@ -1713,18 +1854,24 @@ end
 
 function Perl_PartyDropDown_Initialize()
 	local dropdown;
+	local id = this:GetID();
+
 	if (UIDROPDOWNMENU_OPEN_MENU) then
 		dropdown = getglobal(UIDROPDOWNMENU_OPEN_MENU);
 	else
 		dropdown = this;
 	end
-	UnitPopup_ShowMenu(dropdown, "PARTY", "party"..this:GetID());
+	if (id == 0) then
+		local name = this:GetName();
+		id = string.sub(name, 23, 23);
+	end
+	UnitPopup_ShowMenu(dropdown, "PARTY", "party"..id);
 end
 
 function Perl_Party_MouseUp(button)
 	local id = this:GetID();
 	if (id == 0) then
-		local name=this:GetName();
+		local name = this:GetName();
 		id = string.sub(name, 23, 23);
 	end
 	if (SpellIsTargeting() and button == "RightButton") then
@@ -1740,13 +1887,8 @@ function Perl_Party_MouseUp(button)
 			TargetUnit("party"..id);
 		end
 	else
-		if (this:GetID() == 0) then
-			return;
-		else
-			ToggleDropDownMenu(1, nil, getglobal(this:GetName().."_DropDown"), this:GetName(), 0, 0);
-		end
+		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..id.."_DropDown"), "Perl_Party_MemberFrame"..id, 0, 0);
 	end
-
 	Perl_Party_Frame:StopMovingOrSizing();
 end
 
@@ -1798,8 +1940,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.47",
-			releaseDate = "March 3, 2006",
+			version = "v0.48",
+			releaseDate = "March 10, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

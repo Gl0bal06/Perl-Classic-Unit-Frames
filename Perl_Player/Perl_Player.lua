@@ -1202,11 +1202,7 @@ function Perl_Player_MouseUp(button)
 			TargetUnit("player");
 		end
 	else
-		if (this:GetName() == "Perl_Player_Frame") then
-			ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
-		else
-			return;
-		end
+		ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
 	end
 
 	Perl_Player_Frame:StopMovingOrSizing();
@@ -1286,8 +1282,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.47",
-			releaseDate = "March 3, 2006",
+			version = "v0.48",
+			releaseDate = "March 10, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -76,6 +76,18 @@ function Perl_Config_Party_Set_Values()
 		Perl_Config_Party_Frame_CheckButton11:SetChecked(nil);
 	end
 
+	if (vartable["showportrait"] == 1) then
+		Perl_Config_Party_Frame_CheckButton12:SetChecked(1);
+	else
+		Perl_Config_Party_Frame_CheckButton12:SetChecked(nil);
+	end
+
+	if (vartable["showfkeys"] == 1) then
+		Perl_Config_Party_Frame_CheckButton13:SetChecked(1);
+	else
+		Perl_Config_Party_Frame_CheckButton13:SetChecked(nil);
+	end
+
 	Perl_Config_Party_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Party_Frame_Slider1High:SetText("Big");
 	Perl_Config_Party_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -183,6 +195,22 @@ function Perl_Config_Party_Compact_Percent_Update()
 		Perl_Party_Set_Compact_Percent(1);
 	else
 		Perl_Party_Set_Compact_Percent(0);
+	end
+end
+
+function Perl_Config_Party_Portrait_Update()
+	if (Perl_Config_Party_Frame_CheckButton12:GetChecked() == 1) then
+		Perl_Party_Set_Portrait(1);
+	else
+		Perl_Party_Set_Portrait(0);
+	end
+end
+
+function Perl_Config_Party_FKeys_Update()
+	if (Perl_Config_Party_Frame_CheckButton13:GetChecked() == 1) then
+		Perl_Party_Set_FKeys(1);
+	else
+		Perl_Party_Set_FKeys(0);
 	end
 end
 

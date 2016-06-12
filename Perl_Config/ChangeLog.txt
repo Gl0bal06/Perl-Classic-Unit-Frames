@@ -1,3 +1,13 @@
+0.48 - March 10, 2006
+ - Party: Added toggleable 2D portrait frames
+ - Party: Added F Key indicators to the name frame
+ - Party: Levels should no longer display 0
+ - Party: Monitoring more events to prevent large percents
+ - Party: Changed PvP detection code to that of the default interface
+ - Party: Will not adjust correctly when frames are inverted
+ - Party: Can now right click on more of the frame to get the menu
+ - Player/Target: Can now left and right click on more of the frame to get the appropriate action
+
 0.47 - March 3, 2006
  - CombatDisplay: Changed how the status bars are oriented to be more dynamic
  - CombatDisplay/Player: Added Druid Bar support
