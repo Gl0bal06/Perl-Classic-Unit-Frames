@@ -6,6 +6,7 @@ Perl_Player_Pet_Config = {};
 -- Defaults (also set in Perl_Player_Pet_GetVars)
 local Perl_Player_Pet_State = 1;	-- enabled by default
 local locked = 0;			-- unlocked by default
+local showxp = 0;			-- xp bar is hidden by default
 local transparency = 1;			-- 0.8 default from perl
 local Initialized = nil;		-- waiting to be initialized
 local BlizzardPetFrame_Update = PetFrame_Update;	-- backup the original target function in case we toggle the mod off
@@ -19,6 +20,7 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("PLAYER_PET_CHANGED");
+	this:RegisterEvent("PLAYER_XP_UPDATE");
 	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_FOCUS");
@@ -61,6 +63,9 @@ function Perl_Player_Pet_OnEvent(event)
 				Perl_Player_Pet_Update_Mana();		-- Update energy/mana/rage values
 			end
 			return;
+		elseif (event == "UNIT_HAPPINESS") then
+			Perl_Player_PetFrame_SetHappiness();
+			return;
 		elseif (event == "UNIT_NAME_UPDATE") then
 			if (arg1 == "pet") then
 				Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));	-- Set name
@@ -71,8 +76,10 @@ function Perl_Player_Pet_OnEvent(event)
 				Perl_Player_Pet_Buff_UpdateAll();	-- Update the buff/debuff list
 			end
 			return;
-		elseif (event == "UNIT_HAPPINESS") then
-			Perl_Player_PetFrame_SetHappiness();
+		elseif (event == "PLAYER_XP_UPDATE") then
+			if (showxp == 1) then
+				Perl_Player_Pet_Update_Experience();	-- Set the experience bar info
+			end
 			return;
 		elseif (event == "UNIT_LEVEL") then
 			if (arg1 == "pet") then
@@ -117,12 +124,15 @@ function Perl_Player_Pet_SlashHandler(msg)
 		Perl_Player_Pet_Unlock();
 	elseif (string.find(msg, "lock")) then
 		Perl_Player_Pet_Lock();
+	elseif (string.find(msg, "xp")) then
+		Perl_Player_Pet_Toggle_XPMode();
 	elseif (string.find(msg, "status")) then
 		Perl_Player_Pet_Status();
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Player Pet Frame ---");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp |cffffff00- Toggle the pet experience bar.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 	end
 end
@@ -182,6 +192,7 @@ function Perl_Player_Pet_Update_Once()
 		Perl_Player_PetFrame_SetHappiness();				-- Set Happiness
 		Perl_Player_Pet_Buff_UpdateAll();				-- Set buff frame
 		Perl_Player_Pet_Frame:Show();
+		Perl_Player_Pet_ShowXP();
 	else
 		Perl_Player_Pet_Frame:Hide();
 	end
@@ -257,6 +268,36 @@ function Perl_Player_PetFrame_SetHappiness()
 	end
 end
 
+function Perl_Player_Pet_ShowXP()
+	if (showxp == 0) then
+		Perl_Player_Pet_XPBar:Hide();
+		Perl_Player_Pet_XPBarBG:Hide();
+		Perl_Player_Pet_XPBarText:SetText();
+		Perl_Player_Pet_StatsFrame:SetHeight(34);
+	else
+		Perl_Player_Pet_XPBar:Show();
+		Perl_Player_Pet_XPBarBG:Show();
+		Perl_Player_Pet_StatsFrame:SetHeight(47);
+		Perl_Player_Pet_Update_Experience();
+	end
+end
+
+function Perl_Player_Pet_Update_Experience()
+	-- XP Bar stuff
+	local playerpetxp, playerpetxpmax;
+	playerpetxp, playerpetxpmax = GetPetExperience();
+
+	Perl_Player_Pet_XPBar:SetMinMaxValues(0, playerpetxpmax);
+	Perl_Player_Pet_XPBar:SetValue(playerpetxp);
+
+	-- Set xp text
+	local xptext = playerpetxp.."/"..playerpetxpmax;
+
+	Perl_Player_Pet_XPBar:SetStatusBarColor(0.6, 0, 0.6, 1);
+	Perl_Player_Pet_XPBarBG:SetStatusBarColor(0.6, 0, 0.6, 0.25);
+	Perl_Player_Pet_XPBarText:SetText(xptext);
+end
+
 
 ----------------------
 -- Config functions --
@@ -273,26 +314,49 @@ function Perl_Player_Pet_Unlock()
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now |cffffffffUnlocked|cffffff00.");
 end
 
+function Perl_Player_Pet_Toggle_XPMode()
+	if (showxp == 1) then
+		showxp = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now |cffffffffHiding Experience|cffffff00.");
+	else
+		showxp = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now |cffffffffShowing Experience|cffffff00.");
+	end
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_ShowXP();
+end
+
 function Perl_Player_Pet_Status()
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffUnlocked|cffffff00.");
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffLocked|cffffff00.");
 	end
+
+	if (showxp == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffHiding Experience|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffShowing Experience|cffffff00.");
+	end
 end
 
 function Perl_Player_Pet_GetVars()
 	locked = Perl_Player_Pet_Config[UnitName("player")]["Locked"];
-end
-
-function Perl_Player_Pet_UpdateVars()
-	Perl_Player_Pet_Config[UnitName("player")] = {
-		["Locked"] = locked
-	};
+	showxp = Perl_Player_Pet_Config[UnitName("player")]["ShowXP"];
 
 	if (locked == nil) then
 		locked = 0;
 	end
+	if (showxp == nil) then
+		showxp = 0;
+	end
+end
+
+function Perl_Player_Pet_UpdateVars()
+	Perl_Player_Pet_Config[UnitName("player")] = {
+		["Locked"] = locked,
+		["ShowXP"] = showxp,
+	};
 end
 
 
@@ -405,8 +469,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.13",
-			releaseDate = "October 29, 2005",
+			version = "v0.14",
+			releaseDate = "October 30, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

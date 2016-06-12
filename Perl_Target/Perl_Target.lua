@@ -698,6 +698,7 @@ function Perl_Target_GetVars()
 	locked = Perl_Target_Config[UnitName("player")]["Locked"];
 	showcp = Perl_Target_Config[UnitName("player")]["ComboPoints"];
 	showclassicon = Perl_Target_Config[UnitName("player")]["ClassIcon"];
+	showclassframe = Perl_Target_Config[UnitName("player")]["ClassFrame"];
 	numbuffsshown = Perl_Target_Config[UnitName("player")]["Buffs"];
 	numdebuffsshown = Perl_Target_Config[UnitName("player")]["Debuffs"];
 
@@ -913,8 +914,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.13",
-			releaseDate = "October 29, 2005",
+			version = "v0.14",
+			releaseDate = "October 30, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

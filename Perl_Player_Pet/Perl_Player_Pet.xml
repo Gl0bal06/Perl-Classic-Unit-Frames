@@ -53,7 +53,7 @@
 	<Frame name="Perl_Player_Pet_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Size>
 			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. -->
-			<AbsDimension x="100" y="24"/>
+			<AbsDimension x="165" y="24"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT">
@@ -106,7 +106,7 @@
 			<!-- Target Name -->
 			<Frame name="Perl_Player_Pet_NameFrame">
 				<Size>
-					<AbsDimension x="150" y="24"/>
+					<AbsDimension x="165" y="24"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -333,6 +333,50 @@
 						</Anchors>
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
+					</StatusBar>
+
+					<!-- XP Bar -->
+					<StatusBar name="Perl_Player_Pet_XPBar" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="128" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="Perl_Player_Pet_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="-2"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture name="Perl_Player_Pet_XPBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0.6" g="0" b="0.6"/>
+						<Layers>
+							<!-- XP Text -->
+							<Layer level="OVERLAY">
+								<Fontstring name="Perl_Player_Pet_XPBarText" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="TOP" relativePoint="TOP">
+											<Offset>
+												<AbsDimension x="0" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</Fontstring>
+							</Layer>
+						</Layers>
+					</StatusBar>
+					<StatusBar name="Perl_Player_Pet_XPBarBG" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="128" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_Pet_XPBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarColor r="0.6" g="0" b="0.6" a="0.25"/>
 					</StatusBar>
 				</Frames>
 			</Frame>

@@ -53,7 +53,7 @@
 	<Frame name="Perl_Party_FrameTemplate" virtual="true" frameStrata="LOW">
 		<Size>
 			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. -->
-			<AbsDimension x="220" y="60"/>
+			<AbsDimension x="200" y="24"/> <!-- 220, 60 -->
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT">
@@ -494,7 +494,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Buff1" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="0" y="-5"/>
+									<AbsDimension x="197" y="74"/> <!-- 0, -5 -->
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -502,7 +502,7 @@
 
 					<Button name="$parent_Debuff2" inherits="Perl_Party_BuffTemplate" id="10">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Buff1" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff1" relativePoint="TOPRIGHT">
 								<Offset>
 									<AbsDimension x="5" y="0"/>
 								</Offset>
@@ -512,7 +512,7 @@
 
 					<Button name="$parent_Debuff3" inherits="Perl_Party_BuffTemplate" id="3">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Buff2" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff2" relativePoint="TOPRIGHT">
 								<Offset>
 									<AbsDimension x="5" y="0"/>
 								</Offset>
@@ -522,7 +522,7 @@
 
 					<Button name="$parent_Debuff4" inherits="Perl_Party_BuffTemplate" id="4">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Buff3" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff3" relativePoint="TOPRIGHT">
 								<Offset>
 									<AbsDimension x="5" y="0"/>
 								</Offset>
@@ -532,7 +532,7 @@
 
 					<Button name="$parent_Debuff5" inherits="Perl_Party_BuffTemplate" id="5">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Buff4" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff4" relativePoint="TOPRIGHT">
 								<Offset>
 									<AbsDimension x="5" y="0"/>
 								</Offset>
@@ -542,7 +542,7 @@
 
 					<Button name="$parent_Debuff6" inherits="Perl_Party_BuffTemplate" id="6">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Buff5" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff5" relativePoint="TOPRIGHT">
 								<Offset>
 									<AbsDimension x="5" y="0"/>
 								</Offset>
@@ -552,7 +552,7 @@
 
 					<Button name="$parent_Debuff7" inherits="Perl_Party_BuffTemplate" id="7">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Buff6" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff6" relativePoint="TOPRIGHT">
 								<Offset>
 									<AbsDimension x="5" y="0"/>
 								</Offset>
@@ -562,7 +562,7 @@
 
 					<Button name="$parent_Debuff8" inherits="Perl_Party_BuffTemplate" id="8">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Buff7" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff7" relativePoint="TOPRIGHT">
 								<Offset>
 									<AbsDimension x="5" y="0"/>
 								</Offset>
@@ -627,7 +627,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame1">
 						<Offset>
-							<AbsDimension x="0" y="-100"/> <!-- -60 default -->
+							<AbsDimension x="0" y="-80"/> <!-- -60 default -->
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -636,7 +636,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame2">
 						<Offset>
-							<AbsDimension x="0" y="-100"/>
+							<AbsDimension x="0" y="-80"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -645,7 +645,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame3">
 						<Offset>
-							<AbsDimension x="0" y="-100"/>
+							<AbsDimension x="0" y="-80"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

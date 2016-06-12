@@ -384,10 +384,16 @@ function Perl_Player_Set_CompactMode()
 	if (compactmode == 0) then
 		Perl_Player_Update_Health();
 		Perl_Player_Update_Mana();
+		Perl_Player_XPBar:SetWidth(220);
+		Perl_Player_XPRestBar:SetWidth(220);
+		Perl_Player_XPBarBG:SetWidth(220);
 		Perl_Player_StatsFrame:SetWidth(240);
 	else
 		Perl_Player_Update_Health();
 		Perl_Player_Update_Mana();
+		Perl_Player_XPBar:SetWidth(150);
+		Perl_Player_XPRestBar:SetWidth(150);
+		Perl_Player_XPBarBG:SetWidth(150);
 		Perl_Player_StatsFrame:SetWidth(170);
 	end
 end
@@ -594,8 +600,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.13",
-			releaseDate = "October 29, 2005",
+			version = "v0.14",
+			releaseDate = "October 30, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

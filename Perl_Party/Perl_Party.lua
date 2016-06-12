@@ -385,6 +385,8 @@ end
 function Perl_Party_Toggle_CompactMode()
 	if (compactmode == 0) then
 		compactmode = 1;
+		--Perl_Party_Update_Health();
+		--Perl_Party_Update_Mana();
 		--getglobal(this:GetName().."_StatsFrame"):SetWidth(170);
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying in |cffffffffCompact Mode|cffffff00.");
 	else
@@ -396,8 +398,6 @@ function Perl_Party_Toggle_CompactMode()
 	end
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Please relog or '/console reloadui' for changes to take effect.");
 	Perl_Party_UpdateVars();
-	--Initialized = nil;
-	--Perl_Party_Initialize();
 end
 
 function Perl_Party_Status()
@@ -481,8 +481,8 @@ end
 function Perl_Party_SetBuffTooltip()
 	local partyid = "party"..this:GetParent():GetParent():GetID();
 	GameTooltip:SetOwner(this,"ANCHOR_BOTTOMRIGHT");
-	if (this.isdebuff == 1) then
-		GameTooltip:SetUnitDebuff(partyid, this:GetID()-0);
+	if (this:GetID() > 8) then
+		GameTooltip:SetUnitDebuff(partyid, this:GetID()-8);
 	else
 		GameTooltip:SetUnitBuff(partyid, this:GetID());
 	end
@@ -547,8 +547,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.13",
-			releaseDate = "October 29, 2005",
+			version = "v0.14",
+			releaseDate = "October 30, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

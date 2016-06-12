@@ -7,7 +7,7 @@
 	<Frame name="Perl_Player_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Size>
 			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. -->
-			<AbsDimension x="180" y="24"/>
+			<AbsDimension x="200" y="24"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT">
