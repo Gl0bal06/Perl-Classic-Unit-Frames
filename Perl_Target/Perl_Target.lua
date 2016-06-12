@@ -580,7 +580,9 @@ function Perl_Target_Update_Mana_Text()
 			Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
 		end
 	elseif (framestyle == 2) then
-		targetmanapercent = floor(targetmana/targetmanamax*100+0.5);
+		if (targetmanamax > 0) then
+			targetmanapercent = floor(targetmana/targetmanamax*100+0.5);
+		end
 
 		if (compactmode == 0) then
 			Perl_Target_ManaBarTextCompactPercent:SetText();					-- Hide this text in this frame style

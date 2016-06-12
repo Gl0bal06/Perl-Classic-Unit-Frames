@@ -33,6 +33,7 @@ local paladinpowerbar = 1;		-- paladin power bar is on by default
 local shardbarframe = 1;		-- warlock shard bar frame is on by default
 local eclipsebarframe = 1;		-- druid eclipse bar frame is on by default
 local harmonybarframe = 1;		-- monk harmony bar frame is on by default
+local priestbarframe = 1;		-- priest orb bar frame is on by default
 
 -- Default Local Variables
 local InCombat = 0;				-- used to track if the player is in combat and if the icon should be displayed
@@ -124,6 +125,7 @@ function Perl_Player_OnLoad(self)
 	ShardBarFrame:SetParent(Perl_Player_Frame);
 	EclipseBarFrame:SetParent(Perl_Player_Frame);
 	MonkHarmonyBar:SetParent(Perl_Player_Frame);
+	PriestBarFrame:SetParent(Perl_Player_Frame);
 end
 
 
@@ -1437,42 +1439,42 @@ function Perl_Player_Frame_Style()
 		Perl_Player_Update_Health();
 		Perl_Player_Update_Mana();
 
-		-- Hi-jack the Blizzard totem frame
+		-- Hi-jack the Blizzard Shaman totem frame
 		if (totemtimers == 1) then
 			TotemFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 0);
 		else
 			TotemFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
-		-- Hi-jack the Blizzard rune frame
+		-- Hi-jack the Blizzard Death Knigth rune frame
 		if (runeframe == 1) then
 			RuneFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 20, -2);
 		else
 			RuneFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
-		-- Hi-jack the Blizzard paladin power bar
+		-- Hi-jack the Blizzard Paladin power bar
 		if (paladinpowerbar == 1) then
 			PaladinPowerBar:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 15, 8);
 		else
 			PaladinPowerBar:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
-		-- Hi-jack the Blizzard shard bar frame
+		-- Hi-jack the Blizzard Warlock shard bar frame
 		if (shardbarframe == 1) then
 			ShardBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 28, 0);
 		else
 			ShardBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
-		-- Hi-jack the Blizzard eclipse bar frame
+		-- Hi-jack the Blizzard Druid eclipse bar frame
 		if (eclipsebarframe == 1) then
 			EclipseBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 14, 3);
 		else
 			EclipseBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
-		-- Hi-jack the Blizzard eclipse bar frame
+		-- Hi-jack the Blizzard Monk harmony bar frame
 		if (harmonybarframe == 1) then
 			if (compactmode == 1 and shortbars == 1) then
 				MonkHarmonyBar:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 67, 14);
@@ -1482,7 +1484,17 @@ function Perl_Player_Frame_Style()
 		else
 			MonkHarmonyBar:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
-		
+
+		-- Hi-jack the Blizzard Priest bar frame
+		if (priestbarframe == 1) then
+			if (compactmode == 1 and shortbars == 1) then
+				PriestBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", -10, 2);
+			else
+				PriestBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 5, 2);
+			end
+		else
+			PriestBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+		end
 
 		-- Update the five second rule
 		Perl_Player_FiveSecondRule:SetWidth(Perl_Player_ManaBar:GetWidth());
@@ -1699,6 +1711,12 @@ function Perl_Player_Set_Show_Harmony_Bar_Frame(newvalue)
 	Perl_Player_Frame_Style();
 end
 
+function Perl_Player_Set_Show_Priest_Bar_Frame(newvalue)
+	priestbarframe = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
+end
+
 function Perl_Player_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);													-- convert the user input to a wow acceptable value
@@ -1763,6 +1781,7 @@ function Perl_Player_GetVars(name, updateflag)
 	shardbarframe = Perl_Player_Config[name]["ShardBarFrame"];
 	eclipsebarframe = Perl_Player_Config[name]["EclipseBarFrame"];
 	harmonybarframe = Perl_Player_Config[name]["HarmonyBarFrame"];
+	priestbarframe = Perl_Player_Config[name]["PriestBarFrame"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1848,6 +1867,9 @@ function Perl_Player_GetVars(name, updateflag)
 	if (harmonybarframe == nil) then
 		harmonybarframe = 1;
 	end
+	if (priestbarframe == nil) then
+		priestbarframe = 1;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1889,6 +1911,7 @@ function Perl_Player_GetVars(name, updateflag)
 		["shardbarframe"] = shardbarframe,
 		["eclipsebarframe"] = eclipsebarframe,
 		["harmonybarframe"] = harmonybarframe,
+		["priestbarframe"] = priestbarframe,
 	}
 	return vars;
 end
@@ -2037,6 +2060,11 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				harmonybarframe = nil;
 			end
+			if (vartable["Global Settings"]["PriestBarFrame"] ~= nil) then
+				priestbarframe = vartable["Global Settings"]["PriestBarFrame"];
+			else
+				priestbarframe = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2124,6 +2152,9 @@ function Perl_Player_UpdateVars(vartable)
 		if (harmonybarframe == nil) then
 			harmonybarframe = 1;
 		end
+		if (priestbarframe == nil) then
+			priestbarframe = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Update_Once();
@@ -2160,6 +2191,7 @@ function Perl_Player_UpdateVars(vartable)
 		["ShardBarFrame"] = shardbarframe,
 		["EclipseBarFrame"] = eclipsebarframe,
 		["HarmonyBarFrame"] = harmonybarframe,
+		["PriestBarFrame"] = priestbarframe,
 	};
 end
 

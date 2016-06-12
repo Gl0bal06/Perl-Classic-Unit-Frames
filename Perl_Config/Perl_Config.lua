@@ -1449,6 +1449,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShardBarFrame"] = vartable["shardbarframe"],
 			["EclipseBarFrame"] = vartable["eclipsebarframe"],
 			["HarmonyBarFrame"] = vartable["harmonybarframe"],
+			["PriestBarFrame"] = vartable["priestbarframe"],
 		};
 	end
 

@@ -1,3 +1,7 @@
+5.01 Beta 2 - July 1, 2012
+ - Player: Added support for Priest Shadow Bar
+ - Target: Added some sanity checks for dividing by zero
+
 5.01 Beta 1 - June 30, 2012
  - All: Updated TOC Interface version to 50001
  - All: Updated to use GROUP_ROSTER_UPDATE event
