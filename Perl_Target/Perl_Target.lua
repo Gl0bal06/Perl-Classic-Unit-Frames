@@ -1475,7 +1475,14 @@ function Perl_Target_Main_Style()
 			Perl_Target_GuildFrame:Hide();
 		end
 
-		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+		if (Initialized) then
+			Perl_Target_ArcaneBar_Support();
+		end
+	end
+end
+
+function Perl_Target_ArcaneBar_Support()
+	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 			Perl_ArcaneBar_target:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 5, -5);
 			Perl_ArcaneBar_target_CastTime:ClearAllPoints();
 			if (Perl_ArcaneBar_Config[UnitName("player")]["TargetLeftTimer"] == 0) then
@@ -1492,7 +1499,6 @@ function Perl_Target_Main_Style()
 			Perl_ArcaneBar_target_Flash:SetWidth(Perl_Target_NameFrame:GetWidth() + 5);
 			Perl_ArcaneBar_Set_Spark_Width(nil, Perl_Target_NameFrame:GetWidth(), nil);
 		end
-	end
 end
 
 function Perl_Target_Text_Positions()

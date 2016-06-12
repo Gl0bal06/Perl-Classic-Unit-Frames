@@ -1,3 +1,7 @@
+2.03b - January 15, 2007
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - Focus/Target: Fixed an error caused on the first load with Perl_ArcaneBar
+
 2.03a - January 10, 2007
  - Focus/Player/Target: Updated Perl_ArcaneBar support for various scales
 

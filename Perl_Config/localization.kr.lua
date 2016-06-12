@@ -61,6 +61,7 @@ if (GetLocale() == "koKR") then
 	PERL_LOCALIZED_TARGET_SHADOW_VULNERABILITY = "암흑 저항력 약화";
 	PERL_LOCALIZED_TARGET_SUNDER_ARMOR = "방어구 가르기";
 	PERL_LOCALIZED_TARGET_NA = "N/A";
+	PERL_LOCALIZED_TARGET_UNGUILDED = "길드없음";
 
 	-- Perl Target Target Strings
 	PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU = "|1이;가; 당신을 타겟으로 합니다!";

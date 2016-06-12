@@ -1304,22 +1304,24 @@ function Perl_Player_Frame_Style()
 		Perl_Player_Update_Health();
 		Perl_Player_Update_Mana();
 
-		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
-			Perl_ArcaneBar_player:SetPoint("TOPLEFT", "Perl_Player_NameFrame", "TOPLEFT", 5, -5);
-			Perl_ArcaneBar_player_CastTime:ClearAllPoints();
-			if (Perl_ArcaneBar_Config[UnitName("player")]["PlayerLeftTimer"] == 0) then
-				Perl_ArcaneBar_player_CastTime:SetPoint("LEFT", "Perl_Player_NameFrame", "RIGHT", 0, 0);
-			else
-				if (showportrait == 1) then
-					Perl_ArcaneBar_player_CastTime:SetPoint("RIGHT", "Perl_Player_PortraitFrame", "LEFT", 0, 0);
+		if (Initialized) then
+			if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+				Perl_ArcaneBar_player:SetPoint("TOPLEFT", "Perl_Player_NameFrame", "TOPLEFT", 5, -5);
+				Perl_ArcaneBar_player_CastTime:ClearAllPoints();
+				if (Perl_ArcaneBar_Config[UnitName("player")]["PlayerLeftTimer"] == 0) then
+					Perl_ArcaneBar_player_CastTime:SetPoint("LEFT", "Perl_Player_NameFrame", "RIGHT", 0, 0);
 				else
-					Perl_ArcaneBar_player_CastTime:SetPoint("RIGHT", "Perl_Player_NameFrame", "LEFT", 0, 0);
+					if (showportrait == 1) then
+						Perl_ArcaneBar_player_CastTime:SetPoint("RIGHT", "Perl_Player_PortraitFrame", "LEFT", 0, 0);
+					else
+						Perl_ArcaneBar_player_CastTime:SetPoint("RIGHT", "Perl_Player_NameFrame", "LEFT", 0, 0);
+					end
 				end
-			end
 
-			Perl_ArcaneBar_player:SetWidth(Perl_Player_NameFrame:GetWidth() - 10);
-			Perl_ArcaneBar_player_Flash:SetWidth(Perl_Player_NameFrame:GetWidth() + 5);
-			Perl_ArcaneBar_Set_Spark_Width(Perl_Player_NameFrame:GetWidth(), nil, nil);
+				Perl_ArcaneBar_player:SetWidth(Perl_Player_NameFrame:GetWidth() - 10);
+				Perl_ArcaneBar_player_Flash:SetWidth(Perl_Player_NameFrame:GetWidth() + 5);
+				Perl_ArcaneBar_Set_Spark_Width(Perl_Player_NameFrame:GetWidth(), nil, nil);
+			end
 		end
 	end
 end

@@ -1351,6 +1351,12 @@ function Perl_Focus_Main_Style()
 		Perl_Focus_PortraitTextFrame:Hide();
 	end
 
+	if (Initialized) then
+		Perl_Focus_ArcaneBar_Support();
+	end
+end
+
+function Perl_Focus_ArcaneBar_Support()
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 		Perl_ArcaneBar_focus:SetPoint("TOPLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 5, -5);
 		Perl_ArcaneBar_focus_CastTime:ClearAllPoints();
