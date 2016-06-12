@@ -1,3 +1,7 @@
+2.24 - August 9, 2008
+ - PartyTarget: Health values will correctly display a percent when no MobHealth is installed
+ - Player: Changed the opacity of the experience bar to more easily see the texture
+
 2.23 - August 8, 2008
  - Config: Added LibStub to prevent errors when checking for LibMobHealth-4.0
 

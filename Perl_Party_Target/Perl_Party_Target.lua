@@ -483,7 +483,6 @@ function Perl_Party_Target_HealthShow(self)
 		self.healthBarText:SetText(partytargethealth.."/"..partytargethealthmax);	-- Self/Party/Raid member
 	end
 
-	self.healthBarText:SetText(partytargethealth.."/"..partytargethealthmax);
 	mouseoverhealthflag = self.id;
 end
 
