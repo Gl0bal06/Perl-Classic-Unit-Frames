@@ -207,6 +207,56 @@ function Perl_Player_Initialize()
 	end
 
 	-- Major config options.
+	Perl_Player_Initialize_Frame_Color();
+
+	Perl_Player_Set_Localized_ClassIcons();
+
+--	-- The following UnregisterEvent calls were taken from Nymbia's Perl
+--	-- Blizz Player Frame Events
+--	PlayerFrame:UnregisterEvent("UNIT_LEVEL");
+--	PlayerFrame:UnregisterEvent("UNIT_COMBAT");
+--	PlayerFrame:UnregisterEvent("UNIT_SPELLMISS");
+--	PlayerFrame:UnregisterEvent("UNIT_PVP_UPDATE");
+--	PlayerFrame:UnregisterEvent("UNIT_MAXMANA");
+--	PlayerFrame:UnregisterEvent("PLAYER_ENTER_COMBAT");
+--	PlayerFrame:UnregisterEvent("PLAYER_LEAVE_COMBAT");
+--	PlayerFrame:UnregisterEvent("PLAYER_UPDATE_RESTING");
+--	PlayerFrame:UnregisterEvent("PARTY_MEMBERS_CHANGED");
+--	PlayerFrame:UnregisterEvent("PARTY_LEADER_CHANGED");
+--	PlayerFrame:UnregisterEvent("PARTY_LOOT_METHOD_CHANGED");
+--	PlayerFrame:UnregisterEvent("PLAYER_ENTERING_WORLD");
+--	PlayerFrame:UnregisterEvent("PLAYER_REGEN_DISABLED");
+--	PlayerFrame:UnregisterEvent("PLAYER_REGEN_ENABLED");
+--	PlayerFrameHealthBar:UnregisterEvent("UNIT_HEALTH");
+--	PlayerFrameHealthBar:UnregisterEvent("UNIT_MAXHEALTH");
+--	-- ManaBar Events
+--	PlayerFrameManaBar:UnregisterEvent("UNIT_MANA");
+--	PlayerFrameManaBar:UnregisterEvent("UNIT_RAGE");
+--	PlayerFrameManaBar:UnregisterEvent("UNIT_FOCUS");
+--	PlayerFrameManaBar:UnregisterEvent("UNIT_ENERGY");
+--	PlayerFrameManaBar:UnregisterEvent("UNIT_HAPPINESS");
+--	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXMANA");
+--	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXRAGE");
+--	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXFOCUS");
+--	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXENERGY");
+--	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXHAPPINESS");
+--	PlayerFrameManaBar:UnregisterEvent("UNIT_DISPLAYPOWER");
+--	-- UnitFrame Events
+--	PlayerFrame:UnregisterEvent("UNIT_NAME_UPDATE");
+--	PlayerFrame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
+--	PlayerFrame:UnregisterEvent("UNIT_DISPLAYPOWER");
+
+	-- Unregister the Blizzard frames via the 1.8 function
+	PlayerFrame:UnregisterAllEvents();
+	PlayerFrameHealthBar:UnregisterAllEvents();
+	PlayerFrameManaBar:UnregisterAllEvents();
+
+	Perl_Player_Frame:Show();
+
+	Initialized = 1;
+end
+
+function Perl_Player_Initialize_Frame_Color()
 	Perl_Player_StatsFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Player_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Player_LevelFrame:SetBackdropColor(0, 0, 0, 1);
@@ -219,47 +269,6 @@ function Perl_Player_Initialize()
 	Perl_Player_HealthBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Player_ManaBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Player_RaidGroupNumberBarText:SetTextColor(1, 1, 1);
-
-	Perl_Player_Set_Localized_ClassIcons();
-
-	-- The following UnregisterEvent calls were taken from Nymbia's Perl
-	-- Blizz Player Frame Events
-	PlayerFrame:UnregisterEvent("UNIT_LEVEL");
-	PlayerFrame:UnregisterEvent("UNIT_COMBAT");
-	PlayerFrame:UnregisterEvent("UNIT_SPELLMISS");
-	PlayerFrame:UnregisterEvent("UNIT_PVP_UPDATE");
-	PlayerFrame:UnregisterEvent("UNIT_MAXMANA");
-	PlayerFrame:UnregisterEvent("PLAYER_ENTER_COMBAT");
-	PlayerFrame:UnregisterEvent("PLAYER_LEAVE_COMBAT");
-	PlayerFrame:UnregisterEvent("PLAYER_UPDATE_RESTING");
-	PlayerFrame:UnregisterEvent("PARTY_MEMBERS_CHANGED");
-	PlayerFrame:UnregisterEvent("PARTY_LEADER_CHANGED");
-	PlayerFrame:UnregisterEvent("PARTY_LOOT_METHOD_CHANGED");
-	PlayerFrame:UnregisterEvent("PLAYER_ENTERING_WORLD");
-	PlayerFrame:UnregisterEvent("PLAYER_REGEN_DISABLED");
-	PlayerFrame:UnregisterEvent("PLAYER_REGEN_ENABLED");
-	PlayerFrameHealthBar:UnregisterEvent("UNIT_HEALTH");
-	PlayerFrameHealthBar:UnregisterEvent("UNIT_MAXHEALTH");
-	-- ManaBar Events
-	PlayerFrameManaBar:UnregisterEvent("UNIT_MANA");
-	PlayerFrameManaBar:UnregisterEvent("UNIT_RAGE");
-	PlayerFrameManaBar:UnregisterEvent("UNIT_FOCUS");
-	PlayerFrameManaBar:UnregisterEvent("UNIT_ENERGY");
-	PlayerFrameManaBar:UnregisterEvent("UNIT_HAPPINESS");
-	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXMANA");
-	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXRAGE");
-	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXFOCUS");
-	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXENERGY");
-	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXHAPPINESS");
-	PlayerFrameManaBar:UnregisterEvent("UNIT_DISPLAYPOWER");
-	-- UnitFrame Events
-	PlayerFrame:UnregisterEvent("UNIT_NAME_UPDATE");
-	PlayerFrame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
-	PlayerFrame:UnregisterEvent("UNIT_DISPLAYPOWER");
-
-	Perl_Player_Frame:Show();
-
-	Initialized = 1;
 end
 
 
@@ -946,16 +955,63 @@ function Perl_Player_GetVars()
 	return vars;
 end
 
-function Perl_Player_UpdateVars()
+function Perl_Player_UpdateVars(vartable)
+	if (vartable ~= nil) then
+		-- Set the new values
+		locked = vartable["Global Settings"]["Locked"];
+		xpbarstate = vartable["Global Settings"]["XPBarState"];
+		compactmode = vartable["Global Settings"]["CompactMode"];
+		showraidgroup = vartable["Global Settings"]["ShowRaidGroup"];
+		scale = vartable["Global Settings"]["Scale"];
+		colorhealth = vartable["Global Settings"]["ColorHealth"];
+		healermode = vartable["Global Settings"]["HealerMode"];
+		transparency = vartable["Global Settings"]["Transparency"];
+
+		-- Sanity checks in case you use a load from an old version, same defaults as above
+		if (locked == nil) then
+			locked = 0;
+		end
+		if (xpbarstate == nil) then
+			xpbarstate = 1;
+		end
+		if (compactmode == nil) then
+			compactmode = 0;
+		end
+		if (showraidgroup == nil) then
+			showraidgroup = 1;
+		end
+		if (scale == nil) then
+			scale = 1;
+		end
+		if (colorhealth == nil) then
+			colorhealth = 0;
+		end
+		if (healermode == nil) then
+			healermode = 0;
+		end
+		if (transparency == nil) then
+			transparency = 1;
+		end
+
+		-- Call any code we need to activate them
+		Perl_Player_XPBar_Display(xpbarstate);
+		Perl_Player_Set_Compact(compactmode);
+		Perl_Player_Set_Healer(healermode);
+		Perl_Player_Update_Raid_Group_Number();
+		Perl_Player_Update_Health();
+		Perl_Player_Set_Scale();
+		Perl_Player_Set_Transparency();
+	end
+
 	Perl_Player_Config[UnitName("player")] = {
-						["Locked"] = locked,
-						["XPBarState"] = xpbarstate,
-						["CompactMode"] = compactmode,
-						["ShowRaidGroup"] = showraidgroup,
-						["Scale"] = scale,
-						["ColorHealth"] = colorhealth,
-						["HealerMode"] = healermode,
-						["Transparency"] = transparency,
+		["Locked"] = locked,
+		["XPBarState"] = xpbarstate,
+		["CompactMode"] = compactmode,
+		["ShowRaidGroup"] = showraidgroup,
+		["Scale"] = scale,
+		["ColorHealth"] = colorhealth,
+		["HealerMode"] = healermode,
+		["Transparency"] = transparency,
 	};
 end
 
@@ -1074,8 +1130,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.33",
-			releaseDate = "January 21, 2006",
+			version = "v0.34",
+			releaseDate = "January 24, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

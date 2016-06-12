@@ -10,7 +10,7 @@ function Perl_Config_Target_Display()
 end
 
 function Perl_Config_Target_Set_Values()
-	vartable = Perl_Target_GetVars();
+	local vartable = Perl_Target_GetVars();
 
 	Perl_Config_Target_Frame_Slider2Low:SetText("0");
 	Perl_Config_Target_Frame_Slider2High:SetText("16");

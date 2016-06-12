@@ -10,7 +10,7 @@ function Perl_Config_Player_Pet_Display()
 end
 
 function Perl_Config_Player_Pet_Set_Values()
-	vartable = Perl_Player_Pet_GetVars();
+	local vartable = Perl_Player_Pet_GetVars();
 
 	Perl_Config_Player_Pet_Frame_Slider2Low:SetText("0");
 	Perl_Config_Player_Pet_Frame_Slider2High:SetText("16");

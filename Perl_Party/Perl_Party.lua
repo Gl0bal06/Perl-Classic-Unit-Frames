@@ -225,12 +225,7 @@ function Perl_Party_Initialize()
 	end
 
 	-- Major config options.
-	getglobal(this:GetName().."_NameFrame"):SetBackdropColor(0, 0, 0, 1);
-	getglobal(this:GetName().."_NameFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	getglobal(this:GetName().."_LevelFrame"):SetBackdropColor(0, 0, 0, 1);
-	getglobal(this:GetName().."_LevelFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	getglobal(this:GetName().."_StatsFrame"):SetBackdropColor(0, 0, 0, 1);
-	getglobal(this:GetName().."_StatsFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Party_Initialize_Frame_Color();
 
 	Perl_Party_Set_Localized_ClassIcons();
 	Perl_Party_Set_Transparency();
@@ -241,41 +236,72 @@ function Perl_Party_Initialize()
 		getglobal(this:GetName().."_StatsFrame"):SetWidth(170);
 	end
 
-	-- The following UnregisterEvent calls were taken from Nymbia's Perl
-	-- Blizz Party Events
+--	-- The following UnregisterEvent calls were taken from Nymbia's Perl
+--	-- Blizz Party Events
+--	for num = 1, 4 do
+--		frame = getglobal("PartyMemberFrame"..num);
+--		HealthBar = getglobal("PartyMemberFrame"..num.."HealthBar");
+--		ManaBar = getglobal("PartyMemberFrame"..num.."ManaBar");
+--		frame:UnregisterEvent("PARTY_MEMBERS_CHANGED");
+--		frame:UnregisterEvent("PARTY_LEADER_CHANGED");
+--		frame:UnregisterEvent("PARTY_MEMBER_ENABLE");
+--		frame:UnregisterEvent("PARTY_MEMBER_DISABLE");
+--		frame:UnregisterEvent("PARTY_LOOT_METHOD_CHANGED");
+--		frame:UnregisterEvent("UNIT_PVP_UPDATE");
+--		frame:UnregisterEvent("UNIT_AURA");
+--		-- HealthBar Events
+--		HealthBar:UnregisterEvent("UNIT_HEALTH");
+--		HealthBar:UnregisterEvent("UNIT_MAXHEALTH");
+--		-- ManaBar Events
+--		ManaBar:UnregisterEvent("UNIT_MANA");
+--		ManaBar:UnregisterEvent("UNIT_RAGE");
+--		ManaBar:UnregisterEvent("UNIT_FOCUS");
+--		ManaBar:UnregisterEvent("UNIT_ENERGY");
+--		ManaBar:UnregisterEvent("UNIT_HAPPINESS");
+--		ManaBar:UnregisterEvent("UNIT_MAXMANA");
+--		ManaBar:UnregisterEvent("UNIT_MAXRAGE");
+--		ManaBar:UnregisterEvent("UNIT_MAXFOCUS");
+--		ManaBar:UnregisterEvent("UNIT_MAXENERGY");
+--		ManaBar:UnregisterEvent("UNIT_MAXHAPPINESS");
+--		ManaBar:UnregisterEvent("UNIT_DISPLAYPOWER");
+--		-- UnitFrame Events
+--		frame:UnregisterEvent("UNIT_NAME_UPDATE");
+--		frame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
+--		frame:UnregisterEvent("UNIT_DISPLAYPOWER");
+--	end
+
+	-- Unregister the Blizzard frames via the 1.8 function
 	for num = 1, 4 do
 		frame = getglobal("PartyMemberFrame"..num);
 		HealthBar = getglobal("PartyMemberFrame"..num.."HealthBar");
 		ManaBar = getglobal("PartyMemberFrame"..num.."ManaBar");
-		frame:UnregisterEvent("PARTY_MEMBERS_CHANGED");
-		frame:UnregisterEvent("PARTY_LEADER_CHANGED");
-		frame:UnregisterEvent("PARTY_MEMBER_ENABLE");
-		frame:UnregisterEvent("PARTY_MEMBER_DISABLE");
-		frame:UnregisterEvent("PARTY_LOOT_METHOD_CHANGED");
-		frame:UnregisterEvent("UNIT_PVP_UPDATE");
-		frame:UnregisterEvent("UNIT_AURA");
-		-- HealthBar Events
-		HealthBar:UnregisterEvent("UNIT_HEALTH");
-		HealthBar:UnregisterEvent("UNIT_MAXHEALTH");
-		-- ManaBar Events
-		ManaBar:UnregisterEvent("UNIT_MANA");
-		ManaBar:UnregisterEvent("UNIT_RAGE");
-		ManaBar:UnregisterEvent("UNIT_FOCUS");
-		ManaBar:UnregisterEvent("UNIT_ENERGY");
-		ManaBar:UnregisterEvent("UNIT_HAPPINESS");
-		ManaBar:UnregisterEvent("UNIT_MAXMANA");
-		ManaBar:UnregisterEvent("UNIT_MAXRAGE");
-		ManaBar:UnregisterEvent("UNIT_MAXFOCUS");
-		ManaBar:UnregisterEvent("UNIT_MAXENERGY");
-		ManaBar:UnregisterEvent("UNIT_MAXHAPPINESS");
-		ManaBar:UnregisterEvent("UNIT_DISPLAYPOWER");
-		-- UnitFrame Events
-		frame:UnregisterEvent("UNIT_NAME_UPDATE");
-		frame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
-		frame:UnregisterEvent("UNIT_DISPLAYPOWER");
+
+		frame:UnregisterAllEvents();
+		HealthBar:UnregisterAllEvents();
+		ManaBar:UnregisterAllEvents();
 	end
 
 	Perl_Party_MembersUpdate();
+end
+
+function Perl_Party_Initialize_Frame_Color(flag)
+	if (flag == nil) then
+		getglobal(this:GetName().."_NameFrame"):SetBackdropColor(0, 0, 0, 1);
+		getglobal(this:GetName().."_NameFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		getglobal(this:GetName().."_LevelFrame"):SetBackdropColor(0, 0, 0, 1);
+		getglobal(this:GetName().."_LevelFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		getglobal(this:GetName().."_StatsFrame"):SetBackdropColor(0, 0, 0, 1);
+		getglobal(this:GetName().."_StatsFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	else
+		for partynum=1,4 do
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame"):SetBackdropColor(0, 0, 0, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame"):SetBackdropColor(0, 0, 0, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetBackdropColor(0, 0, 0, 1);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		end
+	end
 end
 
 
@@ -1462,20 +1488,85 @@ function Perl_Party_GetVars()
 	return vars;
 end
 
-function Perl_Party_UpdateVars()
+function Perl_Party_UpdateVars(vartable)
+	if (vartable ~= nil) then
+		-- Set the new values
+		locked = vartable["Global Settings"]["Locked"];
+		compactmode = vartable["Global Settings"]["CompactMode"];
+		partyhidden = vartable["Global Settings"]["PartyHidden"];
+		partyspacing = vartable["Global Settings"]["PartySpacing"];
+		scale = vartable["Global Settings"]["Scale"];
+		showpets = vartable["Global Settings"]["ShowPets"];
+		colorhealth = vartable["Global Settings"]["ColorHealth"];
+		healermode = vartable["Global Settings"]["HealerMode"];
+		transparency = vartable["Global Settings"]["Transparency"];
+		bufflocation = vartable["Global Settings"]["BuffLocation"];
+		debufflocation = vartable["Global Settings"]["DebuffLocation"];
+		verticalalign = vartable["Global Settings"]["VerticalAlign"];
+
+		-- Sanity checks in case you use a load from an old version, same defaults as above
+		if (locked == nil) then
+			locked = 0;
+		end
+		if (compactmode == nil) then
+			compactmode = 0;
+		end
+		if (partyhidden == nil) then
+			partyhidden = 0;
+		end
+		if (partyspacing == nil) then
+			partyspacing = -80;
+		end
+		if (scale == nil) then
+			scale = 1;
+		end
+		if (showpets == nil) then
+			showpets = 1;
+		end
+		if (colorhealth == nil) then
+			colorhealth = 0;
+		end
+		if (healermode == nil) then
+			healermode = 0;
+		end
+		if (transparency == nil) then
+			transparency = 1;
+		end
+		if (bufflocation == nil) then
+			bufflocation = 4;
+		end
+		if (debufflocation == nil) then
+			debufflocation = 1;
+		end
+		if (verticalalign == nil) then
+			verticalalign = 1;
+		end
+
+		-- Call any code we need to activate them
+		Perl_Party_Set_Space();				-- This probably isn't needed, but one extra call for this won't matter
+		Perl_Target_Set_Hidden(partyhidden);
+		Perl_Party_Set_Compact(compactmode);
+		Perl_Party_Set_Healer(healermode);
+		Perl_Party_Set_Pets(showpets);
+		Perl_Party_Reset_Buffs();		-- Reset the buff icons
+		Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+		Perl_Party_Set_Scale();
+		Perl_Party_Set_Transparency();
+	end
+
 	Perl_Party_Config[UnitName("player")] = {
-					["Locked"] = locked,
-					["CompactMode"] = compactmode,
-					["PartyHidden"] = partyhidden,
-					["PartySpacing"] = partyspacing,
-					["Scale"] = scale,
-					["ShowPets"] = showpets,
-					["ColorHealth"] = colorhealth,
-					["HealerMode"] = healermode,
-					["Transparency"] = transparency,
-					["BuffLocation"] = bufflocation,
-					["DebuffLocation"] = debufflocation,
-					["VerticalAlign"] = verticalalign,
+		["Locked"] = locked,
+		["CompactMode"] = compactmode,
+		["PartyHidden"] = partyhidden,
+		["PartySpacing"] = partyspacing,
+		["Scale"] = scale,
+		["ShowPets"] = showpets,
+		["ColorHealth"] = colorhealth,
+		["HealerMode"] = healermode,
+		["Transparency"] = transparency,
+		["BuffLocation"] = bufflocation,
+		["DebuffLocation"] = debufflocation,
+		["VerticalAlign"] = verticalalign,
 	};
 end
 
@@ -1575,7 +1666,7 @@ end
 
 function Perl_Party_SetBuffTooltip()
 	local partyid = "party"..this:GetParent():GetParent():GetID();
-	GameTooltip:SetOwner(this,"ANCHOR_BOTTOMRIGHT");
+	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
 	if (this:GetID() > 8) then
 		GameTooltip:SetUnitDebuff(partyid, this:GetID()-12);	-- 12 being the number of buffs before debuffs in the xml
 	else
@@ -1678,8 +1769,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.33",
-			releaseDate = "January 21, 2006",
+			version = "v0.34",
+			releaseDate = "January 24, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

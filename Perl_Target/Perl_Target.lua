@@ -248,6 +248,57 @@ function Perl_Target_Initialize()
 	end
 
 	-- Major config options.
+	Perl_Target_Initialize_Frame_Color();
+	Perl_Target_Frame:Hide();
+
+	Perl_Target_Set_Localized_ClassIcons();
+
+--	-- The following UnregisterEvent calls were taken from Nymbia's Perl
+--	-- Blizz Target Frame Events
+--	TargetFrame:UnregisterEvent("UNIT_HEALTH");
+--	TargetFrame:UnregisterEvent("UNIT_LEVEL");
+--	TargetFrame:UnregisterEvent("UNIT_FACTION");
+--	TargetFrame:UnregisterEvent("UNIT_DYNAMIC_FLAGS");
+--	TargetFrame:UnregisterEvent("UNIT_CLASSIFICATION_CHANGED");
+--	TargetFrame:UnregisterEvent("PLAYER_PVPLEVEL_CHANGED");
+--	--TargetFrame:UnregisterEvent("PLAYER_TARGET_CHANGED");
+--	TargetFrame:UnregisterEvent("PARTY_MEMBERS_CHANGED");
+--	TargetFrame:UnregisterEvent("PARTY_LEADER_CHANGED");
+--	TargetFrame:UnregisterEvent("PARTY_MEMBER_ENABLE");
+--	TargetFrame:UnregisterEvent("PARTY_MEMBER_DISABLE");
+--	TargetFrame:UnregisterEvent("UNIT_AURA");
+--	TargetFrame:UnregisterEvent("PLAYER_FLAGS_CHANGED");
+--	ComboFrame:UnregisterEvent("PLAYER_TARGET_CHANGED");
+--	ComboFrame:UnregisterEvent("PLAYER_COMBO_POINTS");
+--	TargetFrameHealthBar:UnregisterEvent("UNIT_HEALTH");
+--	TargetFrameHealthBar:UnregisterEvent("UNIT_MAXHEALTH");
+--	-- ManaBar Events
+--	TargetFrameManaBar:UnregisterEvent("UNIT_MANA");
+--	TargetFrameManaBar:UnregisterEvent("UNIT_RAGE");
+--	TargetFrameManaBar:UnregisterEvent("UNIT_FOCUS");
+--	TargetFrameManaBar:UnregisterEvent("UNIT_ENERGY");
+--	TargetFrameManaBar:UnregisterEvent("UNIT_HAPPINESS");
+--	TargetFrameManaBar:UnregisterEvent("UNIT_MAXMANA");
+--	TargetFrameManaBar:UnregisterEvent("UNIT_MAXRAGE");
+--	TargetFrameManaBar:UnregisterEvent("UNIT_MAXFOCUS");
+--	TargetFrameManaBar:UnregisterEvent("UNIT_MAXENERGY");
+--	TargetFrameManaBar:UnregisterEvent("UNIT_MAXHAPPINESS");
+--	TargetFrameManaBar:UnregisterEvent("UNIT_DISPLAYPOWER");
+--	-- UnitFrame Events
+--	TargetFrame:UnregisterEvent("UNIT_NAME_UPDATE");
+--	TargetFrame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
+--	TargetFrame:UnregisterEvent("UNIT_DISPLAYPOWER");
+
+	-- Unregister the Blizzard frames via the 1.8 function
+	TargetFrame:UnregisterAllEvents();
+	TargetFrameHealthBar:UnregisterAllEvents();
+	TargetFrameManaBar:UnregisterAllEvents();
+	ComboFrame:UnregisterAllEvents();
+
+	Initialized = 1;
+end
+
+function Perl_Target_Initialize_Frame_Color()
 	Perl_Target_StatsFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Target_NameFrame:SetBackdropColor(0, 0, 0, 1);
@@ -264,51 +315,10 @@ function Perl_Target_Initialize()
 	Perl_Target_DebuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Target_CPFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Target_CPFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	Perl_Target_Frame:Hide();
 
 	Perl_Target_HealthBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Target_ManaBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Target_ClassNameBarText:SetTextColor(1, 1, 1);
-
-	Perl_Target_Set_Localized_ClassIcons();
-
-	-- The following UnregisterEvent calls were taken from Nymbia's Perl
-	-- Blizz Target Frame Events
-	TargetFrame:UnregisterEvent("UNIT_HEALTH");
-	TargetFrame:UnregisterEvent("UNIT_LEVEL");
-	TargetFrame:UnregisterEvent("UNIT_FACTION");
-	TargetFrame:UnregisterEvent("UNIT_DYNAMIC_FLAGS");
-	TargetFrame:UnregisterEvent("UNIT_CLASSIFICATION_CHANGED");
-	TargetFrame:UnregisterEvent("PLAYER_PVPLEVEL_CHANGED");
-	TargetFrame:UnregisterEvent("PLAYER_TARGET_CHANGED");
-	TargetFrame:UnregisterEvent("PARTY_MEMBERS_CHANGED");
-	TargetFrame:UnregisterEvent("PARTY_LEADER_CHANGED");
-	TargetFrame:UnregisterEvent("PARTY_MEMBER_ENABLE");
-	TargetFrame:UnregisterEvent("PARTY_MEMBER_DISABLE");
-	TargetFrame:UnregisterEvent("UNIT_AURA");
-	TargetFrame:UnregisterEvent("PLAYER_FLAGS_CHANGED");
-	ComboFrame:UnregisterEvent("PLAYER_TARGET_CHANGED");
-	ComboFrame:UnregisterEvent("PLAYER_COMBO_POINTS");
-	TargetFrameHealthBar:UnregisterEvent("UNIT_HEALTH");
-	TargetFrameHealthBar:UnregisterEvent("UNIT_MAXHEALTH");
-	-- ManaBar Events
-	TargetFrameManaBar:UnregisterEvent("UNIT_MANA");
-	TargetFrameManaBar:UnregisterEvent("UNIT_RAGE");
-	TargetFrameManaBar:UnregisterEvent("UNIT_FOCUS");
-	TargetFrameManaBar:UnregisterEvent("UNIT_ENERGY");
-	TargetFrameManaBar:UnregisterEvent("UNIT_HAPPINESS");
-	TargetFrameManaBar:UnregisterEvent("UNIT_MAXMANA");
-	TargetFrameManaBar:UnregisterEvent("UNIT_MAXRAGE");
-	TargetFrameManaBar:UnregisterEvent("UNIT_MAXFOCUS");
-	TargetFrameManaBar:UnregisterEvent("UNIT_MAXENERGY");
-	TargetFrameManaBar:UnregisterEvent("UNIT_MAXHAPPINESS");
-	TargetFrameManaBar:UnregisterEvent("UNIT_DISPLAYPOWER");
-	-- UnitFrame Events
-	TargetFrame:UnregisterEvent("UNIT_NAME_UPDATE");
-	TargetFrame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
-	TargetFrame:UnregisterEvent("UNIT_DISPLAYPOWER");
-
-	Initialized = 1;
 end
 
 
@@ -1097,21 +1107,83 @@ function Perl_Target_GetVars()
 	return vars;
 end
 
-function Perl_Target_UpdateVars()
+function Perl_Target_UpdateVars(vartable)
+	if (vartable ~= nil) then
+		-- Set the new values
+		locked = vartable["Global Settings"]["Locked"];
+		showcp = vartable["Global Settings"]["ComboPoints"];
+		showclassicon = vartable["Global Settings"]["ClassIcon"];
+		showclassframe = vartable["Global Settings"]["ClassFrame"];
+		showpvpicon = vartable["Global Settings"]["PvPIcon"];
+		numbuffsshown = vartable["Global Settings"]["Buffs"];
+		numdebuffsshown = vartable["Global Settings"]["Debuffs"];
+		mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
+		scale = vartable["Global Settings"]["Scale"];
+		colorhealth = vartable["Global Settings"]["ColorHealth"];
+		showpvprank = vartable["Global Settings"]["ShowPvPRank"];
+		transparency = vartable["Global Settings"]["Transparency"];
+
+		-- Sanity checks in case you use a load from an old version, same defaults as above
+		if (locked == nil) then
+			locked = 0;
+		end
+		if (showcp == nil) then
+			showcp = 1;
+		end
+		if (showclassicon == nil) then
+			showclassicon = 1;
+		end
+		if (showclassframe == nil) then
+			showclassframe = 1;
+		end
+		if (showpvpicon == nil) then
+			showpvpicon = 1;
+		end
+		if (numbuffsshown == nil) then
+			numbuffsshown = 16;
+		end
+		if (numdebuffsshown == nil) then
+			numdebuffsshown = 16;
+		end
+		local tempnumbuffsshown = tonumber(numbuffsshown);
+		if (tempnumbuffsshown > 16) then
+			numbuffsshown = 16;
+		end
+		if (mobhealthsupport == nil) then
+			mobhealthsupport = 1;
+		end
+		if (scale == nil) then
+			scale = 1;
+		end
+		if (colorhealth == nil) then
+			colorhealth = 0;
+		end
+		if (showpvprank == nil) then
+			showpvprank = 0;
+		end
+		if (transparency == nil) then
+			transparency = 1;
+		end
+
+		-- Call any code we need to activate them
+		Perl_Target_Reset_Buffs();	-- Reset the buff icons
+		Perl_Target_Update_Once();
+	end
+
 	Perl_Target_Config[UnitName("player")] = {
-						["Locked"] = locked,
-						["ComboPoints"] = showcp,
-						["ClassIcon"] = showclassicon,
-						["ClassFrame"] = showclassframe,
-						["PvPIcon"] = showpvpicon,
-						["Buffs"] = numbuffsshown,
-						["Debuffs"] = numdebuffsshown,
-						["MobHealthSupport"] = mobhealthsupport,
-						["Scale"] = scale,
-						["ColorHealth"] = colorhealth,
-						["ShowPvPRank"] = showpvprank,
-						["Transparency"] = transparency,
-						};
+		["Locked"] = locked,
+		["ComboPoints"] = showcp,
+		["ClassIcon"] = showclassicon,
+		["ClassFrame"] = showclassframe,
+		["PvPIcon"] = showpvpicon,
+		["Buffs"] = numbuffsshown,
+		["Debuffs"] = numdebuffsshown,
+		["MobHealthSupport"] = mobhealthsupport,
+		["Scale"] = scale,
+		["ColorHealth"] = colorhealth,
+		["ShowPvPRank"] = showpvprank,
+		["Transparency"] = transparency,
+	};
 end
 
 
@@ -1228,7 +1300,7 @@ end
 
 function Perl_Target_SetBuffTooltip()
 	local buffmapping = 0;
-	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMLEFT");
+	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
 	if (this.isdebuff == 1) then
 		GameTooltip:SetUnitDebuff("target", this:GetID()-buffmapping);
 	else
@@ -1320,8 +1392,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.33",
-			releaseDate = "January 21, 2006",
+			version = "v0.34",
+			releaseDate = "January 24, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -10,7 +10,7 @@ function Perl_Config_Player_Display()
 end
 
 function Perl_Config_Player_Set_Values()
-	vartable = Perl_Player_GetVars();
+	local vartable = Perl_Player_GetVars();
 
 	if (vartable["xpbarstate"] == 1) then
 		Perl_Config_Player_Frame_CheckButton1:SetChecked(1);

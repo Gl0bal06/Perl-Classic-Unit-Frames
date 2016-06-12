@@ -10,7 +10,7 @@ function Perl_Config_Player_Buff_Display()
 end
 
 function Perl_Config_Player_Buff_Set_Values()
-	vartable = Perl_Player_Buff_GetVars();
+	local vartable = Perl_Player_Buff_GetVars();
 
 	if (vartable["showbuffs"] == 1) then
 		Perl_Config_Player_Buff_Frame_CheckButton1:SetChecked(1);

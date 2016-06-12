@@ -10,7 +10,7 @@ function Perl_Config_Party_Display()
 end
 
 function Perl_Config_Party_Set_Values()
-	vartable = Perl_Party_GetVars();
+	local vartable = Perl_Party_GetVars();
 
 	Perl_Config_Party_Frame_Slider2Low:SetText("-150");
 	Perl_Config_Party_Frame_Slider2High:SetText("150");

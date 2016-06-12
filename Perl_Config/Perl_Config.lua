@@ -3,10 +3,21 @@
 ---------------
 Perl_Config_Config = {};
 
+Perl_Config_Global_ArcaneBar_Config = {};
+Perl_Config_Global_CombatDisplay_Config = {};
+Perl_Config_Global_Config_Config = {};
+Perl_Config_Global_Party_Config = {};
+Perl_Config_Global_Player_Config = {};
+Perl_Config_Global_Player_Buff_Config = {};
+Perl_Config_Global_Player_Pet_Config = {};
+Perl_Config_Global_Target_Config = {};
+Perl_Config_Global_Target_Target_Config = {};
+
 -- Default Saved Variables (also set in Perl_Player_GetVars)
-local texture = 0;		-- no texture is set by default
+local texture = 0;			-- no texture is set by default
 local showminimapbutton = 1;
 local minimapbuttonpos = 270;
+local transparentbackground = 0;	-- use solid black background as default
 
 
 ----------------------
@@ -41,6 +52,7 @@ function Perl_Config_OnEvent(event)
 		Perl_Config_Set_Texture();
 		Perl_Config_Button_UpdatePosition();
 		Perl_Config_ShowHide_MiniMap_Button();
+		Perl_Config_Set_Background();
 	elseif (event == "VARIABLES_LOADED") then
 		Perl_Config_Initialize();
 		return;
@@ -238,6 +250,111 @@ function Perl_Config_Set_Texture(newvalue)
 	end
 end
 
+function Perl_Config_Set_Background(newvalue)
+	if (newvalue ~= nil) then
+		transparentbackground = newvalue;
+		Perl_Config_UpdateVars();
+	end
+
+	if (transparentbackground == 1) then
+		if (Perl_CombatDisplay_Frame) then
+			Perl_CombatDisplay_ManaFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_CombatDisplay_Target_ManaFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_CombatDisplay_Initialize_Frame_Color();
+		end
+
+		if (Perl_Party_Frame) then
+			for partynum=1,4 do
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+				getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			end
+			Perl_Party_Initialize_Frame_Color(1);
+		end
+
+		if (Perl_Player_Frame) then
+			Perl_Player_NameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_LevelFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_RaidGroupNumberFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_StatsFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_Initialize_Frame_Color();
+		end
+
+		if (Perl_Player_Pet_Frame) then
+			Perl_Player_Pet_LevelFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_Pet_NameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_Pet_StatsFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_Pet_Initialize_Frame_Color();
+		end
+
+		if (Perl_Target_Frame) then
+			Perl_Target_CivilianFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_ClassNameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_CPFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_LevelFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_NameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_StatsFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_Initialize_Frame_Color();
+		end
+
+		if (Perl_Target_Target_Script_Frame) then
+			Perl_Target_Target_NameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_Target_StatsFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_Target_Target_NameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_Target_Target_StatsFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_Target_Initialize_Frame_Color();
+		end
+	else
+		if (Perl_CombatDisplay_Frame) then
+			Perl_CombatDisplay_ManaFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_CombatDisplay_Target_ManaFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_CombatDisplay_Initialize_Frame_Color();
+		end
+
+		if (Perl_Party_Frame) then
+			for partynum=1,4 do
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+				getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			end
+			Perl_Party_Initialize_Frame_Color(1);
+		end
+
+		if (Perl_Player_Frame) then
+			Perl_Player_NameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_LevelFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_RaidGroupNumberFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_StatsFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_Initialize_Frame_Color();
+		end
+
+		if (Perl_Player_Pet_Frame) then
+			Perl_Player_Pet_LevelFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_Pet_NameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_Pet_StatsFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_Pet_Initialize_Frame_Color();
+		end
+
+		if (Perl_Target_Frame) then
+			Perl_Target_CivilianFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_ClassNameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_CPFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_LevelFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_NameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_StatsFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_Initialize_Frame_Color();
+		end
+
+		if (Perl_Target_Target_Script_Frame) then
+			Perl_Target_Target_NameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_Target_StatsFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_Target_Target_NameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_Target_Target_StatsFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_Target_Initialize_Frame_Color();
+		end
+	end
+end
+
 function Perl_Config_Set_Transparency(newvalue)
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 		Perl_ArcaneBar_Set_Transparency(newvalue);
@@ -281,6 +398,171 @@ function Perl_Config_Set_MiniMap_Position(newvalue)
 end
 
 
+-------------------------------------
+-- Global Saved Variable Functions --
+-------------------------------------
+function Perl_Config_Global_Save_Settings()
+	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+		local vartable = Perl_ArcaneBar_GetVars();
+		Perl_Config_Global_ArcaneBar_Config["Global Settings"] = {
+			["Enabled"] = vartable["enabled"],
+			["HideOriginal"] = vartable["hideoriginal"],
+			["ShowTimer"] = vartable["showtimer"],
+			["Transparency"] = vartable["transparency"],
+		};
+	end
+
+	if (Perl_CombatDisplay_Frame) then
+		local vartable = Perl_CombatDisplay_GetVars();
+		Perl_Config_Global_CombatDisplay_Config["Global Settings"] = {
+			["State"] = vartable["state"],
+			["Locked"] = vartable["locked"],
+			["HealthPersist"] = vartable["healthpersist"],
+			["ManaPersist"] = vartable["manapersist"],
+			["Scale"] = vartable["scale"],
+			["ColorHealth"] = vartable["colorhealth"],
+			["Transparency"] = vartable["transparency"],
+			["ShowTarget"] = vartable["showtarget"],
+			["MobHealthSupport"] = vartable["mobhealthsupport"],
+		};
+	end
+
+	if (Perl_Config_Frame) then
+		local vartable = Perl_Config_GetVars();
+		Perl_Config_Global_Config_Config["Global Settings"] = {
+			["Texture"] = vartable["texture"],
+			["ShowMiniMapButton"] = vartable["showminimapbutton"],
+			["MiniMapButtonPos"] = vartable["minimapbuttonpos"],
+			["TransparentBackground"] = vartable["transparentbackground"],
+		};
+	end
+
+	if (Perl_Party_Frame) then
+		local vartable = Perl_Party_GetVars();
+		Perl_Config_Global_Party_Config["Global Settings"] = {
+			["Locked"] = vartable["locked"],
+			["CompactMode"] = vartable["compactmode"],
+			["PartyHidden"] = vartable["partyhidden"],
+			["PartySpacing"] = vartable["partyspacing"],
+			["Scale"] = vartable["scale"],
+			["ShowPets"] = vartable["showpets"],
+			["ColorHealth"] = vartable["colorhealth"],
+			["HealerMode"] = vartable["healermode"],
+			["Transparency"] = vartable["transparency"],
+			["BuffLocation"] = vartable["bufflocation"],
+			["DebuffLocation"] = vartable["debufflocation"],
+			["VerticalAlign"] = vartable["verticalalign"],
+		};
+	end
+
+	if (Perl_Player_Frame) then
+		local vartable = Perl_Player_GetVars();
+		Perl_Config_Global_Player_Config["Global Settings"] = {
+			["Locked"] = vartable["locked"],
+			["XPBarState"] = vartable["xpbarstate"],
+			["CompactMode"] = vartable["compactmode"],
+			["ShowRaidGroup"] = vartable["showraidgroup"],
+			["Scale"] = vartable["scale"],
+			["ColorHealth"] = vartable["colorhealth"],
+			["HealerMode"] = vartable["healermode"],
+			["Transparency"] = vartable["transparency"],
+		};
+	end
+
+	if (Perl_Player_Buff_Script_Frame) then
+		local vartable = Perl_Player_Buff_GetVars();
+		Perl_Config_Global_Player_Buff_Config["Global Settings"] = {
+			["BuffAlerts"] = vartable["buffalerts"],
+			["ShowBuffs"] = vartable["showbuffs"],
+			["Scale"] = vartable["scale"],
+		};
+	end
+
+	if (Perl_Player_Pet_Frame) then
+		local vartable = Perl_Player_Pet_GetVars();
+		Perl_Config_Global_Player_Pet_Config["Global Settings"] = {
+			["Locked"] = vartable["locked"],
+			["ShowXP"] = vartable["showxp"],
+			["Scale"] = vartable["scale"],
+			["Buffs"] = vartable["numpetbuffsshown"],
+			["Debuffs"] = vartable["numpetdebuffsshown"],
+			["ColorHealth"] = vartable["colorhealth"],
+			["Transparency"] = vartable["transparency"],
+			["BuffLocation"] = vartable["bufflocation"],
+			["DebuffLocation"] = vartable["debufflocation"],
+		};
+	end
+
+	if (Perl_Target_Frame) then
+		local vartable = Perl_Target_GetVars();
+		Perl_Config_Global_Target_Config["Global Settings"] = {
+			["Locked"] = vartable["locked"],
+			["ComboPoints"] = vartable["showcp"],
+			["ClassIcon"] = vartable["showclassicon"],
+			["ClassFrame"] = vartable["showclassframe"],
+			["PvPIcon"] = vartable["showpvpicon"],
+			["Buffs"] = vartable["numbuffsshown"],
+			["Debuffs"] = vartable["numdebuffsshown"],
+			["MobHealthSupport"] = vartable["mobhealthsupport"],
+			["Scale"] = vartable["scale"],
+			["ColorHealth"] = vartable["colorhealth"],
+			["ShowPvPRank"] = vartable["showpvprank"],
+			["Transparency"] = vartable["transparency"],
+		};
+	end
+
+	if (Perl_Target_Target_Script_Frame) then
+		local vartable = Perl_Target_Target_GetVars();
+		Perl_Config_Global_Target_Target_Config["Global Settings"] = {
+			["ColorHealth"] = vartable["colorhealth"],
+			["Locked"] = vartable["locked"],
+			["MobHealthSupport"] = vartable["mobhealthsupport"],
+			["Scale"] = vartable["scale"],
+			["ToTSupport"] = vartable["totsupport"],
+			["ToToTSupport"] = vartable["tototsupport"],
+			["Transparency"] = vartable["transparency"],
+		};
+	end
+end
+
+function Perl_Config_Global_Load_Settings()
+	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+		Perl_ArcaneBar_UpdateVars(Perl_Config_Global_ArcaneBar_Config);
+	end
+
+	if (Perl_CombatDisplay_Frame) then
+		Perl_CombatDisplay_UpdateVars(Perl_Config_Global_CombatDisplay_Config);
+	end
+
+	if (Perl_Config_Frame) then
+		Perl_Config_UpdateVars(Perl_Config_Global_Config_Config);
+	end
+
+	if (Perl_Party_Frame) then
+		Perl_Party_UpdateVars(Perl_Config_Global_Party_Config);
+	end
+
+	if (Perl_Player_Frame) then
+		Perl_Player_UpdateVars(Perl_Config_Global_Player_Config);
+	end
+
+	if (Perl_Player_Buff_Script_Frame) then
+		Perl_Player_Buff_UpdateVars(Perl_Config_Global_Player_Buff_Config);
+	end
+
+	if (Perl_Player_Pet_Frame) then
+		Perl_Player_Pet_UpdateVars(Perl_Config_Global_Player_Pet_Config);
+	end
+
+	if (Perl_Target_Frame) then
+		Perl_Target_UpdateVars(Perl_Config_Global_Target_Config);
+	end
+
+	if (Perl_Target_Target_Script_Frame) then
+		Perl_Target_Target_UpdateVars(Perl_Config_Global_Target_Target_Config);
+	end
+end
+
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
@@ -288,6 +570,7 @@ function Perl_Config_GetVars()
 	texture = Perl_Config_Config[UnitName("player")]["Texture"];
 	showminimapbutton = Perl_Config_Config[UnitName("player")]["ShowMiniMapButton"];
 	minimapbuttonpos = Perl_Config_Config[UnitName("player")]["MiniMapButtonPos"];
+	transparentbackground = Perl_Config_Config[UnitName("player")]["TransparentBackground"];
 
 	if (texture == nil) then
 		texture = 0;
@@ -298,20 +581,53 @@ function Perl_Config_GetVars()
 	if (minimapbuttonpos == nil) then
 		minimapbuttonpos = 270;
 	end
+	if (transparentbackground == nil) then
+		transparentbackground = 0;
+	end
 
 	local vars = {
 		["texture"] = texture,
 		["showminimapbutton"] = showminimapbutton,
 		["minimapbuttonpos"] = minimapbuttonpos,
+		["transparentbackground"] = transparentbackground,
 	}
 	return vars;
 end
 
-function Perl_Config_UpdateVars()
+function Perl_Config_UpdateVars(vartable)
+	if (vartable ~= nil) then
+		-- Set the new values
+		texture = vartable["Global Settings"]["Texture"];
+		showminimapbutton = vartable["Global Settings"]["ShowMiniMapButton"];
+		minimapbuttonpos = vartable["Global Settings"]["MiniMapButtonPos"];
+		transparentbackground = vartable["Global Settings"]["TransparentBackground"];
+
+		-- Sanity checks in case you use a load from an old version, same defaults as above
+		if (texture == nil) then
+			texture = 0;
+		end
+		if (showminimapbutton == nil) then
+			showminimapbutton = 1;
+		end
+		if (minimapbuttonpos == nil) then
+			minimapbuttonpos = 270;
+		end
+		if (transparentbackground == nil) then
+			transparentbackground = 0;
+		end
+
+		-- Call any code we need to activate them
+		Perl_Config_Set_Texture(texture);
+		Perl_Config_Set_MiniMap_Button(showminimapbutton);
+		Perl_Config_Set_MiniMap_Position(minimapbuttonpos);
+		Perl_Config_Set_Background();
+	end
+
 	Perl_Config_Config[UnitName("player")] = {
-						["Texture"] = texture,
-						["ShowMiniMapButton"] = showminimapbutton,
-						["MiniMapButtonPos"] = minimapbuttonpos,
+		["Texture"] = texture,
+		["ShowMiniMapButton"] = showminimapbutton,
+		["MiniMapButtonPos"] = minimapbuttonpos,
+		["TransparentBackground"] = transparentbackground,
 	};
 end
 
@@ -377,8 +693,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.33",
-			releaseDate = "January 21, 2006",
+			version = "v0.34",
+			releaseDate = "January 24, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

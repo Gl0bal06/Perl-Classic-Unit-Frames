@@ -53,6 +53,16 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
+
+				<FontString name="$parent_Version_Text" inherits="GameFontNormal" text="Version 0.34">
+					<Anchors>
+						<Anchor point="TOPRIGHT">
+							<Offset>
+								<AbsDimension x="-60" y="-15"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
 			</Layer>
 		</Layers>
 

@@ -137,13 +137,20 @@ function Perl_Target_Target_Initialize()
 	end
 
 	-- Major config options.
+	Perl_Target_Target_Initialize_Frame_Color();
+	Perl_Target_Target_Frame:Hide();
+	Perl_Target_Target_Target_Frame:Hide();
+
+	Initialized = 1;
+end
+
+function Perl_Target_Target_Initialize_Frame_Color()
 	Perl_Target_Target_StatsFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Target_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Target_Target_NameFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Target_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Target_Target_HealthBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Target_Target_ManaBarText:SetTextColor(1, 1, 1, 1);
-	Perl_Target_Target_Frame:Hide();
 
 	Perl_Target_Target_Target_StatsFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Target_Target_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
@@ -151,9 +158,6 @@ function Perl_Target_Target_Initialize()
 	Perl_Target_Target_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Target_Target_Target_HealthBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Target_Target_Target_ManaBarText:SetTextColor(1, 1, 1, 1);
-	Perl_Target_Target_Target_Frame:Hide();
-
-	Initialized = 1;
 end
 
 
@@ -857,15 +861,53 @@ function Perl_Target_Target_GetVars()
 	return vars;
 end
 
-function Perl_Target_Target_UpdateVars()
+function Perl_Target_Target_UpdateVars(vartable)
+	if (vartable ~= nil) then
+		-- Set the new values
+		colorhealth = vartable["Global Settings"]["ColorHealth"];
+		locked = vartable["Global Settings"]["Locked"];
+		mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
+		scale = vartable["Global Settings"]["Scale"];
+		totsupport = vartable["Global Settings"]["ToTSupport"];
+		tototsupport = vartable["Global Settings"]["ToToTSupport"];
+		transparency = vartable["Global Settings"]["Transparency"];
+
+		-- Sanity checks in case you use a load from an old version, same defaults as above
+		if (colorhealth == nil) then
+			colorhealth = 0;
+		end
+		if (locked == nil) then
+			locked = 0;
+		end
+		if (mobhealthsupport == nil) then
+			mobhealthsupport = 1;
+		end
+		if (scale == nil) then
+			scale = 1;
+		end
+		if (totsupport == nil) then
+			totsupport = 1;
+		end
+		if (tototsupport == nil) then
+			tototsupport = 1;
+		end
+		if (transparency == nil) then
+			transparency = 1;
+		end
+
+		-- Call any code we need to activate them
+		Perl_Target_Target_Set_Scale();
+		Perl_Target_Target_Set_Transparency();
+	end
+
 	Perl_Target_Target_Config[UnitName("player")] = {
-						["ColorHealth"] = colorhealth,
-						["Locked"] = locked,
-						["MobHealthSupport"] = mobhealthsupport,
-						["Scale"] = scale,
-						["ToTSupport"] = totsupport,
-						["ToToTSupport"] = tototsupport,
-						["Transparency"] = transparency,
+		["ColorHealth"] = colorhealth,
+		["Locked"] = locked,
+		["MobHealthSupport"] = mobhealthsupport,
+		["Scale"] = scale,
+		["ToTSupport"] = totsupport,
+		["ToToTSupport"] = tototsupport,
+		["Transparency"] = transparency,
 	};
 end
 
@@ -1004,8 +1046,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.33",
-			releaseDate = "January 21, 2006",
+			version = "v0.34",
+			releaseDate = "January 24, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

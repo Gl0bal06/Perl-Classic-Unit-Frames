@@ -381,7 +381,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_MiniMap_Text">
 						<Offset>
-							<AbsDimension  x="0" y="-60"/>
+							<AbsDimension  x="0" y="-50"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -394,6 +394,66 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton9" inherits="UICheckButtonTemplate" id="9">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton8">
+						<Offset>
+							<AbsDimension  x="0" y="-30"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Transparent Frame Background");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_All_Set_Transparent_Background();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<Button name="$parent_Button3" inherits="UIPanelButtonTemplate" text="Load Global Settings">
+				<Size>
+					<AbsDimension x="150" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
+						<Offset>
+							<AbsDimension x="200" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Config_Global_Load_Settings();
+						Perl_Config_All_Display();
+						DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic Unit Frames: Global Settings Loaded.");
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parent_Button4" inherits="UIPanelButtonTemplate" text="Save Global Settings">
+				<Size>
+					<AbsDimension x="150" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Button3">
+						<Offset>
+							<AbsDimension x="0" y="-30"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Config_Global_Save_Settings();
+						DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic Unit Frames: Global Settings Saved.");
+					</OnClick>
+				</Scripts>
+			</Button>
 		</Frames>
 
 	</Frame>

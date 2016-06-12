@@ -210,6 +210,26 @@ function Perl_Player_Pet_Initialize()
 	end
 
 	-- Major config options.
+	Perl_Player_Pet_Initialize_Frame_Color();
+
+--	-- The following UnregisterEvent calls were taken from Nymbia's Perl
+--	-- Blizz Pet Frame Events
+--	PetFrame:UnregisterEvent("UNIT_COMBAT");
+--	PetFrame:UnregisterEvent("UNIT_SPELLMISS");
+--	PetFrame:UnregisterEvent("UNIT_AURA");
+--	PetFrame:UnregisterEvent("PLAYER_PET_CHANGED");
+--	PetFrame:UnregisterEvent("PET_ATTACK_START");
+--	PetFrame:UnregisterEvent("PET_ATTACK_STOP");
+--	PetFrame:UnregisterEvent("UNIT_HAPPINESS");
+--	PetFrame:UnregisterEvent("PLAYER_ENTERING_WORLD");
+
+	-- Unregister the Blizzard frames via the 1.8 function
+	PetFrame:UnregisterAllEvents();
+
+	Initialized = 1;
+end
+
+function Perl_Player_Pet_Initialize_Frame_Color()
 	Perl_Player_Pet_StatsFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Player_Pet_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Player_Pet_LevelFrame:SetBackdropColor(0, 0, 0, 1);
@@ -223,19 +243,6 @@ function Perl_Player_Pet_Initialize()
 
 	Perl_Player_Pet_HealthBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Player_Pet_ManaBarText:SetTextColor(1, 1, 1, 1);
-
-	-- The following UnregisterEvent calls were taken from Nymbia's Perl
-	-- Blizz Pet Frame Events
-	PetFrame:UnregisterEvent("UNIT_COMBAT");
-	PetFrame:UnregisterEvent("UNIT_SPELLMISS");
-	PetFrame:UnregisterEvent("UNIT_AURA");
-	PetFrame:UnregisterEvent("PLAYER_PET_CHANGED");
-	PetFrame:UnregisterEvent("PET_ATTACK_START");
-	PetFrame:UnregisterEvent("PET_ATTACK_STOP");
-	PetFrame:UnregisterEvent("UNIT_HAPPINESS");
-	PetFrame:UnregisterEvent("PLAYER_ENTERING_WORLD");
-
-	Initialized = 1;
 end
 
 
@@ -390,7 +397,7 @@ function Perl_Player_Pet_Set_Buffs(newbuffnumber)
 	end
 	numpetbuffsshown = newbuffnumber;
 	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_Reset_Buffs();	-- Reset the buff icons
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 	--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetbuffsshown.."|cffffff00 buffs.");
 end
@@ -591,7 +598,56 @@ function Perl_Player_Pet_GetVars()
 	return vars;
 end
 
-function Perl_Player_Pet_UpdateVars()
+function Perl_Player_Pet_UpdateVars(vartable)
+	if (vartable ~= nil) then
+		-- Set the new values
+		locked = vartable["Global Settings"]["Locked"];
+		showxp = vartable["Global Settings"]["ShowXP"];
+		scale = vartable["Global Settings"]["Scale"];
+		numpetbuffsshown = vartable["Global Settings"]["Buffs"];
+		numpetdebuffsshown = vartable["Global Settings"]["Debuffs"];
+		colorhealth = vartable["Global Settings"]["ColorHealth"];
+		transparency = vartable["Global Settings"]["Transparency"];
+		bufflocation = vartable["Global Settings"]["BuffLocation"];
+		debufflocation = vartable["Global Settings"]["DebuffLocation"];
+
+		-- Sanity checks in case you use a load from an old version, same defaults as above
+		if (locked == nil) then
+			locked = 0;
+		end
+		if (showxp == nil) then
+			showxp = 0;
+		end
+		if (scale == nil) then
+			scale = 1;
+		end
+		if (numpetbuffsshown == nil) then
+			numpetbuffsshown = 16;
+		end
+		if (numpetdebuffsshown == nil) then
+			numpetdebuffsshown = 16;
+		end
+		if (colorhealth == nil) then
+			colorhealth = 0;
+		end
+		if (transparency == nil) then
+			transparency = 1;
+		end
+		if (bufflocation == nil) then
+			bufflocation = 1;
+		end
+		if (debufflocation == nil) then
+			debufflocation = 2;
+		end
+
+		-- Call any code we need to activate them
+		Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
+		Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+		Perl_Player_Pet_Update_Health();
+		Perl_Player_Pet_Set_Scale();
+		Perl_Player_Pet_Set_Transparency();
+	end
+
 	Perl_Player_Pet_Config[UnitName("player")] = {
 		["Locked"] = locked,
 		["ShowXP"] = showxp,
@@ -760,8 +816,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.33",
-			releaseDate = "January 21, 2006",
+			version = "v0.34",
+			releaseDate = "January 24, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

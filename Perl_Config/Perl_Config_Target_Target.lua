@@ -10,7 +10,7 @@ function Perl_Config_Target_Target_Display()
 end
 
 function Perl_Config_Target_Target_Set_Values()
-	vartable = Perl_Target_Target_GetVars();
+	local vartable = Perl_Target_Target_GetVars();
 
 	if (vartable["totsupport"] == 1) then
 		Perl_Config_Target_Target_Frame_CheckButton1:SetChecked(1);

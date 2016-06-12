@@ -220,6 +220,16 @@ function Perl_CombatDisplay_Initialize()
 	end
 
 	-- Major config options.
+	Perl_CombatDisplay_Initialize_Frame_Color();
+	Perl_CombatDisplay_Target_Frame:Hide();
+
+	Perl_CombatDisplay_UpdateBars();	-- Display the bars appropriate to your class
+	Perl_CombatDisplay_UpdateDisplay();	-- Show or hide the window based on whats happening
+
+	Initialized = 1;
+end
+
+function Perl_CombatDisplay_Initialize_Frame_Color()
 	Perl_CombatDisplay_ManaFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_CombatDisplay_ManaFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_CombatDisplay_HealthBarText:SetTextColor(1, 1, 1, 1);
@@ -230,13 +240,6 @@ function Perl_CombatDisplay_Initialize()
 	Perl_CombatDisplay_Target_ManaFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_CombatDisplay_Target_HealthBarText:SetTextColor(1, 1, 1, 1);
 	Perl_CombatDisplay_Target_ManaBarText:SetTextColor(1, 1, 1, 1);
-
-	Perl_CombatDisplay_Target_Frame:Hide();
-
-	Perl_CombatDisplay_UpdateBars();	-- Display the bars appropriate to your class
-	Perl_CombatDisplay_UpdateDisplay();	-- Show or hide the window based on whats happening
-
-	Initialized = 1;
 end
 
 
@@ -663,17 +666,66 @@ function Perl_CombatDisplay_GetVars()
 	return vars;
 end
 
-function Perl_CombatDisplay_UpdateVars()
+function Perl_CombatDisplay_UpdateVars(vartable)
+	if (vartable ~= nil) then
+		-- Set the new values
+		state = vartable["Global Settings"]["State"];
+		locked = vartable["Global Settings"]["Locked"];
+		healthpersist = vartable["Global Settings"]["HealthPersist"];
+		manapersist = vartable["Global Settings"]["ManaPersist"];
+		scale = vartable["Global Settings"]["Scale"];
+		colorhealth = vartable["Global Settings"]["ColorHealth"];
+		transparency = vartable["Global Settings"]["Transparency"];
+		showtarget = vartable["Global Settings"]["ShowTarget"];
+		mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
+
+		-- Sanity checks in case you use a load from an old version, same defaults as above
+		if (state == nil) then
+			state = 3;
+		end
+		if (locked == nil) then
+			locked = 0;
+		end
+		if (healthpersist == nil) then
+			healthpersist = 0;
+		end
+		if (manapersist == nil) then
+			manapersist = 0;
+		end
+		if (scale == nil) then
+			scale = 1;
+		end
+		if (colorhealth == nil) then
+			colorhealth = 0;
+		end
+		if (transparency == nil) then
+			transparency = 1;
+		end
+		if (showtarget == nil) then
+			showtarget = 0;
+		end
+		if (mobhealthsupport == nil) then
+			mobhealthsupport = 1;
+		end
+
+		-- Call any code we need to activate them
+		Perl_CombatDisplay_Set_Target(showtarget)
+		Perl_CombatDisplay_Target_Update_Health();
+		Perl_CombatDisplay_Set_Scale()
+		Perl_CombatDisplay_Set_Transparency()
+		Perl_CombatDisplay_UpdateDisplay();
+	end
+
 	Perl_CombatDisplay_Config[UnitName("player")] = {
-							["State"] = state,
-							["Locked"] = locked,
-							["HealthPersist"] = healthpersist,
-							["ManaPersist"] = manapersist,
-							["Scale"] = scale,
-							["ColorHealth"] = colorhealth,
-							["Transparency"] = transparency,
-							["ShowTarget"] = showtarget,
-							["MobHealthSupport"] = mobhealthsupport,
+		["State"] = state,
+		["Locked"] = locked,
+		["HealthPersist"] = healthpersist,
+		["ManaPersist"] = manapersist,
+		["Scale"] = scale,
+		["ColorHealth"] = colorhealth,
+		["Transparency"] = transparency,
+		["ShowTarget"] = showtarget,
+		["MobHealthSupport"] = mobhealthsupport,
 	};
 end
 
@@ -778,8 +830,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.33",
-			releaseDate = "January 21, 2006",
+			version = "v0.34",
+			releaseDate = "January 24, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

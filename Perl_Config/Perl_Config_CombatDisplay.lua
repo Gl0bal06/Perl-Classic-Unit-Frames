@@ -10,7 +10,7 @@ function Perl_Config_CombatDisplay_Display()
 end
 
 function Perl_Config_CombatDisplay_Set_Values()
-	vartable = Perl_CombatDisplay_GetVars();
+	local vartable = Perl_CombatDisplay_GetVars();
 
 	if (vartable["state"] == 1) then
 		Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(1);

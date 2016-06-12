@@ -10,7 +10,7 @@ function Perl_Config_ArcaneBar_Display()
 end
 
 function Perl_Config_ArcaneBar_Set_Values()
-	vartable = Perl_ArcaneBar_GetVars();
+	local vartable = Perl_ArcaneBar_GetVars();
 
 	if (vartable["enabled"] == 1) then
 		Perl_Config_ArcaneBar_Frame_CheckButton1:SetChecked(1);

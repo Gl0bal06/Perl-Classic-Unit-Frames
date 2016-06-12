@@ -5,9 +5,16 @@ function Perl_Config_All_Display()
 end
 
 function Perl_Config_All_Set_Values()
-	vartable = Perl_Config_GetVars();
+	local vartable = Perl_Config_GetVars();
 
 	if (vartable["texture"] ~= nil) then
+		Perl_Config_All_Frame_CheckButton1:SetChecked(nil);
+		Perl_Config_All_Frame_CheckButton2:SetChecked(nil);
+		Perl_Config_All_Frame_CheckButton3:SetChecked(nil);
+		Perl_Config_All_Frame_CheckButton4:SetChecked(nil);
+		Perl_Config_All_Frame_CheckButton5:SetChecked(nil);
+		Perl_Config_All_Frame_CheckButton6:SetChecked(nil);
+
 		local num = vartable["texture"];
 		if (num == 0) then
 			num = 6;
@@ -32,6 +39,12 @@ function Perl_Config_All_Set_Values()
 		Perl_Config_All_Frame_CheckButton8:SetChecked(1);
 	else
 		Perl_Config_All_Frame_CheckButton8:SetChecked(nil);
+	end
+
+	if (vartable["transparentbackground"] == 1) then
+		Perl_Config_All_Frame_CheckButton9:SetChecked(1);
+	else
+		Perl_Config_All_Frame_CheckButton9:SetChecked(nil);
 	end
 end
 
@@ -128,4 +141,12 @@ end
 
 function Perl_Config_All_Set_MiniMap_Position(value)
 	Perl_Config_Set_MiniMap_Position(value);
+end
+
+function Perl_Config_All_Set_Transparent_Background()
+	if (Perl_Config_All_Frame_CheckButton9:GetChecked() == 1) then
+		Perl_Config_Set_Background(1);
+	else
+		Perl_Config_Set_Background(0);
+	end
 end
