@@ -1,3 +1,10 @@
+0.61 - April 30, 2006
+ - CombatDisplay: Clicking on the target frame will no longer select yourself
+ - CombatDisplay/Party/Pet/Player/Target: Targeting should be a bit quicker now for those with no healing mods
+ - CombatDisplay/Party/Pet/Player/Target: AceHeal users can now right click on name frames to open menus
+ - Config: Updated options available for Perl_Raid
+ - Player: Switching the XP bar from Reputation to PvP will now correctly color the bar
+
 0.60 - April 28, 2006
  - All: Updated Genesis support as per author's request
  - Config: Rearranged party options

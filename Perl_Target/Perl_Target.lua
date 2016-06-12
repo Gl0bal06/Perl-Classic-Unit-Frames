@@ -1756,13 +1756,28 @@ function Perl_TargetDropDown_Initialize()
 end
 
 function Perl_Target_MouseClick(button)
-	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
-		if (not string.find(GetMouseFocus():GetName(), "Name")) then
-			CastParty_OnClickByUnit(button, "target");
-		end
-	elseif (Genesis_MouseHeal and PCUF_CASTPARTYSUPPORT == 1 and (IsControlKeyDown() or IsShiftKeyDown())) then
-		if (not string.find(GetMouseFocus():GetName(), "Name")) then
-			Genesis_MouseHeal("target", button);
+	if (PCUF_CASTPARTYSUPPORT == 1) then
+		if (CastPartyConfig) then
+			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+				CastParty_OnClickByUnit(button, "target");
+			end
+		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+				Genesis_MouseHeal("target", button);
+			end
+		else
+			if (SpellIsTargeting() and button == "RightButton") then
+				SpellStopTargeting();
+				return;
+			end
+
+			if (button == "LeftButton") then
+				if (SpellIsTargeting()) then
+					SpellTargetUnit("target");
+				elseif (CursorHasItem()) then
+					DropItemOnUnit("target");
+				end
+			end
 		end
 	else
 		if (SpellIsTargeting() and button == "RightButton") then
@@ -1788,7 +1803,7 @@ end
 
 function Perl_Target_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal) and PCUF_CASTPARTYSUPPORT == 1) then
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB) and PCUF_CASTPARTYSUPPORT == 1) then
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
 				ToggleDropDownMenu(1, nil, Perl_Target_DropDown, "Perl_Target_NameFrame", 40, 0);
 			end
@@ -1833,8 +1848,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.60",
-			releaseDate = "April 28, 2006",
+			version = "Version 0.61",
+			releaseDate = "April 30, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

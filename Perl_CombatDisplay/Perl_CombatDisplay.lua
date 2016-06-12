@@ -1047,10 +1047,27 @@ function Perl_CombatDisplayDropDown_Initialize()
 end
 
 function Perl_CombatDisplay_MouseClick(button)
-	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
-		CastParty_OnClickByUnit(button, "player");
-	elseif (Genesis_MouseHeal and PCUF_CASTPARTYSUPPORT == 1 and (IsControlKeyDown() or IsShiftKeyDown())) then
-		Genesis_MouseHeal("player", button);
+	if (PCUF_CASTPARTYSUPPORT == 1) then
+		if (CastPartyConfig) then
+			CastParty_OnClickByUnit(button, "player");
+		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+			Genesis_MouseHeal("player", button);
+		else
+			if (SpellIsTargeting() and button == "RightButton") then
+				SpellStopTargeting();
+				return;
+			end
+
+			if (button == "LeftButton") then
+				if (SpellIsTargeting()) then
+					SpellTargetUnit("player");
+				elseif (CursorHasItem()) then
+					DropItemOnUnit("player");
+				else
+					TargetUnit("player");
+				end
+			end
+		end
 	else
 		if (SpellIsTargeting() and button == "RightButton") then
 			SpellStopTargeting();
@@ -1077,7 +1094,7 @@ end
 
 function Perl_CombatDisplay_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
 			-- Do nothing
 		else
 			if (rightclickmenu == 1) then
@@ -1118,10 +1135,27 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 end
 
 function Perl_CombatDisplay_Target_MouseClick(button)
-	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
-		CastParty_OnClickByUnit(button, "target");
-	elseif (Genesis_MouseHeal and PCUF_CASTPARTYSUPPORT == 1 and (IsControlKeyDown() or IsShiftKeyDown())) then
-		Genesis_MouseHeal("target", button);
+	if (PCUF_CASTPARTYSUPPORT == 1) then
+		if (CastPartyConfig) then
+			CastParty_OnClickByUnit(button, "target");
+		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+			Genesis_MouseHeal("target", button);
+		else
+			if (SpellIsTargeting() and button == "RightButton") then
+				SpellStopTargeting();
+				return;
+			end
+
+			if (button == "LeftButton") then
+				if (SpellIsTargeting()) then
+					SpellTargetUnit("target");
+				elseif (CursorHasItem()) then
+					DropItemOnUnit("target");
+				else
+					TargetUnit("target");
+				end
+			end
+		end
 	else
 		if (SpellIsTargeting() and button == "RightButton") then
 			SpellStopTargeting();
@@ -1130,11 +1164,11 @@ function Perl_CombatDisplay_Target_MouseClick(button)
 
 		if (button == "LeftButton") then
 			if (SpellIsTargeting()) then
-				SpellTargetUnit("player");
+				SpellTargetUnit("target");
 			elseif (CursorHasItem()) then
-				DropItemOnUnit("player");
+				DropItemOnUnit("target");
 			else
-				TargetUnit("player");
+				TargetUnit("target");
 			end
 		end
 	end
@@ -1148,7 +1182,7 @@ end
 
 function Perl_CombatDisplay_Target_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
 			-- Do nothing
 		else
 			if (rightclickmenu == 1) then
@@ -1171,8 +1205,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.60",
-			releaseDate = "April 28, 2006",
+			version = "Version 0.61",
+			releaseDate = "April 30, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

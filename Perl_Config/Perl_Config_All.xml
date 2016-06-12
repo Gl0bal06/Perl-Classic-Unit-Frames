@@ -474,7 +474,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("CastParty/Genesis Support");
+						getglobal(this:GetName().."Text"):SetText("CastParty/Genesis/AceHeal Support");
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_CastParty_Support();

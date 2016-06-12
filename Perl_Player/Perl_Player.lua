@@ -901,6 +901,9 @@ function Perl_Player_XPBar_Display(state)
 		Perl_Player_XPBar:SetValue(rankProgress);
 		Perl_Player_XPRestBar:SetValue(rankProgress);
 		Perl_Player_XPBarText:SetText(rankName);
+		Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
+		Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
+		Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 	elseif (state == 3) then						-- Hidden
 		Perl_Player_XPBar:Hide();
 		Perl_Player_XPBarBG:Hide();
@@ -1226,13 +1229,30 @@ function Perl_PlayerDropDown_Initialize()
 end
 
 function Perl_Player_MouseClick(button)
-	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
-		if (not string.find(GetMouseFocus():GetName(), "Name")) then
-			CastParty_OnClickByUnit(button, "player");
-		end
-	elseif (Genesis_MouseHeal and PCUF_CASTPARTYSUPPORT == 1 and (IsControlKeyDown() or IsShiftKeyDown())) then
-		if (not string.find(GetMouseFocus():GetName(), "Name")) then
-			Genesis_MouseHeal("player", button);
+	if (PCUF_CASTPARTYSUPPORT == 1) then
+		if (CastPartyConfig) then
+			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+				CastParty_OnClickByUnit(button, "player");
+			end
+		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+				Genesis_MouseHeal("player", button);
+			end
+		else
+			if (SpellIsTargeting() and button == "RightButton") then
+				SpellStopTargeting();
+				return;
+			end
+
+			if (button == "LeftButton") then
+				if (SpellIsTargeting()) then
+					SpellTargetUnit("player");
+				elseif (CursorHasItem()) then
+					DropItemOnUnit("player");
+				else
+					TargetUnit("player");
+				end
+			end
 		end
 	else
 		if (SpellIsTargeting() and button == "RightButton") then
@@ -1260,7 +1280,7 @@ end
 
 function Perl_Player_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal) and PCUF_CASTPARTYSUPPORT == 1) then
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB) and PCUF_CASTPARTYSUPPORT == 1) then
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
 				ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
 			end
@@ -1378,8 +1398,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.60",
-			releaseDate = "April 28, 2006",
+			version = "Version 0.61",
+			releaseDate = "April 30, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
