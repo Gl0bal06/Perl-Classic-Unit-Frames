@@ -308,7 +308,8 @@ function Perl_Player_IFrameManager()
 		else
 			bottom = 53;
 		end
-		if (showdruidbar == 1 and UnitClass("player") == PERL_LOCALIZED_DRUID) then
+		_, englishclass = UnitClass("player");
+		if (showdruidbar == 1 and englishclass == "DRUID") then
 			bottom = bottom + 12;
 		end
 		if (showraidgroup == 1) then
@@ -602,9 +603,10 @@ function Perl_Player_Update_Mana()
 	end
 
 	if (showdruidbar == 1) then
-		if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID)) then		-- Is Druid Bar installed and are we a Druid?
-			if (UnitPowerType("player") > 0) then					-- Are we in a manaless form?
-				Perl_Player_DruidBar_OnUpdate_Frame:Show();			-- Do all our work here (OnUpdate since it's very random if it works with just the UNIT_MANA event)
+		_, englishclass = UnitClass("player");
+		if (DruidBarKey and (englishclass == "DRUID")) then			-- Is Druid Bar installed and are we a Druid?
+			if (UnitPowerType("player") > 0) then				-- Are we in a manaless form?
+				Perl_Player_DruidBar_OnUpdate_Frame:Show();		-- Do all our work here (OnUpdate since it's very random if it works with just the UNIT_MANA event)
 			else
 				-- Hide it all (bars and text)
 				Perl_Player_DruidBar_OnUpdate_Frame:Hide();
@@ -997,7 +999,8 @@ function Perl_Player_ManaHide()
 end
 
 function Perl_Player_DruidBarManaShow()
-	if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID)) then
+	_, englishclass = UnitClass("player");
+	if (DruidBarKey and (englishclass == "DRUID")) then
 		if (healermode == 1) then
 			playerdruidbarmana = floor(DruidBarKey.keepthemana);
 			playerdruidbarmanamax = DruidBarKey.maxmana;
@@ -1171,7 +1174,8 @@ function Perl_Player_Frame_Style()
 		-- End: Set the xp bar mode and update the experience if needed
 
 		-- Begin: Set the druid bar and tweak the experience bar if needed
-		if (showdruidbar == 1 and UnitClass("player") == PERL_LOCALIZED_DRUID) then
+		_, englishclass = UnitClass("player");
+		if (showdruidbar == 1 and englishclass == "DRUID") then
 			Perl_Player_DruidBar:Show();
 			Perl_Player_DruidBarBG:Show();
 			Perl_Player_DruidBar_CastClickOverlay:Show();

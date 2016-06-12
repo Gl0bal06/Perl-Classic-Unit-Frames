@@ -49,7 +49,7 @@ local Perl_CombatDisplay_Target_ManaBar_Fade_Color = 1;			-- the color fading in
 local Perl_CombatDisplay_Target_ManaBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
 
 -- Local variables to save memory
-local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, pethealth, pethealthmax, petmana, petmanamax, targethealth, targethealthmax, targetmana, targetmanamax, targetpowertype, mobhealththreenumerics;
+local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, pethealth, pethealthmax, petmana, petmanamax, targethealth, targethealthmax, targetmana, targetmanamax, targetpowertype, mobhealththreenumerics, englishclass;
 local energylast = 0;
 local energytime = 0;
 
@@ -367,14 +367,15 @@ function Perl_CombatDisplay_IFrameManager()
 	end
 	function iface:getBorder(frame)
 		if (frame == Perl_CombatDisplay_Frame) then
+			_, englishclass = UnitClass("player");
 			local bottom = 0;
-			if (showcp == 1 and (UnitClass("player") == PERL_LOCALIZED_DRUID or UnitClass("player") == PERL_LOCALIZED_ROGUE)) then
+			if (showcp == 1 and (englishclass == "DRUID" or englishclass == "ROGUE")) then
 				bottom = bottom + 12;
 			end
-			if (showdruidbar == 1 and UnitClass("player") == PERL_LOCALIZED_DRUID) then
+			if (showdruidbar == 1 and englishclass == "DRUID") then
 				bottom = bottom + 12;
 			end
-			if (showpetbars == 1 and (UnitClass("player") == PERL_LOCALIZED_HUNTER or UnitClass("player") == PERL_LOCALIZED_WARLOCK)) then
+			if (showpetbars == 1 and (englishclass == "HUNTER" or englishclass == "WARLOCK")) then
 				bottom = bottom + 24;
 			end
 			return 0, 0, bottom, 0;
@@ -539,7 +540,8 @@ function Perl_CombatDisplay_Update_Mana()
 	end
 
 	if (showdruidbar == 1) then
-		if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID)) then
+		_, englishclass = UnitClass("player");
+		if (DruidBarKey and (englishclass == "DRUID")) then
 			if (playerpower > 0) then
 				Perl_CombatDisplay_DruidBar_OnUpdate_Frame:Show();		-- Do all our work here (OnUpdate since it's very random if it works with just the UNIT_MANA event)
 			else
@@ -1147,6 +1149,8 @@ end
 -- Style Show/Hide Functions --
 -------------------------------
 function Perl_CombatDisplay_Frame_Style()
+	_, englishclass = UnitClass("player");
+
 	Perl_CombatDisplay_ManaFrame:SetHeight(42);
 	Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
 
@@ -1168,7 +1172,7 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_Target_Frame:Hide();
 	end
 
-	if (showdruidbar == 1 and UnitClass("player") == PERL_LOCALIZED_DRUID) then
+	if (showdruidbar == 1 and englishclass == "DRUID") then
 		Perl_CombatDisplay_ManaFrame:SetHeight(Perl_CombatDisplay_ManaFrame:GetHeight() + 12);
 		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 12);
 		Perl_CombatDisplay_DruidBar:Show();
@@ -1182,7 +1186,7 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_DruidBarBG:Hide();
 	end
 
-	if (showcp == 1 and (UnitClass("player") == PERL_LOCALIZED_DRUID or UnitClass("player") == PERL_LOCALIZED_ROGUE)) then
+	if (showcp == 1 and (englishclass == "DRUID" or englishclass == "ROGUE")) then
 		Perl_CombatDisplay_ManaFrame:SetHeight(Perl_CombatDisplay_ManaFrame:GetHeight() + 12);
 		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 12);
 		Perl_CombatDisplay_CPBar:Show();
@@ -1198,7 +1202,7 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_CPBarBG:Hide();
 	end
 
-	if (showpetbars == 1 and (UnitClass("player") == PERL_LOCALIZED_HUNTER or UnitClass("player") == PERL_LOCALIZED_WARLOCK)) then
+	if (showpetbars == 1 and (englishclass == "HUNTER" or englishclass == "WARLOCK")) then
 		Perl_CombatDisplay_ManaFrame:SetHeight(Perl_CombatDisplay_ManaFrame:GetHeight() + 24);
 		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 24);
 		Perl_CombatDisplay_PetHealthBar:Show();

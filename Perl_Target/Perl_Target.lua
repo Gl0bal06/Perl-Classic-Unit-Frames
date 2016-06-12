@@ -804,7 +804,8 @@ function Perl_Target_Update_Health()
 
 	if (UnitIsDead("target")) then
 		if (UnitIsPlayer("target")) then
-			if (UnitClass("target") == PERL_LOCALIZED_HUNTER) then	-- If the dead is a hunter, check for Feign Death
+			_, englishclass = UnitClass("target");
+			if (englishclass == "HUNTER") then	-- If the dead is a hunter, check for Feign Death
 				local buffnum = 1;
 				local _, _, buffTexture = UnitBuff("target", buffnum);
 				while (buffTexture) do
@@ -958,8 +959,8 @@ function Perl_Target_Update_Mana_Bar()
 end
 
 function Perl_Target_Update_Combo_Points()
-	local playerclass = UnitClass("player");
-	if (playerclass == PERL_LOCALIZED_ROGUE or playerclass == PERL_LOCALIZED_DRUID) then	-- Noticed in 2.1.3 that this is being called for warriors also...huh?
+	local _, playerclass = UnitClass("player");
+	if (playerclass == "ROGUE" or playerclass == "DRUID") then		-- Noticed in 2.1.3 that this is being called for warriors also...huh?
 		local combopoints = GetComboPoints();				-- How many Combo Points does the player have?
 
 		if (showcp == 1) then
@@ -2636,17 +2637,17 @@ end
 
 function Perl_Target_Buff_UpdateCPMeter()
 	local debuffapplications;
-	local playerclass = UnitClass("player");
+	local _, playerclass = UnitClass("player");
 
-	if (playerclass == PERL_LOCALIZED_MAGE) then
+	if (playerclass == "MAGE") then
 		debuffapplications = Perl_Target_Buff_GetApplications(PERL_LOCALIZED_TARGET_FIRE_VULNERABILITY);
-	elseif (playerclass == PERL_LOCALIZED_PRIEST) then
+	elseif (playerclass == "PRIEST") then
 		debuffapplications = Perl_Target_Buff_GetApplications(PERL_LOCALIZED_TARGET_SHADOW_VULNERABILITY);
-	elseif (playerclass == PERL_LOCALIZED_WARRIOR) then
+	elseif (playerclass == "WARRIOR") then
 		debuffapplications = Perl_Target_Buff_GetApplications(PERL_LOCALIZED_TARGET_SUNDER_ARMOR);
-	elseif (playerclass == PERL_LOCALIZED_PALADIN) then
+	elseif (playerclass == "PALADIN") then
 		debuffapplications = Perl_Target_Buff_GetApplications(PERL_LOCALIZED_TARGET_HOLY_VENGEANCE);
-	elseif ((playerclass == PERL_LOCALIZED_ROGUE) or (playerclass == PERL_LOCALIZED_DRUID)) then
+	elseif ((playerclass == "ROGUE") or (playerclass == "DRUID")) then
 		return;
 	else
 		Perl_Target_NameFrame_CPMeter:Hide();

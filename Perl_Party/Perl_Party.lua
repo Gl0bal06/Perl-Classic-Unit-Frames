@@ -675,7 +675,8 @@ function Perl_Party_Update_Health(self)
 	-- Handle death state
 	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then
 		self.deadStatus:Show();
-		if (UnitClass(self.unit) == PERL_LOCALIZED_HUNTER) then	-- If the dead is a hunter, check for Feign Death
+		_, englishclass = UnitClass(self.unit);
+		if (englishclass == "HUNTER") then	-- If the dead is a hunter, check for Feign Death
 			local buffnum = 1;
 			local currentlyfd = 0;
 			local _, _, buffTexture = UnitBuff(self.unit, buffnum);
@@ -1142,7 +1143,8 @@ function Perl_Party_HealthHide(self)
 
 			if (compactmode == 1) then
 				if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then
-					if (UnitClass(self.unit) == PERL_LOCALIZED_HUNTER) then
+					_, englishclass = UnitClass(self.unit);
+					if (englishclass == "HUNTER") then
 						local buffnum = 1;
 						local currentlyfd = 0;
 						local _, _, buffTexture = UnitBuff(self.unit, buffnum);
@@ -2518,7 +2520,8 @@ function Perl_Party_Buff_UpdateAll(self)
 		end
 
 		if (UnitIsDead(self.unit)) then
-			if (UnitClass(self.unit) == PERL_LOCALIZED_HUNTER) then	-- If the dead is a hunter, check for Feign Death
+			_, englishclass = UnitClass(self.unit);
+			if (englishclass == "HUNTER") then	-- If the dead is a hunter, check for Feign Death
 				local buffnum = 1;
 				_, _, buffTexture = UnitBuff(self.unit, buffnum);
 				while (buffTexture) do

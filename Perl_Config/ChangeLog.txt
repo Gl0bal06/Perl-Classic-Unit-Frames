@@ -1,3 +1,7 @@
+2.17 - April 8, 2008
+ - All: Class specific features should now work in languages other than English
+ - Pet: Fixed a reference to a global variable
+
 2.16 - March 25, 2008
  - All: Updated TOC Interface version to 20400
  - All: Adjusted the frame borders so that they no longer clip

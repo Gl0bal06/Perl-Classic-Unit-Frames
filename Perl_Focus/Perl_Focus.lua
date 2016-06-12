@@ -742,7 +742,8 @@ function Perl_Focus_Update_Health()
 
 	if (UnitIsDead("focus")) then
 		if (UnitIsPlayer("focus")) then
-			if (UnitClass("focus") == PERL_LOCALIZED_HUNTER) then	-- If the dead is a hunter, check for Feign Death
+			_, englishclass = UnitClass("focus");
+			if (englishclass == "HUNTER") then	-- If the dead is a hunter, check for Feign Death
 				local buffnum = 1;
 				local _, _, buffTexture = UnitBuff("focus", buffnum);
 				while (buffTexture) do
@@ -2332,15 +2333,15 @@ end
 
 function Perl_Focus_Buff_UpdateCPMeter()
 	local debuffapplications;
-	local playerclass = UnitClass("player");
+	local _, playerclass = UnitClass("player");
 
-	if (playerclass == PERL_LOCALIZED_MAGE) then
+	if (playerclass == "MAGE") then
 		debuffapplications = Perl_Focus_Buff_GetApplications(PERL_LOCALIZED_Focus_FIRE_VULNERABILITY);
-	elseif (playerclass == PERL_LOCALIZED_PRIEST) then
+	elseif (playerclass == "PRIEST") then
 		debuffapplications = Perl_Focus_Buff_GetApplications(PERL_LOCALIZED_Focus_SHADOW_VULNERABILITY);
-	elseif (playerclass == PERL_LOCALIZED_WARRIOR) then
+	elseif (playerclass == "WARRIOR") then
 		debuffapplications = Perl_Focus_Buff_GetApplications(PERL_LOCALIZED_Focus_SUNDER_ARMOR);
-	elseif ((playerclass == PERL_LOCALIZED_ROGUE) or (playerclass == PERL_LOCALIZED_DRUID)) then
+	elseif ((playerclass == "ROGUE") or (playerclass == "DRUID")) then
 		return;
 	else
 		Perl_Focus_NameFrame_CPMeter:Hide();

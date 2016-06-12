@@ -42,7 +42,7 @@ local Perl_Party_Pet_Four_ManaBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Party_Pet_Four_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local partypethealth, partypethealthmax, partypetmana, partypetmanamax, partypetpower;
+local partypethealth, partypethealthmax, partypetmana, partypetmanamax, partypetpower, englishclass;
 
 
 ----------------------
@@ -356,7 +356,8 @@ function Perl_Party_Pet_Update_Mana(unit)
 		getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBar"):SetValue(partypetmana);
 	end
 
-	if (UnitClass("party"..id) == PERL_LOCALIZED_WARLOCK) then
+	_, englishclass = UnitClass("party"..id);
+	if (englishclass == "WARLOCK") then
 		getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBar_ManaBarText"):SetText(partypetmana.."/"..partypetmanamax);
 	else
 		getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBar_ManaBarText"):SetText(partypetmana);

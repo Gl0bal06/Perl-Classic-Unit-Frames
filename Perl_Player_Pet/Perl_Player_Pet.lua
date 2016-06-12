@@ -44,7 +44,7 @@ local Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;		-- the color fading interv
 local Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext, r, g, b, reaction, pettargethealth, pettargethealthmax, pettargethealthpercent, mobhealththreenumerics, pettargetmana, pettargetmanamax, pettargetpower, raidpettargetindex;
+local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext, r, g, b, reaction, pettargethealth, pettargethealthmax, pettargethealthpercent, mobhealththreenumerics, pettargetmana, pettargetmanamax, pettargetpower, raidpettargetindex, englishclass;
 
 
 ----------------------
@@ -444,7 +444,8 @@ function Perl_Player_Pet_Update_Mana()
 		Perl_Player_Pet_ManaBar:SetValue(petmana);
 	end
 
-	if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+	_, englishclass = UnitClass("player");
+	if (englishclass == "HUNTER") then
 		Perl_Player_Pet_ManaBarText:SetText(petmana);
 	else
 		Perl_Player_Pet_ManaBarText:SetText(petmana.."/"..petmanamax);
@@ -485,7 +486,8 @@ function Perl_Player_Pet_ShowXP()
 			Perl_Player_Pet_StatsFrame:SetHeight(34);
 			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(34);
 		else
-			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+			_, englishclass = UnitClass("player");
+			if (englishclass == "HUNTER") then
 				if (UnitLevel("pet") == UnitLevel("player")) then
 					Perl_Player_Pet_XPBar:Hide();
 					Perl_Player_Pet_XPBarBG:Hide();
@@ -555,7 +557,8 @@ end
 function Perl_Player_Pet_Set_Window_Layout()
 	Perl_Player_Pet_StatsFrame:ClearAllPoints();
 	Perl_Player_Pet_LevelFrame:ClearAllPoints();
-	if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+	_, englishclass = UnitClass("player");
+	if (englishclass == "HUNTER") then
 		if (hidename == 1) then
 			Perl_Player_Pet_LevelFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_Frame", "TOPLEFT", 0, 0);
 			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_Frame", "TOPLEFT", 28, 0);
@@ -1741,7 +1744,8 @@ function Perl_Player_Pet_Buff_Position_Update()
 		if (hidename == 0) then
 			Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_NameFrame", "TOPLEFT", 5, 15);
 		else
-			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+			_, englishclass = UnitClass("player");
+			if (englishclass == "HUNTER") then
 				Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_LevelFrame", "TOPLEFT", 5, 15);
 			else
 				Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_StatsFrame", "TOPLEFT", 5, 15);
@@ -1751,7 +1755,8 @@ function Perl_Player_Pet_Buff_Position_Update()
 		if (hidename == 0) then
 			Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_NameFrame", "TOPLEFT", 5, 0);
 		else
-			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+			_, englishclass = UnitClass("player");
+			if (englishclass == "HUNTER") then
 				Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_LevelFrame", "TOPLEFT", 5, 0);
 			else
 				Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_StatsFrame", "TOPLEFT", 5, 0);
@@ -1764,13 +1769,15 @@ function Perl_Player_Pet_Buff_Position_Update()
 	elseif (bufflocation == 5) then
 		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
 	elseif (bufflocation == 6) then
-		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+		_, englishclass = UnitClass("player");
+		if (englishclass == "HUNTER") then
 			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, 0);
 		else
 			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", 5, 0);
 		end
 	elseif (bufflocation == 7) then
-		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+		_, englishclass = UnitClass("player");
+		if (englishclass == "HUNTER") then
 			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, -15);
 		else
 			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", 5, -15);
@@ -1782,7 +1789,8 @@ function Perl_Player_Pet_Buff_Position_Update()
 		if (hidename == 0) then
 			Perl_Player_Pet_Debuff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_NameFrame", "TOPLEFT", 5, 15);
 		else
-			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+			_, englishclass = UnitClass("player");
+			if (englishclass == "HUNTER") then
 				Perl_Player_Pet_Debuff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_LevelFrame", "TOPLEFT", 5, 15);
 			else
 				Perl_Player_Pet_Debuff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_StatsFrame", "TOPLEFT", 5, 15);
@@ -1792,7 +1800,8 @@ function Perl_Player_Pet_Buff_Position_Update()
 		if (hidename == 0) then
 			Perl_Player_Pet_Debuff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_NameFrame", "TOPLEFT", 5, 0);
 		else
-			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+			_, englishclass = UnitClass("player");
+			if (englishclass == "HUNTER") then
 				Perl_Player_Pet_Debuff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_LevelFrame", "TOPLEFT", 5, 0);
 			else
 				Perl_Player_Pet_Debuff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_StatsFrame", "TOPLEFT", 5, 0);
@@ -1805,13 +1814,15 @@ function Perl_Player_Pet_Buff_Position_Update()
 	elseif (debufflocation == 5) then
 		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
 	elseif (debufflocation == 6) then
-		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+		_, englishclass = UnitClass("player");
+		if (englishclass == "HUNTER") then
 			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, 0);
 		else
 			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", 5, 0);
 		end
 	elseif (debufflocation == 7) then
-		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+		_, englishclass = UnitClass("player");
+		if (englishclass == "HUNTER") then
 			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, -15);
 		else
 			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", 5, -15);
