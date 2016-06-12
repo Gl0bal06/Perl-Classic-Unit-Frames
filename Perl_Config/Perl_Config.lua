@@ -2583,6 +2583,242 @@ function Perl_Config_Button_UpdatePosition()
 end
 
 
+---------------------------
+-- Combat Text Functions --
+---------------------------
+PERL_COMBATFEEDBACK_FADEINTIME = 0.2;
+PERL_COMBATFEEDBACK_HOLDTIME = 0.7;
+PERL_COMBATFEEDBACK_FADEOUTTIME = 0.3;
+
+PERL_SCHOOL_MASK_NONE		= 0x00;
+PERL_SCHOOL_MASK_PHYSICAL	= 0x01;
+PERL_SCHOOL_MASK_HOLY		= 0x02;
+PERL_SCHOOL_MASK_FIRE		= 0x04;
+PERL_SCHOOL_MASK_NATURE		= 0x08;
+PERL_SCHOOL_MASK_FROST		= 0x10;
+PERL_SCHOOL_MASK_SHADOW		= 0x20;
+PERL_SCHOOL_MASK_ARCANE		= 0x40;
+
+Perl_CombatFeedbackText = { };
+Perl_CombatFeedbackText["INTERRUPT"]	= INTERRUPT;
+Perl_CombatFeedbackText["MISS"]			= MISS;
+Perl_CombatFeedbackText["RESIST"]		= RESIST;
+Perl_CombatFeedbackText["DODGE"]		= DODGE;
+Perl_CombatFeedbackText["PARRY"]		= PARRY;
+Perl_CombatFeedbackText["BLOCK"]		= BLOCK;
+Perl_CombatFeedbackText["EVADE"]		= EVADE;
+Perl_CombatFeedbackText["IMMUNE"]		= IMMUNE;
+Perl_CombatFeedbackText["DEFLECT"]		= DEFLECT;
+Perl_CombatFeedbackText["ABSORB"]		= ABSORB;
+Perl_CombatFeedbackText["REFLECT"]		= REFLECT;
+
+function Perl_CombatFeedback_Initialize(self, feedbackText, fontHeight)
+	self.feedbackText = feedbackText;
+	self.feedbackFontHeight = fontHeight;
+end
+
+function Perl_CombatFeedback_OnCombatEvent(self, event, flags, amount, type)
+	local feedbackText = self.feedbackText;
+	local fontHeight = self.feedbackFontHeight;
+	local text = "";
+	local r = 1.0;
+	local g = 1.0;
+	local b = 1.0;
+
+	if( event == "IMMUNE" ) then
+		fontHeight = fontHeight * 0.5;
+		text = Perl_CombatFeedbackText[event];
+	elseif ( event == "WOUND" ) then
+		if ( amount ~= 0 ) then
+			if ( flags == "CRITICAL" or flags == "CRUSHING" ) then
+				fontHeight = fontHeight * 1.5;
+			elseif ( flags == "GLANCING" ) then
+				fontHeight = fontHeight * 0.75;
+			end
+			if ( type ~= PERL_SCHOOL_MASK_PHYSICAL ) then
+				r = 1.0;
+				g = 1.0;
+				b = 0.0;
+			end
+			text = Perl_BreakUpLargeNumbers(amount);
+		elseif ( flags == "ABSORB" ) then
+			fontHeight = fontHeight * 0.75;
+			text = Perl_CombatFeedbackText["ABSORB"];
+		elseif ( flags == "BLOCK" ) then
+			fontHeight = fontHeight * 0.75;
+			text = Perl_CombatFeedbackText["BLOCK"];
+		elseif ( flags == "RESIST" ) then
+			fontHeight = fontHeight * 0.75;
+			text = Perl_CombatFeedbackText["RESIST"];
+		else
+			text = Perl_CombatFeedbackText["MISS"];
+		end
+	elseif ( event == "BLOCK" ) then
+		fontHeight = fontHeight * 0.75;
+		text = Perl_CombatFeedbackText[event];
+	elseif ( event == "HEAL" ) then
+		text = Perl_BreakUpLargeNumbers(amount);
+		r = 0.0;
+		g = 1.0;
+		b = 0.0;
+		if ( flags == "CRITICAL" ) then
+			fontHeight = fontHeight * 1.5;
+		end
+	elseif ( event == "ENERGIZE" ) then
+		text = Perl_BreakUpLargeNumbers(amount);
+		r = 0.41;
+		g = 0.8;
+		b = 0.94;
+		if ( flags == "CRITICAL" ) then
+			fontHeight = fontHeight * 1.5;
+		end
+	else
+		text = Perl_CombatFeedbackText[event];
+	end
+
+	self.feedbackStartTime = GetTime();
+
+	feedbackText:SetTextHeight(fontHeight);
+	feedbackText:SetText(text);
+	feedbackText:SetTextColor(r, g, b);
+	feedbackText:SetAlpha(0.0);
+	feedbackText:Show();
+end
+
+function Perl_CombatFeedback_OnUpdate(self, elapsed)
+	local feedbackText = self.feedbackText;
+	if ( feedbackText:IsVisible() ) then
+		local elapsedTime = GetTime() - self.feedbackStartTime;
+		local fadeInTime = PERL_COMBATFEEDBACK_FADEINTIME;
+		if ( elapsedTime < fadeInTime ) then
+			local alpha = (elapsedTime / fadeInTime);
+			feedbackText:SetAlpha(alpha);
+			return;
+		end
+		local holdTime = PERL_COMBATFEEDBACK_HOLDTIME;
+		if ( elapsedTime < (fadeInTime + holdTime) ) then
+			feedbackText:SetAlpha(1.0);
+			return;
+		end
+		local fadeOutTime = PERL_COMBATFEEDBACK_FADEOUTTIME;
+		if ( elapsedTime < (fadeInTime + holdTime + fadeOutTime) ) then
+			local alpha = 1.0 - ((elapsedTime - holdTime - fadeInTime) / fadeOutTime);
+			feedbackText:SetAlpha(alpha);
+			return;
+		end
+		feedbackText:Hide();
+	end
+end
+
+function Perl_BreakUpLargeNumbers(value)
+	local retString = "";
+	if ( value < 1000 ) then
+		if ( (value - math.floor(value)) == 0) then
+			return value;
+		end
+		local decimal = (math.floor(value*100));
+		retString = string.sub(decimal, 1, -3);
+		retString = retString..".";
+		retString = retString..string.sub(decimal, -2);
+		return retString;
+	end
+
+	value = math.floor(value);
+	local strLen = strlen(value);
+	if ( GetCVarBool("breakUpLargeNumbers") ) then
+		if ( strLen > 6 ) then
+			retString = string.sub(value, 1, -7)..",";
+		end
+		if ( strLen > 3 ) then
+			retString = retString..string.sub(value, -6, -4)..",";
+		end
+		retString = retString..string.sub(value, -3, -1);
+	else
+		retString = value;
+	end
+	return retString;
+end
+
+
+-------------------------------------
+-- Localizing some Blizzard Arrays --
+-------------------------------------
+PERL_CLASS_ICON_TCOORDS = {
+	["WARRIOR"]	= {0, 0.25, 0, 0.25},
+	["MAGE"]	= {0.25, 0.49609375, 0, 0.25},
+	["ROGUE"]	= {0.49609375, 0.7421875, 0, 0.25},
+	["DRUID"]	= {0.7421875, 0.98828125, 0, 0.25},
+	["HUNTER"]	= {0, 0.25, 0.25, 0.5},
+	["SHAMAN"]	= {0.25, 0.49609375, 0.25, 0.5},
+	["PRIEST"]	= {0.49609375, 0.7421875, 0.25, 0.5},
+	["WARLOCK"]	= {0.7421875, 0.98828125, 0.25, 0.5},
+	["PALADIN"]	= {0, 0.25, 0.5, 0.75},
+	["DEATHKNIGHT"]	= {0.25, 0.49609375, 0.5, 0.75},
+	["MONK"]	= {0.49609375, 0.7421875, 0.5, 0.75},
+};
+
+PERL_FACTION_BAR_COLORS = {
+	[1] = {r = 0.8, g = 0.3, b = 0.22},
+	[2] = {r = 0.8, g = 0.3, b = 0.22},
+	[3] = {r = 0.75, g = 0.27, b = 0},
+	[4] = {r = 0.9, g = 0.7, b = 0},
+	[5] = {r = 0, g = 0.6, b = 0.1},
+	[6] = {r = 0, g = 0.6, b = 0.1},
+	[7] = {r = 0, g = 0.6, b = 0.1},
+	[8] = {r = 0, g = 0.6, b = 0.1},
+};
+
+PERL_RAID_CLASS_COLORS = {
+	["HUNTER"] = { r = 0.67, g = 0.83, b = 0.45, colorStr = "ffabd473" },
+	["WARLOCK"] = { r = 0.58, g = 0.51, b = 0.79, colorStr = "ff9482c9" },
+	["PRIEST"] = { r = 1.0, g = 1.0, b = 1.0, colorStr = "ffffffff" },
+	["PALADIN"] = { r = 0.96, g = 0.55, b = 0.73, colorStr = "fff58cba" },
+	["MAGE"] = { r = 0.41, g = 0.8, b = 0.94, colorStr = "ff69ccf0" },
+	["ROGUE"] = { r = 1.0, g = 0.96, b = 0.41, colorStr = "fffff569" },
+	["DRUID"] = { r = 1.0, g = 0.49, b = 0.04, colorStr = "ffff7d0a" },
+	["SHAMAN"] = { r = 0.0, g = 0.44, b = 0.87, colorStr = "ff0070de" },
+	["WARRIOR"] = { r = 0.78, g = 0.61, b = 0.43, colorStr = "ffc79c6e" },
+	["DEATHKNIGHT"] = { r = 0.77, g = 0.12 , b = 0.23, colorStr = "ffc41f3b" },
+	["MONK"] = { r = 0.0, g = 1.00 , b = 0.59, colorStr = "ff00ff96" },
+};
+
+PerlDebuffTypeColor = { };
+PerlDebuffTypeColor["none"]	= { r = 0.80, g = 0, b = 0 };
+PerlDebuffTypeColor["Magic"]	= { r = 0.20, g = 0.60, b = 1.00 };
+PerlDebuffTypeColor["Curse"]	= { r = 0.60, g = 0.00, b = 1.00 };
+PerlDebuffTypeColor["Disease"]	= { r = 0.60, g = 0.40, b = 0 };
+PerlDebuffTypeColor["Poison"]	= { r = 0.00, g = 0.60, b = 0 };
+PerlDebuffTypeColor[""]	= PerlDebuffTypeColor["none"];
+
+
+----------------------------------------
+-- Localizing some Blizzard Functions --
+----------------------------------------
+function PerlSetRaidTargetIconTexture(texture, raidTargetIconIndex)
+	local PERL_RAID_TARGET_ICON_DIMENSION = 64;
+	local PERL_RAID_TARGET_TEXTURE_DIMENSION = 256;
+	local PERL_RAID_TARGET_TEXTURE_COLUMNS = 4;
+	local PERL_RAID_TARGET_TEXTURE_ROWS = 4;
+
+	raidTargetIconIndex = raidTargetIconIndex - 1;
+	local left, right, top, bottom;
+	local coordIncrement = PERL_RAID_TARGET_ICON_DIMENSION / PERL_RAID_TARGET_TEXTURE_DIMENSION;
+	left = mod(raidTargetIconIndex , PERL_RAID_TARGET_TEXTURE_COLUMNS) * coordIncrement;
+	right = left + coordIncrement;
+	top = floor(raidTargetIconIndex / PERL_RAID_TARGET_TEXTURE_ROWS) * coordIncrement;
+	bottom = top + coordIncrement;
+	texture:SetTexCoord(left, right, top, bottom);
+end
+
+function Perl_CooldownFrame_SetTimer(self, start, duration, enable, charges, maxCharges)
+	if(enable and enable ~= 0) then
+		self:SetCooldown(start, duration, charges, maxCharges);
+	else
+		self:SetCooldown(0, 0, charges, maxCharges);
+	end
+end
+
+
 --------------------------------------
 -- Disable Blizzard Frame Functions --
 --------------------------------------

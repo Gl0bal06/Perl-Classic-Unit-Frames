@@ -1,3 +1,9 @@
+5.06 - March 31, 2013
+ - All: Updated TOC Interface version to 50200
+ - All: Fixed taint issues regarding CombatFeedback, FACTION_BAR_COLORS, RAID_CLASS_COLORS, DebuffTypeColor, CooldownFrame_SetTimer, SetRaidTargetIconTexture, and UIErrorsFrame
+ - Target: Added a quest boss icon to the name frame
+ - Target: Adjusted the dead status icon up one pixel
+
 5.05 - March 2, 2013
  - Target: Reverted ToT positions will save properly now when changing Target options change
 

@@ -239,9 +239,9 @@ function Perl_Party_Target_Work(self)
 		if (UnitIsVisible(self.unit)) then
 			reaction = UnitReaction(self.unit, "player");
 			if (reaction) then
-				r = FACTION_BAR_COLORS[reaction].r;
-				g = FACTION_BAR_COLORS[reaction].g;
-				b = FACTION_BAR_COLORS[reaction].b;
+				r = PERL_FACTION_BAR_COLORS[reaction].r;
+				g = PERL_FACTION_BAR_COLORS[reaction].g;
+				b = PERL_FACTION_BAR_COLORS[reaction].b;
 				self.nameText:SetTextColor(r, g, b);
 			else
 				self.nameText:SetTextColor(0.5, 0.5, 1.0);
@@ -282,7 +282,7 @@ function Perl_Party_Target_Work(self)
 		if (UnitIsPlayer(self.unit)) then
 			local _;
 			_, englishclass = UnitClass(self.unit);
-			self.nameText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+			self.nameText:SetTextColor(PERL_RAID_CLASS_COLORS[englishclass].r,PERL_RAID_CLASS_COLORS[englishclass].g,PERL_RAID_CLASS_COLORS[englishclass].b);
 		end
 	end
 	-- End: Set the name text color
@@ -456,7 +456,7 @@ end
 function Perl_Party_Target_Update_Raid_Icon(self)
 	raidpartytargetindex = GetRaidTargetIndex(self.unit);
 	if (raidpartytargetindex) then
-		SetRaidTargetIconTexture(self.raidIcon, raidpartytargetindex);
+		PerlSetRaidTargetIconTexture(self.raidIcon, raidpartytargetindex);
 		self.raidIcon:Show();
 	else
 		self.raidIcon:Hide();
@@ -475,7 +475,7 @@ function Perl_Party_Target_Update_Buffs(self)
 				if (curableDebuffFound == 0) then
 					if (UnitIsFriend("player", self.unit)) then
 						if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
-							local color = DebuffTypeColor[debuffType];
+							local color = PerlDebuffTypeColor[debuffType];
 							self.nameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
 							self.statsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
 							curableDebuffFound = 1;

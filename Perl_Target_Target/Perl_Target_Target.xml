@@ -1622,4 +1622,19 @@
 			</OnLoad>
 		</Scripts>
 	</Frame>
+
+
+	<MessageFrame name="Perl_Target_Target_UIErrorsFrame" displayDuration="5" insertMode="TOP" parent="UIParent" frameStrata="DIALOG" frameLevel="1" toplevel="true">
+		<Size>
+			<AbsDimension x="512" y="60"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOP">
+				<Offset>
+					<AbsDimension x="0" y="-142"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<FontString inherits="ErrorFont" justifyH="CENTER"/>
+	</MessageFrame>
 </Ui>

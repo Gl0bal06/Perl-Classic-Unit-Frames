@@ -209,9 +209,9 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 				if (UnitIsVisible("targettarget")) then
 					reaction = UnitReaction("targettarget", "player");
 					if (reaction) then
-						r = FACTION_BAR_COLORS[reaction].r;
-						g = FACTION_BAR_COLORS[reaction].g;
-						b = FACTION_BAR_COLORS[reaction].b;
+						r = PERL_FACTION_BAR_COLORS[reaction].r;
+						g = PERL_FACTION_BAR_COLORS[reaction].g;
+						b = PERL_FACTION_BAR_COLORS[reaction].b;
 						Perl_Target_Target_NameBarText:SetTextColor(r, g, b);
 					else
 						Perl_Target_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
@@ -252,7 +252,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 				if (UnitIsPlayer("targettarget")) then
 					local _;
 					_, englishclass = UnitClass("targettarget");
-					Perl_Target_Target_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+					Perl_Target_Target_NameBarText:SetTextColor(PERL_RAID_CLASS_COLORS[englishclass].r,PERL_RAID_CLASS_COLORS[englishclass].g,PERL_RAID_CLASS_COLORS[englishclass].b);
 				end
 			end
 			-- End: Set the name text color
@@ -456,9 +456,9 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 					reaction = UnitReaction("targettargettarget", "player");
 					if (reaction) then
 						local r, g, b;
-						r = FACTION_BAR_COLORS[reaction].r;
-						g = FACTION_BAR_COLORS[reaction].g;
-						b = FACTION_BAR_COLORS[reaction].b;
+						r = PERL_FACTION_BAR_COLORS[reaction].r;
+						g = PERL_FACTION_BAR_COLORS[reaction].g;
+						b = PERL_FACTION_BAR_COLORS[reaction].b;
 						Perl_Target_Target_Target_NameBarText:SetTextColor(r, g, b);
 					else
 						Perl_Target_Target_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
@@ -499,7 +499,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 				if (UnitIsPlayer("targettargettarget")) then
 					local _;
 					_, englishclass = UnitClass("targettargettarget");
-					Perl_Target_Target_Target_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+					Perl_Target_Target_Target_NameBarText:SetTextColor(PERL_RAID_CLASS_COLORS[englishclass].r,PERL_RAID_CLASS_COLORS[englishclass].g,PERL_RAID_CLASS_COLORS[englishclass].b);
 				end
 			end
 			-- End: Set the name text color
@@ -641,7 +641,7 @@ end
 function Perl_Target_Target_Update_Raid_Icon()
 	raidtargettargetindex = GetRaidTargetIndex("targettarget");
 	if (raidtargettargetindex) then
-		SetRaidTargetIconTexture(Perl_Target_Target_RaidTargetIcon, raidtargettargetindex);
+		PerlSetRaidTargetIconTexture(Perl_Target_Target_RaidTargetIcon, raidtargettargetindex);
 		Perl_Target_Target_RaidTargetIcon:Show();
 	else
 		Perl_Target_Target_RaidTargetIcon:Hide();
@@ -651,7 +651,7 @@ end
 function Perl_Target_Target_Target_Update_Raid_Icon()
 	raidtargettargettargetindex = GetRaidTargetIndex("targettargettarget");
 	if (raidtargettargettargetindex) then
-		SetRaidTargetIconTexture(Perl_Target_Target_Target_RaidTargetIcon, raidtargettargettargetindex);
+		PerlSetRaidTargetIconTexture(Perl_Target_Target_Target_RaidTargetIcon, raidtargettargettargetindex);
 		Perl_Target_Target_Target_RaidTargetIcon:Show();
 	else
 		Perl_Target_Target_Target_RaidTargetIcon:Hide();
@@ -702,7 +702,7 @@ function Perl_Target_Target_Update_Buffs()
 			if (buffTexture) then												-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);			-- Set the texture
 				if (debuffType) then
-					color = DebuffTypeColor[debuffType];
+					color = PerlDebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
 						if (curableDebuffFound == 0) then
 							if (UnitIsFriend("player", "targettarget")) then
@@ -715,7 +715,7 @@ function Perl_Target_Target_Update_Buffs()
 						end
 					end
 				else
-					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
+					color = PerlDebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
 				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
 				_G[button:GetName().."DebuffBorder"]:Show();					-- Show the debuff border
@@ -818,7 +818,7 @@ function Perl_Target_Target_Target_Update_Buffs()
 			if (buffTexture) then
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);			-- Set the texture
 				if (debuffType) then
-					color = DebuffTypeColor[debuffType];
+					color = PerlDebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
 						if (curableDebuffFound == 0) then
 							if (UnitIsFriend("player", "targettargettarget")) then
@@ -831,7 +831,7 @@ function Perl_Target_Target_Target_Update_Buffs()
 						end
 					end
 				else
-					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
+					color = PerlDebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
 				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
 				_G[button:GetName().."DebuffBorder"]:Show();					-- Show the debuff border
@@ -944,7 +944,7 @@ function Perl_Target_Target_Warn()
 						-- Its coming right for us!
 						if (aggroWarningCount == 0) then
 							if (alertsize == 0) then
-								UIErrorsFrame:AddMessage(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU,1,0,0,1,3);
+								Perl_Target_Target_UIErrorsFrame:AddMessage(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU,1,0,0,1,3);
 							elseif (alertsize == 1) then
 								Perl_Target_Target_BigWarning_Show(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU);
 							elseif (alertsize == 2) then
@@ -966,13 +966,13 @@ function Perl_Target_Target_Warn()
 						if (aggroWarningCount == 0) then
 							if (alertsize == 0) then
 								if (GetLocale() == "deDE") then
-									UIErrorsFrame:AddMessage("Du hast die Aggro verloren an "..UnitName("targettarget").."!",1,0,0,1,3);
+									Perl_Target_Target_UIErrorsFrame:AddMessage("Du hast die Aggro verloren an "..UnitName("targettarget").."!",1,0,0,1,3);
 								elseif (GetLocale() == "koKR") then
-									UIErrorsFrame:AddMessage("당신은 "..UnitName("targettarget").."의 어그로 획득에 실패했습니다!",1,0,0,1,3);
+									Perl_Target_Target_UIErrorsFrame:AddMessage("당신은 "..UnitName("targettarget").."의 어그로 획득에 실패했습니다!",1,0,0,1,3);
 								elseif (GetLocale() == "zhCN") then
-									UIErrorsFrame:AddMessage("你的目标已经转移到 "..UnitName("targettarget").."!",1,0,0,1,3);
+									Perl_Target_Target_UIErrorsFrame:AddMessage("你的目标已经转移到 "..UnitName("targettarget").."!",1,0,0,1,3);
 								else
-									UIErrorsFrame:AddMessage("You have lost aggro to "..UnitName("targettarget").."!",1,0,0,1,3);
+									Perl_Target_Target_UIErrorsFrame:AddMessage("You have lost aggro to "..UnitName("targettarget").."!",1,0,0,1,3);
 								end
 							elseif (alertsize == 1) then
 								if (GetLocale() == "deDE") then
@@ -1017,13 +1017,13 @@ function Perl_Target_Target_Warn_Healer_Mode()						-- This chunk of code is cal
 				if (aggroWarningCount == 0) then
 					if (alertsize == 0) then
 						if (GetLocale() == "deDE") then
-							UIErrorsFrame:AddMessage(UnitName("target").." tankt nun "..UnitName("targettarget"),1,0,0,1,3);
+							Perl_Target_Target_UIErrorsFrame:AddMessage(UnitName("target").." tankt nun "..UnitName("targettarget"),1,0,0,1,3);
 						elseif (GetLocale() == "koKR") then
-							UIErrorsFrame:AddMessage(UnitName("target").."님이 "..UnitName("targettarget").."|1을;를; 탱킹중입니다.",1,0,0,1,3);
+							Perl_Target_Target_UIErrorsFrame:AddMessage(UnitName("target").."님이 "..UnitName("targettarget").."|1을;를; 탱킹중입니다.",1,0,0,1,3);
 						elseif (GetLocale() == "zhCN") then
-							UIErrorsFrame:AddMessage(UnitName("targettarget").." 正在攻击 "..UnitName("target"),1,0,0,1,3);
+							Perl_Target_Target_UIErrorsFrame:AddMessage(UnitName("targettarget").." 正在攻击 "..UnitName("target"),1,0,0,1,3);
 						else
-							UIErrorsFrame:AddMessage(UnitName("target").." is now tanking "..UnitName("targettarget"),1,0,0,1,3);
+							Perl_Target_Target_UIErrorsFrame:AddMessage(UnitName("target").." is now tanking "..UnitName("targettarget"),1,0,0,1,3);
 						end
 					elseif (alertsize == 1) then
 						if ((UnitName("player") == UnitName("target")) or (UnitName("target") == UnitName("targettarget"))) then
@@ -1053,7 +1053,7 @@ function Perl_Target_Target_Warn_Healer_Mode()						-- This chunk of code is cal
 				-- Its coming right for us!
 				if (aggroWarningCount == 0) then
 					if (alertsize == 0) then
-						UIErrorsFrame:AddMessage(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU,1,0,0,1,3);
+						Perl_Target_Target_UIErrorsFrame:AddMessage(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU,1,0,0,1,3);
 					elseif (alertsize == 1) then
 						Perl_Target_Target_BigWarning_Show(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU);
 					elseif (alertsize == 2) then
@@ -1072,7 +1072,7 @@ function Perl_Target_Target_Warn_Healer_Mode()						-- This chunk of code is cal
 			-- Its coming right for us!
 			if (aggroWarningCount == 0) then
 				if (alertsize == 0) then
-					UIErrorsFrame:AddMessage(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU,1,0,0,1,3);
+					Perl_Target_Target_UIErrorsFrame:AddMessage(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU,1,0,0,1,3);
 				elseif (alertsize == 1) then
 					Perl_Target_Target_BigWarning_Show(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU);
 				elseif (alertsize == 2) then

@@ -846,8 +846,8 @@ function Perl_Party_Set_Name(self)
 	if (UnitIsPlayer(self.unit)) then
 		local _;
 		_, englishclass = UnitClass(self.unit);
-		if (CLASS_ICON_TCOORDS[englishclass] ~= nil) then
-			self.classTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));	-- Set the party member's class icon
+		if (PERL_CLASS_ICON_TCOORDS[englishclass] ~= nil) then
+			self.classTexture:SetTexCoord(unpack(PERL_CLASS_ICON_TCOORDS[englishclass]));	-- Set the party member's class icon
 			self.classTexture:Show();
 		else
 			self.classTexture:Hide();
@@ -889,7 +889,7 @@ function Perl_Party_Update_PvP_Status(self)						-- Modeled after 1.9 code
 		if (UnitIsVisible(self.unit)) then
 			local reaction = UnitReaction(self.unit, "player");
 			if (reaction) then
-				self.nameText:SetTextColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b);
+				self.nameText:SetTextColor(PERL_FACTION_BAR_COLORS[reaction].r, PERL_FACTION_BAR_COLORS[reaction].g, PERL_FACTION_BAR_COLORS[reaction].b);
 			end
 		end
 	end
@@ -898,7 +898,7 @@ function Perl_Party_Update_PvP_Status(self)						-- Modeled after 1.9 code
 		local _;
 		_, englishclass = UnitClass(self.unit);
 		if (englishclass) then
-			self.nameText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+			self.nameText:SetTextColor(PERL_RAID_CLASS_COLORS[englishclass].r,PERL_RAID_CLASS_COLORS[englishclass].g,PERL_RAID_CLASS_COLORS[englishclass].b);
 		end
 	end
 end
@@ -2433,14 +2433,14 @@ function Perl_Party_Buff_UpdateAll(self)
 					cooldown = _G[button:GetName().."Cooldown"];		-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
-							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
+							Perl_CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
 							cooldown:Show();
 						else
-							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+							Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 							cooldown:Hide();
 						end
 					else
-						CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+						Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 						cooldown:Hide();
 					end
 				end
@@ -2461,7 +2461,7 @@ function Perl_Party_Buff_UpdateAll(self)
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);	-- Set the texture
 				if (debuffType) then
-					color = DebuffTypeColor[debuffType];
+					color = PerlDebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
 						if (curableDebuffFound == 0) then
 							if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
@@ -2474,7 +2474,7 @@ function Perl_Party_Buff_UpdateAll(self)
 						end
 					end
 				else
-					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
+					color = PerlDebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
 				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
 				_G[button:GetName().."DebuffBorder"]:Show();			-- Show the debuff border
@@ -2489,14 +2489,14 @@ function Perl_Party_Buff_UpdateAll(self)
 					cooldown = _G[button:GetName().."Cooldown"];		-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
-							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
+							Perl_CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
 							cooldown:Show();
 						else
-							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+							Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 							cooldown:Hide();
 						end
 					else
-						CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+						Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 						cooldown:Hide();
 					end
 				end
@@ -2641,7 +2641,7 @@ function Perl_Party_Reset_Buffs()
 			icon = _G[button:GetName().."Icon"];
 			debuff = _G[button:GetName().."DebuffBorder"];
 			cooldown = _G[button:GetName().."Cooldown"];
-			CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+			Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 			cooldown:Hide();
 			button:SetHeight(buffsize);
 			button:SetWidth(buffsize);
@@ -2657,7 +2657,7 @@ function Perl_Party_Reset_Buffs()
 			icon = _G[button:GetName().."Icon"];
 			debuff = _G[button:GetName().."DebuffBorder"];
 			cooldown = _G[button:GetName().."Cooldown"];
-			CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+			Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 			cooldown:Hide();
 			button:SetHeight(debuffsize);
 			button:SetWidth(debuffsize);

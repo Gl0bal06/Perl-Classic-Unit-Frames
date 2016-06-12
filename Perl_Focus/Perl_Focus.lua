@@ -320,7 +320,7 @@ function Perl_Focus_Update_Once()
 			if (UnitIsPlayer("focus")) then
 				local _;
 				_, englishclass = UnitClass("focus");
-				Perl_Focus_ClassTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));
+				Perl_Focus_ClassTexture:SetTexCoord(unpack(PERL_CLASS_ICON_TCOORDS[englishclass]));
 				Perl_Focus_ClassTexture:Show();
 			else
 				Perl_Focus_ClassTexture:Hide();
@@ -673,7 +673,7 @@ function Perl_Focus_Update_Text_Color()
 		if (UnitIsPlayer("focus")) then
 			local _;
 			_, englishclass = UnitClass("focus");
-			Perl_Focus_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+			Perl_Focus_NameBarText:SetTextColor(PERL_RAID_CLASS_COLORS[englishclass].r,PERL_RAID_CLASS_COLORS[englishclass].g,PERL_RAID_CLASS_COLORS[englishclass].b);
 			return;
 		end
 	end
@@ -713,9 +713,9 @@ function Perl_Focus_Update_Text_Color()
 		if (UnitIsVisible("focus")) then
 			local reaction = UnitReaction("focus", "player");
 			if (reaction) then
-				r = FACTION_BAR_COLORS[reaction].r;
-				g = FACTION_BAR_COLORS[reaction].g;
-				b = FACTION_BAR_COLORS[reaction].b;
+				r = PERL_FACTION_BAR_COLORS[reaction].r;
+				g = PERL_FACTION_BAR_COLORS[reaction].g;
+				b = PERL_FACTION_BAR_COLORS[reaction].b;
 				Perl_Focus_NameBarText:SetTextColor(r, g, b);
 			else
 				Perl_Focus_NameBarText:SetTextColor(0.5, 0.5, 1.0);
@@ -800,7 +800,7 @@ end
 function Perl_Focus_UpdateRaidFocusIcon()
 	local index = GetRaidTargetIndex("focus");
 	if (index) then
-		SetRaidTargetIconTexture(Perl_Focus_RaidFocusIcon, index);
+		PerlSetRaidTargetIconTexture(Perl_Focus_RaidFocusIcon, index);
 		Perl_Focus_RaidFocusIcon:Show();
 	else
 		Perl_Focus_RaidFocusIcon:Hide();
@@ -1920,14 +1920,14 @@ function Perl_Focus_Buff_UpdateAll()
 					cooldown = _G[button:GetName().."Cooldown"];		-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
-							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
+							Perl_CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
 							cooldown:Show();
 						else
-							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+							Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 							cooldown:Hide();
 						end
 					else
-						CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+						Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 						cooldown:Hide();
 					end
 				end
@@ -1946,7 +1946,7 @@ function Perl_Focus_Buff_UpdateAll()
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);	-- Set the texture
 				if (debuffType) then
-					color = DebuffTypeColor[debuffType];
+					color = PerlDebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
 						if (curableDebuffFound == 0) then
 							if (UnitIsFriend("player", "focus")) then
@@ -1964,7 +1964,7 @@ function Perl_Focus_Buff_UpdateAll()
 						end
 					end
 				else
-					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
+					color = PerlDebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
 				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
 				_G[button:GetName().."DebuffBorder"]:Show();			-- Show the debuff border
@@ -1979,14 +1979,14 @@ function Perl_Focus_Buff_UpdateAll()
 					cooldown = _G[button:GetName().."Cooldown"];		-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
-							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
+							Perl_CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
 							cooldown:Show();
 						else
-							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+							Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 							cooldown:Hide();
 						end
 					else
-						CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+						Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 						cooldown:Hide();
 					end
 				end
@@ -2216,13 +2216,13 @@ function Perl_Focus_Reset_Buffs()
 	for buffnum=1,16 do
 		button = _G["Perl_Focus_Buff"..buffnum];
 		cooldown = _G[button:GetName().."Cooldown"];
-		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+		Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 		cooldown:Hide();
 		button:Hide();
 
 		button = _G["Perl_Focus_Debuff"..buffnum];
 		cooldown = _G[button:GetName().."Cooldown"];
-		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+		Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 		cooldown:Hide();
 		button:Hide();
 	end

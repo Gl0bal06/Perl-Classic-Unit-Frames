@@ -1263,7 +1263,7 @@ function Perl_Party_Pet_Buff_UpdateAll(unit)
 			if (buffTexture) then														-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);					-- Set the texture
 				if (debuffType) then
-					color = DebuffTypeColor[debuffType];
+					color = PerlDebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
 						if (curableDebuffFound == 0) then
 							if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
@@ -1275,7 +1275,7 @@ function Perl_Party_Pet_Buff_UpdateAll(unit)
 						end
 					end
 				else
-					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
+					color = PerlDebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
 				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
 				_G[button:GetName().."DebuffBorder"]:Show();							-- Show the debuff border

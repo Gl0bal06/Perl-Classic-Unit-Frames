@@ -190,7 +190,7 @@
 							<Anchors>
 								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
 									<Offset>
-										<AbsDimension x="-5" y="-5"/>
+										<AbsDimension x="-5" y="-4"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -219,6 +219,20 @@
 								<Anchor point="TOPLEFT">
 									<Offset>
 										<AbsDimension x="65" y="7"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+
+						<!-- Quest Icon -->
+						<Texture name="Perl_Target_QuestIcon" file="Interface\TargetingFrame\PortraitQuestBadge" hidden="true">
+							<Size>
+								<AbsDimension x="16" y="16"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+									<Offset>
+										<AbsDimension x="-5" y="-4"/>
 									</Offset>
 								</Anchor>
 							</Anchors>

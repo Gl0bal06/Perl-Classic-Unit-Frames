@@ -67,9 +67,6 @@ function Perl_Player_OnLoad(self)
 	self.lastMana = 0;
 	self.unit = "player";
 
-	-- Combat Text
-	CombatFeedback_Initialize(self, Perl_Player_HitIndicator, 30);
-
 	-- Events
 	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 	self:RegisterEvent("PARTY_LEADER_CHANGED");
@@ -105,7 +102,6 @@ function Perl_Player_OnLoad(self)
 			Perl_Player_Events[event](self, ...);
 		end
 	);
-	self:SetScript("OnUpdate", CombatFeedback_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Player_Name_CastClickOverlay:SetFrameLevel(Perl_Player_Name:GetFrameLevel() + 2);
@@ -164,7 +160,7 @@ end
 
 function Perl_Player_Events:UNIT_COMBAT(arg1, arg2, arg3, arg4, arg5)
 	if (arg1 == "player") then
-		CombatFeedback_OnCombatEvent(Perl_Player_Frame, arg2, arg3, arg4, arg5);
+		Perl_CombatFeedback_OnCombatEvent(Perl_Player_Frame, arg2, arg3, arg4, arg5);
 	end
 end
 
@@ -292,6 +288,10 @@ function Perl_Player_Initialize()
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(PlayerFrame);
 
+	-- Combat Text
+	Perl_CombatFeedback_Initialize(Perl_Player_Frame, Perl_Player_HitIndicator, 30);
+	Perl_Player_Frame:SetScript("OnUpdate", Perl_CombatFeedback_OnUpdate);
+
 	-- IFrameManager Support (Deprecated)
 	Perl_Player_Frame:SetUserPlaced(1);
 
@@ -329,7 +329,7 @@ function Perl_Player_Update_Once()
 		Perl_ArcaneBar_player.unitname = Perl_Player_NameBarText:GetText();
 	end
 	Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
-	Perl_Player_ClassTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));	-- Set the player's class icon
+	Perl_Player_ClassTexture:SetTexCoord(unpack(PERL_CLASS_ICON_TCOORDS[englishclass]));	-- Set the player's class icon
 	Perl_Player_Update_Portrait();										-- Set the player's portrait
 	Perl_Player_Update_PvP_Status();									-- Is the character PvP flagged?
 	Perl_Player_Update_PvP_Timer();										-- Is the PvP timer counting down?
@@ -799,7 +799,7 @@ function Perl_Player_Update_Reputation()
 		Perl_Player_XPBar:SetValue(value);
 		Perl_Player_XPRestBar:SetValue(value);
 
-		local color = FACTION_BAR_COLORS[reaction];
+		local color = PERL_FACTION_BAR_COLORS[reaction];
 		Perl_Player_XPBar:SetStatusBarColor(color.r, color.g, color.b, 1);
 		Perl_Player_XPRestBar:SetStatusBarColor(color.r, color.g, color.b, 0.5);
 		Perl_Player_XPBarBG:SetStatusBarColor(color.r, color.g, color.b, 0.25);
@@ -971,7 +971,7 @@ function Perl_Player_Update_PvP_Status()
 	if (classcolorednames == 1) then									-- Color by class
 		local _;
 		_, englishclass = UnitClass("player");
-		Perl_Player_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+		Perl_Player_NameBarText:SetTextColor(PERL_RAID_CLASS_COLORS[englishclass].r,PERL_RAID_CLASS_COLORS[englishclass].g,PERL_RAID_CLASS_COLORS[englishclass].b);
 	end
 end
 
@@ -2257,7 +2257,7 @@ function Perl_Player_BuffUpdateAll()
 				if (PCUF_COLORFRAMEDEBUFF == 1) then
 					if (curableDebuffFound == 0) then
 						if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
-							color = DebuffTypeColor[debuffType];
+							color = PerlDebuffTypeColor[debuffType];
 							Perl_Player_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
 							Perl_Player_RaidGroupNumberFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
 							Perl_Player_LevelFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);

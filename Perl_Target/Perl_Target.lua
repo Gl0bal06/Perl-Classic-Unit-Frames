@@ -60,9 +60,6 @@ function Perl_Target_OnLoad(self)
 	-- Variables
 	self.lastMana = 0;
 
-	-- Combat Text
-	CombatFeedback_Initialize(self, Perl_Target_HitIndicator, 30);
-
 	-- Events
 	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 	self:RegisterEvent("PARTY_LEADER_CHANGED");
@@ -100,7 +97,6 @@ function Perl_Target_OnLoad(self)
 	);
 	self:SetScript("OnHide", Perl_Target_OnHide);
 	self:SetScript("OnShow", Perl_Target_OnShow);
-	self:SetScript("OnUpdate", CombatFeedback_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Target_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Target_NameFrame:GetFrameLevel() + 2);
@@ -170,7 +166,7 @@ end
 
 function Perl_Target_Events:UNIT_COMBAT(arg1, arg2, arg3, arg4, arg5)
 	if (arg1 == "target") then
-		CombatFeedback_OnCombatEvent(Perl_Target_Frame, arg2, arg3, arg4, arg5);
+		Perl_CombatFeedback_OnCombatEvent(Perl_Target_Frame, arg2, arg3, arg4, arg5);
 	end
 end
 
@@ -289,6 +285,10 @@ function Perl_Target_Initialize()
 	Perl_clearBlizzardFrameDisable(TargetFrameSpellBar);
 	Perl_clearBlizzardFrameDisable(TargetFrameToT);
 
+	-- Combat Text
+	Perl_CombatFeedback_Initialize(Perl_Target_Frame, Perl_Target_HitIndicator, 30);
+	Perl_Target_Frame:SetScript("OnUpdate", Perl_CombatFeedback_OnUpdate);
+
 	-- Disable Blizzard's Target Cast Bar
 	--TargetFrameSpellBar:UnregisterEvent("CVAR_UPDATE");
 	--TargetFrameSpellBar:UnregisterEvent("PLAYER_TARGET_CHANGED");
@@ -361,7 +361,7 @@ function Perl_Target_Update_Once()
 			if (UnitIsPlayer("target")) then
 				local _;
 				_, englishclass = UnitClass("target");
-				Perl_Target_ClassTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));
+				Perl_Target_ClassTexture:SetTexCoord(unpack(PERL_CLASS_ICON_TCOORDS[englishclass]));
 				Perl_Target_ClassTexture:Show();
 			else
 				Perl_Target_ClassTexture:Hide();
@@ -404,6 +404,14 @@ function Perl_Target_Update_Once()
 			Perl_Target_VoiceChatIconFrame:Hide();
 		end
 		-- End: Voice Chat Icon already in progress?
+
+		-- Begin: Is the target a quest npc?
+		if (UnitIsQuestBoss("target")) then
+			Perl_Target_QuestIcon:Show();
+		else
+			Perl_Target_QuestIcon:Hide();
+		end
+		-- End: Is the target a quest npc?
 	end
 end
 
@@ -830,7 +838,7 @@ function Perl_Target_Update_Text_Color()
 		if (UnitIsPlayer("target")) then
 			local _;
 			_, englishclass = UnitClass("target");
-			Perl_Target_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+			Perl_Target_NameBarText:SetTextColor(PERL_RAID_CLASS_COLORS[englishclass].r,PERL_RAID_CLASS_COLORS[englishclass].g,PERL_RAID_CLASS_COLORS[englishclass].b);
 			return;
 		end
 	end
@@ -870,9 +878,9 @@ function Perl_Target_Update_Text_Color()
 		if (UnitIsVisible("target")) then
 			local reaction = UnitReaction("target", "player");
 			if (reaction) then
-				r = FACTION_BAR_COLORS[reaction].r;
-				g = FACTION_BAR_COLORS[reaction].g;
-				b = FACTION_BAR_COLORS[reaction].b;
+				r = PERL_FACTION_BAR_COLORS[reaction].r;
+				g = PERL_FACTION_BAR_COLORS[reaction].g;
+				b = PERL_FACTION_BAR_COLORS[reaction].b;
 				Perl_Target_NameBarText:SetTextColor(r, g, b);
 			else
 				Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
@@ -968,7 +976,7 @@ end
 function Perl_Target_UpdateRaidTargetIcon()
 	local index = GetRaidTargetIndex("target");
 	if (index) then
-		SetRaidTargetIconTexture(Perl_Target_RaidTargetIcon, index);
+		PerlSetRaidTargetIconTexture(Perl_Target_RaidTargetIcon, index);
 		Perl_Target_RaidTargetIcon:Show();
 	else
 		Perl_Target_RaidTargetIcon:Hide();
@@ -2367,14 +2375,14 @@ function Perl_Target_Buff_UpdateAll()
 					cooldown = _G[button:GetName().."Cooldown"];			-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
-							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
+							Perl_CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
 							cooldown:Show();
 						else
-							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+							Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 							cooldown:Hide();
 						end
 					else
-						CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+						Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 						cooldown:Hide();
 					end
 				end
@@ -2393,7 +2401,7 @@ function Perl_Target_Buff_UpdateAll()
 			if (buffTexture) then											-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);		-- Set the texture
 				if (debuffType) then
-					color = DebuffTypeColor[debuffType];
+					color = PerlDebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
 						if (curableDebuffFound == 0) then
 							if (UnitIsFriend("player", "target")) then
@@ -2412,7 +2420,7 @@ function Perl_Target_Buff_UpdateAll()
 						end
 					end
 				else
-					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
+					color = PerlDebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
 				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
 				_G[button:GetName().."DebuffBorder"]:Show();				-- Show the debuff border
@@ -2427,14 +2435,14 @@ function Perl_Target_Buff_UpdateAll()
 					cooldown = _G[button:GetName().."Cooldown"];			-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
-							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
+							Perl_CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
 							cooldown:Show();
 						else
-							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+							Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 							cooldown:Hide();
 						end
 					else
-						CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+						Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 						cooldown:Hide();
 					end
 				end
@@ -2672,7 +2680,7 @@ function Perl_Target_Reset_Buffs()
 		button = _G["Perl_Target_Buff"..buffnum];
 		--button:Hide();
 		cooldown = _G[button:GetName().."Cooldown"];
-		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+		Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 		cooldown:Hide();
 		button:Hide();
 	end
@@ -2680,7 +2688,7 @@ function Perl_Target_Reset_Buffs()
 		button = _G["Perl_Target_Debuff"..debuffnum];
 		--button:Hide();
 		cooldown = _G[button:GetName().."Cooldown"];
-		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+		Perl_CooldownFrame_SetTimer(cooldown, 0, 0, 0);
 		cooldown:Hide();
 		button:Hide();
 	end

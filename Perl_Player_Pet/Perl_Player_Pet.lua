@@ -708,9 +708,9 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 				if (UnitIsVisible("pettarget")) then
 					reaction = UnitReaction("pettarget", "player");
 					if (reaction) then
-						r = FACTION_BAR_COLORS[reaction].r;
-						g = FACTION_BAR_COLORS[reaction].g;
-						b = FACTION_BAR_COLORS[reaction].b;
+						r = PERL_FACTION_BAR_COLORS[reaction].r;
+						g = PERL_FACTION_BAR_COLORS[reaction].g;
+						b = PERL_FACTION_BAR_COLORS[reaction].b;
 						Perl_Player_Pet_Target_NameBarText:SetTextColor(r, g, b);
 					else
 						Perl_Player_Pet_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
@@ -751,7 +751,7 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 				if (UnitIsPlayer("pettarget")) then
 					local _;
 					_, englishclass = UnitClass("pettarget");
-					Perl_Player_Pet_Target_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+					Perl_Player_Pet_Target_NameBarText:SetTextColor(PERL_RAID_CLASS_COLORS[englishclass].r,PERL_RAID_CLASS_COLORS[englishclass].g,PERL_RAID_CLASS_COLORS[englishclass].b);
 				end
 			end
 			-- End: Set the name text color
@@ -877,7 +877,7 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 			-- Begin: Raid Icon
 			raidpettargetindex = GetRaidTargetIndex("pettarget");
 			if (raidpettargetindex) then
-				SetRaidTargetIconTexture(Perl_Player_Pet_Target_RaidTargetIcon, raidpettargetindex);
+				PerlSetRaidTargetIconTexture(Perl_Player_Pet_Target_RaidTargetIcon, raidpettargetindex);
 				Perl_Player_Pet_Target_RaidTargetIcon:Show();
 			else
 				Perl_Player_Pet_Target_RaidTargetIcon:Hide();
@@ -891,7 +891,7 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 				local _;
 				_, _, _, _, debuffType = UnitDebuff("pettarget", 1, 1);
 				if (debuffType) then
-					local color = DebuffTypeColor[debuffType];
+					local color = PerlDebuffTypeColor[debuffType];
 					Perl_Player_Pet_Target_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
 					Perl_Player_Pet_Target_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
 					curableDebuffFound = 1;
@@ -1732,7 +1732,7 @@ function Perl_Player_Pet_Buff_UpdateAll()
 			if (buffTexture) then													-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
 				if (debuffType) then
-					color = DebuffTypeColor[debuffType];
+					color = PerlDebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
 						if (curableDebuffFound == 0) then
 							if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
@@ -1745,7 +1745,7 @@ function Perl_Player_Pet_Buff_UpdateAll()
 						end
 					end
 				else
-					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
+					color = PerlDebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
 				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
 				_G[button:GetName().."DebuffBorder"]:Show();						-- Show the debuff border

@@ -1640,7 +1640,7 @@ function Perl_CombatDisplay_Buff_UpdateAll(unit, frame)
 				if (UnitIsFriend("player", unit)) then
 					if (debuffType) then
 						if (Perl_Config_Set_Curable_Debuffs(debuffType) == 1) then
-							local color = DebuffTypeColor[debuffType];
+							local color = PerlDebuffTypeColor[debuffType];
 							frame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
 							curableDebuffFound = 1;
 							break;
