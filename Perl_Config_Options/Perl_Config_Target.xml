@@ -128,7 +128,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
 						<Offset>
-							<AbsDimension  x="20" y="-20"/>
+							<AbsDimension x="20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -149,7 +149,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton1">
 						<Offset>
-							<AbsDimension  x="0" y="-20"/>
+							<AbsDimension x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -307,7 +307,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton4">
 						<Offset>
-							<AbsDimension  x="0" y="-20"/>
+							<AbsDimension x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -328,7 +328,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
 						<Offset>
-							<AbsDimension  x="20" y="-20"/>
+							<AbsDimension x="20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -349,7 +349,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton11">
 						<Offset>
-							<AbsDimension  x="-20" y="-20"/>
+							<AbsDimension x="-20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -370,7 +370,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton12">
 						<Offset>
-							<AbsDimension  x="0" y="-20"/>
+							<AbsDimension x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

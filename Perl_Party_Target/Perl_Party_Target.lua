@@ -473,6 +473,7 @@ function Perl_Party_Target_HealthShow(self)
 					local s, e;
 					local pts;
 					local pct;
+					local pointsPerPct;
 
 					if MobHealthDB[index] then
 						if (type(MobHealthDB[index]) ~= "string") then

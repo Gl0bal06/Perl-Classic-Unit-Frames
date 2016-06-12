@@ -95,6 +95,12 @@ function Perl_Config_All_Set_Values()
 	else
 		Perl_Config_All_Frame_CheckButton17:SetChecked(nil);
 	end
+
+	if (vartable["positioningmode"] == 1) then
+		Perl_Config_All_Frame_CheckButton18:SetChecked(1);
+	else
+		Perl_Config_All_Frame_CheckButton18:SetChecked(nil);
+	end
 end
 
 function Perl_Config_All_Texture_Update(texturenum)
@@ -249,5 +255,13 @@ function Perl_Config_All_Set_Color_Frame_Debuff()
 		Perl_Config_Set_Color_Frame_Debuff(1);
 	else
 		Perl_Config_Set_Color_Frame_Debuff(0);
+	end
+end
+
+function Perl_Config_All_Set_Positioning_Mode()
+	if (Perl_Config_All_Frame_CheckButton18:GetChecked() == 1) then
+		Perl_Config_Set_Positioning_Mode(1);
+	else
+		Perl_Config_Set_Positioning_Mode(0);
 	end
 end

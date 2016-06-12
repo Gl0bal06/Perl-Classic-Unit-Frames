@@ -980,6 +980,7 @@ function Perl_Player_Pet_Target_HealthShow()
 					local s, e;
 					local pts;
 					local pct;
+					local pointsPerPct;
 
 					if MobHealthDB[index] then
 						if (type(MobHealthDB[index]) ~= "string") then

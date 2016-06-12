@@ -1,3 +1,9 @@
+2.18 - May 14, 2008
+ - All: Fixed a possible scope issue in the MobHealth and MobInfo support code
+ - All: Cleaned up some code syntax and file uniformity
+ - Config: Added a frame positioning mode to help with some of those more rare frames
+ - Config: Fixed a potential incorrect minimap button default setting
+
 2.17 - April 8, 2008
  - All: Class specific features should now work in languages other than English
  - Pet: Fixed a reference to a global variable

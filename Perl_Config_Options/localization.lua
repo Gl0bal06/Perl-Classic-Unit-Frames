@@ -96,6 +96,8 @@
 	PERL_LOCALIZED_CONFIG_ALL_FADE_BARS = "Fade Status Bars";
 	PERL_LOCALIZED_CONFIG_ALL_CLICKCASTABLE_NAME_FRAMES = "Make Name Frames Click Castable";
 	PERL_LOCALIZED_CONFIG_ALL_MINIMAP_RADIUS = "MiniMap Button Radius";
+	PERL_LOCALIZED_CONFIG_ALL_POSITIONING_MODE = "Positioning Mode";
+	PERL_LOCALIZED_CONFIG_ALL_POSITIONING_MODE_TOOLTIP = "This option is for *positioning frames only*!\nText 'errors' are normal and do not need to be reported.\nThis option works best if you have no target so the titles of the frames don't change.";
 
 	-- Perl Config ArcaneBar
 	PERL_LOCALIZED_CONFIG_ARCANEBAR_ENABLE = "Enable "..PERL_LOCALIZED_CONFIG_ARCANEBAR;

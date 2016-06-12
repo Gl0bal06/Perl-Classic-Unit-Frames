@@ -889,6 +889,7 @@ function Perl_CombatDisplay_Target_Update_Health()
 					local s, e;
 					local pts;
 					local pct;
+					local pointsPerPct;
 
 					if (MobHealthDB[index]) then
 						if (type(MobHealthDB[index]) ~= "string") then

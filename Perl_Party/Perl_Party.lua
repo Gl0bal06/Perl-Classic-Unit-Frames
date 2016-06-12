@@ -1736,6 +1736,12 @@ function Perl_Party_Frame_Style()
 		if (Initialized) then
 			Perl_Party_ArcaneBar_Support();
 		end
+
+		-- Added this to update when placement mode is enabled
+		Perl_Party_MembersUpdate(Perl_Party_MemberFrame1);
+		Perl_Party_MembersUpdate(Perl_Party_MemberFrame2);
+		Perl_Party_MembersUpdate(Perl_Party_MemberFrame3);
+		Perl_Party_MembersUpdate(Perl_Party_MemberFrame4);
 	end
 end
 
