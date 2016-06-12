@@ -1,3 +1,6 @@
+0.77 - July 30, 2006
+ - ToT: Fixed an error in the German translations
+
 0.76 - July 24, 2006
  - Config: Added an options page for Party_Target
  - Config: Added a key binding to toggle the options frame

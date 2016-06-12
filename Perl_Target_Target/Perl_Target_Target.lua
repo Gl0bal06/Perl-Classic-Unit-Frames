@@ -1012,7 +1012,7 @@ function Perl_Target_Target_Warn_Healer_Mode()		-- This chunk of code is called 
 				if (aggroWarningCount == 0) then
 					if (alertsize == 0) then
 						if (GetLocale() == "deDE") then
-							UUIErrorsFrame:AddMessage(UnitName("target").." tankt nun "..UnitName("targettarget"),1,0,0,1,3);
+							UIErrorsFrame:AddMessage(UnitName("target").." tankt nun "..UnitName("targettarget"),1,0,0,1,3);
 						elseif (GetLocale() == "koKR") then
 							UIErrorsFrame:AddMessage(UnitName("target").."님이 "..UnitName("targettarget").."|1을;를; 탱킹중입니다.",1,0,0,1,3);
 						elseif (GetLocale() == "zhCN") then
