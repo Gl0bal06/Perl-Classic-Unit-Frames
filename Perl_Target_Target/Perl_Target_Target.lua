@@ -36,6 +36,7 @@ function Perl_Target_Target_OnLoad()
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("PLAYER_REGEN_ENABLED");
+	this:RegisterEvent("PLAYER_TARGET_CHANGED");
 	this:RegisterEvent("VARIABLES_LOADED");
 
 	if (DEFAULT_CHAT_FRAME) then
@@ -48,7 +49,7 @@ end
 -- Event Handler --
 -------------------
 function Perl_Target_Target_OnEvent(event)
-	if (event == "PLAYER_REGEN_ENABLED") then
+	if (event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_TARGET_CHANGED") then
 		aggroWarningCount = 0;
 	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Target_Target_Initialize();
@@ -284,7 +285,7 @@ function Perl_Target_Target_OnUpdate(arg1)
 					if (UnitName("targettargettarget")) then
 						if (UnitIsEnemy("targettarget", "player")) then
 							if (UnitName("targettargettarget") == UnitName("player")) then			-- play the warning sound if needed
-								if (aggroWarningCount == 0) then
+								if (aggroWarningCount == 0 and aggroToToTWarningCount == 0) then
 									-- Its coming right for us!
 									if (aggroToToTWarningCount == 0) then
 										aggroToToTWarningCount = 1;
@@ -464,15 +465,14 @@ end
 
 function Perl_Target_Target_Warn()
 	-- Player has something targetted
-	if (UnitAffectingCombat("target")) then		-- Target is in an active combat situation
-		if (UnitIsDead("targettarget") or UnitIsCorpse("targettarget")) then
-			-- Im thinking targetting something that is targetting a corpse or dead thing is causing crashes
-			-- Hence this safety check. If it is, we do nothing.
+	if (UnitAffectingCombat("target")) then								-- Target is in an active combat situation
+		if (UnitIsDead("targettarget") or UnitIsCorpse("targettarget")) then			-- Target is dead, do nothing
+			-- Previous author had this in as a safety check
 		else
-			if (not UnitIsFriend("target", "player")) then
+			if (not UnitIsFriend("target", "player")) then					-- Target isn't dead
 				-- Stupid mobs dont have targets when they are trapped/polyd/sapped/stunned, check for this
 				if (alertmode == 0) then	-- Disabled but still have audible alert enabled
-					if (UnitName("targettarget") == UnitName("player")) then		-- play the warning sound if needed
+					if (UnitName("targettarget") == UnitName("player")) then	-- play the warning sound if needed
 						-- Its coming right for us!
 						if (aggroWarningCount == 0) then
 							aggroWarningCount = 1;
@@ -482,8 +482,7 @@ function Perl_Target_Target_Warn()
 						-- Whew it isnt fighting us
 						aggroWarningCount = 0;
 					end
-				end
-				if (alertmode == 1) then	-- DPS Mode
+				elseif (alertmode == 1) then	-- DPS Mode
 					if (UnitName("targettarget") == UnitName("player")) then
 						-- Its coming right for us!
 						if (aggroWarningCount == 0) then
@@ -519,75 +518,83 @@ function Perl_Target_Target_Warn()
 							Perl_Target_Target_Play_Sound();
 						end
 					end
+				elseif (alertmode == 3) then	-- Healer Mode (Do this check down here for sanity reasons)
+					Perl_Target_Target_Warn_Healer_Mode();
+				else
+					-- Friendly target
+					aggroWarningCount = 0;
 				end
+				--end
 			else
 				if (alertmode == 3) then	-- Healer Mode (Do this check down here for sanity reasons)
-					if (UnitIsPlayer("target")) then
-						if (UnitIsFriend("player", "target")) then
-							if (UnitIsUnit("target", "targettargettarget")) then	-- The target and the targets target target (whew) are the same
-								if (aggroWarningCount == 0) then
-									if (alertsize == 0) then
-										UIErrorsFrame:AddMessage(UnitName("target").." is now tanking "..UnitName("targettarget"),1,0,0,1,3);
-									elseif (alertsize == 1) then
-										if ((UnitName("player") == UnitName("target")) or (UnitName("target") == UnitName("targettarget"))) then
-											-- Do nothing
-										else
-											Perl_Target_Target_BigWarning_Show(UnitName("target").." is now tanking "..UnitName("targettarget"));
-										end
-									elseif (alertsize == 2) then
-										-- Warning disabled
-									end
-									aggroWarningCount = 1;
-								end
-							else
-								-- Lazy warrior isnt tanking anything!
-								aggroWarningCount = 0;
-							end
-						else
-							if (UnitName("targettarget") == UnitName("player")) then
-								-- Its coming right for us!
-								Perl_Target_Target_Play_Sound();
-								if (aggroWarningCount == 0) then
-									if (alertsize == 0) then
-										UIErrorsFrame:AddMessage(UnitName("target").." has changed targets to you!",1,0,0,1,3);
-									elseif (alertsize == 1) then
-										Perl_Target_Target_BigWarning_Show(UnitName("target").." has changed targets to you!");
-									elseif (alertsize == 2) then
-										-- Warning disabled
-									end
-									aggroWarningCount = 1;
-									Perl_Target_Target_Play_Sound();
-								end
-							else
-								-- Whew it isnt fighting us
-								aggroWarningCount = 0;
-							end
-						end
-					else
-						if (UnitName("targettarget") == UnitName("player")) then
-							-- Its coming right for us!
-							Perl_Target_Target_Play_Sound();
-							if (aggroWarningCount == 0) then
-								if (alertsize == 0) then
-									UIErrorsFrame:AddMessage(UnitName("target").." has changed targets to you!",1,0,0,1,3);
-								elseif (alertsize == 1) then
-									Perl_Target_Target_BigWarning_Show(UnitName("target").." has changed targets to you!");
-								elseif (alertsize == 2) then
-									-- Warning disabled
-								end
-								aggroWarningCount = 1;
-								Perl_Target_Target_Play_Sound();
-							end
-						else
-							-- Whew it isnt fighting us
-							aggroWarningCount = 0;
-						end
-					end
+					Perl_Target_Target_Warn_Healer_Mode();
 				else
 					-- Friendly target
 					aggroWarningCount = 0;
 				end
 			end
+		end
+	end
+end
+
+function Perl_Target_Target_Warn_Healer_Mode()		-- This chunk of code is called in 2 places so may as well place it as it's own function
+	if (UnitIsPlayer("target")) then
+		if (UnitIsFriend("player", "target")) then
+			if (UnitIsUnit("target", "targettargettarget")) then	-- The target and the targets target target (whew) are the same
+				if (aggroWarningCount == 0) then
+					if (alertsize == 0) then
+						UIErrorsFrame:AddMessage(UnitName("target").." is now tanking "..UnitName("targettarget"),1,0,0,1,3);
+					elseif (alertsize == 1) then
+						if ((UnitName("player") == UnitName("target")) or (UnitName("target") == UnitName("targettarget"))) then
+							-- Do nothing
+						else
+							Perl_Target_Target_BigWarning_Show(UnitName("target").." is now tanking "..UnitName("targettarget"));
+						end
+					elseif (alertsize == 2) then
+						-- Warning disabled
+					end
+					aggroWarningCount = 1;
+				end
+			else
+				-- Lazy warrior isnt tanking anything!
+				aggroWarningCount = 0;
+			end
+		else
+			if (UnitName("targettarget") == UnitName("player")) then
+				-- Its coming right for us!
+				if (aggroWarningCount == 0) then
+					if (alertsize == 0) then
+						UIErrorsFrame:AddMessage(UnitName("target").." has changed targets to you!",1,0,0,1,3);
+					elseif (alertsize == 1) then
+						Perl_Target_Target_BigWarning_Show(UnitName("target").." has changed targets to you!");
+					elseif (alertsize == 2) then
+						-- Warning disabled
+					end
+					aggroWarningCount = 1;
+					Perl_Target_Target_Play_Sound();
+				end
+			else
+				-- Whew it isnt fighting us
+				aggroWarningCount = 0;
+			end
+		end
+	else
+		if (UnitName("targettarget") == UnitName("player")) then
+			-- Its coming right for us!
+			if (aggroWarningCount == 0) then
+				if (alertsize == 0) then
+					UIErrorsFrame:AddMessage(UnitName("target").." has changed targets to you!",1,0,0,1,3);
+				elseif (alertsize == 1) then
+					Perl_Target_Target_BigWarning_Show(UnitName("target").." has changed targets to you!");
+				elseif (alertsize == 2) then
+					-- Warning disabled
+				end
+				aggroWarningCount = 1;
+				Perl_Target_Target_Play_Sound();
+			end
+		else
+			-- Whew it isnt fighting us
+			aggroWarningCount = 0;
 		end
 	end
 end
@@ -1222,8 +1229,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.45",
-			releaseDate = "February 25, 2006",
+			version = "v0.46",
+			releaseDate = "March 1, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

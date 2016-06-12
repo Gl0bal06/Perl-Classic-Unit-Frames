@@ -259,6 +259,46 @@
 			</Frame>
 
 
+			<!-- Target Rare Elite Frame -->
+			<Frame name="Perl_Target_RareEliteFrame" hidden="true">
+				<Size>
+					<AbsDimension x="46" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_NameFrame">
+						<Offset>
+							<AbsDimension x="-5" y="20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Layers>
+					<Layer level="OVERLAY">
+						<!-- Level Text -->
+						<Fontstring name="Perl_Target_RareEliteBarText" inherits="GameFontNormal" text="Error!">
+							<Anchors>
+								<Anchor point="TOP">
+									<Offset>
+										<AbsDimension x="0" y="-5"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Fontstring>
+					</Layer>
+				</Layers>
+			</Frame>
+
+
 			<!-- Portrait Frame -->
 			<Frame name="Perl_Target_PortraitFrame">
 				<Size>
@@ -300,6 +340,9 @@
 								this.scale = this:GetScale();
 								Perl_Target_PortraitFrame_TargetModel:SetSequence(30);
 							</OnLoad>
+							<OnUpdate>
+								Perl_Target_PortraitFrame_TargetModel:SetCamera(0);
+							</OnUpdate>
 						</Scripts>
 					</PlayerModel>
 				</Frames>
@@ -398,12 +441,12 @@
 			<!-- Target Civilian Frame -->
 			<Frame name="Perl_Target_CivilianFrame">
 				<Size>
-					<AbsDimension x="135" y="24"/>
+					<AbsDimension x="95" y="24"/> <!-- 135 -->
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Target_NameFrame">
 						<Offset>
-							<AbsDimension x="86" y="20"/>
+							<AbsDimension x="85" y="20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

@@ -20,6 +20,7 @@ local buffdebuffscale = 1;	-- default scale for buffs and debuffs
 local showportrait = 0;		-- portrait is hidden by default
 local threedportrait = 0;	-- 3d portraits are off by default
 local portraitcombattext = 1;	-- Combat text is enabled by default on the portrait frame
+local showrareeliteframe = 0;	-- rare/elite frame is hidden by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -199,6 +200,8 @@ function Perl_Target_Initialize_Frame_Color()
 	Perl_Target_CPFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Target_PortraitFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Target_PortraitFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_RareEliteFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_RareEliteFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 
 	Perl_Target_HealthBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Target_ManaBarText:SetTextColor(1, 1, 1, 1);
@@ -483,8 +486,8 @@ end
 function Perl_Target_Frame_Set_Name()
 	local targetname = UnitName("target");
 	-- Set name
-	if (strlen(targetname) > 20) then
-		targetname = strsub(targetname, 1, 19).."...";
+	if (strlen(targetname) > 19) then
+		targetname = strsub(targetname, 1, 18).."...";
 	end
 	Perl_Target_NameBarText:SetText(targetname);
 end
@@ -513,25 +516,48 @@ function Perl_Target_Frame_Set_PvPRank()
 end
 
 function Perl_Target_Frame_Set_Level()
-	local targetlevel = UnitLevel("target");
-	local targetlevelcolor = GetDifficultyColor(targetlevel);
-	local targetclassification = UnitClassification("target");
+	local targetlevel = UnitLevel("target");			-- Get and store the level of the target
+	local targetlevelcolor = GetDifficultyColor(targetlevel);	-- Get the "con color" of the target
+	local targetclassification = UnitClassification("target");	-- Get the type of character the target is (rare, elite, worldboss)
+	local targetclassificationframetext = nil;			-- Variable set to nil so we can easily track if target is a player or not elite
 
 	Perl_Target_LevelBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
+	Perl_Target_RareEliteBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
+
 	if ((targetclassification == "worldboss") or (targetlevel < 0)) then
 		Perl_Target_LevelBarText:SetTextColor(1, 0, 0);
+		if (UnitIsPlayer("target")) then
+			targetclassificationframetext = nil;
+		else
+			Perl_Target_RareEliteBarText:SetTextColor(1, 0, 0);
+			targetclassificationframetext = "Boss";
+		end
 		targetlevel = "??";
 	end
 
 	if (targetclassification == "rareelite") then
+		targetclassificationframetext = "Rare+";
 		targetlevel = targetlevel.."r+";
 	elseif (targetclassification == "elite") then
+		targetclassificationframetext = "Elite";
 		targetlevel = targetlevel.."+";
 	elseif (targetclassification == "rare") then
+		targetclassificationframetext = "Rare";
 		targetlevel = targetlevel.."r";
 	end
 
-	Perl_Target_LevelBarText:SetText(targetlevel);
+	Perl_Target_LevelBarText:SetText(targetlevel);							-- Set level frame text
+
+	if (showrareeliteframe == 1) then
+		if (targetclassificationframetext == nil) then
+			Perl_Target_RareEliteFrame:Hide();						-- RareElite is hidden if target is a player
+		else
+			Perl_Target_RareEliteFrame:Show();						-- RareElite is hidden if shown if target is a npc
+			Perl_Target_RareEliteBarText:SetText(targetclassificationframetext);		-- Set the text
+		end
+	else
+		Perl_Target_RareEliteFrame:Hide();							-- RareElite is hidden if disabled
+	end
 end
 
 function Perl_Target_Set_Character_Class_Icon()
@@ -768,6 +794,12 @@ function Perl_Target_Set_3D_Portrait(newvalue)
 	Perl_Target_Update_Once();
 end
 
+function Perl_Target_Set_Rare_Elite(newvalue)
+	showrareeliteframe = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
 function Perl_Target_Set_Portrait_Combat_Text(newvalue)
 	portraitcombattext = newvalue;
 	Perl_Target_UpdateVars();
@@ -824,6 +856,7 @@ function Perl_Target_GetVars()
 	showportrait = Perl_Target_Config[UnitName("player")]["ShowPortrait"];
 	threedportrait = Perl_Target_Config[UnitName("player")]["ThreeDPortrait"];
 	portraitcombattext = Perl_Target_Config[UnitName("player")]["PortraitCombatText"];
+	showrareeliteframe = Perl_Target_Config[UnitName("player")]["ShowRareEliteFrame"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -877,6 +910,9 @@ function Perl_Target_GetVars()
 	if (portraitcombattext == nil) then
 		portraitcombattext = 1;
 	end
+	if (showrareeliteframe == nil) then
+		showrareeliteframe = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -895,6 +931,7 @@ function Perl_Target_GetVars()
 		["showportrait"] = showportrait,
 		["threedportrait"] = threedportrait,
 		["portraitcombattext"] = portraitcombattext,
+		["showrareeliteframe"] = showrareeliteframe,
 	}
 	return vars;
 end
@@ -983,6 +1020,11 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				portraitcombattext = nil;
 			end
+			if (vartable["Global Settings"]["ShowRareEliteFrame"] ~= nil) then
+				showrareeliteframe = vartable["Global Settings"]["ShowRareEliteFrame"];
+			else
+				showrareeliteframe = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1034,6 +1076,9 @@ function Perl_Target_UpdateVars(vartable)
 		if (portraitcombattext == nil) then
 			portraitcombattext = 1;
 		end
+		if (showrareeliteframe == nil) then
+			showrareeliteframe = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();	-- Reset the buff icons
@@ -1057,6 +1102,7 @@ function Perl_Target_UpdateVars(vartable)
 		["ShowPortrait"] = showportrait,
 		["ThreeDPortrait"] = threedportrait,
 		["PortraitCombatText"] = portraitcombattext,
+		["ShowRareEliteFrame"] = showrareeliteframe,
 	};
 end
 
@@ -1266,8 +1312,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.45",
-			releaseDate = "February 25, 2006",
+			version = "v0.46",
+			releaseDate = "March 1, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

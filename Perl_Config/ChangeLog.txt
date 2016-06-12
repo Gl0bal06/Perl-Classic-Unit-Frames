@@ -1,3 +1,10 @@
+0.46 - March 1, 2006
+ - Player/Target: 3D portraits will no longer change views
+ - Target: Added a frame to more easily identify the elite, rare, and boss status of your target
+ - Target: Shortened the name length cut off by one character
+ - ToT: Healer mode will now correctly alert when you gain agro from a tank
+ - ToT: Healer mode will no longer spam you when an enemy player has you targetted
+
 0.45 - February 25, 2006
  - Party: Added another check for hidden status
  - Party: Fixed incorrect data being shown when reloading the interface without relogging

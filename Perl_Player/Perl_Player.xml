@@ -335,6 +335,9 @@
 								this.scale = this:GetScale();
 								Perl_Player_PortraitFrame_PlayerModel:SetSequence(30);
 							</OnLoad>
+							<OnUpdate>
+								Perl_Player_PortraitFrame_PlayerModel:SetCamera(0);
+							</OnUpdate>
 						</Scripts>
 					</PlayerModel>
 				</Frames>
