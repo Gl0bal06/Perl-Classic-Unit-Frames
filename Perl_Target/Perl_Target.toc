@@ -1,4 +1,4 @@
-## Interface: 40000
+## Interface: 40100
 ## Title: Perl Target Frame
 ## Notes: Displays a movable target frame to replace the default.
 ## Dependencies: Perl_Config

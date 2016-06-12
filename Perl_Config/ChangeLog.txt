@@ -1,3 +1,7 @@
+4.07 - April 27, 2011
+ - All: Updated TOC Interface version to 40100
+ - Pet: Removed happiness check
+
 4.06 - January 30, 2011
  - Focus/Party/Player/Target: Adjusted the frame size to fit 100,000 health
 

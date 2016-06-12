@@ -1,4 +1,4 @@
-## Interface: 40000
+## Interface: 40100
 ## Title: Perl ArcaneBar
 ## Notes: Displays a cast bar inside the Player Frame.
 ## Dependencies: Perl_Config, Perl_Player

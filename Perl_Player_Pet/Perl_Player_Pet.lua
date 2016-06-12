@@ -422,15 +422,15 @@ function Perl_Player_Pet_Update_Mana_Bar()
 end
 
 function Perl_Player_PetFrame_SetHappiness()
-	happiness = GetPetHappiness();
+	-- happiness = GetPetHappiness();
 
-	if (happiness == 1) then
-		Perl_Player_PetHappinessTexture:SetTexCoord(0.375, 0.5625, 0, 0.359375);
-	elseif (happiness == 2) then
-		Perl_Player_PetHappinessTexture:SetTexCoord(0.1875, 0.375, 0, 0.359375);
-	elseif (happiness == 3) then
-		Perl_Player_PetHappinessTexture:SetTexCoord(0, 0.1875, 0, 0.359375);
-	end
+	-- if (happiness == 1) then
+		-- Perl_Player_PetHappinessTexture:SetTexCoord(0.375, 0.5625, 0, 0.359375);
+	-- elseif (happiness == 2) then
+		-- Perl_Player_PetHappinessTexture:SetTexCoord(0.1875, 0.375, 0, 0.359375);
+	-- elseif (happiness == 3) then
+		 Perl_Player_PetHappinessTexture:SetTexCoord(0, 0.1875, 0, 0.359375);
+	-- end
 end
 
 function Perl_Player_Pet_ShowXP()

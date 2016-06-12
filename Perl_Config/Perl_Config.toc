@@ -1,4 +1,4 @@
-## Interface: 40000
+## Interface: 40100
 ## Title: Perl Config Frame
 ## Notes: Displays a configuration menu for Perl Classic Unit Frames.
 ## Dependencies: 
