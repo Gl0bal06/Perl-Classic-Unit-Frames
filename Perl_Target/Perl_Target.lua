@@ -29,6 +29,9 @@ local UnitReactionColor = {	-- agro color table for npcs
 	{ r = 0.0, g = 1.0, b = 0.0 },
 };
 
+-- Empty variables used for localization
+local pt_localized_creature, pt_localized_notspecified;
+
 -- Variables for position of the class icon texture.
 local Perl_Target_ClassPosRight = {};
 local Perl_Target_ClassPosLeft = {};
@@ -652,8 +655,8 @@ function Perl_Target_Set_Target_Class()
 			Perl_Target_ClassNameFrame:Show();
 		else
 			local targetCreatureType = UnitCreatureType("target");
-			if (targetCreatureType == "Not specified") then
-				targetCreatureType = "Creature";
+			if (targetCreatureType == pt_localized_notspecified) then
+				targetCreatureType = pt_localized_creature;
 			end
 			Perl_Target_ClassNameBarText:SetText(targetCreatureType);
 			Perl_Target_ClassNameFrame:Show();
@@ -664,149 +667,106 @@ function Perl_Target_Set_Target_Class()
 end
 
 function Perl_Target_Set_Localized_ClassIcons()
+	local pt_translate_druid;
+	local pt_translate_hunter;
+	local pt_translate_mage;
+	local pt_translate_paladin;
+	local pt_translate_priest;
+	local pt_translate_rogue;
+	local pt_translate_shaman;
+	local pt_translate_warlock;
+	local pt_translate_warrior;
+
 	if (GetLocale() == "deDE") then
-		Perl_Target_ClassPosRight = {
-			["Druide"] = 0.75,
-			["J\195\164ger"] = 0,
-			["Magier"] = 0.25,
-			["Paladin"] = 0,
-			["Priester"] = 0.5,
-			["Schurke"] = 0.5,
-			["Schamane"] = 0.25,
-			["Hexenmeister"] = 0.75,
-			["Krieger"] = 0,
-		};
-		Perl_Target_ClassPosLeft = {
-			["Druide"] = 1,
-			["J\195\164ger"] = 0.25,
-			["Magier"] = 0.5,
-			["Paladin"] = 0.25,
-			["Priester"] = 0.75,
-			["Schurke"] = 0.75,
-			["Schamane"] = 0.5,
-			["Hexenmeister"] = 1,
-			["Krieger"] = 0.25,
-		};
-		Perl_Target_ClassPosTop = {
-			["Druide"] = 0,
-			["J\195\164ger"] = 0.25,
-			["Magier"] = 0,
-			["Paladin"] = 0.5,
-			["Priester"] = 0.25,
-			["Schurke"] = 0,
-			["Schamane"] = 0.25,
-			["Hexenmeister"] = 0.25,
-			["Krieger"] = 0,
-			
-		};
-		Perl_Target_ClassPosBottom = {
-			["Druide"] = 0.25,
-			["J\195\164ger"] = 0.5,
-			["Magier"] = 0.25,
-			["Paladin"] = 0.75,
-			["Priester"] = 0.5,
-			["Schurke"] = 0.25,
-			["Schamane"] = 0.5,
-			["Hexenmeister"] = 0.5,
-			["Krieger"] = 0.25,
-		};
+		pt_translate_druid = "Druide";
+		pt_translate_hunter = "J\195\164ger";
+		pt_translate_mage = "Magier";
+		pt_translate_paladin = "Paladin";
+		pt_translate_priest = "Priester";
+		pt_translate_rogue = "Schurke";
+		pt_translate_shaman = "Schamane";
+		pt_translate_warlock = "Hexenmeister";
+		pt_translate_warrior = "Krieger";
+
+		pt_localized_creature = "Kreatur";
+		pt_localized_notspecified = "Nicht spezifiziert";
 	end
 
 	if (GetLocale() == "enUS") then
-		Perl_Target_ClassPosRight = {
-			["Druid"] = 0.75,
-			["Hunter"] = 0,
-			["Mage"] = 0.25,
-			["Paladin"] = 0,
-			["Priest"] = 0.5,
-			["Rogue"] = 0.5,
-			["Shaman"] = 0.25,
-			["Warlock"] = 0.75,
-			["Warrior"] = 0,
-		};
-		Perl_Target_ClassPosLeft = {
-			["Druid"] = 1,
-			["Hunter"] = 0.25,
-			["Mage"] = 0.5,
-			["Paladin"] = 0.25,
-			["Priest"] = 0.75,
-			["Rogue"] = 0.75,
-			["Shaman"] = 0.5,
-			["Warlock"] = 1,
-			["Warrior"] = 0.25,
-		};
-		Perl_Target_ClassPosTop = {
-			["Druid"] = 0,
-			["Hunter"] = 0.25,
-			["Mage"] = 0,
-			["Paladin"] = 0.5,
-			["Priest"] = 0.25,
-			["Rogue"] = 0,
-			["Shaman"] = 0.25,
-			["Warlock"] = 0.25,
-			["Warrior"] = 0,
-			
-		};
-		Perl_Target_ClassPosBottom = {
-			["Druid"] = 0.25,
-			["Hunter"] = 0.5,
-			["Mage"] = 0.25,
-			["Paladin"] = 0.75,
-			["Priest"] = 0.5,
-			["Rogue"] = 0.25,
-			["Shaman"] = 0.5,
-			["Warlock"] = 0.5,
-			["Warrior"] = 0.25,
-		};
+		pt_translate_druid = "Druid";
+		pt_translate_hunter = "Hunter";
+		pt_translate_mage = "Mage";
+		pt_translate_paladin = "Paladin";
+		pt_translate_priest = "Priest";
+		pt_translate_rogue = "Rogue";
+		pt_translate_shaman = "Shaman";
+		pt_translate_warlock = "Warlock";
+		pt_translate_warrior = "Warrior";
+
+		pt_localized_creature = "Creature";
+		pt_localized_notspecified = "Not specified";
 	end
 
 	if (GetLocale() == "frFR") then
-		Perl_Target_ClassPosRight = {
-			["Druide"] = 0.75,
-			["Chasseur"] = 0,
-			["Mage"] = 0.25,
-			["Paladin"] = 0,
-			["Prêtre"] = 0.5,
-			["Voleur"] = 0.5,
-			["Chaman"] = 0.25,
-			["Démoniste"] = 0.75,
-			["Guerrier"] = 0,
-		};
-		Perl_Target_ClassPosLeft = {
-			["Druide"] = 1,
-			["Chasseur"] = 0.25,
-			["Mage"] = 0.5,
-			["Paladin"] = 0.25,
-			["Prêtre"] = 0.75,
-			["Voleur"] = 0.75,
-			["Chaman"] = 0.5,
-			["Démoniste"] = 1,
-			["Guerrier"] = 0.25,
-		};
-		Perl_Target_ClassPosTop = {
-			["Druide"] = 0,
-			["Chasseur"] = 0.25,
-			["Mage"] = 0,
-			["Paladin"] = 0.5,
-			["Prêtre"] = 0.25,
-			["Voleur"] = 0,
-			["Chaman"] = 0.25,
-			["Démoniste"] = 0.25,
-			["Guerrier"] = 0,
-			
-		};
-		Perl_Target_ClassPosBottom = {
-			["Druide"] = 0.25,
-			["Chasseur"] = 0.5,
-			["Mage"] = 0.25,
-			["Paladin"] = 0.75,
-			["Prêtre"] = 0.5,
-			["Voleur"] = 0.25,
-			["Chaman"] = 0.5,
-			["Démoniste"] = 0.5,
-			["Guerrier"] = 0.25,
-		};
+		pt_translate_druid = "Druide";
+		pt_translate_hunter = "Chasseur";
+		pt_translate_mage = "Mage";
+		pt_translate_paladin = "Paladin";
+		pt_translate_priest = "Pr\195\170tre";
+		pt_translate_rogue = "Voleur";
+		pt_translate_shaman = "Chaman";
+		pt_translate_warlock = "D\195\169moniste";
+		pt_translate_warrior = "Guerrier";
+
+		pt_localized_creature = "Cr\195\169ature";
+		pt_localized_notspecified = "Non indiqu\195\169";
 	end
+
+	Perl_Target_ClassPosRight = {
+		[pt_translate_druid] = 0.75,
+		[pt_translate_hunter] = 0,
+		[pt_translate_mage] = 0.25,
+		[pt_translate_paladin] = 0,
+		[pt_translate_priest] = 0.5,
+		[pt_translate_rogue] = 0.5,
+		[pt_translate_shaman] = 0.25,
+		[pt_translate_warlock] = 0.75,
+		[pt_translate_warrior] = 0,
+	};
+	Perl_Target_ClassPosLeft = {
+		[pt_translate_druid] = 1,
+		[pt_translate_hunter] = 0.25,
+		[pt_translate_mage] = 0.5,
+		[pt_translate_paladin] = 0.25,
+		[pt_translate_priest] = 0.75,
+		[pt_translate_rogue] = 0.75,
+		[pt_translate_shaman] = 0.5,
+		[pt_translate_warlock] = 1,
+		[pt_translate_warrior] = 0.25,
+	};
+	Perl_Target_ClassPosTop = {
+		[pt_translate_druid] = 0,
+		[pt_translate_hunter] = 0.25,
+		[pt_translate_mage] = 0,
+		[pt_translate_paladin] = 0.5,
+		[pt_translate_priest] = 0.25,
+		[pt_translate_rogue] = 0,
+		[pt_translate_shaman] = 0.25,
+		[pt_translate_warlock] = 0.25,
+		[pt_translate_warrior] = 0,
+		
+	};
+	Perl_Target_ClassPosBottom = {
+		[pt_translate_druid] = 0.25,
+		[pt_translate_hunter] = 0.5,
+		[pt_translate_mage] = 0.25,
+		[pt_translate_paladin] = 0.75,
+		[pt_translate_priest] = 0.5,
+		[pt_translate_rogue] = 0.25,
+		[pt_translate_shaman] = 0.5,
+		[pt_translate_warlock] = 0.5,
+		[pt_translate_warrior] = 0.25,
+	};
 end
 
 
@@ -1328,8 +1288,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.24",
-			releaseDate = "December 7, 2005",
+			version = "v0.25",
+			releaseDate = "December 9, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

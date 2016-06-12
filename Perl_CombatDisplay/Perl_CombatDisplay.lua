@@ -474,10 +474,39 @@ end
 -------------------
 -- Click Handler --
 -------------------
+function Perl_CombatDisplayDropDown_OnLoad()
+	UIDropDownMenu_Initialize(this, Perl_CombatDisplayDropDown_Initialize, "MENU");
+end
+
+function Perl_CombatDisplayDropDown_Initialize()
+	UnitPopup_ShowMenu(Perl_CombatDisplay_DropDown, "SELF", "player");
+end
+
 function Perl_CombatDisplay_OnMouseDown(button)
+	if (SpellIsTargeting() and button == "RightButton") then
+		SpellStopTargeting();
+		return;
+	end
+
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit("player");
+		elseif (CursorHasItem()) then
+			DropItemOnUnit("player");
+		else
+			TargetUnit("player");
+		end
+	else
+		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
+	end
+
 	if (button == "LeftButton" and locked == 0) then
 		Perl_CombatDisplay_Frame:StartMoving();
 	end
+
+	--if (button == "RightButton") then	-- and IsShiftKeyDown()
+	--	ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
+	--end
 end
 
 function Perl_CombatDisplay_OnMouseUp(button)
@@ -493,8 +522,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.24",
-			releaseDate = "December 7, 2005",
+			version = "v0.25",
+			releaseDate = "December 9, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

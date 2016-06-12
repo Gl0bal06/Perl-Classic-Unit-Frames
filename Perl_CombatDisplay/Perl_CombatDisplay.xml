@@ -7,6 +7,7 @@
 		<Size>
 			<AbsDimension x="211" y="40"/>
 		</Size>
+
 		<Anchors>
 			<Anchor point="BOTTOM">
 				<Offset>
@@ -14,7 +15,43 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
+
+		<!-- Script Events -->
+		<Scripts>
+			<OnLoad>
+				Perl_CombatDisplay_OnLoad();
+			</OnLoad>
+			<OnEvent>
+				Perl_CombatDisplay_OnEvent(event);
+			</OnEvent>
+			<OnMouseDown>
+				Perl_CombatDisplay_OnMouseDown(arg1);
+			</OnMouseDown>
+			<OnMouseUp>
+				Perl_CombatDisplay_OnMouseUp(arg1);
+			</OnMouseUp>
+		</Scripts>
+
 		<Frames>
+			<!-- Frame for the drop down menu. -->
+			<Frame name="Perl_CombatDisplay_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
+				<Size>
+					<AbsDimension x="10" y="10"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOP">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						Perl_CombatDisplayDropDown_OnLoad();
+					</OnLoad>
+				</Scripts>
+			</Frame>
+
 			<!-- Frame to display Mana/Energy/Rage/CPs. -->
 			<Frame name="Perl_CombatDisplay_ManaFrame">
 				<Size>
@@ -51,6 +88,14 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnMouseDown>
+								Perl_CombatDisplay_OnMouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_CombatDisplay_OnMouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
 						<BarTexture name="Perl_CombatDisplay_HealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="0.8" b="0"/>
 						<Layers>
@@ -95,6 +140,14 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnMouseDown>
+								Perl_CombatDisplay_OnMouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_CombatDisplay_OnMouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
 						<BarTexture name="Perl_CombatDisplay_ManaBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="0" g="1" b="0"/>
 						<Layers>
@@ -139,6 +192,14 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
+						<Scripts>
+							<OnMouseDown>
+								Perl_CombatDisplay_OnMouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_CombatDisplay_OnMouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
 						<BarTexture name="Perl_CombatDisplay_CPBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
 						<BarColor r="1" g="0" b="0"/>
 						<Layers>
@@ -174,20 +235,5 @@
 			</Frame>
 		</Frames>
 
-		<!-- Script Events -->
-		<Scripts>
-			<OnLoad>
-				Perl_CombatDisplay_OnLoad();
-			</OnLoad>
-			<OnEvent>
-				Perl_CombatDisplay_OnEvent(event);
-			</OnEvent>
-			<OnMouseDown>
-				Perl_CombatDisplay_OnMouseDown(arg1);
-			</OnMouseDown>
-			<OnMouseUp>
-				Perl_CombatDisplay_OnMouseUp(arg1);
-			</OnMouseUp>
-		</Scripts>
 	</Frame>
 </Ui>

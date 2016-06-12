@@ -575,149 +575,97 @@ function Perl_Player_ManaHide()
 end
 
 function Perl_Player_Set_Localized_ClassIcons()
+	local pp_translate_druid;
+	local pp_translate_hunter;
+	local pp_translate_mage;
+	local pp_translate_paladin;
+	local pp_translate_priest;
+	local pp_translate_rogue;
+	local pp_translate_shaman;
+	local pp_translate_warlock;
+	local pp_translate_warrior;
+
 	if (GetLocale() == "deDE") then
-		Perl_Player_ClassPosRight = {
-			["Druide"] = 0.75,
-			["J\195\164ger"] = 0,
-			["Magier"] = 0.25,
-			["Paladin"] = 0,
-			["Priester"] = 0.5,
-			["Schurke"] = 0.5,
-			["Schamane"] = 0.25,
-			["Hexenmeister"] = 0.75,
-			["Krieger"] = 0,
-		};
-		Perl_Player_ClassPosLeft = {
-			["Druide"] = 1,
-			["J\195\164ger"] = 0.25,
-			["Magier"] = 0.5,
-			["Paladin"] = 0.25,
-			["Priester"] = 0.75,
-			["Schurke"] = 0.75,
-			["Schamane"] = 0.5,
-			["Hexenmeister"] = 1,
-			["Krieger"] = 0.25,
-		};
-		Perl_Player_ClassPosTop = {
-			["Druide"] = 0,
-			["J\195\164ger"] = 0.25,
-			["Magier"] = 0,
-			["Paladin"] = 0.5,
-			["Priester"] = 0.25,
-			["Schurke"] = 0,
-			["Schamane"] = 0.25,
-			["Hexenmeister"] = 0.25,
-			["Krieger"] = 0,
-			
-		};
-		Perl_Player_ClassPosBottom = {
-			["Druide"] = 0.25,
-			["J\195\164ger"] = 0.5,
-			["Magier"] = 0.25,
-			["Paladin"] = 0.75,
-			["Priester"] = 0.5,
-			["Schurke"] = 0.25,
-			["Schamane"] = 0.5,
-			["Hexenmeister"] = 0.5,
-			["Krieger"] = 0.25,
-		};
+		pp_translate_druid = "Druide";
+		pp_translate_hunter = "J\195\164ger";
+		pp_translate_mage = "Magier";
+		pp_translate_paladin = "Paladin";
+		pp_translate_priest = "Priester";
+		pp_translate_rogue = "Schurke";
+		pp_translate_shaman = "Schamane";
+		pp_translate_warlock = "Hexenmeister";
+		pp_translate_warrior = "Krieger";
 	end
 
 	if (GetLocale() == "enUS") then
-		Perl_Player_ClassPosRight = {
-			["Druid"] = 0.75,
-			["Hunter"] = 0,
-			["Mage"] = 0.25,
-			["Paladin"] = 0,
-			["Priest"] = 0.5,
-			["Rogue"] = 0.5,
-			["Shaman"] = 0.25,
-			["Warlock"] = 0.75,
-			["Warrior"] = 0,
-		};
-		Perl_Player_ClassPosLeft = {
-			["Druid"] = 1,
-			["Hunter"] = 0.25,
-			["Mage"] = 0.5,
-			["Paladin"] = 0.25,
-			["Priest"] = 0.75,
-			["Rogue"] = 0.75,
-			["Shaman"] = 0.5,
-			["Warlock"] = 1,
-			["Warrior"] = 0.25,
-		};
-		Perl_Player_ClassPosTop = {
-			["Druid"] = 0,
-			["Hunter"] = 0.25,
-			["Mage"] = 0,
-			["Paladin"] = 0.5,
-			["Priest"] = 0.25,
-			["Rogue"] = 0,
-			["Shaman"] = 0.25,
-			["Warlock"] = 0.25,
-			["Warrior"] = 0,
-			
-		};
-		Perl_Player_ClassPosBottom = {
-			["Druid"] = 0.25,
-			["Hunter"] = 0.5,
-			["Mage"] = 0.25,
-			["Paladin"] = 0.75,
-			["Priest"] = 0.5,
-			["Rogue"] = 0.25,
-			["Shaman"] = 0.5,
-			["Warlock"] = 0.5,
-			["Warrior"] = 0.25,
-		};
+		pp_translate_druid = "Druid";
+		pp_translate_hunter = "Hunter";
+		pp_translate_mage = "Mage";
+		pp_translate_paladin = "Paladin";
+		pp_translate_priest = "Priest";
+		pp_translate_rogue = "Rogue";
+		pp_translate_shaman = "Shaman";
+		pp_translate_warlock = "Warlock";
+		pp_translate_warrior = "Warrior";
 	end
 
 	if (GetLocale() == "frFR") then
-		Perl_Player_ClassPosRight = {
-			["Druide"] = 0.75,
-			["Chasseur"] = 0,
-			["Mage"] = 0.25,
-			["Paladin"] = 0,
-			["Prêtre"] = 0.5,
-			["Voleur"] = 0.5,
-			["Chaman"] = 0.25,
-			["Démoniste"] = 0.75,
-			["Guerrier"] = 0,
-		};
-		Perl_Player_ClassPosLeft = {
-			["Druide"] = 1,
-			["Chasseur"] = 0.25,
-			["Mage"] = 0.5,
-			["Paladin"] = 0.25,
-			["Prêtre"] = 0.75,
-			["Voleur"] = 0.75,
-			["Chaman"] = 0.5,
-			["Démoniste"] = 1,
-			["Guerrier"] = 0.25,
-		};
-		Perl_Player_ClassPosTop = {
-			["Druide"] = 0,
-			["Chasseur"] = 0.25,
-			["Mage"] = 0,
-			["Paladin"] = 0.5,
-			["Prêtre"] = 0.25,
-			["Voleur"] = 0,
-			["Chaman"] = 0.25,
-			["Démoniste"] = 0.25,
-			["Guerrier"] = 0,
-			
-		};
-		Perl_Player_ClassPosBottom = {
-			["Druide"] = 0.25,
-			["Chasseur"] = 0.5,
-			["Mage"] = 0.25,
-			["Paladin"] = 0.75,
-			["Prêtre"] = 0.5,
-			["Voleur"] = 0.25,
-			["Chaman"] = 0.5,
-			["Démoniste"] = 0.5,
-			["Guerrier"] = 0.25,
-		};
+		pp_translate_druid = "Druide";
+		pp_translate_hunter = "Chasseur";
+		pp_translate_mage = "Mage";
+		pp_translate_paladin = "Paladin";
+		pp_translate_priest = "Pr\195\170tre";
+		pp_translate_rogue = "Voleur";
+		pp_translate_shaman = "Chaman";
+		pp_translate_warlock = "D\195\169moniste";
+		pp_translate_warrior = "Guerrier";
 	end
+
+	Perl_Player_ClassPosRight = {
+		[pp_translate_druid] = 0.75,
+		[pp_translate_hunter] = 0,
+		[pp_translate_mage] = 0.25,
+		[pp_translate_paladin] = 0,
+		[pp_translate_priest] = 0.5,
+		[pp_translate_rogue] = 0.5,
+		[pp_translate_shaman] = 0.25,
+		[pp_translate_warlock] = 0.75,
+		[pp_translate_warrior] = 0,
+	};
+	Perl_Player_ClassPosLeft = {
+		[pp_translate_druid] = 1,
+		[pp_translate_hunter] = 0.25,
+		[pp_translate_mage] = 0.5,
+		[pp_translate_paladin] = 0.25,
+		[pp_translate_priest] = 0.75,
+		[pp_translate_rogue] = 0.75,
+		[pp_translate_shaman] = 0.5,
+		[pp_translate_warlock] = 1,
+		[pp_translate_warrior] = 0.25,
+	};
+	Perl_Player_ClassPosTop = {
+		[pp_translate_druid] = 0,
+		[pp_translate_hunter] = 0.25,
+		[pp_translate_mage] = 0,
+		[pp_translate_paladin] = 0.5,
+		[pp_translate_priest] = 0.25,
+		[pp_translate_rogue] = 0,
+		[pp_translate_shaman] = 0.25,
+		[pp_translate_warlock] = 0.25,
+		[pp_translate_warrior] = 0,
+		
+	};
+	Perl_Player_ClassPosBottom = {
+		[pp_translate_druid] = 0.25,
+		[pp_translate_hunter] = 0.5,
+		[pp_translate_mage] = 0.25,
+		[pp_translate_paladin] = 0.75,
+		[pp_translate_priest] = 0.5,
+		[pp_translate_rogue] = 0.25,
+		[pp_translate_shaman] = 0.5,
+		[pp_translate_warlock] = 0.5,
+		[pp_translate_warrior] = 0.25,
+	};
 end
 
 
@@ -1021,8 +969,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.24",
-			releaseDate = "December 7, 2005",
+			version = "v0.25",
+			releaseDate = "December 9, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

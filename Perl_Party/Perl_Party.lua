@@ -36,6 +36,7 @@ function Perl_Party_OnLoad()
 	this:RegisterEvent("PARTY_MEMBER_ENABLE");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("RAID_ROSTER_UPDATE");
 	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_ENERGY");
@@ -109,14 +110,17 @@ function Perl_Party_OnEvent(event)
 			Perl_Party_Update_Level();		-- Set the player's level
 		end
 		return;
+	elseif (event == "PARTY_MEMBERS_CHANGED") then	-- or (event == "RAID_ROSTER_UPDATE") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")
+		Perl_Party_MembersUpdate();			-- How many members are in the group and show the correct frames and do UpdateOnce things
+		return;
+	elseif (event == "RAID_ROSTER_UPDATE") then
+		Perl_Party_Check_Raid_Hidden();		-- Who is the master looter if any
+		return;
 	elseif (event == "PARTY_LEADER_CHANGED") then
 		Perl_Party_Update_Leader();			-- Who is the group leader
 		return;
 	elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
 		Perl_Party_Update_Loot_Method();		-- Who is the master looter if any
-		return;
-	elseif (event == "PARTY_MEMBERS_CHANGED") then	-- or (event == "RAID_ROSTER_UPDATE") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")
-		Perl_Party_MembersUpdate();			-- How many members are in the group and show the correct frames and do UpdateOnce things
 		return;
 	elseif (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
 		Perl_Party_Initialize();
@@ -574,6 +578,15 @@ function Perl_Party_Update_Loot_Method()
 	end
 end
 
+function Perl_Party_Check_Raid_Hidden()
+	if (partyhidden == 2) then
+		Perl_Party_MemberFrame1:Hide();
+		Perl_Party_MemberFrame2:Hide();
+		Perl_Party_MemberFrame3:Hide();
+		Perl_Party_MemberFrame4:Hide();
+	end
+end
+
 function Perl_Party_Set_Text_Positions()
 	if (compactmode == 0) then
 		for partynum=1,4 do
@@ -687,149 +700,97 @@ function Perl_Party_Pet_HealthHide()
 end
 
 function Perl_Party_Set_Localized_ClassIcons()
+	local ppty_translate_druid;
+	local ppty_translate_hunter;
+	local ppty_translate_mage;
+	local ppty_translate_paladin;
+	local ppty_translate_priest;
+	local ppty_translate_rogue;
+	local ppty_translate_shaman;
+	local ppty_translate_warlock;
+	local ppty_translate_warrior;
+
 	if (GetLocale() == "deDE") then
-		Perl_Party_ClassPosRight = {
-			["Druide"] = 0.75,
-			["J\195\164ger"] = 0,
-			["Magier"] = 0.25,
-			["Paladin"] = 0,
-			["Priester"] = 0.5,
-			["Schurke"] = 0.5,
-			["Schamane"] = 0.25,
-			["Hexenmeister"] = 0.75,
-			["Krieger"] = 0,
-		};
-		Perl_Party_ClassPosLeft = {
-			["Druide"] = 1,
-			["J\195\164ger"] = 0.25,
-			["Magier"] = 0.5,
-			["Paladin"] = 0.25,
-			["Priester"] = 0.75,
-			["Schurke"] = 0.75,
-			["Schamane"] = 0.5,
-			["Hexenmeister"] = 1,
-			["Krieger"] = 0.25,
-		};
-		Perl_Party_ClassPosTop = {
-			["Druide"] = 0,
-			["J\195\164ger"] = 0.25,
-			["Magier"] = 0,
-			["Paladin"] = 0.5,
-			["Priester"] = 0.25,
-			["Schurke"] = 0,
-			["Schamane"] = 0.25,
-			["Hexenmeister"] = 0.25,
-			["Krieger"] = 0,
-			
-		};
-		Perl_Party_ClassPosBottom = {
-			["Druide"] = 0.25,
-			["J\195\164ger"] = 0.5,
-			["Magier"] = 0.25,
-			["Paladin"] = 0.75,
-			["Priester"] = 0.5,
-			["Schurke"] = 0.25,
-			["Schamane"] = 0.5,
-			["Hexenmeister"] = 0.5,
-			["Krieger"] = 0.25,
-		};
+		ppty_translate_druid = "Druide";
+		ppty_translate_hunter = "J\195\164ger";
+		ppty_translate_mage = "Magier";
+		ppty_translate_paladin = "Paladin";
+		ppty_translate_priest = "Priester";
+		ppty_translate_rogue = "Schurke";
+		ppty_translate_shaman = "Schamane";
+		ppty_translate_warlock = "Hexenmeister";
+		ppty_translate_warrior = "Krieger";
 	end
 
 	if (GetLocale() == "enUS") then
-		Perl_Party_ClassPosRight = {
-			["Druid"] = 0.75,
-			["Hunter"] = 0,
-			["Mage"] = 0.25,
-			["Paladin"] = 0,
-			["Priest"] = 0.5,
-			["Rogue"] = 0.5,
-			["Shaman"] = 0.25,
-			["Warlock"] = 0.75,
-			["Warrior"] = 0,
-		};
-		Perl_Party_ClassPosLeft = {
-			["Druid"] = 1,
-			["Hunter"] = 0.25,
-			["Mage"] = 0.5,
-			["Paladin"] = 0.25,
-			["Priest"] = 0.75,
-			["Rogue"] = 0.75,
-			["Shaman"] = 0.5,
-			["Warlock"] = 1,
-			["Warrior"] = 0.25,
-		};
-		Perl_Party_ClassPosTop = {
-			["Druid"] = 0,
-			["Hunter"] = 0.25,
-			["Mage"] = 0,
-			["Paladin"] = 0.5,
-			["Priest"] = 0.25,
-			["Rogue"] = 0,
-			["Shaman"] = 0.25,
-			["Warlock"] = 0.25,
-			["Warrior"] = 0,
-			
-		};
-		Perl_Party_ClassPosBottom = {
-			["Druid"] = 0.25,
-			["Hunter"] = 0.5,
-			["Mage"] = 0.25,
-			["Paladin"] = 0.75,
-			["Priest"] = 0.5,
-			["Rogue"] = 0.25,
-			["Shaman"] = 0.5,
-			["Warlock"] = 0.5,
-			["Warrior"] = 0.25,
-		};
+		ppty_translate_druid = "Druid";
+		ppty_translate_hunter = "Hunter";
+		ppty_translate_mage = "Mage";
+		ppty_translate_paladin = "Paladin";
+		ppty_translate_priest = "Priest";
+		ppty_translate_rogue = "Rogue";
+		ppty_translate_shaman = "Shaman";
+		ppty_translate_warlock = "Warlock";
+		ppty_translate_warrior = "Warrior";
 	end
 
 	if (GetLocale() == "frFR") then
-		Perl_Party_ClassPosRight = {
-			["Druide"] = 0.75,
-			["Chasseur"] = 0,
-			["Mage"] = 0.25,
-			["Paladin"] = 0,
-			["Prêtre"] = 0.5,
-			["Voleur"] = 0.5,
-			["Chaman"] = 0.25,
-			["Démoniste"] = 0.75,
-			["Guerrier"] = 0,
-		};
-		Perl_Party_ClassPosLeft = {
-			["Druide"] = 1,
-			["Chasseur"] = 0.25,
-			["Mage"] = 0.5,
-			["Paladin"] = 0.25,
-			["Prêtre"] = 0.75,
-			["Voleur"] = 0.75,
-			["Chaman"] = 0.5,
-			["Démoniste"] = 1,
-			["Guerrier"] = 0.25,
-		};
-		Perl_Party_ClassPosTop = {
-			["Druide"] = 0,
-			["Chasseur"] = 0.25,
-			["Mage"] = 0,
-			["Paladin"] = 0.5,
-			["Prêtre"] = 0.25,
-			["Voleur"] = 0,
-			["Chaman"] = 0.25,
-			["Démoniste"] = 0.25,
-			["Guerrier"] = 0,
-			
-		};
-		Perl_Party_ClassPosBottom = {
-			["Druide"] = 0.25,
-			["Chasseur"] = 0.5,
-			["Mage"] = 0.25,
-			["Paladin"] = 0.75,
-			["Prêtre"] = 0.5,
-			["Voleur"] = 0.25,
-			["Chaman"] = 0.5,
-			["Démoniste"] = 0.5,
-			["Guerrier"] = 0.25,
-		};
+		ppty_translate_druid = "Druide";
+		ppty_translate_hunter = "Chasseur";
+		ppty_translate_mage = "Mage";
+		ppty_translate_paladin = "Paladin";
+		ppty_translate_priest = "Pr\195\170tre";
+		ppty_translate_rogue = "Voleur";
+		ppty_translate_shaman = "Chaman";
+		ppty_translate_warlock = "D\195\169moniste";
+		ppty_translate_warrior = "Guerrier";
 	end
+
+	Perl_Party_ClassPosRight = {
+		[ppty_translate_druid] = 0.75,
+		[ppty_translate_hunter] = 0,
+		[ppty_translate_mage] = 0.25,
+		[ppty_translate_paladin] = 0,
+		[ppty_translate_priest] = 0.5,
+		[ppty_translate_rogue] = 0.5,
+		[ppty_translate_shaman] = 0.25,
+		[ppty_translate_warlock] = 0.75,
+		[ppty_translate_warrior] = 0,
+	};
+	Perl_Party_ClassPosLeft = {
+		[ppty_translate_druid] = 1,
+		[ppty_translate_hunter] = 0.25,
+		[ppty_translate_mage] = 0.5,
+		[ppty_translate_paladin] = 0.25,
+		[ppty_translate_priest] = 0.75,
+		[ppty_translate_rogue] = 0.75,
+		[ppty_translate_shaman] = 0.5,
+		[ppty_translate_warlock] = 1,
+		[ppty_translate_warrior] = 0.25,
+	};
+	Perl_Party_ClassPosTop = {
+		[ppty_translate_druid] = 0,
+		[ppty_translate_hunter] = 0.25,
+		[ppty_translate_mage] = 0,
+		[ppty_translate_paladin] = 0.5,
+		[ppty_translate_priest] = 0.25,
+		[ppty_translate_rogue] = 0,
+		[ppty_translate_shaman] = 0.25,
+		[ppty_translate_warlock] = 0.25,
+		[ppty_translate_warrior] = 0,
+		
+	};
+	Perl_Party_ClassPosBottom = {
+		[ppty_translate_druid] = 0.25,
+		[ppty_translate_hunter] = 0.5,
+		[ppty_translate_mage] = 0.25,
+		[ppty_translate_paladin] = 0.75,
+		[ppty_translate_priest] = 0.5,
+		[ppty_translate_rogue] = 0.25,
+		[ppty_translate_shaman] = 0.5,
+		[ppty_translate_warlock] = 0.5,
+		[ppty_translate_warrior] = 0.25,
+	};
 end
 
 
@@ -1385,8 +1346,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.24",
-			releaseDate = "December 7, 2005",
+			version = "v0.25",
+			releaseDate = "December 9, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

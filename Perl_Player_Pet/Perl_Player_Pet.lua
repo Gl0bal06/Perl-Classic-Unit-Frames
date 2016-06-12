@@ -641,8 +641,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.24",
-			releaseDate = "December 7, 2005",
+			version = "v0.25",
+			releaseDate = "December 9, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
