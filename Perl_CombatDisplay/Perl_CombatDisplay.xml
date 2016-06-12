@@ -85,16 +85,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_CombatDisplay_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_CombatDisplay_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_CombatDisplay_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_CombatDisplay_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_CombatDisplay_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 
@@ -446,16 +447,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_CombatDisplay_Target_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_CombatDisplay_Target_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_CombatDisplay_Target_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_CombatDisplay_Target_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_CombatDisplay_Target_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 

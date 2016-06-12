@@ -117,8 +117,14 @@ function Perl_Config_Player_Set_Values()
 		Perl_Config_Player_Frame_CheckButton19:SetChecked(nil);
 	end
 
-	Perl_Config_Player_Frame_Slider1Low:SetText("Small");
-	Perl_Config_Player_Frame_Slider1High:SetText("Big");
+	if (vartable["showpvprank"] == 1) then
+		Perl_Config_Player_Frame_CheckButton20:SetChecked(1);
+	else
+		Perl_Config_Player_Frame_CheckButton20:SetChecked(nil);
+	end
+
+	Perl_Config_Player_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
+	Perl_Config_Player_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Player_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
 
 	if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
@@ -248,6 +254,14 @@ function Perl_Config_Player_Hide_Class_Level_Frame_Update()
 		Perl_Player_Set_Hide_Class_Level_Frame(1);
 	else
 		Perl_Player_Set_Hide_Class_Level_Frame(0);
+	end
+end
+
+function Perl_Config_Player_PvP_Rank_Icon_Update()
+	if (Perl_Config_Player_Frame_CheckButton20:GetChecked() == 1) then
+		Perl_Player_Set_PvP_Rank_Icon(1);
+	else
+		Perl_Player_Set_PvP_Rank_Icon(0);
 	end
 end
 

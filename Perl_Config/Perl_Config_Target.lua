@@ -152,8 +152,8 @@ function Perl_Config_Target_Set_Values()
 		Perl_Config_Target_Frame_CheckButton24:SetChecked(nil);
 	end
 
-	Perl_Config_Target_Frame_Slider1Low:SetText("Small");
-	Perl_Config_Target_Frame_Slider1High:SetText("Big");
+	Perl_Config_Target_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
+	Perl_Config_Target_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
 
 	if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
@@ -166,8 +166,8 @@ function Perl_Config_Target_Set_Values()
 	Perl_Config_Target_Frame_Slider4High:SetText("100");
 	Perl_Config_Target_Frame_Slider4:SetValue(vartable["transparency"]*100);
 
-	Perl_Config_Target_Frame_Slider5Low:SetText("Small");
-	Perl_Config_Target_Frame_Slider5High:SetText("Big");
+	Perl_Config_Target_Frame_Slider5Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
+	Perl_Config_Target_Frame_Slider5High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Target_Frame_Slider5:SetValue(floor(vartable["buffdebuffscale"]*100+0.5));
 end
 

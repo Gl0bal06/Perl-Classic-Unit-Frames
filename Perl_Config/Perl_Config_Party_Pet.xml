@@ -28,7 +28,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="Party Pet">
+				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_PARTYPET">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="Perl_Config_Party_Pet_Header">
 							<Offset>
@@ -38,7 +38,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Buff_Location_Text" inherits="GameFontNormal" text="Buff Location">
+				<FontString name="$parent_Buff_Location_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_BUFF_LOCATION">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -48,7 +48,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Debuff_Location_Text" inherits="GameFontNormal" text="Debuff Location">
+				<FontString name="$parent_Debuff_Location_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_DEBUFF_LOCATION">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -58,7 +58,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Buff_Size_Text" inherits="GameFontNormal" text="Buff Size (12 is default)">
+				<FontString name="$parent_Buff_Size_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_BUFF_SIZE_SMALL">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -68,7 +68,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Debuff_Size_Text" inherits="GameFontNormal" text="Debuff Size (12 is default)">
+				<FontString name="$parent_Debuff_Size_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_DEBUFF_SIZE_SMALL">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -78,7 +78,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Buff_Text" inherits="GameFontNormal" text="# of Buffs">
+				<FontString name="$parent_Buff_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_BUFF_NUMBER">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -88,7 +88,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Debuff_Text" inherits="GameFontNormal" text="# of Debuffs">
+				<FontString name="$parent_Debuff_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_DEBUFF_NUMBER">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -98,7 +98,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="Misc">
+				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_MISC">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -108,7 +108,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="Transparency">
+				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_TRANSPARENCY">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -118,7 +118,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="Scaling">
+				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_SCALING">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -163,7 +163,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Set To Current UI Scale");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Pet_Set_Scale();
@@ -304,7 +304,7 @@
 				</Scripts>
 			</Slider>
 
-			<Button name="$parent_Button1" inherits="UIPanelButtonTemplate" text="Reset Frame Positions">
+			<Button name="$parent_Button1" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_RESET_FRAMES">
 				<Size>
 					<AbsDimension x="170" y="22"/>
 				</Size>
@@ -318,7 +318,7 @@
 				<Scripts>
 					<OnClick>
 						Perl_Party_Pet_Allign();
-						DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic Unit Frames: Party_Pet Frame Positions have been reset.");
+						DEFAULT_CHAT_FRAME:AddMessage(PERL_LOCALIZED_CONFIG_PARTYPET_RESET_FRAMES_OUTPUT);
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -336,7 +336,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Display Portrait Frames");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PORTRAITS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Pet_Portrait_Update();
@@ -357,7 +357,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("3D Portrait Frames");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_THREED_PORTRAITS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Pet_3D_Portrait_Update();
@@ -378,7 +378,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Hidden In Raids");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDDEN_IN_RAID);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Pet_Hidden_Update();
@@ -399,7 +399,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Lock Party_Pet Frames");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYPET_LOCK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Pet_Lock_Update();

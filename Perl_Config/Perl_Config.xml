@@ -1,5 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
+	<Script file="localization.lua"/>
+	<Script file="localization.cn.lua"/>
+	<Script file="localization.de.lua"/>
+	<Script file="localization.fr.lua"/>
+	<Script file="localization.kr.lua"/>
+	<Script file="localization.tw.lua"/>
 	<Script file="Perl_Config.lua"/>
 
 
@@ -43,7 +49,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="Perl Config">
+				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_HEADER">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="Perl_Config_Header">
 							<Offset>
@@ -53,7 +59,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Title_Text" inherits="GameFontNormal" text="Perl Classic Unit Frames">
+				<FontString name="$parent_Title_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_NAME">
 					<Anchors>
 						<Anchor point="TOPLEFT">
 							<Offset>
@@ -63,7 +69,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Version_Text" inherits="GameFontNormal" text="Version 0.74">
+				<FontString name="$parent_Version_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_VERSION">
 					<Anchors>
 						<Anchor point="TOPRIGHT">
 							<Offset>
@@ -76,7 +82,7 @@
 		</Layers>
 
 		<Frames>
-			<Button name="Perl_Config_Close_Button" inherits="UIPanelButtonTemplate" text="Close">
+			<Button name="Perl_Config_Close_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_CLOSE">
 				<Size>
 					<AbsDimension x="80" y="22"/>
 				</Size>
@@ -109,7 +115,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_All_Button" inherits="UIPanelButtonTemplate" text="All">
+			<Button name="Perl_Config_All_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_ALL">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -127,7 +133,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_ArcaneBar_Button" inherits="UIPanelButtonTemplate" text="ArcaneBar">
+			<Button name="Perl_Config_ArcaneBar_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_ARCANEBAR">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -145,7 +151,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_CombatDisplay_Button" inherits="UIPanelButtonTemplate" text="CombatDisplay">
+			<Button name="Perl_Config_CombatDisplay_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_COMBATDISPLAY">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -163,7 +169,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Party_Button" inherits="UIPanelButtonTemplate" text="Party">
+			<Button name="Perl_Config_Party_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PARTY">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -181,7 +187,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Party_Pet_Button" inherits="UIPanelButtonTemplate" text="Party Pet">
+			<Button name="Perl_Config_Party_Pet_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PARTYPET">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -199,7 +205,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Player_Button" inherits="UIPanelButtonTemplate" text="Player">
+			<Button name="Perl_Config_Player_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYER">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -217,7 +223,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Player_Buff_Button" inherits="UIPanelButtonTemplate" text="Player Buff">
+			<Button name="Perl_Config_Player_Buff_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYERBUFF">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -235,7 +241,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Player_Pet_Button" inherits="UIPanelButtonTemplate" text="Player Pet">
+			<Button name="Perl_Config_Player_Pet_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYERPET">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -253,7 +259,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Raid_Button" inherits="UIPanelButtonTemplate" text="Raid">
+			<Button name="Perl_Config_Raid_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_RAID">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -271,7 +277,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Target_Button" inherits="UIPanelButtonTemplate" text="Target">
+			<Button name="Perl_Config_Target_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_TARGET">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -289,7 +295,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Target_Target_Button" inherits="UIPanelButtonTemplate" text="Target Target">
+			<Button name="Perl_Config_Target_Target_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_TARGETTARGET">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -335,7 +341,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="Not Installed">
+				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_NOTINSTALLED">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="Perl_Config_NotInstalled_Header">
 							<Offset>
@@ -345,7 +351,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString inherits="GameFontNormal" text="The requested mod is not installed or enabled.">
+				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_NOTINSTALLED_EXPLANATION">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="Perl_Config_NotInstalled_Header">
 							<Offset>
@@ -356,26 +362,6 @@
 				</FontString>
 			</Layer>
 		</Layers>
-
-		<Frames>
-			<Button name="Perl_Config_Close_Button" inherits="UIPanelButtonTemplate" text="Close">
-				<Size>
-					<AbsDimension x="80" y="22"/>
-				</Size>
-				<Anchors>
-					<Anchor point="BOTTOMRIGHT">
-						<Offset>
-							<AbsDimension x="-20" y="20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						Perl_Config_Toggle();
-					</OnClick>
-				</Scripts>
-			</Button>
-		</Frames>
 	</Frame>
 
 

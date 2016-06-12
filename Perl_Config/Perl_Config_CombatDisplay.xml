@@ -28,7 +28,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="CombatDisplay">
+				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_COMBATDISPLAY">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="Perl_Config_CombatDisplay_Header">
 							<Offset>
@@ -38,7 +38,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Display_Mode_Text" inherits="GameFontNormal" text="Display Mode">
+				<FontString name="$parent_Display_Mode_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_DISPLAY_MODE">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -48,7 +48,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Persist_Modes_Text" inherits="GameFontNormal" text="Persist Modes">
+				<FontString name="$parent_Persist_Modes_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_COMBATDISPLAY_PERSIST_MODES">
 					<Anchors>	
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -58,7 +58,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="Misc">
+				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_MISC">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -78,7 +78,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Target_Text" inherits="GameFontNormal" text="Target Settings">
+				<FontString name="$parent_Target_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_COMBATDISPLAY_TARGET_SETTINGS">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -88,7 +88,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="Transparency">
+				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_TRANSPARENCY">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -98,7 +98,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="Scaling">
+				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_SCALING">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -124,7 +124,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Always");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALWAYS_SHOWN);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Frame_CheckButton2:SetChecked(nil);	<!-- We need to uncheck Button 2 -->
@@ -148,7 +148,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("w/ Auto Attack");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_AUTOATTACK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(nil);	<!-- We need to uncheck Button 1 -->
@@ -172,7 +172,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("On Agro");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_ONAGRO);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(nil);	<!-- We need to uncheck Button 1 -->
@@ -196,7 +196,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Never");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALWAYS_HIDDEN);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(nil);	<!-- We need to uncheck Button 1 -->
@@ -220,7 +220,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Health Persistance");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_HEALTH_PERSIST);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Health_Persistance_Update();
@@ -241,7 +241,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Mana Persistance");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_MANA_PERSIST);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Mana_Persistance_Update();
@@ -262,7 +262,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Display Pet Bars");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PET_SUPPORT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_PetBars_Update();
@@ -283,7 +283,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Display Druid Bar");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_DRUIDBAR);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_DruidBar_Update();
@@ -304,7 +304,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Menu on Right Click");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_MENU);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Right_Click_Update();
@@ -325,7 +325,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Lock CombatDisplay Frame");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_LOCK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Lock_Update();
@@ -365,7 +365,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Set To Current UI Scale");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Set_Scale();
@@ -405,7 +405,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Enable CombatDisplay Target Frame");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_ENABLE_TARGET);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Target_Update();
@@ -426,7 +426,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("MobHealth Support");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_MOBHEALTH);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_MobHealth_Update();
@@ -447,7 +447,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("FiveSec Support");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_FIVESEC);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_FiveSec_Update();

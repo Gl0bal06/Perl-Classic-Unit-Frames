@@ -134,16 +134,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Player_Pet_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_Pet_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_Pet_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_Pet_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_Pet_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 				</Frames>
@@ -204,16 +205,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Player_Pet_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_Pet_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_Pet_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_Pet_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_Pet_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 					<PlayerModel name="$parent_PetModel" hidden="true">
@@ -359,16 +361,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Player_Pet_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_Pet_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_Pet_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_Pet_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_Pet_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 				</Frames>
@@ -413,16 +416,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Player_Pet_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_Pet_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_Pet_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_Pet_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_Pet_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 

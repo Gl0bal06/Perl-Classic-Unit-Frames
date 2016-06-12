@@ -28,7 +28,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="Party">
+				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_PARTY">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="Perl_Config_Party_Header">
 							<Offset>
@@ -38,7 +38,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Space_Text" inherits="GameFontNormal" text="Spacing (80 is default)">
+				<FontString name="$parent_Space_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_PARTY_SPACING">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -48,7 +48,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Display_Mode_Text" inherits="GameFontNormal" text="Display Mode">
+				<FontString name="$parent_Display_Mode_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_DISPLAY_MODE">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -58,7 +58,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="Misc">
+				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_MISC">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -68,7 +68,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="Transparency">
+				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_TRANSPARENCY">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -78,7 +78,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Buff_Location_Text" inherits="GameFontNormal" text="Buff Location">
+				<FontString name="$parent_Buff_Location_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_BUFF_LOCATION">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -88,7 +88,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Debuff_Location_Text" inherits="GameFontNormal" text="Debuff Location">
+				<FontString name="$parent_Debuff_Location_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_DEBUFF_LOCATION">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -98,7 +98,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Buff_Size_Text" inherits="GameFontNormal" text="Buff Size (16 is default)">
+				<FontString name="$parent_Buff_Size_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_BUFF_SIZE_LARGE">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -108,7 +108,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Debuff_Size_Text" inherits="GameFontNormal" text="Debuff Size (16 is default)">
+				<FontString name="$parent_Debuff_Size_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_DEBUFF_SIZE_LARGE">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -118,7 +118,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Buff_Text" inherits="GameFontNormal" text="# of Buffs">
+				<FontString name="$parent_Buff_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_BUFF_NUMBER">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -128,7 +128,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Debuff_Text" inherits="GameFontNormal" text="# of Debuffs">
+				<FontString name="$parent_Debuff_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_DEBUFF_NUMBER">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -138,7 +138,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="Scaling">
+				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_SCALING">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -164,7 +164,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Always Shown");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALWAYS_SHOWN);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
@@ -187,7 +187,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Hidden In Raids");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDDEN_IN_RAID);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -210,7 +210,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Always Hidden");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALWAYS_HIDDEN);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -233,7 +233,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Vertical Party Frames");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_VERTICAL_FRAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_VerticalAlign_Update();
@@ -254,7 +254,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Hide Class Icon Frame");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDE_CLASSICON_FRAME);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Hide_Class_Level_Frame_Update();
@@ -275,7 +275,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Compact Mode");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMPACT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Compact_Update();
@@ -296,7 +296,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Display Percents");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_DISPLAY_PERCENTS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Compact_Percent_Update();
@@ -317,7 +317,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Short Bars");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SHORT_BARS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Short_Bars_Update();
@@ -338,7 +338,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Healer Mode");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HEALER_MODE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Healer_Update();
@@ -359,7 +359,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Party Pets");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PET_SUPPORT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Pets_Update();
@@ -380,7 +380,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Display Portrait Frames");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PORTRAITS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Portrait_Update();
@@ -401,7 +401,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("3D Portrait Frame");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_THREED_PORTRAITS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_3D_Portrait_Update();
@@ -422,7 +422,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Display F Keys");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTY_FKEYS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_FKeys_Update();
@@ -443,7 +443,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Class Buffs/Debuffs");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFFDEBUFF);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Class_Buffs_Update();
@@ -464,7 +464,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Class Colored Names");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Class_Colored_Names_Update();
@@ -485,7 +485,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Lock Party Frames");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTY_LOCK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Lock_Update();
@@ -525,7 +525,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Set To Current UI Scale");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Set_Scale();

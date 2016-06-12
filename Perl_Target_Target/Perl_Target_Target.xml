@@ -173,6 +173,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_Tip();
@@ -184,12 +185,12 @@
 							<OnClick>
 								Perl_Target_Target_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Target_Target_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Target_Target_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Target_Target_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Target_Target_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 				</Frames>
@@ -260,16 +261,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Target_Target_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Target_Target_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Target_Target_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Target_Target_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Target_Target_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 
@@ -330,6 +332,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_HealthShow();
@@ -340,12 +343,12 @@
 							<OnClick>
 								Perl_Target_Target_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Target_Target_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Target_Target_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Target_Target_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Target_Target_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 
@@ -406,6 +409,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_ManaShow();
@@ -416,12 +420,12 @@
 							<OnClick>
 								Perl_Target_Target_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Target_Target_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Target_Target_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Target_Target_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Target_Target_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 				</Frames>
@@ -826,6 +830,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_Target_Tip();
@@ -837,12 +842,12 @@
 							<OnClick>
 								Perl_Target_Target_Target_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Target_Target_Target_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Target_Target_Target_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Target_Target_Target_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Target_Target_Target_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 				</Frames>
@@ -913,16 +918,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Target_Target_Target_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Target_Target_Target_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Target_Target_Target_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Target_Target_Target_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Target_Target_Target_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 
@@ -983,6 +989,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_Target_HealthShow();
@@ -993,12 +1000,12 @@
 							<OnClick>
 								Perl_Target_Target_Target_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Target_Target_Target_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Target_Target_Target_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Target_Target_Target_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Target_Target_Target_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 
@@ -1059,6 +1066,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_Target_ManaShow();
@@ -1069,12 +1077,12 @@
 							<OnClick>
 								Perl_Target_Target_Target_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Target_Target_Target_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Target_Target_Target_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Target_Target_Target_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Target_Target_Target_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 				</Frames>
@@ -1419,7 +1427,7 @@
 		</Frames>
 	</Frame>
 
-	<FontString name="Perl_Target_Target_Font" font="Fonts\ARIALN.TTF" outline="NORMAL" virtual="true">
+	<FontString name="Perl_Target_Target_Font" font="ZoneTextFont" virtual="true">
 		<FontHeight>
 			<AbsValue val="30"/>
 		</FontHeight>

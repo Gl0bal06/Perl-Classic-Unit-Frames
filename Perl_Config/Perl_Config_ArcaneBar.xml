@@ -28,7 +28,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="ArcaneBar">
+				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_ARCANEBAR">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="Perl_Config_ArcaneBar_Header">
 							<Offset>
@@ -38,7 +38,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="Misc">
+				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_MISC">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -48,7 +48,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="Transparency">
+				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_TRANSPARENCY">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -74,7 +74,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Enable ArcaneBar");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_ENABLE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Enabled_Update();
@@ -95,7 +95,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Display Cast Timer");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_DISPLAY_TIMER);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Show_Timer_Update();
@@ -116,7 +116,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Hide the Blizzard Casting Bar");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_HIDE_BLIZZARD);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Hide_Original_Update();

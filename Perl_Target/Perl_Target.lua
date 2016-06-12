@@ -36,7 +36,7 @@ local classcolorednames = 0;	-- names are colored based on pvp status by default
 local Initialized = nil;	-- waiting to be initialized
 
 -- Local variables to save memory
-local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, localizedclass, creatureType, r, g, b;
+local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, localizedclass, creatureType, r, g, b, namelengthrestrictor;
 
 -- Variables for position of the class icon texture.
 local Perl_Target_ClassPosRight = {};
@@ -75,6 +75,7 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("UNIT_MAXHEALTH");
 	this:RegisterEvent("UNIT_MAXMANA");
 	this:RegisterEvent("UNIT_MAXRAGE");
+	this:RegisterEvent("UNIT_NAME_UPDATE");
 	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_FACTION");
@@ -140,6 +141,11 @@ function Perl_Target_OnEvent(event)
 	elseif (event == "UNIT_SPELLMISS") then
 		if (arg1 == "target") then
 			CombatFeedback_OnSpellMissEvent(arg2);
+		end
+		return;
+	elseif (event == "UNIT_NAME_UPDATE") then
+		if (arg1 == "target") then
+			Perl_Target_Update_Name();
 		end
 		return;
 	elseif (event == "UNIT_FACTION" or event == "UNIT_PVP_UPDATE") then
@@ -321,45 +327,7 @@ function Perl_Target_Update_Once()
 		Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
 		Perl_Target_Buff_UpdateAll();		-- Update the buffs
 		Perl_Target_UpdateRaidTargetIcon();	-- Display the raid target icon if needed
-
-		-- Begin: Set the target's name
-		targetname = UnitName("target");
-		if (framestyle == 1) then
-			if (strlen(targetname) > 19) then
-				targetname = strsub(targetname, 1, 18).."...";
-			end
-		elseif (framestyle == 2) then
-			if (compactmode == 0) then
-				if (strlen(targetname) > 19) then
-					targetname = strsub(targetname, 1, 18).."...";
-				end
-			else
-				if (compactpercent == 0) then
-					if (shortbars == 0) then
-						if (strlen(targetname) > 11) then
-							targetname = strsub(targetname, 1, 10).."...";
-						end
-					else
-						if (strlen(targetname) > 6) then
-							targetname = strsub(targetname, 1, 5).."...";
-						end
-					end
-				else
-					if (shortbars == 0) then
-						if (strlen(targetname) > 15) then
-							targetname = strsub(targetname, 1, 14).."...";
-						end
-					else
-						if (strlen(targetname) > 13) then
-							targetname = strsub(targetname, 1, 12).."...";
-						end
-					end
-				end
-			end
-		end
-		Perl_Target_NameBarText:SetText(targetname);
-		-- End: Set the target's name
-
+		Perl_Target_Update_Name();		-- Update the name
 		Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
 
 		-- Begin: Draw the class icon?
@@ -840,6 +808,62 @@ function Perl_Target_Update_PvP_Status_Icon()
 	end
 end
 
+function Perl_Target_Update_Name()
+	targetname = UnitName("target");
+	namelengthrestrictor = 0;
+
+	if (framestyle == 1) then
+		namelengthrestrictor = 16;
+	elseif (framestyle == 2) then
+		if (compactmode == 0) then
+			namelengthrestrictor = 18;
+		else
+			if (compactpercent == 0) then
+				if (shortbars == 0) then
+					namelengthrestrictor = 8;
+				else
+					namelengthrestrictor = 2;
+				end
+			else
+				if (shortbars == 0) then
+					namelengthrestrictor = 13;
+				else
+					namelengthrestrictor = 9;
+				end
+			end
+		end
+	end
+
+	if (UnitIsPlayer("target")) then
+		if (showpvprank == 0) then
+			if (showpvpicon == 1) then
+				namelengthrestrictor = namelengthrestrictor + 2;
+			else
+				namelengthrestrictor = namelengthrestrictor + 4;
+			end
+		end
+		if (showclassicon == 1) then
+			Perl_Target_NameBarText:SetPoint("LEFT", "Perl_Target_ClassTexture", "RIGHT", 5, 0);
+		else
+			namelengthrestrictor = namelengthrestrictor + 3;
+			Perl_Target_NameBarText:SetPoint("LEFT", "Perl_Target_ClassTexture", "RIGHT", -10, 0);
+		end
+	else
+		if (UnitIsPVP("target") and showpvpicon == 1) then
+			namelengthrestrictor = namelengthrestrictor + 4;
+		else
+			namelengthrestrictor = namelengthrestrictor + 7;
+		end
+		Perl_Target_NameBarText:SetPoint("LEFT", "Perl_Target_ClassTexture", "RIGHT", -10, 0);
+	end
+
+	if (strlen(targetname) > (namelengthrestrictor + 1)) then
+		targetname = strsub(targetname, 1, namelengthrestrictor).."...";
+	end
+
+	Perl_Target_NameBarText:SetText(targetname);
+end
+
 function Perl_Target_Update_Text_Color()
 	if (classcolorednames == 0) then
 		if (UnitPlayerControlled("target")) then					-- is it a player
@@ -1006,17 +1030,17 @@ function Perl_Target_Frame_Set_Level()
 
 	if (targetclassification == "worldboss") then
 		Perl_Target_RareEliteBarText:SetTextColor(1, 0, 0);
-		targetclassificationframetext = "Boss";
+		targetclassificationframetext = PERL_LOCALIZED_TARGET_BOSS;
 	end
 
 	if (targetclassification == "rareelite") then
-		targetclassificationframetext = "Rare+";
+		targetclassificationframetext = PERL_LOCALIZED_TARGET_RAREELITE;
 		targetlevel = targetlevel.."r+";
 	elseif (targetclassification == "elite") then
-		targetclassificationframetext = "Elite";
+		targetclassificationframetext = PERL_LOCALIZED_TARGET_ELITE;
 		targetlevel = targetlevel.."+";
 	elseif (targetclassification == "rare") then
-		targetclassificationframetext = "Rare";
+		targetclassificationframetext = PERL_LOCALIZED_TARGET_RARE;
 		targetlevel = targetlevel.."r";
 	end
 
@@ -1978,11 +2002,11 @@ function Perl_Target_Buff_UpdateCPMeter()
 	local playerclass = UnitClass("player");
 
 	if (playerclass == PERL_LOCALIZED_MAGE) then
-		debuffapplications = Perl_Target_Buff_GetApplications("Fire Vulnerability");
+		debuffapplications = Perl_Target_Buff_GetApplications(PERL_LOCALIZED_TARGET_FIRE_VULNERABILITY);
 	elseif (playerclass == PERL_LOCALIZED_PRIEST) then
-		debuffapplications = Perl_Target_Buff_GetApplications("Shadow Vulnerability");
+		debuffapplications = Perl_Target_Buff_GetApplications(PERL_LOCALIZED_TARGET_SHADOW_VULNERABILITY);
 	elseif (playerclass == PERL_LOCALIZED_WARRIOR) then
-		debuffapplications = Perl_Target_Buff_GetApplications("Sunder Armor");
+		debuffapplications = Perl_Target_Buff_GetApplications(PERL_LOCALIZED_TARGET_SUNDER_ARMOR);
 	elseif ((playerclass == PERL_LOCALIZED_ROGUE) or (playerclass == PERL_LOCALIZED_DRUID)) then
 		return;
 	else
@@ -2090,7 +2114,7 @@ end
 
 function Perl_TargetDropDown_Initialize()
 	local menu, name;
-	if (UnitExists("target") and (UnitIsEnemy("target", "player") or (UnitReaction("player", "target") and (UnitReaction("player", "target") >= 4) and not UnitIsPlayer("target")))) then
+	if (UnitExists("target") and UnitReaction("player", "target") and (((UnitReaction("player", "target") >= 4 and not UnitIsPlayer("target")) and not UnitIsUnit("player", "target")) or (UnitReaction("player", "target") < 4 and not UnitIsPlayer("target")))) then
 		menu = "RAID_TARGET_ICON";
 		name = RAID_TARGET_ICON;
 	elseif (UnitIsUnit("target", "player")) then
@@ -2103,6 +2127,9 @@ function Perl_TargetDropDown_Initialize()
 		else
 			menu = "PLAYER";
 		end
+	elseif (UnitInParty("target")) then
+		menu = "RAID_TARGET_ICON";
+		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
 		UnitPopup_ShowMenu(Perl_Target_DropDown, menu, "target", name);
@@ -2110,14 +2137,24 @@ function Perl_TargetDropDown_Initialize()
 end
 
 function Perl_Target_MouseClick(button)
+	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
+		if (Perl_Custom_ClickFunction(button, "target")) then	-- If the function returns true, then we return
+			return;
+		end
+	end								-- Otherwise, it did nothing, so take default action
+
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name")) then
 			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "target");
-			elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-				Genesis_MouseHeal("target", button);
-			elseif (CH_Config and CH_Config.PCUFEnabled) then
-				CH_UnitClicked("target", button);
+				return;
+			elseif (Genesis_MouseHeal and Genesis_MouseHeal("target", button)) then
+				return;
+			elseif (CH_Config) then
+				if (CH_Config.PCUFEnabled) then
+					CH_UnitClicked("target", button);
+					return;
+				end
 			elseif (SmartHeal) then
 				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 					local KeyDownType = SmartHeal:GetClickHealButton();
@@ -2126,73 +2163,40 @@ function Perl_Target_MouseClick(button)
 					else
 						SmartHeal:DefaultClick(button, "target");
 					end
-				end
-			else
-				if (button == "LeftButton") then
-					if (SpellIsTargeting()) then
-						SpellTargetUnit("target");
-					elseif (CursorHasItem()) then
-						DropItemOnUnit("target");
-					end
-					return;
-				end
-
-				if (SpellIsTargeting() and button == "RightButton") then
-					SpellStopTargeting();
 					return;
 				end
 			end
-		else
-			if (button == "LeftButton") then
-				if (SpellIsTargeting()) then
-					SpellTargetUnit("target");
-				elseif (CursorHasItem()) then
-					DropItemOnUnit("target");
-				end
-				return;
-			end
-
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
 		end
-	else
-		if (button == "LeftButton") then
-			if (SpellIsTargeting()) then
-				SpellTargetUnit("target");
-			elseif (CursorHasItem()) then
-				DropItemOnUnit("target");
-			end
-			return;
-		end
+	end
 
-		if (SpellIsTargeting() and button == "RightButton") then
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit("target");
+		elseif (CursorHasItem()) then
+			DropItemOnUnit("target");
+		end
+		return;
+	end
+
+	if (button == "RightButton") then
+		if (SpellIsTargeting()) then
 			SpellStopTargeting();
 			return;
 		end
 	end
+
+	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+		ToggleDropDownMenu(1, nil, Perl_Target_DropDown, "Perl_Target_NameFrame", 40, 0);
+	end
 end
 
-function Perl_Target_MouseDown(button)
+function Perl_Target_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_Target_Frame:StartMoving();
 	end
 end
 
-function Perl_Target_MouseUp(button)
-	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
-				ToggleDropDownMenu(1, nil, Perl_Target_DropDown, "Perl_Target_NameFrame", 40, 0);
-			end
-		else
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
-				ToggleDropDownMenu(1, nil, Perl_Target_DropDown, "Perl_Target_NameFrame", 40, 0);
-			end
-		end
-	end
-
+function Perl_Target_DragStop(button)
 	Perl_Target_Frame:StopMovingOrSizing();
 end
 
@@ -2235,8 +2239,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.74",
-			releaseDate = "June 28, 2006",
+			version = PERL_LOCALIZED_VERSION,
+			releaseDate = PERL_LOCALIZED_DATE,
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

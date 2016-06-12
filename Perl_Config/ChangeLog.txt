@@ -1,3 +1,17 @@
+0.75 - July 14, 2006
+ - All: Mod authors can now hook into the click function
+ - All: Cleaned up the OnMouseClick code
+ - All: Changed how frames are moved to be less invasive
+ - All: myAddOns now uses the localized values for version and date
+ - Config: Localized the options menu
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - Player: Can now display your rank icon
+ - Player/Target/ToT: Certain features can now be localized
+ - Target: NPC names will now correctly change when appropriate
+ - Target: NPC names will now change length according to the options selected
+ - Target: Updated menu conditions to the latest Blizzard version
+ - ToT: Changed the font for the alert text to work with other languages
+
 0.74 - June 28, 2006
  - All: Rewrote much of the click casting code
  - Config: Updated Korean translations (Thanks gygabyte)

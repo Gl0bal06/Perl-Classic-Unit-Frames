@@ -20,6 +20,7 @@ local fivesecsupport = 0;	-- FiveSec support is disabled by default
 local shortbars = 0;		-- Health/Power/Experience bars are all normal length
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local hideclasslevelframe = 0;	-- Showing the class icon and level frame by default
+local showpvprank = 0;		-- hide the pvp rank by default
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -172,9 +173,9 @@ function Perl_Player_Initialize()
 	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
 		InCombat = 0;				-- You can't be fighting if you're zoning, and no event is sent, force it to no combat.
-		Perl_Player_Update_Once();
 		Perl_Player_Set_Scale();		-- Set the scale
 		Perl_Player_Set_Transparency();		-- Set the transparency
+		Perl_Player_Update_Once();		-- Set all the correct information
 		return;
 	end
 
@@ -272,22 +273,23 @@ end
 function Perl_Player_Update_Once()
 	local localizedclass = UnitClass("player");
 
-	Perl_Player_NameBarText:SetText(UnitName("player"));	-- Set the player's name
-	Perl_Player_Update_Portrait();				-- Set the player's portrait
-	Perl_Player_Update_PvP_Status();			-- Is the character PvP flagged?
-	Perl_Player_ClassTexture:SetTexCoord(Perl_Player_ClassPosRight[localizedclass], Perl_Player_ClassPosLeft[localizedclass], Perl_Player_ClassPosTop[localizedclass], Perl_Player_ClassPosBottom[localizedclass]);	-- Set the player's class icon
-	Perl_Player_Set_Text_Positions();			-- Align the text according to compact and healer mode
-	Perl_Player_Update_Health();				-- Set the player's health on load or toggle
-	Perl_Player_Update_Mana();				-- Set the player's mana/energy on load or toggle
-	Perl_Player_Update_Mana_Bar();				-- Set the type of mana used
+	Perl_Player_NameBarText:SetText(UnitName("player"));			-- Set the player's name
 	Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
-	Perl_Player_XPBar_Display(xpbarstate);			-- Set the xp bar mode and update the experience if needed
-	Perl_Player_Update_Raid_Group_Number();			-- Are we in a raid at login?
-	Perl_Player_Portrait_Combat_Text();			-- Are we showing combat text?
-	Perl_Player_Update_Leader();				-- Are we the party leader?
-	Perl_Player_Update_Loot_Method();			-- Are we the master looter?
-	Perl_Player_Update_Combat_Status();			-- Are we already fighting or resting?
-	Perl_Player_Set_CompactMode();				-- Are we using compact mode?
+	Perl_Player_ClassTexture:SetTexCoord(Perl_Player_ClassPosRight[localizedclass], Perl_Player_ClassPosLeft[localizedclass], Perl_Player_ClassPosTop[localizedclass], Perl_Player_ClassPosBottom[localizedclass]);	-- Set the player's class icon
+	Perl_Player_Update_Portrait();						-- Set the player's portrait
+	Perl_Player_Update_PvP_Status();					-- Is the character PvP flagged?
+	Perl_Player_Set_Text_Positions();					-- Align the text according to compact and healer mode
+	Perl_Player_Update_Health();						-- Set the player's health on load or toggle
+	Perl_Player_Update_Mana();						-- Set the player's mana/energy on load or toggle
+	Perl_Player_Update_Mana_Bar();						-- Set the type of mana used
+	Perl_Player_XPBar_Display(xpbarstate);					-- Set the xp bar mode and update the experience if needed
+	Perl_Player_Update_Raid_Group_Number();					-- Are we in a raid at login?
+	Perl_Player_Portrait_Combat_Text();					-- Are we showing combat text?
+	Perl_Player_Update_Leader();						-- Are we the party leader?
+	Perl_Player_Update_Loot_Method();					-- Are we the master looter?
+	Perl_Player_Update_Combat_Status();					-- Are we already fighting or resting?
+	Perl_Player_Set_CompactMode();						-- Are we using compact mode?
+	Perl_Player_PvP_Rank_Icon();						-- Are we displaying our rank icon?
 end
 
 function Perl_Player_Update_Health()
@@ -295,7 +297,7 @@ function Perl_Player_Update_Health()
 	playerhealthmax = UnitHealthMax("player");
 	playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
 
-	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative health
+	if (UnitIsDead("player") or UnitIsGhost("player")) then			-- This prevents negative health
 		playerhealth = 0;
 		playerhealthpercent = 0;
 	end
@@ -375,7 +377,7 @@ function Perl_Player_Update_Mana()
 	playermanamax = UnitManaMax("player");
 	playermanapercent = floor(playermana/playermanamax*100+0.5);
 
-	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
+	if (UnitIsDead("player") or UnitIsGhost("player")) then			-- This prevents negative mana
 		playermana = 0;
 		playermanapercent = 0;
 	end
@@ -403,7 +405,7 @@ function Perl_Player_Update_Mana()
 				Perl_Player_ManaBarTextPercent:SetText(playermanapercent.."%");
 			end
 		end
-		Perl_Player_ManaBarTextCompactPercent:SetText();							-- Hide the compact mode percent text in full mode
+		Perl_Player_ManaBarTextCompactPercent:SetText();		-- Hide the compact mode percent text in full mode
 	else
 		if (healermode == 1) then
 			if (mouseovermanaflag == 0) then
@@ -433,14 +435,14 @@ function Perl_Player_Update_Mana()
 	end
 
 	if (showdruidbar == 1) then
-		if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID)) then
-			if (UnitPowerType("player") > 0) then
+		if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID)) then		-- Is Druid Bar installed and are we a Druid?
+			if (UnitPowerType("player") > 0) then					-- Are we in a manaless form?
 				-- Show the bars and set the text and reposition the original mana bar below the druid bar
 				playerdruidbarmana = floor(DruidBarKey.keepthemana);
 				playerdruidbarmanamax = DruidBarKey.maxmana;
 				playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
 
-				if (playerdruidbarmanapercent == 100) then		-- This is to ensure the value isn't 1 or 2 mana under max when 100%
+				if (playerdruidbarmanapercent == 100) then			-- This is to ensure the value isn't 1 or 2 mana under max when 100%
 					playerdruidbarmana = playerdruidbarmanamax;
 				end
 
@@ -453,10 +455,10 @@ function Perl_Player_Update_Mana()
 				Perl_Player_DruidBar_CastClickOverlay:Show();
 				Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_DruidBar", "BOTTOM", 0, -2);
 				if (xpbarstate == 3) then
-					Perl_Player_StatsFrame:SetHeight(54);		-- Experience Bar is hidden
+					Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is hidden
 					Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
 				else
-					Perl_Player_StatsFrame:SetHeight(66);		-- Experience Bar is shown
+					Perl_Player_StatsFrame:SetHeight(66);			-- Experience Bar is shown
 					Perl_Player_StatsFrame_CastClickOverlay:SetHeight(66);
 				end
 
@@ -473,7 +475,7 @@ function Perl_Player_Update_Mana()
 						Perl_Player_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
 						Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmanapercent.."%");
 					end
-					Perl_Player_DruidBarTextCompactPercent:SetText();							-- Hide the compact mode percent text in full mode
+					Perl_Player_DruidBarTextCompactPercent:SetText();	-- Hide the compact mode percent text in full mode
 				else
 					if (healermode == 1) then
 						if (mouseovermanaflag == 0) then
@@ -520,10 +522,10 @@ function Perl_Player_Update_Mana()
 			Perl_Player_DruidBar_CastClickOverlay:Hide();
 			Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_HealthBar", "BOTTOM", 0, -2);
 			if (xpbarstate == 3) then
-				Perl_Player_StatsFrame:SetHeight(42);			-- Experience Bar is hidden
+				Perl_Player_StatsFrame:SetHeight(42);				-- Experience Bar is hidden
 				Perl_Player_StatsFrame_CastClickOverlay:SetHeight(42);
 			else
-				Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is shown
+				Perl_Player_StatsFrame:SetHeight(54);				-- Experience Bar is shown
 				Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
 			end
 		end
@@ -537,21 +539,21 @@ function Perl_Player_Update_Mana()
 		Perl_Player_DruidBar_CastClickOverlay:Hide();
 		Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_HealthBar", "BOTTOM", 0, -2);
 		if (xpbarstate == 3) then
-			Perl_Player_StatsFrame:SetHeight(42);			-- Experience Bar is hidden
+			Perl_Player_StatsFrame:SetHeight(42);					-- Experience Bar is hidden
 			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(42);
 		else
-			Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is shown
+			Perl_Player_StatsFrame:SetHeight(54);					-- Experience Bar is shown
 			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
 		end
 	end
 
 	if (fivesecsupport == 1) then
-		if (REGENERATING_MANA ~= nil) then				-- Is FiveSec installed?
-			if (UnitPowerType("player") == 0) then			-- If we aren't in mana mode, bail out
-				if (REGENERATING_MANA == false) then		-- If we aren't in regen mode, color light blue
+		if (REGENERATING_MANA ~= nil) then						-- Is FiveSec installed?
+			if (UnitPowerType("player") == 0) then					-- If we aren't in mana mode, bail out
+				if (REGENERATING_MANA == false) then				-- If we aren't in regen mode, color light blue
 					Perl_Player_ManaBar:SetStatusBarColor(0, 0.7, 1, 1);
 					Perl_Player_ManaBarBG:SetStatusBarColor(0, 0.7, 1, 0.25);
-				else						-- Then we must be in regen mode, color bar normally
+				else								-- Then we must be in regen mode, color bar normally
 					Perl_Player_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 					Perl_Player_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
 				end
@@ -615,7 +617,7 @@ function Perl_Player_Update_Experience()
 		Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 		Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 
-		Perl_Player_XPBarText:SetText("Level 70");
+		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_LEVEL_SEVENTY);
 	end
 	
 end
@@ -648,7 +650,7 @@ function Perl_Player_Update_Reputation()
 		Perl_Player_XPRestBar:SetStatusBarColor(0.9, 0.7, 0, 0.5);
 		Perl_Player_XPBarBG:SetStatusBarColor(0.9, 0.7, 0, 0.25);
 
-		Perl_Player_XPBarText:SetText("Select a Reputation");
+		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_SELECT_REPUTATION);
 	end
 end
 
@@ -692,7 +694,7 @@ function Perl_Player_Update_Raid_Group_Number()		-- taken from 1.8
 				name, rank, subgroup = GetRaidRosterInfo(i);
 				-- Set the player's group number indicator
 				if (name == UnitName("player")) then
-					Perl_Player_RaidGroupNumberBarText:SetText("Group "..subgroup);
+					Perl_Player_RaidGroupNumberBarText:SetText(PERL_LOCALIZED_PLAYER_GROUP..subgroup);
 					Perl_Player_RaidGroupNumberFrame:Show();
 					return;
 				end
@@ -1002,6 +1004,25 @@ function Perl_Player_Portrait_Combat_Text()
 	end
 end
 
+function Perl_Player_PvP_Rank_Icon()
+	if (showpvprank == 1) then
+		local rankNumber = UnitPVPRank("player");
+		if (rankNumber == 0) then
+			Perl_Player_PVPRank:Hide();
+		elseif (rankNumber < 14) then
+			rankNumber = rankNumber - 4;
+			Perl_Player_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber);
+			Perl_Player_PVPRank:Show();
+		else
+			rankNumber = rankNumber - 4;
+			Perl_Player_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
+			Perl_Player_PVPRank:Show();
+		end
+	else
+		Perl_Player_PVPRank:Hide();
+	end
+end
+
 function Perl_Player_Set_Localized_ClassIcons()
 	Perl_Player_ClassPosRight = {
 		[PERL_LOCALIZED_DRUID] = 0.75,
@@ -1199,6 +1220,12 @@ function Perl_Player_Set_Hide_Class_Level_Frame(newvalue)
 	Perl_Player_Set_CompactMode();
 end
 
+function Perl_Player_Set_PvP_Rank_Icon(newvalue)
+	showpvprank = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_PvP_Rank_Icon();
+end
+
 function Perl_Player_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1238,6 +1265,7 @@ function Perl_Player_GetVars()
 	shortbars = Perl_Player_Config[UnitName("player")]["ShortBars"];
 	classcolorednames = Perl_Player_Config[UnitName("player")]["ClassColoredNames"];
 	hideclasslevelframe = Perl_Player_Config[UnitName("player")]["HideClassLevelFrame"];
+	showpvprank = Perl_Player_Config[UnitName("player")]["ShowPvPRank"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1287,6 +1315,9 @@ function Perl_Player_GetVars()
 	if (hideclasslevelframe == nil) then
 		hideclasslevelframe = 0;
 	end
+	if (showpvprank == nil) then
+		showpvprank = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1303,8 +1334,9 @@ function Perl_Player_GetVars()
 		["showdruidbar"] = showdruidbar,
 		["fivesecsupport"] = fivesecsupport,
 		["shortbars"] = shortbars,
-		["classcolorednames"] =classcolorednames,
-		["hideclasslevelframe"] =hideclasslevelframe,
+		["classcolorednames"] = classcolorednames,
+		["hideclasslevelframe"] = hideclasslevelframe,
+		["showpvprank"] = showpvprank,
 	}
 	return vars;
 end
@@ -1393,6 +1425,11 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				hideclasslevelframe = nil;
 			end
+			if (vartable["Global Settings"]["ShowPvPRank"] ~= nil) then
+				showpvprank = vartable["Global Settings"]["ShowPvPRank"];
+			else
+				showpvprank = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1444,6 +1481,9 @@ function Perl_Player_UpdateVars(vartable)
 		if (hideclasslevelframe == nil) then
 			hideclasslevelframe = 0;
 		end
+		if (showpvprank == nil) then
+			showpvprank = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_XPBar_Display(xpbarstate);
@@ -1455,6 +1495,7 @@ function Perl_Player_UpdateVars(vartable)
 		Perl_Player_Update_Portrait();
 		Perl_Player_Portrait_Combat_Text();
 		Perl_Player_Update_PvP_Status();
+		Perl_Player_PvP_Rank_Icon();
 		Perl_Player_Set_Scale();
 		Perl_Player_Set_Transparency();
 	end
@@ -1481,6 +1522,7 @@ function Perl_Player_UpdateVars(vartable)
 		["ShortBars"] = shortbars,
 		["ClassColoredNames"] = classcolorednames,
 		["HideClassLevelFrame"] = hideclasslevelframe,
+		["ShowPvPRank"] = showpvprank,
 	};
 end
 
@@ -1497,14 +1539,24 @@ function Perl_PlayerDropDown_Initialize()
 end
 
 function Perl_Player_MouseClick(button)
+	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
+		if (Perl_Custom_ClickFunction(button, "player")) then	-- If the function returns true, then we return
+			return;
+		end
+	end								-- Otherwise, it did nothing, so take default action
+
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name")) then
 			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "player");
-			elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-				Genesis_MouseHeal("player", button);
-			elseif (CH_Config and CH_Config.PCUFEnabled) then
-				CH_UnitClicked("player", button);
+				return;
+			elseif (Genesis_MouseHeal and Genesis_MouseHeal("player", button)) then
+				return;
+			elseif (CH_Config) then
+				if (CH_Config.PCUFEnabled) then
+					CH_UnitClicked("player", button);
+					return;
+				end
 			elseif (SmartHeal) then
 				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 					local KeyDownType = SmartHeal:GetClickHealButton();
@@ -1513,79 +1565,42 @@ function Perl_Player_MouseClick(button)
 					else
 						SmartHeal:DefaultClick(button, "player");
 					end
-				end
-			else
-				if (button == "LeftButton") then
-					if (SpellIsTargeting()) then
-						SpellTargetUnit("player");
-					elseif (CursorHasItem()) then
-						DropItemOnUnit("player");
-					else
-						TargetUnit("player");
-					end
-					return;
-				end
-
-				if (SpellIsTargeting() and button == "RightButton") then
-					SpellStopTargeting();
 					return;
 				end
 			end
+		end
+	end
+
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit("player");
+		elseif (CursorHasItem()) then
+			DropItemOnUnit("player");
 		else
-			if (button == "LeftButton") then
-				if (SpellIsTargeting()) then
-					SpellTargetUnit("player");
-				elseif (CursorHasItem()) then
-					DropItemOnUnit("player");
-				else
-					TargetUnit("player");
-				end
-				return;
-			end
-
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
+			TargetUnit("player");
 		end
-	else
-		if (button == "LeftButton") then
-			if (SpellIsTargeting()) then
-				SpellTargetUnit("player");
-			elseif (CursorHasItem()) then
-				DropItemOnUnit("player");
-			else
-				TargetUnit("player");
-			end
-			return;
-		end
+		return;
+	end
 
-		if (SpellIsTargeting() and button == "RightButton") then
+	if (button == "RightButton") then
+		if (SpellIsTargeting()) then
 			SpellStopTargeting();
 			return;
 		end
 	end
+
+	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+		ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
+	end
 end
 
-function Perl_Player_MouseDown(button)
+function Perl_Player_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_Player_Frame:StartMoving();
 	end
 end
 
-function Perl_Player_MouseUp(button)
-	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
-				ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
-			end
-		else
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
-				ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
-			end
-		end
-	end
-
+function Perl_Player_DragStop(button)
 	Perl_Player_Frame:StopMovingOrSizing();
 end
 
@@ -1611,9 +1626,13 @@ function Perl_Player_XPTooltip()
 			end
 
 			GameTooltip:SetText(xptext, 255/255, 209/255, 0/255);
-			GameTooltip:AddLine(xptolevel.." ("..floor((playerxpmax-playerxp)/playerxpmax*100+0.5).."%) until level "..(playerlevel + 1), 255/255, 209/255, 0/255);
+			if (GetLocale() == "koKR") then
+				GameTooltip:AddLine((playerlevel + 1).." 레벨 까지 "..xptolevel.." ("..floor((playerxpmax-playerxp)/playerxpmax*100+0.5).."%) 남음", 255/255, 209/255, 0/255);
+			else
+				GameTooltip:AddLine(xptolevel.." ("..floor((playerxpmax-playerxp)/playerxpmax*100+0.5).."%) until level "..(playerlevel + 1), 255/255, 209/255, 0/255);
+			end
 		else
-			GameTooltip:SetText("You can't gain anymore experience!", 255/255, 209/255, 0/255);
+			GameTooltip:SetText(PERL_LOCALIZED_PLAYER_NOMORE_EXPERIENCE, 255/255, 209/255, 0/255);
 		end
 		
 	elseif (xpbarstate == 2) then
@@ -1621,15 +1640,23 @@ function Perl_Player_XPTooltip()
 		rankNumber = UnitPVPRank("player")
 		if (rankNumber < 1) then
 			rankName = "Unranked"
-			GameTooltip:SetText("You are Unranked.", 255/255, 209/255, 0/255);
+			GameTooltip:SetText(PERL_LOCALIZED_PLAYER_UNRANKED, 255/255, 209/255, 0/255);
 		else
 			rankName = GetPVPRankInfo(rankNumber, "player");
 			rankProgress = floor(GetPVPRankProgress() * 100);
-			GameTooltip:SetText(rankProgress.."% into Rank "..(rankNumber - 4).." ("..rankName..")", 255/255, 209/255, 0/255);
+			if (GetLocale() == "koKR") then
+				GameTooltip:SetText((rankNumber - 4).."등급 ("..rankName..")의 "..rankProgress.."% 입니다", 255/255, 209/255, 0/255);
+			else
+				GameTooltip:SetText(rankProgress.."% into Rank "..(rankNumber - 4).." ("..rankName..")", 255/255, 209/255, 0/255);
+			end
 			if (rankNumber < 18) then
 				rankNumber = rankNumber + 1;
 				rankName = GetPVPRankInfo(rankNumber, "player");
-				GameTooltip:AddLine((100 - rankProgress).."% until Rank "..(rankNumber - 4).." ("..rankName..")", 255/255, 209/255, 0/255);
+				if (GetLocale() == "koKR") then
+					GameTooltip:AddLine((rankNumber - 4).."등급 ("..rankName..")까지 "..(100 - rankProgress).."% 남음", 255/255, 209/255, 0/255);
+				else
+					GameTooltip:AddLine((100 - rankProgress).."% until Rank "..(rankNumber - 4).." ("..rankName..")", 255/255, 209/255, 0/255);
+				end
 			end
 		end
 	elseif (xpbarstate == 4) then
@@ -1638,13 +1665,21 @@ function Perl_Player_XPTooltip()
 			value = value - min;
 			max = max - min;
 			min = 0;
-			GameTooltip:SetText(floor(value/max*100+0.5).."% into "..Perl_Player_Get_Reaction_Name(reaction), 255/255, 209/255, 0/255);
+			if (GetLocale() == "koKR") then
+				GameTooltip:SetText(Perl_Player_Get_Reaction_Name(reaction).."의 "..floor(value/max*100+0.5).."%", 255/255, 209/255, 0/255);
+			else
+				GameTooltip:SetText(floor(value/max*100+0.5).."% into "..Perl_Player_Get_Reaction_Name(reaction), 255/255, 209/255, 0/255);
+			end
 			GameTooltip:AddLine(value.."/"..max, 255/255, 209/255, 0/255);
 			if (reaction ~= 8) then
-				GameTooltip:AddLine((max - value).." until "..Perl_Player_Get_Reaction_Name(reaction + 1), 255/255, 209/255, 0/255);
+				if (GetLocale() == "koKR") then
+					GameTooltip:AddLine(Perl_Player_Get_Reaction_Name(reaction + 1).."까지 "..(max - value).." 남음", 255/255, 209/255, 0/255);
+				else
+					GameTooltip:AddLine((max - value).." until "..Perl_Player_Get_Reaction_Name(reaction + 1), 255/255, 209/255, 0/255);
+				end
 			end
 		else
-			GameTooltip:SetText("There is no reputation being tracked.", 255/255, 209/255, 0/255);
+			GameTooltip:SetText(PERL_LOCALIZED_PLAYER_NO_REPUTATION, 255/255, 209/255, 0/255);
 		end
 	end
 	GameTooltip:Show();
@@ -1653,21 +1688,21 @@ end
 function Perl_Player_Get_Reaction_Name(reaction)
 	local reactionname;
 	if (reaction == 1) then
-		reactionname = "Hated";
+		reactionname = PERL_LOCALIZED_PLAYER_REACTIONNAME_ONE;
 	elseif (reaction == 2) then
-		reactionname = "Hostile";
+		reactionname = PERL_LOCALIZED_PLAYER_REACTIONNAME_TWO;
 	elseif (reaction == 3) then
-		reactionname = "Unfriendly";
+		reactionname = PERL_LOCALIZED_PLAYER_REACTIONNAME_THREE;
 	elseif (reaction == 4) then
-		reactionname = "Neutral";
+		reactionname = PERL_LOCALIZED_PLAYER_REACTIONNAME_FOUR;
 	elseif (reaction == 5) then
-		reactionname = "Friendly";
+		reactionname = PERL_LOCALIZED_PLAYER_REACTIONNAME_FIVE;
 	elseif (reaction == 6) then
-		reactionname = "Honored";
+		reactionname = PERL_LOCALIZED_PLAYER_REACTIONNAME_SIX;
 	elseif (reaction == 7) then
-		reactionname = "Revered";
+		reactionname = PERL_LOCALIZED_PLAYER_REACTIONNAME_SEVEN;
 	elseif (reaction == 8) then
-		reactionname = "Exalted";
+		reactionname = PERL_LOCALIZED_PLAYER_REACTIONNAME_EIGHT;
 	end
 	return reactionname;
 end
@@ -1693,8 +1728,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.74",
-			releaseDate = "June 28, 2006",
+			version = PERL_LOCALIZED_VERSION,
+			releaseDate = PERL_LOCALIZED_DATE,
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

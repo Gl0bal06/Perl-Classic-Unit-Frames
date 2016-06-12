@@ -919,9 +919,9 @@ function Perl_Target_Target_Warn()
 						-- Its coming right for us!
 						if (aggroWarningCount == 0) then
 							if (alertsize == 0) then
-								UIErrorsFrame:AddMessage(UnitName("target").." has changed targets to you!",1,0,0,1,3);
+								UIErrorsFrame:AddMessage(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU,1,0,0,1,3);
 							elseif (alertsize == 1) then
-								Perl_Target_Target_BigWarning_Show(UnitName("target").." has changed targets to you!");
+								Perl_Target_Target_BigWarning_Show(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU);
 							elseif (alertsize == 2) then
 								-- Warning disabled
 							end
@@ -940,9 +940,17 @@ function Perl_Target_Target_Warn()
 						-- Some dumb hunter pulled aggro
 						if (aggroWarningCount == 0) then
 							if (alertsize == 0) then
-								UIErrorsFrame:AddMessage("You have lost aggro to "..UnitName("targettarget").."!",1,0,0,1,3);
+								if (GetLocale() == "koKR") then
+									UIErrorsFrame:AddMessage("당신은 "..UnitName("targettarget").."의 어그로 획득에 실패했습니다!",1,0,0,1,3);
+								else
+									UIErrorsFrame:AddMessage("You have lost aggro to "..UnitName("targettarget").."!",1,0,0,1,3);
+								end
 							elseif (alertsize == 1) then
-								Perl_Target_Target_BigWarning_Show("You have lost aggro to "..UnitName("targettarget").."!");
+								if (GetLocale() == "koKR") then
+									Perl_Target_Target_BigWarning_Show("당신은 "..UnitName("targettarget").."의 어그로 획득에 실패했습니다!");
+								else
+									Perl_Target_Target_BigWarning_Show("You have lost aggro to "..UnitName("targettarget").."!");
+								end
 							elseif (alertsize == 2) then
 								-- Warning disabled
 							end
@@ -975,12 +983,20 @@ function Perl_Target_Target_Warn_Healer_Mode()		-- This chunk of code is called 
 			if (UnitIsUnit("target", "targettargettarget")) then	-- The target and the targets target target (whew) are the same
 				if (aggroWarningCount == 0) then
 					if (alertsize == 0) then
-						UIErrorsFrame:AddMessage(UnitName("target").." is now tanking "..UnitName("targettarget"),1,0,0,1,3);
+						if (GetLocale() == "koKR") then
+							UIErrorsFrame:AddMessage(UnitName("target").."님이 "..UnitName("targettarget").."|1을;를; 탱킹중입니다.",1,0,0,1,3);
+						else
+							UIErrorsFrame:AddMessage(UnitName("target").." is now tanking "..UnitName("targettarget"),1,0,0,1,3);
+						end
 					elseif (alertsize == 1) then
 						if ((UnitName("player") == UnitName("target")) or (UnitName("target") == UnitName("targettarget"))) then
 							-- Do nothing
 						else
-							Perl_Target_Target_BigWarning_Show(UnitName("target").." is now tanking "..UnitName("targettarget"));
+							if (GetLocale() == "koKR") then
+								Perl_Target_Target_BigWarning_Show(UnitName("target").."님이 "..UnitName("targettarget").."|1을;를; 탱킹중입니다.");
+							else
+								Perl_Target_Target_BigWarning_Show(UnitName("target").." is now tanking "..UnitName("targettarget"));
+							end
 						end
 					elseif (alertsize == 2) then
 						-- Warning disabled
@@ -996,9 +1012,9 @@ function Perl_Target_Target_Warn_Healer_Mode()		-- This chunk of code is called 
 				-- Its coming right for us!
 				if (aggroWarningCount == 0) then
 					if (alertsize == 0) then
-						UIErrorsFrame:AddMessage(UnitName("target").." has changed targets to you!",1,0,0,1,3);
+						UIErrorsFrame:AddMessage(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU,1,0,0,1,3);
 					elseif (alertsize == 1) then
-						Perl_Target_Target_BigWarning_Show(UnitName("target").." has changed targets to you!");
+						Perl_Target_Target_BigWarning_Show(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU);
 					elseif (alertsize == 2) then
 						-- Warning disabled
 					end
@@ -1015,9 +1031,9 @@ function Perl_Target_Target_Warn_Healer_Mode()		-- This chunk of code is called 
 			-- Its coming right for us!
 			if (aggroWarningCount == 0) then
 				if (alertsize == 0) then
-					UIErrorsFrame:AddMessage(UnitName("target").." has changed targets to you!",1,0,0,1,3);
+					UIErrorsFrame:AddMessage(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU,1,0,0,1,3);
 				elseif (alertsize == 1) then
-					Perl_Target_Target_BigWarning_Show(UnitName("target").." has changed targets to you!");
+					Perl_Target_Target_BigWarning_Show(UnitName("target")..PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU);
 				elseif (alertsize == 2) then
 					-- Warning disabled
 				end
@@ -1710,14 +1726,24 @@ function Perl_TargetTargetDropDown_Initialize()
 end
 
 function Perl_Target_Target_MouseClick(button)
+	if (Perl_Custom_ClickFunction) then					-- Check to see if someone defined a custom click function
+		if (Perl_Custom_ClickFunction(button, "targettarget")) then	-- If the function returns true, then we return
+			return;
+		end
+	end									-- Otherwise, it did nothing, so take default action
+
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name")) then
 			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "targettarget");
-			elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-				Genesis_MouseHeal("targettarget", button);
-			elseif (CH_Config and CH_Config.PCUFEnabled) then
-				CH_UnitClicked("targettarget", button);
+				return;
+			elseif (Genesis_MouseHeal and Genesis_MouseHeal("targettarget", button)) then
+				return;
+			elseif (CH_Config) then
+				if (CH_Config.PCUFEnabled) then
+					CH_UnitClicked("targettarget", button);
+					return;
+				end
 			elseif (SmartHeal) then
 				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 					local KeyDownType = SmartHeal:GetClickHealButton();
@@ -1726,79 +1752,42 @@ function Perl_Target_Target_MouseClick(button)
 					else
 						SmartHeal:DefaultClick(button, "targettarget");
 					end
-				end
-			else
-				if (button == "LeftButton") then
-					if (SpellIsTargeting()) then
-						SpellTargetUnit("targettarget");
-					elseif (CursorHasItem()) then
-						DropItemOnUnit("targettarget");
-					else
-						TargetUnit("targettarget");
-					end
-					return;
-				end
-
-				if (SpellIsTargeting() and button == "RightButton") then
-					SpellStopTargeting();
 					return;
 				end
 			end
+		end
+	end
+
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit("targettarget");
+		elseif (CursorHasItem()) then
+			DropItemOnUnit("targettarget");
 		else
-			if (button == "LeftButton") then
-				if (SpellIsTargeting()) then
-					SpellTargetUnit("targettarget");
-				elseif (CursorHasItem()) then
-					DropItemOnUnit("targettarget");
-				else
-					TargetUnit("targettarget");
-				end
-				return;
-			end
-
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
+			TargetUnit("targettarget");
 		end
-	else
-		if (button == "LeftButton") then
-			if (SpellIsTargeting()) then
-				SpellTargetUnit("targettarget");
-			elseif (CursorHasItem()) then
-				DropItemOnUnit("targettarget");
-			else
-				TargetUnit("targettarget");
-			end
-			return;
-		end
+		return;
+	end
 
-		if (SpellIsTargeting() and button == "RightButton") then
+	if (button == "RightButton") then
+		if (SpellIsTargeting()) then
 			SpellStopTargeting();
 			return;
 		end
 	end
+
+	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+		ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
+	end
 end
 
-function Perl_Target_Target_MouseDown(button)
+function Perl_Target_Target_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_Target_Target_Frame:StartMoving();
 	end
 end
 
-function Perl_Target_Target_MouseUp(button)
-	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
-				ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
-			end
-		else
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
-				ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
-			end
-		end
-	end
-
+function Perl_Target_Target_DragStop(button)
 	Perl_Target_Target_Frame:StopMovingOrSizing();
 end
 -- Target of Target End
@@ -1830,14 +1819,24 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 end
 
 function Perl_Target_Target_Target_MouseClick(button)
+	if (Perl_Custom_ClickFunction) then						-- Check to see if someone defined a custom click function
+		if (Perl_Custom_ClickFunction(button, "targettargettarget")) then	-- If the function returns true, then we return
+			return;
+		end
+	end										-- Otherwise, it did nothing, so take default action
+
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name")) then
 			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "targettargettarget");
-			elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-				Genesis_MouseHeal("targettargettarget", button);
-			elseif (CH_Config and CH_Config.PCUFEnabled) then
-				CH_UnitClicked("targettargettarget", button);
+				return;
+			elseif (Genesis_MouseHeal and Genesis_MouseHeal("targettargettarget", button)) then
+				return;
+			elseif (CH_Config) then
+				if (CH_Config.PCUFEnabled) then
+					CH_UnitClicked("targettargettarget", button);
+					return;
+				end
 			elseif (SmartHeal) then
 				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 					local KeyDownType = SmartHeal:GetClickHealButton();
@@ -1846,79 +1845,42 @@ function Perl_Target_Target_Target_MouseClick(button)
 					else
 						SmartHeal:DefaultClick(button, "targettargettarget");
 					end
-				end
-			else
-				if (button == "LeftButton") then
-					if (SpellIsTargeting()) then
-						SpellTargetUnit("targettargettarget");
-					elseif (CursorHasItem()) then
-						DropItemOnUnit("targettargettarget");
-					else
-						TargetUnit("targettargettarget");
-					end
-					return;
-				end
-
-				if (SpellIsTargeting() and button == "RightButton") then
-					SpellStopTargeting();
 					return;
 				end
 			end
+		end
+	end
+
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit("targettargettarget");
+		elseif (CursorHasItem()) then
+			DropItemOnUnit("targettargettarget");
 		else
-			if (button == "LeftButton") then
-				if (SpellIsTargeting()) then
-					SpellTargetUnit("targettargettarget");
-				elseif (CursorHasItem()) then
-					DropItemOnUnit("targettargettarget");
-				else
-					TargetUnit("targettargettarget");
-				end
-				return;
-			end
-
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
+			TargetUnit("targettargettarget");
 		end
-	else
-		if (button == "LeftButton") then
-			if (SpellIsTargeting()) then
-				SpellTargetUnit("targettargettarget");
-			elseif (CursorHasItem()) then
-				DropItemOnUnit("targettargettarget");
-			else
-				TargetUnit("targettargettarget");
-			end
-			return;
-		end
+		return;
+	end
 
-		if (SpellIsTargeting() and button == "RightButton") then
+	if (button == "RightButton") then
+		if (SpellIsTargeting()) then
 			SpellStopTargeting();
 			return;
 		end
 	end
+
+	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+		ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
+	end
 end
 
-function Perl_Target_Target_Target_MouseDown(button)
+function Perl_Target_Target_Target_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_Target_Target_Target_Frame:StartMoving();
 	end
 end
 
-function Perl_Target_Target_Target_MouseUp(button)
-	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
-				ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
-			end
-		else
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
-				ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
-			end
-		end
-	end
-
+function Perl_Target_Target_Target_DragStop(button)
 	Perl_Target_Target_Target_Frame:StopMovingOrSizing();
 end
 -- Target of Target of Target End
@@ -2009,8 +1971,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "Version 0.74",
-			releaseDate = "June 28, 2006",
+			version = PERL_LOCALIZED_VERSION,
+			releaseDate = PERL_LOCALIZED_DATE,
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

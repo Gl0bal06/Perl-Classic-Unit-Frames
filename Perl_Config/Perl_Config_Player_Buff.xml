@@ -28,7 +28,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="Player_Buff">
+				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_PLAYERBUFF">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="Perl_Config_Player_Buff_Header">
 							<Offset>
@@ -38,7 +38,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="Misc">
+				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_MISC">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -48,7 +48,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="Scaling">
+				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_SCALING">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -74,7 +74,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Enable Player Frame Buffs");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERBUFF_ENABLE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Buff_ShowBuffs_Update();
@@ -95,7 +95,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Enable 30 Second Spell Warning Messages");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERBUFF_WARNING);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Buff_Alerts_Update();
@@ -135,7 +135,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Set To Current UI Scale");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Buff_Set_Scale();

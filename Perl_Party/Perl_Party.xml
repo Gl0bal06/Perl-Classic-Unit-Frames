@@ -132,16 +132,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Party_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Party_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Party_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Party_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Party_DragStop(arg1);
+							</OnDragStop>
 							<OnEnter>
 								Perl_Party_Tip();
 								UnitFrame_OnEnter();
@@ -266,9 +267,9 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnMouseUp>
-						Perl_Party_MouseUp(arg1);
-					</OnMouseUp>
+					<OnDragStop>
+						Perl_Party_DragStop(arg1);
+					</OnDragStop>
 				</Scripts>
 				<Frames>
 					<Button name="$parent_CastClickOverlay">
@@ -285,16 +286,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Party_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Party_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Party_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Party_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Party_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 				</Frames>
@@ -353,9 +355,9 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnMouseUp>
-						Perl_Party_MouseUp(arg1);
-					</OnMouseUp>
+					<OnDragStop>
+						Perl_Party_DragStop(arg1);
+					</OnDragStop>
 				</Scripts>
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
@@ -400,16 +402,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Party_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Party_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Party_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Party_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Party_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 				</Frames>
@@ -471,16 +474,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Party_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Party_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Party_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Party_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Party_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 
@@ -562,6 +566,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Party_HealthShow();
@@ -572,12 +577,12 @@
 							<OnClick>
 								Perl_Party_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Party_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Party_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Party_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Party_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 
@@ -659,6 +664,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Party_ManaShow();
@@ -669,12 +675,12 @@
 							<OnClick>
 								Perl_Party_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Party_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Party_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Party_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Party_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 
@@ -756,6 +762,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Party_Pet_HealthShow();
@@ -766,12 +773,12 @@
 							<OnClick>
 								Perl_Party_Pet_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Party_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Party_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Party_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Party_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 

@@ -26,25 +26,6 @@ PCUF_COLORHEALTH = 0;			-- progressively colored health bars are off by default
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
 
--- Empty variables used for localization
-PERL_LOCALIZED_DRUID = nil;
-PERL_LOCALIZED_HUNTER = nil;
-PERL_LOCALIZED_MAGE = nil;
-PERL_LOCALIZED_PALADIN = nil;
-PERL_LOCALIZED_PRIEST = nil;
-PERL_LOCALIZED_ROGUE = nil;
-PERL_LOCALIZED_SHAMAN = nil;
-PERL_LOCALIZED_WARLOCK = nil;
-PERL_LOCALIZED_WARRIOR = nil;
-PERL_LOCALIZED_CIVILIAN = nil;
-PERL_LOCALIZED_CREATURE = nil;
-PERL_LOCALIZED_NOTSPECIFIED = nil;
-PERL_LOCALIZED_BUFF_CURSE = nil;
-PERL_LOCALIZED_BUFF_DISEASE = nil;
-PERL_LOCALIZED_BUFF_MAGIC = nil;
-PERL_LOCALIZED_BUFF_NONE = nil;
-PERL_LOCALIZED_BUFF_POISON = nil;
-
 
 ----------------------
 -- Loading Function --
@@ -53,8 +34,6 @@ function Perl_Config_OnLoad()
 	-- Events
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("VARIABLES_LOADED");
-
-	Perl_Config_Set_Localization();
 
 	-- Slash Commands
 	SlashCmdList["PERL_CONFIG"] = Perl_Config_SlashHandler;
@@ -118,115 +97,9 @@ end
 ---------------------------
 -- Localization Function --
 ---------------------------
-function Perl_Config_Set_Localization()
-	-- English is set no matter what in order to not break the mod for untranslated clients like in version 0.25
-	--if (GetLocale() == "enUS") then
-		PERL_LOCALIZED_DRUID = "Druid";
-		PERL_LOCALIZED_HUNTER = "Hunter";
-		PERL_LOCALIZED_MAGE = "Mage";
-		PERL_LOCALIZED_PALADIN = "Paladin";
-		PERL_LOCALIZED_PRIEST = "Priest";
-		PERL_LOCALIZED_ROGUE = "Rogue";
-		PERL_LOCALIZED_SHAMAN = "Shaman";
-		PERL_LOCALIZED_WARLOCK = "Warlock";
-		PERL_LOCALIZED_WARRIOR = "Warrior";
-
-		PERL_LOCALIZED_CIVILIAN = "Civilian";
-		PERL_LOCALIZED_CREATURE = "Creature";
-		PERL_LOCALIZED_NOTSPECIFIED = "Not specified";
-
-		PERL_LOCALIZED_BUFF_CURSE = "Curse";
-		PERL_LOCALIZED_BUFF_DISEASE = "Disease";
-		PERL_LOCALIZED_BUFF_MAGIC = "Magic";
-		PERL_LOCALIZED_BUFF_NONE = "none";		-- This line does NOT need to be localized
-		PERL_LOCALIZED_BUFF_POISON = "Poison";
-	--end
-
-	if (GetLocale() == "deDE") then
-		PERL_LOCALIZED_DRUID = "Druide";
-		PERL_LOCALIZED_HUNTER = "J\195\164ger";
-		PERL_LOCALIZED_MAGE = "Magier";
-		PERL_LOCALIZED_PALADIN = "Paladin";
-		PERL_LOCALIZED_PRIEST = "Priester";
-		PERL_LOCALIZED_ROGUE = "Schurke";
-		PERL_LOCALIZED_SHAMAN = "Schamane";
-		PERL_LOCALIZED_WARLOCK = "Hexenmeister";
-		PERL_LOCALIZED_WARRIOR = "Krieger";
-
-		PERL_LOCALIZED_CIVILIAN = "Zivilist";
-		PERL_LOCALIZED_CREATURE = "Kreatur";
-		PERL_LOCALIZED_NOTSPECIFIED = "Nicht spezifiziert";
-	end
-
-	if (GetLocale() == "frFR") then
-		PERL_LOCALIZED_DRUID = "Druide";
-		PERL_LOCALIZED_HUNTER = "Chasseur";
-		PERL_LOCALIZED_MAGE = "Mage";
-		PERL_LOCALIZED_PALADIN = "Paladin";
-		PERL_LOCALIZED_PRIEST = "Pr\195\170tre";
-		PERL_LOCALIZED_ROGUE = "Voleur";
-		PERL_LOCALIZED_SHAMAN = "Chaman";
-		PERL_LOCALIZED_WARLOCK = "D\195\169moniste";
-		PERL_LOCALIZED_WARRIOR = "Guerrier";
-
-		PERL_LOCALIZED_CIVILIAN = "Civil";
-		PERL_LOCALIZED_CREATURE = "Cr\195\169ature";
-		PERL_LOCALIZED_NOTSPECIFIED = "Non indiqu\195\169";
-	end
-
-	if (GetLocale() == "koKR") then
-		PERL_LOCALIZED_DRUID = "드루이드";
-		PERL_LOCALIZED_HUNTER = "사냥꾼";
-		PERL_LOCALIZED_MAGE = "마법사";
-		PERL_LOCALIZED_PALADIN = "성기사";
-		PERL_LOCALIZED_PRIEST = "사제";
-		PERL_LOCALIZED_ROGUE = "도적";
-		PERL_LOCALIZED_SHAMAN = "주술사";
-		PERL_LOCALIZED_WARLOCK = "흑마법사";
-		PERL_LOCALIZED_WARRIOR = "전사";
-
-		PERL_LOCALIZED_CIVILIAN = "민간인";
-		PERL_LOCALIZED_CREATURE = "동물";
-		PERL_LOCALIZED_NOTSPECIFIED = "무엇인가";
-
-		PERL_LOCALIZED_BUFF_CURSE = "저주";
-		PERL_LOCALIZED_BUFF_DISEASE = "질병";
-		PERL_LOCALIZED_BUFF_MAGIC = "마법";
-		PERL_LOCALIZED_BUFF_POISON = "독";
-	end
-
-	if (GetLocale() == "zhCN") then
-		PERL_LOCALIZED_DRUID = "德鲁伊";
-		PERL_LOCALIZED_HUNTER = "猎人";
-		PERL_LOCALIZED_MAGE = "法师";
-		PERL_LOCALIZED_PALADIN = "圣骑士";
-		PERL_LOCALIZED_PRIEST = "牧师";
-		PERL_LOCALIZED_ROGUE = "盗贼";
-		PERL_LOCALIZED_SHAMAN = "萨满祭司";
-		PERL_LOCALIZED_WARLOCK = "术士";
-		PERL_LOCALIZED_WARRIOR = "战士";
-
-		PERL_LOCALIZED_CIVILIAN = "平民";
-		PERL_LOCALIZED_CREATURE = "生物";
-		PERL_LOCALIZED_NOTSPECIFIED = "非特定的";
-	end
-
-	if (GetLocale() == "zhTW") then
-		PERL_LOCALIZED_DRUID = "德魯伊";
-		PERL_LOCALIZED_HUNTER = "獵人";
-		PERL_LOCALIZED_MAGE = "法師";
-		PERL_LOCALIZED_PALADIN = "聖騎士";
-		PERL_LOCALIZED_PRIEST = "牧師";
-		PERL_LOCALIZED_ROGUE = "盜賊";
-		PERL_LOCALIZED_SHAMAN = "薩滿";
-		PERL_LOCALIZED_WARLOCK = "術士";
-		PERL_LOCALIZED_WARRIOR = "戰士";
-
-		PERL_LOCALIZED_CIVILIAN = "平民";
-		PERL_LOCALIZED_CREATURE = "生物";
-		PERL_LOCALIZED_NOTSPECIFIED = "非特定的";
-	end
-end
+--function Perl_Config_Set_Localization()
+--	
+--end
 
 
 --------------------------
@@ -698,6 +571,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShortBars"] = vartable["shortbars"],
 			["ClassColoredNames"] = vartable["classcolorednames"],
 			["HideClassLevelFrame"] = vartable["hideclasslevelframe"],
+			["ShowPvPRank"] = vartable["showpvprank"],
 		};
 	end
 
@@ -1307,9 +1181,9 @@ function Perl_Config_Button_Tooltip()
 	GameTooltip:AddLine(" ");
 
 	if (unlockedflag == 1) then
-		GameTooltip:AddLine("Right clicking will LOCK all frames");
+		GameTooltip:AddLine(PERL_LOCALIZED_CONFIG_MINIMAP_LOCK);
 	else
-		GameTooltip:AddLine("Right clicking will UNLOCK all frames");
+		GameTooltip:AddLine(PERL_LOCALIZED_CONFIG_MINIMAP_UNLOCK);
 	end
 
 	GameTooltip:Show();
@@ -1352,8 +1226,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.74",
-			releaseDate = "June 28, 2006",
+			version = PERL_LOCALIZED_VERSION,
+			releaseDate = PERL_LOCALIZED_DATE,
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

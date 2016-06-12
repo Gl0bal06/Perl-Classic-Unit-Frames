@@ -2474,7 +2474,6 @@ end
 function Perl_PartyDropDown_Initialize()
 	local dropdown;
 	local id = this:GetID();
-
 	if (UIDROPDOWNMENU_OPEN_MENU) then
 		dropdown = getglobal(UIDROPDOWNMENU_OPEN_MENU);
 	else
@@ -2494,14 +2493,24 @@ function Perl_Party_MouseClick(button)
 		id = string.sub(name, 23, 23);
 	end
 
+	if (Perl_Custom_ClickFunction) then					-- Check to see if someone defined a custom click function
+		if (Perl_Custom_ClickFunction(button, "party"..id)) then	-- If the function returns true, then we return
+			return;
+		end
+	end									-- Otherwise, it did nothing, so take default action
+
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name")) then
 			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "party"..id);
-			elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-				Genesis_MouseHeal("party"..id, button);
-			elseif (CH_Config and CH_Config.PCUFEnabled) then
-				CH_UnitClicked("party"..id, button);
+				return;
+			elseif (Genesis_MouseHeal and Genesis_MouseHeal("party"..id, button)) then
+				return;
+			elseif (CH_Config) then
+				if (CH_Config.PCUFEnabled) then
+					CH_UnitClicked("party"..id, button);
+					return;
+				end
 			elseif (SmartHeal) then
 				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 					local KeyDownType = SmartHeal:GetClickHealButton();
@@ -2510,85 +2519,42 @@ function Perl_Party_MouseClick(button)
 					else
 						SmartHeal:DefaultClick(button, "party"..id);
 					end
-				end
-			else
-				if (button == "LeftButton") then
-					if (SpellIsTargeting()) then
-						SpellTargetUnit("party"..id);
-					elseif (CursorHasItem()) then
-						DropItemOnUnit("party"..id);
-					else
-						TargetUnit("party"..id);
-					end
-					return;
-				end
-
-				if (SpellIsTargeting() and button == "RightButton") then
-					SpellStopTargeting();
 					return;
 				end
 			end
+		end
+	end
+
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit("party"..id);
+		elseif (CursorHasItem()) then
+			DropItemOnUnit("party"..id);
 		else
-			if (button == "LeftButton") then
-				if (SpellIsTargeting()) then
-					SpellTargetUnit("party"..id);
-				elseif (CursorHasItem()) then
-					DropItemOnUnit("party"..id);
-				else
-					TargetUnit("party"..id);
-				end
-				return;
-			end
-
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
+			TargetUnit("party"..id);
 		end
-	else
-		if (button == "LeftButton") then
-			if (SpellIsTargeting()) then
-				SpellTargetUnit("party"..id);
-			elseif (CursorHasItem()) then
-				DropItemOnUnit("party"..id);
-			else
-				TargetUnit("party"..id);
-			end
-			return;
-		end
+		return;
+	end
 
-		if (SpellIsTargeting() and button == "RightButton") then
+	if (button == "RightButton") then
+		if (SpellIsTargeting()) then
 			SpellStopTargeting();
 			return;
 		end
 	end
+
+	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..id.."_DropDown"), "Perl_Party_MemberFrame"..id, 0, 0);
+	end
 end
 
-function Perl_Party_MouseDown(button)
+function Perl_Party_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_Party_Frame:StartMoving();
 	end
 end
 
-function Perl_Party_MouseUp(button)
-	local id = this:GetID();
-	if (id == 0) then
-		local name = this:GetName();
-		id = string.sub(name, 23, 23);
-	end
-
-	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
-				ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..id.."_DropDown"), "Perl_Party_MemberFrame"..id, 0, 0);
-			end
-		else
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
-				ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..id.."_DropDown"), "Perl_Party_MemberFrame"..id, 0, 0);
-			end
-		end
-	end
-
+function Perl_Party_DragStop(button)
 	Perl_Party_Frame:StopMovingOrSizing();
 end
 
@@ -2599,64 +2565,49 @@ function Perl_Party_Pet_MouseClick(button)
 		id = string.sub(name, 23, 23);
 	end
 
+	if (Perl_Custom_ClickFunction) then					-- Check to see if someone defined a custom click function
+		if (Perl_Custom_ClickFunction(button, "partypet"..id)) then	-- If the function returns true, then we return
+			return;
+		end
+	end									-- Otherwise, it did nothing, so take default action
+
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (CastPartyConfig) then
-			if (not string.find(GetMouseFocus():GetName(), "Name")) then
-				CastParty_OnClickByUnit(button, "partypet"..id);
-			end
-		elseif (Genesis_MouseHeal) then
-			if (IsControlKeyDown() or IsShiftKeyDown()) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					Genesis_MouseHeal("partypet"..id, button);
-				end
-			end
+			CastParty_OnClickByUnit(button, "partypet"..id);
+			return;
+		elseif (Genesis_MouseHeal and Genesis_MouseHeal("partypet"..id, button)) then
+			return;
 		elseif (CH_Config) then
 			if (CH_Config.PCUFEnabled) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					CH_UnitClicked("partypet"..id, button);
-				end
+				CH_UnitClicked("partypet"..id, button);
+				return;
 			end
 		elseif (SmartHeal) then
 			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					local KeyDownType = SmartHeal:GetClickHealButton();
-					if(KeyDownType and KeyDownType ~= "undetermined") then
-						SmartHeal:ClickHeal(KeyDownType..button, "partypet"..id);
-					else
-						SmartHeal:DefaultClick(button, "partypet"..id);
-					end
-				end
-			end
-		else
-			if (button == "LeftButton") then
-				if (SpellIsTargeting()) then
-					SpellTargetUnit("partypet"..id);
-				elseif (CursorHasItem()) then
-					DropItemOnUnit("partypet"..id);
+				local KeyDownType = SmartHeal:GetClickHealButton();
+				if(KeyDownType and KeyDownType ~= "undetermined") then
+					SmartHeal:ClickHeal(KeyDownType..button, "partypet"..id);
 				else
-					TargetUnit("partypet"..id);
+					SmartHeal:DefaultClick(button, "partypet"..id);
 				end
 				return;
 			end
-
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
 		end
-	else
-		if (button == "LeftButton") then
-			if (SpellIsTargeting()) then
-				SpellTargetUnit("partypet"..id);
-			elseif (CursorHasItem()) then
-				DropItemOnUnit("partypet"..id);
-			else
-				TargetUnit("partypet"..id);
-			end
-			return;
-		end
+	end
 
-		if (SpellIsTargeting() and button == "RightButton") then
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit("partypet"..id);
+		elseif (CursorHasItem()) then
+			DropItemOnUnit("partypet"..id);
+		else
+			TargetUnit("partypet"..id);
+		end
+		return;
+	end
+
+	if (button == "RightButton") then
+		if (SpellIsTargeting()) then
 			SpellStopTargeting();
 			return;
 		end
@@ -2689,8 +2640,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.74",
-			releaseDate = "June 28, 2006",
+			version = PERL_LOCALIZED_VERSION,
+			releaseDate = PERL_LOCALIZED_DATE,
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -28,7 +28,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="Raid">
+				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_RAID">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="Perl_Config_Raid_Header">
 							<Offset>
@@ -38,7 +38,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Group_Settings_Text" inherits="GameFontNormal" text="Group Settings">
+				<FontString name="$parent_Group_Settings_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_RAID_GROUP_SETTINGS">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -48,7 +48,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="Misc">
+				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_MISC">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -58,7 +58,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="Transparency">
+				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_TRANSPARENCY">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -68,7 +68,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="Scaling">
+				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_SCALING">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -94,7 +94,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Group 1 (Warrior)");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_GROUP_ONE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Show_Group_One_Update();
@@ -115,7 +115,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Group 2 (Mage)");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_GROUP_TWO);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Show_Group_Two_Update();
@@ -136,7 +136,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Group 3 (Priest)");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_GROUP_THREE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Show_Group_Three_Update();
@@ -157,7 +157,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Group 4 (Warlock)");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_GROUP_FOUR);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Show_Group_Four_Update();
@@ -178,7 +178,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Group 5 (Druid)");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_GROUP_FIVE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Show_Group_Five_Update();
@@ -199,7 +199,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Group 6 (Rogue)");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_GROUP_SIX);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Show_Group_Six_Update();
@@ -220,7 +220,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Group 7 (Hunter)");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_GROUP_SEVEN);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Show_Group_Seven_Update();
@@ -241,7 +241,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Group 8 (Paladin/Shaman)");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_GROUP_EIGHT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Show_Group_Eight_Update();
@@ -262,7 +262,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Sort By Class");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_SORT_BY_CLASS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Sort_By_Class_Update();
@@ -283,7 +283,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Group Headers");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_SHOW_GROUP_HEADERS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Group_Headers_Update();
@@ -304,7 +304,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Lock Raid Frames");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_LOCK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Lock_Update();
@@ -312,7 +312,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<Button name="$parent_Button1" inherits="UIPanelButtonTemplate" text="Show All Groups">
+			<Button name="$parent_Button1" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_RAID_SHOW_ALL">
 				<Size>
 					<AbsDimension x="150" y="22"/>
 				</Size>
@@ -338,7 +338,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="$parent_Button2" inherits="UIPanelButtonTemplate" text="Hide All Groups">
+			<Button name="$parent_Button2" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_RAID_HIDE_ALL">
 				<Size>
 					<AbsDimension x="150" y="22"/>
 				</Size>
@@ -364,7 +364,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="$parent_Button3" inherits="UIPanelButtonTemplate" text="Connect Frames">
+			<Button name="$parent_Button3" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_RAID_CONNECT_FRAMES">
 				<Size>
 					<AbsDimension x="150" y="22"/>
 				</Size>
@@ -414,7 +414,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Set To Current UI Scale");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Set_Scale();
@@ -454,7 +454,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Health/Mana Percentages");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_SHOW_HEALTHMANA_PERCENTAGES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Show_Percents_Update();
@@ -475,7 +475,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Missing Health");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_SHOW_MISSING_HEALTH);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Missing_Health_Update();
@@ -496,7 +496,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Vertical Raid Frames");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_VERTICAL_FRAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Vertical_Update();
@@ -517,7 +517,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Invert Raid Frames");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_INVERT_FRAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Inverted_Update();
@@ -538,7 +538,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Buffs");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_SHOW_BUFFS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Buffs_Update();
@@ -559,7 +559,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Debuffs");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_SHOW_DEBUFFS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Debuffs_Update();
@@ -580,7 +580,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Class Buffs/Debuffs");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFFDEBUFF);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Class_Buffs_Update();
@@ -601,7 +601,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Color Debuff Names");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_COLOR_DEBUFF_NAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Color_Debuff_Names_Update();

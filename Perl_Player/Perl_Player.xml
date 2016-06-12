@@ -107,6 +107,20 @@
 							</Anchors>
 						</Texture>
 
+						<!-- PVP Rank Icon -->
+						<Texture name="Perl_Player_PVPRank">
+							<Size>
+								<AbsDimension x="16" y="16"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+									<Offset>
+										<AbsDimension x="23" y="-4"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+
 						<!-- Leader Icon -->
 						<Texture name="Perl_Player_LeaderIcon" file="Interface\GroupFrame\UI-Group-LeaderIcon" hidden="true">
 							<Size>
@@ -166,16 +180,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Player_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 				</Frames>
@@ -217,16 +232,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Player_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 				</Frames>
@@ -285,16 +301,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Player_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 				</Frames>
@@ -378,16 +395,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Player_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 					<PlayerModel name="$parent_PlayerModel" hidden="true">
@@ -499,16 +517,17 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnClick>
 								Perl_Player_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 
@@ -590,6 +609,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Player_HealthShow();
@@ -600,12 +620,12 @@
 							<OnClick>
 								Perl_Player_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 
@@ -687,6 +707,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Player_ManaShow();
@@ -697,12 +718,12 @@
 							<OnClick>
 								Perl_Player_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 
@@ -784,6 +805,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Player_DruidBarManaShow();
@@ -794,12 +816,12 @@
 							<OnClick>
 								Perl_Player_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 
@@ -875,6 +897,7 @@
 						<Scripts>
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								this:RegisterForDrag('LeftButton');
 							</OnLoad>
 							<OnEnter>
 								Perl_Player_XPTooltip();
@@ -885,12 +908,12 @@
 							<OnClick>
 								Perl_Player_MouseClick(arg1);
 							</OnClick>
-							<OnMouseDown>
-								Perl_Player_MouseDown(arg1);
-							</OnMouseDown>
-							<OnMouseUp>
-								Perl_Player_MouseUp(arg1);
-							</OnMouseUp>
+							<OnDragStart>
+								Perl_Player_DragStart(arg1);
+							</OnDragStart>
+							<OnDragStop>
+								Perl_Player_DragStop(arg1);
+							</OnDragStop>
 						</Scripts>
 					</Button>
 				</Frames>

@@ -28,7 +28,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="All">
+				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_ALL">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="Perl_Config_All_Header">
 							<Offset>
@@ -38,7 +38,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Texture_Text" inherits="GameFontNormal" text="Textured Bars">
+				<FontString name="$parent_Texture_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_ALL_TEXTURED_BARS">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -48,7 +48,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="Transparency">
+				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_TRANSPARENCY">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -58,7 +58,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_MiniMap_Text" inherits="GameFontNormal" text="MiniMap Button Position">
+				<FontString name="$parent_MiniMap_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_ALL_MINIMAP_POSITION">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -68,7 +68,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="Frames">
+				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_ALL_FRAMES">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -78,7 +78,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="Scaling">
+				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_SCALING">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -104,7 +104,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Texture #1");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_ONE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
@@ -131,7 +131,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Texture #2");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_TWO);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -158,7 +158,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Texture #3");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_THREE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -185,7 +185,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Texture #4");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_FOUR);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -212,7 +212,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Texture #5");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_FIVE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -239,7 +239,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Texture #6");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_SIX);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -266,7 +266,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("No Texture");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_NONE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -280,7 +280,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<Button name="$parent_Button1" inherits="UIPanelButtonTemplate" text="Lock All Frames">
+			<Button name="$parent_Button1" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_ALL_LOCK_ALL">
 				<Size>
 					<AbsDimension x="170" y="22"/>
 				</Size>
@@ -298,7 +298,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="$parent_Button2" inherits="UIPanelButtonTemplate" text="Unlock All Frames">
+			<Button name="$parent_Button2" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_ALL_UNLOCK_ALL">
 				<Size>
 					<AbsDimension x="170" y="22"/>
 				</Size>
@@ -348,7 +348,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Set To Current UI Scale");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Scale();
@@ -407,7 +407,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show MiniMap Button");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_SHOW_MINIMAP);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_MiniMap_Button();
@@ -428,7 +428,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Transparent Frame Background");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TRANSPARENT_BACKGROUND);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Transparent_Background();
@@ -436,7 +436,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<Button name="$parent_Button3" inherits="UIPanelButtonTemplate" text="Load Global Settings">
+			<Button name="$parent_Button3" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_ALL_LOAD">
 				<Size>
 					<AbsDimension x="150" y="22"/>
 				</Size>
@@ -451,12 +451,12 @@
 					<OnClick>
 						Perl_Config_Global_Load_Settings();
 						Perl_Config_All_Display();
-						DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic Unit Frames: Global Settings Loaded.");
+						DEFAULT_CHAT_FRAME:AddMessage(PERL_LOCALIZED_CONFIG_ALL_LOAD_OUTPUT);
 					</OnClick>
 				</Scripts>
 			</Button>
 
-			<Button name="$parent_Button4" inherits="UIPanelButtonTemplate" text="Save Global Settings">
+			<Button name="$parent_Button4" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_ALL_SAVE">
 				<Size>
 					<AbsDimension x="150" y="22"/>
 				</Size>
@@ -470,12 +470,12 @@
 				<Scripts>
 					<OnClick>
 						Perl_Config_Global_Save_Settings();
-						DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic Unit Frames: Global Settings Saved.");
+						DEFAULT_CHAT_FRAME:AddMessage(PERL_LOCALIZED_CONFIG_ALL_SAVE_OUTPUT);
 					</OnClick>
 				</Scripts>
 			</Button>
 
-			<Button name="$parent_Button5" inherits="UIPanelButtonTemplate" text="Reset Frame Positions">
+			<Button name="$parent_Button5" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_RESET_FRAMES">
 				<Size>
 					<AbsDimension x="170" y="22"/>
 				</Size>
@@ -489,7 +489,7 @@
 				<Scripts>
 					<OnClick>
 						Perl_Config_Frame_Reset_Positions();
-						DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic Unit Frames: Frame Positions have been reset.");
+						DEFAULT_CHAT_FRAME:AddMessage(PERL_LOCALIZED_CONFIG_ALL_RESET_FRAMES_OUTPUT);
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -507,7 +507,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("CastParty/Genesis/AceHeal/ClickHeal Support");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_CLICKHEALING);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_CastParty_Support();
@@ -528,7 +528,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Progressively Colored Health Bars");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_PROGRESSIVE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Color_Health();

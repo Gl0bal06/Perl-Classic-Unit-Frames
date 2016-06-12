@@ -28,7 +28,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="Target_Target">
+				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_TARGETTARGET">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="Perl_Config_Target_Target_Header">
 							<Offset>
@@ -38,7 +38,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Main_Text" inherits="GameFontNormal" text="Main">
+				<FontString name="$parent_Main_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_TARGETTARGET_MAIN">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -48,7 +48,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_ToT_Text" inherits="GameFontNormal" text="Alert Mode">
+				<FontString name="$parent_ToT_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_TARGETTARGET_ALERT_MODE">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -58,7 +58,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="Misc">
+				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_MISC">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -68,7 +68,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Alert_Text" inherits="GameFontNormal" text="Alert Size">
+				<FontString name="$parent_Alert_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_TARGETTARGET_ALERT_SIZE">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -78,7 +78,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="Transparency">
+				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_TRANSPARENCY">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -88,7 +88,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="Scaling">
+				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_SCALING">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
@@ -114,7 +114,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Enable Target of Target");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_ENABLE_TOT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_ToT_Update();
@@ -135,7 +135,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Enable Target of Target of Target");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_ENABLE_TOTOT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_ToToT_Update();
@@ -156,7 +156,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Audio Alert on Agro");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_AUDIO_ALERT_ON_AGRO);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Sound_Update();
@@ -177,7 +177,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Class Buffs/Debuffs");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFFDEBUFF);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Class_Buffs_Update();
@@ -198,7 +198,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Hide Power Bars");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_HIDE_POWER_BARS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Hide_Power_Bars_Update();
@@ -219,7 +219,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Class Colored Names");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Class_Colored_Names_Update();
@@ -240,7 +240,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("MobHealth Support");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_MOBHEALTH);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_MobHealth_Update();
@@ -261,7 +261,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Lock Target_Target Frames");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_LOCK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Lock_Update();
@@ -282,7 +282,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show ToT Buffs");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_TOT_BUFFS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Buff_Update();
@@ -303,7 +303,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show ToT Debuffs");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_TOT_DEBUFFS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Debuff_Update();
@@ -324,7 +324,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show ToToT Buffs");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_TOTOT_BUFFS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Target_Buff_Update();
@@ -345,7 +345,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show ToToT Debuffs");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_TOTOT_DEBUFFS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Target_Debuff_Update();
@@ -385,7 +385,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Set To Current UI Scale");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Set_Scale();
@@ -425,7 +425,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("DPS Mode");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_DPS_MODE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Frame_CheckButton9:SetChecked(nil);	<!-- We need to uncheck Button 9 -->
@@ -448,7 +448,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Tank Mode");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_TANK_MODE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(nil);	<!-- We need to uncheck Button 8 -->
@@ -471,7 +471,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Healer Mode");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_HEALER_MODE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(nil);	<!-- We need to uncheck Button 8 -->
@@ -494,7 +494,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Small Text");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SMALL_TEXT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Frame_CheckButton12:SetChecked(nil);	<!-- We need to uncheck Button 12 -->
@@ -517,7 +517,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Large Text");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_LARGE_TEXT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(nil);	<!-- We need to uncheck Button 11 -->
@@ -540,7 +540,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("No Text");
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_NO_TEXT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(nil);	<!-- We need to uncheck Button 11 -->
@@ -550,7 +550,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<Button name="$parent_Button1" inherits="UIPanelButtonTemplate" text="Right of Target Frame">
+			<Button name="$parent_Button1" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_TARGETTARGET_RIGHT_OF_TARGET_FRAME">
 				<Size>
 					<AbsDimension x="170" y="22"/>
 				</Size>
@@ -564,12 +564,12 @@
 				<Scripts>
 					<OnClick>
 						Perl_Target_Target_Allign(1);
-						DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic Unit Frames: Target of Target frames have been 'Right Aligned'.");
+						DEFAULT_CHAT_FRAME:AddMessage(PERL_LOCALIZED_CONFIG_TARGETTARGET_RIGHT_OUTPUT);
 					</OnClick>
 				</Scripts>
 			</Button>
 
-			<Button name="$parent_Button2" inherits="UIPanelButtonTemplate" text="Top of Target Frame">
+			<Button name="$parent_Button2" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_TARGETTARGET_TOP_OF_TARGET_FRAME">
 				<Size>
 					<AbsDimension x="170" y="22"/>
 				</Size>
@@ -583,7 +583,7 @@
 				<Scripts>
 					<OnClick>
 						Perl_Target_Target_Allign(2);
-						DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic Unit Frames: Target of Target frames have been 'Top Aligned'.");
+						DEFAULT_CHAT_FRAME:AddMessage(PERL_LOCALIZED_CONFIG_TARGETTARGET_TOP_OUTPUT);
 					</OnClick>
 				</Scripts>
 			</Button>

@@ -1179,13 +1179,23 @@ function Perl_CombatDisplayDropDown_Initialize()
 end
 
 function Perl_CombatDisplay_MouseClick(button)
+	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
+		if (Perl_Custom_ClickFunction(button, "player")) then	-- If the function returns true, then we return
+			return;
+		end
+	end								-- Otherwise, it did nothing, so take default action
+
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (CastPartyConfig) then
 			CastParty_OnClickByUnit(button, "player");
-		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-			Genesis_MouseHeal("player", button);
-		elseif (CH_Config and CH_Config.PCUFEnabled) then
-			CH_UnitClicked("player", button);
+			return;
+		elseif (Genesis_MouseHeal and Genesis_MouseHeal("player", button)) then
+			return;
+		elseif (CH_Config) then
+			if (CH_Config.PCUFEnabled) then
+				CH_UnitClicked("player", button);
+				return;
+			end
 		elseif (SmartHeal) then
 			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 				local KeyDownType = SmartHeal:GetClickHealButton();
@@ -1194,62 +1204,43 @@ function Perl_CombatDisplay_MouseClick(button)
 				else
 					SmartHeal:DefaultClick(button, "player");
 				end
+				return;
 			end
+		end
+	end
+
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit("player");
+		elseif (CursorHasItem()) then
+			DropItemOnUnit("player");
 		else
-			if (button == "LeftButton") then
-				if (SpellIsTargeting()) then
-					SpellTargetUnit("player");
-				elseif (CursorHasItem()) then
-					DropItemOnUnit("player");
-				else
-					TargetUnit("player");
-				end
-				return;
-			end
-
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
+			TargetUnit("player");
 		end
-	else
-		if (button == "LeftButton") then
-			if (SpellIsTargeting()) then
-				SpellTargetUnit("player");
-			elseif (CursorHasItem()) then
-				DropItemOnUnit("player");
-			else
-				TargetUnit("player");
-			end
-			return;
-		end
+		return;
+	end
 
-		if (SpellIsTargeting() and button == "RightButton") then
+	if (button == "RightButton") then
+		if (SpellIsTargeting()) then
 			SpellStopTargeting();
 			return;
 		end
 	end
+
+	if (rightclickmenu == 1) then
+		if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+			ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
+		end
+	end
 end
 
-function Perl_CombatDisplay_MouseDown(button)
+function Perl_CombatDisplay_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_CombatDisplay_Frame:StartMoving();
 	end
 end
 
-function Perl_CombatDisplay_MouseUp(button)
-	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
-			-- Do nothing
-		else
-			if (rightclickmenu == 1) then
-				if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-					ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
-				end
-			end
-		end
-	end
-
+function Perl_CombatDisplay_DragStop(button)
 	Perl_CombatDisplay_Frame:StopMovingOrSizing();
 end
 
@@ -1280,13 +1271,23 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 end
 
 function Perl_CombatDisplay_Target_MouseClick(button)
+	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
+		if (Perl_Custom_ClickFunction(button, "target")) then	-- If the function returns true, then we return
+			return;
+		end
+	end								-- Otherwise, it did nothing, so take default action
+
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (CastPartyConfig) then
 			CastParty_OnClickByUnit(button, "target");
-		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-			Genesis_MouseHeal("target", button);
-		elseif (CH_Config and CH_Config.PCUFEnabled) then
-			CH_UnitClicked("target", button);
+			return;
+		elseif (Genesis_MouseHeal and Genesis_MouseHeal("target", button)) then
+			return;
+		elseif (CH_Config) then
+			if (CH_Config.PCUFEnabled) then
+				CH_UnitClicked("target", button);
+				return;
+			end
 		elseif (SmartHeal) then
 			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 				local KeyDownType = SmartHeal:GetClickHealButton();
@@ -1295,62 +1296,41 @@ function Perl_CombatDisplay_Target_MouseClick(button)
 				else
 					SmartHeal:DefaultClick(button, "target");
 				end
-			end
-		else
-			if (button == "LeftButton") then
-				if (SpellIsTargeting()) then
-					SpellTargetUnit("target");
-				elseif (CursorHasItem()) then
-					DropItemOnUnit("target");
-				else
-					TargetUnit("target");
-				end
-				return;
-			end
-
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
 				return;
 			end
 		end
-	else
-		if (button == "LeftButton") then
-			if (SpellIsTargeting()) then
-				SpellTargetUnit("target");
-			elseif (CursorHasItem()) then
-				DropItemOnUnit("target");
-			else
-				TargetUnit("target");
-			end
-			return;
-		end
+	end
 
-		if (SpellIsTargeting() and button == "RightButton") then
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit("target");
+		elseif (CursorHasItem()) then
+			DropItemOnUnit("target");
+		end
+		return;
+	end
+
+	if (button == "RightButton") then
+		if (SpellIsTargeting()) then
 			SpellStopTargeting();
 			return;
 		end
 	end
+
+	if (rightclickmenu == 1) then
+		if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+			ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
+		end
+	end
 end
 
-function Perl_CombatDisplay_Target_MouseDown(button)
+function Perl_CombatDisplay_Target_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_CombatDisplay_Target_Frame:StartMoving();
 	end
 end
 
-function Perl_CombatDisplay_Target_MouseUp(button)
-	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
-			-- Do nothing
-		else
-			if (rightclickmenu == 1) then
-				if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
-					ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
-				end
-			end
-		end
-	end
-
+function Perl_CombatDisplay_Target_DragStop(button)
 	Perl_CombatDisplay_Target_Frame:StopMovingOrSizing();
 end
 
@@ -1363,8 +1343,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.74",
-			releaseDate = "June 28, 2006",
+			version = PERL_LOCALIZED_VERSION,
+			releaseDate = PERL_LOCALIZED_DATE,
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

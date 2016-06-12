@@ -32,8 +32,8 @@ function Perl_Config_Player_Pet_Set_Values()
 		Perl_Config_Player_Pet_Frame_CheckButton3:SetChecked(nil);
 	end
 
-	Perl_Config_Player_Pet_Frame_Slider1Low:SetText("Small");
-	Perl_Config_Player_Pet_Frame_Slider1High:SetText("Big");
+	Perl_Config_Player_Pet_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
+	Perl_Config_Player_Pet_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Player_Pet_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
 
 	if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then

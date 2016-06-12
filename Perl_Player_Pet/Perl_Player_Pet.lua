@@ -976,14 +976,24 @@ function Perl_Player_Pet_DropDown_Initialize()
 end
 
 function Perl_Player_Pet_MouseClick(button)
+	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
+		if (Perl_Custom_ClickFunction(button, "pet")) then	-- If the function returns true, then we return
+			return;
+		end
+	end								-- Otherwise, it did nothing, so take default action
+
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name")) then
 			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "pet");
-			elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-				Genesis_MouseHeal("pet", button);
-			elseif (CH_Config and CH_Config.PCUFEnabled) then
-				CH_UnitClicked("pet", button);
+				return;
+			elseif (Genesis_MouseHeal and Genesis_MouseHeal("pet", button)) then
+				return;
+			elseif (CH_Config) then
+				if (CH_Config.PCUFEnabled) then
+					CH_UnitClicked("pet", button);
+					return;
+				end
 			elseif (SmartHeal) then
 				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 					local KeyDownType = SmartHeal:GetClickHealButton();
@@ -992,79 +1002,42 @@ function Perl_Player_Pet_MouseClick(button)
 					else
 						SmartHeal:DefaultClick(button, "pet");
 					end
-				end
-			else
-				if (button == "LeftButton") then
-					if (SpellIsTargeting()) then
-						SpellTargetUnit("pet");
-					elseif (CursorHasItem()) then
-						DropItemOnUnit("pet");
-					else
-						TargetUnit("pet");
-					end
-					return;
-				end
-
-				if (SpellIsTargeting() and button == "RightButton") then
-					SpellStopTargeting();
 					return;
 				end
 			end
+		end
+	end
+
+	if (button == "LeftButton") then
+		if (SpellIsTargeting()) then
+			SpellTargetUnit("pet");
+		elseif (CursorHasItem()) then
+			DropItemOnUnit("pet");
 		else
-			if (button == "LeftButton") then
-				if (SpellIsTargeting()) then
-					SpellTargetUnit("pet");
-				elseif (CursorHasItem()) then
-					DropItemOnUnit("pet");
-				else
-					TargetUnit("pet");
-				end
-				return;
-			end
-
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
+			TargetUnit("pet");
 		end
-	else
-		if (button == "LeftButton") then
-			if (SpellIsTargeting()) then
-				SpellTargetUnit("pet");
-			elseif (CursorHasItem()) then
-				DropItemOnUnit("pet");
-			else
-				TargetUnit("pet");
-			end
-			return;
-		end
+		return;
+	end
 
-		if (SpellIsTargeting() and button == "RightButton") then
+	if (button == "RightButton") then
+		if (SpellIsTargeting()) then
 			SpellStopTargeting();
 			return;
 		end
 	end
+
+	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+		ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
+	end
 end
 
-function Perl_Player_Pet_MouseDown(button)
+function Perl_Player_Pet_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
 		Perl_Player_Pet_Frame:StartMoving();
 	end
 end
 
-function Perl_Player_Pet_MouseUp(button)
-	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
-				ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
-			end
-		else
-			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
-				ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
-			end
-		end
-	end
-
+function Perl_Player_Pet_DragStop(button)
 	Perl_Player_Pet_Frame:StopMovingOrSizing();
 end
 
@@ -1077,8 +1050,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "Version 0.74",
-			releaseDate = "June 28, 2006",
+			version = PERL_LOCALIZED_VERSION,
+			releaseDate = PERL_LOCALIZED_DATE,
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
