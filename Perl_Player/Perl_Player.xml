@@ -4,7 +4,7 @@
 
 
 	<!-- Real Frames -->
-	<Frame name="Perl_Player_Frame" frameStrata="LOW" toplevel="true" movable="true" parent="UIParent" hidden="false" enableMouse="true">
+	<Frame name="Perl_Player_Frame" frameStrata="MEDIUM" toplevel="true" movable="true" parent="UIParent" hidden="false" enableMouse="true">
 		<Size>
 			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. (This is no longer true in 0.48) -->
 			<AbsDimension x="200" y="24"/>
@@ -259,6 +259,50 @@
 								</Anchor>
 							</Anchors>
 						</Fontstring>
+					</Layer>
+				</Layers>
+			</Frame>
+
+
+			<!-- Voice Chat Icon Frame-->
+			<Frame name="Perl_Player_VoiceChatIconFrame" hidden="true">
+				<Size>
+					<AbsDimension x="16" y="16"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<!-- Voice Chat Icon -->
+						<Texture name="Perl_Player_VoiceChatIcon" file="Interface\Common\VoiceChat-Speaker" hidden="false">
+							<Size>
+								<AbsDimension x="16" y="16"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="TOPRIGHT" relativeTo="Perl_Player_NameFrame">
+									<Offset>
+										<AbsDimension x="-35" y="-12"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+						<Texture name="Perl_Player_VoiceChatSpeakerIcon" file="Interface\Common\VoiceChat-On" hidden="false">
+							<Size>
+								<AbsDimension x="16" y="16"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="TOPRIGHT" relativeTo="Perl_Player_NameFrame">
+									<Offset>
+										<AbsDimension x="-35" y="-12"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
 					</Layer>
 				</Layers>
 			</Frame>

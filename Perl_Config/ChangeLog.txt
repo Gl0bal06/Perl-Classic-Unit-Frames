@@ -1,3 +1,7 @@
+2.10 - October 11, 2007
+ - All: Changed frame strata so target of unit frames are lower than the parent unit
+ - Focus/Party/Player/Target: Added voice chat display support
+
 2.09 - September 25, 2007
  - All: Updated TOC Interface version to 20200
  - All: Updated tooltip code for 2.2

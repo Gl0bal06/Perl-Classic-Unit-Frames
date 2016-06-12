@@ -100,6 +100,9 @@ function Perl_Party_OnLoad(self)
 	self.portrait2D = getglobal("Perl_Party_MemberFrame"..self.id.."_PortraitFrame_Portrait");
 	self.portrait3D = getglobal("Perl_Party_MemberFrame"..self.id.."_PortraitFrame_PartyModel");
 	self.pvpStatus = getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame_PVPStatus");
+	self.voiceChat = getglobal("Perl_Party_MemberFrame"..self.id.."_VoiceChatIconFrame");
+	self.voiceChat:ClearAllPoints();	-- Didn't feel like moving this line and the one below it to the style function
+	self.voiceChat:SetPoint("CENTER", "Perl_Party_MemberFrame"..self.id, "TOPRIGHT", -35, -12);
 
 	self.healthBar = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBar");
 	self.healthBarBG = getglobal("Perl_Party_MemberFrame"..self.id.."_StatsFrame_HealthBarBG");
@@ -143,6 +146,8 @@ function Perl_Party_OnLoad(self)
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	self:RegisterEvent("UNIT_PVP_UPDATE");
 	self:RegisterEvent("UNIT_RAGE");
+	self:RegisterEvent("VOICE_START");
+	self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
 	self:SetScript("OnEvent", Perl_Party_OnEvent);
@@ -270,6 +275,18 @@ end
 
 function Perl_Party_Events:PLAYER_ALIVE()
 	Perl_Party_Check_Hidden();			-- Are we running a hidden mode? (Hopefully the last check we need to add for this)
+end
+
+function Perl_Party_Events:VOICE_START()
+	if (arg1 == this.unit) then
+		this.voiceChat:Show();
+	end
+end
+
+function Perl_Party_Events:VOICE_STOP()
+	if (arg1 == this.unit) then
+		this.voiceChat:Hide();
+	end
 end
 
 function Perl_Party_Events:PLAYER_ENTERING_WORLD()
@@ -529,6 +546,7 @@ function Perl_Party_MembersUpdate(self)
 	Perl_Party_Update_Loot_Method(self);
 	Perl_Party_Update_Portrait(self);
 	Perl_Party_Buff_UpdateAll(self);
+	Perl_Party_VoiceChat(self);
 end
 
 function Perl_Party_Update_Health(self)
@@ -1235,6 +1253,14 @@ function Perl_Party_Update_Portrait(self)
 				self.portrait2D:Show();				-- Show the 2d graphic
 			end
 		end
+	end
+end
+
+function Perl_Party_VoiceChat(self)
+	if (UnitIsTalking(self.unit)) then
+		self.voiceChat:Show();
+	else
+		self.voiceChat:Hide();
 	end
 end
 

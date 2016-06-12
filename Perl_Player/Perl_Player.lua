@@ -87,6 +87,8 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("UNIT_SPELLMISS");
 	this:RegisterEvent("UPDATE_FACTION");
+	this:RegisterEvent("VOICE_START");
+	this:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Player_OnEvent);
@@ -227,6 +229,18 @@ function Perl_Player_Events:UNIT_PORTRAIT_UPDATE()
 	end
 end
 Perl_Player_Events.UNIT_MODEL_CHANGED = Perl_Player_Events.UNIT_PORTRAIT_UPDATE;
+
+function Perl_Player_Events:VOICE_START()
+	if (arg1 == "player") then
+		Perl_Player_VoiceChatIconFrame:Show();
+	end
+end
+
+function Perl_Player_Events:VOICE_STOP()
+	if (arg1 == "player") then
+		Perl_Player_VoiceChatIconFrame:Hide();
+	end
+end
 
 function Perl_Player_Events:PLAYER_LOGIN()
 	Perl_Player_Initialize();

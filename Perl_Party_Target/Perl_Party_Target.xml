@@ -3,7 +3,7 @@
 	<Script file="Perl_Party_Target.lua"/>
 
 
-	<Frame name="Perl_Party_Target_FrameTemplate" frameStrata="LOW" toplevel="true" virtual="true">
+	<Frame name="Perl_Party_Target_FrameTemplate" frameStrata="MEDIUM" toplevel="true" virtual="true">
 		<Size>
 			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. -->
 			<AbsDimension x="110" y="24"/>

@@ -83,6 +83,8 @@ function Perl_Focus_OnLoad()
 	this:RegisterEvent("UNIT_FACTION");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("UNIT_SPELLMISS");
+	this:RegisterEvent("VOICE_START");
+	this:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Focus_OnEvent);
@@ -207,6 +209,18 @@ function Perl_Focus_Events:UNIT_DISPLAYPOWER()
 	if (arg1 == "focus") then
 		Perl_Focus_Update_Mana_Bar();		-- What type of energy are they using now?
 		Perl_Focus_Update_Mana();		-- Update the energy info immediately
+	end
+end
+
+function Perl_Focus_Events:VOICE_START()
+	if (arg1 == "focus") then
+		Perl_Focus_VoiceChatIconFrame:Show();
+	end
+end
+
+function Perl_Focus_Events:VOICE_STOP()
+	if (arg1 == "focus") then
+		Perl_Focus_VoiceChatIconFrame:Hide();
 	end
 end
 
@@ -430,6 +444,14 @@ function Perl_Focus_Update_Once()
 		end
 	end
 	-- End: Set the pvp rank icon
+
+	-- Begin: Voice Chat Icon already in progress?
+	if (UnitIsTalking(UnitName("focus"))) then
+		Perl_Focus_VoiceChatIconFrame:Show();
+	else
+		Perl_Focus_VoiceChatIconFrame:Hide();
+	end
+	-- End: Voice Chat Icon already in progress?
 end
 
 function Perl_Focus_Update_Health()
