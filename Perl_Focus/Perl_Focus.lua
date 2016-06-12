@@ -841,6 +841,11 @@ end
 function Perl_Focus_Update_Threat()
 	local status = UnitThreatSituation("player", "focus");
 
+	if (status == nil) then
+		Perl_Focus_ThreatIndicator:Hide();
+		return;
+	end
+
 	if (status > 0 and PCUF_THREATICON == 1) then
 		Perl_Focus_ThreatIndicator:SetVertexColor(GetThreatStatusColor(status));
 		Perl_Focus_ThreatIndicator:Show();

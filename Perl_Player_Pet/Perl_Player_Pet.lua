@@ -532,6 +532,11 @@ end
 function Perl_Player_Pet_Update_Threat()
 	local status = UnitThreatSituation("pet");
 
+	if (status == nil) then
+		Perl_Player_Pet_ThreatIndicator:Hide();
+		return;
+	end
+
 	if (status > 0 and PCUF_THREATICON == 1) then
 		Perl_Player_Pet_ThreatIndicator:SetVertexColor(GetThreatStatusColor(status));
 		Perl_Player_Pet_ThreatIndicator:Show();

@@ -957,6 +957,11 @@ end
 function Perl_Player_Update_Threat()
 	local status = UnitThreatSituation("player");
 
+	if (status == nil) then
+		Perl_Player_ThreatIndicator:Hide();
+		return;
+	end
+
 	if (status > 0 and PCUF_THREATICON == 1) then
 		Perl_Player_ThreatIndicator:SetVertexColor(GetThreatStatusColor(status));
 		Perl_Player_ThreatIndicator:Show();

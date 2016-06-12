@@ -390,6 +390,11 @@ function Perl_Party_Pet_Update_Threat(unit)
 	local id = string.sub(unit, 9, 9);
 	local status = UnitThreatSituation(unit);
 
+	if (status == nil) then
+		getglobal("Perl_Party_Pet"..id.."_NameFrame_ThreatIndicator"):Hide();
+		return;
+	end
+
 	if (status > 0 and PCUF_THREATICON == 1) then
 		getglobal("Perl_Party_Pet"..id.."_NameFrame_ThreatIndicator"):SetVertexColor(GetThreatStatusColor(status));
 		getglobal("Perl_Party_Pet"..id.."_NameFrame_ThreatIndicator"):Show();

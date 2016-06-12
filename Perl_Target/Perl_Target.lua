@@ -1010,11 +1010,15 @@ end
 function Perl_Target_Update_Threat()
 	local status = UnitThreatSituation("player", "target");
 
-	if (status > 0 and PCUF_THREATICON == 1) then
-		Perl_Target_ThreatIndicator:SetVertexColor(GetThreatStatusColor(status));
-		Perl_Target_ThreatIndicator:Show();
-	else
+	if (status == nil) then
 		Perl_Target_ThreatIndicator:Hide();
+	else
+		if (status > 0 and PCUF_THREATICON == 1) then
+			Perl_Target_ThreatIndicator:SetVertexColor(GetThreatStatusColor(status));
+			Perl_Target_ThreatIndicator:Show();
+		else
+			Perl_Target_ThreatIndicator:Hide();
+		end
 	end
 
 	local _, statustwo, threatpct, _, _ = UnitDetailedThreatSituation("player", "target")

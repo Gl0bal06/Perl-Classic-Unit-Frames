@@ -948,6 +948,11 @@ end
 function Perl_Party_Update_Threat(self)
 	local status = UnitThreatSituation(self.unit);
 
+	if (status == nil) then
+		self.threatIcon:Hide();
+		return;
+	end
+
 	if (status > 0 and PCUF_THREATICON == 1) then
 		self.threatIcon:SetVertexColor(GetThreatStatusColor(status));
 		self.threatIcon:Show();

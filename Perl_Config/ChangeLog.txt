@@ -1,3 +1,7 @@
+3.06 - April 15, 2009
+ - All: Updated TOC Interface version to 30100
+ - All: Added a sanity check for UnitThreatSituation returning nil
+
 3.05 - January 29, 2009
  - All: Invert bar values combined with fade status bars now fade correctly
  - CombatDisplay: Restricted bar placement to not consider the druid bar if player is not a druid
