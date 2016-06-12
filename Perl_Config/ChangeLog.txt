@@ -1,3 +1,12 @@
+5.01 Beta 7 - July 14, 2012
+ - All: Frame positions are now saved in saved variables
+ - CombatDisplay/PartyPet/PartyTarget/Pet/Target/ToT: Changed the default frame position
+ - Config: CombatDisplay now displays in positioning mode
+ - PartyPet: Fixed a scaling issue
+ - PartyTarget: Health bars now show the percent sign after hovering over a health bar
+ - PartyTarget/Pet/ToT: Added some sanity checks for dividing by zero
+ - Pet: Pet Target frame will now save position in the Global Save option
+
 5.01 Beta 6 - July 8, 2012
  - All: Added server specific saved variable support
  - Config: Fixed an issue that would prevent deleting profiles

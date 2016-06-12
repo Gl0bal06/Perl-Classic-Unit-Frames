@@ -355,9 +355,9 @@
 	<!-- The Real Frames -->
 	<Frame name="Perl_Party_Target1" inherits="Perl_Party_Target_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="1">
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame1_StatsFrame" relativePoint="TOPRIGHT">
+			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="-2" y="22"/>
+					<AbsDimension x="298" y="-214"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -391,9 +391,9 @@
 
 	<Frame name="Perl_Party_Target2" inherits="Perl_Party_Target_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="2">
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame2_StatsFrame" relativePoint="TOPRIGHT">
+			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="-2" y="22"/>
+					<AbsDimension x="298" y="-309"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -427,9 +427,9 @@
 
 	<Frame name="Perl_Party_Target3" inherits="Perl_Party_Target_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="3">
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame3_StatsFrame" relativePoint="TOPRIGHT">
+			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="-2" y="22"/>
+					<AbsDimension x="298" y="-404"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -463,9 +463,9 @@
 
 	<Frame name="Perl_Party_Target4" inherits="Perl_Party_Target_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="4">
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame4_StatsFrame" relativePoint="TOPRIGHT">
+			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="-2" y="22"/>
+					<AbsDimension x="298" y="-499"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -499,9 +499,9 @@
 
 	<Frame name="Perl_Party_Target5" inherits="Perl_Party_Target_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="5">
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="Perl_Focus_LevelFrame" relativePoint="TOPRIGHT">
+			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="-2" y="0"/>
+					<AbsDimension x="419" y="-650"/>
 				</Offset>
 			</Anchor>
 		</Anchors>

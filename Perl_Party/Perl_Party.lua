@@ -35,6 +35,8 @@ local showbarvalues = 0;				-- healer mode will have the bar values hidden by de
 local displaycurabledebuff = 0;			-- display all debuffs by default
 local portraitbuffs = 1;				-- buffs will be pushed over to the portrait if it is displayed
 local displaybufftimers = 0;			-- buff/debuff timers are off by default
+local xposition = -7;					-- default x position
+local yposition = -187;					-- default y position
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
@@ -281,6 +283,7 @@ function Perl_Party_Initialize()
 		Perl_Party_Force_Update()			-- Attempt to forcefully update information
 		Perl_Party_Update_Health_Mana();	-- You know the drill
 		Perl_Party_Check_Hidden();			-- Are we running a hidden mode?
+		Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		return;
 	end
 
@@ -1860,6 +1863,12 @@ function Perl_Party_Set_Portrait_Buffs(newvalue)
 	Perl_Party_Update_All_Buff_Positions();
 end
 
+function Perl_Party_Set_Frame_Position()
+	xposition = floor(Perl_Party_Frame:GetLeft() + 0.5);
+	yposition = floor(Perl_Party_Frame:GetTop() - (UIParent:GetTop() / Perl_Party_Frame:GetScale()) + 0.5);
+	Perl_Party_UpdateVars();
+end
+
 function Perl_Party_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);
@@ -1928,6 +1937,8 @@ function Perl_Party_GetVars(index, updateflag)
 	displaycurabledebuff = Perl_Party_Config[index]["DisplayCurableDebuff"];
 	portraitbuffs = Perl_Party_Config[index]["PortraitBuffs"];
 	displaybufftimers = Perl_Party_Config[index]["DisplayBuffTimers"];
+	xposition = Perl_Party_Config[index]["XPosition"];
+	yposition = Perl_Party_Config[index]["YPosition"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -2016,6 +2027,12 @@ function Perl_Party_GetVars(index, updateflag)
 	if (displaybufftimers == nil) then
 		displaybufftimers = 0;
 	end
+	if (xposition == nil) then
+		xposition = -7;
+	end
+	if (yposition == nil) then
+		yposition = -187;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -2031,6 +2048,7 @@ function Perl_Party_GetVars(index, updateflag)
 		Perl_Party_Frame_Style();
 		Perl_Party_Set_Scale_Actual();
 		Perl_Party_Set_Transparency();
+		Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		return;
 	end
 
@@ -2064,6 +2082,8 @@ function Perl_Party_GetVars(index, updateflag)
 		["displaycurabledebuff"] = displaycurabledebuff,
 		["portraitbuffs"] = portraitbuffs,
 		["displaybufftimers"] = displaybufftimers,
+		["xposition"] = xposition,
+		["yposition"] = yposition,
 	}
 	return vars;
 end
@@ -2217,6 +2237,16 @@ function Perl_Party_UpdateVars(vartable)
 			else
 				displaybufftimers = nil;
 			end
+			if (vartable["Global Settings"]["XPosition"] ~= nil) then
+				xposition = vartable["Global Settings"]["XPosition"];
+			else
+				xposition = nil;
+			end
+			if (vartable["Global Settings"]["YPosition"] ~= nil) then
+				yposition = vartable["Global Settings"]["YPosition"];
+			else
+				yposition = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2307,6 +2337,12 @@ function Perl_Party_UpdateVars(vartable)
 		if (displaybufftimers == nil) then
 			displaybufftimers = 0;
 		end
+		if (xposition == nil) then
+			xposition = -7;
+		end
+		if (yposition == nil) then
+			yposition = -187;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Party_Check_Hidden();
@@ -2318,6 +2354,7 @@ function Perl_Party_UpdateVars(vartable)
 		Perl_Party_Frame_Style();
 		Perl_Party_Set_Scale_Actual();
 		Perl_Party_Set_Transparency();
+		Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 	end
 
 	Perl_Party_Config[GetRealmName("player").."-"..UnitName("player")] = {
@@ -2350,6 +2387,8 @@ function Perl_Party_UpdateVars(vartable)
 		["DisplayCurableDebuff"] = displaycurabledebuff,
 		["PortraitBuffs"] = portraitbuffs,
 		["DisplayBuffTimers"] = displaybufftimers,
+		["XPosition"] = xposition,
+		["YPosition"] = yposition,
 	};
 end
 
@@ -2665,6 +2704,7 @@ end
 
 function Perl_Party_DragStop()
 	Perl_Party_Frame:StopMovingOrSizing();
+	Perl_Party_Set_Frame_Position();
 end
 
 function Perl_Party_Pet_CastClickOverlay_OnLoad(self)

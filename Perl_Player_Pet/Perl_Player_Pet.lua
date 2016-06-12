@@ -26,6 +26,10 @@ local classcolorednames = 0;		-- names are colored based on pvp status by defaul
 local showfriendlyhealth = 0;		-- show numerical friendly health is disbaled by default
 local displaycastablebuffs = 0;		-- display all buffs by default
 local displaycurabledebuff = 0;		-- display all debuffs by default
+local xposition = 30;				-- default x position
+local yposition = -117;				-- default y position
+local xpositiont = 198;				-- target default x position
+local ypositiont = -117;			-- target default y position
 
 -- Default Local Variables
 local Initialized = nil;			-- waiting to be initialized
@@ -224,6 +228,8 @@ function Perl_Player_Pet_Initialize()
 		Perl_Player_Pet_Update_Once();
 		Perl_Player_Pet_Set_Scale_Actual();	-- Set the scale
 		Perl_Player_Pet_Set_Transparency();	-- Set transparency
+		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);			-- Position the frame
+		Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiont, ypositiont);	-- Position the frame
 		return;
 	end
 
@@ -948,7 +954,11 @@ function Perl_Player_Pet_Target_HealthShow()
 end
 
 function Perl_Player_Pet_Target_HealthHide()
-	pettargethealthpercent = floor(UnitHealth("pettarget")/UnitHealthMax("pettarget")*100+0.5);
+	if (UnitHealthMax("pettarget") > 0) then
+		pettargethealthpercent = floor(UnitHealth("pettarget")/UnitHealthMax("pettarget")*100+0.5);
+	else
+		pettargethealthpercent = 0;
+	end
 
 	if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then	-- This prevents negative health
 		pettargethealthpercent = 0;
@@ -1218,6 +1228,14 @@ function Perl_Player_Pet_Set_Friendly_Health(newvalue)
 	Perl_Player_Pet_UpdateVars();
 end
 
+function Perl_Player_Pet_Set_Frame_Position()
+	xposition = floor(Perl_Player_Pet_Frame:GetLeft() + 0.5);
+	yposition = floor(Perl_Player_Pet_Frame:GetTop() - (UIParent:GetTop() / Perl_Player_Pet_Frame:GetScale()) + 0.5);
+	xpositiont = floor(Perl_Player_Pet_Target_Frame:GetLeft() + 0.5);
+	ypositiont = floor(Perl_Player_Pet_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Player_Pet_Target_Frame:GetScale()) + 0.5);
+	Perl_Player_Pet_UpdateVars();
+end
+
 function Perl_Player_Pet_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);				-- convert the user input to a wow acceptable value
@@ -1284,6 +1302,10 @@ function Perl_Player_Pet_GetVars(index, updateflag)
 	showfriendlyhealth = Perl_Player_Pet_Config[index]["ShowFriendlyHealth"];
 	displaycastablebuffs = Perl_Player_Pet_Config[index]["DisplayCastableBuffs"];
 	displaycurabledebuff = Perl_Player_Pet_Config[index]["DisplayCurableDebuff"];
+	xposition = Perl_Player_Pet_Config[index]["XPosition"];
+	yposition = Perl_Player_Pet_Config[index]["YPosition"];
+	xpositiont = Perl_Player_Pet_Config[index]["XPositionT"];
+	ypositiont = Perl_Player_Pet_Config[index]["YPositionT"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1348,6 +1370,18 @@ function Perl_Player_Pet_GetVars(index, updateflag)
 	if (displaycurabledebuff == nil) then
 		displaycurabledebuff = 0;
 	end
+	if (xposition == nil) then
+		xposition = 30;
+	end
+	if (yposition == nil) then
+		yposition = -117;
+	end
+	if (xpositiont == nil) then
+		xpositiont = 198;
+	end
+	if (ypositiont == nil) then
+		ypositiont = -117;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1362,6 +1396,8 @@ function Perl_Player_Pet_GetVars(index, updateflag)
 		Perl_Player_Pet_Set_Window_Layout();
 		Perl_Player_Pet_Set_Scale_Actual();	-- Set the scale
 		Perl_Player_Pet_Set_Transparency();	-- Set the transparency
+		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);			-- Position the frame
+		Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiont, ypositiont);	-- Position the frame
 		return;
 	end
 
@@ -1387,6 +1423,10 @@ function Perl_Player_Pet_GetVars(index, updateflag)
 		["showfriendlyhealth"] = showfriendlyhealth,
 		["displaycastablebuffs"] = displaycastablebuffs,
 		["displaycurabledebuff"] = displaycurabledebuff,
+		["xposition"] = xposition,
+		["yposition"] = yposition,
+		["xpositiont"] = xpositiont,
+		["ypositiont"] = ypositiont,
 	}
 	return vars;
 end
@@ -1500,6 +1540,26 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			else
 				displaycurabledebuff = nil;
 			end
+			if (vartable["Global Settings"]["XPosition"] ~= nil) then
+				xposition = vartable["Global Settings"]["XPosition"];
+			else
+				xposition = nil;
+			end
+			if (vartable["Global Settings"]["YPosition"] ~= nil) then
+				yposition = vartable["Global Settings"]["YPosition"];
+			else
+				yposition = nil;
+			end
+			if (vartable["Global Settings"]["XPositionT"] ~= nil) then
+				xpositiont = vartable["Global Settings"]["XPositionT"];
+			else
+				xpositiont = nil;
+			end
+			if (vartable["Global Settings"]["YPositionT"] ~= nil) then
+				ypositiont = vartable["Global Settings"]["YPositionT"];
+			else
+				ypositiont = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1566,6 +1626,18 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		if (displaycurabledebuff == nil) then
 			displaycurabledebuff = 0;
 		end
+		if (xposition == nil) then
+			xposition = 30;
+		end
+		if (yposition == nil) then
+			yposition = -117;
+		end
+		if (xpositiont == nil) then
+			xpositiont = 198;
+		end
+		if (ypositiont == nil) then
+			ypositiont = -117;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
@@ -1576,6 +1648,8 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		Perl_Player_Pet_Set_Window_Layout();
 		Perl_Player_Pet_Set_Scale_Actual();	-- Set the scale
 		Perl_Player_Pet_Set_Transparency();	-- Set the transparency
+		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);			-- Position the frame
+		Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiont, ypositiont);	-- Position the frame
 	end
 
 	Perl_Player_Pet_Config[GetRealmName("player").."-"..UnitName("player")] = {
@@ -1600,6 +1674,10 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		["ShowFriendlyHealth"] = showfriendlyhealth,
 		["DisplayCastableBuffs"] = displaycastablebuffs,
 		["DisplayCurableDebuff"] = displaycurabledebuff,
+		["XPosition"] = xposition,
+		["YPosition"] = yposition,
+		["XPositionT"] = xpositiont,
+		["YPositionT"] = ypositiont,
 	};
 end
 
@@ -1852,6 +1930,7 @@ end
 
 function Perl_Player_Pet_DragStop()
 	Perl_Player_Pet_Frame:StopMovingOrSizing();
+	Perl_Player_Pet_Set_Frame_Position();
 end
 
 function Perl_Player_Pet_Target_CastClickOverlay_OnLoad(self)
@@ -1910,4 +1989,5 @@ end
 
 function Perl_Player_Pet_Target_DragStop()
 	Perl_Player_Pet_Target_Frame:StopMovingOrSizing();
+	Perl_Player_Pet_Set_Frame_Position();
 end

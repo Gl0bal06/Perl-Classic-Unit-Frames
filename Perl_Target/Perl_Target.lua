@@ -38,6 +38,8 @@ local displaycurabledebuff = 0;		-- display all debuffs by default
 local displaybufftimers = 1;		-- buff/debuff timers are on by default
 local displaynumbericthreat = 1;	-- threat is displayed numerically by default
 local displayonlymydebuffs = 0;		-- display all debuffs by default
+local xposition = 298;				-- default x position
+local yposition = -43;				-- default y position
 
 -- Default Local Variables
 local Initialized = nil;			-- waiting to be initialized
@@ -252,6 +254,7 @@ function Perl_Target_Initialize()
 	if (Initialized) then
 		Perl_Target_Set_Scale_Actual();		-- Set the scale
 		Perl_Target_Set_Transparency();		-- Set the transparency
+		Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		return;
 	end
 
@@ -1723,6 +1726,12 @@ function Perl_Target_Set_Display_Numeric_Threat(newvalue)
 	end
 end
 
+function Perl_Target_Set_Frame_Position()
+	xposition = floor(Perl_Target_Frame:GetLeft() + 0.5);
+	yposition = floor(Perl_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Frame:GetScale()) + 0.5);
+	Perl_Target_UpdateVars();
+end
+
 function Perl_Target_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);		-- convert the user input to a wow acceptable value
@@ -1804,6 +1813,8 @@ function Perl_Target_GetVars(index, updateflag)
 	displaybufftimers = Perl_Target_Config[index]["DisplayBuffTimers"];
 	displaynumbericthreat = Perl_Target_Config[index]["DisplayNumbericThreat"];
 	displayonlymydebuffs = Perl_Target_Config[index]["DisplayOnlyMyDebuffs"];
+	xposition = Perl_Target_Config[index]["XPosition"];
+	yposition = Perl_Target_Config[index]["YPosition"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1904,6 +1915,12 @@ function Perl_Target_GetVars(index, updateflag)
 	if (displayonlymydebuffs == nil) then
 		displayonlymydebuffs = 0;
 	end
+	if (xposition == nil) then
+		xposition = 298;
+	end
+	if (yposition == nil) then
+		yposition = -43;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1915,6 +1932,7 @@ function Perl_Target_GetVars(index, updateflag)
 		Perl_Target_Buff_Debuff_Background();	-- Hide/Show the background frame
 		Perl_Target_Set_Scale_Actual();			-- Set the scale
 		Perl_Target_Set_Transparency();			-- Set the transparency
+		Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		if (UnitExists("target")) then
 			Perl_Target_Update_Once();
 		end
@@ -1955,6 +1973,8 @@ function Perl_Target_GetVars(index, updateflag)
 		["displaybufftimers"] = displaybufftimers,
 		["displaynumbericthreat"] = displaynumbericthreat,
 		["displayonlymydebuffs"] = displayonlymydebuffs,
+		["xposition"] = xposition,
+		["yposition"] = yposition,
 	}
 	return vars;
 end
@@ -2128,6 +2148,16 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				displayonlymydebuffs = nil;
 			end
+			if (vartable["Global Settings"]["XPosition"] ~= nil) then
+				xposition = vartable["Global Settings"]["XPosition"];
+			else
+				xposition = nil;
+			end
+			if (vartable["Global Settings"]["YPosition"] ~= nil) then
+				yposition = vartable["Global Settings"]["YPosition"];
+			else
+				yposition = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2230,6 +2260,12 @@ function Perl_Target_UpdateVars(vartable)
 		if (displayonlymydebuffs == nil) then
 			displayonlymydebuffs = 0;
 		end
+		if (xposition == nil) then
+			xposition = 298;
+		end
+		if (yposition == nil) then
+			yposition = -43;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();				-- Reset the buff icons
@@ -2237,6 +2273,7 @@ function Perl_Target_UpdateVars(vartable)
 		Perl_Target_Buff_Debuff_Background();	-- Hide/Show the background frame
 		Perl_Target_Set_Scale_Actual();			-- Set the scale
 		Perl_Target_Set_Transparency();			-- Set the transparency
+		Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		if (UnitExists("target")) then
 			Perl_Target_Update_Once();
 		end
@@ -2276,6 +2313,8 @@ function Perl_Target_UpdateVars(vartable)
 		["DisplayBuffTimers"] = displaybufftimers,
 		["DisplayNumbericThreat"] = displaynumbericthreat,
 		["DisplayOnlyMyDebuffs"] = displayonlymydebuffs,
+		["XPosition"] = xposition,
+		["YPosition"] = yposition,
 	};
 end
 
@@ -2702,6 +2741,7 @@ end
 
 function Perl_Target_DragStop()
 	Perl_Target_Frame:StopMovingOrSizing();
+	Perl_Target_Set_Frame_Position();
 end
 
 function Perl_Target_OnShow()

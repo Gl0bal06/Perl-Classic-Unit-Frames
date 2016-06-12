@@ -23,14 +23,18 @@ local classcolorednames = 0;			-- names are colored based on pvp status by defau
 local showfriendlyhealth = 0;			-- show numerical friendly health is disbaled by default
 local displaycurabledebuff = 0;			-- display all debuffs by default
 local displayonlymydebuffs = 0;			-- display all debuffs by default
+local xpositiontot = 517;				-- ToT default x position
+local ypositiontot = -43;				-- ToT default y position
+local xpositiontotot = 625;				-- ToToT default x position
+local ypositiontotot = -43;				-- ToToT default y position
 
 -- Default Local Variables
-local Initialized = nil;				-- waiting to be initialized
+local Initialized = nil;							-- waiting to be initialized
 --local Perl_Target_Target_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Target_Target_Time_Update_Rate = 0.2;	-- the update interval
-local aggroWarningCount = 0;			-- the check to see if we have alerted the player of a ToT event
-local aggroToToTWarningCount = 0;		-- the check to see if we have alerted the player of a ToToT event
-local startTime = 0;					-- used to keep track of fading the big alert text
+local aggroWarningCount = 0;						-- the check to see if we have alerted the player of a ToT event
+local aggroToToTWarningCount = 0;					-- the check to see if we have alerted the player of a ToToT event
+local startTime = 0;								-- used to keep track of fading the big alert text
 local mouseovertargettargethealthflag = 0;			-- is the mouse over the health bar for healer mode?
 local mouseovertargettargetmanaflag = 0;			-- is the mouse over the mana bar for healer mode?
 local mouseovertargettargettargethealthflag = 0;	-- is the mouse over the health bar for healer mode?
@@ -111,6 +115,8 @@ function Perl_Target_Target_Initialize()
 	if (Initialized) then
 		Perl_Target_Target_Set_Scale_Actual();	-- Set the scale
 		Perl_Target_Target_Set_Transparency();	-- Set the transparency
+		Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiontot, ypositiontot);
+		Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiontotot, ypositiontotot);
 		return;
 	end
 
@@ -1136,7 +1142,11 @@ function Perl_Target_Target_HealthShow()
 end
 
 function Perl_Target_Target_HealthHide()
-	targettargethealthpercent = floor(UnitHealth("targettarget")/UnitHealthMax("targettarget")*100+0.5);
+	if (UnitHealthMax("targettarget") > 0) then
+		targettargethealthpercent = floor(UnitHealth("targettarget")/UnitHealthMax("targettarget")*100+0.5);
+	else
+		targettargethealthpercent = 0;
+	end
 
 	if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then	-- This prevents negative health
 		targettargethealthpercent = 0;
@@ -1185,7 +1195,11 @@ function Perl_Target_Target_Target_HealthShow()
 end
 
 function Perl_Target_Target_Target_HealthHide()
-	targettargettargethealthpercent = floor(UnitHealth("targettargettarget")/UnitHealthMax("targettargettarget")*100+0.5);
+	if (UnitHealthMax("targettargettarget") > 0) then
+		targettargettargethealthpercent = floor(UnitHealth("targettargettarget")/UnitHealthMax("targettargettarget")*100+0.5);
+	else
+		targettargettargethealthpercent = 0;
+	end
 
 	if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then	-- This prevents negative health
 		targettargettargethealthpercent = 0;
@@ -1527,6 +1541,14 @@ function Perl_Target_Target_Set_Show_Friendly_Health(newvalue)
 	Perl_Target_Target_UpdateVars();
 end
 
+function Perl_Target_Target_Set_Frame_Position()
+	xpositiontot = floor(Perl_Target_Target_Frame:GetLeft() + 0.5);
+	ypositiontot = floor(Perl_Target_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Target_Frame:GetScale()) + 0.5);
+	xpositiontotot = floor(Perl_Target_Target_Target_Frame:GetLeft() + 0.5);
+	ypositiontotot = floor(Perl_Target_Target_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Target_Target_Frame:GetScale()) + 0.5);
+	Perl_Target_Target_UpdateVars();
+end
+
 function Perl_Target_Target_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);											-- convert the user input to a wow acceptable value
@@ -1616,6 +1638,10 @@ function Perl_Target_Target_GetVars(index, updateflag)
 	showfriendlyhealth = Perl_Target_Target_Config[index]["ShowFriendlyHealth"];
 	displaycurabledebuff = Perl_Target_Target_Config[index]["DisplayCurableDebuff"];
 	displayonlymydebuffs = Perl_Target_Target_Config[index]["DisplayOnlyMyDebuffs"];
+	xpositiontot = Perl_Target_Target_Config[index]["XPositionToT"];
+	ypositiontot = Perl_Target_Target_Config[index]["YPositionToT"];
+	xpositiontotot = Perl_Target_Target_Config[index]["XPositionToToT"];
+	ypositiontotot = Perl_Target_Target_Config[index]["YPositionToToT"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1671,6 +1697,18 @@ function Perl_Target_Target_GetVars(index, updateflag)
 	if (displayonlymydebuffs == nil) then
 		displayonlymydebuffs = 0;
 	end
+	if (xpositiontot == nil) then
+		xpositiontot = 517;
+	end
+	if (ypositiontot == nil) then
+		ypositiontot = -43;
+	end
+	if (xpositiontotot == nil) then
+		xpositiontotot = 625;
+	end
+	if (ypositiontotot == nil) then
+		ypositiontotot = -43;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1680,6 +1718,8 @@ function Perl_Target_Target_GetVars(index, updateflag)
 		Perl_Target_Target_Frame_Style();
 		Perl_Target_Target_Set_Scale_Actual();
 		Perl_Target_Target_Set_Transparency();
+		Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiontot, ypositiontot);
+		Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiontotot, ypositiontotot);
 		return;
 	end
 
@@ -1702,6 +1742,10 @@ function Perl_Target_Target_GetVars(index, updateflag)
 		["showfriendlyhealth"] = showfriendlyhealth,
 		["displaycurabledebuff"] = displaycurabledebuff,
 		["displayonlymydebuffs"] = displayonlymydebuffs,
+		["xpositiontot"] = xpositiontot,
+		["ypositiontot"] = ypositiontot,
+		["xpositiontotot"] = xpositiontotot,
+		["ypositiontotot"] = ypositiontotot,
 	}
 	return vars;
 end
@@ -1800,6 +1844,26 @@ function Perl_Target_Target_UpdateVars(vartable)
 			else
 				displayonlymydebuffs = nil;
 			end
+			if (vartable["Global Settings"]["XPositionToT"] ~= nil) then
+				xpositiontot = vartable["Global Settings"]["XPositionToT"];
+			else
+				xpositiontot = nil;
+			end
+			if (vartable["Global Settings"]["YPositionToT"] ~= nil) then
+				ypositiontot = vartable["Global Settings"]["YPositionToT"];
+			else
+				ypositiontot = nil;
+			end
+			if (vartable["Global Settings"]["XPositionToToT"] ~= nil) then
+				xpositiontotot = vartable["Global Settings"]["XPositionToToT"];
+			else
+				xpositiontotot = nil;
+			end
+			if (vartable["Global Settings"]["YPositionToToT"] ~= nil) then
+				ypositiontotot = vartable["Global Settings"]["YPositionToToT"];
+			else
+				ypositiontotot = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1857,11 +1921,25 @@ function Perl_Target_Target_UpdateVars(vartable)
 		if (displayonlymydebuffs == nil) then
 			displayonlymydebuffs = 0;
 		end
+		if (xpositiontot == nil) then
+			xpositiontot = 517;
+		end
+		if (ypositiontot == nil) then
+			ypositiontot = -43;
+		end
+		if (xpositiontotot == nil) then
+			xpositiontotot = 625;
+		end
+		if (ypositiontotot == nil) then
+			ypositiontotot = -43;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Target_Frame_Style();
 		Perl_Target_Target_Set_Scale_Actual();
 		Perl_Target_Target_Set_Transparency();
+		Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiontot, ypositiontot);
+		Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiontotot, ypositiontotot);
 	end
 
 	Perl_Target_Target_Config[GetRealmName("player").."-"..UnitName("player")] = {
@@ -1883,6 +1961,10 @@ function Perl_Target_Target_UpdateVars(vartable)
 		["ShowFriendlyHealth"] = showfriendlyhealth,
 		["DisplayCurableDebuff"] = displaycurabledebuff,
 		["DisplayOnlyMyDebuffs"] = displayonlymydebuffs,
+		["XPositionToT"] = xpositiontot,
+		["YPositionToT"] = ypositiontot,
+		["XPositionToToT"] = xpositiontotot,
+		["YPositionToToT"] = ypositiontotot,
 	};
 end
 
@@ -1947,6 +2029,7 @@ end
 
 function Perl_Target_Target_DragStop()
 	Perl_Target_Target_Frame:StopMovingOrSizing();
+	Perl_Target_Target_Set_Frame_Position();
 end
 -- Target of Target End
 
@@ -2007,6 +2090,7 @@ end
 
 function Perl_Target_Target_Target_DragStop()
 	Perl_Target_Target_Target_Frame:StopMovingOrSizing();
+	Perl_Target_Target_Set_Frame_Position();
 end
 -- Target of Target of Target End
 

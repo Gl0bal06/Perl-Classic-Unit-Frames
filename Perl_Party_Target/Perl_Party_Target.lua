@@ -15,6 +15,16 @@ local enabled = 1;						-- mod is shown by default
 local partyhiddeninraid = 0;			-- party target is not hidden in raids by default
 local enabledfocus = 1;					-- focus target is on by default
 local focushiddeninraid = 0;			-- focus target is not hidden in raids by default
+local xposition1 = 298;					-- target 1 default x position
+local yposition1 = -214;				-- target 1 default y position
+local xposition2 = 298;					-- target 2 default x position
+local yposition2 = -309;				-- target 2 default y position
+local xposition3 = 298;					-- target 3 default x position
+local yposition3 = -404;				-- target 3 default y position
+local xposition4 = 298;					-- target 4 default x position
+local yposition4 = -499;				-- target 4 default y position
+local xposition5 = 419;					-- focus target default x position
+local yposition5 = -650;				-- focus target default y position
 
 
 -- Default Local Variables
@@ -103,6 +113,11 @@ function Perl_Party_Target_Initialize()
 	if (Initialized) then
 		Perl_Party_Target_Set_Scale_Actual();	-- Set the frame scale
 		Perl_Party_Target_Set_Transparency();	-- Set the frame transparency
+		Perl_Party_Target1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition1, yposition1);
+		Perl_Party_Target2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition2, yposition2);
+		Perl_Party_Target3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition3, yposition3);
+		Perl_Party_Target4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition4, yposition4);
+		Perl_Party_Target5:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition5, yposition5);
 		Perl_Party_Target_Check_Hidden();		-- Hide the frames if in a raid
 		return;
 	end
@@ -408,7 +423,11 @@ function Perl_Party_Target_HealthShow(self)
 end
 
 function Perl_Party_Target_HealthHide(self)
-	self.healthBarText:SetText(floor(UnitHealth(self.unit)/UnitHealthMax(self.unit)*100+0.5));
+	if (UnitHealthMax(self.unit) > 0) then
+		self.healthBarText:SetText(floor(UnitHealth(self.unit)/UnitHealthMax(self.unit)*100+0.5).."%");
+	else
+		self.healthBarText:SetText("0%");
+	end
 	mouseoverhealthflag = 0;
 end
 
@@ -801,16 +820,17 @@ function Perl_Party_Target_Allign()
 	Perl_Party_Target4:SetUserPlaced(1);
 	Perl_Party_Target5:SetUserPlaced(1);
 
-	Perl_Party_Target1:SetPoint("TOPLEFT", Perl_Party_MemberFrame1_StatsFrame, "TOPRIGHT", -2, 22);
-	Perl_Party_Target2:SetPoint("TOPLEFT", Perl_Party_MemberFrame2_StatsFrame, "TOPRIGHT", -2, 22);
-	Perl_Party_Target3:SetPoint("TOPLEFT", Perl_Party_MemberFrame3_StatsFrame, "TOPRIGHT", -2, 22);
-	Perl_Party_Target4:SetPoint("TOPLEFT", Perl_Party_MemberFrame4_StatsFrame, "TOPRIGHT", -2, 22);
-	Perl_Party_Target5:ClearAllPoints();
+	Perl_Party_Target1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 298, -214);
+	Perl_Party_Target2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 298, -309);
+	Perl_Party_Target3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 298, -404);
+	Perl_Party_Target4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 298, -499);
 	if (Perl_Focus_PortraitFrame:IsShown()) then
-		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_PortraitFrame, "TOPRIGHT", -2, 0);
+		Perl_Party_Target5:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 481, -650);
 	else
-		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_LevelFrame, "TOPRIGHT", -2, 0);
+		Perl_Party_Target5:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 419, -650);
 	end
+
+	Perl_Party_Target_Set_Frame_Position();
 end
 
 function Perl_Party_Target_Set_Enabled(newvalue)
@@ -850,6 +870,20 @@ end
 
 function Perl_Party_Target_Set_Lock(newvalue)
 	locked = newvalue;
+	Perl_Party_Target_UpdateVars();
+end
+
+function Perl_Party_Target_Set_Frame_Position()
+	xposition1 = floor(Perl_Party_Target1:GetLeft() + 0.5);
+	yposition1 = floor(Perl_Party_Target1:GetTop() - (UIParent:GetTop() / Perl_Party_Target1:GetScale()) + 0.5);
+	xposition2 = floor(Perl_Party_Target2:GetLeft() + 0.5);
+	yposition2 = floor(Perl_Party_Target2:GetTop() - (UIParent:GetTop() / Perl_Party_Target2:GetScale()) + 0.5);
+	xposition3 = floor(Perl_Party_Target3:GetLeft() + 0.5);
+	yposition3 = floor(Perl_Party_Target3:GetTop() - (UIParent:GetTop() / Perl_Party_Target3:GetScale()) + 0.5);
+	xposition4 = floor(Perl_Party_Target4:GetLeft() + 0.5);
+	yposition4 = floor(Perl_Party_Target4:GetTop() - (UIParent:GetTop() / Perl_Party_Target4:GetScale()) + 0.5);
+	xposition5 = floor(Perl_Party_Target5:GetLeft() + 0.5);
+	yposition5 = floor(Perl_Party_Target5:GetTop() - (UIParent:GetTop() / Perl_Party_Target5:GetScale()) + 0.5);
 	Perl_Party_Target_UpdateVars();
 end
 
@@ -914,6 +948,16 @@ function Perl_Party_Target_GetVars(index, updateflag)
 	partyhiddeninraid = Perl_Party_Target_Config[index]["PartyHiddenInRaid"];
 	enabledfocus = Perl_Party_Target_Config[index]["EnabledFocus"];
 	focushiddeninraid = Perl_Party_Target_Config[index]["FocusHiddenInRaid"];
+	xposition1 = Perl_Party_Target_Config[index]["XPosition1"];
+	yposition1 = Perl_Party_Target_Config[index]["YPosition1"];
+	xposition2 = Perl_Party_Target_Config[index]["XPosition2"];
+	yposition2 = Perl_Party_Target_Config[index]["YPosition2"];
+	xposition3 = Perl_Party_Target_Config[index]["XPosition3"];
+	yposition3 = Perl_Party_Target_Config[index]["YPosition3"];
+	xposition4 = Perl_Party_Target_Config[index]["XPosition4"];
+	yposition4 = Perl_Party_Target_Config[index]["YPosition4"];
+	xposition5 = Perl_Party_Target_Config[index]["XPosition5"];
+	yposition5 = Perl_Party_Target_Config[index]["YPosition5"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -945,6 +989,36 @@ function Perl_Party_Target_GetVars(index, updateflag)
 	if (focushiddeninraid == nil) then
 		focushiddeninraid = 0;
 	end
+	if (xposition1 == nil) then
+		xposition1 = 298;
+	end
+	if (yposition1 == nil) then
+		yposition1 = -214;
+	end
+	if (xposition2 == nil) then
+		xposition2 = 298;
+	end
+	if (yposition2 == nil) then
+		yposition2 = -309;
+	end
+	if (xposition3 == nil) then
+		xposition3 = 298;
+	end
+	if (yposition3 == nil) then
+		yposition3 = -404;
+	end
+	if (xposition4 == nil) then
+		xposition4 = 298;
+	end
+	if (yposition4 == nil) then
+		yposition4 = -499;
+	end
+	if (xposition5 == nil) then
+		xposition5 = 419;
+	end
+	if (yposition5 == nil) then
+		yposition5 = -650;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -954,6 +1028,11 @@ function Perl_Party_Target_GetVars(index, updateflag)
 		Perl_Party_Target_Set_Scale_Actual();
 		Perl_Party_Target_Set_Transparency();
 		Perl_Party_Target_Frame_Style();
+		Perl_Party_Target1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition1, yposition1);
+		Perl_Party_Target2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition2, yposition2);
+		Perl_Party_Target3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition3, yposition3);
+		Perl_Party_Target4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition4, yposition4);
+		Perl_Party_Target5:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition5, yposition5);
 		return;
 	end
 
@@ -968,6 +1047,16 @@ function Perl_Party_Target_GetVars(index, updateflag)
 		["partyhiddeninraid"] = partyhiddeninraid,
 		["enabledfocus"] = enabledfocus,
 		["focushiddeninraid"] = focushiddeninraid,
+		["xposition1"] = xposition1,
+		["yposition1"] = yposition1,
+		["xposition2"] = xposition2,
+		["yposition2"] = yposition2,
+		["xposition3"] = xposition3,
+		["yposition3"] = yposition3,
+		["xposition4"] = xposition4,
+		["yposition4"] = yposition4,
+		["xposition5"] = xposition5,
+		["yposition5"] = yposition5,
 	}
 	return vars;
 end
@@ -1026,6 +1115,56 @@ function Perl_Party_Target_UpdateVars(vartable)
 			else
 				focushiddeninraid = nil;
 			end
+			if (vartable["Global Settings"]["XPosition1"] ~= nil) then
+				xposition1 = vartable["Global Settings"]["XPosition1"];
+			else
+				xposition1 = nil;
+			end
+			if (vartable["Global Settings"]["YPosition1"] ~= nil) then
+				yposition1 = vartable["Global Settings"]["YPosition1"];
+			else
+				yposition1 = nil;
+			end
+			if (vartable["Global Settings"]["XPosition2"] ~= nil) then
+				xposition2 = vartable["Global Settings"]["XPosition2"];
+			else
+				xposition2 = nil;
+			end
+			if (vartable["Global Settings"]["YPosition2"] ~= nil) then
+				yposition2 = vartable["Global Settings"]["YPosition2"];
+			else
+				yposition2 = nil;
+			end
+			if (vartable["Global Settings"]["XPosition3"] ~= nil) then
+				xposition3 = vartable["Global Settings"]["XPosition3"];
+			else
+				xposition3 = nil;
+			end
+			if (vartable["Global Settings"]["YPosition3"] ~= nil) then
+				yposition3 = vartable["Global Settings"]["YPosition3"];
+			else
+				yposition3 = nil;
+			end
+			if (vartable["Global Settings"]["XPosition4"] ~= nil) then
+				xposition4 = vartable["Global Settings"]["XPosition4"];
+			else
+				xposition4 = nil;
+			end
+			if (vartable["Global Settings"]["YPosition4"] ~= nil) then
+				yposition4 = vartable["Global Settings"]["YPosition4"];
+			else
+				yposition4 = nil;
+			end
+			if (vartable["Global Settings"]["XPosition5"] ~= nil) then
+				xposition5 = vartable["Global Settings"]["XPosition5"];
+			else
+				xposition5 = nil;
+			end
+			if (vartable["Global Settings"]["YPosition5"] ~= nil) then
+				yposition5 = vartable["Global Settings"]["YPosition5"];
+			else
+				yposition5 = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1059,11 +1198,46 @@ function Perl_Party_Target_UpdateVars(vartable)
 		if (focushiddeninraid == nil) then
 			focushiddeninraid = 0;
 		end
+		if (xposition1 == nil) then
+			xposition1 = 298;
+		end
+		if (yposition1 == nil) then
+			yposition1 = -214;
+		end
+		if (xposition2 == nil) then
+			xposition2 = 298;
+		end
+		if (yposition2 == nil) then
+			yposition2 = -309;
+		end
+		if (xposition3 == nil) then
+			xposition3 = 298;
+		end
+		if (yposition3 == nil) then
+			yposition3 = -404;
+		end
+		if (xposition4 == nil) then
+			xposition4 = 298;
+		end
+		if (yposition4 == nil) then
+			yposition4 = -499;
+		end
+		if (xposition5 == nil) then
+			xposition5 = 419;
+		end
+		if (yposition5 == nil) then
+			yposition5 = -650;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Party_Target_Set_Scale_Actual();
 		Perl_Party_Target_Set_Transparency();
 		Perl_Party_Target_Frame_Style();
+		Perl_Party_Target1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition1, yposition1);
+		Perl_Party_Target2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition2, yposition2);
+		Perl_Party_Target3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition3, yposition3);
+		Perl_Party_Target4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition4, yposition4);
+		Perl_Party_Target5:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition5, yposition5);
 	end
 
 	Perl_Party_Target_Config[GetRealmName("player").."-"..UnitName("player")] = {
@@ -1077,6 +1251,16 @@ function Perl_Party_Target_UpdateVars(vartable)
 		["PartyHiddenInRaid"] = partyhiddeninraid,
 		["EnabledFocus"] = enabledfocus,
 		["FocusHiddenInRaid"] = focushiddeninraid,
+		["XPosition1"] = xposition1,
+		["YPosition1"] = yposition1,
+		["XPosition2"] = xposition2,
+		["YPosition2"] = yposition2,
+		["XPosition3"] = xposition3,
+		["YPosition3"] = yposition3,
+		["XPosition4"] = xposition4,
+		["YPosition4"] = yposition4,
+		["XPosition5"] = xposition5,
+		["YPosition5"] = yposition5,
 	};
 end
 
@@ -1301,4 +1485,5 @@ end
 function Perl_Party_Target_DragStop(self)
 	_G["Perl_Party_Target"..self:GetID()]:SetUserPlaced(1);
 	_G["Perl_Party_Target"..self:GetID()]:StopMovingOrSizing();
+	Perl_Party_Target_Set_Frame_Position();
 end

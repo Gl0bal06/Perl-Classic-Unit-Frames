@@ -18,6 +18,10 @@ local rightclickmenu = 0;				-- The ability to open a menu from CombatDisplay is
 local displaypercents = 0;				-- percents are off by default
 local showcp = 0;						-- combo points are hidden by default
 local clickthrough = 0;					-- frames are clickable by default
+local xpositioncd = 0;					-- default x position
+local ypositioncd = 300;				-- default y position
+local xpositioncdt = 0;					-- target default x position
+local ypositioncdt = 350;				-- target default y position
 
 -- Default Local Variables
 local InCombat = 0;
@@ -1220,7 +1224,8 @@ function Perl_CombatDisplay_Align_Horizontally()
 	Perl_CombatDisplay_Target_Frame:ClearAllPoints();
 	Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", ((UIParent:GetWidth() / 2) / (1 - UIParent:GetEffectiveScale() + scale)) - (Perl_CombatDisplay_Frame:GetWidth() / 2), floor(Perl_CombatDisplay_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Frame:GetScale()) + 0.5))
 	Perl_CombatDisplay_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", ((UIParent:GetWidth() / 2) / (1 - UIParent:GetEffectiveScale() + scale)) - (Perl_CombatDisplay_Target_Frame:GetWidth() / 2), floor(Perl_CombatDisplay_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Target_Frame:GetScale()) + 0.5))
-end
+	Perl_CombatDisplay_Set_Frame_Position();
+	end
 
 function Perl_CombatDisplay_Set_State(newvalue)
 	state = newvalue;
@@ -1288,6 +1293,14 @@ function Perl_CombatDisplay_Set_Click_Through(newvalue)
 	Perl_CombatDisplay_Frame_Style();
 end
 
+function Perl_CombatDisplay_Set_Frame_Position()
+	xpositioncd = floor(Perl_CombatDisplay_Frame:GetLeft() + 0.5);
+	ypositioncd = floor(Perl_CombatDisplay_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Frame:GetScale()) + 0.5);
+	xpositioncdt = floor(Perl_CombatDisplay_Target_Frame:GetLeft() + 0.5);
+	ypositioncdt = floor(Perl_CombatDisplay_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Target_Frame:GetScale()) + 0.5);
+	Perl_CombatDisplay_UpdateVars();
+end
+
 function Perl_CombatDisplay_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);											-- convert the user input to a wow acceptable value
@@ -1337,6 +1350,10 @@ function Perl_CombatDisplay_GetVars(index, updateflag)
 	displaypercents = Perl_CombatDisplay_Config[index]["DisplayPercents"];
 	showcp = Perl_CombatDisplay_Config[index]["ShowCP"];
 	clickthrough = Perl_CombatDisplay_Config[index]["ClickThrough"];
+	xpositioncd = Perl_CombatDisplay_Config[index]["XPositionCD"];
+	ypositioncd = Perl_CombatDisplay_Config[index]["YPositionCD"];
+	xpositioncdt = Perl_CombatDisplay_Config[index]["XPositionCDT"];
+	ypositioncdt = Perl_CombatDisplay_Config[index]["YPositionCDT"];
 
 	if (state == nil) then
 		state = 3;
@@ -1377,17 +1394,31 @@ function Perl_CombatDisplay_GetVars(index, updateflag)
 	if (clickthrough == nil) then
 		clickthrough = 0;
 	end
+	if (xpositioncd == nil) then
+		xpositioncd = 0;
+	end
+	if (ypositioncd == nil) then
+		ypositioncd = 300;
+	end
+	if (xpositioncdt == nil) then
+		xpositioncdt = 0;
+	end
+	if (ypositioncdt == nil) then
+		ypositioncdt = 350;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
 		Perl_CombatDisplay_UpdateVars();
 
 		-- Call any code we need to activate them
-		Perl_CombatDisplay_Set_Target(showtarget)
+		Perl_CombatDisplay_Set_Target(showtarget);
 		Perl_CombatDisplay_Target_Update_Health();
 		Perl_CombatDisplay_Update_Mana();
-		Perl_CombatDisplay_Set_Scale_Actual()
-		Perl_CombatDisplay_Set_Transparency()
+		Perl_CombatDisplay_Set_Scale_Actual();
+		Perl_CombatDisplay_Set_Transparency();
+		Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositioncd, ypositioncd);			-- Position the frame
+		Perl_CombatDisplay_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositioncdt, ypositioncdt);	-- Position the frame
 		Perl_CombatDisplay_UpdateDisplay();
 		return;
 	end
@@ -1406,6 +1437,10 @@ function Perl_CombatDisplay_GetVars(index, updateflag)
 		["displaypercents"] = displaypercents,
 		["showcp"] = showcp,
 		["clickthrough"] = clickthrough,
+		["xpositioncd"] = xpositioncd,
+		["ypositioncd"] = ypositioncd,
+		["xpositioncdt"] = xpositioncdt,
+		["ypositioncdt"] = ypositioncdt,
 	}
 	return vars;
 end
@@ -1479,6 +1514,27 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			else
 				clickthrough = nil;
 			end
+			
+			if (vartable["Global Settings"]["XPositionCD"] ~= nil) then
+				xpositioncd = vartable["Global Settings"]["XPositionCD"];
+			else
+				xpositioncd = nil;
+			end
+			if (vartable["Global Settings"]["YPositionCD"] ~= nil) then
+				ypositioncd = vartable["Global Settings"]["YPositionCD"];
+			else
+				ypositioncd = nil;
+			end
+			if (vartable["Global Settings"]["XPositionCDT"] ~= nil) then
+				xpositioncdt = vartable["Global Settings"]["XPositionCDT"];
+			else
+				xpositioncdt = nil;
+			end
+			if (vartable["Global Settings"]["YPositionCDT"] ~= nil) then
+				ypositioncdt = vartable["Global Settings"]["YPositionCDT"];
+			else
+				ypositioncdt = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1521,13 +1577,27 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		if (clickthrough == nil) then
 			clickthrough = 0;
 		end
+		if (xpositioncd == nil) then
+			xpositioncd = 0;
+		end
+		if (ypositioncd == nil) then
+			ypositioncd = 300;
+		end
+		if (xpositioncdt == nil) then
+			xpositioncdt = 0;
+		end 
+		if (ypositioncdt == nil) then
+			ypositioncdt = 350;
+		end
 
 		-- Call any code we need to activate them
-		Perl_CombatDisplay_Set_Target(showtarget)
+		Perl_CombatDisplay_Set_Target(showtarget);
 		Perl_CombatDisplay_Target_Update_Health();
 		Perl_CombatDisplay_Update_Mana();
-		Perl_CombatDisplay_Set_Scale_Actual()
-		Perl_CombatDisplay_Set_Transparency()
+		Perl_CombatDisplay_Set_Scale_Actual();
+		Perl_CombatDisplay_Set_Transparency();
+		Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositioncd, ypositioncd);			-- Position the frame
+		Perl_CombatDisplay_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositioncdt, ypositioncdt);	-- Position the frame
 		Perl_CombatDisplay_UpdateDisplay();
 	end
 
@@ -1545,6 +1615,10 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		["DisplayPercents"] = displaypercents,
 		["ShowCP"] = showcp,
 		["ClickThrough"] = clickthrough,
+		["XPositionCD"] = xpositioncd,
+		["YPositionCD"] = ypositioncd,
+		["XPositionCDT"] = xpositioncdt,
+		["YPositionCDT"] = ypositioncdt,
 	};
 end
 
@@ -1614,6 +1688,7 @@ end
 
 function Perl_CombatDisplay_DragStop()
 	Perl_CombatDisplay_Frame:StopMovingOrSizing();
+	Perl_CombatDisplay_Set_Frame_Position();
 end
 
 
@@ -1675,4 +1750,5 @@ end
 
 function Perl_CombatDisplay_Target_DragStop()
 	Perl_CombatDisplay_Target_Frame:StopMovingOrSizing();
+	Perl_CombatDisplay_Set_Frame_Position();
 end

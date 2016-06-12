@@ -795,11 +795,11 @@
 
 
 	<!-- The Real Frames -->
-	<Frame name="Perl_Party_Pet1" inherits="Perl_Party_Pet_FrameTemplate" parent="Perl_Party_MemberFrame1" hidden="true" movable="true" id="1">
+	<Frame name="Perl_Party_Pet1" inherits="Perl_Party_Pet_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="1">
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame1_StatsFrame" relativePoint="TOPRIGHT">
+			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="-2" y="0"/>
+					<AbsDimension x="298" y="-214"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -810,11 +810,11 @@
 			</OnLoad>
 		</Scripts>
 	</Frame>
-	<Frame name="Perl_Party_Pet2" inherits="Perl_Party_Pet_FrameTemplate" parent="Perl_Party_MemberFrame2" hidden="true" movable="true" id="2">
+	<Frame name="Perl_Party_Pet2" inherits="Perl_Party_Pet_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="2">
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame2_StatsFrame" relativePoint="TOPRIGHT">
+			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="-2" y="0"/>
+					<AbsDimension x="298" y="-309"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -825,11 +825,11 @@
 			</OnLoad>
 		</Scripts>
 	</Frame>
-	<Frame name="Perl_Party_Pet3" inherits="Perl_Party_Pet_FrameTemplate" parent="Perl_Party_MemberFrame3" hidden="true" movable="true" id="3">
+	<Frame name="Perl_Party_Pet3" inherits="Perl_Party_Pet_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="3">
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame3_StatsFrame" relativePoint="TOPRIGHT">
+			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="-2" y="0"/>
+					<AbsDimension x="298" y="-404"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -840,11 +840,11 @@
 			</OnLoad>
 		</Scripts>
 	</Frame>
-	<Frame name="Perl_Party_Pet4" inherits="Perl_Party_Pet_FrameTemplate" parent="Perl_Party_MemberFrame4" hidden="true" movable="true" id="4">
+	<Frame name="Perl_Party_Pet4" inherits="Perl_Party_Pet_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="4">
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame4_StatsFrame" relativePoint="TOPRIGHT">
+			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="-2" y="0"/>
+					<AbsDimension x="298" y="-499"/>
 				</Offset>
 			</Anchor>
 		</Anchors>

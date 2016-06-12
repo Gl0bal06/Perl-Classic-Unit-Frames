@@ -33,6 +33,8 @@ local invertbuffs = 0;			-- buffs and debuffs are below the Focus frame by defau
 local displaycurabledebuff = 0;	-- display all debuffs by default
 local displaybufftimers = 1;	-- buff/debuff timers are on by default
 local displayonlymydebuffs = 0;	-- display all debuffs by default
+local xposition = 200;			-- default x position
+local yposition = -650;			-- default y position
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -227,6 +229,7 @@ function Perl_Focus_Initialize()
 	if (Initialized) then
 		Perl_Focus_Set_Scale_Actual();	-- Set the scale
 		Perl_Focus_Set_Transparency();	-- Set the transparency
+		Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		if (UnitExists("focus")) then
 			Perl_Focus_Update_Once();
 		end
@@ -1352,6 +1355,12 @@ function Perl_Focus_Set_Mana_Deficit(newvalue)
 	end
 end
 
+function Perl_Focus_Set_Frame_Position()
+	xposition = floor(Perl_Focus_Frame:GetLeft() + 0.5);
+	yposition = floor(Perl_Focus_Frame:GetTop() - (UIParent:GetTop() / Perl_Focus_Frame:GetScale()) + 0.5);
+	Perl_Focus_UpdateVars();
+end
+
 function Perl_Focus_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1429,6 +1438,8 @@ function Perl_Focus_GetVars(index, updateflag)
 	displaycurabledebuff = Perl_Focus_Config[index]["DisplayCurableDebuff"];
 	displaybufftimers = Perl_Focus_Config[index]["DisplayBuffTimers"];
 	displayonlymydebuffs = Perl_Focus_Config[index]["DisplayOnlyMyDebuffs"];
+	xposition = Perl_Focus_Config[index]["XPosition"];
+	yposition = Perl_Focus_Config[index]["YPosition"];
 
 
 	if (locked == nil) then
@@ -1515,6 +1526,12 @@ function Perl_Focus_GetVars(index, updateflag)
 	if (displayonlymydebuffs == nil) then
 		displayonlymydebuffs = 0;
 	end
+	if (xposition == nil) then
+		xposition = 200;
+	end
+	if (yposition == nil) then
+		yposition = -650;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1526,6 +1543,7 @@ function Perl_Focus_GetVars(index, updateflag)
 		Perl_Focus_Buff_Debuff_Background();	-- Hide/Show the background frame
 		Perl_Focus_Set_Scale_Actual();			-- Set the scale
 		Perl_Focus_Set_Transparency();			-- Set the transparency
+		Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		if (UnitExists("focus")) then
 			Perl_Focus_Update_Once();
 		end
@@ -1561,6 +1579,8 @@ function Perl_Focus_GetVars(index, updateflag)
 		["displaycurabledebuff"] = displaycurabledebuff,
 		["displaybufftimers"] = displaybufftimers,
 		["displayonlymydebuffs"] = displayonlymydebuffs,
+		["xposition"] = xposition,
+		["yposition"] = yposition,
 	}
 	return vars;
 end
@@ -1709,6 +1729,16 @@ function Perl_Focus_UpdateVars(vartable)
 			else
 				displayonlymydebuffs = nil;
 			end
+			if (vartable["Global Settings"]["XPosition"] ~= nil) then
+				xposition = vartable["Global Settings"]["XPosition"];
+			else
+				xposition = nil;
+			end
+			if (vartable["Global Settings"]["YPosition"] ~= nil) then
+				yposition = vartable["Global Settings"]["YPosition"];
+			else
+				yposition = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1796,6 +1826,12 @@ function Perl_Focus_UpdateVars(vartable)
 		if (displayonlymydebuffs == nil) then
 			displayonlymydebuffs = 0;
 		end
+		if (xposition == nil) then
+			xposition = 200;
+		end
+		if (yposition == nil) then
+			yposition = -650;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Focus_Reset_Buffs();				-- Reset the buff icons
@@ -1803,6 +1839,7 @@ function Perl_Focus_UpdateVars(vartable)
 		Perl_Focus_Buff_Debuff_Background();	-- Hide/Show the background frame
 		Perl_Focus_Set_Scale_Actual();			-- Set the scale
 		Perl_Focus_Set_Transparency();			-- Set the transparency
+		Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		if (UnitExists("focus")) then
 			Perl_Focus_Update_Once();
 		end
@@ -1837,6 +1874,8 @@ function Perl_Focus_UpdateVars(vartable)
 		["DisplayCurableDebuff"] = displaycurabledebuff,
 		["DisplayBuffTimers"] = displaybufftimers,
 		["DisplayOnlyMyDebuffs"] = displayonlymydebuffs,
+		["XPosition"] = xposition,
+		["YPosition"] = yposition,
 	};
 end
 
@@ -2253,4 +2292,5 @@ end
 
 function Perl_Focus_DragStop()
 	Perl_Focus_Frame:StopMovingOrSizing();
+	Perl_Focus_Set_Frame_Position();
 end

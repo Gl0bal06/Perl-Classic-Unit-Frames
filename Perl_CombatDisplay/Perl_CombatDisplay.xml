@@ -456,9 +456,9 @@
 		</Size>
 
 		<Anchors>
-			<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" relativeTo="Perl_CombatDisplay_Frame">
+			<Anchor point="BOTTOM">
 				<Offset>
-					<AbsDimension x="0" y="5"/>
+					<AbsDimension x="0" y="350"/>
 				</Offset>
 			</Anchor>
 		</Anchors>

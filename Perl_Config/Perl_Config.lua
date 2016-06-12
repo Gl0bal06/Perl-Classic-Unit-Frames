@@ -160,7 +160,7 @@ end
 -------------------------------
 -- Migrate Settings Function --
 -------------------------------
-function Perl_Config_Migrate_Vars_Old_To_New(addon)
+function Perl_Config_Migrate_Vars_Old_To_New(addon)		-- Do not add new variable support to this function
 	local name = UnitName("player");
 	local realm = GetRealmName("player");
 
@@ -518,6 +518,14 @@ function Perl_Config_PositioningMode_Disable()
 		end
 	end
 
+	if (Perl_CombatDisplay_Frame) then
+		Perl_CombatDisplay_Target_Frame:SetAttribute("unit", "target");
+		Perl_CombatDisplay_Frame:Hide();
+		Perl_CombatDisplay_Target_Frame:Hide();
+		Perl_CombatDisplay_Frame_Style();
+		Perl_CombatDisplay_Initialize();
+	end
+
 	if (Perl_Party_Frame) then
 		Perl_Party_MemberFrame1:SetAttribute("unit", "party1");
 		Perl_Party_MemberFrame2:SetAttribute("unit", "party2");
@@ -573,6 +581,14 @@ function Perl_Config_PositioningMode_Disable()
 end
 
 function Perl_Config_PositioningMode_Enable()
+	if (Perl_CombatDisplay_Frame) then
+		Perl_CombatDisplay_Target_Frame:SetAttribute("unit", "player");
+		Perl_CombatDisplay_HealthBarText:SetText("CombatDisplay Player");
+		Perl_CombatDisplay_Target_HealthBarText:SetText("CombatDisplay Target");
+		Perl_CombatDisplay_Frame:Show();
+		Perl_CombatDisplay_Target_Frame:Show();
+	end
+
 	if (Perl_Focus_Frame) then
 		Perl_Focus_Frame:SetAttribute("unit", "player");
 		Perl_Focus_Update_Once();
@@ -1463,18 +1479,19 @@ end
 -----------------------------------
 function Perl_Config_Frame_Reset_Positions()
 	if (Perl_CombatDisplay_Frame) then
-		-- All the SetUserPlaced allows us to save the new location set by these functions even if the user has not moved the frames on their own yet.
 		Perl_CombatDisplay_Frame:SetUserPlaced(1);
 		Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
 		Perl_CombatDisplay_Frame:ClearAllPoints();
 		Perl_CombatDisplay_Target_Frame:ClearAllPoints();
-		Perl_CombatDisplay_Frame:SetPoint("BOTTOM", 0, 300);
-		Perl_CombatDisplay_Target_Frame:SetPoint("BOTTOMLEFT", Perl_CombatDisplay_Frame, "TOPLEFT", 0, 5);
+		Perl_CombatDisplay_Frame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 300);
+		Perl_CombatDisplay_Target_Frame:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 350);
+		Perl_CombatDisplay_Set_Frame_Position();
 	end
 
 	if (Perl_Focus_Frame) then
 		Perl_Focus_Frame:SetUserPlaced(1);
 		Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 200, -650);
+		Perl_Focus_Set_Frame_Position();
 	end
 
 	if (Perl_Party_Frame) then
@@ -1485,6 +1502,7 @@ function Perl_Config_Frame_Reset_Positions()
 		else
 			Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 55, -187);
 		end
+		Perl_Party_Set_Frame_Position();
 	end
 
 	if (Perl_Party_Pet_Script_Frame) then
@@ -1503,6 +1521,7 @@ function Perl_Config_Frame_Reset_Positions()
 		else
 			Perl_Player_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 60, -43);
 		end
+		Perl_Player_Set_Frame_Position();
 	end
 
 	if (Perl_Player_Pet_Frame) then
@@ -1511,53 +1530,52 @@ function Perl_Config_Frame_Reset_Positions()
 		if (Perl_Player_Frame) then
 			local vartableone = Perl_Player_GetVars();
 			local vartabletwo = Perl_Player_Pet_GetVars();
-			Perl_Player_Pet_Frame:ClearAllPoints();
 			if (vartableone["showportrait"] == 0 and vartabletwo["showportrait"] == 1) then
-				Perl_Player_Pet_Frame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 54, 2);
+				Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 52, -117);
 			else
-				Perl_Player_Pet_Frame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 2);
+				Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 30, -117);
 			end
 		else
-			Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 27, -112);
+			Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 30, -117);
 		end
-		Perl_Player_Pet_Target_Frame:ClearAllPoints();
-		Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", Perl_Player_Pet_Frame, "TOPRIGHT", -2, 0);
+		Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Player_Pet_Frame:GetRight() - 2), -117);
+		Perl_Player_Pet_Set_Frame_Position();
 	end
 
 	if (Perl_Target_Frame) then
 		Perl_Target_Frame:SetUserPlaced(1);
 		if (Perl_Player_Frame) then
-			Perl_Target_Frame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "TOPRIGHT", -2, 22);
+			Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Player_StatsFrame:GetRight() - 2), -43);
 		else
-			Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 283, -43);
+			Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 298, -43);
 		end
+		Perl_Target_Set_Frame_Position();
 	end
 
 	if (Perl_Target_Target_Script_Frame) then
 		Perl_Target_Target_Frame:SetUserPlaced(1);
 		Perl_Target_Target_Target_Frame:SetUserPlaced(1);
 		if (Perl_Target_Frame) then
-			Perl_Target_Target_Frame:ClearAllPoints();
-			Perl_Target_Target_Target_Frame:ClearAllPoints();
 			local vartable = Perl_Target_GetVars();
 			if (vartable["showcp"] == 1) then
 				if (vartable["showportrait"] == 1) then
-					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_CPFrame, "TOPRIGHT", -2, 34);
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Target_PortraitFrame:GetRight() + 21), -43);
 				else
-					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_CPFrame, "TOPRIGHT", -2, 22);
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Target_LevelFrame:GetRight() + 21), -43);
 				end
 			else
 				if (vartable["showportrait"] == 1) then
-					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -2, 0);
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Target_PortraitFrame:GetRight() - 2), -43);
 				else
-					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_LevelFrame, "TOPRIGHT", -2, 0);
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Target_LevelFrame:GetRight() - 2), -43);
 				end
 			end
-			Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", -2, 0);
+			Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Target_Target_Frame:GetRight() - 2), -43);
 		else
-			Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 525, -43);
-			Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 633, -43);
+			Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 517, -43);
+			Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 625, -43);
 		end
+		Perl_Target_Target_Set_Frame_Position();
 	end
 end
 
@@ -1600,16 +1618,16 @@ function Perl_Config_Global_Save_Settings()
 			["Scale"] = vartable["scale"],
 			["Transparency"] = vartable["transparency"],
 			["ShowTarget"] = vartable["showtarget"],
-			["XPositionCD"] = floor(Perl_CombatDisplay_Frame:GetLeft() + 0.5),
-			["YPositionCD"] = floor(Perl_CombatDisplay_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Frame:GetScale()) + 0.5),
-			["XPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetLeft() + 0.5),
-			["YPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Target_Frame:GetScale()) + 0.5),
 			["ShowDruidBar"] = vartable["showdruidbar"],
 			["ShowPetBars"] = vartable["showpetbars"],
 			["RightClickMenu"] = vartable["rightclickmenu"],
 			["DisplayPercents"] = vartable["displaypercents"],
 			["ShowCP"] = vartable["showcp"],
 			["ClickThrough"] = vartable["clickthrough"],
+			["XPositionCD"] = vartable["xpositioncd"],
+			["YPositionCD"] = vartable["ypositioncd"],
+			["XPositionCDT"] = vartable["xpositioncdt"],
+			["YPositionCDT"] = vartable["ypositioncdt"],
 		};
 	end
 
@@ -1644,8 +1662,6 @@ function Perl_Config_Global_Save_Settings()
 			["Scale"] = vartable["scale"],
 			["Transparency"] = vartable["transparency"],
 			["BuffDebuffScale"] = vartable["buffdebuffscale"],
-			["XPosition"] = floor(Perl_Focus_Frame:GetLeft() + 0.5),
-			["YPosition"] = floor(Perl_Focus_Frame:GetTop() - (UIParent:GetTop() / Perl_Focus_Frame:GetScale()) + 0.5),
 			["ShowPortrait"] = vartable["showportrait"],
 			["ThreeDPortrait"] = vartable["threedportrait"],
 			["PortraitCombatText"] = vartable["portraitcombattext"],
@@ -1665,6 +1681,8 @@ function Perl_Config_Global_Save_Settings()
 			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
 			["DisplayBuffTimers"] = vartable["displaybufftimers"],
 			["DisplayOnlyMyDebuffs"] = vartable["displayonlymydebuffs"],
+			["XPosition"] = vartable["xposition"],
+			["YPosition"] = vartable["yposition"],
 		};
 	end
 
@@ -1682,8 +1700,6 @@ function Perl_Config_Global_Save_Settings()
 			["BuffLocation"] = vartable["bufflocation"],
 			["DebuffLocation"] = vartable["debufflocation"],
 			["VerticalAlign"] = vartable["verticalalign"],
-			["XPosition"] = floor(Perl_Party_Frame:GetLeft() + 0.5),
-			["YPosition"] = floor(Perl_Party_Frame:GetTop() - (UIParent:GetTop() / Perl_Party_Frame:GetScale()) + 0.5),
 			["CompactPercent"] = vartable["compactpercent"],
 			["ShowPortrait"] = vartable["showportrait"],
 			["ShowFKeys"] = vartable["showfkeys"],
@@ -1702,6 +1718,8 @@ function Perl_Config_Global_Save_Settings()
 			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
 			["PortraitBuffs"] = vartable["portraitbuffs"],
 			["DisplayBuffTimers"] = vartable["displaybufftimers"],
+			["XPosition"] = vartable["xposition"],
+			["YPosition"] = vartable["yposition"],
 		};
 	end
 
@@ -1720,17 +1738,17 @@ function Perl_Config_Global_Save_Settings()
 			["BuffLocation"] = vartable["bufflocation"],
 			["DebuffLocation"] = vartable["debufflocation"],
 			["HiddenInRaids"] = vartable["hiddeninraids"],
-			["XPosition1"] = floor(Perl_Party_Pet1:GetLeft() + 0.5),
-			["YPosition1"] = floor(Perl_Party_Pet1:GetTop() - (UIParent:GetTop() / Perl_Party_Pet1:GetScale()) + 0.5),
-			["XPosition2"] = floor(Perl_Party_Pet2:GetLeft() + 0.5),
-			["YPosition2"] = floor(Perl_Party_Pet2:GetTop() - (UIParent:GetTop() / Perl_Party_Pet2:GetScale()) + 0.5),
-			["XPosition3"] = floor(Perl_Party_Pet3:GetLeft() + 0.5),
-			["YPosition3"] = floor(Perl_Party_Pet3:GetTop() - (UIParent:GetTop() / Perl_Party_Pet3:GetScale()) + 0.5),
-			["XPosition4"] = floor(Perl_Party_Pet4:GetLeft() + 0.5),
-			["YPosition4"] = floor(Perl_Party_Pet4:GetTop() - (UIParent:GetTop() / Perl_Party_Pet4:GetScale()) + 0.5),
 			["Enabled"] = vartable["enabled"],
 			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
 			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
+			["XPosition1"] = vartable["xposition1"],
+			["YPosition1"] = vartable["yposition1"],
+			["XPosition2"] = vartable["xposition2"],
+			["YPosition2"] = vartable["yposition2"],
+			["XPosition3"] = vartable["xposition3"],
+			["YPosition3"] = vartable["yposition3"],
+			["XPosition4"] = vartable["xposition4"],
+			["YPosition4"] = vartable["yposition4"],
 		};
 	end
 
@@ -1743,20 +1761,20 @@ function Perl_Config_Global_Save_Settings()
 			["Transparency"] = vartable["transparency"],
 			["HidePowerBars"] = vartable["hidepowerbars"],
 			["ClassColoredNames"] = vartable["classcolorednames"],
-			["XPosition1"] = floor(Perl_Party_Target1:GetLeft() + 0.5),
-			["YPosition1"] = floor(Perl_Party_Target1:GetTop() - (UIParent:GetTop() / Perl_Party_Target1:GetScale()) + 0.5),
-			["XPosition2"] = floor(Perl_Party_Target2:GetLeft() + 0.5),
-			["YPosition2"] = floor(Perl_Party_Target2:GetTop() - (UIParent:GetTop() / Perl_Party_Target2:GetScale()) + 0.5),
-			["XPosition3"] = floor(Perl_Party_Target3:GetLeft() + 0.5),
-			["YPosition3"] = floor(Perl_Party_Target3:GetTop() - (UIParent:GetTop() / Perl_Party_Target3:GetScale()) + 0.5),
-			["XPosition4"] = floor(Perl_Party_Target4:GetLeft() + 0.5),
-			["YPosition4"] = floor(Perl_Party_Target4:GetTop() - (UIParent:GetTop() / Perl_Party_Target4:GetScale()) + 0.5),
-			["XPosition5"] = floor(Perl_Party_Target5:GetLeft() + 0.5),
-			["YPosition5"] = floor(Perl_Party_Target5:GetTop() - (UIParent:GetTop() / Perl_Party_Target5:GetScale()) + 0.5),
 			["Enabled"] = vartable["enabled"],
 			["PartyHiddenInRaid"] = vartable["partyhiddeninraid"],
 			["EnabledFocus"] = vartable["enabledfocus"],
 			["FocusHiddenInRaid"] = vartable["focushiddeninraid"],
+			["XPosition1"] = vartable["xposition1"],
+			["YPosition1"] = vartable["yposition1"],
+			["XPosition2"] = vartable["xposition2"],
+			["YPosition2"] = vartable["yposition2"],
+			["XPosition3"] = vartable["xposition3"],
+			["YPosition3"] = vartable["yposition3"],
+			["XPosition4"] = vartable["xposition4"],
+			["YPosition4"] = vartable["yposition4"],
+			["XPosition5"] = vartable["xposition5"],
+			["YPosition5"] = vartable["yposition5"],
 		};
 	end
 
@@ -1770,8 +1788,6 @@ function Perl_Config_Global_Save_Settings()
 			["Scale"] = vartable["scale"],
 			["HealerMode"] = vartable["healermode"],
 			["Transparency"] = vartable["transparency"],
-			["XPosition"] = floor(Perl_Player_Frame:GetLeft() + 0.5),
-			["YPosition"] = floor(Perl_Player_Frame:GetTop() - (UIParent:GetTop() / Perl_Player_Frame:GetScale()) + 0.5),
 			["ShowPortrait"] = vartable["showportrait"],
 			["CompactPercent"] = vartable["compactpercent"],
 			["ThreeDPortrait"] = vartable["threedportrait"],
@@ -1794,6 +1810,8 @@ function Perl_Config_Global_Save_Settings()
 			["EclipseBarFrame"] = vartable["eclipsebarframe"],
 			["HarmonyBarFrame"] = vartable["harmonybarframe"],
 			["PriestBarFrame"] = vartable["priestbarframe"],
+			["XPosition"] = vartable["xposition"],
+			["YPosition"] = vartable["yposition"],
 		};
 	end
 
@@ -1820,8 +1838,6 @@ function Perl_Config_Global_Save_Settings()
 			["Transparency"] = vartable["transparency"],
 			["BuffLocation"] = vartable["bufflocation"],
 			["DebuffLocation"] = vartable["debufflocation"],
-			["XPosition"] = floor(Perl_Player_Pet_Frame:GetLeft() + 0.5),
-			["YPosition"] = floor(Perl_Player_Pet_Frame:GetTop() - (UIParent:GetTop() / Perl_Player_Pet_Frame:GetScale()) + 0.5),
 			["BuffSize"] = vartable["buffsize"],
 			["DebuffSize"] = vartable["debuffsize"],
 			["ShowPortrait"] = vartable["showportrait"],
@@ -1834,6 +1850,10 @@ function Perl_Config_Global_Save_Settings()
 			["ShowFriendlyHealth"] = vartable["showfriendlyhealth"],
 			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
 			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
+			["XPosition"] = vartable["xposition"],
+			["YPosition"] = vartable["yposition"],
+			["XPositionT"] = vartable["xpositiont"],
+			["YPositionT"] = vartable["ypositiont"],
 		};
 	end
 
@@ -1850,8 +1870,6 @@ function Perl_Config_Global_Save_Settings()
 			["Scale"] = vartable["scale"],
 			["Transparency"] = vartable["transparency"],
 			["BuffDebuffScale"] = vartable["buffdebuffscale"],
-			["XPosition"] = floor(Perl_Target_Frame:GetLeft() + 0.5),
-			["YPosition"] = floor(Perl_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Frame:GetScale()) + 0.5),
 			["ShowPortrait"] = vartable["showportrait"],
 			["ThreeDPortrait"] = vartable["threedportrait"],
 			["PortraitCombatText"] = vartable["portraitcombattext"],
@@ -1875,6 +1893,8 @@ function Perl_Config_Global_Save_Settings()
 			["DisplayBuffTimers"] = vartable["displaybufftimers"],
 			["DisplayNumbericThreat"] = vartable["displaynumbericthreat"],
 			["DisplayOnlyMyDebuffs"] = vartable["displayonlymydebuffs"],
+			["XPosition"] = vartable["xposition"],
+			["YPosition"] = vartable["yposition"],
 		};
 	end
 
@@ -1886,10 +1906,6 @@ function Perl_Config_Global_Save_Settings()
 			["ToTSupport"] = vartable["totsupport"],
 			["ToToTSupport"] = vartable["tototsupport"],
 			["Transparency"] = vartable["transparency"],
-			["XPositionToT"] = floor(Perl_Target_Target_Frame:GetLeft() + 0.5),
-			["YPositionToT"] = floor(Perl_Target_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Target_Frame:GetScale()) + 0.5),
-			["XPositionToToT"] = floor(Perl_Target_Target_Target_Frame:GetLeft() + 0.5),
-			["YPositionToToT"] = floor(Perl_Target_Target_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Target_Target_Frame:GetScale()) + 0.5),
 			["AlertSound"] = vartable["alertsound"],
 			["AlertMode"] = vartable["alertmode"],
 			["AlertSize"] = vartable["alertsize"],
@@ -1903,6 +1919,10 @@ function Perl_Config_Global_Save_Settings()
 			["ShowFriendlyHealth"] = vartable["showfriendlyhealth"],
 			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
 			["DisplayOnlyMyDebuffs"] = vartable["displayonlymydebuffs"],
+			["XPositionToT"] = vartable["xpositiontot"],
+			["YPositionToT"] = vartable["ypositiontot"],
+			["XPositionToToT"] = vartable["xpositiontotot"],
+			["YPositionToToT"] = vartable["ypositiontotot"],
 		};
 	end
 end
@@ -1915,17 +1935,6 @@ function Perl_Config_Global_Load_Settings()
 
 	if (Perl_CombatDisplay_Frame) then
 		Perl_CombatDisplay_UpdateVars(Perl_Config_Global_CombatDisplay_Config);
-
-		if (Perl_Config_Global_CombatDisplay_Config["Global Settings"] ~= nil) then
-			if ((Perl_Config_Global_CombatDisplay_Config["Global Settings"]["XPositionCD"] ~= nil) and (Perl_Config_Global_CombatDisplay_Config["Global Settings"]["YPositionCD"] ~= nil) and (Perl_Config_Global_CombatDisplay_Config["Global Settings"]["XPositionCDT"] ~= nil) and (Perl_Config_Global_CombatDisplay_Config["Global Settings"]["YPositionCDT"] ~= nil)) then
-				Perl_CombatDisplay_Frame:SetUserPlaced(1);
-				Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
-				Perl_CombatDisplay_Frame:ClearAllPoints();
-				Perl_CombatDisplay_Target_Frame:ClearAllPoints();
-				Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_CombatDisplay_Config["Global Settings"]["XPositionCD"], Perl_Config_Global_CombatDisplay_Config["Global Settings"]["YPositionCD"]);
-				Perl_CombatDisplay_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_CombatDisplay_Config["Global Settings"]["XPositionCDT"], Perl_Config_Global_CombatDisplay_Config["Global Settings"]["YPositionCDT"]);
-			end
-		end
 	end
 
 	if (Perl_Config_Script_Frame) then
@@ -1934,71 +1943,22 @@ function Perl_Config_Global_Load_Settings()
 
 	if (Perl_Focus_Frame) then
 		Perl_Focus_UpdateVars(Perl_Config_Global_Focus_Config);
-
-		if (Perl_Config_Global_Focus_Config["Global Settings"] ~= nil) then
-			if ((Perl_Config_Global_Focus_Config["Global Settings"]["XPosition"] ~= nil) and (Perl_Config_Global_Focus_Config["Global Settings"]["YPosition"] ~= nil)) then
-				Perl_Focus_Frame:SetUserPlaced(1);
-				Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Focus_Config["Global Settings"]["XPosition"], Perl_Config_Global_Focus_Config["Global Settings"]["YPosition"]);
-			end
-		end
 	end
 
 	if (Perl_Party_Frame) then
 		Perl_Party_UpdateVars(Perl_Config_Global_Party_Config);
-
-		if (Perl_Config_Global_Party_Config["Global Settings"] ~= nil) then
-			if ((Perl_Config_Global_Party_Config["Global Settings"]["XPosition"] ~= nil) and (Perl_Config_Global_Party_Config["Global Settings"]["YPosition"] ~= nil)) then
-				Perl_Party_Frame:SetUserPlaced(1);
-				Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Config["Global Settings"]["XPosition"], Perl_Config_Global_Party_Config["Global Settings"]["YPosition"]);
-			end
-		end
 	end
 
 	if (Perl_Party_Pet_Script_Frame) then
 		Perl_Party_Pet_UpdateVars(Perl_Config_Global_Party_Pet_Config);
-
-		if (Perl_Config_Global_Party_Pet_Config["Global Settings"] ~= nil) then
-			if ((Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition1"] ~= nil) and (Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition1"] ~= nil)) then
-				Perl_Party_Pet1:SetUserPlaced(1);
-				Perl_Party_Pet2:SetUserPlaced(1);
-				Perl_Party_Pet3:SetUserPlaced(1);
-				Perl_Party_Pet4:SetUserPlaced(1);
-				Perl_Party_Pet1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition1"], Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition1"]);
-				Perl_Party_Pet2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition2"], Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition2"]);
-				Perl_Party_Pet3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition3"], Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition3"]);
-				Perl_Party_Pet4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition4"], Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition4"]);
-			end
-		end
 	end
 
 	if (Perl_Party_Target_Script_Frame) then
 		Perl_Party_Target_UpdateVars(Perl_Config_Global_Party_Target_Config);
-
-		if (Perl_Config_Global_Party_Target_Config["Global Settings"] ~= nil) then
-			if ((Perl_Config_Global_Party_Target_Config["Global Settings"]["XPosition1"] ~= nil) and (Perl_Config_Global_Party_Target_Config["Global Settings"]["YPosition1"] ~= nil)) then
-				Perl_Party_Target1:SetUserPlaced(1);
-				Perl_Party_Target2:SetUserPlaced(1);
-				Perl_Party_Target3:SetUserPlaced(1);
-				Perl_Party_Target4:SetUserPlaced(1);
-				Perl_Party_Target5:SetUserPlaced(1);
-				Perl_Party_Target1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Target_Config["Global Settings"]["XPosition1"], Perl_Config_Global_Party_Target_Config["Global Settings"]["YPosition1"]);
-				Perl_Party_Target2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Target_Config["Global Settings"]["XPosition2"], Perl_Config_Global_Party_Target_Config["Global Settings"]["YPosition2"]);
-				Perl_Party_Target3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Target_Config["Global Settings"]["XPosition3"], Perl_Config_Global_Party_Target_Config["Global Settings"]["YPosition3"]);
-				Perl_Party_Target4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Target_Config["Global Settings"]["XPosition4"], Perl_Config_Global_Party_Target_Config["Global Settings"]["YPosition4"]);
-				Perl_Party_Target5:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Target_Config["Global Settings"]["XPosition5"], Perl_Config_Global_Party_Target_Config["Global Settings"]["YPosition5"]);
-			end
-		end
 	end
 
 	if (Perl_Player_Frame) then
 		Perl_Player_UpdateVars(Perl_Config_Global_Player_Config);
-
-		if (Perl_Config_Global_Player_Config["Global Settings"] ~= nil) then
-			if ((Perl_Config_Global_Player_Config["Global Settings"]["XPosition"] ~= nil) and (Perl_Config_Global_Player_Config["Global Settings"]["YPosition"] ~= nil)) then
-				Perl_Player_Frame:SetUserPlaced(1);
-				Perl_Player_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Player_Config["Global Settings"]["XPosition"], Perl_Config_Global_Player_Config["Global Settings"]["YPosition"]);
-			end
-		end
 	end
 
 	if (Perl_Player_Buff_Script_Frame) then
@@ -2007,37 +1967,14 @@ function Perl_Config_Global_Load_Settings()
 
 	if (Perl_Player_Pet_Frame) then
 		Perl_Player_Pet_UpdateVars(Perl_Config_Global_Player_Pet_Config);
-
-		if (Perl_Config_Global_Player_Pet_Config["Global Settings"] ~= nil) then
-			if ((Perl_Config_Global_Player_Pet_Config["Global Settings"]["XPosition"] ~= nil) and (Perl_Config_Global_Player_Pet_Config["Global Settings"]["YPosition"] ~= nil)) then
-				Perl_Player_Pet_Frame:SetUserPlaced(1);
-				Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Player_Pet_Config["Global Settings"]["XPosition"], Perl_Config_Global_Player_Pet_Config["Global Settings"]["YPosition"]);
-			end
-		end
 	end
 
 	if (Perl_Target_Frame) then
 		Perl_Target_UpdateVars(Perl_Config_Global_Target_Config);
-
-		if (Perl_Config_Global_Target_Config["Global Settings"] ~= nil) then
-			if ((Perl_Config_Global_Target_Config["Global Settings"]["XPosition"] ~= nil) and (Perl_Config_Global_Target_Config["Global Settings"]["YPosition"] ~= nil)) then
-				Perl_Target_Frame:SetUserPlaced(1);
-				Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Target_Config["Global Settings"]["XPosition"], Perl_Config_Global_Target_Config["Global Settings"]["YPosition"]);
-			end
-		end
 	end
 
 	if (Perl_Target_Target_Script_Frame) then
 		Perl_Target_Target_UpdateVars(Perl_Config_Global_Target_Target_Config);
-
-		if (Perl_Config_Global_Target_Target_Config["Global Settings"] ~= nil) then
-			if ((Perl_Config_Global_Target_Target_Config["Global Settings"]["XPositionToT"] ~= nil) and (Perl_Config_Global_Target_Target_Config["Global Settings"]["YPositionToT"] ~= nil) and (Perl_Config_Global_Target_Target_Config["Global Settings"]["XPositionToToT"] ~= nil) and (Perl_Config_Global_Target_Target_Config["Global Settings"]["YPositionToToT"] ~= nil)) then
-				Perl_Target_Target_Frame:SetUserPlaced(1);
-				Perl_Target_Target_Target_Frame:SetUserPlaced(1);
-				Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Target_Target_Config["Global Settings"]["XPositionToT"], Perl_Config_Global_Target_Target_Config["Global Settings"]["YPositionToT"]);
-				Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Target_Target_Config["Global Settings"]["XPositionToToT"], Perl_Config_Global_Target_Target_Config["Global Settings"]["YPositionToToT"]);
-			end
-		end
 	end
 end
 

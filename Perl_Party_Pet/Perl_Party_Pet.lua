@@ -21,6 +21,14 @@ local compactmode = 0;				-- compact mode is disabled by default
 local enabled = 0;					-- mod is disabled by default
 local displaycastablebuffs = 0;		-- display all buffs by default
 local displaycurabledebuff = 0;		-- display all debuffs by default
+local xposition1 = 298;				-- pet 1 default x position
+local yposition1 = -214;			-- pet 1 default y position
+local xposition2 = 298;				-- pet 2 default x position
+local yposition2 = -309;			-- pet 2 default y position
+local xposition3 = 298;				-- pet 3 default x position
+local yposition3 = -404;			-- pet 3 default y position
+local xposition4 = 298;				-- pet 4 default x position
+local yposition4 = -499;			-- pet 4 default y position
 
 -- Default Local Variables
 local Initialized = nil;			-- waiting to be initialized
@@ -149,6 +157,10 @@ function Perl_Party_Pet_Initialize()
 		Perl_Party_Pet_Set_Scale_Actual();		-- Set the frame scale
 		Perl_Party_Pet_Set_Transparency();		-- Set the frame transparency
 		Perl_Party_Pet_Update();				-- Refresh the info
+		Perl_Party_Pet1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition1, yposition1);
+		Perl_Party_Pet2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition2, yposition2);
+		Perl_Party_Pet3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition3, yposition3);
+		Perl_Party_Pet4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition4, yposition4);
 		return;
 	end
 
@@ -645,16 +657,18 @@ function Perl_Party_Pet_Allign()
 	Perl_Party_Pet4:SetUserPlaced(1);
 
 	if (vartable["showportrait"] == 1) then
-		Perl_Party_Pet1:SetPoint("TOPLEFT", Perl_Party_MemberFrame1_StatsFrame, "TOPRIGHT", 52, 0);
-		Perl_Party_Pet2:SetPoint("TOPLEFT", Perl_Party_MemberFrame2_StatsFrame, "TOPRIGHT", 52, 0);
-		Perl_Party_Pet3:SetPoint("TOPLEFT", Perl_Party_MemberFrame3_StatsFrame, "TOPRIGHT", 52, 0);
-		Perl_Party_Pet4:SetPoint("TOPLEFT", Perl_Party_MemberFrame4_StatsFrame, "TOPRIGHT", 52, 0);
+		Perl_Party_Pet1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Party_MemberFrame1_StatsFrame:GetRight() + 52), (-(Perl_Party_MemberFrame1_StatsFrame:GetTop()) + 454));
+		Perl_Party_Pet2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Party_MemberFrame2_StatsFrame:GetRight() + 52), (-(Perl_Party_MemberFrame2_StatsFrame:GetTop()) + 264));
+		Perl_Party_Pet3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Party_MemberFrame3_StatsFrame:GetRight() + 52), (-(Perl_Party_MemberFrame3_StatsFrame:GetTop()) + 74));
+		Perl_Party_Pet4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Party_MemberFrame4_StatsFrame:GetRight() + 52), (-(Perl_Party_MemberFrame4_StatsFrame:GetTop()) - 116));
 	else
-		Perl_Party_Pet1:SetPoint("TOPLEFT", Perl_Party_MemberFrame1_StatsFrame, "TOPRIGHT", -2, 0);
-		Perl_Party_Pet2:SetPoint("TOPLEFT", Perl_Party_MemberFrame2_StatsFrame, "TOPRIGHT", -2, 0);
-		Perl_Party_Pet3:SetPoint("TOPLEFT", Perl_Party_MemberFrame3_StatsFrame, "TOPRIGHT", -2, 0);
-		Perl_Party_Pet4:SetPoint("TOPLEFT", Perl_Party_MemberFrame4_StatsFrame, "TOPRIGHT", -2, 0);
+		Perl_Party_Pet1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Party_MemberFrame1_StatsFrame:GetRight() - 2), (-(Perl_Party_MemberFrame1_StatsFrame:GetTop()) + 454));
+		Perl_Party_Pet2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Party_MemberFrame2_StatsFrame:GetRight() - 2), (-(Perl_Party_MemberFrame2_StatsFrame:GetTop()) + 264));
+		Perl_Party_Pet3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Party_MemberFrame3_StatsFrame:GetRight() - 2), (-(Perl_Party_MemberFrame3_StatsFrame:GetTop()) +  74));
+		Perl_Party_Pet4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", (Perl_Party_MemberFrame4_StatsFrame:GetRight() - 2), (-(Perl_Party_MemberFrame4_StatsFrame:GetTop()) - 116));
 	end
+
+	Perl_Party_Pet_Set_Frame_Position();
 end
 
 function Perl_Party_Pet_Set_Portrait(newvalue)
@@ -784,6 +798,18 @@ function Perl_Party_Pet_Set_Curable_Debuffs(newvalue)
 	Perl_Party_Pet_Buff_UpdateAll("partypet4");
 end
 
+function Perl_Party_Pet_Set_Frame_Position()
+	xposition1 = floor(Perl_Party_Pet1:GetLeft() + 0.5);
+	yposition1 = floor(Perl_Party_Pet1:GetTop() - (UIParent:GetTop() / Perl_Party_Pet1:GetScale()) + 0.5);
+	xposition2 = floor(Perl_Party_Pet2:GetLeft() + 0.5);
+	yposition2 = floor(Perl_Party_Pet2:GetTop() - (UIParent:GetTop() / Perl_Party_Pet2:GetScale()) + 0.5);
+	xposition3 = floor(Perl_Party_Pet3:GetLeft() + 0.5);
+	yposition3 = floor(Perl_Party_Pet3:GetTop() - (UIParent:GetTop() / Perl_Party_Pet3:GetScale()) + 0.5);
+	xposition4 = floor(Perl_Party_Pet4:GetLeft() + 0.5);
+	yposition4 = floor(Perl_Party_Pet4:GetTop() - (UIParent:GetTop() / Perl_Party_Pet4:GetScale()) + 0.5);
+	Perl_Party_Pet_UpdateVars();
+end
+
 function Perl_Party_Pet_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);
@@ -840,6 +866,14 @@ function Perl_Party_Pet_GetVars(index, updateflag)
 	enabled = Perl_Party_Pet_Config[index]["Enabled"];
 	displaycastablebuffs = Perl_Party_Pet_Config[index]["DisplayCastableBuffs"];
 	displaycurabledebuff = Perl_Party_Pet_Config[index]["DisplayCurableDebuff"];
+	xposition1 = Perl_Party_Pet_Config[index]["XPosition1"];
+	yposition1 = Perl_Party_Pet_Config[index]["YPosition1"];
+	xposition2 = Perl_Party_Pet_Config[index]["XPosition2"];
+	yposition2 = Perl_Party_Pet_Config[index]["YPosition2"];
+	xposition3 = Perl_Party_Pet_Config[index]["XPosition3"];
+	yposition3 = Perl_Party_Pet_Config[index]["YPosition3"];
+	xposition4 = Perl_Party_Pet_Config[index]["XPosition4"];
+	yposition4 = Perl_Party_Pet_Config[index]["YPosition4"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -886,6 +920,30 @@ function Perl_Party_Pet_GetVars(index, updateflag)
 	if (displaycurabledebuff == nil) then
 		displaycurabledebuff = 0;
 	end
+	if (xposition1 == nil) then
+		xposition1 = 298;
+	end
+	if (yposition1 == nil) then
+		yposition1 = -214;
+	end
+	if (xposition2 == nil) then
+		xposition2 = 298;
+	end
+	if (yposition2 == nil) then
+		yposition2 = -309;
+	end
+	if (xposition3 == nil) then
+		xposition3 = 298;
+	end
+	if (yposition3 == nil) then
+		yposition3 = -404;
+	end
+	if (xposition4 == nil) then
+		xposition4 = 298;
+	end
+	if (yposition4 == nil) then
+		yposition4 = -499;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -895,6 +953,10 @@ function Perl_Party_Pet_GetVars(index, updateflag)
 		Perl_Party_Pet_Set_Scale_Actual();
 		Perl_Party_Pet_Set_Transparency();
 		Perl_Party_Pet_Update();
+		Perl_Party_Pet1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition1, yposition1);
+		Perl_Party_Pet2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition2, yposition2);
+		Perl_Party_Pet3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition3, yposition3);
+		Perl_Party_Pet4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition4, yposition4);
 		return;
 	end
 
@@ -914,6 +976,14 @@ function Perl_Party_Pet_GetVars(index, updateflag)
 		["enabled"] = enabled,
 		["displaycastablebuffs"] = displaycastablebuffs,
 		["displaycurabledebuff"] = displaycurabledebuff,
+		["xposition1"] = xposition1,
+		["yposition1"] = yposition1,
+		["xposition2"] = xposition2,
+		["yposition2"] = yposition2,
+		["xposition3"] = xposition3,
+		["yposition3"] = yposition3,
+		["xposition4"] = xposition4,
+		["yposition4"] = yposition4,
 	}
 	return vars;
 end
@@ -997,6 +1067,46 @@ function Perl_Party_Pet_UpdateVars(vartable)
 			else
 				displaycurabledebuff = nil;
 			end
+			if (vartable["Global Settings"]["XPosition1"] ~= nil) then
+				xposition1 = vartable["Global Settings"]["XPosition1"];
+			else
+				xposition1 = nil;
+			end
+			if (vartable["Global Settings"]["YPosition1"] ~= nil) then
+				yposition1 = vartable["Global Settings"]["YPosition1"];
+			else
+				yposition1 = nil;
+			end
+			if (vartable["Global Settings"]["XPosition2"] ~= nil) then
+				xposition2 = vartable["Global Settings"]["XPosition2"];
+			else
+				xposition2 = nil;
+			end
+			if (vartable["Global Settings"]["YPosition2"] ~= nil) then
+				yposition2 = vartable["Global Settings"]["YPosition2"];
+			else
+				yposition2 = nil;
+			end
+			if (vartable["Global Settings"]["XPosition3"] ~= nil) then
+				xposition3 = vartable["Global Settings"]["XPosition3"];
+			else
+				xposition3 = nil;
+			end
+			if (vartable["Global Settings"]["YPosition3"] ~= nil) then
+				yposition3 = vartable["Global Settings"]["YPosition3"];
+			else
+				yposition3 = nil;
+			end
+			if (vartable["Global Settings"]["XPosition4"] ~= nil) then
+				xposition4 = vartable["Global Settings"]["XPosition4"];
+			else
+				xposition4 = nil;
+			end
+			if (vartable["Global Settings"]["YPosition4"] ~= nil) then
+				yposition4 = vartable["Global Settings"]["YPosition4"];
+			else
+				yposition4 = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1045,11 +1155,39 @@ function Perl_Party_Pet_UpdateVars(vartable)
 		if (displaycurabledebuff == nil) then
 			displaycurabledebuff = 0;
 		end
+		if (xposition1 == nil) then
+			xposition1 = 298;
+		end
+		if (yposition1 == nil) then
+			yposition1 = -214;
+		end
+		if (xposition2 == nil) then
+			xposition2 = 298;
+		end
+		if (yposition2 == nil) then
+			yposition2 = -309;
+		end
+		if (xposition3 == nil) then
+			xposition3 = 298;
+		end
+		if (yposition3 == nil) then
+			yposition3 = -404;
+		end
+		if (xposition4 == nil) then
+			xposition4 = 298;
+		end
+		if (yposition4 == nil) then
+			yposition4 = -499;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Party_Pet_Set_Scale_Actual();
 		Perl_Party_Pet_Set_Transparency();
 		Perl_Party_Pet_Update();
+		Perl_Party_Pet1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition1, yposition1);
+		Perl_Party_Pet2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition2, yposition2);
+		Perl_Party_Pet3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition3, yposition3);
+		Perl_Party_Pet4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition4, yposition4);
 	end
 
 	Perl_Party_Pet_Config[GetRealmName("player").."-"..UnitName("player")] = {
@@ -1068,6 +1206,14 @@ function Perl_Party_Pet_UpdateVars(vartable)
 		["Enabled"] = enabled,
 		["DisplayCastableBuffs"] = displaycastablebuffs,
 		["DisplayCurableDebuff"] = displaycurabledebuff,
+		["XPosition1"] = xposition1,
+		["YPosition1"] = yposition1,
+		["XPosition2"] = xposition2,
+		["YPosition2"] = yposition2,
+		["XPosition3"] = xposition3,
+		["YPosition3"] = yposition3,
+		["XPosition4"] = xposition4,
+		["YPosition4"] = yposition4,
 	};
 end
 
@@ -1296,4 +1442,5 @@ end
 function Perl_Party_Pet_DragStop(self)
 	_G["Perl_Party_Pet"..self:GetID()]:SetUserPlaced(1);
 	_G["Perl_Party_Pet"..self:GetID()]:StopMovingOrSizing();
+	Perl_Party_Pet_Set_Frame_Position();
 end

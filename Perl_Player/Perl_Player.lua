@@ -34,6 +34,8 @@ local shardbarframe = 1;		-- warlock shard bar frame is on by default
 local eclipsebarframe = 1;		-- druid eclipse bar frame is on by default
 local harmonybarframe = 1;		-- monk harmony bar frame is on by default
 local priestbarframe = 1;		-- priest orb bar frame is on by default
+local xposition = -2;			-- default x position
+local yposition = -43;			-- default y position
 
 -- Default Local Variables
 local InCombat = 0;				-- used to track if the player is in combat and if the icon should be displayed
@@ -270,6 +272,7 @@ function Perl_Player_Initialize()
 		InCombat = 0;						-- You can't be fighting if you're zoning, and no event is sent, force it to no combat.
 		Perl_Player_Set_Scale_Actual();		-- Set the scale
 		Perl_Player_Set_Transparency();		-- Set the transparency
+		Perl_Player_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		Perl_Player_Update_Once();			-- Set all the correct information
 		return;
 	end
@@ -1718,6 +1721,12 @@ function Perl_Player_Set_Show_Priest_Bar_Frame(newvalue)
 	Perl_Player_Frame_Style();
 end
 
+function Perl_Player_Set_Frame_Position()
+	xposition = floor(Perl_Player_Frame:GetLeft() + 0.5);
+	yposition = floor(Perl_Player_Frame:GetTop() - (UIParent:GetTop() / Perl_Player_Frame:GetScale()) + 0.5);
+	Perl_Player_UpdateVars();
+end
+
 function Perl_Player_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);													-- convert the user input to a wow acceptable value
@@ -1783,6 +1792,8 @@ function Perl_Player_GetVars(index, updateflag)
 	eclipsebarframe = Perl_Player_Config[index]["EclipseBarFrame"];
 	harmonybarframe = Perl_Player_Config[index]["HarmonyBarFrame"];
 	priestbarframe = Perl_Player_Config[index]["PriestBarFrame"];
+	xposition = Perl_Player_Config[index]["XPosition"];
+	yposition = Perl_Player_Config[index]["YPosition"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1871,15 +1882,22 @@ function Perl_Player_GetVars(index, updateflag)
 	if (priestbarframe == nil) then
 		priestbarframe = 1;
 	end
+	if (xposition == nil) then
+		xposition = -2;
+	end
+	if (yposition == nil) then
+		yposition = -43;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
 		Perl_Player_UpdateVars();
 
 		-- Call any code we need to activate them
-		Perl_Player_Update_Once();
 		Perl_Player_Set_Scale_Actual();
 		Perl_Player_Set_Transparency();
+		Perl_Player_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
+		Perl_Player_Update_Once();
 		return;
 	end
 
@@ -1913,6 +1931,8 @@ function Perl_Player_GetVars(index, updateflag)
 		["eclipsebarframe"] = eclipsebarframe,
 		["harmonybarframe"] = harmonybarframe,
 		["priestbarframe"] = priestbarframe,
+		["xposition"] = xposition,
+		["yposition"] = yposition,
 	}
 	return vars;
 end
@@ -2066,6 +2086,16 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				priestbarframe = nil;
 			end
+			if (vartable["Global Settings"]["XPosition"] ~= nil) then
+				xposition = vartable["Global Settings"]["XPosition"];
+			else
+				xposition = nil;
+			end
+			if (vartable["Global Settings"]["YPosition"] ~= nil) then
+				yposition = vartable["Global Settings"]["YPosition"];
+			else
+				yposition = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2156,11 +2186,18 @@ function Perl_Player_UpdateVars(vartable)
 		if (priestbarframe == nil) then
 			priestbarframe = 1;
 		end
+		if (xposition == nil) then
+			xposition = -2;
+		end
+		if (yposition == nil) then
+			yposition = -43;
+		end
 
 		-- Call any code we need to activate them
-		Perl_Player_Update_Once();
 		Perl_Player_Set_Scale_Actual();
 		Perl_Player_Set_Transparency();
+		Perl_Player_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
+		Perl_Player_Update_Once();
 	end
 
 	Perl_Player_Config[GetRealmName("player").."-"..UnitName("player")] = {
@@ -2193,6 +2230,8 @@ function Perl_Player_UpdateVars(vartable)
 		["EclipseBarFrame"] = eclipsebarframe,
 		["HarmonyBarFrame"] = harmonybarframe,
 		["PriestBarFrame"] = priestbarframe,
+		["XPosition"] = xposition,
+		["YPosition"] = yposition,
 	};
 end
 
@@ -2266,6 +2305,7 @@ end
 
 function Perl_Player_DragStop()
 	Perl_Player_Frame:StopMovingOrSizing();
+	Perl_Player_Set_Frame_Position();
 end
 
 

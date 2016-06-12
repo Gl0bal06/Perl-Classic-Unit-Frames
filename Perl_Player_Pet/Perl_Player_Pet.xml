@@ -68,7 +68,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="27" y="-112"/>
+					<AbsDimension x="30" y="-117"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -962,9 +962,9 @@
 			<AbsDimension x="145" y="24"/>
 		</Size>
 		<Anchors>
-			<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Player_Pet_Frame">
+			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="-2" y="0"/>
+					<AbsDimension x="198" y="-117"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
