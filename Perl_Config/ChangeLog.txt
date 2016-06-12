@@ -1,3 +1,9 @@
+2.02c - December 21, 2006
+ - Focus: Rare elite targets correctly show the not available text now
+
+2.02b - December 21, 2006
+ - Party: Fixed the error on line 1017 again
+
 2.02a - December 21, 2006
  - Focus: The rare elite frame is now correctly anchored
  - Party: Fixed the error on line 1017

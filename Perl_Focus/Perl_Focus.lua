@@ -1128,7 +1128,7 @@ function Perl_Focus_Frame_Set_Level()
 
 	if (showrareeliteframe == 1) then
 		if (focusclassificationframetext == nil) then
-			Perl_Focus_RareEliteBarText:SetText(PERL_LOCALIZED_Focus_NA);
+			Perl_Focus_RareEliteBarText:SetText(PERL_LOCALIZED_TARGET_NA);
 		else
 			Perl_Focus_RareEliteBarText:SetText(focusclassificationframetext);	-- Set the text
 		end
