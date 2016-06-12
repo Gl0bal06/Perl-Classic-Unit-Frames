@@ -1,3 +1,8 @@
+3.12 - June 13, 2010
+ - ArcaneBar: Casting a spell while a spell is already casting will no longer display as a failed cast
+ - CombatDisplay/Player: Removed Druid Bar references from TOC files
+ - Focus/Target: Level will now properly update when a mob changes from elite to non elite
+
 3.11 - June 4, 2010
  - All: Texture code tweaked for patch 3.3.3, still needs work
  - CombatDisplay/Player: Druid Bar functionality no longer requires the Druid Bar addon

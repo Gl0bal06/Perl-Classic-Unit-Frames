@@ -185,6 +185,7 @@ end
 
 function Perl_Focus_Events:UNIT_NAME_UPDATE()
 	if (arg1 == "focus") then
+		Perl_Focus_Frame_Set_Level();
 		Perl_Focus_Update_Name();
 	end
 end

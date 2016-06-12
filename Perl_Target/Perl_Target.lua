@@ -205,6 +205,7 @@ end
 
 function Perl_Target_Events:UNIT_NAME_UPDATE()
 	if (arg1 == "target") then
+		Perl_Target_Frame_Set_Level();
 		Perl_Target_Update_Name();
 	end
 end

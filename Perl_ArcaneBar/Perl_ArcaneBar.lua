@@ -94,7 +94,7 @@ function Perl_ArcaneBar_Loaded_Frame_OnEvent()
 	end
 end
 
-function Perl_ArcaneBar_OnEvent(self, event, arg1)
+function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 	if (event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED") then
 		self.unitname = UnitName(self.unit);
 		if (UnitChannelInfo(self.unit)) then
@@ -220,7 +220,7 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1)
 				self.nameframetext:SetText(self.unitname);
 			end
 		end
-	elseif (event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_INTERRUPTED") then
+	elseif (event == "UNIT_SPELLCAST_INTERRUPTED") then
 		if (self:IsShown() and not self.channeling) then
 			self:SetValue(self.maxValue);
 			self:SetStatusBarColor(Perl_ArcaneBar_Colors.failure.r, Perl_ArcaneBar_Colors.failure.g, Perl_ArcaneBar_Colors.failure.b, transparency);
@@ -229,6 +229,19 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1)
 			self.channeling = nil;
 			self.fadeOut = 1;
 			self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME;
+		end
+	elseif (event == "UNIT_SPELLCAST_FAILED") then
+		if (self:IsShown() and not self.channeling) then
+			local text, _, _, _, startTime, endTime, _ = UnitCastingInfo(arg1);
+			if (text == arg2) then
+				self:SetValue(self.maxValue);
+				self:SetStatusBarColor(Perl_ArcaneBar_Colors.failure.r, Perl_ArcaneBar_Colors.failure.g, Perl_ArcaneBar_Colors.failure.b, transparency);
+				self.barSpark:Hide();
+				self.casting = nil;
+				self.channeling = nil;
+				self.fadeOut = 1;
+				self.holdTime = GetTime() + CASTING_BAR_HOLD_TIME;
+			end
 		end
 	elseif (event == "UNIT_SPELLCAST_DELAYED") then
 		if(self:IsShown()) then
