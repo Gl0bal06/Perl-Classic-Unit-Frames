@@ -1,3 +1,8 @@
+3.10 - January 6, 2010
+ - Party/Player: Added LFG role icon support
+ - Party/Player: Added a custom LFG role icon (Thanks Kudane)
+ - Player - Moved the PvP cooldown timer text to the right
+
 3.09 - November 22, 2009
  - All: Updated TOC Interface version to 30300
  - Focus/Target: Updated the Target of Target and Target of Focus frame names to disable

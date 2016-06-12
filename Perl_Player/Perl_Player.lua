@@ -239,6 +239,7 @@ end
 function Perl_Player_Events:PARTY_LEADER_CHANGED()
 	Perl_Player_Update_Leader();			-- Are we the party leader?
 	Perl_Player_Update_Loot_Method();
+	Perl_Player_Update_Role();
 end
 Perl_Player_Events.PARTY_MEMBERS_CHANGED = Perl_Player_Events.PARTY_LEADER_CHANGED;
 
@@ -355,6 +356,7 @@ function Perl_Player_Update_Once()
 	Perl_Player_Update_Mana();						-- Set the player's mana/energy on load or toggle
 	Perl_Player_Update_Leader();						-- Are we the party leader?
 	Perl_Player_Update_Loot_Method();					-- Are we the master looter?
+	Perl_Player_Update_Role();						-- What group role are we playing as?
 	Perl_Player_Update_Combat_Status();					-- Are we already fighting or resting?
 	Perl_Player_Update_Threat();						-- Are we agro on something?
 	Perl_Player_BuffUpdateAll();						-- Do we have any curable debuffs on us?
@@ -919,6 +921,22 @@ function Perl_Player_Update_Loot_Method()
 		Perl_Player_MasterIcon:Show();
 	else
 		Perl_Player_MasterIcon:Hide();
+	end
+end
+
+function Perl_Player_Update_Role()
+	local isTank, isHealer, isDamage = UnitGroupRolesAssigned("player");
+	if(isTank) then
+		Perl_Player_RoleIcon:SetTexCoord(0, 19/64, 22/64, 41/64);
+		Perl_Player_RoleIcon:Show();
+	elseif(isHealer) then
+		Perl_Player_RoleIcon:SetTexCoord(20/64, 39/64, 1/64, 20/64);
+		Perl_Player_RoleIcon:Show();
+	elseif(isDamage) then
+		Perl_Player_RoleIcon:SetTexCoord(20/64, 39/64, 22/64, 41/64);
+		Perl_Player_RoleIcon:Show();
+	else
+		Perl_Player_RoleIcon:Hide();
 	end
 end
 

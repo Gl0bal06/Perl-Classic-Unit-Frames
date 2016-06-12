@@ -185,11 +185,25 @@
 							<Anchors>
 								<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Player_PVPStatus">
 									<Offset>
-										<AbsDimension x="-28" y="-3"/>
+										<AbsDimension x="-13" y="-3"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
 						</Fontstring>
+
+						<!-- Role Icon -->
+						<Texture name="Perl_Player_RoleIcon" file="Interface\AddOns\Perl_Config\Perl_Role_Icon" hidden="true">
+							<Size>
+								<AbsDimension x="19" y="18"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPLEFT">
+									<Offset>
+										<AbsDimension x="3" y="-4"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
 
 						<!-- Threat Icon -->
 						<Texture name="Perl_Player_ThreatIndicator" file="Interface\Minimap\ObjectIcons" hidden="true">

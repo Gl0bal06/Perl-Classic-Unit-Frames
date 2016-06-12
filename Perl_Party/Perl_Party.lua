@@ -101,6 +101,7 @@ function Perl_Party_OnLoad(self)
 	self.portrait2D = getglobal("Perl_Party_MemberFrame"..self.id.."_PortraitFrame_Portrait");
 	self.portrait3D = getglobal("Perl_Party_MemberFrame"..self.id.."_PortraitFrame_PartyModel");
 	self.pvpStatus = getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame_PVPStatus");
+	self.roleIcon = getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame_RoleIcon");
 	self.threatIcon = getglobal("Perl_Party_MemberFrame"..self.id.."_Name_ThreatIndicator");
 	self.voiceChat = getglobal("Perl_Party_MemberFrame"..self.id.."_VoiceChatIconFrame");
 	self.voiceChat:ClearAllPoints();	-- Didn't feel like moving this line and the one below it to the style function
@@ -422,6 +423,7 @@ function Perl_Party_MembersUpdate(self)
 	Perl_Party_Update_Pet_Health(self);
 	Perl_Party_Update_Leader(self);
 	Perl_Party_Update_Loot_Method(self);
+	Perl_Party_Update_Role(self);
 	Perl_Party_Update_Portrait(self);
 	Perl_Party_Buff_UpdateAll(self);
 	Perl_Party_VoiceChat(self);
@@ -943,6 +945,22 @@ function Perl_Party_Update_Loot_Method(self)
 		self.masterLootIcon:Show();
 	else
 		self.masterLootIcon:Hide();
+	end
+end
+
+function Perl_Party_Update_Role(self)
+	local isTank, isHealer, isDamage = UnitGroupRolesAssigned("party"..self.id);
+	if(isTank) then
+		self.roleIcon:SetTexCoord(0, 19/64, 22/64, 41/64);
+		self.roleIcon:Show();
+	elseif(isHealer) then
+		self.roleIcon:SetTexCoord(20/64, 39/64, 1/64, 20/64);
+		self.roleIcon:Show();
+	elseif(isDamage) then
+		self.roleIcon:SetTexCoord(20/64, 39/64, 22/64, 41/64);
+		self.roleIcon:Show();
+	else
+		self.roleIcon:Hide();
 	end
 end
 
