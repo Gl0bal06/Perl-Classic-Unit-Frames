@@ -134,8 +134,10 @@ function Perl_Party_OnEvent(event)
 	if (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH") then
 		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
 			Perl_Party_Update_Health();
-		elseif ((arg1 == "partypet1") or (arg1 == "partypet2") or (arg1 == "partypet3") or (arg1 == "partypet4")) then
-			Perl_Party_Update_Pet_Health();
+		elseif (showpets == 1) then
+			if ((arg1 == "partypet1") or (arg1 == "partypet2") or (arg1 == "partypet3") or (arg1 == "partypet4")) then
+				Perl_Party_Update_Pet_Health();
+			end
 		end
 		return;
 	elseif (event == "UNIT_MANA" or event == "UNIT_ENERGY" or event == "UNIT_RAGE" or event == "UNIT_MAXMANA" or event == "UNIT_MAXENERGY" or event == "UNIT_MAXRAGE") then

@@ -640,26 +640,46 @@ function Perl_Player_Update_DruidBar(arg1)
 		-- Display the needed text
 		if (compactmode == 0) then
 			if (healermode == 1) then
-				if (mouseovermanaflag == 0) then
+				Perl_Player_DruidBarText:SetTextColor(0.5, 0.5, 0.5, 1);
+				if (showmanadeficit == 1) then
+					Perl_Player_DruidBarText:SetText("-"..playerdruidbarmanamax - playerdruidbarmana);
+				else
 					Perl_Player_DruidBarText:SetText();
-					Perl_Player_DruidBarTextPercent:SetText();
+				end
+				if (showbarvalues == 0) then
+					if (mouseovermanaflag == 0) then
+						Perl_Player_DruidBarTextPercent:SetText();
+					else
+						Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+					end
 				else
 					Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
 				end
 			else
+				Perl_Player_DruidBarText:SetTextColor(1, 1, 1, 1);
 				Perl_Player_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
 				Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmanapercent.."%");
 			end
 			Perl_Player_DruidBarTextCompactPercent:SetText();	-- Hide the compact mode percent text in full mode
 		else
 			if (healermode == 1) then
-				if (mouseovermanaflag == 0) then
+				Perl_Player_DruidBarText:SetTextColor(0.5, 0.5, 0.5, 1);
+				if (showmanadeficit == 1) then
+					Perl_Player_DruidBarText:SetText("-"..playermanamax - playermana);
+				else
 					Perl_Player_DruidBarText:SetText();
-					Perl_Player_DruidBarTextPercent:SetText();
+				end
+				if (showbarvalues == 0) then
+					if (mouseovermanaflag == 0) then
+						Perl_Player_DruidBarTextPercent:SetText();
+					else
+						Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+					end
 				else
 					Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
 				end
 			else
+				Perl_Player_DruidBarText:SetTextColor(1, 1, 1, 1);
 				Perl_Player_DruidBarText:SetText();
 				Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
 			end

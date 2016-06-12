@@ -1,3 +1,9 @@
+0.80a - September 27, 2006
+ - Config: Updated Simplified Chinese translations (Thanks middle007)
+ - Party: Pet health bar should no longer fade when pets are disabled
+ - Player: Druid Bar will now correctly show bar values when toggled
+ - Player: Druid Bar will now correctly show mana deficit values when toggled
+
 0.80 - September 22, 2006
  - All: Can now fade lost amounts on status bars
  - All: Can now toggle the name frame as a valid click casting frame
