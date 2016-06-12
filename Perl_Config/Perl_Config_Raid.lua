@@ -90,6 +90,12 @@ function Perl_Config_Raid_Set_Values()
 		Perl_Config_Raid_Frame_CheckButton14:SetChecked(nil);
 	end
 
+	if (vartable["verticalalign"] == 1) then
+		Perl_Config_Raid_Frame_CheckButton15:SetChecked(1);
+	else
+		Perl_Config_Raid_Frame_CheckButton15:SetChecked(nil);
+	end
+
 	Perl_Config_Raid_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Raid_Frame_Slider1High:SetText("Big");
 	Perl_Config_Raid_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -206,6 +212,14 @@ function Perl_Config_Raid_Missing_Health_Update()
 		Perl_Raid_Set_Missing_Health(1);
 	else
 		Perl_Raid_Set_Missing_Health(0);
+	end
+end
+
+function Perl_Config_Raid_Vertical_Update()
+	if (Perl_Config_Raid_Frame_CheckButton15:GetChecked() == 1) then
+		Perl_Raid_Set_Vertical(1);
+	else
+		Perl_Raid_Set_Vertical(0);
 	end
 end
 
