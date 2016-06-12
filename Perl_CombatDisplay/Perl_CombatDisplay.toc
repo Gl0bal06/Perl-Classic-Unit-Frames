@@ -1,7 +1,6 @@
 ## Interface: 1800
-## Version: 0.05
 ## Title: Perl Combat Display
-## Notes: Displays a movable bar that displays rage/energy/mana and combo points.
+## Notes: Displays a movable bar that displays health, rage/energy/mana, and combo points.
 ## Dependencies: 
 ## OptionalDeps: myAddOns
 ## SavedVariables: Perl_CombatDisplay_Config

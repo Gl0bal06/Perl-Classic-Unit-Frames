@@ -122,8 +122,8 @@ function Perl_Player_OnLoad()
 	
 	-- Slash Commands
 	SlashCmdList["PERL_PLAYER"] = Perl_Player_SlashHandler;
-	SLASH_PERL_PLAYER1 = "/PerlPlayer";
-	SLASH_PERL_PLAYER2 = "/PP";
+	SLASH_PERL_PLAYER1 = "/perlplayer";
+	SLASH_PERL_PLAYER2 = "/pp";
 	
 	table.insert(UnitPopupFrames,"Perl_Player_DropDown");
 
@@ -533,8 +533,8 @@ function Perl_Player_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.05",
-			releaseDate = "October 15, 2005",
+			version = "v0.06",
+			releaseDate = "October 16, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

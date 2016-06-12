@@ -87,8 +87,8 @@ function Perl_Target_OnLoad()
 
 	-- Slash Commands
 	SlashCmdList["PERL_TARGET"] = Perl_Target_SlashHandler;
-	SLASH_PERL_TARGET1 = "/PerlTarget";
-	SLASH_PERL_TARGET2 = "/PT";
+	SLASH_PERL_TARGET1 = "/perltarget";
+	SLASH_PERL_TARGET2 = "/pt";
 
 	table.insert(UnitPopupFrames,"Perl_Target_DropDown");
 
@@ -275,10 +275,58 @@ function Perl_Target_Update_Health()
 	Perl_Target_HealthBar:SetValue(targethealth);
 
 	if (targethealthmax == 100) then
-		Perl_Target_HealthBarText:SetText(targethealth.."%");
+		-- Begin Mobhealth support
+		if (MobHealthFrame) then
+			MobHealthFrame:Hide();
+
+			local index;
+			if UnitIsPlayer("target") then
+				index = UnitName("target");
+			else
+				index = UnitName("target")..":"..UnitLevel("target");
+			end
+
+			if ( (MobHealthDB and MobHealthDB[index]) or (MobHealthPlayerDB and MobHealthPlayerDB[index]) ) then
+				local s, e;
+				local pts;
+				local pct;
+
+				if MobHealthDB[index] then
+					if ( type(MobHealthDB[index]) ~= "string" ) then
+						Perl_Target_HealthBarText:SetText(targethealth.."%");
+					end
+					s, e, pts, pct = string.find(MobHealthDB[index], "^(%d+)/(%d+)$");
+				else
+					if ( type(MobHealthPlayerDB[index]) ~= "string" ) then
+						Perl_Target_HealthBarText:SetText(targethealth.."%");
+					end
+					s, e, pts, pct = string.find(MobHealthPlayerDB[index], "^(%d+)/(%d+)$");
+				end
+
+				if ( pts and pct ) then
+					pts = pts + 0;
+					pct = pct + 0;
+					if( pct ~= 0 ) then
+						pointsPerPct = pts / pct;
+					else
+						pointsPerPct = 0;
+					end
+				end
+
+				local currentPct = UnitHealth("target");
+				if ( pointsPerPct > 0 ) then
+					Perl_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5).." | "..targethealth.."%");	-- Stored unit info from the DB
+				end
+			else
+				Perl_Target_HealthBarText:SetText(targethealth.."%");	-- Unit not in MobHealth DB
+			end
+		-- End MobHealth Support
+		else
+			Perl_Target_HealthBarText:SetText(targethealth.."%");	-- MobHealth isn't installed
+		end
 	else
-		Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-	end
+		Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);	-- Self/Party/Raid member
+	end		
 end
 
 function Perl_Target_Update_Mana()
@@ -721,8 +769,8 @@ function Perl_Target_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.05",
-			releaseDate = "October 15, 2005",
+			version = "v0.06",
+			releaseDate = "October 16, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

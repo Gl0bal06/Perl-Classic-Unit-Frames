@@ -1,6 +1,9 @@
 ---------------
 -- Variables --
 ---------------
+Perl_CombatDisplay_Config = {};
+
+-- Defaults
 local State = 1;
 local ManaPersist = 1;
 local HealthPersist = 0;
@@ -8,12 +11,10 @@ local IsAggroed = 0;
 local InCombat = 0;
 local ManaFull = 0;
 local HealthFull = 0;
-Perl_CombatDisplay_Config = {};
 local Debug = 0;
 local Locked = 0;
 local Initialized = nil;
 local VariablesLoaded = nil;
-
 
 
 -------------------------
@@ -26,12 +27,10 @@ function Perl_CombatDisplay_DebugPrint(message)
 end
 
 
-
 -----------------------
 -- Obligatory OnLoad --
 -----------------------
 function Perl_CombatDisplay_OnLoad()
-
 	-- Events
 	this:RegisterEvent("PLAYER_REGEN_DISABLED");
 	this:RegisterEvent("PLAYER_REGEN_ENABLED");
@@ -50,8 +49,13 @@ function Perl_CombatDisplay_OnLoad()
 
 	-- Slash Commands
 	SlashCmdList["COMBATDISPLAY"] = Perl_CombatDisplay_SlashHandler;
-	SLASH_COMBATDISPLAY1 = "/PerlCombatDisplay";
+	SLASH_COMBATDISPLAY1 = "/perlcombatdisplay";
 	SLASH_COMBATDISPLAY2 = "/pcd";
+
+	if( DEFAULT_CHAT_FRAME ) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Combat Display by Perl loaded successfully.");
+	end
+	UIErrorsFrame:AddMessage("|cffffff00Combat Display by Perl loaded successfully.", 1.0, 1.0, 1.0, 1.0, UIERRORS_HOLD_TIME);
 
 	Perl_CombatDisplay_DebugPrint("OnLoad function run.");
 end
@@ -499,24 +503,6 @@ function Perl_CombatDisplay_VarInit ()
 	Initialized = 1;
 end
 
-function Perl_CombatDisplay_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if(myAddOnsFrame_Register) then
-		local Perl_CombatDisplay_myAddOns_Details = {
-			name = "Perl_CombatDisplay",
-			version = "v0.05",
-			releaseDate = "October 15, 2005",
-			author = "Perl; Maintained by Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS,
-			optionsframe = "Perl_CombatDisplay_Options_Frame"
-		};
-		Perl_CombatDisplay_myAddOns_Help = {};
-		Perl_CombatDisplay_myAddOns_Help[1] = "/perltarget\n/pt\n";
-		myAddOnsFrame_Register(Perl_CombatDisplay_myAddOns_Details, Perl_CombatDisplay_myAddOns_Help);
-	end	
-end
 
 ------------------------------
 -- Common Related Functions --
@@ -586,4 +572,27 @@ function Perl_CombatDisplay_SetSmoothBarColor (bar, refbar, alpha)
 	end
 	
 	
+end
+
+
+----------------------
+-- myAddOns Support --
+----------------------
+function Perl_CombatDisplay_myAddOns_Support()
+	-- Register the addon in myAddOns
+	if(myAddOnsFrame_Register) then
+		local Perl_CombatDisplay_myAddOns_Details = {
+			name = "Perl_CombatDisplay",
+			version = "v0.06",
+			releaseDate = "October 16, 2005",
+			author = "Perl; Maintained by Global",
+			email = "global@g-ball.com",
+			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+			category = MYADDONS_CATEGORY_OTHERS,
+			optionsframe = "Perl_CombatDisplay_Options_Frame"
+		};
+		Perl_CombatDisplay_myAddOns_Help = {};
+		Perl_CombatDisplay_myAddOns_Help[1] = "/perlcombatdisplay\n/pcd\n";
+		myAddOnsFrame_Register(Perl_CombatDisplay_myAddOns_Details, Perl_CombatDisplay_myAddOns_Help);
+	end	
 end

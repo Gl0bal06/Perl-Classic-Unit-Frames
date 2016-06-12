@@ -1,5 +1,4 @@
 ## Interface: 1800
-## Version: 0.05
 ## Title: Perl Player Frame
 ## Notes: Displays a movable player frame to replace the default.
 ## Dependencies: 

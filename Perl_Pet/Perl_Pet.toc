@@ -1,5 +1,4 @@
 ## Interface: 1800
-## Version: 0.05
 ## Title: Perl Pet Frame
 ## Notes: Displays a movable pet frame to replace the default.
 ## Dependencies: 

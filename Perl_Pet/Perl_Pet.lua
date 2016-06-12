@@ -150,6 +150,16 @@ function Perl_Pet_Initialize()
 
 	--Perl_Player_Pet_Frame:Show();
 	Perl_Player_Pet_UpdateDisplay();
+
+--	if (Perl_Pet_State == 1) then
+--		PetFrame_Update = Perl_Player_Pet_UpdateDisplay;
+--	else
+--		Perl_Player_Pet_Frame:Hide();
+--		PetFrame_Update = BlizzardPetFrame_Update;
+--	end
+
+	Initialized = 1;
+
 end
 
 
@@ -413,8 +423,8 @@ function Perl_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Pet_myAddOns_Details = {
 			name = "Perl_Pet",
-			version = "v0.05",
-			releaseDate = "October 15, 2005",
+			version = "v0.06",
+			releaseDate = "October 16, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
