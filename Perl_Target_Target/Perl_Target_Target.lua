@@ -1191,7 +1191,7 @@ end
 ------------------------
 function Perl_Target_Target_HealthBar_Fade_Check()
 	if (PCUF_FADEBARS == 1) then
-		if (targettargethealth < Perl_Target_Target_HealthBar:GetValue()) then
+		if (targettargethealth < Perl_Target_Target_HealthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and targettargethealth > Perl_Target_Target_HealthBar:GetValue())) then
 			Perl_Target_Target_HealthBarFadeBar:SetMinMaxValues(0, targettargethealthmax);
 			Perl_Target_Target_HealthBarFadeBar:SetValue(Perl_Target_Target_HealthBar:GetValue());
 			Perl_Target_Target_HealthBarFadeBar:Show();
@@ -1205,7 +1205,7 @@ end
 
 function Perl_Target_Target_ManaBar_Fade_Check()
 	if (PCUF_FADEBARS == 1) then
-		if (targettargetmana < Perl_Target_Target_ManaBar:GetValue()) then
+		if (targettargetmana < Perl_Target_Target_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and targettargetmana > Perl_Target_Target_ManaBar:GetValue())) then
 			Perl_Target_Target_ManaBarFadeBar:SetMinMaxValues(0, targettargetmanamax);
 			Perl_Target_Target_ManaBarFadeBar:SetValue(Perl_Target_Target_ManaBar:GetValue());
 			Perl_Target_Target_ManaBarFadeBar:Show();
@@ -1229,7 +1229,7 @@ end
 
 function Perl_Target_Target_Target_HealthBar_Fade_Check()
 	if (PCUF_FADEBARS == 1) then
-		if (targettargettargethealth < Perl_Target_Target_Target_HealthBar:GetValue()) then
+		if (targettargettargethealth < Perl_Target_Target_Target_HealthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and targettargettargethealth > Perl_Target_Target_Target_HealthBar:GetValue())) then
 			Perl_Target_Target_Target_HealthBarFadeBar:SetMinMaxValues(0, targettargettargethealthmax);
 			Perl_Target_Target_Target_HealthBarFadeBar:SetValue(Perl_Target_Target_Target_HealthBar:GetValue());
 			Perl_Target_Target_Target_HealthBarFadeBar:Show();
@@ -1243,7 +1243,7 @@ end
 
 function Perl_Target_Target_Target_ManaBar_Fade_Check()
 	if (PCUF_FADEBARS == 1) then
-		if (targettargettargetmana < Perl_Target_Target_Target_ManaBar:GetValue()) then
+		if (targettargettargetmana < Perl_Target_Target_Target_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and targettargettargetmana > Perl_Target_Target_Target_ManaBar:GetValue())) then
 			Perl_Target_Target_Target_ManaBarFadeBar:SetMinMaxValues(0, targettargettargetmanamax);
 			Perl_Target_Target_Target_ManaBarFadeBar:SetValue(Perl_Target_Target_Target_ManaBar:GetValue());
 			Perl_Target_Target_Target_ManaBarFadeBar:Show();

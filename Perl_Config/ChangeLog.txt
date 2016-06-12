@@ -1,3 +1,12 @@
+3.05 - January 29, 2009
+ - All: Invert bar values combined with fade status bars now fade correctly
+ - CombatDisplay: Restricted bar placement to not consider the druid bar if player is not a druid
+ - CombatDisplay: The combo point bar no longer appears when it is disabled and combo points are earned
+ - CombatDisplay: The combo point bar no longer displays as empty with invert bar values enabled when logging in
+ - CombatDisplay: The combo point bar and pet bars will now display regardless of your class
+ - CombatDisplay/Player/Target: Invert bar values combined with fade status bars no longer glitches when using mana
+ - CombatDisplay/Target: Combo points now work correctly for vehicles (Thanks mroovek)
+
 3.04 - January 25, 2009
  - Party: Fixed an error when right clicking on party members
 

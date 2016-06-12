@@ -493,7 +493,7 @@ end
 ------------------------
 function Perl_Party_Target_HealthBar_Fade_Check(self)
 	if (PCUF_FADEBARS == 1) then
-		if (partytargethealth < self.healthBar:GetValue()) then
+		if (partytargethealth < self.healthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and partytargethealth > self.healthBar:GetValue())) then
 			self.healthBarFadeBar:SetMinMaxValues(0, partytargethealthmax);
 			self.healthBarFadeBar:SetValue(self.healthBar:GetValue());
 			self.healthBarFadeBar:Show();
@@ -505,7 +505,7 @@ end
 
 function Perl_Party_Target_ManaBar_Fade_Check(self)
 	if (PCUF_FADEBARS == 1) then
-		if (partytargetmana < self.manaBar:GetValue()) then
+		if (partytargetmana < self.manaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and partytargetmana > self.manaBar:GetValue())) then
 			self.manaBarFadeBar:SetMinMaxValues(0, partytargetmanamax);
 			self.manaBarFadeBar:SetValue(self.manaBar:GetValue());
 			self.manaBarFadeBar:Show();

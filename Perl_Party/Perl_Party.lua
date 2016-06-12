@@ -438,7 +438,7 @@ function Perl_Party_Update_Health(self)
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (partyhealth < self.healthBar:GetValue()) then
+		if (partyhealth < self.healthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and partyhealth > self.healthBar:GetValue())) then
 			self.healthBarFadeBar:SetMinMaxValues(0, partyhealthmax);
 			self.healthBarFadeBar:SetValue(self.healthBar:GetValue());
 			self.healthBarFadeBar:Show();
@@ -606,7 +606,7 @@ function Perl_Party_Update_Mana(self)
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (partymana < self.manaBar:GetValue()) then
+		if (partymana < self.manaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and partymana > self.manaBar:GetValue())) then
 			self.manaBarFadeBar:SetMinMaxValues(0, partymanamax);
 			self.manaBarFadeBar:SetValue(self.manaBar:GetValue());
 			self.manaBarFadeBar:Show();
@@ -745,7 +745,7 @@ function Perl_Party_Update_Pet_Health(self)
 		end
 
 		if (PCUF_FADEBARS == 1) then
-			if (partypethealth < self.petHealthBar:GetValue()) then
+			if (partypethealth < self.petHealthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and partypethealth > self.petHealthBar:GetValue())) then
 				self.petHealthBarFadeBar:SetMinMaxValues(0, partypethealthmax);
 				self.petHealthBarFadeBar:SetValue(self.petHealthBar:GetValue());
 				self.petHealthBarFadeBar:Show();

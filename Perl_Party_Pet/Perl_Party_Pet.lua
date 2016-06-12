@@ -252,7 +252,7 @@ function Perl_Party_Pet_Update_Health(unit)
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (partypethealth < getglobal("Perl_Party_Pet"..id.."_StatsFrame_HealthBar"):GetValue()) then
+		if (partypethealth < getglobal("Perl_Party_Pet"..id.."_StatsFrame_HealthBar"):GetValue() or (PCUF_INVERTBARVALUES == 1 and partypethealth > getglobal("Perl_Party_Pet"..id.."_StatsFrame_HealthBar"):GetValue())) then
 			getglobal("Perl_Party_Pet"..id.."_StatsFrame_HealthBarFadeBar"):SetMinMaxValues(0, partypethealthmax);
 			getglobal("Perl_Party_Pet"..id.."_StatsFrame_HealthBarFadeBar"):SetValue(getglobal("Perl_Party_Pet"..id.."_StatsFrame_HealthBar"):GetValue());
 			getglobal("Perl_Party_Pet"..id.."_StatsFrame_HealthBarFadeBar"):Show();
@@ -315,7 +315,7 @@ function Perl_Party_Pet_Update_Mana(unit)
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (partypetmana < getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBar"):GetValue()) then
+		if (partypetmana < getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBar"):GetValue() or (PCUF_INVERTBARVALUES == 1 and partypetmana > getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBar"):GetValue())) then
 			getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBarFadeBar"):SetMinMaxValues(0, partypetmanamax);
 			getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBarFadeBar"):SetValue(getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBar"):GetValue());
 			getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBarFadeBar"):Show();

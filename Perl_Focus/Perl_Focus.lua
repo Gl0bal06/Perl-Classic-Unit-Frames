@@ -388,7 +388,7 @@ function Perl_Focus_Update_Health()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (focushealth < Perl_Focus_HealthBar:GetValue()) then
+		if (focushealth < Perl_Focus_HealthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and focushealth > Perl_Focus_HealthBar:GetValue())) then
 			Perl_Focus_HealthBarFadeBar:SetMinMaxValues(0, focushealthmax);
 			Perl_Focus_HealthBarFadeBar:SetValue(Perl_Focus_HealthBar:GetValue());
 			Perl_Focus_HealthBarFadeBar:Show();
@@ -505,7 +505,7 @@ function Perl_Focus_Update_Mana()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (focusmana < Perl_Focus_ManaBar:GetValue()) then
+		if (focusmana < Perl_Focus_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and focusmana > Perl_Focus_ManaBar:GetValue())) then
 			Perl_Focus_ManaBarFadeBar:SetMinMaxValues(0, focusmanamax);
 			Perl_Focus_ManaBarFadeBar:SetValue(Perl_Focus_ManaBar:GetValue());
 			Perl_Focus_ManaBarFadeBar:Show();

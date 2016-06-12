@@ -226,7 +226,7 @@ function Perl_CombatDisplay_Events:PLAYER_TARGET_CHANGED()
 end
 
 function Perl_CombatDisplay_Events:UNIT_COMBO_POINTS()
-	if (arg1 == "player") then
+	if (arg1 == "player" or arg1 == "vehicle") then
 		Perl_CombatDisplay_Update_Combo_Points();
 	end
 end
@@ -331,6 +331,7 @@ function Perl_CombatDisplay_Initialize()
 		Perl_CombatDisplay_Set_Scale_Actual();	-- set the correct scale
 		Perl_CombatDisplay_Set_Transparency();	-- set the transparency
 		Perl_CombatDisplay_CheckForPets();	-- do we have a pet out?
+		Perl_CombatDisplay_Update_Combo_Points();
 		return;
 	end
 
@@ -419,7 +420,7 @@ function Perl_CombatDisplay_Update_Health()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (playerhealth < Perl_CombatDisplay_HealthBar:GetValue()) then
+		if (playerhealth < Perl_CombatDisplay_HealthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and playerhealth > Perl_CombatDisplay_HealthBar:GetValue())) then
 			Perl_CombatDisplay_HealthBarFadeBar:SetMinMaxValues(0, playerhealthmax);
 			Perl_CombatDisplay_HealthBarFadeBar:SetValue(Perl_CombatDisplay_HealthBar:GetValue());
 			Perl_CombatDisplay_HealthBarFadeBar:Show();
@@ -493,7 +494,7 @@ function Perl_CombatDisplay_Update_Mana()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (playermana < Perl_CombatDisplay_ManaBar:GetValue()) then
+		if (playermana < Perl_CombatDisplay_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and playermana > Perl_CombatDisplay_ManaBar:GetValue())) then
 			Perl_CombatDisplay_ManaBarFadeBar:SetMinMaxValues(0, playermanamax);
 			Perl_CombatDisplay_ManaBarFadeBar:SetValue(Perl_CombatDisplay_ManaBar:GetValue());
 			Perl_CombatDisplay_ManaBarFadeBar:Show();
@@ -554,7 +555,11 @@ function Perl_CombatDisplay_OnUpdate_ManaBar(arg1)
 		playeronupdatemana = UnitPower("player", UnitPowerType("player"));
 		if (playeronupdatemana ~= playermana) then
 			playermana = playeronupdatemana;
-			Perl_CombatDisplay_ManaBar:SetValue(playeronupdatemana);
+			if (PCUF_INVERTBARVALUES == 1) then
+				Perl_CombatDisplay_ManaBar:SetValue(playermanamax - playeronupdatemana);
+			else
+				Perl_CombatDisplay_ManaBar:SetValue(playeronupdatemana);
+			end
 			Perl_CombatDisplay_Update_Mana_Text();
 		end
 	end
@@ -601,22 +606,29 @@ function Perl_CombatDisplay_Update_DruidBar(arg1)
 end
 
 function Perl_CombatDisplay_Update_Combo_Points()
-	if (PCUF_FADEBARS == 1) then
-		if (GetComboPoints("player") < Perl_CombatDisplay_CPBar:GetValue()) then
-			Perl_CombatDisplay_CPBarFadeBar:SetMinMaxValues(0, 5);
-			Perl_CombatDisplay_CPBarFadeBar:SetValue(Perl_CombatDisplay_CPBar:GetValue());
-			Perl_CombatDisplay_CPBarFadeBar:Show();
-			Perl_CombatDisplay_CPBar_Fade_Color = 1;
-			Perl_CombatDisplay_CPBar_Fade_Time_Elapsed = 0;
-			Perl_CombatDisplay_CPBar_Fade_OnUpdate_Frame:Show();
+	if (showcp == 1) then
+		local combopoints = GetComboPoints("vehicle","target");	-- How many Combo Points does the player have in their vehicle?
+		if (combopoints == 0) then
+			combopoints = GetComboPoints("player");		-- We aren't in a vehicle, get regular combo points
 		end
-	end
 
-	Perl_CombatDisplay_CPBarText:SetText(GetComboPoints("player")..'/5');
-	if (PCUF_INVERTBARVALUES == 1) then
-		Perl_CombatDisplay_CPBar:SetValue(5 - GetComboPoints("player"));
-	else
-		Perl_CombatDisplay_CPBar:SetValue(GetComboPoints("player"));
+		if (PCUF_FADEBARS == 1) then
+			if (combopoints < Perl_CombatDisplay_CPBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and combopoints > Perl_CombatDisplay_CPBar:GetValue())) then
+				Perl_CombatDisplay_CPBarFadeBar:SetMinMaxValues(0, 5);
+				Perl_CombatDisplay_CPBarFadeBar:SetValue(Perl_CombatDisplay_CPBar:GetValue());
+				Perl_CombatDisplay_CPBarFadeBar:Show();
+				Perl_CombatDisplay_CPBar_Fade_Color = 1;
+				Perl_CombatDisplay_CPBar_Fade_Time_Elapsed = 0;
+				Perl_CombatDisplay_CPBar_Fade_OnUpdate_Frame:Show();
+			end
+		end
+
+		Perl_CombatDisplay_CPBarText:SetText(combopoints..'/5');
+		if (PCUF_INVERTBARVALUES == 1) then
+			Perl_CombatDisplay_CPBar:SetValue(5 - combopoints);
+		else
+			Perl_CombatDisplay_CPBar:SetValue(combopoints);
+		end
 	end
 end
 
@@ -682,7 +694,7 @@ function Perl_CombatDisplay_Update_PetHealth()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (pethealth < Perl_CombatDisplay_PetHealthBar:GetValue()) then
+		if (pethealth < Perl_CombatDisplay_PetHealthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and pethealth > Perl_CombatDisplay_PetHealthBar:GetValue())) then
 			Perl_CombatDisplay_PetHealthBarFadeBar:SetMinMaxValues(0, pethealthmax);
 			Perl_CombatDisplay_PetHealthBarFadeBar:SetValue(Perl_CombatDisplay_PetHealthBar:GetValue());
 			Perl_CombatDisplay_PetHealthBarFadeBar:Show();
@@ -749,7 +761,7 @@ function Perl_CombatDisplay_Update_PetMana()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (petmana < Perl_CombatDisplay_PetManaBar:GetValue()) then
+		if (petmana < Perl_CombatDisplay_PetManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and petmana > Perl_CombatDisplay_PetManaBar:GetValue())) then
 			Perl_CombatDisplay_PetManaBarFadeBar:SetMinMaxValues(0, petmanamax);
 			Perl_CombatDisplay_PetManaBarFadeBar:SetValue(Perl_CombatDisplay_PetManaBar:GetValue());
 			Perl_CombatDisplay_PetManaBarFadeBar:Show();
@@ -816,7 +828,7 @@ function Perl_CombatDisplay_Target_Update_Health()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (targethealth < Perl_CombatDisplay_Target_HealthBar:GetValue()) then
+		if (targethealth < Perl_CombatDisplay_Target_HealthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and targethealth > Perl_CombatDisplay_Target_HealthBar:GetValue())) then
 			Perl_CombatDisplay_Target_HealthBarFadeBar:SetMinMaxValues(0, targethealthmax);
 			Perl_CombatDisplay_Target_HealthBarFadeBar:SetValue(Perl_CombatDisplay_Target_HealthBar:GetValue());
 			Perl_CombatDisplay_Target_HealthBarFadeBar:Show();
@@ -895,7 +907,7 @@ function Perl_CombatDisplay_Target_Update_Mana()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (targetmana < Perl_CombatDisplay_Target_ManaBar:GetValue()) then
+		if (targetmana < Perl_CombatDisplay_Target_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and targetmana > Perl_CombatDisplay_Target_ManaBar:GetValue())) then
 			Perl_CombatDisplay_Target_ManaBarFadeBar:SetMinMaxValues(0, targetmanamax);
 			Perl_CombatDisplay_Target_ManaBarFadeBar:SetValue(Perl_CombatDisplay_Target_ManaBar:GetValue());
 			Perl_CombatDisplay_Target_ManaBarFadeBar:Show();
@@ -935,7 +947,11 @@ function Perl_CombatDisplay_Target_OnUpdate_ManaBar(arg1)
 		targetonupdatemana = UnitPower("target", UnitPowerType("target"));
 		if (targetonupdatemana ~= targetmana) then
 			targetmana = targetonupdatemana;
-			Perl_CombatDisplay_Target_ManaBar:SetValue(targetonupdatemana);
+			if (PCUF_INVERTBARVALUES == 1) then
+				Perl_CombatDisplay_Target_ManaBar:SetValue(targetmanamax - targetonupdatemana);
+			else
+				Perl_CombatDisplay_Target_ManaBar:SetValue(targetonupdatemana);
+			end
 			Perl_CombatDisplay_Target_Update_Mana_Text();
 		end
 	end
@@ -1153,13 +1169,13 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_DruidBarBG:Hide();
 	end
 
-	if (showcp == 1 and (englishclass == "DRUID" or englishclass == "ROGUE")) then
+	if (showcp == 1) then
 		Perl_CombatDisplay_ManaFrame:SetHeight(Perl_CombatDisplay_ManaFrame:GetHeight() + 12);
 		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 12);
 		Perl_CombatDisplay_CPBar:Show();
 		Perl_CombatDisplay_CPBarBG:Show();
 		Perl_CombatDisplay_CPBar:SetMinMaxValues(0, 5);
-		if (showdruidbar == 1) then
+		if (showdruidbar == 1 and englishclass == "DRUID") then
 			Perl_CombatDisplay_CPBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_DruidBar", "BOTTOMLEFT", 0, -2);
 		else
 			Perl_CombatDisplay_CPBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_ManaBar", "BOTTOMLEFT", 0, -2);
@@ -1169,18 +1185,18 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_CPBarBG:Hide();
 	end
 
-	if (showpetbars == 1 and (englishclass == "HUNTER" or englishclass == "WARLOCK")) then
+	if (showpetbars == 1) then
 		Perl_CombatDisplay_ManaFrame:SetHeight(Perl_CombatDisplay_ManaFrame:GetHeight() + 24);
 		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 24);
 		Perl_CombatDisplay_PetHealthBar:Show();
 		Perl_CombatDisplay_PetHealthBarBG:Show();
 		Perl_CombatDisplay_PetManaBar:Show();
 		Perl_CombatDisplay_PetManaBarBG:Show();
-		if (showdruidbar == 1 and showcp == 0) then
+		if (showdruidbar == 1 and showcp == 0 and englishclass == "DRUID") then
 			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_DruidBar", "BOTTOMLEFT", 0, -2);
-		elseif (showdruidbar == 0 and showcp == 1) then
+		elseif (showdruidbar == 1 and showcp == 1 and englishclass == "DRUID") then
 			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_CPBar", "BOTTOMLEFT", 0, -2);
-		elseif (showdruidbar == 1 and showcp == 1) then
+		elseif (showcp == 1) then
 			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_CPBar", "BOTTOMLEFT", 0, -2);
 		end
 		Perl_CombatDisplay_PetManaBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_PetHealthBar", "BOTTOMLEFT", 0, -2);

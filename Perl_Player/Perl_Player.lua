@@ -375,7 +375,7 @@ function Perl_Player_Update_Health()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (playerhealth < Perl_Player_HealthBar:GetValue()) then
+		if (playerhealth < Perl_Player_HealthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and playerhealth > Perl_Player_HealthBar:GetValue())) then
 			Perl_Player_HealthBarFadeBar:SetMinMaxValues(0, playerhealthmax);
 			Perl_Player_HealthBarFadeBar:SetValue(Perl_Player_HealthBar:GetValue());
 			Perl_Player_HealthBarFadeBar:Show();
@@ -484,7 +484,7 @@ function Perl_Player_Update_Mana()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (playermana < Perl_Player_ManaBar:GetValue()) then
+		if (playermana < Perl_Player_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and playermana > Perl_Player_ManaBar:GetValue())) then
 			Perl_Player_ManaBarFadeBar:SetMinMaxValues(0, playermanamax);
 			Perl_Player_ManaBarFadeBar:SetValue(Perl_Player_ManaBar:GetValue());
 			Perl_Player_ManaBarFadeBar:Show();
@@ -625,7 +625,11 @@ function Perl_Player_OnUpdate_ManaBar(arg1)
 		playeronupdatemana = UnitPower("player", UnitPowerType("player"));
 		if (playeronupdatemana ~= playermana) then
 			playermana = playeronupdatemana;
-			Perl_Player_ManaBar:SetValue(playeronupdatemana);
+			if (PCUF_INVERTBARVALUES == 1) then
+				Perl_Player_ManaBar:SetValue(playermanamax - playeronupdatemana);
+			else
+				Perl_Player_ManaBar:SetValue(playeronupdatemana);
+			end
 			Perl_Player_Update_Mana_Text();
 		end
 	end

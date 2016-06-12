@@ -221,7 +221,7 @@ function Perl_Target_Events:UNIT_PORTRAIT_UPDATE()
 end
 
 function Perl_Target_Events:UNIT_COMBO_POINTS()
-	if (arg1 == "player") then
+	if (arg1 == "player" or arg1 == "vehicle") then
 		Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
 	end
 end
@@ -443,7 +443,7 @@ function Perl_Target_Update_Health()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (targethealth < Perl_Target_HealthBar:GetValue()) then
+		if (targethealth < Perl_Target_HealthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and targethealth > Perl_Target_HealthBar:GetValue())) then
 			Perl_Target_HealthBarFadeBar:SetMinMaxValues(0, targethealthmax);
 			Perl_Target_HealthBarFadeBar:SetValue(Perl_Target_HealthBar:GetValue());
 			Perl_Target_HealthBarFadeBar:Show();
@@ -566,7 +566,7 @@ function Perl_Target_Update_Mana()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (targetmana < Perl_Target_ManaBar:GetValue()) then
+		if (targetmana < Perl_Target_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and targetmana > Perl_Target_ManaBar:GetValue())) then
 			Perl_Target_ManaBarFadeBar:SetMinMaxValues(0, targetmanamax);
 			Perl_Target_ManaBarFadeBar:SetValue(Perl_Target_ManaBar:GetValue());
 			Perl_Target_ManaBarFadeBar:Show();
@@ -675,7 +675,11 @@ function Perl_Target_OnUpdate_ManaBar(arg1)
 		targetonupdatemana = UnitPower("target", UnitPowerType("target"));
 		if (playeronupdatemana ~= targetmana) then
 			targetmana = targetonupdatemana;
-			Perl_Target_ManaBar:SetValue(targetonupdatemana);
+			if (PCUF_INVERTBARVALUES == 1) then
+				Perl_Target_ManaBar:SetValue(targetmanamax - targetonupdatemana);
+			else
+				Perl_Target_ManaBar:SetValue(targetonupdatemana);
+			end
 			Perl_Target_Update_Mana_Text();
 		end
 	end
@@ -718,27 +722,30 @@ end
 
 function Perl_Target_Update_Combo_Points()
 	local _, playerclass = UnitClass("player");
-	if (playerclass == "ROGUE" or playerclass == "DRUID") then		-- Noticed in 2.1.3 that this is being called for warriors also...huh?
-		local combopoints = GetComboPoints("player");			-- How many Combo Points does the player have?
+	if (playerclass == "ROGUE" or playerclass == "DRUID" or CanExitVehicle()) then	-- Noticed in 2.1.3 that this is being called for warriors also...huh?
+		local combopoints = GetComboPoints("vehicle","target");			-- How many Combo Points does the player have in their vehicle?
+		if (combopoints == 0) then
+			combopoints = GetComboPoints("player");				-- We aren't in a vehicle, get regular combo points
+		end
 
 		if (showcp == 1) then
 			Perl_Target_CPText:SetText(combopoints);
 			if (combopoints == 5) then
-				Perl_Target_CPText:SetTextColor(1, 0, 0);	-- red text
+				Perl_Target_CPText:SetTextColor(1, 0, 0);		-- red text
 			elseif (combopoints == 4) then
-				Perl_Target_CPText:SetTextColor(1, 0.5, 0);	-- orange text
+				Perl_Target_CPText:SetTextColor(1, 0.5, 0);		-- orange text
 			elseif (combopoints == 3) then
-				Perl_Target_CPText:SetTextColor(1, 1, 0);	-- yellow text
+				Perl_Target_CPText:SetTextColor(1, 1, 0);		-- yellow text
 			elseif (combopoints == 2) then
-				Perl_Target_CPText:SetTextColor(0.5, 1, 0);	-- yellow-green text
+				Perl_Target_CPText:SetTextColor(0.5, 1, 0);		-- yellow-green text
 			elseif (combopoints == 1) then
-				Perl_Target_CPText:SetTextColor(0, 1, 0);	-- green text
+				Perl_Target_CPText:SetTextColor(0, 1, 0);		-- green text
 			else
-				Perl_Target_CPText:SetTextColor(0, 0.5, 0);	-- dark green text
+				Perl_Target_CPText:SetTextColor(0, 0.5, 0);		-- dark green text
 			end
 		end
 
-		if (nameframecombopoints == 1) then				-- this isn't nested since you can have both combo point styles on at the same time
+		if (nameframecombopoints == 1) then					-- this isn't nested since you can have both combo point styles on at the same time
 			Perl_Target_NameFrame_CPMeter:SetMinMaxValues(0, 5);
 			Perl_Target_NameFrame_CPMeter:SetValue(combopoints);
 			if (combopoints == 5) then

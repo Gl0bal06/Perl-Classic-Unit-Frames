@@ -326,7 +326,7 @@ function Perl_Player_Pet_Update_Health()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (pethealth < Perl_Player_Pet_HealthBar:GetValue()) then
+		if (pethealth < Perl_Player_Pet_HealthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and pethealth > Perl_Player_Pet_HealthBar:GetValue())) then
 			Perl_Player_Pet_HealthBarFadeBar:SetMinMaxValues(0, pethealthmax);
 			Perl_Player_Pet_HealthBarFadeBar:SetValue(Perl_Player_Pet_HealthBar:GetValue());
 			Perl_Player_Pet_HealthBarFadeBar:Show();
@@ -393,7 +393,7 @@ function Perl_Player_Pet_Update_Mana()
 	end
 
 	if (PCUF_FADEBARS == 1) then
-		if (petmana < Perl_Player_Pet_ManaBar:GetValue()) then
+		if (petmana < Perl_Player_Pet_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and petmana > Perl_Player_Pet_ManaBar:GetValue())) then
 			Perl_Player_Pet_ManaBarFadeBar:SetMinMaxValues(0, petmanamax);
 			Perl_Player_Pet_ManaBarFadeBar:SetValue(Perl_Player_Pet_ManaBar:GetValue());
 			Perl_Player_Pet_ManaBarFadeBar:Show();
@@ -903,7 +903,7 @@ end
 
 function Perl_Player_Pet_Target_HealthBar_Fade_Check()
 	if (PCUF_FADEBARS == 1) then
-		if (pettargethealth < Perl_Player_Pet_Target_HealthBar:GetValue()) then
+		if (pettargethealth < Perl_Player_Pet_Target_HealthBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and pettargethealth > Perl_Player_Pet_Target_HealthBar:GetValue())) then
 			Perl_Player_Pet_Target_HealthBarFadeBar:SetMinMaxValues(0, pettargethealthmax);
 			Perl_Player_Pet_Target_HealthBarFadeBar:SetValue(Perl_Player_Pet_Target_HealthBar:GetValue());
 			Perl_Player_Pet_Target_HealthBarFadeBar:Show();
@@ -917,7 +917,7 @@ end
 
 function Perl_Player_Pet_Target_ManaBar_Fade_Check()
 	if (PCUF_FADEBARS == 1) then
-		if (pettargetmana < Perl_Player_Pet_Target_ManaBar:GetValue()) then
+		if (pettargetmana < Perl_Player_Pet_Target_ManaBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and pettargetmana > Perl_Player_Pet_Target_ManaBar:GetValue())) then
 			Perl_Player_Pet_Target_ManaBarFadeBar:SetMinMaxValues(0, pettargetmanamax);
 			Perl_Player_Pet_Target_ManaBarFadeBar:SetValue(Perl_Player_Pet_Target_ManaBar:GetValue());
 			Perl_Player_Pet_Target_ManaBarFadeBar:Show();
