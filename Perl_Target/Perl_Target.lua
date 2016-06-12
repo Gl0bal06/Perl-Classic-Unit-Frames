@@ -482,7 +482,7 @@ function Perl_Target_Update_Health()
 	if (framestyle == 1) then
 		Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
 		Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-		Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+		Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..targethealthpercent.."%");
 	elseif (framestyle == 2) then
 		if (compactmode == 0) then
 			if (healermode == 0) then
