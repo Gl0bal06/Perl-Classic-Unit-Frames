@@ -428,7 +428,7 @@ function Perl_Focus_Update_Health()
 	if (framestyle == 1) then
 		Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
 		Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-		Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
+		Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax.." | "..focushealthpercent.."%");
 	elseif (framestyle == 2) then
 		if (compactmode == 0) then
 			if (healermode == 0) then

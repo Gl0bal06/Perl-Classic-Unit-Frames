@@ -1,3 +1,6 @@
+3.01 Beta 3 - August 10, 2008
+ - Focus: Readded the health percent to the default frame layout
+
 3.01 Beta 2 - August 10, 2008
  - Target: Readded the health percent to the default frame layout
 
