@@ -1324,8 +1324,8 @@ function Perl_Party_One_PetHealthBar_Fade(self, elapsed)
 end
 
 function Perl_Party_Two_PetHealthBar_Fade(self, elapsed)
-	Perl_Party_Two_PetHealthBar_Fade_Color = Perl_Party_Two_PetHealthBar_Fade_Color - arg1;
-	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + arg1;
+	Perl_Party_Two_PetHealthBar_Fade_Color = Perl_Party_Two_PetHealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_MemberFrame2_StatsFrame_PetHealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Two_PetHealthBar_Fade_Color, 0, Perl_Party_Two_PetHealthBar_Fade_Color);
 
@@ -1338,8 +1338,8 @@ function Perl_Party_Two_PetHealthBar_Fade(self, elapsed)
 end
 
 function Perl_Party_Three_PetHealthBar_Fade(self, elapsed)
-	Perl_Party_Three_PetHealthBar_Fade_Color = Perl_Party_Three_PetHealthBar_Fade_Color - arg1;
-	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + arg1;
+	Perl_Party_Three_PetHealthBar_Fade_Color = Perl_Party_Three_PetHealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_MemberFrame3_StatsFrame_PetHealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Three_PetHealthBar_Fade_Color, 0, Perl_Party_Three_PetHealthBar_Fade_Color);
 
@@ -1352,8 +1352,8 @@ function Perl_Party_Three_PetHealthBar_Fade(self, elapsed)
 end
 
 function Perl_Party_Four_PetHealthBar_Fade(self, elapsed)
-	Perl_Party_Four_PetHealthBar_Fade_Color = Perl_Party_Four_PetHealthBar_Fade_Color - arg1;
-	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + arg1;
+	Perl_Party_Four_PetHealthBar_Fade_Color = Perl_Party_Four_PetHealthBar_Fade_Color - elapsed;
+	self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed;
 
 	Perl_Party_MemberFrame4_StatsFrame_PetHealthBarFadeBar:SetStatusBarColor(0, Perl_Party_Four_PetHealthBar_Fade_Color, 0, Perl_Party_Four_PetHealthBar_Fade_Color);
 

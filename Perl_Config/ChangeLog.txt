@@ -1,3 +1,6 @@
+4.04 - December 25, 2010
+ - Party: Fixed some leftover old OnUpdate code in the pet fadebars
+
 4.03 - October 15, 2010
  - Config: Updated German translations (Thanks archiv)
  - Pet: Updated OnDragStart code on the pet target frame for Cataclysm
