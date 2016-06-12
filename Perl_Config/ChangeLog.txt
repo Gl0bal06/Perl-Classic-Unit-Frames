@@ -1,26 +1,4 @@
-4.01 Beta 4 - October 8, 2010
- - ToT: The top and right position presets now have the same spacing effect other positioning presets
- - ToT: The top position preset now takes the numeric threat display and guild name frames into consideration
-
-4.01 Beta 3 - October 4, 2010
- - All: Updated right click menu code for target related frames
- - All: Default scale is now 100
- - All: Code now reads best in Notepad++
- - Focus: Added vehicle support to the right click menu
- - Player: Added support for Druid Eclipse Bar
- - ToT: Target of Target of Target frame is now disabled by default
-
-4.01 Beta 2 - September 27, 2010
- - CombatDisplay: Fade bars option works correctly on power bars with OnUpdate scripts
- - CombatDisplay/Player/Target: Fade bars used with inverted bars work again
- - Pet: Experience bar correctly disappears when pet levels up to the same level as the player
- - Player: Added support for Paladin Holy Bar
- - Player: Added support for Warlock Shard Bar
- - Player: The combat status icon works again
- - Player: Power bar now correctly changes color when necessary
- - Player: The experience bar now correctly shows level 85 being the max level
-
-4.01 Beta 1 - September 22, 2010
+4.01 - October 12, 2010
  - All: Updated TOC Interface version to 40000
  - All: Updated OnEvent code for Cataclysm
  - All: Updated OnUpdate code for Cataclysm
@@ -28,15 +6,28 @@
  - All: Updated to use UNIT_POWER and UNIT_MAXPOWER events
  - All: Updated to use UnitPower and UnitPowerMax functions
  - All: Updated OnClick and OnDragStart code for Cataclysm
+ - All: Updated right click menu code for target related frames
+ - All: Default scale is now 100
+ - All: Code now reads best in Notepad++
  - CombatDisplay/Party/Player: Added focus as a valid bar for player characters
+ - CombatDisplay/Player/Target: Fade bars used with inverted bars work again
+ - CombatDisplay/Player/Target: Fade bars option works correctly on power bars with OnUpdate scripts
+ - Focus: Added vehicle support to the right click menu
  - Party: Fixed an issue with fade bars on the power bar for party member two
  - Party: Fixed a condition where the party frame may not be hidden when logging in
  - Party/Player: Updated UnitGroupRolesAssigned function for Cataclysm
+ - Pet: Experience bar correctly disappears when pet levels up to the same level as the player
+ - Player: Added support for Druid Eclipse Bar
+ - Player: Added support for Paladin Holy Bar
+ - Player: Added support for Warlock Shard Bar
  - Player: The experience bar now maxes out at Level 85
  - Player: The PvP timer now correctly counts down from 5 minutes (Thanks flare1985)
  - Player: Added a sanity check for loading ArcaneBar saved variables
- - Player/Target: Fade bars option works correctly on power bars with OnUpdate scripts
+ - Player: The combat status icon works again
  - Target: Fixed an issue with inverted bars not working correctly on the power bar
+ - ToT: Target of Target of Target frame is now disabled by default
+ - ToT: The top and right position presets now have the same spacing effect other positioning presets
+ - ToT: The top position preset now takes the numeric threat display and guild name frames into consideration
 
 3.12 - June 13, 2010
  - ArcaneBar: Casting a spell while a spell is already casting will no longer display as a failed cast
