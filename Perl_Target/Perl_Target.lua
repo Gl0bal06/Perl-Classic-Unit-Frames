@@ -582,6 +582,8 @@ function Perl_Target_Update_Mana_Text()
 	elseif (framestyle == 2) then
 		if (targetmanamax > 0) then
 			targetmanapercent = floor(targetmana/targetmanamax*100+0.5);
+		else
+			targetmanapercent = 0;
 		end
 
 		if (compactmode == 0) then

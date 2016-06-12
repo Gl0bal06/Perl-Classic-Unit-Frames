@@ -510,7 +510,11 @@ function Perl_Focus_Update_Mana()
 			Perl_Focus_ManaBarText:SetText(focusmana.."/"..focusmanamax);
 		end
 	elseif (framestyle == 2) then
-		focusmanapercent = floor(focusmana/focusmanamax*100+0.5);
+		if (targetmanamax > 0) then
+			focusmanapercent = floor(focusmana/focusmanamax*100+0.5);
+		else
+			focusmanapercent = 0;
+		end
 
 		if (compactmode == 0) then
 			Perl_Focus_ManaBarTextCompactPercent:SetText();	-- Hide this text in this frame style

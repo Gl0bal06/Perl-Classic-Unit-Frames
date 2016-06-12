@@ -895,7 +895,11 @@ function Perl_CombatDisplay_Target_Update_Mana_Text()
 		if (displaypercents == 0) then
 			Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
 		else
-			Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax.." | "..floor(targetmana/targetmanamax*100+0.5).."%");
+			if (targetmanamax > 0) then
+				Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax.." | "..floor(targetmana/targetmanamax*100+0.5).."%");
+			else
+				Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax.." | ".."0".."%");
+			end
 		end
 	end
 end
