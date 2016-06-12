@@ -877,6 +877,8 @@ function Perl_Config_Global_Load_Settings()
 	end
 
 	if (Perl_Raid_Frame) then
+		Perl_Raid_Set_Scale();
+		Perl_Raid_Set_Transparency();
 		Perl_Raid_UpdateVars(Perl_Config_Global_Raid_Config);
 
 		if (Perl_Config_Global_Raid_Config["Global Settings"] ~= nil) then
@@ -1122,8 +1124,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.64",
-			releaseDate = "May 6, 2006",
+			version = "Version 0.65",
+			releaseDate = "May 12, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

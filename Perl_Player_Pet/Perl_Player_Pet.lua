@@ -912,6 +912,12 @@ function Perl_Player_Pet_MouseClick(button)
 			if (not string.find(GetMouseFocus():GetName(), "Name")) then
 				Genesis_MouseHeal("pet", button);
 			end
+		elseif (CH_Config) then
+			if (CH_Config.PCUFEnabled) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					CH_UnitClicked("pet", button);
+				end
+			end
 		else
 			if (SpellIsTargeting() and button == "RightButton") then
 				SpellStopTargeting();
@@ -954,7 +960,7 @@ end
 
 function Perl_Player_Pet_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB) and PCUF_CASTPARTYSUPPORT == 1) then
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
 				ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
 			end
@@ -977,8 +983,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "Version 0.64",
-			releaseDate = "May 6, 2006",
+			version = "Version 0.65",
+			releaseDate = "May 12, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

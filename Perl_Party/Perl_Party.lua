@@ -2099,6 +2099,12 @@ function Perl_Party_MouseClick(button)
 			if (not string.find(GetMouseFocus():GetName(), "Name")) then
 				Genesis_MouseHeal("party"..id, button);
 			end
+		elseif (CH_Config) then
+			if (CH_Config.PCUFEnabled) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					CH_UnitClicked("party"..id, button);
+				end
+			end
 		else
 			if (SpellIsTargeting() and button == "RightButton") then
 				SpellStopTargeting();
@@ -2147,7 +2153,7 @@ function Perl_Party_MouseUp(button)
 	end
 
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB) and PCUF_CASTPARTYSUPPORT == 1) then
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
 				ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..id.."_DropDown"), "Perl_Party_MemberFrame"..id, 0, 0);
 			end
@@ -2176,6 +2182,12 @@ function Perl_Party_Pet_MouseClick(button)
 		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
 			if (not string.find(GetMouseFocus():GetName(), "Name")) then
 				Genesis_MouseHeal("partypet"..id, button);
+			end
+		elseif (CH_Config) then
+			if (CH_Config.PCUFEnabled) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					CH_UnitClicked("partypet"..id, button);
+				end
 			end
 		else
 			if (SpellIsTargeting() and button == "RightButton") then
@@ -2237,8 +2249,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.64",
-			releaseDate = "May 6, 2006",
+			version = "Version 0.65",
+			releaseDate = "May 12, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

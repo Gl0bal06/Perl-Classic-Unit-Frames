@@ -1,3 +1,8 @@
+0.65 - May 12, 2006
+ - CombatDisplay/Party/Pet/Player/Target: Added ClickHeal support
+ - Target: Load Global Settings will now correctly set transparency and scale
+ - ToT: Added crude click casting support (only works if it is your current target or yourself)
+
 0.64 - May 6, 2006
  - All: Updated TOC files to reflect currently supported mods
  - CombatDisplay: Added FiveSec support

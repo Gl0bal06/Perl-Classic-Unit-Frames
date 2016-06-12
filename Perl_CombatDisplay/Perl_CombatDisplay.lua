@@ -1120,6 +1120,10 @@ function Perl_CombatDisplay_MouseClick(button)
 			CastParty_OnClickByUnit(button, "player");
 		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
 			Genesis_MouseHeal("player", button);
+		elseif (CH_Config) then
+			if (CH_Config.PCUFEnabled) then
+				CH_UnitClicked("player", button);
+			end
 		else
 			if (SpellIsTargeting() and button == "RightButton") then
 				SpellStopTargeting();
@@ -1162,7 +1166,7 @@ end
 
 function Perl_CombatDisplay_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
 			-- Do nothing
 		else
 			if (rightclickmenu == 1) then
@@ -1208,6 +1212,10 @@ function Perl_CombatDisplay_Target_MouseClick(button)
 			CastParty_OnClickByUnit(button, "target");
 		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
 			Genesis_MouseHeal("target", button);
+		elseif (CH_Config) then
+			if (CH_Config.PCUFEnabled) then
+				CH_UnitClicked("target", button);
+			end
 		else
 			if (SpellIsTargeting() and button == "RightButton") then
 				SpellStopTargeting();
@@ -1250,7 +1258,7 @@ end
 
 function Perl_CombatDisplay_Target_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
 			-- Do nothing
 		else
 			if (rightclickmenu == 1) then
@@ -1273,8 +1281,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.64",
-			releaseDate = "May 6, 2006",
+			version = "Version 0.65",
+			releaseDate = "May 12, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -1159,18 +1159,51 @@ function Perl_TargetTargetDropDown_Initialize()
 end
 
 function Perl_Target_Target_MouseClick(button)
-	if (SpellIsTargeting() and button == "RightButton") then
-		SpellStopTargeting();
-		return;
-	end
-
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("targettarget");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("targettarget");
+	if (PCUF_CASTPARTYSUPPORT == 1) then
+		if (CastPartyConfig) then
+			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+				CastParty_OnClickByUnit(button, "targettarget");
+			end
+		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+				Genesis_MouseHeal("targettarget", button);
+			end
+		elseif (CH_Config) then
+			if (CH_Config.PCUFEnabled) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					CH_UnitClicked("targettarget", button);
+				end
+			end
 		else
-			TargetUnit("targettarget");
+			if (SpellIsTargeting() and button == "RightButton") then
+				SpellStopTargeting();
+				return;
+			end
+
+			if (button == "LeftButton") then
+				if (SpellIsTargeting()) then
+					SpellTargetUnit("targettarget");
+				elseif (CursorHasItem()) then
+					DropItemOnUnit("targettarget");
+				else
+					TargetUnit("targettarget");
+				end
+			end
+		end
+	else
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
+		end
+
+		if (button == "LeftButton") then
+			if (SpellIsTargeting()) then
+				SpellTargetUnit("targettarget");
+			elseif (CursorHasItem()) then
+				DropItemOnUnit("targettarget");
+			else
+				TargetUnit("targettarget");
+			end
 		end
 	end
 end
@@ -1183,8 +1216,14 @@ end
 
 function Perl_Target_Target_MouseUp(button)
 	if (button == "RightButton") then
-		if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
-			ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then
+			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
+				ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
+			end
+		else
+			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
+				ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
+			end
 		end
 	end
 
@@ -1219,18 +1258,51 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 end
 
 function Perl_Target_Target_Target_MouseClick(button)
-	if (SpellIsTargeting() and button == "RightButton") then
-		SpellStopTargeting();
-		return;
-	end
-
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("targettargettarget");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("targettargettarget");
+	if (PCUF_CASTPARTYSUPPORT == 1) then
+		if (CastPartyConfig) then
+			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+				CastParty_OnClickByUnit(button, "targettargettarget");
+			end
+		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+				Genesis_MouseHeal("targettargettarget", button);
+			end
+		elseif (CH_Config) then
+			if (CH_Config.PCUFEnabled) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					CH_UnitClicked("targettargettarget", button);
+				end
+			end
 		else
-			TargetUnit("targettargettarget");
+			if (SpellIsTargeting() and button == "RightButton") then
+				SpellStopTargeting();
+				return;
+			end
+
+			if (button == "LeftButton") then
+				if (SpellIsTargeting()) then
+					SpellTargetUnit("targettargettarget");
+				elseif (CursorHasItem()) then
+					DropItemOnUnit("targettargettarget");
+				else
+					TargetUnit("targettargettarget");
+				end
+			end
+		end
+	else
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
+		end
+
+		if (button == "LeftButton") then
+			if (SpellIsTargeting()) then
+				SpellTargetUnit("targettargettarget");
+			elseif (CursorHasItem()) then
+				DropItemOnUnit("targettargettarget");
+			else
+				TargetUnit("targettargettarget");
+			end
 		end
 	end
 end
@@ -1243,8 +1315,14 @@ end
 
 function Perl_Target_Target_Target_MouseUp(button)
 	if (button == "RightButton") then
-		if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
-			ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then
+			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
+				ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
+			end
+		else
+			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
+				ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
+			end
 		end
 	end
 
@@ -1320,8 +1398,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "Version 0.64",
-			releaseDate = "May 6, 2006",
+			version = "Version 0.65",
+			releaseDate = "May 12, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

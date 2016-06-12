@@ -1478,6 +1478,8 @@ function Perl_Target_UpdateVars(vartable)
 		Perl_Target_Reset_Buffs();		-- Reset the buff icons
 		Perl_Target_Frame_Style();		-- Reposition the frames
 		Perl_Target_Buff_Debuff_Background();	-- Hide/Show the background frame
+		Perl_Target_Set_Scale();		-- Set the scale
+		Perl_Target_Set_Transparency();		-- Set the transparency
 		Perl_Target_Update_Once();
 	end
 
@@ -1770,6 +1772,12 @@ function Perl_Target_MouseClick(button)
 			if (not string.find(GetMouseFocus():GetName(), "Name")) then
 				Genesis_MouseHeal("target", button);
 			end
+		elseif (CH_Config) then
+			if (CH_Config.PCUFEnabled) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					CH_UnitClicked("target", button);
+				end
+			end
 		else
 			if (SpellIsTargeting() and button == "RightButton") then
 				SpellStopTargeting();
@@ -1808,7 +1816,7 @@ end
 
 function Perl_Target_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB) and PCUF_CASTPARTYSUPPORT == 1) then
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
 				ToggleDropDownMenu(1, nil, Perl_Target_DropDown, "Perl_Target_NameFrame", 40, 0);
 			end
@@ -1853,8 +1861,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.64",
-			releaseDate = "May 6, 2006",
+			version = "Version 0.65",
+			releaseDate = "May 12, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -635,7 +635,7 @@ function Perl_Player_Update_Raid_Group_Number()		-- taken from 1.8
 			return;
 		end
 		local numRaidMembers = GetNumRaidMembers();
-		for i=1, MAX_RAID_MEMBERS do
+		for i=1,40 do
 			if (i <= numRaidMembers) then
 				name, rank, subgroup = GetRaidRosterInfo(i);
 				-- Set the player's group number indicator
@@ -1283,6 +1283,12 @@ function Perl_Player_MouseClick(button)
 			if (not string.find(GetMouseFocus():GetName(), "Name")) then
 				Genesis_MouseHeal("player", button);
 			end
+		elseif (CH_Config) then
+			if (CH_Config.PCUFEnabled) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					CH_UnitClicked("player", button);
+				end
+			end
 		else
 			if (SpellIsTargeting() and button == "RightButton") then
 				SpellStopTargeting();
@@ -1325,7 +1331,7 @@ end
 
 function Perl_Player_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB) and PCUF_CASTPARTYSUPPORT == 1) then
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
 				ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
 			end
@@ -1443,8 +1449,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.64",
-			releaseDate = "May 6, 2006",
+			version = "Version 0.65",
+			releaseDate = "May 12, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
