@@ -701,9 +701,9 @@ function Perl_Player_Pet_Target_OnUpdate()
 				if (UnitIsVisible("pettarget")) then
 					reaction = UnitReaction("pettarget", "player");
 					if (reaction) then
-						r = UnitReactionColor[reaction].r;
-						g = UnitReactionColor[reaction].g;
-						b = UnitReactionColor[reaction].b;
+						r = FACTION_BAR_COLORS[reaction].r;
+						g = FACTION_BAR_COLORS[reaction].g;
+						b = FACTION_BAR_COLORS[reaction].b;
 						Perl_Player_Pet_Target_NameBarText:SetTextColor(r, g, b);
 					else
 						Perl_Player_Pet_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);

@@ -822,9 +822,9 @@ function Perl_Target_Update_Text_Color()
 		if (UnitIsVisible("target")) then
 			local reaction = UnitReaction("target", "player");
 			if (reaction) then
-				r = UnitReactionColor[reaction].r;
-				g = UnitReactionColor[reaction].g;
-				b = UnitReactionColor[reaction].b;
+				r = FACTION_BAR_COLORS[reaction].r;
+				g = FACTION_BAR_COLORS[reaction].g;
+				b = FACTION_BAR_COLORS[reaction].b;
 				Perl_Target_NameBarText:SetTextColor(r, g, b);
 			else
 				Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);

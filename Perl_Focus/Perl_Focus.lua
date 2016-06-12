@@ -725,9 +725,9 @@ function Perl_Focus_Update_Text_Color()
 		if (UnitIsVisible("focus")) then
 			local reaction = UnitReaction("focus", "player");
 			if (reaction) then
-				r = UnitReactionColor[reaction].r;
-				g = UnitReactionColor[reaction].g;
-				b = UnitReactionColor[reaction].b;
+				r = FACTION_BAR_COLORS[reaction].r;
+				g = FACTION_BAR_COLORS[reaction].g;
+				b = FACTION_BAR_COLORS[reaction].b;
 				Perl_Focus_NameBarText:SetTextColor(r, g, b);
 			else
 				Perl_Focus_NameBarText:SetTextColor(0.5, 0.5, 1.0);

@@ -241,9 +241,9 @@ function Perl_Party_Target_Work(self)
 		if (UnitIsVisible(self.unit)) then
 			reaction = UnitReaction(self.unit, "player");
 			if (reaction) then
-				r = UnitReactionColor[reaction].r;
-				g = UnitReactionColor[reaction].g;
-				b = UnitReactionColor[reaction].b;
+				r = FACTION_BAR_COLORS[reaction].r;
+				g = FACTION_BAR_COLORS[reaction].g;
+				b = FACTION_BAR_COLORS[reaction].b;
 				self.nameText:SetTextColor(r, g, b);
 			else
 				self.nameText:SetTextColor(0.5, 0.5, 1.0);

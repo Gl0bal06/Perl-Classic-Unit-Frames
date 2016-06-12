@@ -908,7 +908,7 @@ function Perl_Party_Update_PvP_Status(self)				-- Modeled after 1.9 code
 		if (UnitIsVisible(self.unit)) then
 			local reaction = UnitReaction(self.unit, "player");
 			if (reaction) then
-				self.nameText:SetTextColor(UnitReactionColor[reaction].r, UnitReactionColor[reaction].g, UnitReactionColor[reaction].b);
+				self.nameText:SetTextColor(FACTION_BAR_COLORS[reaction].r, FACTION_BAR_COLORS[reaction].g, FACTION_BAR_COLORS[reaction].b);
 			end
 		end
 	end
