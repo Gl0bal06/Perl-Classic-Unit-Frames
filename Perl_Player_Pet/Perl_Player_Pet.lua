@@ -9,6 +9,7 @@ local locked = 0;			-- unlocked by default
 local showxp = 0;			-- xp bar is hidden by default
 local transparency = 1;			-- 0.8 default from perl
 local Initialized = nil;		-- waiting to be initialized
+local scale = 1;		-- default scale
 local BlizzardPetFrame_Update = PetFrame_Update;	-- backup the original target function in case we toggle the mod off
 
 
@@ -125,6 +126,25 @@ function Perl_Player_Pet_SlashHandler(msg)
 		Perl_Player_Pet_Lock();
 	elseif (string.find(msg, "xp")) then
 		Perl_Player_Pet_Toggle_XPMode();
+	elseif (string.find(msg, "scale")) then
+		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
+		if (arg1 ~= "") then
+			if (arg1 == "ui") then
+				Perl_Player_Pet_Set_ParentUI_Scale();
+				return;
+			end
+			local number = tonumber(arg1);
+			if (number > 0 and number < 150) then
+				Perl_Player_Pet_Set_Scale(number);
+				return;
+			else
+				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/ppp scale ui' to set to the current UI scale.");
+				return;
+			end
+		else
+			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/ppp scale ui' to set to the current UI scale.");
+			return;
+		end
 	elseif (string.find(msg, "status")) then
 		Perl_Player_Pet_Status();
 	else
@@ -132,6 +152,7 @@ function Perl_Player_Pet_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp |cffffff00- Toggle the pet experience bar.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/ppp scale ui' to set to the current UI scale.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 	end
 end
@@ -185,6 +206,7 @@ function Perl_Player_Pet_Update_Once()
 	if (UnitExists("pet")) then
 		Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));		-- Set name
 		Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
+		Perl_Player_Pet_Frame:SetScale(scale);				-- Set the scale
 		Perl_Player_Pet_Update_Health();				-- Set health
 		Perl_Player_Pet_Update_Mana();					-- Set mana values
 		Perl_Player_Pet_Update_Mana_Bar();				-- Set the type of mana
@@ -325,6 +347,20 @@ function Perl_Player_Pet_Toggle_XPMode()
 	Perl_Player_Pet_ShowXP();
 end
 
+function Perl_Player_Pet_Set_ParentUI_Scale()
+	scale = UIParent:GetScale();
+	Perl_Player_Pet_Frame:SetScale(scale);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Pet Display is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	Perl_Player_Pet_UpdateVars();
+end
+
+function Perl_Player_Pet_Set_Scale(number)
+	scale = (number / 100);
+	Perl_Player_Pet_Frame:SetScale(scale);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Pet Display is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	Perl_Player_Pet_UpdateVars();
+end
+
 function Perl_Player_Pet_Status()
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffUnlocked|cffffff00.");
@@ -337,11 +373,14 @@ function Perl_Player_Pet_Status()
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffShowing Experience|cffffff00.");
 	end
+
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying at a scale of |cffffffff"..(scale * 100).."%|cffffff00.");
 end
 
 function Perl_Player_Pet_GetVars()
 	locked = Perl_Player_Pet_Config[UnitName("player")]["Locked"];
 	showxp = Perl_Player_Pet_Config[UnitName("player")]["ShowXP"];
+	scale = Perl_Player_Pet_Config[UnitName("player")]["Scale"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -349,12 +388,16 @@ function Perl_Player_Pet_GetVars()
 	if (showxp == nil) then
 		showxp = 0;
 	end
+	if (scale == nil) then
+		scale = 1;
+	end
 end
 
 function Perl_Player_Pet_UpdateVars()
 	Perl_Player_Pet_Config[UnitName("player")] = {
 		["Locked"] = locked,
 		["ShowXP"] = showxp,
+		["Scale"] = scale,
 	};
 end
 
@@ -468,8 +511,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.19",
-			releaseDate = "November 14, 2005",
+			version = "v0.20",
+			releaseDate = "November 19, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

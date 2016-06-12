@@ -168,6 +168,25 @@ function Perl_Player_SlashHandler(msg)
 		Perl_Player_Toggle_CompactMode();
 	elseif (string.find(msg, "raid")) then
 		Perl_Player_Toggle_RaidGroupNumber();
+	elseif (string.find(msg, "scale")) then
+		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
+		if (arg1 ~= "") then
+			if (arg1 == "ui") then
+				Perl_Player_Set_ParentUI_Scale();
+				return;
+			end
+			local number = tonumber(arg1);
+			if (number > 0 and number < 150) then
+				Perl_Player_Set_Scale(number);
+				return;
+			else
+				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pp scale ui' to set to the current UI scale.");
+				return;
+			end
+		else
+			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pp scale ui' to set to the current UI scale.");
+			return;
+		end
 	elseif (string.find(msg, "toggle")) then
 		Perl_Player_TogglePlayer();
 	elseif (string.find(msg, "status")) then
@@ -191,6 +210,7 @@ function Perl_Player_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff compact |cffffff00- Toggle compact mode.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff raid |cffffff00- Toggle the displaying of your group number while in a raid.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp # |cffffff00- Set the display mode of the experience bar: 1) default, 2) pvp rank, 3) off");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/pp scale ui' to set to the current UI scale.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the player frame on and off.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 	end
@@ -249,6 +269,7 @@ function Perl_Player_Update_Once()
 	local PlayerClass = UnitClass("player");
 
 	PlayerFrame:Hide();					-- Hide default frame
+	Perl_Player_Frame:SetScale(scale);			-- Set the scale
 	Perl_Player_NameBarText:SetText(UnitName("player"));	-- Set the player's name
 	Perl_Player_Update_PvP_Status();			-- Is the character PvP flagged?
 	Perl_Player_ClassTexture:SetTexCoord(Perl_Player_ClassPosRight[PlayerClass], Perl_Player_ClassPosLeft[PlayerClass], Perl_Player_ClassPosTop[PlayerClass], Perl_Player_ClassPosBottom[PlayerClass]); -- Set the player's class icon
@@ -525,6 +546,20 @@ function Perl_Player_XPBar_Display(state)
 	Perl_Player_UpdateVars();
 end
 
+function Perl_Player_Set_ParentUI_Scale()
+	scale = UIParent:GetScale();
+	Perl_Player_Frame:SetScale(scale);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	Perl_Player_UpdateVars();
+end
+
+function Perl_Player_Set_Scale(number)
+	scale = (number / 100);
+	Perl_Player_Frame:SetScale(scale);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	Perl_Player_UpdateVars();
+end
+
 function Perl_Player_Status()
 	if (Perl_Player_State == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisabled|cffffff00.");
@@ -557,6 +592,8 @@ function Perl_Player_Status()
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisplaying Raid Group Numbers|cffffff00.");
 	end
+
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying at a scale of |cffffffff"..(scale * 100).."%|cffffff00.");
 end
 
 function Perl_Player_GetVars()
@@ -564,6 +601,7 @@ function Perl_Player_GetVars()
 	xpbarstate = Perl_Player_Config[UnitName("player")]["XPBarState"];
 	compactmode = Perl_Player_Config[UnitName("player")]["CompactMode"];
 	showraidgroup = Perl_Player_Config[UnitName("player")]["ShowRaidGroup"];
+	scale = Perl_Player_Config[UnitName("player")]["Scale"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -577,6 +615,9 @@ function Perl_Player_GetVars()
 	if (showraidgroup == nil) then
 		showraidgroup = 1;
 	end
+	if (scale == nil) then
+		scale = 1;
+	end
 end
 
 function Perl_Player_UpdateVars()
@@ -585,6 +626,7 @@ function Perl_Player_UpdateVars()
 						["XPBarState"] = xpbarstate,
 						["CompactMode"] = compactmode,
 						["ShowRaidGroup"] = showraidgroup,
+						["Scale"] = scale,
 	};
 end
 
@@ -658,8 +700,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.19",
-			releaseDate = "November 14, 2005",
+			version = "v0.20",
+			releaseDate = "November 19, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

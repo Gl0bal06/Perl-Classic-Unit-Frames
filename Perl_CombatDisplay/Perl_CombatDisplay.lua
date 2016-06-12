@@ -8,6 +8,7 @@ local state = 3;
 local locked = 0;
 local manapersist = 0;
 local healthpersist = 0;
+local scale = 1;
 
 local IsAggroed = 0;
 local InCombat = 0;
@@ -170,6 +171,7 @@ function Perl_CombatDisplay_OnEvent(event)
 			Perl_CombatDisplay_Update_Health();	-- make sure we dont display 0/0 on load
 			Perl_CombatDisplay_Update_Mana();	-- make sure we dont display 0/0 on load
 			Perl_CombatDisplay_UpdateDisplay();	-- what mode are we in?
+			Perl_CombatDisplay_Frame:SetScale(scale);	-- set the correct scale
 			return;
 		end
 		Perl_CombatDisplay_Initialize();
@@ -187,7 +189,28 @@ end
 -- Slash Handler --
 -------------------
 function Perl_CombatDisplay_SlashHandler(msg)
-	Perl_CombatDisplay_Options_Toggle();
+	if (string.find(msg, "scale")) then
+		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
+		if (arg1 ~= "") then
+			if (arg1 == "ui") then
+				Perl_CombatDisplay_Set_ParentUI_Scale();
+				return;
+			end
+			local number = tonumber(arg1);
+			if (number > 0 and number < 150) then
+				Perl_CombatDisplay_Set_Scale(number);
+				return;
+			else
+				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pcd scale ui' to set to the current UI scale.");
+				return;
+			end
+		else
+			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pcd scale ui' to set to the current UI scale.");
+			return;
+		end
+	else
+		Perl_CombatDisplay_Options_Toggle();
+	end
 end
 
 
@@ -318,11 +341,26 @@ end
 ----------------------
 -- Config functions --
 ----------------------
+function Perl_CombatDisplay_Set_ParentUI_Scale()
+	scale = UIParent:GetScale();
+	Perl_CombatDisplay_Frame:SetScale(scale);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl CombatDisplay is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	Perl_CombatDisplay_UpdateVars();
+end
+
+function Perl_CombatDisplay_Set_Scale(number)
+	scale = (number / 100);
+	Perl_CombatDisplay_Frame:SetScale(scale);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl CombatDisplay is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	Perl_CombatDisplay_UpdateVars();
+end
+
 function Perl_CombatDisplay_GetVars()
 	state = Perl_CombatDisplay_Config[UnitName("player")]["State"];
 	locked = Perl_CombatDisplay_Config[UnitName("player")]["Locked"];
 	healthpersist = Perl_CombatDisplay_Config[UnitName("player")]["HealthPersist"];
 	manapersist = Perl_CombatDisplay_Config[UnitName("player")]["ManaPersist"];
+	scale = Perl_CombatDisplay_Config[UnitName("player")]["Scale"];
 
 	if (state == nil) then
 		state = 3;
@@ -336,12 +374,16 @@ function Perl_CombatDisplay_GetVars()
 	if (manapersist == nil) then
 		manapersist = 0;
 	end
+	if (scale == nil) then
+		scale = 1;
+	end
 
 	local vars = {
 		["state"] = state,
 		["manapersist"] = manapersist,
 		["healthpersist"] = healthpersist,
 		["locked"] = locked,
+		["scale"] = scale,
 	}
 	return vars;
 end
@@ -352,6 +394,7 @@ function Perl_CombatDisplay_UpdateVars()
 							["Locked"] = locked,
 							["HealthPersist"] = healthpersist,
 							["ManaPersist"] = manapersist,
+							["Scale"] = scale,
 	};
 end
 
@@ -399,8 +442,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.19",
-			releaseDate = "November 14, 2005",
+			version = "v0.20",
+			releaseDate = "November 19, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -84,6 +84,9 @@
 			<OnEvent>
 				Perl_Target_OnEvent(event);
 			</OnEvent>
+			<OnShow>
+				Perl_Target_OnShow();
+			</OnShow>
 			<OnMouseDown>
 				Perl_Target_MouseDown(arg1);
 			</OnMouseDown>

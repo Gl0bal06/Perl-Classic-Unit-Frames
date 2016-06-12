@@ -311,7 +311,7 @@
 							<AbsDimension x="150" y="10"/>
 						</Size>
 						<Anchors>
-						<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT">
 								<Offset>
 									<AbsDimension x="10" y="-10"/>
 								</Offset>
@@ -423,7 +423,66 @@
 						</Anchors>
 						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
-						
+					</StatusBar>
+
+					<!-- Pet Health Bar -->
+					<StatusBar name="$parent_PetHealthBar" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="$parent_ManaBar">
+								<Offset>
+									<AbsDimension x="0" y="-2"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnMouseUp>
+								Perl_Party_Pet_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+						<BarTexture name="$parent_PetHealthBarTex" file="Interface\TargetingFrame\UI-StatusBar"/>
+						<BarColor r="0" g="0.8" b="0"/>
+						<Layers>
+							<!-- Text -->
+							<Layer level="OVERLAY">
+								<Fontstring name="$parent_PetHealthBarText" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="RIGHT">
+											<Offset>
+												<AbsDimension x="70" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1"/>
+								</Fontstring>
+								<Fontstring name="$parent_PetHealthBarTextPercent" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="TOP" relativePoint="TOP">
+											<Offset>
+												<AbsDimension x="0" y="1"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1"/>
+								</Fontstring>
+							</Layer>
+						</Layers>
+					</StatusBar>
+					<StatusBar name="$parent_PetHealthBarBG" inherits="TextStatusBar">
+						<Size>
+							<AbsDimension x="150" y="10"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" relativeTo="$parent_PetHealthBar">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<BarTexture file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
+						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
 				</Frames>
 			</Frame>

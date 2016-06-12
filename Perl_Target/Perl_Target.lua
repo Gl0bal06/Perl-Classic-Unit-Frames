@@ -14,6 +14,7 @@ local showpvpicon = 1;		-- show the pvp icon
 local showclassframe = 1;	-- show the class frame
 local numbuffsshown = 16;	-- buff row is 20 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
+local scale = 1;		-- default scale
 local mobhealthsupport = 1;	-- mobhealth support is on by default
 local BlizzardTargetFrame_Update = TargetFrame_Update;	-- backup the original target function in case we toggle the mod off
 local BlizzardUnitFrame_OnEnter = UnitFrame_OnEnter;	-- may not need to back this up
@@ -174,22 +175,31 @@ end
 function Perl_Target_SlashHandler(msg)
 	if (string.find(msg, "unlock")) then
 		Perl_Target_Unlock();
+		return;
 	elseif (string.find(msg, "lock")) then
 		Perl_Target_Lock();
+		return;
 	elseif (string.find(msg, "combopoints")) then
 		Perl_Target_ToggleCP();
+		return;
 	elseif (string.find(msg, "icon")) then
 		Perl_Target_ToggleClassIcon();
+		return;
 	elseif (string.find(msg, "class")) then
 		Perl_Target_ToggleClassFrame();
+		return;
 	elseif (string.find(msg, "pvp")) then
 		Perl_Target_TogglePvPIcon();
+		return;
 	elseif (string.find(msg, "mobhealth")) then
 		Perl_Target_ToggleMobHealth();
+		return;
 	elseif (string.find(msg, "status")) then
 		Perl_Target_Status();
+		return;
 	elseif (string.find(msg, "toggle")) then
 		Perl_Target_ToggleTarget();
+		return;
 	elseif (string.find(msg, "debuffs")) then
 		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
 		if (arg1 ~= "") then
@@ -208,11 +218,33 @@ function Perl_Target_SlashHandler(msg)
 			local number = tonumber(arg1);
 			if (number >= 0 and number <= 16) then
 				Perl_Target_Set_Buffs(number)
+				return;
 			else
 				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-16)");
+				return;
 			end
 		else
 			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of buffs to display (0-16): /pt buffs #");
+			return;
+		end
+	elseif (string.find(msg, "scale")) then
+		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
+		if (arg1 ~= "") then
+			if (arg1 == "ui") then
+				Perl_Target_Set_ParentUI_Scale();
+				return;
+			end
+			local number = tonumber(arg1);
+			if (number > 0 and number < 150) then
+				Perl_Target_Set_Scale(number);
+				return;
+			else
+				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pt scale ui' to set to the current UI scale.");
+				return;
+			end
+		else
+			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pt scale ui' to set to the current UI scale.");
+			return;
 		end
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Target Frame ---");
@@ -225,8 +257,10 @@ function Perl_Target_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff mobhealth |cffffff00- Toggle the displaying of integrated MobHealth support.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs # |cffffff00- Show the number of buffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuffs # |cffffff00- Show the number of debuffs to display.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/pt scale ui' to set to the current UI scale.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the target frame on and off.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
+		return;
 	end
 end
 
@@ -267,6 +301,8 @@ function Perl_Target_Initialize()
 	Perl_Target_ManaBarText:SetTextColor(1,1,1,1);
 	Perl_Target_ClassNameBarText:SetTextColor(1,1,1);
 
+	
+
 	if (Perl_Target_State == 1) then
 		TargetFrame_Update = Perl_Target_Update_Frequently;
 	else
@@ -284,6 +320,7 @@ end
 function Perl_Target_Update_Once()
 	if (UnitExists("target")) then
 		Perl_Target_Frame:Show();		-- Show frame
+		Perl_Target_Frame:SetScale(scale);	-- Set the scale (easier ways exist, but this is the safest)
 		ComboFrame:Hide();			-- Hide default Combo Points
 		Perl_Target_Frame_Set_Name();		-- Set the target's name
 		Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
@@ -711,6 +748,20 @@ function Perl_Target_ToggleMobHealth()
 	Perl_Target_Update_Once();
 end
 
+function Perl_Target_Set_ParentUI_Scale()
+	scale = UIParent:GetScale();
+	Perl_Target_Frame:SetScale(scale);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	Perl_Target_UpdateVars();
+end
+
+function Perl_Target_Set_Scale(number)
+	scale = (number / 100);
+	Perl_Target_Frame:SetScale(scale);
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now scaled to |cffffffff"..(scale * 100).."|cffffff00.");
+	Perl_Target_UpdateVars();
+end
+
 function Perl_Target_Status()
 	if (Perl_Target_State == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffDisabled|cffffff00.");
@@ -744,6 +795,14 @@ function Perl_Target_Status()
 
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 buffs.");
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numdebuffsshown.."|cffffff00 debuffs.");
+
+	if (mobhealthsupport == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame has MobHealth support |cffffffffDisabled|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame has MobHealth support |cffffffffEnabled|cffffff00.");
+	end
+
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying at a scale of |cffffffff"..(scale * 100).."%|cffffff00.");
 end
 
 function Perl_Target_GetVars()
@@ -755,6 +814,8 @@ function Perl_Target_GetVars()
 	showpvpicon = Perl_Target_Config[UnitName("player")]["PvPIcon"];
 	numbuffsshown = Perl_Target_Config[UnitName("player")]["Buffs"];
 	numdebuffsshown = Perl_Target_Config[UnitName("player")]["Debuffs"];
+	mobhealthsupport = Perl_Target_Config[UnitName("player")]["MobHealthSupport"];
+	scale = Perl_Target_Config[UnitName("player")]["Scale"];
 
 	if (Perl_Target_State == nil) then
 		Perl_Target_State = 1;
@@ -777,14 +838,18 @@ function Perl_Target_GetVars()
 	if (numbuffsshown == nil) then
 		numbuffsshown = 16;
 	end
-	if (numbuffsshown > 16) then
-		numbuffsshown = 16;
-	end
 	if (numdebuffsshown == nil) then
 		numdebuffsshown = 16;
 	end
+	local tempnumbuffsshown = tonumber(numbuffsshown);
+	if (tempnumbuffsshown > 16) then
+		numbuffsshown = 16;
+	end
 	if (mobhealthsupport == nil) then
 		mobhealthsupport = 1;
+	end
+	if (scale == nil) then
+		scale = 1;
 	end
 end
 
@@ -798,6 +863,8 @@ function Perl_Target_UpdateVars()
 						["PvPIcon"] = showpvpicon,
 						["Buffs"] = numbuffsshown,
 						["Debuffs"] = numdebuffsshown,
+						["MobHealthSupport"] = mobhealthsupport,
+						["Scale"] = scale,
 						};
 end
 
@@ -954,6 +1021,16 @@ function Perl_Target_MouseDown(button)
 	end
 end
 
+function Perl_Target_OnShow()
+	if ( UnitIsEnemy("target", "player") ) then
+		PlaySound("igCreatureAggroSelect");
+	elseif ( UnitIsFriend("player", "target") ) then
+		PlaySound("igCharacterNPCSelect");
+	else
+		PlaySound("igCreatureNeutralSelect");
+	end
+end
+
 
 -------------
 -- Tooltip --
@@ -1018,8 +1095,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.19",
-			releaseDate = "November 14, 2005",
+			version = "v0.20",
+			releaseDate = "November 19, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
