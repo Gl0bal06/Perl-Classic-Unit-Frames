@@ -36,6 +36,7 @@ local showguildname = 0;	-- guild names are hidden by default
 local eliteraregraphic = 0;	-- the blizzard elite/rare graphic is off by default
 local displaycurabledebuff = 0;	-- display all debuffs by default
 local displaybufftimers = 1;	-- buff/debuff timers are on by default
+local displaynumbericthreat = 1;-- threat is displayed numerically by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -45,9 +46,11 @@ local Perl_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Target_HealthBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local Perl_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
+local Perl_Target_ManaBar_Time_Elapsed = 0;		-- set the update timer to 0
+local Perl_Target_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
 
 -- Local variables to save memory
-local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, englishclass, creatureType, r, g, b, guildName;
+local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, englishclass, creatureType, r, g, b, guildName, targetonupdatemana;
 
 
 ----------------------
@@ -556,6 +559,12 @@ function Perl_Target_Update_Mana()
 		targetmana = 0;
 	end
 
+	if (targetmana ~= targetmanamax) then
+		Perl_Target_ManaBar_OnUpdate_Frame:Show();
+	else
+		Perl_Target_ManaBar_OnUpdate_Frame:Hide();
+	end
+
 	if (PCUF_FADEBARS == 1) then
 		if (targetmana < Perl_Target_ManaBar:GetValue()) then
 			Perl_Target_ManaBarFadeBar:SetMinMaxValues(0, targetmanamax);
@@ -574,6 +583,10 @@ function Perl_Target_Update_Mana()
 		Perl_Target_ManaBar:SetValue(targetmana);
 	end
 
+	Perl_Target_Update_Mana_Text();
+end
+
+function Perl_Target_Update_Mana_Text()
 	if (framestyle == 1) then
 		Perl_Target_ManaBarTextRight:SetTextColor(1, 1, 1, 1);
 		Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
@@ -650,6 +663,20 @@ function Perl_Target_Update_Mana()
 					Perl_Target_ManaBarTextCompactPercent:SetText(targetmanapercent.."%");
 				end
 			end
+		end
+	end
+end
+
+function Perl_Target_OnUpdate_ManaBar(arg1)
+	Perl_Target_ManaBar_Time_Elapsed = Perl_Target_ManaBar_Time_Elapsed + arg1;
+	if (Perl_Target_ManaBar_Time_Elapsed > Perl_Target_ManaBar_Time_Update_Rate) then
+		Perl_Target_ManaBar_Time_Elapsed = 0;
+
+		targetonupdatemana = UnitPower("target", UnitPowerType("target"));
+		if (playeronupdatemana ~= targetmana) then
+			targetmana = targetonupdatemana;
+			Perl_Target_ManaBar:SetValue(targetonupdatemana);
+			Perl_Target_Update_Mana_Text();
 		end
 	end
 end
@@ -870,7 +897,9 @@ function Perl_Target_Frame_Set_Level()
 	targetclassificationframetext = nil;			-- Variable set to nil so we can easily track if target is a player or not elite
 
 	Perl_Target_LevelBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
-	Perl_Target_RareEliteBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
+	if (displaynumbericthreat == 0) then
+		Perl_Target_RareEliteBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
+	end
 
 	if (targetlevel < 0) then
 		Perl_Target_LevelBarText:SetTextColor(1, 0, 0);
@@ -902,7 +931,7 @@ function Perl_Target_Frame_Set_Level()
 
 	Perl_Target_LevelBarText:SetText(targetlevel);						-- Set level frame text
 
-	if (showrareeliteframe == 1) then
+	if (showrareeliteframe == 1 and displaynumbericthreat == 0) then
 		if (targetclassificationframetext == nil) then
 			Perl_Target_RareEliteBarText:SetText(PERL_LOCALIZED_TARGET_NA);
 		else
@@ -980,6 +1009,18 @@ function Perl_Target_Update_Threat()
 	else
 		Perl_Target_ThreatIndicator:Hide();
 	end
+
+	local _, statustwo, threatpct, _, _ = UnitDetailedThreatSituation("player", "target")
+	if (statustwo ~= nil and displaynumbericthreat == 1) then
+		Perl_Target_RareEliteBarText:SetVertexColor(GetThreatStatusColor(status));
+		Perl_Target_RareEliteBarText:SetText(floor(tostring(threatpct)+0.5));
+	else
+		if (displaynumbericthreat == 1) then
+			Perl_Target_RareEliteBarText:SetVertexColor(GetThreatStatusColor(status));
+			Perl_Target_RareEliteBarText:SetText(PERL_LOCALIZED_TARGET_NA);
+		end
+	end
+	
 end
 
 function Perl_Target_Buff_Debuff_Background()
@@ -1174,7 +1215,7 @@ function Perl_Target_Main_Style()
 			Perl_Target_PortraitFrame:Hide();									-- Hide the frame and 2d/3d portion
 		end
 
-		if (showrareeliteframe == 1) then		-- Are we showing the Rare/Elite frame?
+		if (showrareeliteframe == 1 or displaynumbericthreat == 1) then		-- Are we showing the Rare/Elite frame?
 			Perl_Target_RareEliteFrame:Show();
 		else
 			Perl_Target_RareEliteFrame:Hide();
@@ -1577,6 +1618,15 @@ function Perl_Target_Set_Elite_Rare_Graphic(newvalue)
 	end
 end
 
+function Perl_Target_Set_Display_Numeric_Threat(newvalue)
+	displaynumbericthreat = newvalue;
+	Perl_Target_UpdateVars();		-- Save the new setting
+	Perl_Target_Frame_Style();		-- Apply any showing/hiding of frames and enabling/disabling of events
+	if (UnitExists("target")) then
+		Perl_Target_Update_Once();	-- Update the target frame information if appropriate
+	end
+end
+
 function Perl_Target_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);		-- convert the user input to a wow acceptable value
@@ -1656,6 +1706,7 @@ function Perl_Target_GetVars(name, updateflag)
 	eliteraregraphic = Perl_Target_Config[name]["EliteRareGraphic"];
 	displaycurabledebuff = Perl_Target_Config[name]["DisplayCurableDebuff"];
 	displaybufftimers = Perl_Target_Config[name]["DisplayBuffTimers"];
+	displaynumbericthreat = Perl_Target_Config[name]["DisplayNumbericThreat"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1750,6 +1801,9 @@ function Perl_Target_GetVars(name, updateflag)
 	if (displaybufftimers == nil) then
 		displaybufftimers = 1;
 	end
+	if (displaynumbericthreat == nil) then
+		displaynumbericthreat = 1;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1799,6 +1853,7 @@ function Perl_Target_GetVars(name, updateflag)
 		["eliteraregraphic"] = eliteraregraphic,
 		["displaycurabledebuff"] = displaycurabledebuff,
 		["displaybufftimers"] = displaybufftimers,
+		["displaynumbericthreat"] = displaynumbericthreat,
 	}
 	return vars;
 end
@@ -1962,6 +2017,11 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				displaybufftimers = nil;
 			end
+			if (vartable["Global Settings"]["DisplayNumbericThreat"] ~= nil) then
+				displaynumbericthreat = vartable["Global Settings"]["DisplayNumbericThreat"];
+			else
+				displaynumbericthreat = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2058,6 +2118,9 @@ function Perl_Target_UpdateVars(vartable)
 		if (displaybufftimers == nil) then
 			displaybufftimers = 1;
 		end
+		if (displaynumbericthreat == nil) then
+			displaynumbericthreat = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();		-- Reset the buff icons
@@ -2102,6 +2165,7 @@ function Perl_Target_UpdateVars(vartable)
 		["EliteRareGraphic"] = eliteraregraphic,
 		["DisplayCurableDebuff"] = displaycurabledebuff,
 		["DisplayBuffTimers"] = displaybufftimers,
+		["DisplayNumbericThreat"] = displaynumbericthreat,
 	};
 end
 

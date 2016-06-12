@@ -33,6 +33,8 @@ local runeframe = 1;		-- default for rune frame is on by default
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
 local Initialized = nil;	-- waiting to be initialized
+local Perl_Player_ManaBar_Time_Elapsed = 0;		-- set the update timer to 0
+local Perl_Player_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
 local Perl_Player_DruidBar_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Player_DruidBar_Time_Update_Rate = 0.2;	-- the update interval
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
@@ -47,7 +49,7 @@ local Perl_Player_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 --local Perl_Player_DruidBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local playerhealth, playerhealthmax, playerhealthpercent, playermana, playermanamax, playermanapercent, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, playerpower, englishclass;
+local playerhealth, playerhealthmax, playerhealthpercent, playermana, playermanamax, playermanapercent, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, playerpower, englishclass, playeronupdatemana;
 local energylast = 0;
 local energytime = 0;
 local fivesecondrulelastmana = 0;
@@ -162,7 +164,7 @@ function Perl_Player_Events:UNIT_ENERGY()
 		Perl_Player_Update_Mana();		-- Update energy values
 
 		local e = UnitMana("player");
-		if (e == energylast + 20) then
+		if (e == energylast + 1) then
 			energytime = GetTime();
 		end
 		energylast = e;
@@ -466,6 +468,12 @@ function Perl_Player_Update_Mana()
 		playermanapercent = 0;
 	end
 
+	if (playermana ~= playermanamax) then
+		Perl_Player_ManaBar_OnUpdate_Frame:Show();
+	else
+		Perl_Player_ManaBar_OnUpdate_Frame:Hide();
+	end
+
 	if (PCUF_FADEBARS == 1) then
 		if (playermana < Perl_Player_ManaBar:GetValue()) then
 			Perl_Player_ManaBarFadeBar:SetMinMaxValues(0, playermanamax);
@@ -484,82 +492,7 @@ function Perl_Player_Update_Mana()
 		Perl_Player_ManaBar:SetValue(playermana);
 	end
 
-	if (compactmode == 0) then
-		if (healermode == 1) then
-			Perl_Player_ManaBarText:SetTextColor(0.5, 0.5, 0.5, 1);
-			if (showmanadeficit == 1) then
-				Perl_Player_ManaBarText:SetText("-"..playermanamax - playermana);
-			else
-				Perl_Player_ManaBarText:SetText();
-			end
-			if (showbarvalues == 0) then
-				if (mouseovermanaflag == 0) then
-					Perl_Player_ManaBarTextPercent:SetText();
-				else
-					if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
-						Perl_Player_ManaBarTextPercent:SetText(playermana);
-					else
-						Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
-					end
-				end
-			else
-				if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
-					Perl_Player_ManaBarTextPercent:SetText(playermana);
-				else
-					Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
-				end
-			end
-		else
-			Perl_Player_ManaBarText:SetTextColor(1, 1, 1, 1);
-			Perl_Player_ManaBarText:SetText(playermana.."/"..playermanamax);
-			if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
-				Perl_Player_ManaBarTextPercent:SetText(playermana);
-			else
-				Perl_Player_ManaBarTextPercent:SetText(playermanapercent.."%");
-			end
-		end
-		Perl_Player_ManaBarTextCompactPercent:SetText();		-- Hide the compact mode percent text in full mode
-	else
-		if (healermode == 1) then
-			Perl_Player_ManaBarText:SetTextColor(0.5, 0.5, 0.5, 1);
-			if (showmanadeficit == 1) then
-				Perl_Player_ManaBarText:SetText("-"..playermanamax - playermana);
-			else
-				Perl_Player_ManaBarText:SetText();
-			end
-			if (showbarvalues == 0) then
-				if (mouseovermanaflag == 0) then
-					Perl_Player_ManaBarTextPercent:SetText();
-				else
-					if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
-						Perl_Player_ManaBarTextPercent:SetText(playermana);
-					else
-						Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
-					end
-				end
-			else
-				if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
-					Perl_Player_ManaBarTextPercent:SetText(playermana);
-				else
-					Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
-				end
-			end
-		else
-			Perl_Player_ManaBarText:SetTextColor(1, 1, 1, 1);
-			Perl_Player_ManaBarText:SetText();
-			if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
-				Perl_Player_ManaBarTextPercent:SetText(playermana);
-			else
-				Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
-			end
-		end
-
-		if (compactpercent == 1) then
-			Perl_Player_ManaBarTextCompactPercent:SetText(playermanapercent.."%");
-		else
-			Perl_Player_ManaBarTextCompactPercent:SetText();
-		end
-	end
+	Perl_Player_Update_Mana_Text()
 
 	if (showdruidbar == 1) then
 		_, englishclass = UnitClass("player");
@@ -591,6 +524,99 @@ function Perl_Player_Update_Mana()
 			Perl_Player_FiveSecondRule:Show();
 		end
 		fivesecondrulelastmana = playermana
+	end
+end
+
+function Perl_Player_Update_Mana_Text()
+	if (compactmode == 0) then
+		if (healermode == 1) then
+			Perl_Player_ManaBarText:SetTextColor(0.5, 0.5, 0.5, 1);
+			if (showmanadeficit == 1) then
+				Perl_Player_ManaBarText:SetText("-"..playermanamax - playermana);
+			else
+				Perl_Player_ManaBarText:SetText();
+			end
+			if (showbarvalues == 0) then
+				if (mouseovermanaflag == 0) then
+					Perl_Player_ManaBarTextPercent:SetText();
+				else
+					if (playerpower == 1 or playerpower == 6) then
+						Perl_Player_ManaBarTextPercent:SetText(playermana);
+					else
+						Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+					end
+				end
+			else
+				if (playerpower == 1 or playerpower == 6) then
+					Perl_Player_ManaBarTextPercent:SetText(playermana);
+				else
+					Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+				end
+			end
+		else
+			Perl_Player_ManaBarText:SetTextColor(1, 1, 1, 1);
+			Perl_Player_ManaBarText:SetText(playermana.."/"..playermanamax);
+			if (playerpower == 1 or playerpower == 6) then
+				Perl_Player_ManaBarTextPercent:SetText(playermana);
+			else
+				Perl_Player_ManaBarTextPercent:SetText(playermanapercent.."%");
+			end
+		end
+		Perl_Player_ManaBarTextCompactPercent:SetText();		-- Hide the compact mode percent text in full mode
+	else
+		if (healermode == 1) then
+			Perl_Player_ManaBarText:SetTextColor(0.5, 0.5, 0.5, 1);
+			if (showmanadeficit == 1) then
+				Perl_Player_ManaBarText:SetText("-"..playermanamax - playermana);
+			else
+				Perl_Player_ManaBarText:SetText();
+			end
+			if (showbarvalues == 0) then
+				if (mouseovermanaflag == 0) then
+					Perl_Player_ManaBarTextPercent:SetText();
+				else
+					if (playerpower == 1 or playerpower == 6) then
+						Perl_Player_ManaBarTextPercent:SetText(playermana);
+					else
+						Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+					end
+				end
+			else
+				if (playerpower == 1 or playerpower == 6) then
+					Perl_Player_ManaBarTextPercent:SetText(playermana);
+				else
+					Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+				end
+			end
+		else
+			Perl_Player_ManaBarText:SetTextColor(1, 1, 1, 1);
+			Perl_Player_ManaBarText:SetText();
+			if (playerpower == 1 or playerpower == 6) then
+				Perl_Player_ManaBarTextPercent:SetText(playermana);
+			else
+				Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+			end
+		end
+
+		if (compactpercent == 1) then
+			Perl_Player_ManaBarTextCompactPercent:SetText(playermanapercent.."%");
+		else
+			Perl_Player_ManaBarTextCompactPercent:SetText();
+		end
+	end
+end
+
+function Perl_Player_OnUpdate_ManaBar(arg1)
+	Perl_Player_ManaBar_Time_Elapsed = Perl_Player_ManaBar_Time_Elapsed + arg1;
+	if (Perl_Player_ManaBar_Time_Elapsed > Perl_Player_ManaBar_Time_Update_Rate) then
+		Perl_Player_ManaBar_Time_Elapsed = 0;
+
+		playeronupdatemana = UnitPower("player", UnitPowerType("player"));
+		if (playeronupdatemana ~= playermana) then
+			playermana = playeronupdatemana;
+			Perl_Player_ManaBar:SetValue(playeronupdatemana);
+			Perl_Player_Update_Mana_Text();
+		end
 	end
 end
 

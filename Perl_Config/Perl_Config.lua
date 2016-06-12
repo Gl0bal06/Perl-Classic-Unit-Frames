@@ -34,7 +34,7 @@ PCUF_NAMEFRAMECLICKCAST = 0;		-- name frames will be the one safe spot for menus
 PCUF_INVERTBARVALUES = 0;		-- bars deplete when low
 PCUF_COLORFRAMEDEBUFF = 1;		-- frame debuff coloring is on by default
 local positioningmode = 0;		-- positioning mode is off by default
-PCUF_THREATICON = 1;			-- threat icon is on by default
+PCUF_THREATICON = 0;			-- threat icon is off by default
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -1533,6 +1533,7 @@ function Perl_Config_Global_Save_Settings()
 			["EliteRareGraphic"] = vartable["eliteraregraphic"],
 			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
 			["DisplayBuffTimers"] = vartable["displaybufftimers"],
+			["DisplayNumbericThreat"] = vartable["displaynumbericthreat"],
 		};
 	end
 
@@ -1761,7 +1762,7 @@ function Perl_Config_GetVars(name, updateflag)
 		positioningmode = 0;
 	end
 	if (PCUF_THREATICON == nil) then
-		PCUF_THREATICON = 1;
+		PCUF_THREATICON = 0;
 	end
 
 	if (updateflag == 1) then
@@ -1912,7 +1913,7 @@ function Perl_Config_UpdateVars(vartable)
 			positioningmode = 0;
 		end
 		if (PCUF_THREATICON == nil) then
-			PCUF_THREATICON = 1;
+			PCUF_THREATICON = 0;
 		end
 
 		-- Call any code we need to activate them

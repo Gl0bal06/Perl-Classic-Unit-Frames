@@ -176,6 +176,12 @@ function Perl_Config_Target_Set_Values()
 		Perl_Config_Target_Frame_CheckButton30:SetChecked(nil);
 	end
 
+	if (vartable["displaynumbericthreat"] == 1) then
+		Perl_Config_Target_Frame_CheckButton31:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton31:SetChecked(nil);
+	end
+
 	Perl_Config_Target_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_Target_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -418,6 +424,14 @@ function Perl_Config_Target_Buff_Timers_Update()
 		Perl_Target_Set_Buff_Timers(1);
 	else
 		Perl_Target_Set_Buff_Timers(0);
+	end
+end
+
+function Perl_Config_Target_Display_Numeric_Threat_Update()
+	if (Perl_Config_Target_Frame_CheckButton31:GetChecked() == 1) then
+		Perl_Target_Set_Display_Numeric_Threat(1);
+	else
+		Perl_Target_Set_Display_Numeric_Threat(0);
 	end
 end
 

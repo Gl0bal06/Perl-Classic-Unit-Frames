@@ -1,3 +1,9 @@
+3.02 - November 12, 2008
+ - Config: The threat icon is now off by default
+ - PartyPet: Fixed the error on line 392
+ - Player/Target: Power bars now update much faster
+ - Target: Added a numeric threat number
+
 3.01 - October 14, 2008
  - All: Updated TOC Interface version to 30000
  - All: Added support for Death Knights

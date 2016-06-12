@@ -144,7 +144,7 @@ function Perl_Party_Pet_Events:UNIT_NAME_UPDATE()
 end
 
 function Perl_Party_Pet_Events:UNIT_THREAT_SITUATION_UPDATE()
-	if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+	if ((arg1 == "partypet1") or (arg1 == "partypet2") or (arg1 == "partypet3") or (arg1 == "partypet4")) then
 		Perl_Party_Pet_Update_Threat(arg1);
 	end
 end

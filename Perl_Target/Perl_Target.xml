@@ -1766,4 +1766,12 @@
 			</OnUpdate>
 		</Scripts>
 	</Frame>
+
+	<Frame name="Perl_Target_ManaBar_OnUpdate_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_Target_OnUpdate_ManaBar(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
 </Ui>
