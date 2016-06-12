@@ -315,7 +315,7 @@ function Perl_Party_Initialize()
 	end
 
 	Initialized = 1;
-	Perl_Party_MembersUpdate();
+--	Perl_Party_MembersUpdate();
 end
 
 function Perl_Party_IFrameManager()

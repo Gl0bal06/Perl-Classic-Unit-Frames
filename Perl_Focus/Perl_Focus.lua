@@ -1188,7 +1188,8 @@ function Perl_Focus_Frame_Style()
 end
 
 function Perl_Focus_Main_Style()
-	Perl_Focus_RareEliteFrame:SetPoint("TOPLEFT", "Perl_Focus_CivilianFrame", "TOPRIGHT", -5, 0);
+	Perl_Focus_RareEliteFrame:ClearAllPoints();
+	Perl_Focus_RareEliteFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_LevelFrame", "TOPLEFT", 0, -4);
 
 	if (framestyle == 1) then
 		Perl_Focus_HealthBar:SetWidth(200);
@@ -1247,7 +1248,6 @@ function Perl_Focus_Main_Style()
 					Perl_Focus_NameFrame:SetWidth(129);
 					Perl_Focus_RareEliteFrame:SetWidth(46);
 					Perl_Focus_StatsFrame:SetWidth(170);
-					Perl_Focus_RareEliteFrame:SetPoint("TOPLEFT", "Perl_Focus_CivilianFrame", "TOPRIGHT", -46, 0);
 
 					Perl_Focus_NameFrame_CPMeter:SetWidth(119);
 
