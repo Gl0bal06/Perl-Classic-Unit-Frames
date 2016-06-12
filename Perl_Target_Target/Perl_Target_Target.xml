@@ -222,6 +222,38 @@
 			</Frame>
 
 
+			<!-- Raid Icon -->
+			<Frame name="Perl_Target_Target_RaidIconFrame">
+				<Size>
+					<AbsDimension x="110" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<!-- Raid Target Icon -->
+						<Texture name="Perl_Target_Target_RaidTargetIcon" file="Interface\TargetingFrame\UI-RaidTargetingIcons" hidden="true">
+							<Size>
+								<AbsDimension x="26" y="26"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="TOPRIGHT" relativeTo="Perl_Target_Target_NameFrame">
+									<Offset>
+										<AbsDimension x="-10" y="-10"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+
+
 			<!-- Target Stats -->
 			<Frame name="Perl_Target_Target_StatsFrame">
 				<Size>
@@ -907,6 +939,38 @@
 			</Frame>
 
 
+			<!-- Raid Icon -->
+			<Frame name="Perl_Target_Target_Target_RaidIconFrame">
+				<Size>
+					<AbsDimension x="110" y="24"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<!-- Raid Target Icon -->
+						<Texture name="Perl_Target_Target_Target_RaidTargetIcon" file="Interface\TargetingFrame\UI-RaidTargetingIcons" hidden="true">
+							<Size>
+								<AbsDimension x="26" y="26"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="TOPRIGHT" relativeTo="Perl_Target_Target_Target_NameFrame">
+									<Offset>
+										<AbsDimension x="-10" y="-10"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+
+
 			<!-- Target Stats -->
 			<Frame name="Perl_Target_Target_Target_StatsFrame">
 				<Size>
@@ -1517,9 +1581,6 @@
 			<OnLoad>
 				Perl_Target_Target_BigWarning_OnLoad();
 			</OnLoad>
-			<OnUpdate>
-				Perl_Target_Target_BigWarning_OnUpdate();
-			</OnUpdate>
 		</Scripts>
 	</Frame>
 
@@ -1558,15 +1619,9 @@
 
 	<Frame name="Perl_Target_Target_Script_Frame" movable="true" parent="UIParent" hidden="false" enableMouse="true">
 		<Scripts>
-			<OnEvent>
-				Perl_Target_Target_OnEvent(event);
-			</OnEvent>
 			<OnLoad>
 				Perl_Target_Target_OnLoad();
 			</OnLoad>
-			<OnUpdate>
-				Perl_Target_Target_OnUpdate(arg1);
-			</OnUpdate>
 		</Scripts>
 	</Frame>
 

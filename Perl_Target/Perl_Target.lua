@@ -2,6 +2,7 @@
 -- Variables --
 ---------------
 Perl_Target_Config = {};
+local Perl_Target_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Target_GetVars)
 local locked = 0;		-- unlocked by default
@@ -91,6 +92,12 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("UNIT_SPELLMISS");
 	this:RegisterEvent("VARIABLES_LOADED");
 
+	-- Scripts
+	this:SetScript("OnEvent", Perl_Target_OnEvent);
+	this:SetScript("OnHide", Perl_Target_OnHide);
+	this:SetScript("OnShow", Perl_Target_OnShow);
+	this:SetScript("OnUpdate", CombatFeedback_OnUpdate);
+
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Target_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Target_NameFrame:GetFrameLevel() + 2);
 	Perl_Target_Name:SetFrameLevel(Perl_Target_NameFrame:GetFrameLevel() + 1);
@@ -105,92 +112,120 @@ function Perl_Target_OnLoad()
 	Perl_Target_RaidIconFrame:SetFrameLevel(Perl_Target_PortraitFrame_CastClickOverlay:GetFrameLevel() - 1);
 	Perl_Target_HealthBarFadeBar:SetFrameLevel(Perl_Target_HealthBar:GetFrameLevel() - 1);
 	Perl_Target_ManaBarFadeBar:SetFrameLevel(Perl_Target_ManaBar:GetFrameLevel() - 1);
-
-	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Target loaded successfully.");
-	end
 end
 
 
 -------------------
 -- Event Handler --
 -------------------
-function Perl_Target_OnEvent(event)
-	if (event == "PLAYER_TARGET_CHANGED" or event == "PARTY_MEMBERS_CHANGED" or event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBER_ENABLE" or event == "PARTY_MEMBER_DISABLE") then
-		if (UnitExists("target")) then
-			Perl_Target_Update_Once();		-- Set the unchanging info for the target
-		else
-			Perl_Target_Frame:Hide();		-- There is no target, hide the frame
-		end
-		return;
-	elseif (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH") then
-		if (arg1 == "target") then
-			Perl_Target_Update_Health();		-- Update health values
-		end
-		return;
-	elseif (event == "UNIT_ENERGY" or event == "UNIT_MANA" or event == "UNIT_RAGE" or event == "UNIT_FOCUS" or event == "UNIT_MAXMANA" or event == "UNIT_MAXENERGY" or event == "UNIT_MAXRAGE" or event == "UNIT_MAXFOCUS") then
-		if (arg1 == "target") then
-			Perl_Target_Update_Mana();		-- Update energy/mana/rage values
-		end
-		return;
-	elseif (event == "UNIT_AURA") then
-		if (arg1 == "target") then
-			Perl_Target_Buff_UpdateAll();		-- Update the buffs
-		end
-		return;
-	elseif (event == "UNIT_DYNAMIC_FLAGS") then
-		if (arg1 == "target") then
-			Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
-		end
-		return;
-	elseif (event == "UNIT_COMBAT") then
-		if (arg1 == "target") then
-			CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5);
-		end
-		return;
-	elseif (event == "UNIT_SPELLMISS") then
-		if (arg1 == "target") then
-			CombatFeedback_OnSpellMissEvent(arg2);
-		end
-		return;
-	elseif (event == "UNIT_NAME_UPDATE") then
-		if (arg1 == "target") then
-			Perl_Target_Update_Name();
-		end
-		return;
-	elseif (event == "UNIT_FACTION" or event == "UNIT_PVP_UPDATE") then
-		Perl_Target_Update_Text_Color();		-- Is the character PvP flagged?
-		Perl_Target_Update_PvP_Status_Icon();		-- Set pvp status icon
-		return;
-	elseif (event == "UNIT_PORTRAIT_UPDATE") then
-		if (arg1 == "target") then
-			Perl_Target_Update_Portrait();
-		end
-		return;
-	elseif (event == "PLAYER_COMBO_POINTS") then
-		Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
-		return;
-	elseif (event == "RAID_TARGET_UPDATE") then
-		Perl_Target_UpdateRaidTargetIcon();
-		return;
-	elseif (event == "UNIT_LEVEL") then
-		if (arg1 == "target") then
-			Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
-		end
-		return;
-	elseif (event == "UNIT_DISPLAYPOWER") then
-		if (arg1 == "target") then
-			Perl_Target_Update_Mana_Bar();		-- What type of energy are they using now?
-			Perl_Target_Update_Mana();		-- Update the energy info immediately
-		end
-		return;
-	elseif (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
-		Perl_Target_Initialize();
-		return;
+function Perl_Target_OnEvent()
+	local func = Perl_Target_Events[event];
+	if (func) then
+		func();
 	else
-		return;
+		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Target: Report the following event error to the author: "..event);
 	end
 end
+
+function Perl_Target_Events:PLAYER_TARGET_CHANGED()
+	if (UnitExists("target")) then
+		Perl_Target_Update_Once();		-- Set the unchanging info for the target
+	else
+		Perl_Target_Frame:Hide();		-- There is no target, hide the frame
+	end
+end
+Perl_Target_Events.PARTY_MEMBERS_CHANGED = Perl_Target_Events.PLAYER_TARGET_CHANGED;
+Perl_Target_Events.PARTY_LEADER_CHANGED = Perl_Target_Events.PLAYER_TARGET_CHANGED;
+Perl_Target_Events.PARTY_MEMBER_ENABLE = Perl_Target_Events.PLAYER_TARGET_CHANGED;
+Perl_Target_Events.PARTY_MEMBER_DISABLE = Perl_Target_Events.PLAYER_TARGET_CHANGED;
+
+function Perl_Target_Events:UNIT_HEALTH()
+	if (arg1 == "target") then
+		Perl_Target_Update_Health();		-- Update health values
+	end
+end
+Perl_Target_Events.UNIT_MAXHEALTH = Perl_Target_Events.UNIT_HEALTH;
+
+function Perl_Target_Events:UNIT_ENERGY()
+	if (arg1 == "target") then
+		Perl_Target_Update_Mana();		-- Update energy/mana/rage values
+	end
+end
+Perl_Target_Events.UNIT_MAXENERGY = Perl_Target_Events.UNIT_ENERGY;
+Perl_Target_Events.UNIT_MANA = Perl_Target_Events.UNIT_ENERGY;
+Perl_Target_Events.UNIT_MAXMANA = Perl_Target_Events.UNIT_ENERGY;
+Perl_Target_Events.UNIT_RAGE = Perl_Target_Events.UNIT_ENERGY;
+Perl_Target_Events.UNIT_MAXRAGE = Perl_Target_Events.UNIT_ENERGY;
+Perl_Target_Events.UNIT_FOCUS = Perl_Target_Events.UNIT_ENERGY;
+Perl_Target_Events.UNIT_MAXFOCUS = Perl_Target_Events.UNIT_ENERGY;
+
+function Perl_Target_Events:UNIT_AURA()
+	if (arg1 == "target") then
+		Perl_Target_Buff_UpdateAll();		-- Update the buffs
+	end
+end
+
+function Perl_Target_Events:UNIT_DYNAMIC_FLAGS()
+	if (arg1 == "target") then
+		Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
+	end
+end
+
+function Perl_Target_Events:UNIT_COMBAT()
+	if (arg1 == "target") then
+		CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5);
+	end
+end
+
+function Perl_Target_Events:UNIT_SPELLMISS()
+	if (arg1 == "target") then
+		CombatFeedback_OnSpellMissEvent(arg2);
+	end
+end
+
+function Perl_Target_Events:UNIT_NAME_UPDATE()
+	if (arg1 == "target") then
+		Perl_Target_Update_Name();
+	end
+end
+
+function Perl_Target_Events:UNIT_FACTION()
+	Perl_Target_Update_Text_Color();		-- Is the character PvP flagged?
+	Perl_Target_Update_PvP_Status_Icon();		-- Set pvp status icon
+end
+Perl_Target_Events.UNIT_PVP_UPDATE = Perl_Target_Events.UNIT_FACTION;
+
+function Perl_Target_Events:UNIT_PORTRAIT_UPDATE()
+	if (arg1 == "target") then
+		Perl_Target_Update_Portrait();
+	end
+end
+
+function Perl_Target_Events:PLAYER_COMBO_POINTS()
+	Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
+end
+
+function Perl_Target_Events:RAID_TARGET_UPDATE()
+	Perl_Target_UpdateRaidTargetIcon();
+end
+
+function Perl_Target_Events:UNIT_LEVEL()
+	if (arg1 == "target") then
+		Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
+	end
+end
+
+function Perl_Target_Events:UNIT_DISPLAYPOWER()
+	if (arg1 == "target") then
+		Perl_Target_Update_Mana_Bar();		-- What type of energy are they using now?
+		Perl_Target_Update_Mana();		-- Update the energy info immediately
+	end
+end
+
+function Perl_Target_Events:VARIABLES_LOADED()
+	Perl_Target_Initialize();
+end
+Perl_Target_Events.PLAYER_ENTERING_WORLD = Perl_Target_Events.VARIABLES_LOADED;
 
 
 -------------------------------
@@ -2512,10 +2547,7 @@ end
 
 function Perl_TargetDropDown_Initialize()
 	local menu, name;
-	if (UnitExists("target") and UnitReaction("player", "target") and (((UnitReaction("player", "target") >= 4 and not UnitIsPlayer("target")) and not UnitIsUnit("player", "target")) or (UnitReaction("player", "target") < 4 and not UnitIsPlayer("target")))) then
-		menu = "RAID_TARGET_ICON";
-		name = RAID_TARGET_ICON;
-	elseif (UnitIsUnit("target", "player")) then
+	if (UnitIsUnit("target", "player")) then
 		menu = "SELF";
 	elseif (UnitIsUnit("target", "pet")) then
 		menu = "PET";
@@ -2525,7 +2557,7 @@ function Perl_TargetDropDown_Initialize()
 		else
 			menu = "PLAYER";
 		end
-	elseif (UnitInParty("target")) then
+	else
 		menu = "RAID_TARGET_ICON";
 		name = RAID_TARGET_ICON;
 	end
@@ -2544,7 +2576,7 @@ function Perl_Target_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
 			if (CastPartyConfig) then
-				CastParty_OnClickByUnit(button, "target");
+				CastParty.Event.OnClickByUnit(button, "target");
 				return;
 			elseif (Genesis_MouseHeal and Genesis_MouseHeal("target", button)) then
 				return;

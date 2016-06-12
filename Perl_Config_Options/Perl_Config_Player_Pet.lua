@@ -47,11 +47,11 @@ function Perl_Config_Player_Pet_Set_Values()
 	Perl_Config_Player_Pet_Frame_Slider4:SetValue(vartable["transparency"]*100);
 
 	Perl_Config_Player_Pet_Frame_Slider5Low:SetText("1");
-	Perl_Config_Player_Pet_Frame_Slider5High:SetText("5");
+	Perl_Config_Player_Pet_Frame_Slider5High:SetText("7");
 	Perl_Config_Player_Pet_Frame_Slider5:SetValue(vartable["bufflocation"]);
 
 	Perl_Config_Player_Pet_Frame_Slider6Low:SetText("1");
-	Perl_Config_Player_Pet_Frame_Slider6High:SetText("5");
+	Perl_Config_Player_Pet_Frame_Slider6High:SetText("7");
 	Perl_Config_Player_Pet_Frame_Slider6:SetValue(vartable["debufflocation"]);
 
 	Perl_Config_Player_Pet_Frame_Slider7Low:SetText("1");
@@ -84,6 +84,12 @@ function Perl_Config_Player_Pet_Set_Values()
 		Perl_Config_Player_Pet_Frame_CheckButton8:SetChecked(1);
 	else
 		Perl_Config_Player_Pet_Frame_CheckButton8:SetChecked(nil);
+	end
+
+	if (vartable["hidename"] == 1) then
+		Perl_Config_Player_Pet_Frame_CheckButton9:SetChecked(1);
+	else
+		Perl_Config_Player_Pet_Frame_CheckButton9:SetChecked(nil);
 	end
 end
 
@@ -168,6 +174,14 @@ function Perl_Config_Player_Pet_Compact_Mode_Update()
 		Perl_Player_Pet_Set_Compact_Mode(1);
 	else
 		Perl_Player_Pet_Set_Compact_Mode(0);
+	end
+end
+
+function Perl_Config_Player_Pet_Hide_Name_Update()
+	if (Perl_Config_Player_Pet_Frame_CheckButton9:GetChecked() == 1) then
+		Perl_Player_Pet_Set_Hide_Name(1);
+	else
+		Perl_Player_Pet_Set_Hide_Name(0);
 	end
 end
 

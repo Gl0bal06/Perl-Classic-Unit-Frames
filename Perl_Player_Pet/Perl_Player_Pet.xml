@@ -78,12 +78,6 @@
 			<OnLoad>
 				Perl_Player_Pet_OnLoad();
 			</OnLoad>
-			<OnEvent>
-				Perl_Player_Pet_OnEvent(event);
-			</OnEvent>
-			<OnUpdate>
-				CombatFeedback_OnUpdate(arg1);
-			</OnUpdate>
 		</Scripts>
 
 		<Frames>
@@ -162,6 +156,15 @@
 				<Layers>
 					<Layer level="OVERLAY">
 						<Fontstring name="Perl_Player_Pet_NameBarText" inherits="GameFontNormalSmall" text="Error!"/>
+						<Fontstring name="Perl_Player_Pet_LevelBarText" inherits="GameFontNormalSmall" text="Error!">
+							<Anchors>
+								<Anchor point="LEFT">
+									<Offset>
+										<AbsDimension x="6" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Fontstring>
 					</Layer>
 				</Layers>
 			</Frame>
@@ -311,6 +314,7 @@
 						<AbsInset left="5" right="5" top="5" bottom="5"/>
 					</BackgroundInsets>
 				</Backdrop>
+				<!--
 				<Layers>
 					<Layer level="OVERLAY">
 						<Fontstring name="Perl_Player_Pet_LevelBarText" inherits="GameFontNormalSmall" text="Error!">
@@ -324,6 +328,7 @@
 						</Fontstring>
 					</Layer>
 				</Layers>
+				-->
 				<Frames>
 					<Frame name="Perl_Player_PetHappiness">
 						<Size>

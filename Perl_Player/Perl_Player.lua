@@ -2,6 +2,7 @@
 -- Variables --
 ---------------
 Perl_Player_Config = {};
+local Perl_Player_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Player_GetVars)
 local locked = 0;		-- unlocked by default
@@ -88,6 +89,10 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("UPDATE_FACTION");
 	this:RegisterEvent("VARIABLES_LOADED");
 
+	-- Scripts
+	this:SetScript("OnEvent", Perl_Player_OnEvent);
+	this:SetScript("OnUpdate", CombatFeedback_OnUpdate);
+
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Player_Name_CastClickOverlay:SetFrameLevel(Perl_Player_Name:GetFrameLevel() + 2);
 	Perl_Player_RaidGroupNumberFrame_CastClickOverlay:SetFrameLevel(Perl_Player_RaidGroupNumberFrame:GetFrameLevel() + 1);
@@ -102,86 +107,146 @@ function Perl_Player_OnLoad()
 	Perl_Player_HealthBarFadeBar:SetFrameLevel(Perl_Player_HealthBar:GetFrameLevel() - 1);
 	Perl_Player_ManaBarFadeBar:SetFrameLevel(Perl_Player_ManaBar:GetFrameLevel() - 1);
 	--Perl_Player_DruidBarFadeBar:SetFrameLevel(Perl_Player_DruidBar:GetFrameLevel() - 1);
-
-	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Player loaded successfully.");
-	end
 end
+
+
+-------------------
+-- TEST Event Handler (DELETE LATER) --
+-------------------
+--/script Perl_IfLoopTest("UNIT_MANA")
+--function Perl_IfLoopTest(event)
+--	DEFAULT_CHAT_FRAME:AddMessage("IF processing time START = "..GetTime());
+--	for i=1,10000000 do
+--		if (event == "UNIT_MANA") then
+--			if (arg1 == "player") then
+--				--Perl_Player_Update_Mana()
+--			end
+--		end
+--	end
+--	DEFAULT_CHAT_FRAME:AddMessage("IF processing time END = "..GetTime());
+--end
+
+--/script Perl_TableLoopTest("UNIT_MANA")
+--local perl_func;
+--function Perl_TableLoopTest(event)
+--	local test = GetTime()
+--	DEFAULT_CHAT_FRAME:AddMessage("TABLE processing time START = "..GetTime());
+--	for i=1,10000000 do
+--		local func = Perl_Player_Test_Events[event]
+--		--perl_func = Perl_Player_Test_Events[event]
+--		if (func) then
+--			--func()
+--		end
+--	end
+--	DEFAULT_CHAT_FRAME:AddMessage("TABLE processing time END = "..GetTime());
+--	test = GetTime()-test
+--	DEFAULT_CHAT_FRAME:AddMessage(test);
+--end
 
 
 -------------------
 -- Event Handler --
 -------------------
-function Perl_Player_OnEvent(event)
-	if (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH") then
-		if (arg1 == "player") then
-			Perl_Player_Update_Health();		-- Update health values
-		end
-		return;
-	elseif ((event == "UNIT_ENERGY") or (event == "UNIT_MANA") or (event == "UNIT_RAGE") or (event == "UNIT_MAXMANA") or (event == "UNIT_MAXENERGY") or (event == "UNIT_MAXRAGE")) then
-		if (arg1 == "player") then
-			Perl_Player_Update_Mana();		-- Update energy/mana/rage values
-		end
-		return;
-	elseif (event == "UNIT_DISPLAYPOWER") then
-		if (arg1 == "player") then
-			Perl_Player_Update_Mana_Bar();		-- What type of energy are we using now?
-			Perl_Player_Update_Mana();		-- Update the energy info immediately
-		end
-		return;
-	elseif (event == "UNIT_COMBAT") then
-		if (arg1 == "player") then
-			CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5);
-		end
-		return;
-	elseif (event == "UNIT_SPELLMISS") then
-		if (arg1 == "player") then
-			CombatFeedback_OnSpellMissEvent(arg2);
-		end
-		return;
-	elseif ((event == "PLAYER_REGEN_DISABLED") or (event == "PLAYER_REGEN_ENABLED") or (event == "PLAYER_UPDATE_RESTING")) then
-		Perl_Player_Update_Combat_Status(event);	-- Are we fighting, resting, or none?
-		return;
-	elseif (event == "PLAYER_XP_UPDATE") then
-		if (xpbarstate == 1) then
-			Perl_Player_Update_Experience();	-- Set the experience bar info
-		end
-		return;
-	elseif (event == "UPDATE_FACTION") then
-		if (xpbarstate == 4) then
-			Perl_Player_Update_Reputation();	-- Set faction info
-		end
-		return;
-	elseif (event == "UNIT_FACTION" or event == "UNIT_PVP_UPDATE") then
-		Perl_Player_Update_PvP_Status();		-- Is the character PvP flagged?
-		return;
-	elseif (event == "UNIT_LEVEL") then
-		if (arg1 == "player") then
-			Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
-		end
-		return;
-	elseif (event == "RAID_ROSTER_UPDATE") then
-		Perl_Player_Update_Raid_Group_Number();		-- What raid group number are we in?
-		Perl_Player_Check_Hidden();			-- Are suppossed to hide the frame?
-		return;
-	elseif (event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBERS_CHANGED") then
-		Perl_Player_Update_Leader();			-- Are we the party leader?
-		return;
-	elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
-		Perl_Player_Update_Loot_Method();
-		return;
-	elseif (event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED") then
-		if (arg1 == "player") then
-			Perl_Player_Update_Portrait();
-		end
-		return;
-	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
-		Perl_Player_Initialize();
-		return;
+function Perl_Player_OnEvent()
+	local func = Perl_Player_Events[event];
+	if (func) then
+		func();
 	else
-		return;
+		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Player: Report the following event error to the author: "..event);
 	end
 end
+
+function Perl_Player_Events:UNIT_HEALTH()
+	if (arg1 == "player") then
+		Perl_Player_Update_Health();		-- Update health values
+	end
+end
+Perl_Player_Events.UNIT_MAXHEALTH = Perl_Player_Events.UNIT_HEALTH;
+
+function Perl_Player_Events:UNIT_MANA()
+	if (arg1 == "player") then
+		Perl_Player_Update_Mana();		-- Update energy/mana/rage values
+	end
+end
+Perl_Player_Events.UNIT_MAXMANA = Perl_Player_Events.UNIT_MANA;
+Perl_Player_Events.UNIT_ENERGY = Perl_Player_Events.UNIT_MANA;
+Perl_Player_Events.UNIT_MAXENERGY = Perl_Player_Events.UNIT_MANA;
+Perl_Player_Events.UNIT_RAGE = Perl_Player_Events.UNIT_MANA;
+Perl_Player_Events.UNIT_MAXRAGE = Perl_Player_Events.UNIT_MANA;
+
+function Perl_Player_Events:UNIT_DISPLAYPOWER()
+	if (arg1 == "player") then
+		Perl_Player_Update_Mana_Bar();		-- What type of energy are we using now?
+		Perl_Player_Update_Mana();		-- Update the energy info immediately
+	end
+end
+
+function Perl_Player_Events:UNIT_COMBAT()
+	if (arg1 == "player") then
+		CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5);
+	end
+end
+
+function Perl_Player_Events:UNIT_SPELLMISS()
+	if (arg1 == "player") then
+		CombatFeedback_OnSpellMissEvent(arg2);
+	end
+end
+
+function Perl_Player_Events:PLAYER_UPDATE_RESTING()
+	Perl_Player_Update_Combat_Status(event);	-- Are we fighting, resting, or none?
+end
+Perl_Player_Events.PLAYER_REGEN_DISABLED = Perl_Player_Events.PLAYER_UPDATE_RESTING;
+Perl_Player_Events.PLAYER_REGEN_ENABLED = Perl_Player_Events.PLAYER_UPDATE_RESTING;
+
+function Perl_Player_Events:PLAYER_XP_UPDATE()
+	if (xpbarstate == 1) then
+		Perl_Player_Update_Experience();	-- Set the experience bar info
+	end
+end
+
+function Perl_Player_Events:UPDATE_FACTION()
+	if (xpbarstate == 4) then
+		Perl_Player_Update_Reputation();	-- Set faction info
+	end
+end
+
+function Perl_Player_Events:UNIT_FACTION()
+	Perl_Player_Update_PvP_Status();		-- Is the character PvP flagged?
+end
+Perl_Player_Events.UNIT_PVP_UPDATE = Perl_Player_Events.UNIT_FACTION;
+
+function Perl_Player_Events:UNIT_LEVEL()
+	if (arg1 == "player") then
+		Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
+	end
+end
+
+function Perl_Player_Events:RAID_ROSTER_UPDATE()
+	Perl_Player_Update_Raid_Group_Number();		-- What raid group number are we in?
+	Perl_Player_Check_Hidden();			-- Are suppossed to hide the frame?
+end
+
+function Perl_Player_Events:PARTY_LEADER_CHANGED()
+	Perl_Player_Update_Leader();			-- Are we the party leader?
+end
+Perl_Player_Events.PARTY_MEMBERS_CHANGED = Perl_Player_Events.PARTY_LEADER_CHANGED;
+
+function Perl_Player_Events:PARTY_LOOT_METHOD_CHANGED()
+	Perl_Player_Update_Loot_Method();
+end
+
+function Perl_Player_Events:UNIT_PORTRAIT_UPDATE()
+	if (arg1 == "player") then
+		Perl_Player_Update_Portrait();
+	end
+end
+Perl_Player_Events.UNIT_MODEL_CHANGED = Perl_Player_Events.UNIT_PORTRAIT_UPDATE;
+
+function Perl_Player_Events:VARIABLES_LOADED()
+	Perl_Player_Initialize();
+end
+Perl_Player_Events.PLAYER_ENTERING_WORLD = Perl_Player_Events.VARIABLES_LOADED;
 
 
 -------------------------------
@@ -1878,7 +1943,7 @@ function Perl_Player_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
 			if (CastPartyConfig) then
-				CastParty_OnClickByUnit(button, "player");
+				CastParty.Event.OnClickByUnit(button, "player");
 				return;
 			elseif (Genesis_MouseHeal and Genesis_MouseHeal("player", button)) then
 				return;

@@ -21,9 +21,6 @@
 			<OnLoad>
 				Perl_CombatDisplay_OnLoad();
 			</OnLoad>
-			<OnEvent>
-				Perl_CombatDisplay_OnEvent(event);
-			</OnEvent>
 		</Scripts>
 
 		<Frames>

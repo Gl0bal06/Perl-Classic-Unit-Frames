@@ -173,12 +173,33 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton5" inherits="UICheckButtonTemplate" id="5">
+			<CheckButton name="$parent_CheckButton9" inherits="UICheckButtonTemplate" id="9">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton8">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERPET_HIDENAME);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Pet_Hide_Name_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton5" inherits="UICheckButtonTemplate" id="5">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton9">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>
@@ -354,7 +375,7 @@
 				</Scripts>
 			</Slider>
 
-			<Slider name="$parent_Slider5" inherits="OptionsSliderTemplate" minValue="1" maxValue="5" valueStep="1">
+			<Slider name="$parent_Slider5" inherits="OptionsSliderTemplate" minValue="1" maxValue="7" valueStep="1">
 				<Size>
 					<AbsDimension x="150" y="15"/>
 				</Size>
@@ -373,7 +394,7 @@
 				</Scripts>
 			</Slider>
 
-			<Slider name="$parent_Slider6" inherits="OptionsSliderTemplate" minValue="1" maxValue="5" valueStep="1">
+			<Slider name="$parent_Slider6" inherits="OptionsSliderTemplate" minValue="1" maxValue="7" valueStep="1">
 				<Size>
 					<AbsDimension x="150" y="15"/>
 				</Size>

@@ -43,11 +43,11 @@ function Perl_Config_Party_Pet_Set_Values()
 	Perl_Config_Party_Pet_Frame_Slider6:SetValue(vartable["debuffsize"]);
 
 	Perl_Config_Party_Pet_Frame_Slider7Low:SetText("1");
-	Perl_Config_Party_Pet_Frame_Slider7High:SetText("5");
+	Perl_Config_Party_Pet_Frame_Slider7High:SetText("7");
 	Perl_Config_Party_Pet_Frame_Slider7:SetValue(vartable["bufflocation"]);
 
 	Perl_Config_Party_Pet_Frame_Slider8Low:SetText("1");
-	Perl_Config_Party_Pet_Frame_Slider8High:SetText("5");
+	Perl_Config_Party_Pet_Frame_Slider8High:SetText("7");
 	Perl_Config_Party_Pet_Frame_Slider8:SetValue(vartable["debufflocation"]);
 
 	if (vartable["showportrait"] == 1) then

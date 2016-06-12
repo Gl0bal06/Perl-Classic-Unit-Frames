@@ -2,6 +2,7 @@
 -- Variables --
 ---------------
 Perl_Player_Pet_Config = {};
+local Perl_Player_Pet_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Player_Pet_GetVars)
 local locked = 0;			-- unlocked by default
@@ -10,14 +11,15 @@ local scale = 1;			-- default scale
 local numpetbuffsshown = 16;		-- buff row is 16 long
 local numpetdebuffsshown = 16;		-- debuff row is 16 long
 local transparency = 1;			-- transparency for frames
-local bufflocation = 2;			-- default buff location
-local debufflocation = 3;		-- default debuff location
+local bufflocation = 4;			-- default buff location
+local debufflocation = 5;		-- default debuff location
 local buffsize = 12;			-- default buff size is 12
 local debuffsize = 12;			-- default debuff size is 12
 local showportrait = 0;			-- portrait is hidden by default
 local threedportrait = 0;		-- 3d portraits are off by default
 local portraitcombattext = 0;		-- Combat text is disabled by default on the portrait frame
 local compactmode = 0;			-- compact mode is disabled by default
+local hidename = 1;			-- name and level frame is enabled by default
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -61,6 +63,10 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("UNIT_SPELLMISS");
 	this:RegisterEvent("VARIABLES_LOADED");
 
+	-- Scripts
+	this:SetScript("OnEvent", Perl_Player_Pet_OnEvent);
+	this:SetScript("OnUpdate", CombatFeedback_OnUpdate);
+
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Player_Pet_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_NameFrame:GetFrameLevel() + 1);
 	Perl_Player_Pet_LevelFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_LevelFrame:GetFrameLevel() + 2);
@@ -69,91 +75,108 @@ function Perl_Player_Pet_OnLoad()
 	Perl_Player_Pet_PortraitTextFrame:SetFrameLevel(Perl_Player_Pet_PortraitFrame:GetFrameLevel() + 1);
 	Perl_Player_Pet_HealthBarFadeBar:SetFrameLevel(Perl_Player_Pet_HealthBar:GetFrameLevel() - 1);
 	Perl_Player_Pet_ManaBarFadeBar:SetFrameLevel(Perl_Player_Pet_ManaBar:GetFrameLevel() - 1);
-
-	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Player_Pet loaded successfully.");
-	end
 end
 
 
 -------------------
 -- Event Handler --
 -------------------
-function Perl_Player_Pet_OnEvent(event)
-	if (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH") then
-		if (arg1 == "pet") then
-			Perl_Player_Pet_Update_Health();	-- Update health values
-		end
-		return;
-	elseif (event == "UNIT_FOCUS" or event == "UNIT_MANA" or event == "UNIT_MAXFOCUS" or event == "UNIT_MAXMANA") then
-		if (arg1 == "pet") then
-			Perl_Player_Pet_Update_Mana();		-- Update energy/mana/rage values
-		end
-		return;
-	elseif (event == "UNIT_HAPPINESS") then
-		Perl_Player_PetFrame_SetHappiness();
-		return;
-	elseif (event == "UNIT_COMBAT") then
-		if (arg1 == "pet") then
-			CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5);
-		end
-		return;
-	elseif (event == "UNIT_SPELLMISS") then
-		if (arg1 == "pet") then
-			CombatFeedback_OnSpellMissEvent(arg2);
-		end
-		return;
-	elseif (event == "UNIT_NAME_UPDATE") then
-		if (arg1 == "pet") then
-			Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));	-- Set name
-		end
-		return;
-	elseif (event == "UNIT_AURA") then
-		if (arg1 == "pet") then
-			Perl_Player_Pet_Buff_UpdateAll();	-- Update the buff/debuff list
-		end
-		return;
-	elseif (event == "UNIT_PET_EXPERIENCE") then
-		if (showxp == 1) then
-			Perl_Player_Pet_Update_Experience();	-- Set the experience bar info
-		end
-		return;
-	elseif (event == "UNIT_LEVEL") then
-		if (arg1 == "pet") then
-			Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
-			return;
-		end
-		if (arg1 == "player") then
-			Perl_Player_Pet_ShowXP();
-		end
-		return;
-	elseif (event == "UNIT_DISPLAYPOWER") then
-		if (arg1 == "pet") then
-			Perl_Player_Pet_Update_Mana_Bar();	-- What type of energy are we using now?
-			Perl_Player_Pet_Update_Mana();		-- Update the energy info immediately
-		end
-		return;
-	elseif (event == "PLAYER_PET_CHANGED") then
-		Perl_Player_Pet_Update_Once();
-		return;
-	elseif (event == "UNIT_PET") then
-		if (arg1 == "player") then
-			Perl_Player_Pet_Update_Once();
-		end
-		return;
-	elseif (event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED") then
-		if (arg1 == "pet") then
-			--Perl_Player_Pet_Update_Portrait();	-- Uncomment this line if the line below is ever removed
-			Perl_Player_Pet_Update_Once();		-- As of 1.10 the stable is partially broken, this event however is always called after a pet is swapped, so we will just update the whole mod here too to ensure a clean switch.
-		end
-		return;
-	elseif (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
-		Perl_Player_Pet_Initialize();
-		return;
+function Perl_Player_Pet_OnEvent()
+	local func = Perl_Player_Pet_Events[event];
+	if (func) then
+		func();
 	else
-		return;
+		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Player Pet: Report the following event error to the author: "..event);
 	end
 end
+
+function Perl_Player_Pet_Events:UNIT_HEALTH()
+	if (arg1 == "pet") then
+		Perl_Player_Pet_Update_Health();	-- Update health values
+	end
+end
+Perl_Player_Pet_Events.UNIT_MAXHEALTH = Perl_Player_Pet_Events.UNIT_HEALTH;
+
+function Perl_Player_Pet_Events:UNIT_FOCUS()
+	if (arg1 == "pet") then
+		Perl_Player_Pet_Update_Mana();		-- Update energy/mana/rage values
+	end
+end
+Perl_Player_Pet_Events.UNIT_MAXFOCUS = Perl_Player_Pet_Events.UNIT_FOCUS;
+Perl_Player_Pet_Events.UNIT_MANA = Perl_Player_Pet_Events.UNIT_FOCUS;
+Perl_Player_Pet_Events.UNIT_MAXMANA = Perl_Player_Pet_Events.UNIT_FOCUS;
+
+function Perl_Player_Pet_Events:UNIT_HAPPINESS()
+	Perl_Player_PetFrame_SetHappiness();
+end
+
+function Perl_Player_Pet_Events:UNIT_COMBAT()
+	if (arg1 == "pet") then
+		CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5);
+	end
+end
+
+function Perl_Player_Pet_Events:UNIT_SPELLMISS()
+	if (arg1 == "pet") then
+		CombatFeedback_OnSpellMissEvent(arg2);
+	end
+end
+
+function Perl_Player_Pet_Events:UNIT_NAME_UPDATE()
+	if (arg1 == "pet") then
+		Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));	-- Set name
+	end
+end
+
+function Perl_Player_Pet_Events:UNIT_AURA()
+	if (arg1 == "pet") then
+		Perl_Player_Pet_Buff_UpdateAll();	-- Update the buff/debuff list
+	end
+end
+
+function Perl_Player_Pet_Events:UNIT_PET_EXPERIENCE()
+	if (showxp == 1) then
+		Perl_Player_Pet_Update_Experience();	-- Set the experience bar info
+	end
+end
+
+function Perl_Player_Pet_Events:UNIT_LEVEL()
+	if (arg1 == "pet") then
+		Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
+	elseif (arg1 == "player") then
+		Perl_Player_Pet_ShowXP();
+	end
+end
+
+function Perl_Player_Pet_Events:UNIT_DISPLAYPOWER()
+	if (arg1 == "pet") then
+		Perl_Player_Pet_Update_Mana_Bar();	-- What type of energy are we using now?
+		Perl_Player_Pet_Update_Mana();		-- Update the energy info immediately
+	end
+end
+
+function Perl_Player_Pet_Events:PLAYER_PET_CHANGED()
+	Perl_Player_Pet_Update_Once();
+end
+
+function Perl_Player_Pet_Events:UNIT_PET()
+	if (arg1 == "player") then
+		Perl_Player_Pet_Update_Once();
+	end
+end
+
+function Perl_Player_Pet_Events:UNIT_PORTRAIT_UPDATE()
+	if (arg1 == "pet") then
+		--Perl_Player_Pet_Update_Portrait();	-- Uncomment this line if the line below is ever removed
+		Perl_Player_Pet_Update_Once();		-- As of 1.10 the stable is partially broken, this event however is always called after a pet is swapped, so we will just update the whole mod here too to ensure a clean switch.
+	end
+end
+Perl_Player_Pet_Events.UNIT_MODEL_CHANGED = Perl_Player_Pet_Events.UNIT_PORTRAIT_UPDATE;
+
+function Perl_Player_Pet_Events:VARIABLES_LOADED()
+	Perl_Player_Pet_Initialize();
+end
+Perl_Player_Pet_Events.PLAYER_ENTERING_WORLD = Perl_Player_Pet_Events.VARIABLES_LOADED;
 
 
 -------------------------------
@@ -526,6 +549,12 @@ function Perl_Player_Pet_Set_Window_Layout()
 			Perl_Player_Pet_XPBarBG:SetWidth(98);
 		end
 	end
+
+	if (hidename == 1) then
+		Perl_Player_Pet_NameFrame:Hide();
+	else
+		Perl_Player_Pet_NameFrame:Show();
+	end
 end
 
 
@@ -613,6 +642,7 @@ function Perl_Player_Pet_Set_Buff_Size(newvalue)
 		buffsize = newvalue;
 	end
 	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Buff_Position_Update();	-- Set the buff positions
 	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 end
@@ -622,6 +652,7 @@ function Perl_Player_Pet_Set_Debuff_Size(newvalue)
 		debuffsize = newvalue;
 	end
 	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Buff_Position_Update();	-- Set the buff positions
 	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 end
@@ -629,6 +660,16 @@ end
 function Perl_Player_Pet_Set_Compact_Mode(newvalue)
 	compactmode = newvalue;
 	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Buff_Position_Update();	-- Set the buff positions
+	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
+	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	Perl_Player_Pet_Set_Window_Layout();
+end
+
+function Perl_Player_Pet_Set_Hide_Name(newvalue)
+	hidename = newvalue;
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Buff_Position_Update();	-- Set the buff positions
 	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 	Perl_Player_Pet_Set_Window_Layout();
@@ -690,20 +731,21 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 		name = UnitName("player");
 	end
 
-	locked = Perl_Player_Pet_Config[UnitName("player")]["Locked"];
-	showxp = Perl_Player_Pet_Config[UnitName("player")]["ShowXP"];
-	scale = Perl_Player_Pet_Config[UnitName("player")]["Scale"];
-	numpetbuffsshown = Perl_Player_Pet_Config[UnitName("player")]["Buffs"];
-	numpetdebuffsshown = Perl_Player_Pet_Config[UnitName("player")]["Debuffs"];
-	transparency = Perl_Player_Pet_Config[UnitName("player")]["Transparency"];
-	bufflocation = Perl_Player_Pet_Config[UnitName("player")]["BuffLocation"];
-	debufflocation = Perl_Player_Pet_Config[UnitName("player")]["DebuffLocation"];
-	buffsize = Perl_Player_Pet_Config[UnitName("player")]["BuffSize"];
-	debuffsize = Perl_Player_Pet_Config[UnitName("player")]["DebuffSize"];
-	showportrait = Perl_Player_Pet_Config[UnitName("player")]["ShowPortrait"];
-	threedportrait = Perl_Player_Pet_Config[UnitName("player")]["ThreeDPortrait"];
-	portraitcombattext = Perl_Player_Pet_Config[UnitName("player")]["PortraitCombatText"];
-	compactmode = Perl_Player_Pet_Config[UnitName("player")]["CompactMode"];
+	locked = Perl_Player_Pet_Config[name]["Locked"];
+	showxp = Perl_Player_Pet_Config[name]["ShowXP"];
+	scale = Perl_Player_Pet_Config[name]["Scale"];
+	numpetbuffsshown = Perl_Player_Pet_Config[name]["Buffs"];
+	numpetdebuffsshown = Perl_Player_Pet_Config[name]["Debuffs"];
+	transparency = Perl_Player_Pet_Config[name]["Transparency"];
+	bufflocation = Perl_Player_Pet_Config[name]["BuffLocation"];
+	debufflocation = Perl_Player_Pet_Config[name]["DebuffLocation"];
+	buffsize = Perl_Player_Pet_Config[name]["BuffSize"];
+	debuffsize = Perl_Player_Pet_Config[name]["DebuffSize"];
+	showportrait = Perl_Player_Pet_Config[name]["ShowPortrait"];
+	threedportrait = Perl_Player_Pet_Config[name]["ThreeDPortrait"];
+	portraitcombattext = Perl_Player_Pet_Config[name]["PortraitCombatText"];
+	compactmode = Perl_Player_Pet_Config[name]["CompactMode"];
+	hidename = Perl_Player_Pet_Config[name]["HideName"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -724,10 +766,10 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 		transparency = 1;
 	end
 	if (bufflocation == nil) then
-		bufflocation = 2;
+		bufflocation = 4;
 	end
 	if (debufflocation == nil) then
-		debufflocation = 3;
+		debufflocation = 5;
 	end
 	if (buffsize == nil) then
 		buffsize = 12;
@@ -746,6 +788,9 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 	end
 	if (compactmode == nil) then
 		compactmode = 0;
+	end
+	if (hidename == nil) then
+		hidename = 0;
 	end
 
 	if (updateflag == 1) then
@@ -779,6 +824,7 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 		["threedportrait"] = threedportrait,
 		["portraitcombattext"] = portraitcombattext,
 		["compactmode"] = compactmode,
+		["hidename"] = hidename,
 	}
 	return vars;
 end
@@ -857,6 +903,11 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			else
 				compactmode = nil;
 			end
+			if (vartable["Global Settings"]["HideName"] ~= nil) then
+				hidename = vartable["Global Settings"]["HideName"];
+			else
+				hidename = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -879,10 +930,10 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			transparency = 1;
 		end
 		if (bufflocation == nil) then
-			bufflocation = 2;
+			bufflocation = 4;
 		end
 		if (debufflocation == nil) then
-			debufflocation = 3;
+			debufflocation = 5;
 		end
 		if (buffsize == nil) then
 			buffsize = 12;
@@ -901,6 +952,9 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		end
 		if (compactmode == nil) then
 			compactmode = 0;
+		end
+		if (hidename == nil) then
+			hidename = 0;
 		end
 
 		-- Call any code we need to activate them
@@ -934,6 +988,7 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		["ThreeDPortrait"] = threedportrait,
 		["PortraitCombatText"] = portraitcombattext,
 		["CompactMode"] = compactmode,
+		["HideName"] = hidename,
 	};
 end
 
@@ -992,19 +1047,40 @@ function Perl_Player_Pet_Buff_UpdateAll()
 end
 
 function Perl_Player_Pet_Buff_Position_Update()
+	Perl_Player_Pet_Buff1:ClearAllPoints();
 	if (bufflocation == 1) then
-		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "TOPRIGHT", 0, -3);
+		if (hidename == 0) then
+			Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_NameFrame", "TOPLEFT", 5, 15);
+		else
+			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+				Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_LevelFrame", "TOPLEFT", 5, 15);
+			else
+				Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_StatsFrame", "TOPLEFT", 5, 15);
+			end
+		end
 	elseif (bufflocation == 2) then
-		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
+		if (hidename == 0) then
+			Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_NameFrame", "TOPLEFT", 5, 0);
+		else
+			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+				Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_LevelFrame", "TOPLEFT", 5, 0);
+			else
+				Perl_Player_Pet_Buff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_StatsFrame", "TOPLEFT", 5, 0);
+			end
+		end
 	elseif (bufflocation == 3) then
-		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
+		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "TOPRIGHT", 0, -3);
 	elseif (bufflocation == 4) then
+		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
+	elseif (bufflocation == 5) then
+		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
+	elseif (bufflocation == 6) then
 		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
 			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 0);
 		else
 			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, 0);
 		end
-	else
+	elseif (bufflocation == 7) then
 		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
 			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, -15);
 		else
@@ -1012,19 +1088,20 @@ function Perl_Player_Pet_Buff_Position_Update()
 		end
 	end
 
-	if (debufflocation == 1) then
+	Perl_Player_Pet_Debuff1:ClearAllPoints();
+	if (debufflocation == 3) then
 		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "TOPRIGHT", 0, -3);
-	elseif (debufflocation == 2) then
-		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
-	elseif (debufflocation == 3) then
-		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
 	elseif (debufflocation == 4) then
+		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
+	elseif (debufflocation == 5) then
+		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
+	elseif (debufflocation == 6) then
 		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
 			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 0);
 		else
 			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, 0);
 		end
-	else
+	elseif (debufflocation == 7) then
 		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
 			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, -15);
 		else
@@ -1035,6 +1112,7 @@ end
 
 function Perl_Player_Pet_Reset_Buffs()
 	local button, debuff, icon;
+
 	for buffnum=1,16 do
 		button = getglobal("Perl_Player_Pet_Buff"..buffnum);
 		icon = getglobal(button:GetName().."Icon");
@@ -1091,7 +1169,7 @@ function Perl_Player_Pet_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
 			if (CastPartyConfig) then
-				CastParty_OnClickByUnit(button, "pet");
+				CastParty.Event.OnClickByUnit(button, "pet");
 				return;
 			elseif (Genesis_MouseHeal and Genesis_MouseHeal("pet", button)) then
 				return;

@@ -1,3 +1,19 @@
+0.81 - October 23, 2006
+ - All: Changed the event system to a more efficient method (Thanks Zek)
+ - All: Changed how certain frame scripts are set up (Thanks Zek)
+ - All: Updated CastParty support for version 4.2
+ - All: Removed loading messages from all except Perl_Config
+ - CombatDisplay: Will now correctly change power bar color without retargeting
+ - CombatDisplay/Target/ToT: Updated menu conditions to the latest Blizzard version
+ - Config: The options menu is now LoadOnDemand to save memory
+ - Config: Option menu specific localization strings have been moved out of Perl_Config
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - Party/Pet: Added 2 additional buff and debuff locations
+ - Pet: Can now toggle the name frame
+ - Pet: Will now correctly load profile settings
+ - Pet: Moved the level text to the name frame in the XML
+ - ToT: Added raid icon support
+
 0.80a - September 27, 2006
  - Config: Updated Simplified Chinese translations (Thanks middle007)
  - Party: Pet health bar should no longer fade when pets are disabled

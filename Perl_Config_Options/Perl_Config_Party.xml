@@ -644,7 +644,7 @@
 				</Scripts>
 			</Slider>
 
-			<Slider name="$parent_Slider4" inherits="OptionsSliderTemplate" minValue="1" maxValue="5" valueStep="1">
+			<Slider name="$parent_Slider4" inherits="OptionsSliderTemplate" minValue="1" maxValue="7" valueStep="1">
 				<Size>
 					<AbsDimension x="75" y="15"/>
 				</Size>
@@ -663,7 +663,7 @@
 				</Scripts>
 			</Slider>
 
-			<Slider name="$parent_Slider5" inherits="OptionsSliderTemplate" minValue="1" maxValue="5" valueStep="1">
+			<Slider name="$parent_Slider5" inherits="OptionsSliderTemplate" minValue="1" maxValue="7" valueStep="1">
 				<Size>
 					<AbsDimension x="75" y="15"/>
 				</Size>

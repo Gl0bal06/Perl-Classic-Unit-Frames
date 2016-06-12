@@ -23,12 +23,6 @@
 			<OnLoad>
 				Perl_Player_OnLoad();
 			</OnLoad>
-			<OnEvent>
-				Perl_Player_OnEvent(event);
-			</OnEvent>
-			<OnUpdate>
-				CombatFeedback_OnUpdate(arg1);
-			</OnUpdate>
 		</Scripts>
 
 

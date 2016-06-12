@@ -145,11 +145,11 @@ function Perl_Config_Party_Set_Values()
 	Perl_Config_Party_Frame_Slider3:SetValue(vartable["transparency"]*100);
 
 	Perl_Config_Party_Frame_Slider4Low:SetText("1");
-	Perl_Config_Party_Frame_Slider4High:SetText("5");
+	Perl_Config_Party_Frame_Slider4High:SetText("7");
 	Perl_Config_Party_Frame_Slider4:SetValue(vartable["bufflocation"]);
 
 	Perl_Config_Party_Frame_Slider5Low:SetText("1");
-	Perl_Config_Party_Frame_Slider5High:SetText("5");
+	Perl_Config_Party_Frame_Slider5High:SetText("7");
 	Perl_Config_Party_Frame_Slider5:SetValue(vartable["debufflocation"]);
 
 	Perl_Config_Party_Frame_Slider6Low:SetText("1");

@@ -79,18 +79,6 @@
 			<OnLoad>
 				Perl_Target_OnLoad();
 			</OnLoad>
-			<OnEvent>
-				Perl_Target_OnEvent(event);
-			</OnEvent>
-			<OnShow>
-				Perl_Target_OnShow();
-			</OnShow>
-			<OnHide>
-				Perl_Target_OnHide();
-			</OnHide>
-			<OnUpdate>
-				CombatFeedback_OnUpdate(arg1);
-			</OnUpdate>
 		</Scripts>
 
 		<Frames>

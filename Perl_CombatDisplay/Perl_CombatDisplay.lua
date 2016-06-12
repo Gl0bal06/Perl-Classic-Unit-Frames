@@ -2,6 +2,7 @@
 -- Variables --
 ---------------
 Perl_CombatDisplay_Config = {};
+local Perl_CombatDisplay_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_CombatDisplay_GetVars)
 local state = 3;		-- hidden unless in combat by default
@@ -74,6 +75,9 @@ function Perl_CombatDisplay_OnLoad()
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
+	-- Scripts
+	this:SetScript("OnEvent", Perl_CombatDisplay_OnEvent);
+
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetFrameLevel(Perl_CombatDisplay_ManaFrame:GetFrameLevel() + 2);
 	Perl_CombatDisplay_HealthBarFadeBar:SetFrameLevel(Perl_CombatDisplay_HealthBar:GetFrameLevel() - 1);
@@ -82,10 +86,6 @@ function Perl_CombatDisplay_OnLoad()
 	Perl_CombatDisplay_CPBarFadeBar:SetFrameLevel(Perl_CombatDisplay_CPBar:GetFrameLevel() - 1);
 	Perl_CombatDisplay_PetHealthBarFadeBar:SetFrameLevel(Perl_CombatDisplay_PetHealthBar:GetFrameLevel() - 1);
 	Perl_CombatDisplay_PetManaBarFadeBar:SetFrameLevel(Perl_CombatDisplay_PetManaBar:GetFrameLevel() - 1);
-
-	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: CombatDisplay loaded successfully.");
-	end
 end
 
 function Perl_CombatDisplay_Target_OnLoad()
@@ -99,169 +99,196 @@ end
 -------------------
 -- Event Handler --
 -------------------
-function Perl_CombatDisplay_OnEvent(event)
-	if (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH") then
-		if (arg1 == "player") then
-			if (UnitHealth("player") == UnitHealthMax("player")) then
-				healthfull = 1;
-				if (healthpersist == 1) then
-					Perl_CombatDisplay_UpdateDisplay();
-				end
-			else
-				healthfull = 0;
-			end
-			Perl_CombatDisplay_Update_Health();
-		end
-		if (arg1 == "pet") then
-			if (showpetbars == 1) then
-				Perl_CombatDisplay_Update_PetHealth();
-			end
-		end
-		if (arg1 == "target") then
-			Perl_CombatDisplay_Target_Update_Health();
-		end
-		return;
-	elseif (event == "UNIT_ENERGY" or event == "UNIT_MAXENERGY") then
-		if (arg1 == "player") then
-			if (UnitMana("player") == UnitManaMax("player")) then
-				manafull = 1;
-				if (manapersist == 1) then
-					Perl_CombatDisplay_UpdateDisplay();
-				end
-			else
-				manafull = 0;
-			end
-			Perl_CombatDisplay_Update_Mana();
-		end
-		if (arg1 == "target") then
-			Perl_CombatDisplay_Target_Update_Mana();
-		end
-		return;
-	elseif (event == "UNIT_MANA" or event == "UNIT_MAXMANA") then
-		if (arg1 == "player") then
-			if (UnitMana("player") == UnitManaMax("player")) then
-				manafull = 1;
-				if (manapersist == 1) then
-					Perl_CombatDisplay_UpdateDisplay();
-				end
-			else
-				manafull = 0;
-			end
-			Perl_CombatDisplay_Update_Mana();
-		end
-		if (arg1 == "pet") then
-			if (showpetbars == 1) then
-				Perl_CombatDisplay_Update_PetMana();
-			end
-		end
-		if (arg1 == "target") then
-			Perl_CombatDisplay_Target_Update_Mana();
-		end
-		return;
-	elseif (event == "UNIT_RAGE" or event == "UNIT_MAXRAGE") then
-		if (arg1 == "player") then
-			if (UnitMana("player") == 0) then
-				manafull = 1;
-				if (manapersist == 1) then
-					Perl_CombatDisplay_UpdateDisplay();
-				end
-			else
-				manafull = 0;
-			end
-			Perl_CombatDisplay_Update_Mana();
-		end
-		if (arg1 == "target") then
-			Perl_CombatDisplay_Target_Update_Mana();
-		end
-		return;
-	elseif (event == "UNIT_FOCUS" or event == "UNIT_MAXFOCUS") then
-		if (arg1 == "pet") then
-			if (showpetbars == 1) then
-				Perl_CombatDisplay_Update_PetMana();
-			end
-		end
-	elseif (event == "PLAYER_TARGET_CHANGED") then
-		Perl_CombatDisplay_UpdateDisplay();
-		return;
-	elseif (event == "PLAYER_COMBO_POINTS") then
-		Perl_CombatDisplay_Update_Combo_Points();
-		return;
-	elseif (event == "PLAYER_REGEN_ENABLED") then	-- Player no longer in combat (something has agro on you)
-		IsAggroed = 0;
-		if (state == 3) then
-			Perl_CombatDisplay_UpdateDisplay();
-		end
-		return;
-	elseif (event == "PLAYER_REGEN_DISABLED") then	-- Player in combat (something has agro on you)
-		IsAggroed = 1;
-		if (state == 3) then
-			Perl_CombatDisplay_UpdateDisplay();
-		end
-		return;
-	elseif (event == "PLAYER_ENTER_COMBAT") then	-- Player attacking (auto attack)
-		InCombat = 1;
-		if (state == 2) then
-			Perl_CombatDisplay_UpdateDisplay();
-		end
-		return;
-	elseif (event == "PLAYER_LEAVE_COMBAT") then	-- Player not attacking (auto attack)
-		InCombat = 0;
-		if (state == 2) then
-			Perl_CombatDisplay_UpdateDisplay();
-		end
-		return;
-	elseif (event == "UNIT_DISPLAYPOWER") then
-		if (arg1 == "player") then
-			Perl_CombatDisplay_UpdateBars();
-			Perl_CombatDisplay_Update_Mana();
-			if (InCombat == 0 and IsAggroed == 0) then
-				if (state == 1) then
-					Perl_CombatDisplay_Frame:Show();
-				else
-					Perl_CombatDisplay_Frame:Hide();
-				end
-			end
-		end
-		if (arg1 == "pet") then
-			if (showpetbars == 1) then
-				Perl_CombatDisplay_Update_PetManaBarColor();	-- What type of energy are we using now?
-				Perl_CombatDisplay_Update_PetMana();		-- Update the energy info immediately
-			end
-		end
-		return;
-	elseif (event == "UNIT_PET") then
-		Perl_CombatDisplay_CheckForPets();
-		return;
-	elseif (event=="PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
-		local powertype = UnitPowerType("player");
-		InCombat = 0;
-		IsAggroed = 0;
+function Perl_CombatDisplay_OnEvent()
+	local func = Perl_CombatDisplay_Events[event];
+	if (func) then
+		func();
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - CombatDisplay: Report the following event error to the author: "..event);
+	end
+end
 
+function Perl_CombatDisplay_Events:UNIT_HEALTH()
+	if (arg1 == "player") then
 		if (UnitHealth("player") == UnitHealthMax("player")) then
 			healthfull = 1;
+			if (healthpersist == 1) then
+				Perl_CombatDisplay_UpdateDisplay();
+			end
 		else
 			healthfull = 0;
 		end
-		if (powertype == 0 or powertype == 3) then
-			if (UnitMana("player") == UnitManaMax("player")) then
-				manafull = 1;
-			else
-				manafull = 0;
-			end
-		elseif (powertype == 1) then
-			if (UnitMana("player") == 0) then
-				manafull = 1;
-			else
-				manafull = 0;
-			end
+		Perl_CombatDisplay_Update_Health();
+	elseif (arg1 == "target") then
+		Perl_CombatDisplay_Target_Update_Health();
+	elseif (arg1 == "pet") then
+		if (showpetbars == 1) then
+			Perl_CombatDisplay_Update_PetHealth();
 		end
-
-		Perl_CombatDisplay_Initialize();
-		return;
-	else
-		return;
 	end
 end
+Perl_CombatDisplay_Events.UNIT_MAXHEALTH = Perl_CombatDisplay_Events.UNIT_HEALTH;
+
+function Perl_CombatDisplay_Events:UNIT_ENERGY()
+	if (arg1 == "player") then
+		if (UnitMana("player") == UnitManaMax("player")) then
+			manafull = 1;
+			if (manapersist == 1) then
+				Perl_CombatDisplay_UpdateDisplay();
+			end
+		else
+			manafull = 0;
+		end
+		Perl_CombatDisplay_Update_Mana();
+	elseif (arg1 == "target") then
+		Perl_CombatDisplay_Target_Update_Mana();
+	elseif (arg1 == "pet") then
+		if (showpetbars == 1) then
+			Perl_CombatDisplay_Update_PetMana();
+		end
+	end
+end
+Perl_CombatDisplay_Events.UNIT_MAXENERGY = Perl_CombatDisplay_Events.UNIT_ENERGY;
+Perl_CombatDisplay_Events.UNIT_MANA = Perl_CombatDisplay_Events.UNIT_ENERGY;
+Perl_CombatDisplay_Events.UNIT_MAXMANA = Perl_CombatDisplay_Events.UNIT_ENERGY;
+
+function Perl_CombatDisplay_Events:UNIT_RAGE()
+	if (arg1 == "player") then
+		if (UnitMana("player") == 0) then
+			manafull = 1;
+			if (manapersist == 1) then
+				Perl_CombatDisplay_UpdateDisplay();
+			end
+		else
+			manafull = 0;
+		end
+		Perl_CombatDisplay_Update_Mana();
+	elseif (arg1 == "target") then
+		Perl_CombatDisplay_Target_Update_Mana();
+	end
+end
+Perl_CombatDisplay_Events.UNIT_MAXRAGE = Perl_CombatDisplay_Events.UNIT_RAGE;
+
+function Perl_CombatDisplay_Events:UNIT_FOCUS()
+	if (arg1 == "pet") then
+		if (showpetbars == 1) then
+			Perl_CombatDisplay_Update_PetMana();
+		end
+	end
+end
+Perl_CombatDisplay_Events.UNIT_MAXFOCUS = Perl_CombatDisplay_Events.UNIT_FOCUS;
+
+function Perl_CombatDisplay_Events:PLAYER_TARGET_CHANGED()
+	Perl_CombatDisplay_UpdateDisplay();
+end
+
+function Perl_CombatDisplay_Events:PLAYER_COMBO_POINTS()
+	Perl_CombatDisplay_Update_Combo_Points();
+end
+
+function Perl_CombatDisplay_Events:PLAYER_REGEN_ENABLED()
+	IsAggroed = 0;
+	if (state == 3) then
+		Perl_CombatDisplay_UpdateDisplay();
+	end
+end
+
+function Perl_CombatDisplay_Events:PLAYER_REGEN_DISABLED()
+	IsAggroed = 1;
+	if (state == 3) then
+		Perl_CombatDisplay_UpdateDisplay();
+	end
+end
+
+function Perl_CombatDisplay_Events:PLAYER_ENTER_COMBAT()
+	InCombat = 1;
+	if (state == 2) then
+		Perl_CombatDisplay_UpdateDisplay();
+	end
+end
+
+function Perl_CombatDisplay_Events:PLAYER_LEAVE_COMBAT()
+	InCombat = 0;
+	if (state == 2) then
+		Perl_CombatDisplay_UpdateDisplay();
+	end
+end
+
+function Perl_CombatDisplay_Events:UNIT_DISPLAYPOWER()
+	if (arg1 == "player") then
+		Perl_CombatDisplay_UpdateBars();
+		Perl_CombatDisplay_Update_Mana();
+		if (InCombat == 0 and IsAggroed == 0) then
+			if (state == 1) then
+				Perl_CombatDisplay_Frame:Show();
+			else
+				Perl_CombatDisplay_Frame:Hide();
+			end
+		end
+	elseif (arg1 == "target") then
+		Perl_CombatDisplay_Target_UpdateBars();
+		Perl_CombatDisplay_Target_Update_Mana();
+	elseif (arg1 == "pet") then
+		if (showpetbars == 1) then
+			Perl_CombatDisplay_Update_PetManaBarColor();	-- What type of energy are we using now?
+			Perl_CombatDisplay_Update_PetMana();		-- Update the energy info immediately
+		end
+	end
+end
+
+function Perl_CombatDisplay_Events:UNIT_DISPLAYPOWER()
+	if (arg1 == "player") then
+		Perl_CombatDisplay_UpdateBars();
+		Perl_CombatDisplay_Update_Mana();
+		if (InCombat == 0 and IsAggroed == 0) then
+			if (state == 1) then
+				Perl_CombatDisplay_Frame:Show();
+			else
+				Perl_CombatDisplay_Frame:Hide();
+			end
+		end
+	elseif (arg1 == "target") then
+		Perl_CombatDisplay_Target_UpdateBars();
+		Perl_CombatDisplay_Target_Update_Mana();
+	elseif (arg1 == "pet") then
+		if (showpetbars == 1) then
+			Perl_CombatDisplay_Update_PetManaBarColor();	-- What type of energy are we using now?
+			Perl_CombatDisplay_Update_PetMana();		-- Update the energy info immediately
+		end
+	end
+end
+
+function Perl_CombatDisplay_Events:UNIT_PET()
+	Perl_CombatDisplay_CheckForPets();
+end
+
+function Perl_CombatDisplay_Events:VARIABLES_LOADED()
+	local powertype = UnitPowerType("player");
+	InCombat = 0;
+	IsAggroed = 0;
+
+	if (UnitHealth("player") == UnitHealthMax("player")) then
+		healthfull = 1;
+	else
+		healthfull = 0;
+	end
+	if (powertype == 0 or powertype == 3) then
+		if (UnitMana("player") == UnitManaMax("player")) then
+			manafull = 1;
+		else
+			manafull = 0;
+		end
+	elseif (powertype == 1) then
+		if (UnitMana("player") == 0) then
+			manafull = 1;
+		else
+			manafull = 0;
+		end
+	end
+
+	Perl_CombatDisplay_Initialize();
+end
+Perl_CombatDisplay_Events.PLAYER_ENTERING_WORLD = Perl_CombatDisplay_Events.VARIABLES_LOADED;
 
 
 -------------------------------
@@ -1570,7 +1597,7 @@ function Perl_CombatDisplay_MouseClick(button)
 
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (CastPartyConfig) then
-			CastParty_OnClickByUnit(button, "player");
+			CastParty.Event.OnClickByUnit(button, "player");
 			return;
 		elseif (Genesis_MouseHeal and Genesis_MouseHeal("player", button)) then
 			return;
@@ -1634,10 +1661,7 @@ end
 
 function Perl_CombatDisplayTargetDropDown_Initialize()
 	local menu, name;
-	if (UnitExists("target") and (UnitIsEnemy("target", "player") or (UnitReaction("player", "target") and (UnitReaction("player", "target") >= 4) and not UnitIsPlayer("target")))) then
-		menu = "RAID_TARGET_ICON";
-		name = RAID_TARGET_ICON;
-	elseif (UnitIsUnit("target", "player")) then
+	if (UnitIsUnit("target", "player")) then
 		menu = "SELF";
 	elseif (UnitIsUnit("target", "pet")) then
 		menu = "PET";
@@ -1647,6 +1671,9 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 		else
 			menu = "PLAYER";
 		end
+	else
+		menu = "RAID_TARGET_ICON";
+		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
 		UnitPopup_ShowMenu(Perl_CombatDisplay_Target_DropDown, menu, "target", name);
@@ -1662,7 +1689,7 @@ function Perl_CombatDisplay_Target_MouseClick(button)
 
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (CastPartyConfig) then
-			CastParty_OnClickByUnit(button, "target");
+			CastParty.Event.OnClickByUnit(button, "target");
 			return;
 		elseif (Genesis_MouseHeal and Genesis_MouseHeal("target", button)) then
 			return;

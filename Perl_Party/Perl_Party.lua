@@ -2,6 +2,7 @@
 -- Variables --
 ---------------
 Perl_Party_Config = {};
+local Perl_Party_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Party_GetVars)
 local locked = 0;		-- unlocked by default
@@ -12,8 +13,8 @@ local scale = 1;		-- default scale
 local showpets = 1;		-- show pets by default
 local healermode = 0;		-- nurfed unit frame style
 local transparency = 1.0;	-- transparency for frames
-local bufflocation = 4;		-- default buff location
-local debufflocation = 1;	-- default debuff location
+local bufflocation = 6;		-- default buff location
+local debufflocation = 3;	-- default debuff location
 local verticalalign = 1;	-- default alignment is vertically
 local compactpercent = 0;	-- percents are not shown in compact mode by default
 local showportrait = 0;		-- portrait is hidden by default
@@ -77,11 +78,11 @@ local Perl_Party_ClassPosBottom = {};
 -- Loading Function --
 ----------------------
 function Perl_Party_Script_OnLoad()
+	-- Events
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 
-	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Party loaded successfully.");
-	end
+	-- Scripts
+	this:SetScript("OnEvent", Perl_Party_Script_OnEvent);
 end
 
 function Perl_Party_OnLoad()
@@ -111,6 +112,9 @@ function Perl_Party_OnLoad()
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
+	-- Scripts
+	this:SetScript("OnEvent", Perl_Party_OnEvent);
+
 	HidePartyFrame();
 	ShowPartyFrame = HidePartyFrame;	-- This is to fix the annoyance 1.9 introduced
 end
@@ -119,90 +123,114 @@ end
 -------------------
 -- Event Handler --
 -------------------
-function Perl_Party_Script_OnEvent(event)				-- All this just to ensure party frames are hidden/shown on zoning
+function Perl_Party_Script_OnEvent()				-- All this just to ensure party frames are hidden/shown on zoning
 	if (event == "PLAYER_ENTERING_WORLD") then
 		if (Initialized) then
 			Perl_Party_Set_Hidden();			-- Are we running a hidden mode? (Another redundancy check because Blizzard sucks)
 		end
-		return;
-	else
-		return;
 	end
 end
 
-function Perl_Party_OnEvent(event)
-	if (event == "UNIT_HEALTH" or event == "UNIT_MAXHEALTH") then
-		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
-			Perl_Party_Update_Health();
-		elseif (showpets == 1) then
-			if ((arg1 == "partypet1") or (arg1 == "partypet2") or (arg1 == "partypet3") or (arg1 == "partypet4")) then
-				Perl_Party_Update_Pet_Health();
-			end
-		end
-		return;
-	elseif (event == "UNIT_MANA" or event == "UNIT_ENERGY" or event == "UNIT_RAGE" or event == "UNIT_MAXMANA" or event == "UNIT_MAXENERGY" or event == "UNIT_MAXRAGE") then
-		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
-			Perl_Party_Update_Mana();
-		end
-		return;
-	elseif (event == "UNIT_AURA") then
-		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
-			Perl_Party_Buff_UpdateAll();
-		end
-		return;
-	elseif (event == "UNIT_DISPLAYPOWER") then
-		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
-			Perl_Party_Update_Mana_Bar();		-- What type of energy are we using now?
-			Perl_Party_Update_Mana();		-- Update the power info immediately
-		end
-		return;
-	elseif (event == "UNIT_FACTION" or event == "UNIT_PVP_UPDATE") then
-		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
-			Perl_Party_Update_PvP_Status();		-- Is the character PvP flagged?
-		end
-		return;
-	elseif (event == "UNIT_NAME_UPDATE") then
-		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
-			Perl_Party_Set_Name();			-- Set the player's name and class icon
-		end
-		return;
-	elseif (event == "UNIT_PET") then
-		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
-			Perl_Party_Update_Pet();		-- Set the player's level
-		end
-		return;
-	elseif (event == "UNIT_LEVEL") then
-		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
-			Perl_Party_Update_Level();		-- Set the player's level
-		end
-		return;
-	elseif (event == "PARTY_MEMBERS_CHANGED") then	-- or (event == "RAID_ROSTER_UPDATE") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")
-		Perl_Party_MembersUpdate();			-- How many members are in the group and show the correct frames and do UpdateOnce things
-		return;
-	elseif (event == "RAID_ROSTER_UPDATE") then
-		Perl_Party_Check_Raid_Hidden();			-- Are we running a hidden mode?
-		return;
-	elseif (event == "PARTY_LEADER_CHANGED") then
-		Perl_Party_Update_Leader();			-- Who is the group leader
-		return;
-	elseif (event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED") then
-		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
-			Perl_Party_Update_Portrait();
-		end
-		return;
-	elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
-		Perl_Party_Update_Loot_Method();		-- Who is the master looter if any
-		return;
-	elseif (event == "PLAYER_ALIVE") then
-		Perl_Party_Set_Hidden();			-- Are we running a hidden mode? (Hopefully the last check we need to add for this)
-		return;
-	elseif (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
-		Perl_Party_Initialize();			-- We also force update info here in case of a /console reloadui
-		return;
+function Perl_Party_OnEvent()
+	local func = Perl_Party_Events[event];
+	if (func) then
+		func();
 	else
-		return;
+		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Party: Report the following event error to the author: "..event);
 	end
 end
+
+function Perl_Party_Events:UNIT_HEALTH()
+	if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+		Perl_Party_Update_Health();
+	elseif (showpets == 1) then
+		if ((arg1 == "partypet1") or (arg1 == "partypet2") or (arg1 == "partypet3") or (arg1 == "partypet4")) then
+			Perl_Party_Update_Pet_Health();
+		end
+	end
+end
+Perl_Party_Events.UNIT_MAXHEALTH = Perl_Party_Events.UNIT_HEALTH;
+
+function Perl_Party_Events:UNIT_ENERGY()
+	if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+		Perl_Party_Update_Mana();
+	end
+end
+Perl_Party_Events.UNIT_MAXENERGY = Perl_Party_Events.UNIT_ENERGY;
+Perl_Party_Events.UNIT_MANA = Perl_Party_Events.UNIT_ENERGY;
+Perl_Party_Events.UNIT_MAXMANA = Perl_Party_Events.UNIT_ENERGY;
+Perl_Party_Events.UNIT_RAGE = Perl_Party_Events.UNIT_ENERGY;
+Perl_Party_Events.UNIT_MAXRAGE = Perl_Party_Events.UNIT_ENERGY;
+
+function Perl_Party_Events:UNIT_AURA()
+	if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+		Perl_Party_Buff_UpdateAll();
+	end
+end
+
+function Perl_Party_Events:UNIT_DISPLAYPOWER()
+	if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+		Perl_Party_Update_Mana_Bar();		-- What type of energy are we using now?
+		Perl_Party_Update_Mana();		-- Update the power info immediately
+	end
+end
+
+function Perl_Party_Events:UNIT_FACTION()
+	if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+		Perl_Party_Update_PvP_Status();		-- Is the character PvP flagged?
+	end
+end
+Perl_Party_Events.UNIT_PVP_UPDATE = Perl_Party_Events.UNIT_FACTION;
+
+function Perl_Party_Events:UNIT_NAME_UPDATE()
+	if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+		Perl_Party_Set_Name();			-- Set the player's name and class icon
+	end
+end
+
+function Perl_Party_Events:UNIT_PET()
+	if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+		Perl_Party_Update_Pet();		-- Set the player's level
+	end
+end
+
+function Perl_Party_Events:UNIT_LEVEL()
+	if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+		Perl_Party_Update_Level();		-- Set the player's level
+	end
+end
+
+function Perl_Party_Events:PARTY_MEMBERS_CHANGED()
+	Perl_Party_MembersUpdate();			-- How many members are in the group and show the correct frames and do UpdateOnce things
+end
+
+function Perl_Party_Events:RAID_ROSTER_UPDATE()
+	Perl_Party_Check_Raid_Hidden();			-- Are we running a hidden mode?
+end
+
+function Perl_Party_Events:PARTY_LEADER_CHANGED()
+	Perl_Party_Update_Leader();			-- Who is the group leader
+end
+
+function Perl_Party_Events:UNIT_PORTRAIT_UPDATE()
+	if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+		Perl_Party_Update_Portrait();
+	end
+end
+Perl_Party_Events.UNIT_MODEL_CHANGED = Perl_Party_Events.UNIT_PORTRAIT_UPDATE;
+
+function Perl_Party_Events:PARTY_LOOT_METHOD_CHANGED()
+	Perl_Party_Update_Loot_Method();		-- Who is the master looter if any
+end
+
+function Perl_Party_Events:PLAYER_ALIVE()
+	Perl_Party_Set_Hidden();			-- Are we running a hidden mode? (Hopefully the last check we need to add for this)
+end
+
+function Perl_Party_Events:VARIABLES_LOADED()
+	Perl_Party_Initialize();			-- We also force update info here in case of a /console reloadui
+end
+Perl_Party_Events.PLAYER_ENTERING_WORLD = Perl_Party_Events.VARIABLES_LOADED;
 
 
 -------------------------------
@@ -2598,10 +2626,10 @@ function Perl_Party_GetVars(name, updateflag)
 		transparency = 1;
 	end
 	if (bufflocation == nil) then
-		bufflocation = 4;
+		bufflocation = 6;
 	end
 	if (debufflocation == nil) then
-		debufflocation = 1;
+		debufflocation = 3;
 	end
 	if (verticalalign == nil) then
 		verticalalign = 1;
@@ -2862,10 +2890,10 @@ function Perl_Party_UpdateVars(vartable)
 			transparency = 1;
 		end
 		if (bufflocation == nil) then
-			bufflocation = 4;
+			bufflocation = 6;
 		end
 		if (debufflocation == nil) then
-			debufflocation = 1;
+			debufflocation = 3;
 		end
 		if (verticalalign == nil) then
 			verticalalign = 1;
@@ -3057,19 +3085,24 @@ function Perl_Party_Buff_Position_Update(id)
 		id = this:GetID();
 	end
 
+	getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):ClearAllPoints();
 	if (bufflocation == 1) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPRIGHT", 0, -3);
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPLEFT", 5, 20);
 	elseif (bufflocation == 2) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -3);
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPLEFT", 5, 0);
 	elseif (bufflocation == 3) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -23);
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPRIGHT", 0, -3);
 	elseif (bufflocation == 4) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -3);
+	elseif (bufflocation == 5) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -23);
+	elseif (bufflocation == 6) then
 		if (hideclasslevelframe == 0) then
 			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, 0);
 		else
 			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, 0);
 		end
-	elseif (bufflocation == 5) then
+	elseif (bufflocation == 7) then
 		if (hideclasslevelframe == 0) then
 			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, -20);
 		else
@@ -3077,19 +3110,24 @@ function Perl_Party_Buff_Position_Update(id)
 		end
 	end
 
+	getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):ClearAllPoints();
 	if (debufflocation == 1) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPRIGHT", 0, -3);
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPLEFT", 5, 20);
 	elseif (debufflocation == 2) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -3);
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("BOTTOMLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPLEFT", 5, 0);
 	elseif (debufflocation == 3) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -23);
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPRIGHT", 0, -3);
 	elseif (debufflocation == 4) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -3);
+	elseif (debufflocation == 5) then
+		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -23);
+	elseif (debufflocation == 6) then
 		if (hideclasslevelframe == 0) then
 			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, 0);
 		else
 			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, 0);
 		end
-	elseif (debufflocation == 5) then
+	elseif (debufflocation == 7) then
 		if (hideclasslevelframe == 0) then
 			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, -20);
 		else
@@ -3169,7 +3207,7 @@ function Perl_Party_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
 			if (CastPartyConfig) then
-				CastParty_OnClickByUnit(button, "party"..id);
+				CastParty.Event.OnClickByUnit(button, "party"..id);
 				return;
 			elseif (Genesis_MouseHeal and Genesis_MouseHeal("party"..id, button)) then
 				return;
@@ -3236,7 +3274,7 @@ function Perl_Party_Pet_MouseClick(button)
 
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (CastPartyConfig) then
-			CastParty_OnClickByUnit(button, "partypet"..id);
+			CastParty.Event.OnClickByUnit(button, "partypet"..id);
 			return;
 		elseif (Genesis_MouseHeal and Genesis_MouseHeal("partypet"..id, button)) then
 			return;

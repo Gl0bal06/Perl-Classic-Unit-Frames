@@ -2,6 +2,7 @@
 -- Variables --
 ---------------
 Perl_Target_Target_Config = {};
+local Perl_Target_Target_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Target_Target_GetVars)
 local locked = 0;		-- unlocked by default
@@ -46,10 +47,10 @@ local Perl_Target_Target_Target_ManaBar_Fade_Time_Elapsed = 0;		-- set the updat
 
 -- Local variables to save memory
 -- ToT variables
-local targettargetname, targettargethealth, targettargethealthmax, targettargethealthpercent, targettargetmana, targettargetmanamax, targettargetpower;
+local targettargetname, targettargethealth, targettargethealthmax, targettargethealthpercent, targettargetmana, targettargetmanamax, targettargetpower, raidtargettargetindex;
 
 -- ToToT variables
-local targettargettargetname, targettargettargethealth, targettargettargethealthmax, targettargettargethealthpercent, targettargettargetmana, targettargettargetmanamax, targettargettargetpower;
+local targettargettargetname, targettargettargethealth, targettargettargethealthmax, targettargettargethealthpercent, targettargettargetmana, targettargettargetmanamax, targettargettargetpower, raidtargettargettargetindex;
 
 -- Shared
 local r, g, b, reaction, mobhealththreenumerics;
@@ -64,11 +65,16 @@ function Perl_Target_Target_OnLoad()
 	this:RegisterEvent("PLAYER_TARGET_CHANGED");
 	this:RegisterEvent("VARIABLES_LOADED");
 
+	-- Scripts
+	this:SetScript("OnEvent", Perl_Target_Target_OnEvent);
+	this:SetScript("OnUpdate", Perl_Target_Target_OnUpdate);
+
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Target_Target_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Target_Target_NameFrame:GetFrameLevel() + 1);
 	Perl_Target_Target_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Target_Target_StatsFrame:GetFrameLevel() + 1);
 	Perl_Target_Target_HealthBar_CastClickOverlay:SetFrameLevel(Perl_Target_Target_StatsFrame:GetFrameLevel() + 2);
 	Perl_Target_Target_ManaBar_CastClickOverlay:SetFrameLevel(Perl_Target_Target_StatsFrame:GetFrameLevel() + 2);
+	Perl_Target_Target_RaidIconFrame:SetFrameLevel(Perl_Target_Target_NameFrame_CastClickOverlay:GetFrameLevel() - 1);
 	Perl_Target_Target_Target_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Target_Target_Target_NameFrame:GetFrameLevel() + 1);
 	Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Target_Target_Target_StatsFrame:GetFrameLevel() + 1);
 	Perl_Target_Target_Target_HealthBar_CastClickOverlay:SetFrameLevel(Perl_Target_Target_Target_StatsFrame:GetFrameLevel() + 2);
@@ -77,26 +83,30 @@ function Perl_Target_Target_OnLoad()
 	Perl_Target_Target_ManaBarFadeBar:SetFrameLevel(Perl_Target_Target_ManaBar:GetFrameLevel() - 1);
 	Perl_Target_Target_Target_HealthBarFadeBar:SetFrameLevel(Perl_Target_Target_Target_HealthBar:GetFrameLevel() - 1);
 	Perl_Target_Target_Target_ManaBarFadeBar:SetFrameLevel(Perl_Target_Target_Target_ManaBar:GetFrameLevel() - 1);
-
-	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Target_Target loaded successfully.");
-	end
 end
 
 
 -------------------
 -- Event Handler --
 -------------------
-function Perl_Target_Target_OnEvent(event)
-	if (event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_REGEN_ENABLED") then
-		aggroWarningCount = 0;
-	elseif (event=="PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
-		Perl_Target_Target_Initialize();
-		return;
+function Perl_Target_Target_OnEvent()
+	local func = Perl_Target_Target_Events[event];
+	if (func) then
+		func();
 	else
-		return;
+		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Target of Target: Report the following event error to the author: "..event);
 	end
 end
+
+function Perl_Target_Target_Events:PLAYER_TARGET_CHANGED()
+	aggroWarningCount = 0;
+end
+Perl_Target_Target_Events.PLAYER_REGEN_ENABLED = Perl_Target_Target_Events.PLAYER_TARGET_CHANGED;
+
+function Perl_Target_Target_Events:VARIABLES_LOADED()
+	Perl_Target_Target_Initialize();
+end
+Perl_Target_Target_Events.PLAYER_ENTERING_WORLD = Perl_Target_Target_Events.VARIABLES_LOADED;
 
 
 -------------------------------
@@ -196,7 +206,7 @@ end
 --------------------------
 -- The Update Functions --
 --------------------------
-function Perl_Target_Target_OnUpdate(arg1)
+function Perl_Target_Target_OnUpdate()
 	Perl_Target_Target_Time_Elapsed = Perl_Target_Target_Time_Elapsed + arg1;
 	if (Perl_Target_Target_Time_Elapsed > Perl_Target_Target_Time_Update_Rate) then
 		Perl_Target_Target_Time_Elapsed = 0;
@@ -470,6 +480,10 @@ function Perl_Target_Target_OnUpdate(arg1)
 				Perl_Target_Target_StatsFrame:SetHeight(30);
 				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
 			end
+
+			-- Begin: Raid Icon
+			Perl_Target_Target_Update_Raid_Icon();
+			-- End: Raid Icon
 
 			-- Begin: Update buffs and debuffs
 			Perl_Target_Target_Update_Buffs();			-- Apparently too many nested if's make lua cry, slow function call MUST be done here to avoid errors.
@@ -776,6 +790,10 @@ function Perl_Target_Target_OnUpdate(arg1)
 				Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
 			end
 
+			-- Begin: Raid Icon
+			Perl_Target_Target_Target_Update_Raid_Icon();
+			-- End: Raid Icon
+
 			-- Begin: Update buffs and debuffs
 			Perl_Target_Target_Target_Update_Buffs();		-- Apparently too many nested if's make lua cry, slow function call MUST be done here to avoid errors.
 			-- End: Update buffs and debuffs
@@ -783,6 +801,26 @@ function Perl_Target_Target_OnUpdate(arg1)
 			Perl_Target_Target_Target_Frame:Hide();			-- Hide the frame
 		end
 
+	end
+end
+
+function Perl_Target_Target_Update_Raid_Icon()
+	raidtargettargetindex = GetRaidTargetIndex("targettarget");
+	if (raidtargettargetindex) then
+		SetRaidTargetIconTexture(Perl_Target_Target_RaidTargetIcon, raidtargettargetindex);
+		Perl_Target_Target_RaidTargetIcon:Show();
+	else
+		Perl_Target_Target_RaidTargetIcon:Hide();
+	end
+end
+
+function Perl_Target_Target_Target_Update_Raid_Icon()
+	raidtargettargettargetindex = GetRaidTargetIndex("targettargettarget");
+	if (raidtargettargettargetindex) then
+		SetRaidTargetIconTexture(Perl_Target_Target_Target_RaidTargetIcon, raidtargettargettargetindex);
+		Perl_Target_Target_Target_RaidTargetIcon:Show();
+	else
+		Perl_Target_Target_Target_RaidTargetIcon:Hide();
 	end
 end
 
@@ -1992,10 +2030,7 @@ end
 
 function Perl_TargetTargetDropDown_Initialize()
 	local menu, name;
-	if (UnitExists("targettarget") and (UnitIsEnemy("targettarget", "player") or (UnitReaction("player", "targettarget") and (UnitReaction("player", "targettarget") >= 4) and not UnitIsPlayer("targettarget")))) then
-		menu = "RAID_TARGET_ICON";
-		name = RAID_TARGET_ICON;
-	elseif (UnitIsUnit("targettarget", "player")) then
+	if (UnitIsUnit("targettarget", "player")) then
 		menu = "SELF";
 	elseif (UnitIsUnit("targettarget", "pet")) then
 		menu = "PET";
@@ -2005,6 +2040,9 @@ function Perl_TargetTargetDropDown_Initialize()
 		else
 			menu = "PLAYER";
 		end
+	else
+		menu = "RAID_TARGET_ICON";
+		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
 		UnitPopup_ShowMenu(Perl_Target_Target_DropDown, menu, "targettarget", name);
@@ -2021,7 +2059,7 @@ function Perl_Target_Target_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
 			if (CastPartyConfig) then
-				CastParty_OnClickByUnit(button, "targettarget");
+				CastParty.Event.OnClickByUnit(button, "targettarget");
 				return;
 			elseif (Genesis_MouseHeal and Genesis_MouseHeal("targettarget", button)) then
 				return;
@@ -2085,10 +2123,7 @@ end
 
 function Perl_TargetTargetTargetDropDown_Initialize()
 	local menu, name;
-	if (UnitExists("targettargettarget") and (UnitIsEnemy("targettargettarget", "player") or (UnitReaction("player", "targettargettarget") and (UnitReaction("player", "targettargettarget") >= 4) and not UnitIsPlayer("targettargettarget")))) then
-		menu = "RAID_TARGET_ICON";
-		name = RAID_TARGET_ICON;
-	elseif (UnitIsUnit("targettargettarget", "player")) then
+	if (UnitIsUnit("targettargettarget", "player")) then
 		menu = "SELF";
 	elseif (UnitIsUnit("targettargettarget", "pet")) then
 		menu = "PET";
@@ -2098,6 +2133,9 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 		else
 			menu = "PLAYER";
 		end
+	else
+		menu = "RAID_TARGET_ICON";
+		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
 		UnitPopup_ShowMenu(Perl_Target_Target_Target_DropDown, menu, "targettargettarget", name);
@@ -2114,7 +2152,7 @@ function Perl_Target_Target_Target_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
 			if (CastPartyConfig) then
-				CastParty_OnClickByUnit(button, "targettargettarget");
+				CastParty.Event.OnClickByUnit(button, "targettargettarget");
 				return;
 			elseif (Genesis_MouseHeal and Genesis_MouseHeal("targettargettarget", button)) then
 				return;
@@ -2181,6 +2219,9 @@ end
 
 function Perl_Target_Target_BigWarning_OnLoad()
 	Perl_Target_Target_BigWarning:Hide();
+
+	-- Scripts
+	this:SetScript("OnUpdate", Perl_Target_Target_BigWarning_OnUpdate);
 end
 
 function Perl_Target_Target_BigWarning_Show(message)

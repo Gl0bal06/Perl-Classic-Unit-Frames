@@ -3,6 +3,7 @@
 ---------------
 Perl_Config_Config = {};
 Perl_Config_Profiles = {};
+local Perl_Config_Events = {};	-- event manager
 
 Perl_Config_Global_ArcaneBar_Config = {};
 Perl_Config_Global_CombatDisplay_Config = {};
@@ -42,27 +43,31 @@ function Perl_Config_OnLoad()
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("VARIABLES_LOADED");
 
+	-- Scripts
+	this:SetScript("OnEvent", Perl_Config_OnEvent);
+
 	-- Slash Commands
 	SlashCmdList["PERL_CONFIG"] = Perl_Config_SlashHandler;
 	SLASH_PERL_CONFIG1 = "/perl";
-
-	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Config loaded successfully.");
-	end
 end
 
 
 -------------------
 -- Event Handler --
 -------------------
-function Perl_Config_OnEvent(event)
-	if (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
-		Perl_Config_Initialize();
-		return;
+function Perl_Config_OnEvent()
+	local func = Perl_Config_Events[event];
+	if (func) then
+		func();
 	else
-		return;
+		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Config: Report the following event error to the author: "..event);
 	end
 end
+
+function Perl_Config_Events:VARIABLES_LOADED()
+	Perl_Config_Initialize();
+end
+Perl_Config_Events.PLAYER_ENTERING_WORLD = Perl_Config_Events.VARIABLES_LOADED;
 
 
 -------------------
@@ -101,6 +106,8 @@ function Perl_Config_Initialize()
 
 	-- Set the initialization flag
 	Initialized = 1;
+
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": "..PERL_LOCALIZED_VERSION.." loaded.");
 end
 
 
@@ -806,7 +813,7 @@ function Perl_Config_Global_Save_Settings()
 		};
 	end
 
-	if (Perl_Config_Frame) then
+	if (Perl_Config_Script_Frame) then
 		local vartable = Perl_Config_GetVars();
 		Perl_Config_Global_Config_Config["Global Settings"] = {
 			["Texture"] = vartable["texture"],
@@ -963,6 +970,7 @@ function Perl_Config_Global_Save_Settings()
 			["ThreeDPortrait"] = vartable["threedportrait"],
 			["PortraitCombatText"] = vartable["portraitcombattext"],
 			["CompactMode"] = vartable["compactmode"],
+			["HideName"] = vartable["hidename"],
 		};
 	end
 
@@ -1103,7 +1111,7 @@ function Perl_Config_Global_Load_Settings()
 		end
 	end
 
-	if (Perl_Config_Frame) then
+	if (Perl_Config_Script_Frame) then
 		Perl_Config_UpdateVars(Perl_Config_Global_Config_Config);
 	end
 
@@ -1421,14 +1429,20 @@ end
 -- The Toggle Function --
 -------------------------
 function Perl_Config_Toggle()
-	if (Perl_Config_Frame:IsVisible()) then
-		Perl_Config_Frame:Hide();
-		Perl_Config_Hide_All();
+	local loaded, reason = LoadAddOn("Perl_Config_Options");
+
+	if (loaded) then
+		if (Perl_Config_Frame:IsVisible()) then
+			Perl_Config_Frame:Hide();
+			Perl_Config_Hide_All();
+		else
+			Perl_Config_Frame:ClearAllPoints();
+			Perl_Config_Frame:SetPoint("CENTER", 0, 0);
+			Perl_Config_Frame:Show();
+			Perl_Config_Hide_All();
+		end
 	else
-		Perl_Config_Frame:ClearAllPoints();
-		Perl_Config_Frame:SetPoint("CENTER", 0, 0);
-		Perl_Config_Frame:Show();
-		Perl_Config_Hide_All();
+		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Config: The options menu failed to load because: "..reason);
 	end
 end
 

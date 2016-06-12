@@ -79,9 +79,6 @@
 			<OnLoad>
 				Perl_Party_OnLoad();
 			</OnLoad>
-			<OnEvent>
-				Perl_Party_OnEvent(event);
-			</OnEvent>
 		</Scripts>
 
 		<Frames>
@@ -1344,9 +1341,6 @@
 
 	<Frame name="Perl_Party_Script_Frame" movable="true" parent="UIParent" hidden="false" enableMouse="true">
 		<Scripts>
-			<OnEvent>
-				Perl_Party_Script_OnEvent(event);
-			</OnEvent>
 			<OnLoad>
 				Perl_Party_Script_OnLoad();
 			</OnLoad>
