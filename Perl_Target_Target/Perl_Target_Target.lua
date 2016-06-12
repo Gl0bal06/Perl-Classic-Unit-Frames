@@ -137,6 +137,8 @@ function Perl_Target_Target_Initialize()
 	Perl_Target_Target_myAddOns_Support();
 
 	-- IFrameManager Support
+	Perl_Target_Target_Frame:SetUserPlaced(1);
+	Perl_Target_Target_Target_Frame:SetUserPlaced(1);
 	if (IFrameManager) then
 		Perl_Target_Target_IFrameManager();
 	end
@@ -169,7 +171,6 @@ function Perl_Target_Target_IFrameManager()
 			if (hidepowerbars == 1) then
 				bottom = bottom - 12;
 			end
-			return top, right, bottom, left;
 		else
 			if (showtototbuffs == 1 and showtototdebuffs == 1) then
 				bottom = 88;
@@ -181,7 +182,11 @@ function Perl_Target_Target_IFrameManager()
 			if (hidepowerbars == 1) then
 				bottom = bottom - 12;
 			end
-			return top, right, bottom, left;
+		end
+		if (IFrameManagerLayout) then			-- this isn't in the old version
+			return right, top, bottom, left;	-- new
+		else
+			return top, right, bottom, left;	-- old
 		end
 	end
 	IFrameManager:Register(Perl_Target_Target_Frame, iface);
@@ -2003,7 +2008,12 @@ function Perl_Target_Target_UpdateVars(vartable)
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		IFrameManager:Refresh();
+		if (IFrameManagerLayout) then
+			IFrameManager:Update(Perl_Target_Target_Frame);
+			IFrameManager:Update(Perl_Target_Target_Target_Frame);
+		else
+			IFrameManager:Refresh();
+		end
 	end
 
 	Perl_Target_Target_Config[UnitName("player")] = {

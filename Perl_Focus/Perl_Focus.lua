@@ -263,6 +263,7 @@ function Perl_Focus_Initialize()
 	Perl_Focus_myAddOns_Support();
 
 	-- IFrameManager Support
+	Perl_Focus_Frame:SetUserPlaced(1);
 	if (IFrameManager) then
 		Perl_Focus_IFrameManager();
 	end
@@ -280,7 +281,8 @@ function Perl_Focus_IFrameManager()
 		return "Perl Focus";
 	end
 	function iface:getBorder(frame)
-		local bottom, right, top;
+		local bottom, left, right, top;
+		left = 0;
 		if (showclassframe == 1 or showrareeliteframe == 1) then
 			top = 20;
 		else
@@ -343,7 +345,11 @@ function Perl_Focus_IFrameManager()
 --			end
 --		end
 		bottom = bottom + 38;	-- Offset for the stats frame
-		return top, right, bottom, 0;
+		if (IFrameManagerLayout) then			-- this isn't in the old version
+			return right, top, bottom, left;	-- new
+		else
+			return top, right, bottom, left;	-- old
+		end
 	end
 	IFrameManager:Register(this, iface);
 end
@@ -2119,7 +2125,11 @@ function Perl_Focus_UpdateVars(vartable)
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		IFrameManager:Refresh();
+		if (IFrameManagerLayout) then
+			IFrameManager:Update(Perl_Focus_Frame);
+		else
+			IFrameManager:Refresh();
+		end
 	end
 
 	Perl_Focus_Config[UnitName("player")] = {

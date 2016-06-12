@@ -189,6 +189,9 @@ function Perl_Party_Pet_Initialize()
 	Perl_Party_Pet_myAddOns_Support();
 
 	-- IFrameManager Support
+	for num=1,4 do
+		getglobal("Perl_Party_Pet"..num):SetUserPlaced(1);
+	end
 	if (IFrameManager) then
 		Perl_Party_Pet_IFrameManager();
 	end
@@ -1020,7 +1023,14 @@ function Perl_Party_Pet_UpdateVars(vartable)
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		IFrameManager:Refresh();
+		if (IFrameManagerLayout) then
+			IFrameManager:Update(Perl_Party_Pet1);
+			IFrameManager:Update(Perl_Party_Pet2);
+			IFrameManager:Update(Perl_Party_Pet3);
+			IFrameManager:Update(Perl_Party_Pet4);
+		else
+			IFrameManager:Refresh();
+		end
 	end
 
 	Perl_Party_Pet_Config[UnitName("player")] = {

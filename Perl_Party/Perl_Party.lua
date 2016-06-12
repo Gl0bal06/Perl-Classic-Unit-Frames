@@ -370,6 +370,7 @@ function Perl_Party_Initialize()
 	Perl_Party_myAddOns_Support();
 
 	-- IFrameManager Support
+	Perl_Party_Frame:SetUserPlaced(1);
 	if (IFrameManager) then
 		Perl_Party_IFrameManager();
 	end
@@ -512,7 +513,11 @@ function Perl_Party_IFrameManager()
 			right = right - 20;
 			top = -5;
 		end
-		return top, right, bottom, left;
+		if (IFrameManagerLayout) then			-- this isn't in the old version
+			return right, top, bottom, left;	-- new
+		else
+			return top, right, bottom, left;	-- old
+		end
 	end
 	IFrameManager:Register(Perl_Party_Frame, iface);
 end
@@ -2403,7 +2408,11 @@ function Perl_Party_UpdateVars(vartable)
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		IFrameManager:Refresh();
+		if (IFrameManagerLayout) then
+			IFrameManager:Update(Perl_Party_Frame);
+		else
+			IFrameManager:Refresh();
+		end
 	end
 
 	Perl_Party_Config[UnitName("player")] = {

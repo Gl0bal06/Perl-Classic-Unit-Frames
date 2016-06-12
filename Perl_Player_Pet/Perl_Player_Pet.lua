@@ -243,6 +243,8 @@ function Perl_Player_Pet_Initialize()
 	Perl_Player_Pet_myAddOns_Support();
 
 	-- IFrameManager Support
+	Perl_Player_Pet_Frame:SetUserPlaced(1);
+	Perl_Player_Pet_Target_Frame:SetUserPlaced(1);
 	if (IFrameManager) then
 		Perl_Player_Pet_IFrameManager();
 	end
@@ -285,9 +287,16 @@ function Perl_Player_Pet_IFrameManager()
 			else
 				top = -20;
 			end
-			return top, right, bottom, left;
 		else
-			return 0, 0, 30, 0;
+			top = 0;
+			right = 0;
+			bottom = 30;
+			left = 0;
+		end
+		if (IFrameManagerLayout) then			-- this isn't in the old version
+			return right, top, bottom, left;	-- new
+		else
+			return top, right, bottom, left;	-- old
 		end
 	end
 	IFrameManager:Register(Perl_Player_Pet_Frame, iface);
@@ -1572,7 +1581,12 @@ function Perl_Player_Pet_UpdateVars(vartable)
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		IFrameManager:Refresh();
+		if (IFrameManagerLayout) then
+			IFrameManager:Update(Perl_Player_Pet_Frame);
+			IFrameManager:Update(Perl_Player_Pet_Target_Frame);
+		else
+			IFrameManager:Refresh();
+		end
 	end
 
 	Perl_Player_Pet_Config[UnitName("player")] = {

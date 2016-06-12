@@ -289,6 +289,7 @@ function Perl_Target_Initialize()
 	Perl_Target_myAddOns_Support();
 
 	-- IFrameManager Support
+	Perl_Target_Frame:SetUserPlaced(1);
 	if (IFrameManager) then
 		Perl_Target_IFrameManager();
 	end
@@ -306,7 +307,8 @@ function Perl_Target_IFrameManager()
 		return "Perl Target";
 	end
 	function iface:getBorder(frame)
-		local bottom, right, top;
+		local bottom, left, right, top;
+		left = 0;
 		if (showclassframe == 1 or showrareeliteframe == 1) then
 			top = 20;
 		else
@@ -371,8 +373,12 @@ function Perl_Target_IFrameManager()
 --				top = top + 48;
 --			end
 --		end
-		bottom = bottom + 38;	-- Offset for the stats frame
-		return top, right, bottom, 0;
+		bottom = bottom + 38;				-- Offset for the stats frame
+		if (IFrameManagerLayout) then			-- this isn't in the old version
+			return right, top, bottom, left;	-- new
+		else
+			return top, right, bottom, left;	-- old
+		end
 	end
 	IFrameManager:Register(this, iface);
 end
@@ -2358,7 +2364,11 @@ function Perl_Target_UpdateVars(vartable)
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		IFrameManager:Refresh();
+		if (IFrameManagerLayout) then
+			IFrameManager:Update(Perl_Target_Frame);
+		else
+			IFrameManager:Refresh();
+		end
 	end
 
 	Perl_Target_Config[UnitName("player")] = {

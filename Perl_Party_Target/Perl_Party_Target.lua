@@ -156,6 +156,9 @@ function Perl_Party_Target_Initialize()
 	Perl_Party_Target_myAddOns_Support();
 
 	-- IFrameManager Support
+	for num=1,5 do
+		getglobal("Perl_Party_Target"..num):SetUserPlaced(1);
+	end
 	if (IFrameManager) then
 		Perl_Party_Target_IFrameManager();
 	end
@@ -186,7 +189,11 @@ function Perl_Party_Target_IFrameManager()
 		if (hidepowerbars == 1) then
 			bottom = bottom - 12;
 		end
-		return top, right, bottom, left;
+		if (IFrameManagerLayout) then			-- this isn't in the old version
+			return right, top, bottom, left;	-- new
+		else
+			return top, right, bottom, left;	-- old
+		end
 	end
 	IFrameManager:Register(Perl_Party_Target1, iface);
 	IFrameManager:Register(Perl_Party_Target2, iface);
@@ -1158,7 +1165,15 @@ function Perl_Party_Target_UpdateVars(vartable)
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		IFrameManager:Refresh();
+		if (IFrameManagerLayout) then
+			IFrameManager:Update(Perl_Party_Target1);
+			IFrameManager:Update(Perl_Party_Target2);
+			IFrameManager:Update(Perl_Party_Target3);
+			IFrameManager:Update(Perl_Party_Target4);
+			IFrameManager:Update(Perl_Party_Target5);
+		else
+			IFrameManager:Refresh();
+		end
 	end
 
 	Perl_Party_Target_Config[UnitName("player")] = {

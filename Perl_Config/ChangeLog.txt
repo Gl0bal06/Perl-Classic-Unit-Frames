@@ -1,3 +1,6 @@
+2.14 - January 9, 2008
+ - All: Added support for the new IFrameManager
+
 2.13 - November 25, 2007
  - Target: Fixed a source of action taint
 

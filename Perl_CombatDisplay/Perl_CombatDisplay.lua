@@ -347,6 +347,8 @@ function Perl_CombatDisplay_Initialize()
 	Perl_CombatDisplay_myAddOns_Support();
 
 	-- IFrameManager Support
+	Perl_CombatDisplay_Frame:SetUserPlaced(1);
+	Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
 	if (IFrameManager) then
 		Perl_CombatDisplay_IFrameManager();
 	end
@@ -1590,7 +1592,12 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		IFrameManager:Refresh();
+		if (IFrameManagerLayout) then
+			IFrameManager:Update(Perl_CombatDisplay_Frame);
+			IFrameManager:Update(Perl_CombatDisplay_Target_Frame);
+		else
+			IFrameManager:Refresh();
+		end
 	end
 
 	Perl_CombatDisplay_Config[UnitName("player")] = {
