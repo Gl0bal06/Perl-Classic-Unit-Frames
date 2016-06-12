@@ -50,6 +50,7 @@ if (GetLocale() == "deDE") then
 	PERL_LOCALIZED_PLAYER_NO_REPUTATION = "Es wurde kein Ruf ausgew\195\164hlt.";
 	PERL_LOCALIZED_PLAYER_SELECT_REPUTATION = "W\195\164hle einen Ruf";
 	PERL_LOCALIZED_PLAYER_UNRANKED = "Du bist Unranked.";
+	PERL_LOCALIZED_PLAYER_STEALTH = "Verstohlenheit";
 
 	-- Perl Target Strings
 	PERL_LOCALIZED_TARGET_BOSS = "Boss";

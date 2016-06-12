@@ -1,4 +1,7 @@
-2.09 Beta 2 - August 7, 2007
+2.09 Beta 3 - August 20, 2007
+ - Config: Updated German translations (Thanks Humpfldump)
+
+2.09 Beta 2 - August 20, 2007
  - CombatDisplay: Combo points correctly update when changing targets
 
 2.09 Beta 1 - August 7, 2007
