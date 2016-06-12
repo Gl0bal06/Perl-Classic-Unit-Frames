@@ -1480,6 +1480,9 @@ function Perl_Player_Set_Scale_Actual()
 		Perl_Config_Queue_Add(Perl_Player_Set_Scale_Actual);
 	else
 		Perl_Player_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
+		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+			Perl_ArcaneBar_Set_Scale_Actual(scale, nil, nil);
+		end
 	end
 end
 

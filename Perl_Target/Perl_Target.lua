@@ -1815,6 +1815,9 @@ function Perl_Target_Set_Scale_Actual()
 	else
 		Perl_Target_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
 		Perl_Target_Set_BuffDebuff_Scale(buffdebuffscale*100);		-- maintain the buff/debuff scale
+		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+			Perl_ArcaneBar_Set_Scale_Actual(nil, scale, nil);
+		end
 	end
 end
 
