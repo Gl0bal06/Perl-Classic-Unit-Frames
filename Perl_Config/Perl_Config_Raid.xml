@@ -465,7 +465,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton15" inherits="UICheckButtonTemplate" id="14">
+			<CheckButton name="$parent_CheckButton15" inherits="UICheckButtonTemplate" id="15">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>

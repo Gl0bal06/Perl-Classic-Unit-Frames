@@ -257,18 +257,12 @@ end
 function Perl_Player_Pet_Update_Mana_Bar()
 	local petpower = UnitPowerType("pet");
 	-- Set mana bar color
-	if (petpower == 1) then
-		Perl_Player_Pet_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+	if (petpower == 0) then
+		Perl_Player_Pet_ManaBar:SetStatusBarColor(0, 0, 1, 1);
+		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
 	elseif (petpower == 2) then
 		Perl_Player_Pet_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-	elseif (petpower == 3) then
-		Perl_Player_Pet_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-	else
-		Perl_Player_Pet_ManaBar:SetStatusBarColor(0, 0, 1, 1);
-		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
 	end
 end
 
@@ -897,8 +891,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "Version 0.57",
-			releaseDate = "April 14, 2006",
+			version = "Version 0.58",
+			releaseDate = "April 15, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

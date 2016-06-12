@@ -532,18 +532,12 @@ end
 function Perl_CombatDisplay_Update_PetManaBarColor()
 	local petpower = UnitPowerType("pet");
 	-- Set mana bar color
-	if (petpower == 1) then
-		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(1, 0, 0, 1);
-		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-	elseif (petpower == 2) then
-		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-	elseif (petpower == 3) then
-		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(1, 1, 0, 1);
-		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-	else
+	if (petpower == 0) then			-- mana
 		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
+	elseif (petpower == 2) then		-- focus
+		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(1, 0.5, 0, 1);
+		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 	end
 end
 
@@ -592,7 +586,7 @@ function Perl_CombatDisplay_Update_PetMana()
 	Perl_CombatDisplay_PetManaBar:SetMinMaxValues(0, petmanamax);
 	Perl_CombatDisplay_PetManaBar:SetValue(petmana);
 
-	if (petpower == 1 or petpower == 2) then
+	if (petpower == 2) then
 		Perl_CombatDisplay_PetManaBarText:SetText(petmana);
 	else
 		Perl_CombatDisplay_PetManaBarText:SetText(petmana.."/"..petmanamax);
@@ -744,7 +738,7 @@ function Perl_CombatDisplay_Target_UpdateBars()
 		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
 		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
-	elseif (targetpowertype == 1) then	-- focus
+	elseif (targetpowertype == 2) then	-- focus
 		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 		Perl_CombatDisplay_Target_ManaBar:Show();
@@ -1153,8 +1147,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.57",
-			releaseDate = "April 14, 2006",
+			version = "Version 0.58",
+			releaseDate = "April 15, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -1,3 +1,9 @@
+0.58 - April 15, 2006
+ - CombatDisplay: Will now correctly color focus for targeted pets
+ - CombatDisplay: Removed some checks for pet power text formatting
+ - CombatDisplay/Party/Pet/Player: Removed some checks for power bar coloring
+ - Config: Fixed a minor issue in the XML on the Raid page
+
 0.57 - April 14, 2006
  - Config: Updated options available for Perl_Raid
  - Config: Added some sanity checks to the Load Global Settings feature

@@ -272,27 +272,27 @@ function Perl_Player_Update_Health()
 	end
 
 	if (compactmode == 0) then
-		if (healermode == 1) then
+		if (healermode == 1) then		-- compact mode off and healer mode on
 			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
 			if (mouseoverhealthflag == 0) then
 				Perl_Player_HealthBarTextPercent:SetText();
 			else
 				Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 			end
-		else
+		else					-- compact mode off and healer mode off
 			Perl_Player_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
 			Perl_Player_HealthBarTextPercent:SetText(playerhealthpercent .. "%");
 		end
 		Perl_Player_HealthBarTextCompactPercent:SetText();							-- Hide the compact mode percent text in full mode
 	else
-		if (healermode == 1) then
+		if (healermode == 1) then		-- compact mode on and healer mode on
 			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
 			if (mouseoverhealthflag == 0) then
 				Perl_Player_HealthBarTextPercent:SetText();
 			else
 				Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 			end
-		else
+		else					-- compact mode on and healer mode off
 			Perl_Player_HealthBarText:SetText();
 			Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 		end
@@ -485,18 +485,15 @@ function Perl_Player_Update_Mana_Bar()
 	local playerpower = UnitPowerType("player");
 
 	-- Set mana bar color
-	if (playerpower == 1) then
+	if (playerpower == 0) then
+		Perl_Player_ManaBar:SetStatusBarColor(0, 0, 1, 1);
+		Perl_Player_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
+	elseif (playerpower == 1) then
 		Perl_Player_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-	elseif (playerpower == 2) then
-		Perl_Player_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-		Perl_Player_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 	elseif (playerpower == 3) then
 		Perl_Player_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-	else
-		Perl_Player_ManaBar:SetStatusBarColor(0, 0, 1, 1);
-		Perl_Player_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
 	end
 end
 
@@ -1378,8 +1375,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.57",
-			releaseDate = "April 14, 2006",
+			version = "Version 0.58",
+			releaseDate = "April 15, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
