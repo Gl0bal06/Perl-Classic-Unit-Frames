@@ -1,13 +1,16 @@
 ---------------
 -- Variables --
 ---------------
+PCUF_SHOW_DEBUG_EVENTS = 0;	-- event hijack monitor
 Perl_Config_Config = {};
 Perl_Config_Profiles = {};
 local Perl_Config_Events = {};	-- event manager
+local Perl_Config_Queue = {};	-- queue manager
 
 Perl_Config_Global_ArcaneBar_Config = {};
 Perl_Config_Global_CombatDisplay_Config = {};
 Perl_Config_Global_Config_Config = {};
+Perl_Config_Global_Focus_Config = {};
 Perl_Config_Global_Party_Config = {};
 Perl_Config_Global_Party_Pet_Config = {};
 Perl_Config_Global_Party_Target_Config = {};
@@ -33,6 +36,7 @@ PCUF_INVERTBARVALUES = 0;		-- bars deplete when low
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
 local currentprofilenumber = 0;		-- easy way to make our profile system work
+local eventqueuetotal = 0;		-- variable to check how many queued events we have
 
 
 ----------------------
@@ -41,7 +45,12 @@ local currentprofilenumber = 0;		-- easy way to make our profile system work
 function Perl_Config_OnLoad()
 	-- Events
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_REGEN_DISABLED");
+	this:RegisterEvent("PLAYER_REGEN_ENABLED");
 	this:RegisterEvent("VARIABLES_LOADED");
+
+	this:RegisterEvent("ADDON_ACTION_BLOCKED");
+	this:RegisterEvent("ADDON_ACTION_FORBIDDEN");
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Config_OnEvent);
@@ -59,8 +68,26 @@ function Perl_Config_OnEvent()
 	local func = Perl_Config_Events[event];
 	if (func) then
 		func();
---	else
---		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Config: Report the following event error to the author: "..event);
+	else
+		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
+			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Config: Report the following event error to the author: "..event);
+		end
+	end
+end
+
+function Perl_Config_Events:PLAYER_REGEN_DISABLED()
+	if (Perl_Config_Frame) then
+		if (Perl_Config_Frame:IsVisible()) then
+			Perl_Config_Frame:Hide();
+			Perl_Config_Hide_All();
+			DEFAULT_CHAT_FRAME:AddMessage(PERL_LOCALIZED_CONFIG_OPTIONS_UNAVAILABLE);
+		end
+	end
+end
+
+function Perl_Config_Events:PLAYER_REGEN_ENABLED()
+	if (eventqueuetotal ~= 0) then
+		Perl_Config_Queue_Process();
 	end
 end
 
@@ -68,6 +95,13 @@ function Perl_Config_Events:VARIABLES_LOADED()
 	Perl_Config_Initialize();
 end
 Perl_Config_Events.PLAYER_ENTERING_WORLD = Perl_Config_Events.VARIABLES_LOADED;
+
+function Perl_Config_Events:ADDON_ACTION_BLOCKED()
+	if (PCUF_SHOW_DEBUG_EVENTS == 1) then
+		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic: Violation in : "..arg1.."    Function Name : "..arg2);
+	end
+end
+Perl_Config_Events.ADDON_ACTION_FORBIDDEN = Perl_Config_Events.ADDON_ACTION_BLOCKED;
 
 
 -------------------
@@ -102,12 +136,34 @@ function Perl_Config_Initialize()
 	Perl_Config_Profile_Work();
 
 	-- MyAddOns Support
-	Perl_Config_myAddOns_Support();
+--	Perl_Config_myAddOns_Support();
 
 	-- Set the initialization flag
 	Initialized = 1;
 
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00"..PERL_LOCALIZED_NAME..": "..PERL_LOCALIZED_VERSION.." loaded.");
+end
+
+
+---------------------
+-- Queue Functions --
+---------------------
+function Perl_Config_Queue_Add(incomingFunction)
+	if (incomingFunction ~= nil) then
+		table.insert(Perl_Config_Queue, incomingFunction);	-- Add our function to the queue
+		eventqueuetotal = eventqueuetotal + 1;			-- Increment our variable by one
+	end
+end
+
+function Perl_Config_Queue_Process()
+	for i=1, table.getn(Perl_Config_Queue), 1 do			-- Loop through the queue and call all the functions we need to update
+		local func = Perl_Config_Queue[i];
+		if (func) then
+			func();
+		end
+	end
+	Perl_Config_Queue = {};						-- Empty the queue
+	eventqueuetotal = 0;						-- Reset our variable
 end
 
 
@@ -163,6 +219,10 @@ function Perl_Config_Profile_Load()
 
 		if (Perl_CombatDisplay_Frame) then
 			Perl_CombatDisplay_GetVars(name, 1);
+		end
+
+		if (Perl_Focus_Frame) then
+			Perl_Focus_GetVars(name, 1);
 		end
 
 		if (Perl_Party_Frame) then
@@ -275,6 +335,21 @@ function Perl_Config_Set_Texture(newvalue)
 			Perl_CombatDisplay_PetManaBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
 			Perl_CombatDisplay_Target_HealthBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
 			Perl_CombatDisplay_Target_ManaBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+		end
+	end
+
+	if (Perl_Focus_Frame) then
+		Perl_Focus_HealthBarTex:SetTexture(texturename);
+		Perl_Focus_HealthBarFadeBarTex:SetTexture(texturename);
+		Perl_Focus_ManaBarTex:SetTexture(texturename);
+		Perl_Focus_ManaBarFadeBarTex:SetTexture(texturename);
+		Perl_Focus_NameFrame_CPMeterTex:SetTexture(texturename);
+		if (texturedbarbackground == 1) then
+			Perl_Focus_HealthBarBGTex:SetTexture(texturename);
+			Perl_Focus_ManaBarBGTex:SetTexture(texturename);
+		else
+			Perl_Focus_HealthBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_Focus_ManaBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
 		end
 	end
 
@@ -433,6 +508,17 @@ function Perl_Config_Set_Background(newvalue)
 			Perl_CombatDisplay_Initialize_Frame_Color();
 		end
 
+		if (Perl_Focus_Frame) then
+			Perl_Focus_CivilianFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_ClassNameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_LevelFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_NameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_PortraitFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_RareEliteFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_StatsFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_Initialize_Frame_Color();
+		end
+
 		if (Perl_Party_Frame) then
 			for partynum=1,4 do
 				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
@@ -509,6 +595,17 @@ function Perl_Config_Set_Background(newvalue)
 			Perl_CombatDisplay_ManaFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_CombatDisplay_Target_ManaFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_CombatDisplay_Initialize_Frame_Color();
+		end
+
+		if (Perl_Focus_Frame) then
+			Perl_Focus_CivilianFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_White", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_ClassNameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_LevelFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_NameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_PortraitFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_RareEliteFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_StatsFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Focus_Initialize_Frame_Color();
 		end
 
 		if (Perl_Party_Frame) then
@@ -592,6 +689,10 @@ function Perl_Config_Set_Transparency(newvalue)
 
 	if (Perl_CombatDisplay_Frame) then
 		Perl_CombatDisplay_Set_Transparency(newvalue);
+	end
+
+	if (Perl_Focus_Frame) then
+		Perl_Focus_Set_Transparency(newvalue);
 	end
 
 	if (Perl_Party_Frame) then
@@ -683,6 +784,12 @@ function Perl_Config_Set_Invert_Bar_Values(newvalue)
 		end
 	end
 
+	if (Perl_Focus_Frame) then
+		if (UnitExists("focus")) then
+			Perl_Focus_Update_Once();
+		end
+	end
+
 	if (Perl_Party_Frame) then
 		Perl_Party_Update_Health_Mana();
 	end
@@ -704,13 +811,19 @@ function Perl_Config_Set_Invert_Bar_Values(newvalue)
 	end
 
 	if (Perl_Target_Frame) then
-		Perl_Target_Update_Once();
+		if (UnitExists("target")) then
+			Perl_Target_Update_Once();
+		end
 	end
 end
 
 function Perl_Config_Lock_Unlock(value)
 	if (Perl_CombatDisplay_Frame) then
 		Perl_CombatDisplay_Set_Lock(value);
+	end
+
+	if (Perl_Focus_Frame) then
+		Perl_Focus_Set_Lock(value);
 	end
 
 	if (Perl_Party_Frame) then
@@ -758,6 +871,11 @@ function Perl_Config_Frame_Reset_Positions()
 		Perl_CombatDisplay_Target_Frame:ClearAllPoints();
 		Perl_CombatDisplay_Frame:SetPoint("BOTTOM", 0, 300);
 		Perl_CombatDisplay_Target_Frame:SetPoint("BOTTOMLEFT", Perl_CombatDisplay_Frame, "TOPLEFT", 0, 5);
+	end
+
+	if (Perl_Focus_Frame) then
+		Perl_Focus_Frame:SetUserPlaced(1);
+--		Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 263, -43);
 	end
 
 	if (Perl_Party_Frame) then
@@ -848,6 +966,7 @@ function Perl_Config_Global_Save_Settings()
 			["RightClickMenu"] = vartable["rightclickmenu"],
 			["FiveSecSupport"] = vartable["fivesecsupport"],
 			["DisplayPercents"] = vartable["displaypercents"],
+			["ShowCP"] = vartable["showcp"],
 		};
 	end
 
@@ -863,6 +982,42 @@ function Perl_Config_Global_Save_Settings()
 			["TexturedBarBackround"] = vartable["texturedbarbackground"],
 			["PCUF_FadeBars"] = vartable["PCUF_FadeBars"],
 			["PCUF_InvertBarValues"] = vartable["PCUF_InvertBarValues"],
+		};
+	end
+
+	if (Perl_Focus_Frame) then
+		local vartable = Perl_Focus_GetVars();
+		Perl_Config_Global_Focus_Config["Global Settings"] = {
+			["Locked"] = vartable["locked"],
+			["ClassIcon"] = vartable["showclassicon"],
+			["ClassFrame"] = vartable["showclassframe"],
+			["PvPIcon"] = vartable["showpvpicon"],
+			["Buffs"] = vartable["numbuffsshown"],
+			["Debuffs"] = vartable["numdebuffsshown"],
+			["MobHealthSupport"] = vartable["mobhealthsupport"],
+			["Scale"] = vartable["scale"],
+			["ShowPvPRank"] = vartable["showpvprank"],
+			["Transparency"] = vartable["transparency"],
+			["BuffDebuffScale"] = vartable["buffdebuffscale"],
+			["XPosition"] = floor(Perl_Focus_Frame:GetLeft() + 0.5),
+			["YPosition"] = floor(Perl_Focus_Frame:GetTop() - (UIParent:GetTop() / Perl_Focus_Frame:GetScale()) + 0.5),
+			["ShowPortrait"] = vartable["showportrait"],
+			["ThreeDPortrait"] = vartable["threedportrait"],
+			["PortraitCombatText"] = vartable["portraitcombattext"],
+			["ShowRareEliteFrame"] = vartable["showrareeliteframe"],
+			["NameFrameComboPoints"] = vartable["nameframecombopoints"],
+			["ComboFrameDebuffs"] = vartable["comboframedebuffs"],
+			["FrameStyle"] = vartable["framestyle"],
+			["CompactMode"] = vartable["compactmode"],
+			["CompactPercent"] = vartable["compactpercent"],
+			["HideBuffBackground"] = vartable["hidebuffbackground"],
+			["ShortBars"] = vartable["shortbars"],
+			["HealerMode"] = vartable["healermode"],
+			["SoundTargetChange"] = vartable["soundtargetchange"],
+			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
+			["ClassColoredNames"] = vartable["classcolorednames"],
+			["ShowManaDeficit"] = vartable["showmanadeficit"],
+			["InvertBuffs"] = vartable["invertbuffs"],
 		};
 	end
 
@@ -1151,6 +1306,17 @@ function Perl_Config_Global_Load_Settings()
 
 	if (Perl_Config_Script_Frame) then
 		Perl_Config_UpdateVars(Perl_Config_Global_Config_Config);
+	end
+
+	if (Perl_Focus_Frame) then
+		Perl_Focus_UpdateVars(Perl_Config_Global_Focus_Config);
+
+		if (Perl_Config_Global_Focus_Config["Global Settings"] ~= nil) then
+			if ((Perl_Config_Global_Focus_Config["Global Settings"]["XPosition"] ~= nil) and (Perl_Config_Global_Focus_Config["Global Settings"]["YPosition"] ~= nil)) then
+				Perl_Focus_Frame:SetUserPlaced(1);
+				Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Focus_Config["Global Settings"]["XPosition"], Perl_Config_Global_Focus_Config["Global Settings"]["YPosition"]);
+			end
+		end
 	end
 
 	if (Perl_Party_Frame) then
@@ -1467,20 +1633,24 @@ end
 -- The Toggle Function --
 -------------------------
 function Perl_Config_Toggle()
-	local loaded, reason = LoadAddOn("Perl_Config_Options");
-
-	if (loaded) then
-		if (Perl_Config_Frame:IsVisible()) then
-			Perl_Config_Frame:Hide();
-			Perl_Config_Hide_All();
-		else
-			Perl_Config_Frame:ClearAllPoints();
-			Perl_Config_Frame:SetPoint("CENTER", 0, 0);
-			Perl_Config_Frame:Show();
-			Perl_Config_Hide_All();
-		end
+	if (InCombatLockdown()) then
+		DEFAULT_CHAT_FRAME:AddMessage(PERL_LOCALIZED_CONFIG_OPTIONS_UNAVAILABLE);
 	else
-		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Config: The options menu failed to load because: "..reason);
+		local loaded, reason = LoadAddOn("Perl_Config_Options");
+
+		if (loaded) then
+			if (Perl_Config_Frame:IsVisible()) then
+				Perl_Config_Frame:Hide();
+				Perl_Config_Hide_All();
+			else
+				Perl_Config_Frame:ClearAllPoints();
+				Perl_Config_Frame:SetPoint("CENTER", 0, 0);
+				Perl_Config_Frame:Show();
+				Perl_Config_Hide_All();
+			end
+		else
+			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Config: The options menu failed to load because: "..reason);
+		end
 	end
 end
 
@@ -1488,6 +1658,7 @@ function Perl_Config_Hide_All()
 	Perl_Config_All_Frame:Hide();
 	Perl_Config_ArcaneBar_Frame:Hide();
 	Perl_Config_CombatDisplay_Frame:Hide();
+	Perl_Config_Focus_Frame:Hide();
 	Perl_Config_NotInstalled_Frame:Hide();
 	Perl_Config_Party_Frame:Hide();
 	Perl_Config_Party_Pet_Frame:Hide();
@@ -1526,6 +1697,12 @@ function Perl_Config_Button_OnClick(button)
 
 		if (Perl_CombatDisplay_Frame) then
 			if (Perl_CombatDisplay_Config[UnitName("player")]["Locked"] == 0) then
+				unlockedflag = 1;
+			end
+		end
+
+		if (Perl_Focus_Frame) then
+			if (Perl_Focus_Config[UnitName("player")]["Locked"] == 0) then
 				unlockedflag = 1;
 			end
 		end
@@ -1606,6 +1783,20 @@ function Perl_Config_Button_Tooltip()
 		else
 			Perl_CombatDisplay_UpdateVars();
 			GameTooltip:AddLine("Perl_CombatDisplay could not verify its status.");
+		end
+	end
+
+	if (Perl_Focus_Frame) then
+		if (type(Perl_Focus_Config[UnitName("player")]) == "table") then
+			if (Perl_Focus_Config[UnitName("player")]["Locked"] == 0) then
+				GameTooltip:AddLine("Perl_Focus is unlocked");
+				unlockedflag = 1;
+			else
+				GameTooltip:AddLine("Perl_Focus is locked");
+			end
+		else
+			Perl_Focus_UpdateVars();
+			GameTooltip:AddLine("Perl_Focus could not verify its status.");
 		end
 	end
 
@@ -1746,16 +1937,11 @@ end
 --------------------------------------
 -- Disable Blizzard Frame Functions --
 --------------------------------------
-function Perl_clearBlizzardOnEventHandler()	-- Changed function names as to not intrude on those using the mod for other purposes
-end
-
-function Perl_clearBlizzardOnShowHandler()
-	this:Hide();
-end
-
 function Perl_clearBlizzardFrameDisable(frameObject)
-	frameObject:SetScript("OnEvent", Perl_clearBlizzardOnEventHandler);
-	frameObject:SetScript("OnShow", Perl_clearBlizzardOnShowHandler);
+	frameObject:UnregisterAllEvents();
+	frameObject:SetScript("OnEvent", nil);
+	frameObject:SetScript("OnShow", nil);
+	frameObject:SetScript("OnUpdate", nil);
 	frameObject:Hide();
 end
 
@@ -1763,21 +1949,21 @@ end
 ----------------------
 -- myAddOns Support --
 ----------------------
-function Perl_Config_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if (myAddOnsFrame_Register) then
-		local Perl_Config_myAddOns_Details = {
-			name = "Perl_Config",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS,
-			optionsframe = "Perl_Config_Frame",
-		};
-		Perl_Config_myAddOns_Help = {};
-		Perl_Config_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_Config_myAddOns_Details, Perl_Config_myAddOns_Help);
-	end
-end
+--function Perl_Config_myAddOns_Support()
+--	-- Register the addon in myAddOns
+--	if (myAddOnsFrame_Register) then
+--		local Perl_Config_myAddOns_Details = {
+--			name = "Perl_Config",
+--			version = PERL_LOCALIZED_VERSION,
+--			releaseDate = PERL_LOCALIZED_DATE,
+--			author = "Global",
+--			email = "global@g-ball.com",
+--			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+--			category = MYADDONS_CATEGORY_OTHERS,
+--			optionsframe = "Perl_Config_Frame",
+--		};
+--		Perl_Config_myAddOns_Help = {};
+--		Perl_Config_myAddOns_Help[1] = "/perl";
+--		myAddOnsFrame_Register(Perl_Config_myAddOns_Details, Perl_Config_myAddOns_Help);
+--	end
+--end

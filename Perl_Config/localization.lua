@@ -1,7 +1,7 @@
 --if (GetLocale() == "enUS") then	-- Bypassing this allows us to at least give other languages English since they aren't fully translated
 	-- Generic Globals that do NOT need localizing
-	PERL_LOCALIZED_VERSION_NUMBER = "0.81d";
-	PERL_LOCALIZED_DATE = "November 3, 2006";
+	PERL_LOCALIZED_VERSION_NUMBER = "2.01";
+	PERL_LOCALIZED_DATE = "December 5, 2006";
 	PERL_LOCALIZED_BUFF_NONE = "none";
 
 	-- Title and Version
@@ -43,6 +43,7 @@
 	-- Perl Config Strings
 	PERL_LOCALIZED_CONFIG_MINIMAP_LOCK = "Right clicking will LOCK all frames";
 	PERL_LOCALIZED_CONFIG_MINIMAP_UNLOCK = "Right clicking will UNLOCK all frames";
+	PERL_LOCALIZED_CONFIG_OPTIONS_UNAVAILABLE = PERL_LOCALIZED_NAME..": Options cannot be changed in combat.";
 
 	-- Perl Player Strings
 	PERL_LOCALIZED_PLAYER_GROUP = "Group ";
@@ -68,6 +69,7 @@
 	PERL_LOCALIZED_TARGET_FIRE_VULNERABILITY = "Fire Vulnerability";
 	PERL_LOCALIZED_TARGET_SHADOW_VULNERABILITY = "Shadow Vulnerability";
 	PERL_LOCALIZED_TARGET_SUNDER_ARMOR = "Sunder Armor";
+	PERL_LOCALIZED_TARGET_NA = "N/A";
 
 	-- Perl Target Target Strings
 	PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU = " has changed targets to you!";

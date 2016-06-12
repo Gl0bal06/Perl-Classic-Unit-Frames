@@ -19,7 +19,7 @@ local showportrait = 0;			-- portrait is hidden by default
 local threedportrait = 0;		-- 3d portraits are off by default
 local portraitcombattext = 0;		-- Combat text is disabled by default on the portrait frame
 local compactmode = 0;			-- compact mode is disabled by default
-local hidename = 1;			-- name and level frame is enabled by default
+local hidename = 0;			-- name and level frame is enabled by default
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -75,6 +75,11 @@ function Perl_Player_Pet_OnLoad()
 	Perl_Player_Pet_PortraitTextFrame:SetFrameLevel(Perl_Player_Pet_PortraitFrame:GetFrameLevel() + 1);
 	Perl_Player_Pet_HealthBarFadeBar:SetFrameLevel(Perl_Player_Pet_HealthBar:GetFrameLevel() - 1);
 	Perl_Player_Pet_ManaBarFadeBar:SetFrameLevel(Perl_Player_Pet_ManaBar:GetFrameLevel() - 1);
+
+	-- WoW 2.0 Secure API Stuff
+	this:SetAttribute("unit", "pet");
+	RegisterUnitWatch(this);
+	--hooksecurefunc("Perl_Target_OnShow", Perl_Target_Update_Once);
 end
 
 
@@ -85,8 +90,10 @@ function Perl_Player_Pet_OnEvent()
 	local func = Perl_Player_Pet_Events[event];
 	if (func) then
 		func();
---	else
---		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Player Pet: Report the following event error to the author: "..event);
+	else
+		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
+			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Player Pet: Report the following event error to the author: "..event);
+		end
 	end
 end
 
@@ -202,49 +209,48 @@ function Perl_Player_Pet_Initialize()
 	Perl_Player_Pet_Initialize_Frame_Color();
 	Perl_Player_Pet_Reset_Buffs();			-- Set correct buff sizes
 	Perl_Player_Pet_Set_Window_Layout();		-- Warlocks don't need the happiness frame
-	Perl_Player_Pet_Frame:Hide();
 
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(PetFrame);
 
 	-- MyAddOns Support
-	Perl_Player_Pet_myAddOns_Support();
+--	Perl_Player_Pet_myAddOns_Support();
 
 	-- IFrameManager Support
-	if (IFrameManager) then
-		Perl_Player_Pet_IFrameManager();
-	end
+--	if (IFrameManager) then
+--		Perl_Player_Pet_IFrameManager();
+--	end
 
 	Initialized = 1;
 end
 
-function Perl_Player_Pet_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		return "Perl Player Pet";
-	end
-	function iface:getBorder(frame)
-		local bottom, left, right;
-		if (showxp == 0) then
-			bottom = 30;
-		else
-			bottom = 43;
-		end
-		if (showportrait == 0) then
-			left = 0;
-		else
-			left = 48;
-		end
-		if (compactmode == 0) then
-			right = 0;
-		else
-			right = -35;
-		end
-		--return top, right, bottom, left;
-		return 0, right, bottom, left;
-	end
-	IFrameManager:Register(this, iface);
-end
+--function Perl_Player_Pet_IFrameManager()
+--	local iface = IFrameManager:Interface();
+--	function iface:getName(frame)
+--		return "Perl Player Pet";
+--	end
+--	function iface:getBorder(frame)
+--		local bottom, left, right;
+--		if (showxp == 0) then
+--			bottom = 30;
+--		else
+--			bottom = 43;
+--		end
+--		if (showportrait == 0) then
+--			left = 0;
+--		else
+--			left = 48;
+--		end
+--		if (compactmode == 0) then
+--			right = 0;
+--		else
+--			right = -35;
+--		end
+--		--return top, right, bottom, left;
+--		return 0, right, bottom, left;
+--	end
+--	IFrameManager:Register(this, iface);
+--end
 
 function Perl_Player_Pet_Initialize_Frame_Color()
 	Perl_Player_Pet_StatsFrame:SetBackdropColor(0, 0, 0, 1);
@@ -269,7 +275,7 @@ end
 -- The Update Function --
 -------------------------
 function Perl_Player_Pet_Update_Once()
-	if (UnitExists("pet")) then
+	if (UnitExists(this:GetAttribute("unit"))) then				-- Show the frame if applicable
 		Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));		-- Set name
 		Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
 		Perl_Player_Pet_Update_Portrait();				-- Set the pet's portrait
@@ -281,9 +287,6 @@ function Perl_Player_Pet_Update_Once()
 		Perl_Player_Pet_Buff_UpdateAll();				-- Set buff frame
 		Perl_Player_Pet_Portrait_Combat_Text();				-- Set the combat text frame
 		Perl_Player_Pet_ShowXP();					-- Are we showing the xp bar?
-		Perl_Player_Pet_Frame:Show();					-- Display the pet frame
-	else
-		Perl_Player_Pet_Frame:Hide();
 	end
 end
 
@@ -411,25 +414,29 @@ function Perl_Player_PetFrame_SetHappiness()
 end
 
 function Perl_Player_Pet_ShowXP()
-	if (showxp == 0) then
-		Perl_Player_Pet_XPBar:Hide();
-		Perl_Player_Pet_XPBarBG:Hide();
-		Perl_Player_Pet_XPBarText:SetText();
-		Perl_Player_Pet_StatsFrame:SetHeight(34);
-		Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(34);
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_Player_Pet_ShowXP);
 	else
-		if (UnitLevel("pet") == UnitLevel("player")) then
+		if (showxp == 0) then
 			Perl_Player_Pet_XPBar:Hide();
 			Perl_Player_Pet_XPBarBG:Hide();
 			Perl_Player_Pet_XPBarText:SetText();
 			Perl_Player_Pet_StatsFrame:SetHeight(34);
 			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(34);
 		else
-			Perl_Player_Pet_XPBar:Show();
-			Perl_Player_Pet_XPBarBG:Show();
-			Perl_Player_Pet_StatsFrame:SetHeight(47);
-			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(47);
-			Perl_Player_Pet_Update_Experience();
+			if (UnitLevel("pet") == UnitLevel("player")) then
+				Perl_Player_Pet_XPBar:Hide();
+				Perl_Player_Pet_XPBarBG:Hide();
+				Perl_Player_Pet_XPBarText:SetText();
+				Perl_Player_Pet_StatsFrame:SetHeight(34);
+				Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(34);
+			else
+				Perl_Player_Pet_XPBar:Show();
+				Perl_Player_Pet_XPBarBG:Show();
+				Perl_Player_Pet_StatsFrame:SetHeight(47);
+				Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(47);
+				Perl_Player_Pet_Update_Experience();
+			end
 		end
 	end
 end
@@ -451,27 +458,20 @@ end
 
 function Perl_Player_Pet_Update_Portrait()
 	if (showportrait == 1) then
-		Perl_Player_Pet_PortraitFrame:Show();							-- Show the main portrait frame
-
 		if (threedportrait == 0) then
-			SetPortraitTexture(Perl_Player_Pet_Portrait, "pet");				-- Load the correct 2d graphic
-			Perl_Player_Pet_PortraitFrame_PetModel:Hide();					-- Hide the 3d graphic
-			Perl_Player_Pet_Portrait:Show();						-- Show the 2d graphic
+			SetPortraitTexture(Perl_Player_Pet_Portrait, "pet");		-- Load the correct 2d graphic
 		else
 			if UnitIsVisible("pet") then
-				Perl_Player_Pet_PortraitFrame_PetModel:SetUnit("pet");			-- Load the correct 3d graphic
-				Perl_Player_Pet_Portrait:Hide();					-- Hide the 2d graphic
-				Perl_Player_Pet_PortraitFrame_PetModel:Show();				-- Show the 3d graphic
+				Perl_Player_Pet_PortraitFrame_PetModel:SetUnit("pet");	-- Load the correct 3d graphic
+				Perl_Player_Pet_Portrait:Hide();			-- Hide the 2d graphic
+				Perl_Player_Pet_PortraitFrame_PetModel:Show();		-- Show the 3d graphic
 				Perl_Player_Pet_PortraitFrame_PetModel:SetCamera(0);
 			else
-				SetPortraitTexture(Perl_Player_Pet_Portrait, "pet");			-- Load the correct 2d graphic
-				Perl_Player_Pet_PortraitFrame_PetModel:Hide();				-- Hide the 3d graphic
-				Perl_Player_Pet_Portrait:Show();					-- Show the 2d graphic
+				SetPortraitTexture(Perl_Player_Pet_Portrait, "pet");	-- Load the correct 2d graphic
+				Perl_Player_Pet_PortraitFrame_PetModel:Hide();		-- Hide the 3d graphic
+				Perl_Player_Pet_Portrait:Show();			-- Show the 2d graphic
 			end
 		end
-
-	else
-		Perl_Player_Pet_PortraitFrame:Hide();							-- Hide the frame and 2d/3d portion
 	end
 end
 
@@ -555,6 +555,16 @@ function Perl_Player_Pet_Set_Window_Layout()
 	else
 		Perl_Player_Pet_NameFrame:Show();
 	end
+
+	if (showportrait == 1) then
+		Perl_Player_Pet_PortraitFrame:Show();
+		if (threedportrait == 0) then
+			Perl_Player_Pet_PortraitFrame_PetModel:Hide();	-- Hide the 3d graphic
+			Perl_Player_Pet_Portrait:Show();		-- Show the 2d graphic
+		end
+	else
+		Perl_Player_Pet_PortraitFrame:Hide();
+	end
 end
 
 
@@ -591,6 +601,14 @@ function Perl_Player_Pet_ManaBar_Fade(arg1)
 		Perl_Player_Pet_ManaBarFadeBar:Hide();
 		Perl_Player_Pet_ManaBar_Fade_OnUpdate_Frame:Hide();
 	end
+end
+
+
+-------------------------------
+-- Style Show/Hide Functions --
+-------------------------------
+function Perl_Player_Pet_Frame_Style()
+	
 end
 
 
@@ -689,12 +707,14 @@ end
 function Perl_Player_Pet_Set_Portrait(newvalue)
 	showportrait = newvalue;
 	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Set_Window_Layout();
 	Perl_Player_Pet_Update_Portrait();
 end
 
 function Perl_Player_Pet_Set_3D_Portrait(newvalue)
 	threedportrait = newvalue;
 	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Set_Window_Layout();
 	Perl_Player_Pet_Update_Portrait();
 end
 
@@ -969,9 +989,9 @@ function Perl_Player_Pet_UpdateVars(vartable)
 	end
 
 	-- IFrameManager Support
-	if (IFrameManager) then
-		IFrameManager:Refresh();
-	end
+--	if (IFrameManager) then
+--		IFrameManager:Refresh();
+--	end
 
 	Perl_Player_Pet_Config[UnitName("player")] = {
 		["Locked"] = locked,
@@ -1001,7 +1021,7 @@ function Perl_Player_Pet_Buff_UpdateAll()
 		local button, buffCount, buffTexture, buffApplications, color, debuffType;				-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 
 		for buffnum=1,numpetbuffsshown do									-- Start main buff loop
-			buffTexture, buffApplications = UnitBuff("pet", buffnum);					-- Get the texture and buff stacking information if any
+			_, _, buffTexture, buffApplications = UnitBuff("pet", buffnum);					-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Player_Pet_Buff"..buffnum);						-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -1020,7 +1040,7 @@ function Perl_Player_Pet_Buff_UpdateAll()
 		end													-- End main buff loop
 
 		for debuffnum=1,numpetdebuffsshown do
-			buffTexture, buffApplications, debuffType = UnitDebuff("pet", debuffnum);			-- Get the texture and debuff stacking information if any
+			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("pet", debuffnum);			-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Player_Pet_Debuff"..debuffnum);					-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -1151,6 +1171,19 @@ end
 --------------------
 -- Click Handlers --
 --------------------
+function Perl_Player_Pet_CastClickOverlay_OnLoad()
+	local showmenu = function()
+		ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
+	end
+	SecureUnitButton_OnLoad(this, "pet", showmenu);
+
+	this:SetAttribute("unit", "pet");
+	if (not ClickCastFrames) then
+		ClickCastFrames = {};
+	end
+	ClickCastFrames[this] = true;
+end
+
 function Perl_Player_Pet_DropDown_OnLoad()
 	UIDropDownMenu_Initialize(this, Perl_Player_Pet_DropDown_Initialize, "MENU");
 end
@@ -1159,61 +1192,61 @@ function Perl_Player_Pet_DropDown_Initialize()
 	UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, "PET", "pet");
 end
 
-function Perl_Player_Pet_MouseClick(button)
-	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
-		if (Perl_Custom_ClickFunction(button, "pet")) then	-- If the function returns true, then we return
-			return;
-		end
-	end								-- Otherwise, it did nothing, so take default action
-
-	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
-			if (CastPartyConfig) then
-				CastParty.Event.OnClickByUnit(button, "pet");
-				return;
-			elseif (Genesis_MouseHeal and Genesis_MouseHeal("pet", button)) then
-				return;
-			elseif (CH_Config) then
-				if (CH_Config.PCUFEnabled) then
-					CH_UnitClicked("pet", button);
-					return;
-				end
-			elseif (SmartHeal) then
-				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
-					local KeyDownType = SmartHeal:GetClickHealButton();
-					if(KeyDownType and KeyDownType ~= "undetermined") then
-						SmartHeal:ClickHeal(KeyDownType..button, "pet");
-					else
-						SmartHeal:DefaultClick(button, "pet");
-					end
-					return;
-				end
-			end
-		end
-	end
-
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("pet");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("pet");
-		else
-			TargetUnit("pet");
-		end
-		return;
-	end
-
-	if (button == "RightButton") then
-		if (SpellIsTargeting()) then
-			SpellStopTargeting();
-			return;
-		end
-	end
-
-	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-		ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
-	end
-end
+--function Perl_Player_Pet_MouseClick(button)
+--	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
+--		if (Perl_Custom_ClickFunction(button, "pet")) then	-- If the function returns true, then we return
+--			return;
+--		end
+--	end								-- Otherwise, it did nothing, so take default action
+--
+--	if (PCUF_CASTPARTYSUPPORT == 1) then
+--		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
+--			if (CastPartyConfig) then
+--				CastParty.Event.OnClickByUnit(button, "pet");
+--				return;
+--			elseif (Genesis_MouseHeal and Genesis_MouseHeal("pet", button)) then
+--				return;
+--			elseif (CH_Config) then
+--				if (CH_Config.PCUFEnabled) then
+--					CH_UnitClicked("pet", button);
+--					return;
+--				end
+--			elseif (SmartHeal) then
+--				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+--					local KeyDownType = SmartHeal:GetClickHealButton();
+--					if(KeyDownType and KeyDownType ~= "undetermined") then
+--						SmartHeal:ClickHeal(KeyDownType..button, "pet");
+--					else
+--						SmartHeal:DefaultClick(button, "pet");
+--					end
+--					return;
+--				end
+--			end
+--		end
+--	end
+--
+--	if (button == "LeftButton") then
+--		if (SpellIsTargeting()) then
+--			SpellTargetUnit("pet");
+--		elseif (CursorHasItem()) then
+--			DropItemOnUnit("pet");
+--		else
+--			TargetUnit("pet");
+--		end
+--		return;
+--	end
+--
+--	if (button == "RightButton") then
+--		if (SpellIsTargeting()) then
+--			SpellStopTargeting();
+--			return;
+--		end
+--	end
+--
+--	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+--		ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
+--	end
+--end
 
 function Perl_Player_Pet_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
@@ -1229,20 +1262,20 @@ end
 ----------------------
 -- myAddOns Support --
 ----------------------
-function Perl_Player_Pet_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if(myAddOnsFrame_Register) then
-		local Perl_Player_Pet_myAddOns_Details = {
-			name = "Perl_Player_Pet",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Perl; Maintained by Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_Player_Pet_myAddOns_Help = {};
-		Perl_Player_Pet_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_Player_Pet_myAddOns_Details, Perl_Player_Pet_myAddOns_Help);
-	end
-end
+--function Perl_Player_Pet_myAddOns_Support()
+--	-- Register the addon in myAddOns
+--	if(myAddOnsFrame_Register) then
+--		local Perl_Player_Pet_myAddOns_Details = {
+--			name = "Perl_Player_Pet",
+--			version = PERL_LOCALIZED_VERSION,
+--			releaseDate = PERL_LOCALIZED_DATE,
+--			author = "Perl; Maintained by Global",
+--			email = "global@g-ball.com",
+--			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+--			category = MYADDONS_CATEGORY_OTHERS
+--		};
+--		Perl_Player_Pet_myAddOns_Help = {};
+--		Perl_Player_Pet_myAddOns_Help[1] = "/perl";
+--		myAddOnsFrame_Register(Perl_Player_Pet_myAddOns_Details, Perl_Player_Pet_myAddOns_Help);
+--	end
+--end

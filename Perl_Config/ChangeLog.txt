@@ -1,3 +1,38 @@
+2.01 - December 5, 2006
+ - All: Updated TOC Interface version to 20000
+ - All: Converted all clickable surfaces to the new secure templates
+ - All: Added support for the Clique standard of click casting
+ - All: Removed myAddOns support
+ - All: Removed IFrameManager support
+ - All: Removed click casting support for all mods supported pre expansion
+ - CombatDisplay: Can now toggle the combo point bar
+ - CombatDisplay: Removed display with auto attack mode
+ - CombatDisplay: Fixed a font size inconsistency
+ - CombatDisplay: Combo point bar is always displayed if enabled
+ - CombatDisplay: Pet bars are always displayed if enabled
+ - CombatDisplay/Party/Player/Target/ToT: Performance increase from moving frame styling out of update once code
+ - CombatDisplay/Player: Druid Bar is always displayed if enabled
+ - CombatDisplay/Player: Removed FiveSec support
+ - CombatDisplay/Target/ToT: No longer resizes main frame for NPCs that have no power pool
+ - Config: Added support for Perl_Focus
+ - Config: Options can no longer be changed in combat
+ - Config: Added a queue system to handle illegal functions called in combat
+ - Config: Reworked the functions to disable the Blizzard unit frames
+ - Config: Fixed option menu support for Perl_ColorChange
+ - Config: Fixed an alignment issue on the party options
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - Focus: Added Perl_Focus to the core package
+ - Focus/Party/Player/Target/ToT: Updated the shaman class color to the new color
+ - Party: Pet support should now be working in combat
+ - Party: Pet support now makes the frame always big enough to house the pet health bar
+ - Party: Moved the raid event to a different frame so it's not called 4 times
+ - Party: Reworked many functions to allow the removal of the forced update section
+ - Party: Fixed an inconsistency in default settings for the pvp status icon
+ - Party/Pet/Player: Now takes advantage of the queue system when appropriate
+ - Pet: Hide name frame is now disabled by default
+ - Target: Civilian status is now displayed in the class frame
+ - Target: Combo point frame is always displayed if enabled
+
 0.81d - November 3, 2006
  - All: Removed event error messages caused by other mods tampering with my events
 

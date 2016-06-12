@@ -33,6 +33,7 @@ function Perl_Config_CombatDisplay_Set_Values()
 		Perl_Config_CombatDisplay_Frame_CheckButton3:SetChecked(nil);
 		Perl_Config_CombatDisplay_Frame_CheckButton4:SetChecked(1);
 	end
+	Perl_Config_CombatDisplay_Frame_CheckButton2:Hide();
 
 	if (vartable["healthpersist"] == 1) then
 		Perl_Config_CombatDisplay_Frame_CheckButton5:SetChecked(1);
@@ -101,11 +102,18 @@ function Perl_Config_CombatDisplay_Set_Values()
 	else
 		Perl_Config_CombatDisplay_Frame_CheckButton15:SetChecked(nil);
 	end
+	Perl_Config_CombatDisplay_Frame_CheckButton15:Hide();
 
 	if (vartable["displaypercents"] == 1) then
 		Perl_Config_CombatDisplay_Frame_CheckButton16:SetChecked(1);
 	else
 		Perl_Config_CombatDisplay_Frame_CheckButton16:SetChecked(nil);
+	end
+
+	if (vartable["showcp"] == 1) then
+		Perl_Config_CombatDisplay_Frame_CheckButton17:SetChecked(1);
+	else
+		Perl_Config_CombatDisplay_Frame_CheckButton17:SetChecked(nil);
 	end
 end
 
@@ -201,6 +209,14 @@ function Perl_Config_CombatDisplay_Display_Percents_Update()
 		Perl_CombatDisplay_Set_Display_Percents(1);
 	else
 		Perl_CombatDisplay_Set_Display_Percents(0);
+	end
+end
+
+function Perl_Config_CombatDisplay_ComboPoint_Bars_Update()
+	if (Perl_Config_CombatDisplay_Frame_CheckButton17:GetChecked() == 1) then
+		Perl_CombatDisplay_Set_ComboPoint_Bars(1);
+	else
+		Perl_CombatDisplay_Set_ComboPoint_Bars(0);
 	end
 end
 

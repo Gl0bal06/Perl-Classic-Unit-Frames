@@ -34,6 +34,7 @@ if (GetLocale() == "koKR") then
 	-- Perl Config Strings
 	PERL_LOCALIZED_CONFIG_MINIMAP_LOCK = "오른쪽 클릭 : 잠금";
 	PERL_LOCALIZED_CONFIG_MINIMAP_UNLOCK = "오른쪽 클릭 : 풀림";
+	PERL_LOCALIZED_CONFIG_OPTIONS_UNAVAILABLE = PERL_LOCALIZED_NAME..": 전투중에는 설정을 변경할 수 없습니다.";
 
 	-- Perl Player Strings
 	PERL_LOCALIZED_PLAYER_GROUP = "파티 ";
@@ -59,6 +60,7 @@ if (GetLocale() == "koKR") then
 	PERL_LOCALIZED_TARGET_FIRE_VULNERABILITY = "화염 저항력 약화";
 	PERL_LOCALIZED_TARGET_SHADOW_VULNERABILITY = "암흑 저항력 약화";
 	PERL_LOCALIZED_TARGET_SUNDER_ARMOR = "방어구 가르기";
+	PERL_LOCALIZED_TARGET_NA = "N/A";
 
 	-- Perl Target Target Strings
 	PERL_LOCALIZED_TARGET_TARGET_CHANGED_TO_YOU = "|1이;가; 당신을 타겟으로 합니다!";

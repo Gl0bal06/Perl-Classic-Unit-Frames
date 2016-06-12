@@ -115,7 +115,7 @@
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<Button name="$parent_CastClickOverlay">
+					<Button name="$parent_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="200" y="24"/>
 						</Size>
@@ -130,10 +130,8 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_Party_CastClickOverlay_OnLoad();
 							</OnLoad>
-							<OnClick>
-								Perl_Party_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
 							</OnDragStart>
@@ -266,7 +264,7 @@
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<Button name="$parent_CastClickOverlay">
+					<Button name="$parent_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="34" y="42"/>
 						</Size>
@@ -281,10 +279,8 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_Party_CastClickOverlay_OnLoad();
 							</OnLoad>
-							<OnClick>
-								Perl_Party_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
 							</OnDragStart>
@@ -377,7 +373,7 @@
 							</OnUpdate>
 						</Scripts>
 					</PlayerModel>
-					<Button name="$parent_CastClickOverlay">
+					<Button name="$parent_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="60" y="61"/>
 						</Size>
@@ -392,10 +388,8 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_Party_CastClickOverlay_OnLoad();
 							</OnLoad>
-							<OnClick>
-								Perl_Party_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
 							</OnDragStart>
@@ -449,7 +443,7 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
-					<Button name="$parent_CastClickOverlay">
+					<Button name="$parent_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="240" y="42"/>
 						</Size>
@@ -464,10 +458,8 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_Party_CastClickOverlay_OnLoad();
 							</OnLoad>
-							<OnClick>
-								Perl_Party_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
 							</OnDragStart>
@@ -555,7 +547,7 @@
 						<BarTexture name="$parent_HealthBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<Button name="$parent_HealthBar_CastClickOverlay">
+					<Button name="$parent_HealthBar_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -570,6 +562,7 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_Party_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
 								Perl_Party_HealthShow();
@@ -577,9 +570,6 @@
 							<OnLeave>
 								Perl_Party_HealthHide();
 							</OnLeave>
-							<OnClick>
-								Perl_Party_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
 							</OnDragStart>
@@ -667,7 +657,7 @@
 						<BarTexture name="$parent_ManaBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
-					<Button name="$parent_ManaBar_CastClickOverlay">
+					<Button name="$parent_ManaBar_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -682,6 +672,7 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_Party_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
 								Perl_Party_ManaShow();
@@ -689,9 +680,6 @@
 							<OnLeave>
 								Perl_Party_ManaHide();
 							</OnLeave>
-							<OnClick>
-								Perl_Party_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
 							</OnDragStart>
@@ -779,7 +767,7 @@
 						<BarTexture name="$parent_PetHealthBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<Button name="$parent_PetHealthBar_CastClickOverlay">
+					<Button name="$parent_PetHealthBar_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="150" y="10"/>
 						</Size>
@@ -794,6 +782,7 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_Party_Pet_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
 								Perl_Party_Pet_HealthShow();
@@ -801,9 +790,6 @@
 							<OnLeave>
 								Perl_Party_Pet_HealthHide();
 							</OnLeave>
-							<OnClick>
-								Perl_Party_Pet_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
 							</OnDragStart>
@@ -1169,6 +1155,7 @@
 			</Anchor>
 		</Anchors>
 		<Frames>
+			<!--
 			<Frame name="Perl_Party_Background">
 				<Size>
 					<AbsDimension x="225" y="42"/>
@@ -1180,7 +1167,6 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<!--
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
@@ -1192,8 +1178,8 @@
 						<AbsInset left="5" right="5" top="5" bottom="5"/>
 					</BackgroundInsets>
 				</Backdrop>
-				-->
 			</Frame>
+			-->
 			<Frame name="Perl_Party_MemberFrame1" inherits="Perl_Party_FrameTemplate" id="1">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="Perl_Party_Frame">

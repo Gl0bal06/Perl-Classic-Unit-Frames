@@ -125,6 +125,11 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
+		<Scripts>
+			<OnLoad>
+				this:SetAttribute("unit", "targettarget");
+			</OnLoad>
+		</Scripts>
 		<Frames>
 			<!-- Frame for the drop down menu. -->
 			<Frame name="Perl_Target_Target_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
@@ -159,7 +164,7 @@
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<Button name="Perl_Target_Target_NameFrame_CastClickOverlay">
+					<Button name="Perl_Target_Target_NameFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="110" y="24"/>
 						</Size>
@@ -174,6 +179,7 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_TargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_Tip();
@@ -182,9 +188,6 @@
 							<OnLeave>
 								UnitFrame_OnLeave();
 							</OnLeave>
-							<OnClick>
-								Perl_Target_Target_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Target_Target_DragStart(arg1);
 							</OnDragStart>
@@ -279,7 +282,7 @@
 				</Backdrop>
 				<Frames>
 					<!-- 1.10 Click Solution -->
-					<Button name="Perl_Target_Target_StatsFrame_CastClickOverlay">
+					<Button name="Perl_Target_Target_StatsFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="110" y="24"/>
 						</Size>
@@ -294,10 +297,8 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_TargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
-							<OnClick>
-								Perl_Target_Target_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Target_Target_DragStart(arg1);
 							</OnDragStart>
@@ -364,7 +365,7 @@
 						<BarTexture name="Perl_Target_Target_HealthBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<Button name="Perl_Target_Target_HealthBar_CastClickOverlay">
+					<Button name="Perl_Target_Target_HealthBar_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -379,6 +380,7 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_TargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_HealthShow();
@@ -386,9 +388,6 @@
 							<OnLeave>
 								Perl_Target_Target_HealthHide();
 							</OnLeave>
-							<OnClick>
-								Perl_Target_Target_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Target_Target_DragStart(arg1);
 							</OnDragStart>
@@ -455,7 +454,7 @@
 						<BarTexture name="Perl_Target_Target_ManaBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
-					<Button name="Perl_Target_Target_ManaBar_CastClickOverlay">
+					<Button name="Perl_Target_Target_ManaBar_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -470,6 +469,7 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_TargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_ManaShow();
@@ -477,9 +477,6 @@
 							<OnLeave>
 								Perl_Target_Target_ManaHide();
 							</OnLeave>
-							<OnClick>
-								Perl_Target_Target_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Target_Target_DragStart(arg1);
 							</OnDragStart>
@@ -843,6 +840,11 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
+		<Scripts>
+			<OnLoad>
+				this:SetAttribute("unit", "targettargettarget");
+			</OnLoad>
+		</Scripts>
 		<Frames>
 			<!-- Frame for the drop down menu. -->
 			<Frame name="Perl_Target_Target_Target_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
@@ -876,7 +878,7 @@
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<Button name="Perl_Target_Target_Target_NameFrame_CastClickOverlay">
+					<Button name="Perl_Target_Target_Target_NameFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="110" y="24"/>
 						</Size>
@@ -891,6 +893,7 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_TargetTargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_Target_Tip();
@@ -899,9 +902,6 @@
 							<OnLeave>
 								UnitFrame_OnLeave();
 							</OnLeave>
-							<OnClick>
-								Perl_Target_Target_Target_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Target_Target_Target_DragStart(arg1);
 							</OnDragStart>
@@ -996,7 +996,7 @@
 				</Backdrop>
 				<Frames>
 					<!-- 1.10 Click Solution -->
-					<Button name="Perl_Target_Target_Target_StatsFrame_CastClickOverlay">
+					<Button name="Perl_Target_Target_Target_StatsFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="110" y="24"/>
 						</Size>
@@ -1011,10 +1011,8 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_TargetTargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
-							<OnClick>
-								Perl_Target_Target_Target_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Target_Target_Target_DragStart(arg1);
 							</OnDragStart>
@@ -1081,7 +1079,7 @@
 						<BarTexture name="Perl_Target_Target_Target_HealthBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0.8" b="0" a="0.25"/>
 					</StatusBar>
-					<Button name="Perl_Target_Target_Target_HealthBar_CastClickOverlay">
+					<Button name="Perl_Target_Target_Target_HealthBar_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -1096,6 +1094,7 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_TargetTargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_Target_HealthShow();
@@ -1103,9 +1102,6 @@
 							<OnLeave>
 								Perl_Target_Target_Target_HealthHide();
 							</OnLeave>
-							<OnClick>
-								Perl_Target_Target_Target_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Target_Target_Target_DragStart(arg1);
 							</OnDragStart>
@@ -1172,7 +1168,7 @@
 						<BarTexture name="Perl_Target_Target_Target_ManaBarBGTex" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill"/>
 						<BarColor r="0" g="0" b="1" a="0.25"/>
 					</StatusBar>
-					<Button name="Perl_Target_Target_Target_ManaBar_CastClickOverlay">
+					<Button name="Perl_Target_Target_Target_ManaBar_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="90" y="10"/>
 						</Size>
@@ -1187,6 +1183,7 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_TargetTargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_Target_ManaShow();
@@ -1194,9 +1191,6 @@
 							<OnLeave>
 								Perl_Target_Target_Target_ManaHide();
 							</OnLeave>
-							<OnClick>
-								Perl_Target_Target_Target_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Target_Target_Target_DragStart(arg1);
 							</OnDragStart>

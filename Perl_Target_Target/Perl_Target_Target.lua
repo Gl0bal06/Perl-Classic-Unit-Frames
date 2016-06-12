@@ -83,7 +83,19 @@ function Perl_Target_Target_OnLoad()
 	Perl_Target_Target_ManaBarFadeBar:SetFrameLevel(Perl_Target_Target_ManaBar:GetFrameLevel() - 1);
 	Perl_Target_Target_Target_HealthBarFadeBar:SetFrameLevel(Perl_Target_Target_Target_HealthBar:GetFrameLevel() - 1);
 	Perl_Target_Target_Target_ManaBarFadeBar:SetFrameLevel(Perl_Target_Target_Target_ManaBar:GetFrameLevel() - 1);
+
+	-- WoW 2.0 Secure API Stuff
+	--this:SetAttribute("unit", "targettarget");
+	--RegisterUnitWatch(this);
+	--hooksecurefunc("Perl_Target_OnShow", Perl_Target_Update_Once);
 end
+
+--function Perl_Target_Target_Target_OnLoad()
+	-- WoW 2.0 Secure API Stuff
+	--this:SetAttribute("unit", "targettargettarget");
+	--RegisterUnitWatch(this);
+	--hooksecurefunc("Perl_Target_OnShow", Perl_Target_Update_Once);
+--end
 
 
 -------------------
@@ -93,8 +105,10 @@ function Perl_Target_Target_OnEvent()
 	local func = Perl_Target_Target_Events[event];
 	if (func) then
 		func();
---	else
---		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Target of Target: Report the following event error to the author: "..event);
+	else
+		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
+			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Target of Target: Report the following event error to the author: "..event);
+		end
 	end
 end
 
@@ -128,63 +142,64 @@ function Perl_Target_Target_Initialize()
 
 	-- Major config options.
 	Perl_Target_Target_Initialize_Frame_Color();
-	Perl_Target_Target_Frame:Hide();
-	Perl_Target_Target_Target_Frame:Hide();
+	Perl_Target_Target_Frame_Style();
+--	Perl_Target_Target_Frame:Hide();
+--	Perl_Target_Target_Target_Frame:Hide();
 
 	-- MyAddOns Support
-	Perl_Target_Target_myAddOns_Support();
+--	Perl_Target_Target_myAddOns_Support();
 
 	-- IFrameManager Support
-	if (IFrameManager) then
-		Perl_Target_Target_IFrameManager();
-	end
+--	if (IFrameManager) then
+--		Perl_Target_Target_IFrameManager();
+--	end
 
 	Initialized = 1;
 end
 
-function Perl_Target_Target_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		if (frame == Perl_Target_Target_Frame) then
-			return "Perl Target Target";
-		else
-			return "Perl Target Target Target";
-		end
-	end
-	function iface:getBorder(frame)
-		local bottom = 0;
-		local left = 0;
-		local right = 0;
-		local top = 0;
-		if (frame == Perl_Target_Target_Frame) then
-			if (showtotbuffs == 1 and showtotdebuffs == 1) then
-				bottom = 88;
-			elseif ((showtotbuffs == 0 and showtotdebuffs == 1) or (showtotbuffs == 1 and showtotdebuffs == 0)) then
-				bottom = 58;
-			else
-				bottom = 38;
-			end
-			if (hidepowerbars == 1) then
-				bottom = bottom - 12;
-			end
-			return top, right, bottom, left;
-		else
-			if (showtototbuffs == 1 and showtototdebuffs == 1) then
-				bottom = 88;
-			elseif ((showtototbuffs == 0 and showtototdebuffs == 1) or (showtototbuffs == 1 and showtototdebuffs == 0)) then
-				bottom = 58;
-			else
-				bottom = 38;
-			end
-			if (hidepowerbars == 1) then
-				bottom = bottom - 12;
-			end
-			return top, right, bottom, left;
-		end
-	end
-	IFrameManager:Register(Perl_Target_Target_Frame, iface);
-	IFrameManager:Register(Perl_Target_Target_Target_Frame, iface);
-end
+--function Perl_Target_Target_IFrameManager()
+--	local iface = IFrameManager:Interface();
+--	function iface:getName(frame)
+--		if (frame == Perl_Target_Target_Frame) then
+--			return "Perl Target Target";
+--		else
+--			return "Perl Target Target Target";
+--		end
+--	end
+--	function iface:getBorder(frame)
+--		local bottom = 0;
+--		local left = 0;
+--		local right = 0;
+--		local top = 0;
+--		if (frame == Perl_Target_Target_Frame) then
+--			if (showtotbuffs == 1 and showtotdebuffs == 1) then
+--				bottom = 88;
+--			elseif ((showtotbuffs == 0 and showtotdebuffs == 1) or (showtotbuffs == 1 and showtotdebuffs == 0)) then
+--				bottom = 58;
+--			else
+--				bottom = 38;
+--			end
+--			if (hidepowerbars == 1) then
+--				bottom = bottom - 12;
+--			end
+--			return top, right, bottom, left;
+--		else
+--			if (showtototbuffs == 1 and showtototdebuffs == 1) then
+--				bottom = 88;
+--			elseif ((showtototbuffs == 0 and showtototdebuffs == 1) or (showtototbuffs == 1 and showtototdebuffs == 0)) then
+--				bottom = 58;
+--			else
+--				bottom = 38;
+--			end
+--			if (hidepowerbars == 1) then
+--				bottom = bottom - 12;
+--			end
+--			return top, right, bottom, left;
+--		end
+--	end
+--	IFrameManager:Register(Perl_Target_Target_Frame, iface);
+--	IFrameManager:Register(Perl_Target_Target_Target_Frame, iface);
+--end
 
 function Perl_Target_Target_Initialize_Frame_Color()
 	Perl_Target_Target_StatsFrame:SetBackdropColor(0, 0, 0, 1);
@@ -211,9 +226,8 @@ function Perl_Target_Target_OnUpdate()
 	if (Perl_Target_Target_Time_Elapsed > Perl_Target_Target_Time_Update_Rate) then
 		Perl_Target_Target_Time_Elapsed = 0;
 
-		if (UnitExists("targettarget") and totsupport == 1) then
+		if (UnitExists(Perl_Target_Target_Frame:GetAttribute("unit"))) then
 			Perl_Target_Target_Warn();				-- Display any warnings if needed
-			Perl_Target_Target_Frame:Show();			-- Show the frame
 
 			-- Begin: Set the name
 			targettargetname = UnitName("targettarget");
@@ -251,7 +265,7 @@ function Perl_Target_Target_OnUpdate()
 					r = 1.0;
 					g = 1.0;
 					b = 0.0;
-				elseif (UnitIsPVP("targettarget")) then						-- friendly pvp enabled character
+				elseif (UnitIsPVP("targettarget") and not UnitIsPVPSanctuary("targettarget") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
 					-- Players we can assist but are PvP flagged are green
 					r = 0.0;
 					g = 1.0;
@@ -293,7 +307,7 @@ function Perl_Target_Target_OnUpdate()
 						r = 1.0;
 						g = 1.0;
 						b = 0.0;
-					elseif (UnitIsPVP("targettarget")) then						-- friendly pvp enabled character
+					elseif (UnitIsPVP("targettarget") and not UnitIsPVPSanctuary("targettarget") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
 						-- Players we can assist but are PvP flagged are green
 						r = 0.0;
 						g = 1.0;
@@ -321,7 +335,7 @@ function Perl_Target_Target_OnUpdate()
 					elseif (UnitClass("targettarget") == PERL_LOCALIZED_HUNTER) then
 						Perl_Target_Target_NameBarText:SetTextColor(0.67, 0.83, 0.45);
 					elseif (UnitClass("targettarget") == PERL_LOCALIZED_SHAMAN) then
-						Perl_Target_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+						Perl_Target_Target_NameBarText:SetTextColor(0, 0.86, 0.73);
 					elseif (UnitClass("targettarget") == PERL_LOCALIZED_PRIEST) then
 						Perl_Target_Target_NameBarText:SetTextColor(1, 1, 1);
 					elseif (UnitClass("targettarget") == PERL_LOCALIZED_WARLOCK) then
@@ -434,51 +448,22 @@ function Perl_Target_Target_OnUpdate()
 
 				-- Set mana bar color
 				if (UnitManaMax("targettarget") == 0) then
-					Perl_Target_Target_ManaBar:Hide();
-					Perl_Target_Target_ManaBarBG:Hide();
-					Perl_Target_Target_ManaBar_CastClickOverlay:Hide();
-					Perl_Target_Target_StatsFrame:SetHeight(30);
-					Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
+					Perl_Target_Target_ManaBar:SetStatusBarColor(0, 0, 0, 1);
+					Perl_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 0, 0.25);
 				elseif (targettargetpower == 1) then
 					Perl_Target_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 					Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-					Perl_Target_Target_ManaBar:Show();
-					Perl_Target_Target_ManaBarBG:Show();
-					Perl_Target_Target_ManaBar_CastClickOverlay:Show();
-					Perl_Target_Target_StatsFrame:SetHeight(42);
-					Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 				elseif (targettargetpower == 2) then
 					Perl_Target_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 					Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-					Perl_Target_Target_ManaBar:Show();
-					Perl_Target_Target_ManaBarBG:Show();
-					Perl_Target_Target_ManaBar_CastClickOverlay:Show();
-					Perl_Target_Target_StatsFrame:SetHeight(42);
-					Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 				elseif (targettargetpower == 3) then
 					Perl_Target_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 					Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-					Perl_Target_Target_ManaBar:Show();
-					Perl_Target_Target_ManaBarBG:Show();
-					Perl_Target_Target_ManaBar_CastClickOverlay:Show();
-					Perl_Target_Target_StatsFrame:SetHeight(42);
-					Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 				else
 					Perl_Target_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 					Perl_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-					Perl_Target_Target_ManaBar:Show();
-					Perl_Target_Target_ManaBarBG:Show();
-					Perl_Target_Target_ManaBar_CastClickOverlay:Show();
-					Perl_Target_Target_StatsFrame:SetHeight(42);
-					Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 				end
 				-- End: Update the mana bar color
-			else
-				Perl_Target_Target_ManaBar:Hide();
-				Perl_Target_Target_ManaBarBG:Hide();
-				Perl_Target_Target_ManaBar_CastClickOverlay:Hide();
-				Perl_Target_Target_StatsFrame:SetHeight(30);
-				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
 			end
 
 			-- Begin: Raid Icon
@@ -488,12 +473,9 @@ function Perl_Target_Target_OnUpdate()
 			-- Begin: Update buffs and debuffs
 			Perl_Target_Target_Update_Buffs();			-- Apparently too many nested if's make lua cry, slow function call MUST be done here to avoid errors.
 			-- End: Update buffs and debuffs
-		else
-			Perl_Target_Target_Frame:Hide();			-- Hide the frame
 		end
 
-		if (UnitExists("targettargettarget") and tototsupport == 1) then
-			Perl_Target_Target_Target_Frame:Show();			-- Show the frame
+		if (UnitExists(Perl_Target_Target_Target_Frame:GetAttribute("unit"))) then
 
 			if (UnitAffectingCombat("targettarget")) then
 				if (UnitIsDead("targettargettarget") or UnitIsCorpse("targettargettarget")) then
@@ -559,7 +541,7 @@ function Perl_Target_Target_OnUpdate()
 					r = 1.0;
 					g = 1.0;
 					b = 0.0;
-				elseif (UnitIsPVP("targettargettarget")) then						-- friendly pvp enabled character
+				elseif (UnitIsPVP("targettargettarget") and not UnitIsPVPSanctuary("targettargettarget") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
 					-- Players we can assist but are PvP flagged are green
 					r = 0.0;
 					g = 1.0;
@@ -602,7 +584,7 @@ function Perl_Target_Target_OnUpdate()
 						r = 1.0;
 						g = 1.0;
 						b = 0.0;
-					elseif (UnitIsPVP("targettargettarget")) then						-- friendly pvp enabled character
+					elseif (UnitIsPVP("targettargettarget") and not UnitIsPVPSanctuary("targettargettarget") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
 						-- Players we can assist but are PvP flagged are green
 						r = 0.0;
 						g = 1.0;
@@ -630,7 +612,7 @@ function Perl_Target_Target_OnUpdate()
 					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_HUNTER) then
 						Perl_Target_Target_Target_NameBarText:SetTextColor(0.67, 0.83, 0.45);
 					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_SHAMAN) then
-						Perl_Target_Target_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+						Perl_Target_Target_Target_NameBarText:SetTextColor(0, 0.86, 0.73);
 					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_PRIEST) then
 						Perl_Target_Target_Target_NameBarText:SetTextColor(1, 1, 1);
 					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_WARLOCK) then
@@ -743,51 +725,22 @@ function Perl_Target_Target_OnUpdate()
 
 				-- Set mana bar color
 				if (UnitManaMax("targettargettarget") == 0) then
-					Perl_Target_Target_Target_ManaBar:Hide();
-					Perl_Target_Target_Target_ManaBarBG:Hide();
-					Perl_Target_Target_Target_ManaBar_CastClickOverlay:Hide();
-					Perl_Target_Target_Target_StatsFrame:SetHeight(30);
-					Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
+					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(0, 0, 0, 1);
+					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 0, 0.25);
 				elseif (targettargettargetpower == 1) then
 					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-					Perl_Target_Target_Target_ManaBar:Show();
-					Perl_Target_Target_Target_ManaBarBG:Show();
-					Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
-					Perl_Target_Target_Target_StatsFrame:SetHeight(42);
-					Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 				elseif (targettargettargetpower == 2) then
 					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-					Perl_Target_Target_Target_ManaBar:Show();
-					Perl_Target_Target_Target_ManaBarBG:Show();
-					Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
-					Perl_Target_Target_Target_StatsFrame:SetHeight(42);
-					Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 				elseif (targettargettargetpower == 3) then
 					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-					Perl_Target_Target_Target_ManaBar:Show();
-					Perl_Target_Target_Target_ManaBarBG:Show();
-					Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
-					Perl_Target_Target_Target_StatsFrame:SetHeight(42);
-					Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 				else
 					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-					Perl_Target_Target_Target_ManaBar:Show();
-					Perl_Target_Target_Target_ManaBarBG:Show();
-					Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
-					Perl_Target_Target_Target_StatsFrame:SetHeight(42);
-					Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 				end
 				-- End: Update the mana bar color
-			else
-				Perl_Target_Target_Target_ManaBar:Hide();
-				Perl_Target_Target_Target_ManaBarBG:Hide();
-				Perl_Target_Target_Target_ManaBar_CastClickOverlay:Hide();
-				Perl_Target_Target_Target_StatsFrame:SetHeight(30);
-				Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
 			end
 
 			-- Begin: Raid Icon
@@ -797,8 +750,6 @@ function Perl_Target_Target_OnUpdate()
 			-- Begin: Update buffs and debuffs
 			Perl_Target_Target_Target_Update_Buffs();		-- Apparently too many nested if's make lua cry, slow function call MUST be done here to avoid errors.
 			-- End: Update buffs and debuffs
-		else
-			Perl_Target_Target_Target_Frame:Hide();			-- Hide the frame
 		end
 
 	end
@@ -830,7 +781,7 @@ function Perl_Target_Target_Update_Buffs()
 	local numBuffs = 0;														-- Buff counter for correct layout
 	if (showtotbuffs == 1) then
 		for buffnum=1,16 do													-- Start main buff loop
-			buffTexture, buffApplications = UnitBuff("targettarget", buffnum, displaycastablebuffs);			-- Get the texture and buff stacking information if any
+			_, _, buffTexture, buffApplications = UnitBuff("targettarget", buffnum, displaycastablebuffs);			-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Target_Target_BuffFrame_Buff"..buffnum);						-- Create the main icon for the buff
 			if (buffTexture) then												-- If there is a valid texture, proceed with buff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
@@ -855,7 +806,7 @@ function Perl_Target_Target_Update_Buffs()
 	local numDebuffs = 0;														-- Debuff counter for correct layout
 	if (showtotdebuffs == 1) then
 		for debuffnum=1,16 do													-- Start main debuff loop
-			buffTexture, buffApplications, debuffType = UnitDebuff("targettarget", debuffnum, displaycastablebuffs);	-- Get the texture and debuff stacking information if any
+			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("targettarget", debuffnum, displaycastablebuffs);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Target_Target_BuffFrame_Debuff"..debuffnum);						-- Create the main icon for the debuff
 			if (buffTexture) then												-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
@@ -922,7 +873,7 @@ function Perl_Target_Target_Target_Update_Buffs()
 	local numBuffs = 0;														-- Buff counter for correct layout
 	if (showtototbuffs == 1) then
 		for buffnum=1,16 do
-			buffTexture, buffApplications = UnitBuff("targettargettarget", buffnum, displaycastablebuffs);			-- Get the texture and buff stacking information if any
+			_, _, buffTexture, buffApplications = UnitBuff("targettargettarget", buffnum, displaycastablebuffs);		-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Target_Target_Target_BuffFrame_Buff"..buffnum);					-- Create the main icon for the buff
 			if (buffTexture) then
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
@@ -947,7 +898,7 @@ function Perl_Target_Target_Target_Update_Buffs()
 	local numDebuffs = 0;														-- Debuff counter for correct layout
 	if (showtototdebuffs == 1) then
 		for debuffnum=1,16 do
-			buffTexture, buffApplications, debuffType = UnitDebuff("targettargettarget", debuffnum, displaycastablebuffs);	-- Get the texture and debuff stacking information if any
+			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("targettargettarget", debuffnum, displaycastablebuffs);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum);					-- Create the main icon for the debuff
 			if (buffTexture) then
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
@@ -1589,17 +1540,65 @@ function Perl_Target_Target_Target_ManaBar_Fade(arg1)
 end
 
 
+-------------------------------
+-- Style Show/Hide Functions --
+-------------------------------
+function Perl_Target_Target_Frame_Style()
+	if (totsupport == 0) then
+		Perl_Target_Target_Frame:Hide();
+		UnregisterUnitWatch(Perl_Target_Target_Frame);
+	else
+		RegisterUnitWatch(Perl_Target_Target_Frame);
+	end
+
+	if (tototsupport == 0) then
+		Perl_Target_Target_Target_Frame:Hide();
+		UnregisterUnitWatch(Perl_Target_Target_Target_Frame);
+	else
+		RegisterUnitWatch(Perl_Target_Target_Target_Frame);
+	end
+
+	if (hidepowerbars == 0) then
+		Perl_Target_Target_ManaBar:Show();
+		Perl_Target_Target_ManaBarBG:Show();
+		Perl_Target_Target_ManaBar_CastClickOverlay:Show();
+		Perl_Target_Target_StatsFrame:SetHeight(42);
+		Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
+
+		Perl_Target_Target_Target_ManaBar:Show();
+		Perl_Target_Target_Target_ManaBarBG:Show();
+		Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
+		Perl_Target_Target_Target_StatsFrame:SetHeight(42);
+		Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
+	else
+		Perl_Target_Target_ManaBar:Hide();
+		Perl_Target_Target_ManaBarBG:Hide();
+		Perl_Target_Target_ManaBar_CastClickOverlay:Hide();
+		Perl_Target_Target_StatsFrame:SetHeight(30);
+		Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
+
+		Perl_Target_Target_Target_ManaBar:Hide();
+		Perl_Target_Target_Target_ManaBarBG:Hide();
+		Perl_Target_Target_Target_ManaBar_CastClickOverlay:Hide();
+		Perl_Target_Target_Target_StatsFrame:SetHeight(30);
+		Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
+	end
+end
+
+
 --------------------------
 -- GUI Config Functions --
 --------------------------
 function Perl_Target_Target_Set_ToT(newvalue)
 	totsupport = newvalue;
 	Perl_Target_Target_UpdateVars();
+	Perl_Target_Target_Frame_Style();
 end
 
 function Perl_Target_Target_Set_ToToT(newvalue)
 	tototsupport = newvalue;
 	Perl_Target_Target_UpdateVars();
+	Perl_Target_Target_Frame_Style();
 end
 
 function Perl_Target_Target_Set_Mode(newvalue)
@@ -1654,6 +1653,7 @@ end
 function Perl_Target_Target_Set_Hide_Power_Bars(newvalue)
 	hidepowerbars = newvalue;
 	Perl_Target_Target_UpdateVars();
+	Perl_Target_Target_Frame_Style();
 end
 
 function Perl_Target_Target_Set_Class_Colored_Names(newvalue)
@@ -1817,6 +1817,7 @@ function Perl_Target_Target_GetVars(name, updateflag)
 		Perl_Target_Target_UpdateVars();
 
 		-- Call any code we need to activate them
+		Perl_Target_Target_Frame_Style();
 		Perl_Target_Target_Set_Scale();
 		Perl_Target_Target_Set_Transparency();
 		return;
@@ -1989,14 +1990,15 @@ function Perl_Target_Target_UpdateVars(vartable)
 		end
 
 		-- Call any code we need to activate them
+		Perl_Target_Target_Frame_Style();
 		Perl_Target_Target_Set_Scale();
 		Perl_Target_Target_Set_Transparency();
 	end
 
 	-- IFrameManager Support
-	if (IFrameManager) then
-		IFrameManager:Refresh();
-	end
+--	if (IFrameManager) then
+--		IFrameManager:Refresh();
+--	end
 
 	Perl_Target_Target_Config[UnitName("player")] = {
 		["Locked"] = locked,
@@ -2024,6 +2026,19 @@ end
 -- Click Handlers --
 --------------------
 -- Target of Target Start
+function Perl_TargetTarget_CastClickOverlay_OnLoad()
+	local showmenu = function()
+		ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
+	end
+	SecureUnitButton_OnLoad(this, "targettarget", showmenu);
+
+	this:SetAttribute("unit", "targettarget");
+	if (not ClickCastFrames) then
+		ClickCastFrames = {};
+	end
+	ClickCastFrames[this] = true;
+end
+
 function Perl_TargetTargetDropDown_OnLoad()
 	UIDropDownMenu_Initialize(this, Perl_TargetTargetDropDown_Initialize, "MENU");
 end
@@ -2049,61 +2064,61 @@ function Perl_TargetTargetDropDown_Initialize()
 	end
 end
 
-function Perl_Target_Target_MouseClick(button)
-	if (Perl_Custom_ClickFunction) then					-- Check to see if someone defined a custom click function
-		if (Perl_Custom_ClickFunction(button, "targettarget")) then	-- If the function returns true, then we return
-			return;
-		end
-	end									-- Otherwise, it did nothing, so take default action
-
-	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
-			if (CastPartyConfig) then
-				CastParty.Event.OnClickByUnit(button, "targettarget");
-				return;
-			elseif (Genesis_MouseHeal and Genesis_MouseHeal("targettarget", button)) then
-				return;
-			elseif (CH_Config) then
-				if (CH_Config.PCUFEnabled) then
-					CH_UnitClicked("targettarget", button);
-					return;
-				end
-			elseif (SmartHeal) then
-				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
-					local KeyDownType = SmartHeal:GetClickHealButton();
-					if(KeyDownType and KeyDownType ~= "undetermined") then
-						SmartHeal:ClickHeal(KeyDownType..button, "targettarget");
-					else
-						SmartHeal:DefaultClick(button, "targettarget");
-					end
-					return;
-				end
-			end
-		end
-	end
-
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("targettarget");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("targettarget");
-		else
-			TargetUnit("targettarget");
-		end
-		return;
-	end
-
-	if (button == "RightButton") then
-		if (SpellIsTargeting()) then
-			SpellStopTargeting();
-			return;
-		end
-	end
-
-	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-		ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
-	end
-end
+--function Perl_Target_Target_MouseClick(button)
+--	if (Perl_Custom_ClickFunction) then					-- Check to see if someone defined a custom click function
+--		if (Perl_Custom_ClickFunction(button, "targettarget")) then	-- If the function returns true, then we return
+--			return;
+--		end
+--	end									-- Otherwise, it did nothing, so take default action
+--
+--	if (PCUF_CASTPARTYSUPPORT == 1) then
+--		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
+--			if (CastPartyConfig) then
+--				CastParty.Event.OnClickByUnit(button, "targettarget");
+--				return;
+--			elseif (Genesis_MouseHeal and Genesis_MouseHeal("targettarget", button)) then
+--				return;
+--			elseif (CH_Config) then
+--				if (CH_Config.PCUFEnabled) then
+--					CH_UnitClicked("targettarget", button);
+--					return;
+--				end
+--			elseif (SmartHeal) then
+--				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+--					local KeyDownType = SmartHeal:GetClickHealButton();
+--					if(KeyDownType and KeyDownType ~= "undetermined") then
+--						SmartHeal:ClickHeal(KeyDownType..button, "targettarget");
+--					else
+--						SmartHeal:DefaultClick(button, "targettarget");
+--					end
+--					return;
+--				end
+--			end
+--		end
+--	end
+--
+--	if (button == "LeftButton") then
+--		if (SpellIsTargeting()) then
+--			SpellTargetUnit("targettarget");
+--		elseif (CursorHasItem()) then
+--			DropItemOnUnit("targettarget");
+--		else
+--			TargetUnit("targettarget");
+--		end
+--		return;
+--	end
+--
+--	if (button == "RightButton") then
+--		if (SpellIsTargeting()) then
+--			SpellStopTargeting();
+--			return;
+--		end
+--	end
+--
+--	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+--		ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
+--	end
+--end
 
 function Perl_Target_Target_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
@@ -2117,6 +2132,19 @@ end
 -- Target of Target End
 
 -- Target of Target of Target Start
+function Perl_TargetTargetTarget_CastClickOverlay_OnLoad()
+	local showmenu = function()
+		ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
+	end
+	SecureUnitButton_OnLoad(this, "targettargettarget", showmenu);
+
+	this:SetAttribute("unit", "targettargettarget");
+	if (not ClickCastFrames) then
+		ClickCastFrames = {};
+	end
+	ClickCastFrames[this] = true;
+end
+
 function Perl_TargetTargetTargetDropDown_OnLoad()
 	UIDropDownMenu_Initialize(this, Perl_TargetTargetTargetDropDown_Initialize, "MENU");
 end
@@ -2142,61 +2170,61 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 	end
 end
 
-function Perl_Target_Target_Target_MouseClick(button)
-	if (Perl_Custom_ClickFunction) then						-- Check to see if someone defined a custom click function
-		if (Perl_Custom_ClickFunction(button, "targettargettarget")) then	-- If the function returns true, then we return
-			return;
-		end
-	end										-- Otherwise, it did nothing, so take default action
-
-	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
-			if (CastPartyConfig) then
-				CastParty.Event.OnClickByUnit(button, "targettargettarget");
-				return;
-			elseif (Genesis_MouseHeal and Genesis_MouseHeal("targettargettarget", button)) then
-				return;
-			elseif (CH_Config) then
-				if (CH_Config.PCUFEnabled) then
-					CH_UnitClicked("targettargettarget", button);
-					return;
-				end
-			elseif (SmartHeal) then
-				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
-					local KeyDownType = SmartHeal:GetClickHealButton();
-					if(KeyDownType and KeyDownType ~= "undetermined") then
-						SmartHeal:ClickHeal(KeyDownType..button, "targettargettarget");
-					else
-						SmartHeal:DefaultClick(button, "targettargettarget");
-					end
-					return;
-				end
-			end
-		end
-	end
-
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("targettargettarget");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("targettargettarget");
-		else
-			TargetUnit("targettargettarget");
-		end
-		return;
-	end
-
-	if (button == "RightButton") then
-		if (SpellIsTargeting()) then
-			SpellStopTargeting();
-			return;
-		end
-	end
-
-	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-		ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
-	end
-end
+--function Perl_Target_Target_Target_MouseClick(button)
+--	if (Perl_Custom_ClickFunction) then						-- Check to see if someone defined a custom click function
+--		if (Perl_Custom_ClickFunction(button, "targettargettarget")) then	-- If the function returns true, then we return
+--			return;
+--		end
+--	end										-- Otherwise, it did nothing, so take default action
+--
+--	if (PCUF_CASTPARTYSUPPORT == 1) then
+--		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
+--			if (CastPartyConfig) then
+--				CastParty.Event.OnClickByUnit(button, "targettargettarget");
+--				return;
+--			elseif (Genesis_MouseHeal and Genesis_MouseHeal("targettargettarget", button)) then
+--				return;
+--			elseif (CH_Config) then
+--				if (CH_Config.PCUFEnabled) then
+--					CH_UnitClicked("targettargettarget", button);
+--					return;
+--				end
+--			elseif (SmartHeal) then
+--				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+--					local KeyDownType = SmartHeal:GetClickHealButton();
+--					if(KeyDownType and KeyDownType ~= "undetermined") then
+--						SmartHeal:ClickHeal(KeyDownType..button, "targettargettarget");
+--					else
+--						SmartHeal:DefaultClick(button, "targettargettarget");
+--					end
+--					return;
+--				end
+--			end
+--		end
+--	end
+--
+--	if (button == "LeftButton") then
+--		if (SpellIsTargeting()) then
+--			SpellTargetUnit("targettargettarget");
+--		elseif (CursorHasItem()) then
+--			DropItemOnUnit("targettargettarget");
+--		else
+--			TargetUnit("targettargettarget");
+--		end
+--		return;
+--	end
+--
+--	if (button == "RightButton") then
+--		if (SpellIsTargeting()) then
+--			SpellStopTargeting();
+--			return;
+--		end
+--	end
+--
+--	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+--		ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
+--	end
+--end
 
 function Perl_Target_Target_Target_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
@@ -2293,20 +2321,20 @@ end
 ----------------------
 -- myAddOns Support --
 ----------------------
-function Perl_Target_Target_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if (myAddOnsFrame_Register) then
-		local Perl_Target_Target_myAddOns_Details = {
-			name = "Perl_Target_Target",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_Target_Target_myAddOns_Help = {};
-		Perl_Target_Target_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_Target_Target_myAddOns_Details, Perl_Target_Target_myAddOns_Help);
-	end
-end
+--function Perl_Target_Target_myAddOns_Support()
+--	-- Register the addon in myAddOns
+--	if (myAddOnsFrame_Register) then
+--		local Perl_Target_Target_myAddOns_Details = {
+--			name = "Perl_Target_Target",
+--			version = PERL_LOCALIZED_VERSION,
+--			releaseDate = PERL_LOCALIZED_DATE,
+--			author = "Global",
+--			email = "global@g-ball.com",
+--			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+--			category = MYADDONS_CATEGORY_OTHERS
+--		};
+--		Perl_Target_Target_myAddOns_Help = {};
+--		Perl_Target_Target_myAddOns_Help[1] = "/perl";
+--		myAddOnsFrame_Register(Perl_Target_Target_myAddOns_Details, Perl_Target_Target_myAddOns_Help);
+--	end
+--end

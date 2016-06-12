@@ -164,7 +164,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton2">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton1">
 						<Offset>
 							<AbsDimension  x="0" y="-20"/>
 						</Offset>
@@ -472,6 +472,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Display_Percents_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton17" inherits="UICheckButtonTemplate" id="17">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton16">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_DISPLAY_COMBOPOINT_BAR);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_CombatDisplay_ComboPoint_Bars_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

@@ -18,6 +18,7 @@ local showpetbars = 0;		-- Pet info is hidden by default
 local rightclickmenu = 0;	-- The ability to open a menu from CombatDisplay is disabled by default
 local fivesecsupport = 0;	-- FiveSec support is disabled by default
 local displaypercents = 0;	-- percents are off by default
+local showcp = 0;		-- combo points are hidden by default
 
 -- Default Local Variables
 local InCombat = 0;
@@ -55,9 +56,9 @@ local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, pla
 ----------------------
 function Perl_CombatDisplay_OnLoad()
 	-- Events
-	this:RegisterEvent("PLAYER_ENTER_COMBAT");
+--	this:RegisterEvent("PLAYER_ENTER_COMBAT");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	this:RegisterEvent("PLAYER_LEAVE_COMBAT");
+--	this:RegisterEvent("PLAYER_LEAVE_COMBAT");
 	this:RegisterEvent("PLAYER_REGEN_DISABLED");
 	this:RegisterEvent("PLAYER_REGEN_ENABLED");
 	this:RegisterEvent("PLAYER_TARGET_CHANGED");
@@ -86,6 +87,11 @@ function Perl_CombatDisplay_OnLoad()
 	Perl_CombatDisplay_CPBarFadeBar:SetFrameLevel(Perl_CombatDisplay_CPBar:GetFrameLevel() - 1);
 	Perl_CombatDisplay_PetHealthBarFadeBar:SetFrameLevel(Perl_CombatDisplay_PetHealthBar:GetFrameLevel() - 1);
 	Perl_CombatDisplay_PetManaBarFadeBar:SetFrameLevel(Perl_CombatDisplay_PetManaBar:GetFrameLevel() - 1);
+
+	-- WoW 2.0 Secure API Stuff
+--	this:SetAttribute("unit", "target");
+--	RegisterUnitWatch(this);
+--	hooksecurefunc("Perl_Target_OnShow", Perl_Target_Update_Once);
 end
 
 function Perl_CombatDisplay_Target_OnLoad()
@@ -93,6 +99,11 @@ function Perl_CombatDisplay_Target_OnLoad()
 	Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetFrameLevel(Perl_CombatDisplay_Target_ManaFrame:GetFrameLevel() + 2);
 	Perl_CombatDisplay_Target_HealthBarFadeBar:SetFrameLevel(Perl_CombatDisplay_Target_HealthBar:GetFrameLevel() - 1);
 	Perl_CombatDisplay_Target_ManaBarFadeBar:SetFrameLevel(Perl_CombatDisplay_Target_ManaBar:GetFrameLevel() - 1);
+
+	-- WoW 2.0 Secure API Stuff
+	this:SetAttribute("unit", "target");
+	RegisterUnitWatch(this);
+--	hooksecurefunc("Perl_Target_OnShow", Perl_Target_Update_Once);
 end
 
 
@@ -103,8 +114,10 @@ function Perl_CombatDisplay_OnEvent()
 	local func = Perl_CombatDisplay_Events[event];
 	if (func) then
 		func();
---	else
---		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - CombatDisplay: Report the following event error to the author: "..event);
+	else
+		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
+			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - CombatDisplay: Report the following event error to the author: "..event);
+		end
 	end
 end
 
@@ -180,6 +193,12 @@ Perl_CombatDisplay_Events.UNIT_MAXFOCUS = Perl_CombatDisplay_Events.UNIT_FOCUS;
 
 function Perl_CombatDisplay_Events:PLAYER_TARGET_CHANGED()
 	Perl_CombatDisplay_UpdateDisplay();
+--	Perl_CombatDisplay_Target_UpdateAll();
+--	if (state == 3) then
+--		if (IsAggroed == 0) then
+--			UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
+--		end
+--	end
 end
 
 function Perl_CombatDisplay_Events:PLAYER_COMBO_POINTS()
@@ -189,6 +208,13 @@ end
 function Perl_CombatDisplay_Events:PLAYER_REGEN_ENABLED()
 	IsAggroed = 0;
 	if (state == 3) then
+--		if (manapersist == 1 or healthpersist == 1) then
+--			Perl_CombatDisplay_UpdateDisplay();
+--		else
+--			Perl_CombatDisplay_UpdateDisplay();
+--			UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
+--		end
+--		--UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
 		Perl_CombatDisplay_UpdateDisplay();
 	end
 end
@@ -196,23 +222,28 @@ end
 function Perl_CombatDisplay_Events:PLAYER_REGEN_DISABLED()
 	IsAggroed = 1;
 	if (state == 3) then
+		Perl_CombatDisplay_Frame:Show();				-- Show the player frame if needed
+		if (showtarget == 1) then
+			RegisterUnitWatch(Perl_CombatDisplay_Target_Frame);	-- Register the target frame to show/hide on its own
+		end
+
 		Perl_CombatDisplay_UpdateDisplay();
 	end
 end
 
-function Perl_CombatDisplay_Events:PLAYER_ENTER_COMBAT()
-	InCombat = 1;
-	if (state == 2) then
-		Perl_CombatDisplay_UpdateDisplay();
-	end
-end
-
-function Perl_CombatDisplay_Events:PLAYER_LEAVE_COMBAT()
-	InCombat = 0;
-	if (state == 2) then
-		Perl_CombatDisplay_UpdateDisplay();
-	end
-end
+--function Perl_CombatDisplay_Events:PLAYER_ENTER_COMBAT()
+--	InCombat = 1;
+--	if (state == 2) then
+--		Perl_CombatDisplay_UpdateDisplay();
+--	end
+--end
+--
+--function Perl_CombatDisplay_Events:PLAYER_LEAVE_COMBAT()
+--	InCombat = 0;
+--	if (state == 2) then
+--		Perl_CombatDisplay_UpdateDisplay();
+--	end
+--end
 
 function Perl_CombatDisplay_Events:UNIT_DISPLAYPOWER()
 	if (arg1 == "player") then
@@ -322,58 +353,60 @@ function Perl_CombatDisplay_Initialize()
 	Perl_CombatDisplay_UpdateDisplay();		-- Show or hide the window based on whats happening
 	Perl_CombatDisplay_CheckForPets();		-- do we have a pet out?
 
+	Perl_CombatDisplay_Frame_Style();
+
 	-- MyAddOns Support
-	Perl_CombatDisplay_myAddOns_Support();
+--	Perl_CombatDisplay_myAddOns_Support();
 
 	-- IFrameManager Support
-	if (IFrameManager) then
-		Perl_CombatDisplay_IFrameManager();
-	end
+--	if (IFrameManager) then
+--		Perl_CombatDisplay_IFrameManager();
+--	end
 
 	Initialized = 1;
 end
 
-function Perl_CombatDisplay_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		if (frame == Perl_CombatDisplay_Frame) then
-			return "Perl CombatDisplay (Player)"
-		else
-			return "Perl CombatDisplay (Target)"
-		end
-	end
-	function iface:getBorder(frame)
-		if (frame == Perl_CombatDisplay_Frame) then
-			local bottom;
-			if (UnitClass("player") == PERL_LOCALIZED_ROGUE) then
-				bottom = 12;
-			else
-				if (UnitClass("player") == PERL_LOCALIZED_DRUID) then
-					if (showdruidbar == 1) then
-						bottom = 24;
-					else
-						bottom = 12;
-					end
-				else
-					if (UnitClass("player") == PERL_LOCALIZED_HUNTER or UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
-						if (showpetbars == 1) then
-							bottom = 12;
-						else
-							bottom = 0;
-						end
-					else
-						bottom = 0;
-					end
-				end
-			end
-			return 0, 0, bottom, 0;
-		else
-			return 0, 0, 0, 0;
-		end
-	end
-	IFrameManager:Register(Perl_CombatDisplay_Frame, iface);
-	IFrameManager:Register(Perl_CombatDisplay_Target_Frame, iface);
-end
+--function Perl_CombatDisplay_IFrameManager()
+--	local iface = IFrameManager:Interface();
+--	function iface:getName(frame)
+--		if (frame == Perl_CombatDisplay_Frame) then
+--			return "Perl CombatDisplay (Player)"
+--		else
+--			return "Perl CombatDisplay (Target)"
+--		end
+--	end
+--	function iface:getBorder(frame)
+--		if (frame == Perl_CombatDisplay_Frame) then
+--			local bottom;
+--			if (UnitClass("player") == PERL_LOCALIZED_ROGUE) then
+--				bottom = 12;
+--			else
+--				if (UnitClass("player") == PERL_LOCALIZED_DRUID) then
+--					if (showdruidbar == 1) then
+--						bottom = 24;
+--					else
+--						bottom = 12;
+--					end
+--				else
+--					if (UnitClass("player") == PERL_LOCALIZED_HUNTER or UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
+--						if (showpetbars == 1) then
+--							bottom = 12;
+--						else
+--							bottom = 0;
+--						end
+--					else
+--						bottom = 0;
+--					end
+--				end
+--			end
+--			return 0, 0, bottom, 0;
+--		else
+--			return 0, 0, 0, 0;
+--		end
+--	end
+--	IFrameManager:Register(Perl_CombatDisplay_Frame, iface);
+--	IFrameManager:Register(Perl_CombatDisplay_Target_Frame, iface);
+--end
 
 function Perl_CombatDisplay_Initialize_Frame_Color()
 	Perl_CombatDisplay_ManaFrame:SetBackdropColor(0, 0, 0, 1);
@@ -400,46 +433,60 @@ function Perl_CombatDisplay_UpdateDisplay()
 	Perl_CombatDisplay_Target_HealthBar:SetValue(0);	-- Do this so we don't fade the bar on a fresh target switch
 	Perl_CombatDisplay_Target_ManaBar:SetValue(0);		-- Do this so we don't fade the bar on a fresh target switch
 
-	if (state == 0) then
-		Perl_CombatDisplay_Frame:Hide();
-		Perl_CombatDisplay_Target_Frame:Hide();
-		Perl_CombatDisplay_Frame:StopMovingOrSizing();
-		Perl_CombatDisplay_Target_Frame:StopMovingOrSizing();
-	elseif (state == 1) then
-		Perl_CombatDisplay_Frame:Show();
-		Perl_CombatDisplay_Target_Show();
-	elseif (state == 2) then
-		if (InCombat == 1) then
-			Perl_CombatDisplay_Frame:Show();
-			Perl_CombatDisplay_Target_Show();
-		elseif (manapersist == 1 and manafull == 0) then
-			Perl_CombatDisplay_Frame:Show();
-			Perl_CombatDisplay_Target_Show();
-		elseif (healthpersist == 1 and healthfull == 0) then
-			Perl_CombatDisplay_Frame:Show();
-			Perl_CombatDisplay_Target_Show();
-		else
-			Perl_CombatDisplay_Frame:Hide();
-			Perl_CombatDisplay_Target_Frame:Hide();
-			Perl_CombatDisplay_Frame:StopMovingOrSizing();
-			Perl_CombatDisplay_Target_Frame:StopMovingOrSizing();
-		end
+--	if (state == 0) then
+--		Perl_CombatDisplay_Frame:Hide();
+--		Perl_CombatDisplay_Target_Frame:Hide();
+--		Perl_CombatDisplay_Frame:StopMovingOrSizing();
+--		Perl_CombatDisplay_Target_Frame:StopMovingOrSizing();
+--	elseif (state == 1) then
+	if (state == 1) then
+		Perl_CombatDisplay_Target_UpdateAll();
+--		Perl_CombatDisplay_Frame:Show();
+--		Perl_CombatDisplay_Target_Show();
+--	elseif (state == 2) then
+--		if (InCombat == 1) then
+--			Perl_CombatDisplay_Frame:Show();
+--			Perl_CombatDisplay_Target_Show();
+--		elseif (manapersist == 1 and manafull == 0) then
+--			Perl_CombatDisplay_Frame:Show();
+--			Perl_CombatDisplay_Target_Show();
+--		elseif (healthpersist == 1 and healthfull == 0) then
+--			Perl_CombatDisplay_Frame:Show();
+--			Perl_CombatDisplay_Target_Show();
+--		else
+--			Perl_CombatDisplay_Frame:Hide();
+--			Perl_CombatDisplay_Target_Frame:Hide();
+--			Perl_CombatDisplay_Frame:StopMovingOrSizing();
+--			Perl_CombatDisplay_Target_Frame:StopMovingOrSizing();
+--		end
 	elseif (state == 3) then
+--	if (state == 3) then
 		if (IsAggroed == 1) then
-			Perl_CombatDisplay_Frame:Show();
-			Perl_CombatDisplay_Target_Show();
+--			RegisterUnitWatch(Perl_CombatDisplay_Target_Frame);
+--			Perl_CombatDisplay_Frame:Show();
+			--Perl_CombatDisplay_Target_UpdateAll();
+--			return;
 		elseif (manapersist == 1 and manafull == 0) then
-			Perl_CombatDisplay_Frame:Show();
-			Perl_CombatDisplay_Target_Show();
+--			Perl_CombatDisplay_Frame:Show();
+			--Perl_CombatDisplay_Target_UpdateAll();
 		elseif (healthpersist == 1 and healthfull == 0) then
-			Perl_CombatDisplay_Frame:Show();
-			Perl_CombatDisplay_Target_Show();
+--			Perl_CombatDisplay_Frame:Show();
+			--Perl_CombatDisplay_Target_UpdateAll();
 		else
+			--if (not InCombatLockdown()) then
+				--UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
+			--end
+			
 			Perl_CombatDisplay_Frame:Hide();
+			UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
 			Perl_CombatDisplay_Target_Frame:Hide();
-			Perl_CombatDisplay_Frame:StopMovingOrSizing();
-			Perl_CombatDisplay_Target_Frame:StopMovingOrSizing();
+--			Perl_CombatDisplay_Frame:StopMovingOrSizing();
+--			Perl_CombatDisplay_Target_Frame:StopMovingOrSizing();
+			return;
 		end
+--		UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
+--		Perl_CombatDisplay_Target_Frame:Hide();
+		Perl_CombatDisplay_Target_UpdateAll();
 	end
 end
 
@@ -555,68 +602,72 @@ function Perl_CombatDisplay_Update_Mana()
 				-- Hide it all (bars and text)
 				Perl_CombatDisplay_DruidBar_OnUpdate_Frame:Hide();
 				Perl_CombatDisplay_DruidBarText:SetText();
-				Perl_CombatDisplay_DruidBar:Hide();
-				Perl_CombatDisplay_DruidBarBG:Hide();
-				Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_HealthBar", "BOTTOM", 0, -2);
-				if (playerpower == 3) then
-					Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Energy and Combo Points
-					Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
-				else
-					Perl_CombatDisplay_ManaFrame:SetHeight(42);		-- Using mana or rage, use default height
-					Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
-				end
+				Perl_CombatDisplay_DruidBar:SetMinMaxValues(0, 1);
+				Perl_CombatDisplay_DruidBar:SetValue(0);
+--				Perl_CombatDisplay_DruidBar:Hide();
+--				Perl_CombatDisplay_DruidBarBG:Hide();
+--				Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_HealthBar", "BOTTOM", 0, -2);
+--				if (playerpower == 3) then
+--					Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Energy and Combo Points
+--					Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
+--				else
+--					Perl_CombatDisplay_ManaFrame:SetHeight(42);		-- Using mana or rage, use default height
+--					Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
+--				end
 			end
 		else
-			-- Hide it all (bars and text)
+--			-- Hide it all (bars and text)
 			Perl_CombatDisplay_DruidBar_OnUpdate_Frame:Hide();
 			Perl_CombatDisplay_DruidBarText:SetText();
-			Perl_CombatDisplay_DruidBar:Hide();
-			Perl_CombatDisplay_DruidBarBG:Hide();
-			Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_HealthBar", "BOTTOM", 0, -2);
-			if (playerpower == 3) then
-				Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Energy and Combo Points
-				Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
-			else
-				Perl_CombatDisplay_ManaFrame:SetHeight(42);		-- Using mana or rage, use default height
-				Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
-			end
+			Perl_CombatDisplay_DruidBar:SetMinMaxValues(0, 1);
+			Perl_CombatDisplay_DruidBar:SetValue(0);
+--			Perl_CombatDisplay_DruidBar:Hide();
+--			Perl_CombatDisplay_DruidBarBG:Hide();
+--			Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_HealthBar", "BOTTOM", 0, -2);
+--			if (playerpower == 3) then
+--				Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Energy and Combo Points
+--				Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
+--			else
+--				Perl_CombatDisplay_ManaFrame:SetHeight(42);		-- Using mana or rage, use default height
+--				Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
+--			end
 		end
-	else
-		-- Hide it all (bars and text)
-		Perl_CombatDisplay_DruidBar_OnUpdate_Frame:Hide();
-		Perl_CombatDisplay_DruidBarText:SetText();
-		Perl_CombatDisplay_DruidBar:Hide();
-		Perl_CombatDisplay_DruidBarBG:Hide();
-		Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_HealthBar", "BOTTOM", 0, -2);
-		if (playerpower == 3) then
-			Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Energy and Combo Points
-			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
-		else
-			Perl_CombatDisplay_ManaFrame:SetHeight(42);		-- Using mana or rage, use default height
-			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
-		end
+--	else
+--		-- Hide it all (bars and text)
+--		Perl_CombatDisplay_DruidBar_OnUpdate_Frame:Hide();
+--		Perl_CombatDisplay_DruidBarText:SetText();
+--		Perl_CombatDisplay_DruidBar:Hide();
+--		Perl_CombatDisplay_DruidBarBG:Hide();
+--		Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_HealthBar", "BOTTOM", 0, -2);
+--		if (playerpower == 3) then
+--			Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Energy and Combo Points
+--			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
+--		else
+--			Perl_CombatDisplay_ManaFrame:SetHeight(42);		-- Using mana or rage, use default height
+--			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
+--		end
 	end
 
-	if (showpetbars == 1) then							-- running this check here since all the previous if's will undo it if i don't
-		if (UnitExists("pet")) then
-			Perl_CombatDisplay_ManaFrame:SetHeight(66);			-- health and mana/focus bar
-			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(66);
-		end
-	end
+--	if (showpetbars == 1) then							-- running this check here since all the previous if's will undo it if i don't
+--		if (UnitExists("pet")) then
+--			Perl_CombatDisplay_ManaFrame:SetHeight(66);			-- health and mana/focus bar
+--			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(66);
+--		end
+--	end
 
-	if (fivesecsupport == 1) then
-		if (REGENERATING_MANA ~= nil) then				-- Is FiveSec installed?
-			if (UnitPowerType("player") == 0) then			-- If we aren't in mana mode, bail out
-				if (REGENERATING_MANA == false) then		-- If we aren't in regen mode, color light blue
-					Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0.7, 1, 1);
-					Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0.7, 1, 0.25);
-				else						-- Then we must be in regen mode, color bar normally
-					Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0, 1, 1);
-					Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-				end
-			end
-		end
-	end
+--	if (fivesecsupport == 1) then
+--		if (REGENERATING_MANA ~= nil) then				-- Is FiveSec installed?
+--			if (UnitPowerType("player") == 0) then			-- If we aren't in mana mode, bail out
+--				if (REGENERATING_MANA == false) then		-- If we aren't in regen mode, color light blue
+--					Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0.7, 1, 1);
+--					Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0.7, 1, 0.25);
+--				else						-- Then we must be in regen mode, color bar normally
+--					Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0, 1, 1);
+--					Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
+--				end
+--			end
+--		end
+--	end
 end
 
 function Perl_CombatDisplay_Update_DruidBar(arg1)
@@ -651,16 +702,16 @@ function Perl_CombatDisplay_Update_DruidBar(arg1)
 		end
 
 		-- Show the bar and adjust the stats frame
-		Perl_CombatDisplay_DruidBar:Show();
-		Perl_CombatDisplay_DruidBarBG:Show();
-		Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_DruidBar", "BOTTOM", 0, -2);
-		if (playerpower == 3) then
-			Perl_CombatDisplay_ManaFrame:SetHeight(66);		-- Energy and Combo Points
-			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(66);
-		else
-			Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Rage
-			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
-		end
+--		Perl_CombatDisplay_DruidBar:Show();
+--		Perl_CombatDisplay_DruidBarBG:Show();
+--		Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_DruidBar", "BOTTOM", 0, -2);
+--		if (playerpower == 3) then
+--			Perl_CombatDisplay_ManaFrame:SetHeight(66);		-- Energy and Combo Points
+--			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(66);
+--		else
+--			Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Rage
+--			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
+--		end
 
 		-- Display the needed text
 		if (displaypercents == 0) then
@@ -699,34 +750,34 @@ function Perl_CombatDisplay_UpdateBars()
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
 		-- Hide CP Bar
-		Perl_CombatDisplay_CPBar:Hide();
-		Perl_CombatDisplay_CPBarBG:Hide();
-		Perl_CombatDisplay_CPBarText:Hide();
-		Perl_CombatDisplay_ManaFrame:SetHeight(42);
-		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
+--		Perl_CombatDisplay_CPBar:Hide();
+--		Perl_CombatDisplay_CPBarBG:Hide();
+--		Perl_CombatDisplay_CPBarText:Hide();
+--		Perl_CombatDisplay_ManaFrame:SetHeight(42);
+--		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
 	elseif (playerpower == 1) then		-- rage
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
 		-- Hide CP Bar
-		Perl_CombatDisplay_CPBar:Hide();
-		Perl_CombatDisplay_CPBarBG:Hide();
-		Perl_CombatDisplay_CPBarText:Hide();
-		Perl_CombatDisplay_ManaFrame:SetHeight(42);
-		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
+--		Perl_CombatDisplay_CPBar:Hide();
+--		Perl_CombatDisplay_CPBarBG:Hide();
+--		Perl_CombatDisplay_CPBarText:Hide();
+--		Perl_CombatDisplay_ManaFrame:SetHeight(42);
+--		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
 	elseif (playerpower == 3) then		-- energy
 		this:RegisterEvent("PLAYER_COMBO_POINTS");
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 		-- Setup CP Bar
-		Perl_CombatDisplay_CPBar:Show();
-		Perl_CombatDisplay_CPBarBG:Show();
-		Perl_CombatDisplay_CPBarText:Show();
-		Perl_CombatDisplay_CPBarText:SetText('0/5');
-		Perl_CombatDisplay_ManaFrame:SetHeight(54);
-		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
-		Perl_CombatDisplay_CPBar:SetMinMaxValues(0,5);
+--		Perl_CombatDisplay_CPBar:Show();
+--		Perl_CombatDisplay_CPBarBG:Show();
+--		Perl_CombatDisplay_CPBarText:Show();
+--		Perl_CombatDisplay_CPBarText:SetText('0/5');
+--		Perl_CombatDisplay_ManaFrame:SetHeight(54);
+--		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
+--		Perl_CombatDisplay_CPBar:SetMinMaxValues(0,5);
 		Perl_CombatDisplay_Update_Combo_Points();
 		return;
 	end
@@ -734,21 +785,27 @@ end
 
 function Perl_CombatDisplay_CheckForPets()
 	if (showpetbars == 1 and UnitExists("pet")) then
-		Perl_CombatDisplay_PetHealthBar:Show();
-		Perl_CombatDisplay_PetHealthBarBG:Show();
-		Perl_CombatDisplay_PetManaBar:Show();
-		Perl_CombatDisplay_PetManaBarBG:Show();
-		Perl_CombatDisplay_ManaFrame:SetHeight(66);			-- health and mana/focus bar
-		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(66);
+--		Perl_CombatDisplay_PetHealthBar:Show();
+--		Perl_CombatDisplay_PetHealthBarBG:Show();
+--		Perl_CombatDisplay_PetManaBar:Show();
+--		Perl_CombatDisplay_PetManaBarBG:Show();
+--		Perl_CombatDisplay_ManaFrame:SetHeight(66);			-- health and mana/focus bar
+--		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(66);
 		Perl_CombatDisplay_Update_PetManaBarColor();
 		Perl_CombatDisplay_Update_PetHealth();
 		Perl_CombatDisplay_Update_PetMana();
 	else
-		Perl_CombatDisplay_PetHealthBar:Hide();
-		Perl_CombatDisplay_PetHealthBarBG:Hide();
-		Perl_CombatDisplay_PetManaBar:Hide();
-		Perl_CombatDisplay_PetManaBarBG:Hide();
-		Perl_CombatDisplay_UpdateBars();
+--		Perl_CombatDisplay_PetHealthBar:Hide();
+--		Perl_CombatDisplay_PetHealthBarBG:Hide();
+--		Perl_CombatDisplay_PetManaBar:Hide();
+--		Perl_CombatDisplay_PetManaBarBG:Hide();
+--		Perl_CombatDisplay_UpdateBars();
+		Perl_CombatDisplay_PetHealthBar:SetMinMaxValues(0, 1);
+		Perl_CombatDisplay_PetHealthBar:SetValue(0);
+		Perl_CombatDisplay_PetHealthBarText:SetText();
+		Perl_CombatDisplay_PetManaBar:SetMinMaxValues(0, 1);
+		Perl_CombatDisplay_PetManaBar:SetValue(0);
+		Perl_CombatDisplay_PetManaBarText:SetText();
 	end
 end
 
@@ -871,11 +928,24 @@ end
 -------------------------------
 -- Update Functions (Target) --
 -------------------------------
+--function Perl_CombatDisplay_Target_Show()
+--	if (showtarget == 1) then
+--		if (UnitExists("target")) then
+----			Perl_CombatDisplay_Target_Frame:Show();
+--			Perl_CombatDisplay_Target_UpdateAll();
+----		else
+----			Perl_CombatDisplay_Target_Frame:Hide();
+--		end
+--	end
+--end
+
 function Perl_CombatDisplay_Target_UpdateAll()
-	if (UnitExists("target")) then
-		Perl_CombatDisplay_Target_Update_Health();
-		Perl_CombatDisplay_Target_Update_Mana();
-		Perl_CombatDisplay_Target_UpdateBars();
+	if (showtarget == 1) then
+		if (UnitExists("target")) then
+			Perl_CombatDisplay_Target_Update_Health();
+			Perl_CombatDisplay_Target_Update_Mana();
+			Perl_CombatDisplay_Target_UpdateBars();
+		end
 	end
 end
 
@@ -1020,6 +1090,11 @@ function Perl_CombatDisplay_Target_Update_Mana()
 	targetmanamax = UnitManaMax("target");
 	targetpowertype = UnitPowerType("target");
 
+	if (targetmanamax == 0) then
+		Perl_CombatDisplay_Target_ManaBarText:SetText();
+		return;
+	end
+
 	if (UnitIsDead("target") or UnitIsGhost("target")) then				-- This prevents negative mana
 		targetmana = 0;
 	end
@@ -1059,53 +1134,45 @@ function Perl_CombatDisplay_Target_UpdateBars()
 
 	-- Set power type specific events and colors.
 	if (targetmanamax == 0) then
-		Perl_CombatDisplay_Target_ManaBar:Hide();
-		Perl_CombatDisplay_Target_ManaBarBG:Hide();
-		Perl_CombatDisplay_Target_ManaFrame:SetHeight(30);
-		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(30);
+		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(0, 0, 0, 1);
+		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(0, 0, 0, 0.25);
+		Perl_CombatDisplay_Target_ManaBarText:SetText();
+--		Perl_CombatDisplay_Target_ManaBar:Hide();
+--		Perl_CombatDisplay_Target_ManaBarBG:Hide();
+--		Perl_CombatDisplay_Target_ManaFrame:SetHeight(30);
+--		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(30);
 	elseif (targetpowertype == 0) then	-- mana
 		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-		Perl_CombatDisplay_Target_ManaBar:Show();
-		Perl_CombatDisplay_Target_ManaBarBG:Show();
-		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
-		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
+--		Perl_CombatDisplay_Target_ManaBar:Show();
+--		Perl_CombatDisplay_Target_ManaBarBG:Show();
+--		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
+--		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
 	elseif (targetpowertype == 1) then	-- rage
 		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-		Perl_CombatDisplay_Target_ManaBar:Show();
-		Perl_CombatDisplay_Target_ManaBarBG:Show();
-		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
-		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
+--		Perl_CombatDisplay_Target_ManaBar:Show();
+--		Perl_CombatDisplay_Target_ManaBarBG:Show();
+--		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
+--		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
 	elseif (targetpowertype == 2) then	-- focus
 		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-		Perl_CombatDisplay_Target_ManaBar:Show();
-		Perl_CombatDisplay_Target_ManaBarBG:Show();
-		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
-		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
+--		Perl_CombatDisplay_Target_ManaBar:Show();
+--		Perl_CombatDisplay_Target_ManaBarBG:Show();
+--		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
+--		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
 	elseif (targetpowertype == 3) then	-- energy
 		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-		Perl_CombatDisplay_Target_ManaBar:Show();
-		Perl_CombatDisplay_Target_ManaBarBG:Show();
-		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
-		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
+--		Perl_CombatDisplay_Target_ManaBar:Show();
+--		Perl_CombatDisplay_Target_ManaBarBG:Show();
+--		Perl_CombatDisplay_Target_ManaFrame:SetHeight(42);
+--		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetHeight(42);
 		return;
-	end
-end
-
-function Perl_CombatDisplay_Target_Show()
-	if (showtarget == 1) then
-		if (UnitExists("target")) then
-			Perl_CombatDisplay_Target_Frame:Show();
-			Perl_CombatDisplay_Target_UpdateAll();
-		else
-			Perl_CombatDisplay_Target_Frame:Hide();
-		end
 	end
 end
 
@@ -1244,25 +1311,112 @@ function Perl_CombatDisplay_Target_ManaBar_Fade(arg1)
 end
 
 
+-------------------------------
+-- Style Show/Hide Functions --
+-------------------------------
+function Perl_CombatDisplay_Frame_Style()
+	Perl_CombatDisplay_ManaFrame:SetHeight(42);
+	Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
+
+	if (state == 0) then						-- Always Hidden
+		Perl_CombatDisplay_Frame:Hide();
+		UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
+		Perl_CombatDisplay_Target_Frame:Hide();
+	elseif (state == 1) then					-- Always Shown
+		Perl_CombatDisplay_Frame:Show();
+		if (showtarget == 1) then
+			Perl_CombatDisplay_Target_UpdateAll();
+			RegisterUnitWatch(Perl_CombatDisplay_Target_Frame);
+		else
+			UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
+			Perl_CombatDisplay_Target_Frame:Hide();
+		end
+	elseif (state == 3) then					-- On Agro
+		UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
+		Perl_CombatDisplay_Target_Frame:Hide();
+	end
+
+	if (showdruidbar == 1) then
+		Perl_CombatDisplay_ManaFrame:SetHeight(Perl_CombatDisplay_ManaFrame:GetHeight() + 12);
+		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 12);
+		Perl_CombatDisplay_DruidBar:Show();
+		Perl_CombatDisplay_DruidBarBG:Show();
+		Perl_CombatDisplay_DruidBar:SetMinMaxValues(0, 1);
+		Perl_CombatDisplay_DruidBar:SetValue(0);
+		Perl_CombatDisplay_DruidBarText:SetText();
+		Perl_CombatDisplay_DruidBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_ManaBar", "BOTTOMLEFT", 0, -2);
+	else
+		Perl_CombatDisplay_DruidBar:Hide();
+		Perl_CombatDisplay_DruidBarBG:Hide();
+	end
+
+	if (showcp == 1) then
+		Perl_CombatDisplay_ManaFrame:SetHeight(Perl_CombatDisplay_ManaFrame:GetHeight() + 12);
+		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 12);
+		Perl_CombatDisplay_CPBar:Show();
+		Perl_CombatDisplay_CPBarBG:Show();
+		Perl_CombatDisplay_CPBar:SetMinMaxValues(0, 5);
+		if (showdruidbar == 1) then
+			Perl_CombatDisplay_CPBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_DruidBar", "BOTTOMLEFT", 0, -2);
+		else
+			Perl_CombatDisplay_CPBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_ManaBar", "BOTTOMLEFT", 0, -2);
+		end
+	else
+		Perl_CombatDisplay_CPBar:Hide();
+		Perl_CombatDisplay_CPBarBG:Hide();
+	end
+
+	if (showpetbars == 1) then
+		Perl_CombatDisplay_ManaFrame:SetHeight(Perl_CombatDisplay_ManaFrame:GetHeight() + 24);
+		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 24);
+		Perl_CombatDisplay_PetHealthBar:Show();
+		Perl_CombatDisplay_PetHealthBarBG:Show();
+		Perl_CombatDisplay_PetManaBar:Show();
+		Perl_CombatDisplay_PetManaBarBG:Show();
+		if (showdruidbar == 1 and showcp == 0) then
+			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_DruidBar", "BOTTOMLEFT", 0, -2);
+		elseif (showdruidbar == 0 and showcp == 1) then
+			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_CPBar", "BOTTOMLEFT", 0, -2);
+		elseif (showdruidbar == 1 and showcp == 1) then
+			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_CPBar", "BOTTOMLEFT", 0, -2);
+		end
+		Perl_CombatDisplay_PetManaBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_PetHealthBar", "BOTTOMLEFT", 0, -2);
+	else
+		Perl_CombatDisplay_PetHealthBar:Hide();
+		Perl_CombatDisplay_PetHealthBarBG:Hide();
+		Perl_CombatDisplay_PetManaBar:Hide();
+		Perl_CombatDisplay_PetManaBarBG:Hide();
+	end
+
+	Perl_CombatDisplay_Update_Mana();
+	Perl_CombatDisplay_Update_Combo_Points();
+	Perl_CombatDisplay_CheckForPets();
+	Perl_CombatDisplay_UpdateDisplay();
+end
+
+
 --------------------------
 -- GUI Config Functions --
 --------------------------
 function Perl_CombatDisplay_Set_State(newvalue)
 	state = newvalue;
 	Perl_CombatDisplay_UpdateVars();
-	Perl_CombatDisplay_UpdateDisplay();
+--	Perl_CombatDisplay_UpdateDisplay();
+	Perl_CombatDisplay_Frame_Style();
 end
 
 function Perl_CombatDisplay_Set_Health_Persistance(newvalue)
 	healthpersist = newvalue;
 	Perl_CombatDisplay_UpdateVars();
-	Perl_CombatDisplay_UpdateDisplay();
+--	Perl_CombatDisplay_UpdateDisplay();
+	Perl_CombatDisplay_Frame_Style();
 end
 
 function Perl_CombatDisplay_Set_Mana_Persistance(newvalue)
 	manapersist = newvalue;
 	Perl_CombatDisplay_UpdateVars();
-	Perl_CombatDisplay_UpdateDisplay();
+--	Perl_CombatDisplay_UpdateDisplay();
+	Perl_CombatDisplay_Frame_Style();
 end
 
 function Perl_CombatDisplay_Set_Lock(newvalue)
@@ -1273,10 +1427,11 @@ end
 function Perl_CombatDisplay_Set_Target(newvalue)
 	showtarget = newvalue;
 	Perl_CombatDisplay_UpdateVars();
-	if (showtarget == 0) then
-		Perl_CombatDisplay_Target_Frame:Hide();
-	end
-	Perl_CombatDisplay_UpdateDisplay();
+--	if (showtarget == 0) then
+--		Perl_CombatDisplay_Target_Frame:Hide();
+--	end
+--	Perl_CombatDisplay_UpdateDisplay();
+	Perl_CombatDisplay_Frame_Style();
 end
 
 function Perl_CombatDisplay_Set_MobHealth(newvalue)
@@ -1288,7 +1443,8 @@ end
 function Perl_CombatDisplay_Set_DruidBar(newvalue)
 	showdruidbar = newvalue;
 	Perl_CombatDisplay_UpdateVars();
-	Perl_CombatDisplay_Update_Mana();
+--	Perl_CombatDisplay_Update_Mana();
+	Perl_CombatDisplay_Frame_Style();
 end
 
 function Perl_CombatDisplay_Set_FiveSec(newvalue)
@@ -1301,7 +1457,8 @@ end
 function Perl_CombatDisplay_Set_PetBars(newvalue)
 	showpetbars = newvalue;
 	Perl_CombatDisplay_UpdateVars();
-	Perl_CombatDisplay_CheckForPets();
+--	Perl_CombatDisplay_CheckForPets();
+	Perl_CombatDisplay_Frame_Style();
 end
 
 function Perl_CombatDisplay_Set_Right_Click(newvalue)
@@ -1314,8 +1471,14 @@ function Perl_CombatDisplay_Set_Display_Percents(newvalue)
 	Perl_CombatDisplay_UpdateVars();
 	Perl_CombatDisplay_Update_Health();
 	Perl_CombatDisplay_Update_Mana();
-	Perl_CombatDisplay_CheckForPets();
+--	Perl_CombatDisplay_CheckForPets();
 	Perl_CombatDisplay_Target_UpdateAll();
+end
+
+function Perl_CombatDisplay_Set_ComboPoint_Bars(newvalue)
+	showcp = newvalue;
+	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_Frame_Style();
 end
 
 function Perl_CombatDisplay_Set_Scale(number)
@@ -1360,6 +1523,7 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 	rightclickmenu = Perl_CombatDisplay_Config[name]["RightClickMenu"];
 	fivesecsupport = Perl_CombatDisplay_Config[name]["FiveSecSupport"];
 	displaypercents = Perl_CombatDisplay_Config[name]["DisplayPercents"];
+	showcp = Perl_CombatDisplay_Config[name]["ShowCP"];
 
 	if (state == nil) then
 		state = 3;
@@ -1400,6 +1564,9 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 	if (displaypercents == nil) then
 		displaypercents = 0;
 	end
+	if (showcp == nil) then
+		showcp = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1429,6 +1596,7 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 		["rightclickmenu"] = rightclickmenu,
 		["fivesecsupport"] = fivesecsupport,
 		["displaypercents"] = displaypercents,
+		["showcp"] = showcp,
 	}
 	return vars;
 end
@@ -1502,6 +1670,11 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			else
 				displaypercents = nil;
 			end
+			if (vartable["Global Settings"]["ShowCP"] ~= nil) then
+				showcp = vartable["Global Settings"]["ShowCP"];
+			else
+				showcp = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1544,6 +1717,9 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		if (displaypercents == nil) then
 			displaypercents = 0;
 		end
+		if (showcp == nil) then
+			showcp = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_CombatDisplay_Set_Target(showtarget)
@@ -1555,9 +1731,9 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 	end
 
 	-- IFrameManager Support
-	if (IFrameManager) then
-		IFrameManager:Refresh();
-	end
+--	if (IFrameManager) then
+--		IFrameManager:Refresh();
+--	end
 
 	Perl_CombatDisplay_Config[UnitName("player")] = {
 		["State"] = state,
@@ -1573,6 +1749,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		["RightClickMenu"] = rightclickmenu,
 		["FiveSecSupport"] = fivesecsupport,
 		["DisplayPercents"] = displaypercents,
+		["ShowCP"] = showcp,
 	};
 end
 
@@ -1580,6 +1757,19 @@ end
 -------------------
 -- Click Handler --
 -------------------
+function Perl_CombatDisplay_CastClickOverlay_OnLoad()
+	local showmenu = function()
+		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
+	end
+	SecureUnitButton_OnLoad(this, "player", showmenu);
+
+	this:SetAttribute("unit", "player");
+	if (not ClickCastFrames) then
+		ClickCastFrames = {};
+	end
+	ClickCastFrames[this] = true;
+end
+
 function Perl_CombatDisplayDropDown_OnLoad()
 	UIDropDownMenu_Initialize(this, Perl_CombatDisplayDropDown_Initialize, "MENU");
 end
@@ -1588,61 +1778,61 @@ function Perl_CombatDisplayDropDown_Initialize()
 	UnitPopup_ShowMenu(Perl_CombatDisplay_DropDown, "SELF", "player");
 end
 
-function Perl_CombatDisplay_MouseClick(button)
-	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
-		if (Perl_Custom_ClickFunction(button, "player")) then	-- If the function returns true, then we return
-			return;
-		end
-	end								-- Otherwise, it did nothing, so take default action
-
-	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (CastPartyConfig) then
-			CastParty.Event.OnClickByUnit(button, "player");
-			return;
-		elseif (Genesis_MouseHeal and Genesis_MouseHeal("player", button)) then
-			return;
-		elseif (CH_Config) then
-			if (CH_Config.PCUFEnabled) then
-				CH_UnitClicked("player", button);
-				return;
-			end
-		elseif (SmartHeal) then
-			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
-				local KeyDownType = SmartHeal:GetClickHealButton();
-				if(KeyDownType and KeyDownType ~= "undetermined") then
-					SmartHeal:ClickHeal(KeyDownType..button, "player");
-				else
-					SmartHeal:DefaultClick(button, "player");
-				end
-				return;
-			end
-		end
-	end
-
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("player");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("player");
-		else
-			TargetUnit("player");
-		end
-		return;
-	end
-
-	if (button == "RightButton") then
-		if (SpellIsTargeting()) then
-			SpellStopTargeting();
-			return;
-		end
-	end
-
-	if (rightclickmenu == 1) then
-		if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-			ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
-		end
-	end
-end
+--function Perl_CombatDisplay_MouseClick(button)
+--	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
+--		if (Perl_Custom_ClickFunction(button, "player")) then	-- If the function returns true, then we return
+--			return;
+--		end
+--	end								-- Otherwise, it did nothing, so take default action
+--
+--	if (PCUF_CASTPARTYSUPPORT == 1) then
+--		if (CastPartyConfig) then
+--			CastParty.Event.OnClickByUnit(button, "player");
+--			return;
+--		elseif (Genesis_MouseHeal and Genesis_MouseHeal("player", button)) then
+--			return;
+--		elseif (CH_Config) then
+--			if (CH_Config.PCUFEnabled) then
+--				CH_UnitClicked("player", button);
+--				return;
+--			end
+--		elseif (SmartHeal) then
+--			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+--				local KeyDownType = SmartHeal:GetClickHealButton();
+--				if(KeyDownType and KeyDownType ~= "undetermined") then
+--					SmartHeal:ClickHeal(KeyDownType..button, "player");
+--				else
+--					SmartHeal:DefaultClick(button, "player");
+--				end
+--				return;
+--			end
+--		end
+--	end
+--
+--	if (button == "LeftButton") then
+--		if (SpellIsTargeting()) then
+--			SpellTargetUnit("player");
+--		elseif (CursorHasItem()) then
+--			DropItemOnUnit("player");
+--		else
+--			TargetUnit("player");
+--		end
+--		return;
+--	end
+--
+--	if (button == "RightButton") then
+--		if (SpellIsTargeting()) then
+--			SpellStopTargeting();
+--			return;
+--		end
+--	end
+--
+--	if (rightclickmenu == 1) then
+--		if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+--			ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
+--		end
+--	end
+--end
 
 function Perl_CombatDisplay_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
@@ -1680,59 +1870,72 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 	end
 end
 
-function Perl_CombatDisplay_Target_MouseClick(button)
-	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
-		if (Perl_Custom_ClickFunction(button, "target")) then	-- If the function returns true, then we return
-			return;
-		end
-	end								-- Otherwise, it did nothing, so take default action
-
-	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (CastPartyConfig) then
-			CastParty.Event.OnClickByUnit(button, "target");
-			return;
-		elseif (Genesis_MouseHeal and Genesis_MouseHeal("target", button)) then
-			return;
-		elseif (CH_Config) then
-			if (CH_Config.PCUFEnabled) then
-				CH_UnitClicked("target", button);
-				return;
-			end
-		elseif (SmartHeal) then
-			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
-				local KeyDownType = SmartHeal:GetClickHealButton();
-				if(KeyDownType and KeyDownType ~= "undetermined") then
-					SmartHeal:ClickHeal(KeyDownType..button, "target");
-				else
-					SmartHeal:DefaultClick(button, "target");
-				end
-				return;
-			end
-		end
+function Perl_CombatDisplay_Target_CastClickOverlay_OnLoad()
+	local showmenu = function()
+		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
 	end
+	SecureUnitButton_OnLoad(this, "target", showmenu);
 
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("target");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("target");
-		end
-		return;
+	this:SetAttribute("unit", "target");
+	if (not ClickCastFrames) then
+		ClickCastFrames = {};
 	end
-
-	if (button == "RightButton") then
-		if (SpellIsTargeting()) then
-			SpellStopTargeting();
-			return;
-		end
-	end
-
-	if (rightclickmenu == 1) then
-		if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-			ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
-		end
-	end
+	ClickCastFrames[this] = true;
 end
+
+--function Perl_CombatDisplay_Target_MouseClick(button)
+--	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
+--		if (Perl_Custom_ClickFunction(button, "target")) then	-- If the function returns true, then we return
+--			return;
+--		end
+--	end								-- Otherwise, it did nothing, so take default action
+--
+--	if (PCUF_CASTPARTYSUPPORT == 1) then
+--		if (CastPartyConfig) then
+--			CastParty.Event.OnClickByUnit(button, "target");
+--			return;
+--		elseif (Genesis_MouseHeal and Genesis_MouseHeal("target", button)) then
+--			return;
+--		elseif (CH_Config) then
+--			if (CH_Config.PCUFEnabled) then
+--				CH_UnitClicked("target", button);
+--				return;
+--			end
+--		elseif (SmartHeal) then
+--			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+--				local KeyDownType = SmartHeal:GetClickHealButton();
+--				if(KeyDownType and KeyDownType ~= "undetermined") then
+--					SmartHeal:ClickHeal(KeyDownType..button, "target");
+--				else
+--					SmartHeal:DefaultClick(button, "target");
+--				end
+--				return;
+--			end
+--		end
+--	end
+--
+--	if (button == "LeftButton") then
+--		if (SpellIsTargeting()) then
+--			SpellTargetUnit("target");
+--		elseif (CursorHasItem()) then
+--			DropItemOnUnit("target");
+--		end
+--		return;
+--	end
+--
+--	if (button == "RightButton") then
+--		if (SpellIsTargeting()) then
+--			SpellStopTargeting();
+--			return;
+--		end
+--	end
+--
+--	if (rightclickmenu == 1) then
+--		if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+--			ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
+--		end
+--	end
+--end
 
 function Perl_CombatDisplay_Target_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
@@ -1748,20 +1951,20 @@ end
 ----------------------
 -- myAddOns Support --
 ----------------------
-function Perl_CombatDisplay_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if(myAddOnsFrame_Register) then
-		local Perl_CombatDisplay_myAddOns_Details = {
-			name = "Perl_CombatDisplay",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Perl; Maintained by Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_CombatDisplay_myAddOns_Help = {};
-		Perl_CombatDisplay_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_CombatDisplay_myAddOns_Details, Perl_CombatDisplay_myAddOns_Help);
-	end
-end
+--function Perl_CombatDisplay_myAddOns_Support()
+--	-- Register the addon in myAddOns
+--	if(myAddOnsFrame_Register) then
+--		local Perl_CombatDisplay_myAddOns_Details = {
+--			name = "Perl_CombatDisplay",
+--			version = PERL_LOCALIZED_VERSION,
+--			releaseDate = PERL_LOCALIZED_DATE,
+--			author = "Perl; Maintained by Global",
+--			email = "global@g-ball.com",
+--			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+--			category = MYADDONS_CATEGORY_OTHERS
+--		};
+--		Perl_CombatDisplay_myAddOns_Help = {};
+--		Perl_CombatDisplay_myAddOns_Help[1] = "/perl";
+--		myAddOnsFrame_Register(Perl_CombatDisplay_myAddOns_Details, Perl_CombatDisplay_myAddOns_Help);
+--	end
+--end

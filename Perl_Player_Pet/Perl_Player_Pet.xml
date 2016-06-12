@@ -114,7 +114,7 @@
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<Button name="Perl_Player_Pet_NameFrame_CastClickOverlay">
+					<Button name="Perl_Player_Pet_NameFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="170" y="24"/>
 						</Size>
@@ -129,10 +129,8 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_Player_Pet_CastClickOverlay_OnLoad();
 							</OnLoad>
-							<OnClick>
-								Perl_Player_Pet_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Player_Pet_DragStart(arg1);
 							</OnDragStart>
@@ -194,7 +192,7 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
-					<Button name="Perl_Player_Pet_PortraitFrame_CastClickOverlay">
+					<Button name="Perl_Player_Pet_PortraitFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="60" y="61"/>
 						</Size>
@@ -209,10 +207,8 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_Player_Pet_CastClickOverlay_OnLoad();
 							</OnLoad>
-							<OnClick>
-								Perl_Player_Pet_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Player_Pet_DragStart(arg1);
 							</OnDragStart>
@@ -314,21 +310,6 @@
 						<AbsInset left="5" right="5" top="5" bottom="5"/>
 					</BackgroundInsets>
 				</Backdrop>
-				<!--
-				<Layers>
-					<Layer level="OVERLAY">
-						<Fontstring name="Perl_Player_Pet_LevelBarText" inherits="GameFontNormalSmall" text="Error!">
-							<Anchors>
-								<Anchor point="LEFT" relativeTo="Perl_Player_Pet_NameFrame">
-									<Offset>
-										<AbsDimension x="6" y="0"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</Fontstring>
-					</Layer>
-				</Layers>
-				-->
 				<Frames>
 					<Frame name="Perl_Player_PetHappiness">
 						<Size>
@@ -352,7 +333,7 @@
 							</Layer>
 						</Layers>
 					</Frame>
-					<Button name="Perl_Player_Pet_LevelFrame_CastClickOverlay">
+					<Button name="Perl_Player_Pet_LevelFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="30" y="34"/>
 						</Size>
@@ -367,10 +348,8 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_Player_Pet_CastClickOverlay_OnLoad();
 							</OnLoad>
-							<OnClick>
-								Perl_Player_Pet_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Player_Pet_DragStart(arg1);
 							</OnDragStart>
@@ -407,7 +386,7 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
-					<Button name="Perl_Player_Pet_StatsFrame_CastClickOverlay">
+					<Button name="Perl_Player_Pet_StatsFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="145" y="34"/>
 						</Size>
@@ -422,10 +401,8 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_Player_Pet_CastClickOverlay_OnLoad();
 							</OnLoad>
-							<OnClick>
-								Perl_Player_Pet_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_Player_Pet_DragStart(arg1);
 							</OnDragStart>

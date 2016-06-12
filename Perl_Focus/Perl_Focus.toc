@@ -1,0 +1,7 @@
+## Interface: 20000
+## Title: Perl Focus Frame
+## Notes: Displays a movable focus frame.
+## Dependencies: Perl_Config
+## OptionalDeps: Clique, MobHealth
+## SavedVariables: Perl_Focus_Config
+Perl_Focus.xml

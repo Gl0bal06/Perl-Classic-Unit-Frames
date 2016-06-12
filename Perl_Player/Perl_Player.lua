@@ -117,8 +117,10 @@ function Perl_Player_OnEvent()
 	local func = Perl_Player_Events[event];
 	if (func) then
 		func();
---	else
---		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Player: Report the following event error to the author: "..event);
+	else
+		if (PCUF_SHOW_DEBUG_EVENTS == 1) then
+			DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Player: Report the following event error to the author: "..event);
+		end
 	end
 end
 
@@ -238,65 +240,65 @@ function Perl_Player_Initialize()
 	-- Major config options.
 	Perl_Player_Initialize_Frame_Color();		-- Give the borders (and background if applicable) that "Perl" look
 	Perl_Player_Set_Localized_ClassIcons();		-- Set the correct class icon
-	Perl_Player_Frame:Show();			-- Show the player frame
+--	Perl_Player_Frame:Show();			-- Show the player frame
 
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(PlayerFrame);
 
 	-- MyAddOns Support
-	Perl_Player_myAddOns_Support();
+--	Perl_Player_myAddOns_Support();
 
 	-- IFrameManager Support
-	if (IFrameManager) then
-		Perl_Player_IFrameManager();
-	end
+--	if (IFrameManager) then
+--		Perl_Player_IFrameManager();
+--	end
 
 	Initialized = 1;
 end
 
-function Perl_Player_IFrameManager()
-	local iface = IFrameManager:Interface();
-	function iface:getName(frame)
-		return "Perl Player";
-	end
-	function iface:getBorder(frame)
-		local bottom, left, right, top;
-		if (xpbarstate == 3) then
-			bottom = 38;
-		else
-			bottom = 50;
-		end
-		if (showraidgroup == 1) then
-			top = 20;
-		else
-			top = 0;
-		end
-		if (compactmode == 0) then
-			right = 70;
-		else
-			if (compactpercent == 0) then
-				if (shortbars == 0) then
-					right = 0;
-				else
-					right = -35;
-				end
-			else
-				if (shortbars == 0) then
-					right = 35;
-				else
-					right = 0;
-				end
-			end
-		end
-		if (showportrait == 0) then
-			left = 0;
-		else
-			left = 55;
-		end
-		return top, right, bottom, left;
-	end
-	IFrameManager:Register(this, iface);
-end
+--function Perl_Player_IFrameManager()
+--	local iface = IFrameManager:Interface();
+--	function iface:getName(frame)
+--		return "Perl Player";
+--	end
+--	function iface:getBorder(frame)
+--		local bottom, left, right, top;
+--		if (xpbarstate == 3) then
+--			bottom = 38;
+--		else
+--			bottom = 50;
+--		end
+--		if (showraidgroup == 1) then
+--			top = 20;
+--		else
+--			top = 0;
+--		end
+--		if (compactmode == 0) then
+--			right = 70;
+--		else
+--			if (compactpercent == 0) then
+--				if (shortbars == 0) then
+--					right = 0;
+--				else
+--					right = -35;
+--				end
+--			else
+--				if (shortbars == 0) then
+--					right = 35;
+--				else
+--					right = 0;
+--				end
+--			end
+--		end
+--		if (showportrait == 0) then
+--			left = 0;
+--		else
+--			left = 55;
+--		end
+--		return top, right, bottom, left;
+--	end
+--	IFrameManager:Register(this, iface);
+--end
 
 function Perl_Player_Initialize_Frame_Color()
 	Perl_Player_StatsFrame:SetBackdropColor(0, 0, 0, 1);
@@ -322,24 +324,22 @@ end
 function Perl_Player_Update_Once()
 	local localizedclass = UnitClass("player");
 
+	-- Anytime functions
 	Perl_Player_NameBarText:SetText(UnitName("player"));			-- Set the player's name
 	Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
 	Perl_Player_ClassTexture:SetTexCoord(Perl_Player_ClassPosRight[localizedclass], Perl_Player_ClassPosLeft[localizedclass], Perl_Player_ClassPosTop[localizedclass], Perl_Player_ClassPosBottom[localizedclass]);	-- Set the player's class icon
 	Perl_Player_Update_Portrait();						-- Set the player's portrait
 	Perl_Player_Update_PvP_Status();					-- Is the character PvP flagged?
-	Perl_Player_Set_Text_Positions();					-- Align the text according to compact and healer mode
 	Perl_Player_Update_Health();						-- Set the player's health on load or toggle
-	Perl_Player_Update_Mana();						-- Set the player's mana/energy on load or toggle
 	Perl_Player_Update_Mana_Bar();						-- Set the type of mana used
-	Perl_Player_XPBar_Display(xpbarstate);					-- Set the xp bar mode and update the experience if needed
-	Perl_Player_Update_Raid_Group_Number();					-- Are we in a raid at login?
-	Perl_Player_Portrait_Combat_Text();					-- Are we showing combat text?
+	Perl_Player_Update_Mana();						-- Set the player's mana/energy on load or toggle
 	Perl_Player_Update_Leader();						-- Are we the party leader?
 	Perl_Player_Update_Loot_Method();					-- Are we the master looter?
 	Perl_Player_Update_Combat_Status();					-- Are we already fighting or resting?
-	Perl_Player_Set_CompactMode();						-- Are we using compact mode?
-	Perl_Player_PvP_Rank_Icon();						-- Are we displaying our rank icon?
-	Perl_Player_Check_Hidden();						-- Are we in a raid and suppossed to be hidden?
+
+	-- Out of Combat ONLY functions
+	Perl_Player_Update_Raid_Group_Number();					-- Are we in a raid?
+	Perl_Player_Frame_Style();
 end
 
 function Perl_Player_Update_Health()
@@ -560,68 +560,76 @@ function Perl_Player_Update_Mana()
 				Perl_Player_DruidBarText:SetText();
 				Perl_Player_DruidBarTextPercent:SetText();
 				Perl_Player_DruidBarTextCompactPercent:SetText();
-				Perl_Player_DruidBar:Hide();
-				Perl_Player_DruidBarBG:Hide();
-				Perl_Player_DruidBar_CastClickOverlay:Hide();
-				Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_HealthBar", "BOTTOM", 0, -2);
-				if (xpbarstate == 3) then
-					Perl_Player_StatsFrame:SetHeight(42);			-- Experience Bar is hidden
-					Perl_Player_StatsFrame_CastClickOverlay:SetHeight(42);
-				else
-					Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is shown
-					Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
-				end
+				Perl_Player_DruidBar:SetMinMaxValues(0, 1);
+				Perl_Player_DruidBar:SetValue(0);
+--				Perl_Player_DruidBar:Hide();
+--				Perl_Player_DruidBarBG:Hide();
+--				Perl_Player_DruidBar_CastClickOverlay:Hide();
+--				Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_HealthBar", "BOTTOM", 0, -2);
+--				if (xpbarstate == 3) then
+--					Perl_Player_StatsFrame:SetHeight(42);			-- Experience Bar is hidden
+--					Perl_Player_StatsFrame_CastClickOverlay:SetHeight(42);
+--				else
+--					Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is shown
+--					Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
+--				end
 			end
 		else
-			-- Hide it all (bars and text)
 			Perl_Player_DruidBar_OnUpdate_Frame:Hide();
 			Perl_Player_DruidBarText:SetText();
 			Perl_Player_DruidBarTextPercent:SetText();
 			Perl_Player_DruidBarTextCompactPercent:SetText();
-			Perl_Player_DruidBar:Hide();
-			Perl_Player_DruidBarBG:Hide();
-			Perl_Player_DruidBar_CastClickOverlay:Hide();
-			Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_HealthBar", "BOTTOM", 0, -2);
-			if (xpbarstate == 3) then
-				Perl_Player_StatsFrame:SetHeight(42);				-- Experience Bar is hidden
-				Perl_Player_StatsFrame_CastClickOverlay:SetHeight(42);
-			else
-				Perl_Player_StatsFrame:SetHeight(54);				-- Experience Bar is shown
-				Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
-			end
+			Perl_Player_DruidBar:SetMinMaxValues(0, 1);
+			Perl_Player_DruidBar:SetValue(0);
+--			-- Hide it all (bars and text)
+--			Perl_Player_DruidBar_OnUpdate_Frame:Hide();
+--			Perl_Player_DruidBarText:SetText();
+--			Perl_Player_DruidBarTextPercent:SetText();
+--			Perl_Player_DruidBarTextCompactPercent:SetText();
+--			Perl_Player_DruidBar:Hide();
+--			Perl_Player_DruidBarBG:Hide();
+--			Perl_Player_DruidBar_CastClickOverlay:Hide();
+--			Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_HealthBar", "BOTTOM", 0, -2);
+--			if (xpbarstate == 3) then
+--				Perl_Player_StatsFrame:SetHeight(42);				-- Experience Bar is hidden
+--				Perl_Player_StatsFrame_CastClickOverlay:SetHeight(42);
+--			else
+--				Perl_Player_StatsFrame:SetHeight(54);				-- Experience Bar is shown
+--				Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
+--			end
 		end
-	else
-		-- Hide it all (bars and text)
-		Perl_Player_DruidBar_OnUpdate_Frame:Hide();
-		Perl_Player_DruidBarText:SetText();
-		Perl_Player_DruidBarTextPercent:SetText();
-		Perl_Player_DruidBarTextCompactPercent:SetText();
-		Perl_Player_DruidBar:Hide();
-		Perl_Player_DruidBarBG:Hide();
-		Perl_Player_DruidBar_CastClickOverlay:Hide();
-		Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_HealthBar", "BOTTOM", 0, -2);
-		if (xpbarstate == 3) then
-			Perl_Player_StatsFrame:SetHeight(42);					-- Experience Bar is hidden
-			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(42);
-		else
-			Perl_Player_StatsFrame:SetHeight(54);					-- Experience Bar is shown
-			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
-		end
+--	else
+--		-- Hide it all (bars and text)
+--		Perl_Player_DruidBar_OnUpdate_Frame:Hide();
+--		Perl_Player_DruidBarText:SetText();
+--		Perl_Player_DruidBarTextPercent:SetText();
+--		Perl_Player_DruidBarTextCompactPercent:SetText();
+--		Perl_Player_DruidBar:Hide();
+--		Perl_Player_DruidBarBG:Hide();
+--		Perl_Player_DruidBar_CastClickOverlay:Hide();
+--		Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_HealthBar", "BOTTOM", 0, -2);
+--		if (xpbarstate == 3) then
+--			Perl_Player_StatsFrame:SetHeight(42);					-- Experience Bar is hidden
+--			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(42);
+--		else
+--			Perl_Player_StatsFrame:SetHeight(54);					-- Experience Bar is shown
+--			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
+--		end
 	end
 
-	if (fivesecsupport == 1) then
-		if (REGENERATING_MANA ~= nil) then						-- Is FiveSec installed?
-			if (UnitPowerType("player") == 0) then					-- If we aren't in mana mode, bail out
-				if (REGENERATING_MANA == false) then				-- If we aren't in regen mode, color light blue
-					Perl_Player_ManaBar:SetStatusBarColor(0, 0.7, 1, 1);
-					Perl_Player_ManaBarBG:SetStatusBarColor(0, 0.7, 1, 0.25);
-				else								-- Then we must be in regen mode, color bar normally
-					Perl_Player_ManaBar:SetStatusBarColor(0, 0, 1, 1);
-					Perl_Player_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-				end
-			end
-		end
-	end
+--	if (fivesecsupport == 1) then
+--		if (REGENERATING_MANA ~= nil) then						-- Is FiveSec installed?
+--			if (UnitPowerType("player") == 0) then					-- If we aren't in mana mode, bail out
+--				if (REGENERATING_MANA == false) then				-- If we aren't in regen mode, color light blue
+--					Perl_Player_ManaBar:SetStatusBarColor(0, 0.7, 1, 1);
+--					Perl_Player_ManaBarBG:SetStatusBarColor(0, 0.7, 1, 0.25);
+--				else								-- Then we must be in regen mode, color bar normally
+--					Perl_Player_ManaBar:SetStatusBarColor(0, 0, 1, 1);
+--					Perl_Player_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
+--				end
+--			end
+--		end
+--	end
 end
 
 function Perl_Player_Update_DruidBar(arg1)
@@ -656,17 +664,17 @@ function Perl_Player_Update_DruidBar(arg1)
 		end
 
 		-- Show the bar and adjust the stats frame
-		Perl_Player_DruidBar:Show();
-		Perl_Player_DruidBarBG:Show();
-		Perl_Player_DruidBar_CastClickOverlay:Show();
-		Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_DruidBar", "BOTTOM", 0, -2);
-		if (xpbarstate == 3) then
-			Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is hidden
-			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
-		else
-			Perl_Player_StatsFrame:SetHeight(66);			-- Experience Bar is shown
-			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(66);
-		end
+--		Perl_Player_DruidBar:Show();
+--		Perl_Player_DruidBarBG:Show();
+--		Perl_Player_DruidBar_CastClickOverlay:Show();
+--		Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_DruidBar", "BOTTOM", 0, -2);
+--		if (xpbarstate == 3) then
+--			Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is hidden
+--			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
+--		else
+--			Perl_Player_StatsFrame:SetHeight(66);			-- Experience Bar is shown
+--			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(66);
+--		end
 
 		-- Display the needed text
 		if (compactmode == 0) then
@@ -741,6 +749,10 @@ function Perl_Player_Update_Mana_Bar()
 end
 
 function Perl_Player_Update_Experience()
+	Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);		-- move this to the frame style function later
+	Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
+	Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
+
 	if (UnitLevel("player") ~= 70) then
 		-- XP Bar stuff
 		local playerxp = UnitXP("player");
@@ -757,15 +769,9 @@ function Perl_Player_Update_Experience()
 
 		if (playerxprest) then
 			xptext = xptext.."(+"..(playerxprest)..")";
-			Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
-			Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
-			Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 			Perl_Player_XPRestBar:SetValue(playerxp + playerxprest);
 			Perl_Player_XPBarText:SetText(xptextpercent.."%".." (+"..floor(playerxprest/playerxpmax*100+0.5).."%)");
 		else
-			Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
-			Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
-			Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 			Perl_Player_XPRestBar:SetValue(playerxp);
 			Perl_Player_XPBarText:SetText(xptextpercent.."%");
 		end
@@ -774,10 +780,6 @@ function Perl_Player_Update_Experience()
 		Perl_Player_XPRestBar:SetMinMaxValues(0, 1);
 		Perl_Player_XPBar:SetValue(1);
 		Perl_Player_XPRestBar:SetValue(1);
-
-		Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
-		Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
-		Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 
 		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_LEVEL_SEVENTY);
 	end
@@ -842,28 +844,32 @@ function Perl_Player_Update_Combat_Status(event)
 end
 
 function Perl_Player_Update_Raid_Group_Number()		-- taken from 1.8
-	if (showraidgroup == 1) then
-		Perl_Player_RaidGroupNumberFrame:Hide();
-		local name, rank, subgroup;
-		if (GetNumRaidMembers() == 0) then
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_Player_Update_Raid_Group_Number);
+	else
+		if (showraidgroup == 1) then
 			Perl_Player_RaidGroupNumberFrame:Hide();
-			Perl_Player_MasterIcon:Hide();				-- This was added to correctly hide the master loot icon after leaving a party/raid
-			return;
-		end
-		local numRaidMembers = GetNumRaidMembers();
-		for i=1,40 do
-			if (i <= numRaidMembers) then
-				name, rank, subgroup = GetRaidRosterInfo(i);
-				-- Set the player's group number indicator
-				if (name == UnitName("player")) then
-					Perl_Player_RaidGroupNumberBarText:SetText(PERL_LOCALIZED_PLAYER_GROUP..subgroup);
-					Perl_Player_RaidGroupNumberFrame:Show();
-					return;
+			local name, rank, subgroup;
+			if (GetNumRaidMembers() == 0) then
+				Perl_Player_RaidGroupNumberFrame:Hide();
+				Perl_Player_MasterIcon:Hide();				-- This was added to correctly hide the master loot icon after leaving a party/raid
+				return;
+			end
+			local numRaidMembers = GetNumRaidMembers();
+			for i=1,40 do
+				if (i <= numRaidMembers) then
+					name, rank, subgroup = GetRaidRosterInfo(i);
+					-- Set the player's group number indicator
+					if (name == UnitName("player")) then
+						Perl_Player_RaidGroupNumberBarText:SetText(PERL_LOCALIZED_PLAYER_GROUP..subgroup);
+						Perl_Player_RaidGroupNumberFrame:Show();
+						return;
+					end
 				end
 			end
+		else
+			Perl_Player_RaidGroupNumberFrame:Hide();
 		end
-	else
-		Perl_Player_RaidGroupNumberFrame:Hide();
 	end
 end
 
@@ -886,7 +892,7 @@ function Perl_Player_Update_Loot_Method()
 end
 
 function Perl_Player_Update_PvP_Status()
-	if (UnitIsPVP("player")) then
+	if (UnitIsPVP("player") and not UnitIsPVPSanctuary("player")) then
 		if (UnitFactionGroup("player")) then
 			Perl_Player_NameBarText:SetTextColor(0, 1, 0);		-- Green if PvP flagged
 			if (showpvpicon == 1) then
@@ -916,157 +922,13 @@ function Perl_Player_Update_PvP_Status()
 		elseif (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
 			Perl_Player_NameBarText:SetTextColor(0.67, 0.83, 0.45);
 		elseif (UnitClass("player") == PERL_LOCALIZED_SHAMAN) then
-			Perl_Player_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+			Perl_Player_NameBarText:SetTextColor(0, 0.86, 0.73);
 		elseif (UnitClass("player") == PERL_LOCALIZED_PRIEST) then
 			Perl_Player_NameBarText:SetTextColor(1, 1, 1);
 		elseif (UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
 			Perl_Player_NameBarText:SetTextColor(0.58, 0.51, 0.79);
 		elseif (UnitClass("player") == PERL_LOCALIZED_PALADIN) then
 			Perl_Player_NameBarText:SetTextColor(0.96, 0.55, 0.73);
-		end
-	end
-end
-
-function Perl_Player_Set_CompactMode()
-	if (compactmode == 0) then
-		Perl_Player_XPBar:SetWidth(220);
-		Perl_Player_XPRestBar:SetWidth(220);
-		Perl_Player_XPBarBG:SetWidth(220);
-		Perl_Player_XPBar_CastClickOverlay:SetWidth(220);
-		Perl_Player_StatsFrame:SetWidth(240);
-		Perl_Player_StatsFrame_CastClickOverlay:SetWidth(240);
-	else
-		if (compactpercent == 0) then
-			if (shortbars == 0) then
-				Perl_Player_XPBar:SetWidth(150);
-				Perl_Player_XPRestBar:SetWidth(150);
-				Perl_Player_XPBarBG:SetWidth(150);
-				Perl_Player_XPBar_CastClickOverlay:SetWidth(150);
-				Perl_Player_StatsFrame:SetWidth(170);
-				Perl_Player_StatsFrame_CastClickOverlay:SetWidth(170);
-			else
-				Perl_Player_XPBar:SetWidth(115);
-				Perl_Player_XPRestBar:SetWidth(115);
-				Perl_Player_XPBarBG:SetWidth(115);
-				Perl_Player_XPBar_CastClickOverlay:SetWidth(115);
-				Perl_Player_StatsFrame:SetWidth(135);
-				Perl_Player_StatsFrame_CastClickOverlay:SetWidth(135);
-			end
-		else
-			if (shortbars == 0) then
-				Perl_Player_XPBar:SetWidth(185);
-				Perl_Player_XPRestBar:SetWidth(185);
-				Perl_Player_XPBarBG:SetWidth(185);
-				Perl_Player_XPBar_CastClickOverlay:SetWidth(185);
-				Perl_Player_StatsFrame:SetWidth(205);
-				Perl_Player_StatsFrame_CastClickOverlay:SetWidth(205);
-			else
-				Perl_Player_XPBar:SetWidth(150);
-				Perl_Player_XPRestBar:SetWidth(150);
-				Perl_Player_XPBarBG:SetWidth(150);
-				Perl_Player_XPBar_CastClickOverlay:SetWidth(150);
-				Perl_Player_StatsFrame:SetWidth(170);
-				Perl_Player_StatsFrame_CastClickOverlay:SetWidth(170);
-			end
-		end
-	end
-
-	if (compactmode == 1 and shortbars == 1) then
-		Perl_Player_NameFrame:SetWidth(165);
-		Perl_Player_Name:SetWidth(165);
-		Perl_Player_Name_CastClickOverlay:SetWidth(165);
-
-		Perl_Player_HealthBar:SetWidth(115);
-		Perl_Player_HealthBarFadeBar:SetWidth(115);
-		Perl_Player_HealthBarBG:SetWidth(115);
-		Perl_Player_HealthBar_CastClickOverlay:SetWidth(115);
-		Perl_Player_ManaBar:SetWidth(115);
-		Perl_Player_ManaBarFadeBar:SetWidth(115);
-		Perl_Player_ManaBarBG:SetWidth(115);
-		Perl_Player_ManaBar_CastClickOverlay:SetWidth(115);
-		Perl_Player_DruidBar:SetWidth(115);
-		--Perl_Player_DruidBarFadeBar:SetWidth(115);
-		Perl_Player_DruidBarBG:SetWidth(115);
-		Perl_Player_DruidBar_CastClickOverlay:SetWidth(115);
-	else
-		Perl_Player_NameFrame:SetWidth(200);
-		Perl_Player_Name:SetWidth(200);
-		Perl_Player_Name_CastClickOverlay:SetWidth(200);
-
-		Perl_Player_HealthBar:SetWidth(150);
-		Perl_Player_HealthBarFadeBar:SetWidth(150);
-		Perl_Player_HealthBarBG:SetWidth(150);
-		Perl_Player_HealthBar_CastClickOverlay:SetWidth(150);
-		Perl_Player_ManaBar:SetWidth(150);
-		Perl_Player_ManaBarFadeBar:SetWidth(150);
-		Perl_Player_ManaBarBG:SetWidth(150);
-		Perl_Player_ManaBar_CastClickOverlay:SetWidth(150);
-		Perl_Player_DruidBar:SetWidth(150);
-		--Perl_Player_DruidBarFadeBar:SetWidth(150);
-		Perl_Player_DruidBarBG:SetWidth(150);
-		Perl_Player_DruidBar_CastClickOverlay:SetWidth(150);
-	end
-
-	if (hideclasslevelframe == 1) then
-		Perl_Player_LevelFrame:Hide();
-		Perl_Player_StatsFrame:SetPoint("TOPLEFT", Perl_Player_NameFrame, "BOTTOMLEFT", 0, 5);
-		Perl_Player_StatsFrame:SetWidth(Perl_Player_StatsFrame:GetWidth() + 30);
-		Perl_Player_StatsFrame_CastClickOverlay:SetWidth(Perl_Player_StatsFrame_CastClickOverlay:GetWidth() + 30);
-		
-		Perl_Player_HealthBar:SetWidth(Perl_Player_HealthBar:GetWidth() + 30);
-		Perl_Player_HealthBarFadeBar:SetWidth(Perl_Player_HealthBarFadeBar:GetWidth() + 30);
-		Perl_Player_HealthBarBG:SetWidth(Perl_Player_HealthBarBG:GetWidth() + 30);
-		Perl_Player_HealthBar_CastClickOverlay:SetWidth(Perl_Player_HealthBar_CastClickOverlay:GetWidth() + 30);
-		
-		Perl_Player_ManaBar:SetWidth(Perl_Player_ManaBar:GetWidth() + 30);
-		Perl_Player_ManaBarFadeBar:SetWidth(Perl_Player_ManaBarFadeBar:GetWidth() + 30);
-		Perl_Player_ManaBarBG:SetWidth(Perl_Player_ManaBarBG:GetWidth() + 30);
-		Perl_Player_ManaBar_CastClickOverlay:SetWidth(Perl_Player_ManaBar_CastClickOverlay:GetWidth() + 30);
-		
-		Perl_Player_DruidBar:SetWidth(Perl_Player_DruidBar:GetWidth() + 30);
-		--Perl_Player_DruidBarFadeBar:SetWidth(Perl_Player_DruidBarFadeBar:GetWidth() + 30);
-		Perl_Player_DruidBarBG:SetWidth(Perl_Player_DruidBarBG:GetWidth() + 30);
-		Perl_Player_DruidBar_CastClickOverlay:SetWidth(Perl_Player_DruidBar_CastClickOverlay:GetWidth() + 30);
-
-		Perl_Player_XPBar:SetWidth(Perl_Player_XPBar:GetWidth() + 30);
-		Perl_Player_XPRestBar:SetWidth(Perl_Player_XPRestBar:GetWidth() + 30);
-		Perl_Player_XPBarBG:SetWidth(Perl_Player_XPBarBG:GetWidth() + 30);
-		Perl_Player_XPBar_CastClickOverlay:SetWidth(Perl_Player_XPBar_CastClickOverlay:GetWidth() + 30);
-	else
-		Perl_Player_LevelFrame:Show();
-		Perl_Player_StatsFrame:SetPoint("TOPLEFT", Perl_Player_NameFrame, "BOTTOMLEFT", 30, 5);
-	end
-
-	Perl_Player_Update_Health();
-	Perl_Player_Update_Mana();
-end
-
-function Perl_Player_Set_Text_Positions()
-	Perl_Player_HealthBarTextPercent:ClearAllPoints();
-	Perl_Player_ManaBarTextPercent:ClearAllPoints();
-	Perl_Player_DruidBarTextPercent:ClearAllPoints();
-	if (compactmode == 0) then
-		Perl_Player_HealthBarText:SetPoint("RIGHT", 70, 0);
-		Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
-		Perl_Player_ManaBarText:SetPoint("RIGHT", 70, 0);
-		Perl_Player_ManaBarTextPercent:SetPoint("TOP", 0, 1);
-		Perl_Player_DruidBarText:SetPoint("RIGHT", 70, 0);
-		Perl_Player_DruidBarTextPercent:SetPoint("TOP", 0, 1);
-	else
-		if (healermode == 0) then
-			Perl_Player_HealthBarText:SetPoint("RIGHT", 70, 0);
-			Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
-			Perl_Player_ManaBarText:SetPoint("RIGHT", 70, 0);
-			Perl_Player_ManaBarTextPercent:SetPoint("TOP", 0, 1);
-			Perl_Player_DruidBarText:SetPoint("RIGHT", 70, 0);
-			Perl_Player_DruidBarTextPercent:SetPoint("TOP", 0, 1);
-		else
-			Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
-			Perl_Player_HealthBarTextPercent:SetPoint("TOPLEFT", 5, 1);
-			Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
-			Perl_Player_ManaBarTextPercent:SetPoint("TOPLEFT", 5, 1);
-			Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
-			Perl_Player_DruidBarTextPercent:SetPoint("TOPLEFT", 5, 1);
 		end
 	end
 end
@@ -1156,71 +1018,12 @@ end
 
 function Perl_Player_Update_Portrait()
 	if (showportrait == 1) then
-		Perl_Player_PortraitFrame:Show();					-- Show the main portrait frame
-
 		if (threedportrait == 0) then
 			SetPortraitTexture(Perl_Player_Portrait, "player");		-- Load the correct 2d graphic
-			Perl_Player_PortraitFrame_PlayerModel:Hide();			-- Hide the 3d graphic
-			Perl_Player_Portrait:Show();					-- Show the 2d graphic
 		else
 			Perl_Player_PortraitFrame_PlayerModel:SetUnit("player");	-- Load the correct 3d graphic
-			Perl_Player_Portrait:Hide();					-- Hide the 2d graphic
-			Perl_Player_PortraitFrame_PlayerModel:Show();			-- Show the 3d graphic
 			Perl_Player_PortraitFrame_PlayerModel:SetCamera(0);
 		end
-	else
-		Perl_Player_PortraitFrame:Hide();					-- Hide the frame and 2d/3d portion
-	end
-
-	if (Perl_Player_Buff_Script_Frame) then
-		if (showportrait == 1) then
-			if (xpbarstate == 3) then
-				Perl_Player_BuffFrame:SetPoint("TOPLEFT", "Perl_Player_PortraitFrame", "BOTTOMLEFT", 0, -2);
-			else
-				Perl_Player_BuffFrame:SetPoint("TOPLEFT", "Perl_Player_PortraitFrame", "BOTTOMLEFT", 0, -10);
-			end
-		else
-			Perl_Player_BuffFrame:SetPoint("TOPLEFT", "Perl_Player_StatsFrame", "BOTTOMLEFT", 0, -2);
-		end
-	end
-end
-
-function Perl_Player_Portrait_Combat_Text()
-	if (portraitcombattext == 1) then
-		Perl_Player_PortraitTextFrame:Show();
-	else
-		Perl_Player_PortraitTextFrame:Hide();
-	end
-end
-
-function Perl_Player_PvP_Rank_Icon()
-	if (showpvprank == 1) then
-		local rankNumber = UnitPVPRank("player");
-		if (rankNumber == 0) then
-			Perl_Player_PVPRank:Hide();
-		elseif (rankNumber < 14) then
-			rankNumber = rankNumber - 4;
-			Perl_Player_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber);
-			Perl_Player_PVPRank:Show();
-		else
-			rankNumber = rankNumber - 4;
-			Perl_Player_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
-			Perl_Player_PVPRank:Show();
-		end
-	else
-		Perl_Player_PVPRank:Hide();
-	end
-end
-
-function Perl_Player_Check_Hidden()
-	if (hiddeninraid == 1) then
-		if (UnitInRaid("player")) then
-			Perl_Player_Frame:Hide();
-		else
-			Perl_Player_Frame:Show();
-		end
-	else
-		Perl_Player_Frame:Show();
 	end
 end
 
@@ -1325,83 +1128,356 @@ end
 --end
 
 
+-------------------------------
+-- Style Show/Hide Functions --
+-------------------------------
+function Perl_Player_Frame_Style()
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_Player_Frame_Style);
+	else
+		-- Begin: Set the xp bar mode and update the experience if needed
+		if (xpbarstate == 1) then						-- Experience
+			Perl_Player_StatsFrame:SetHeight(54);
+			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
+			Perl_Player_XPBar:Show();
+			Perl_Player_XPBarBG:Show();
+			Perl_Player_XPRestBar:Show();
+			Perl_Player_XPBar_CastClickOverlay:Show();
+			Perl_Player_Update_Experience();
+		elseif (xpbarstate == 2) then						-- PvP
+			Perl_Player_StatsFrame:SetHeight(54);
+			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
+			Perl_Player_XPBar:Show();
+			Perl_Player_XPBarBG:Show();
+			Perl_Player_XPRestBar:Show();
+			Perl_Player_XPBar_CastClickOverlay:Show();
+			local rankNumber, rankName, rankProgress;
+			rankNumber = UnitPVPRank("player")
+			if (rankNumber < 1) then
+				rankName = "Unranked"
+			else
+				rankName = GetPVPRankInfo(rankNumber, "player");
+			end
+			Perl_Player_XPBar:SetMinMaxValues(0, 1);
+			Perl_Player_XPRestBar:SetMinMaxValues(0, 1);
+			Perl_Player_XPBar:SetValue(GetPVPRankProgress());
+			Perl_Player_XPRestBar:SetValue(GetPVPRankProgress());
+			Perl_Player_XPBarText:SetText(rankName);
+			Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
+			Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
+			Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
+		elseif (xpbarstate == 3) then						-- Hidden
+			Perl_Player_XPBar:Hide();
+			Perl_Player_XPBarBG:Hide();
+			Perl_Player_XPRestBar:Hide();
+			Perl_Player_XPBar_CastClickOverlay:Hide();
+			Perl_Player_StatsFrame:SetHeight(42);
+			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(42);
+		elseif (xpbarstate == 4) then						-- Reputation
+			Perl_Player_StatsFrame:SetHeight(54);
+			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
+			Perl_Player_XPBar:Show();
+			Perl_Player_XPBarBG:Show();
+			Perl_Player_XPRestBar:Show();
+			Perl_Player_XPBar_CastClickOverlay:Show();
+			Perl_Player_Update_Reputation();
+		end
+		-- End: Set the xp bar mode and update the experience if needed
+
+		-- Begin: Set the druid bar and tweak the experience bar if needed
+		if (showdruidbar == 1) then
+			Perl_Player_DruidBar:Show();
+			Perl_Player_DruidBarBG:Show();
+			Perl_Player_DruidBar_CastClickOverlay:Show();
+			Perl_Player_XPBar:SetPoint("TOPLEFT", "Perl_Player_DruidBar", "BOTTOMLEFT", 0, -2);
+
+			if (xpbarstate == 3) then
+				Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is hidden
+				Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
+			else
+				Perl_Player_StatsFrame:SetHeight(66);			-- Experience Bar is shown
+				Perl_Player_StatsFrame_CastClickOverlay:SetHeight(66);
+			end
+		else
+			-- Hide it all (bars and text)
+			Perl_Player_DruidBar_OnUpdate_Frame:Hide();
+			Perl_Player_DruidBarText:SetText();
+			Perl_Player_DruidBarTextPercent:SetText();
+			Perl_Player_DruidBarTextCompactPercent:SetText();
+			Perl_Player_DruidBar:Hide();
+			Perl_Player_DruidBarBG:Hide();
+			Perl_Player_DruidBar_CastClickOverlay:Hide();
+			Perl_Player_XPBar:SetPoint("TOPLEFT", "Perl_Player_ManaBar", "BOTTOMLEFT", 0, -2);
+		end
+		-- End: Set the druid bar and tweak the experience bar if needed
+
+		-- Begin: Are we using compact mode?
+		if (compactmode == 0) then
+			Perl_Player_XPBar:SetWidth(220);
+			Perl_Player_XPRestBar:SetWidth(220);
+			Perl_Player_XPBarBG:SetWidth(220);
+			Perl_Player_XPBar_CastClickOverlay:SetWidth(220);
+			Perl_Player_StatsFrame:SetWidth(240);
+			Perl_Player_StatsFrame_CastClickOverlay:SetWidth(240);
+		else
+			if (compactpercent == 0) then
+				if (shortbars == 0) then
+					Perl_Player_XPBar:SetWidth(150);
+					Perl_Player_XPRestBar:SetWidth(150);
+					Perl_Player_XPBarBG:SetWidth(150);
+					Perl_Player_XPBar_CastClickOverlay:SetWidth(150);
+					Perl_Player_StatsFrame:SetWidth(170);
+					Perl_Player_StatsFrame_CastClickOverlay:SetWidth(170);
+				else
+					Perl_Player_XPBar:SetWidth(115);
+					Perl_Player_XPRestBar:SetWidth(115);
+					Perl_Player_XPBarBG:SetWidth(115);
+					Perl_Player_XPBar_CastClickOverlay:SetWidth(115);
+					Perl_Player_StatsFrame:SetWidth(135);
+					Perl_Player_StatsFrame_CastClickOverlay:SetWidth(135);
+				end
+			else
+				if (shortbars == 0) then
+					Perl_Player_XPBar:SetWidth(185);
+					Perl_Player_XPRestBar:SetWidth(185);
+					Perl_Player_XPBarBG:SetWidth(185);
+					Perl_Player_XPBar_CastClickOverlay:SetWidth(185);
+					Perl_Player_StatsFrame:SetWidth(205);
+					Perl_Player_StatsFrame_CastClickOverlay:SetWidth(205);
+				else
+					Perl_Player_XPBar:SetWidth(150);
+					Perl_Player_XPRestBar:SetWidth(150);
+					Perl_Player_XPBarBG:SetWidth(150);
+					Perl_Player_XPBar_CastClickOverlay:SetWidth(150);
+					Perl_Player_StatsFrame:SetWidth(170);
+					Perl_Player_StatsFrame_CastClickOverlay:SetWidth(170);
+				end
+			end
+		end
+
+		if (compactmode == 1 and shortbars == 1) then
+			Perl_Player_NameFrame:SetWidth(165);
+			Perl_Player_Name:SetWidth(165);
+			Perl_Player_Name_CastClickOverlay:SetWidth(165);
+
+			Perl_Player_HealthBar:SetWidth(115);
+			Perl_Player_HealthBarFadeBar:SetWidth(115);
+			Perl_Player_HealthBarBG:SetWidth(115);
+			Perl_Player_HealthBar_CastClickOverlay:SetWidth(115);
+			Perl_Player_ManaBar:SetWidth(115);
+			Perl_Player_ManaBarFadeBar:SetWidth(115);
+			Perl_Player_ManaBarBG:SetWidth(115);
+			Perl_Player_ManaBar_CastClickOverlay:SetWidth(115);
+			Perl_Player_DruidBar:SetWidth(115);
+			--Perl_Player_DruidBarFadeBar:SetWidth(115);
+			Perl_Player_DruidBarBG:SetWidth(115);
+			Perl_Player_DruidBar_CastClickOverlay:SetWidth(115);
+		else
+			Perl_Player_NameFrame:SetWidth(200);
+			Perl_Player_Name:SetWidth(200);
+			Perl_Player_Name_CastClickOverlay:SetWidth(200);
+
+			Perl_Player_HealthBar:SetWidth(150);
+			Perl_Player_HealthBarFadeBar:SetWidth(150);
+			Perl_Player_HealthBarBG:SetWidth(150);
+			Perl_Player_HealthBar_CastClickOverlay:SetWidth(150);
+			Perl_Player_ManaBar:SetWidth(150);
+			Perl_Player_ManaBarFadeBar:SetWidth(150);
+			Perl_Player_ManaBarBG:SetWidth(150);
+			Perl_Player_ManaBar_CastClickOverlay:SetWidth(150);
+			Perl_Player_DruidBar:SetWidth(150);
+			--Perl_Player_DruidBarFadeBar:SetWidth(150);
+			Perl_Player_DruidBarBG:SetWidth(150);
+			Perl_Player_DruidBar_CastClickOverlay:SetWidth(150);
+		end
+
+		if (hideclasslevelframe == 1) then
+			Perl_Player_LevelFrame:Hide();
+			Perl_Player_StatsFrame:SetPoint("TOPLEFT", Perl_Player_NameFrame, "BOTTOMLEFT", 0, 5);
+			Perl_Player_StatsFrame:SetWidth(Perl_Player_StatsFrame:GetWidth() + 30);
+			Perl_Player_StatsFrame_CastClickOverlay:SetWidth(Perl_Player_StatsFrame_CastClickOverlay:GetWidth() + 30);
+			
+			Perl_Player_HealthBar:SetWidth(Perl_Player_HealthBar:GetWidth() + 30);
+			Perl_Player_HealthBarFadeBar:SetWidth(Perl_Player_HealthBarFadeBar:GetWidth() + 30);
+			Perl_Player_HealthBarBG:SetWidth(Perl_Player_HealthBarBG:GetWidth() + 30);
+			Perl_Player_HealthBar_CastClickOverlay:SetWidth(Perl_Player_HealthBar_CastClickOverlay:GetWidth() + 30);
+			
+			Perl_Player_ManaBar:SetWidth(Perl_Player_ManaBar:GetWidth() + 30);
+			Perl_Player_ManaBarFadeBar:SetWidth(Perl_Player_ManaBarFadeBar:GetWidth() + 30);
+			Perl_Player_ManaBarBG:SetWidth(Perl_Player_ManaBarBG:GetWidth() + 30);
+			Perl_Player_ManaBar_CastClickOverlay:SetWidth(Perl_Player_ManaBar_CastClickOverlay:GetWidth() + 30);
+			
+			Perl_Player_DruidBar:SetWidth(Perl_Player_DruidBar:GetWidth() + 30);
+			--Perl_Player_DruidBarFadeBar:SetWidth(Perl_Player_DruidBarFadeBar:GetWidth() + 30);
+			Perl_Player_DruidBarBG:SetWidth(Perl_Player_DruidBarBG:GetWidth() + 30);
+			Perl_Player_DruidBar_CastClickOverlay:SetWidth(Perl_Player_DruidBar_CastClickOverlay:GetWidth() + 30);
+
+			Perl_Player_XPBar:SetWidth(Perl_Player_XPBar:GetWidth() + 30);
+			Perl_Player_XPRestBar:SetWidth(Perl_Player_XPRestBar:GetWidth() + 30);
+			Perl_Player_XPBarBG:SetWidth(Perl_Player_XPBarBG:GetWidth() + 30);
+			Perl_Player_XPBar_CastClickOverlay:SetWidth(Perl_Player_XPBar_CastClickOverlay:GetWidth() + 30);
+		else
+			Perl_Player_LevelFrame:Show();
+			Perl_Player_StatsFrame:SetPoint("TOPLEFT", Perl_Player_NameFrame, "BOTTOMLEFT", 30, 5);
+		end
+		-- Begin: Are we using compact mode?
+
+		-- Begin: Align the text according to compact and healer mode
+		Perl_Player_HealthBarTextPercent:ClearAllPoints();
+		Perl_Player_ManaBarTextPercent:ClearAllPoints();
+		Perl_Player_DruidBarTextPercent:ClearAllPoints();
+		if (compactmode == 0) then
+			Perl_Player_HealthBarText:SetPoint("RIGHT", 70, 0);
+			Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
+			Perl_Player_ManaBarText:SetPoint("RIGHT", 70, 0);
+			Perl_Player_ManaBarTextPercent:SetPoint("TOP", 0, 1);
+			Perl_Player_DruidBarText:SetPoint("RIGHT", 70, 0);
+			Perl_Player_DruidBarTextPercent:SetPoint("TOP", 0, 1);
+		else
+			if (healermode == 0) then
+				Perl_Player_HealthBarText:SetPoint("RIGHT", 70, 0);
+				Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
+				Perl_Player_ManaBarText:SetPoint("RIGHT", 70, 0);
+				Perl_Player_ManaBarTextPercent:SetPoint("TOP", 0, 1);
+				Perl_Player_DruidBarText:SetPoint("RIGHT", 70, 0);
+				Perl_Player_DruidBarTextPercent:SetPoint("TOP", 0, 1);
+			else
+				Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
+				Perl_Player_HealthBarTextPercent:SetPoint("TOPLEFT", 5, 1);
+				Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
+				Perl_Player_ManaBarTextPercent:SetPoint("TOPLEFT", 5, 1);
+				Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
+				Perl_Player_DruidBarTextPercent:SetPoint("TOPLEFT", 5, 1);
+			end
+		end
+		-- End: Align the text according to compact and healer mode
+
+		-- Begin: Are we displaying our rank icon?
+		if (showpvprank == 1) then
+			local rankNumber = UnitPVPRank("player");
+			if (rankNumber == 0) then
+				Perl_Player_PVPRank:Hide();
+			elseif (rankNumber < 14) then
+				rankNumber = rankNumber - 4;
+				Perl_Player_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber);
+				Perl_Player_PVPRank:Show();
+			else
+				rankNumber = rankNumber - 4;
+				Perl_Player_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
+				Perl_Player_PVPRank:Show();
+			end
+		else
+			Perl_Player_PVPRank:Hide();
+		end
+		-- End: Are we displaying our rank icon?
+
+		-- Begin: Show/Hide the portrait frame
+		if (showportrait == 1) then
+			Perl_Player_PortraitFrame:Show();					-- Show the main portrait frame
+			if (threedportrait == 0) then
+				Perl_Player_PortraitFrame_PlayerModel:Hide();			-- Hide the 3d graphic
+				Perl_Player_Portrait:Show();					-- Show the 2d graphic
+			else
+				Perl_Player_Portrait:Hide();					-- Hide the 2d graphic
+				Perl_Player_PortraitFrame_PlayerModel:Show();			-- Show the 3d graphic
+			end
+		else
+			Perl_Player_PortraitFrame:Hide();					-- Hide the frame and 2d/3d portion
+		end
+		-- End: Show/Hide the portrait frame
+
+		-- Begin: Align the player_buff mod if appropriate
+		if (Perl_Player_Buff_Script_Frame) then
+			if (showportrait == 1) then
+				if (xpbarstate == 3) then
+					Perl_Player_BuffFrame:SetPoint("TOPLEFT", "Perl_Player_PortraitFrame", "BOTTOMLEFT", 0, -2);
+				else
+					Perl_Player_BuffFrame:SetPoint("TOPLEFT", "Perl_Player_PortraitFrame", "BOTTOMLEFT", 0, -10);
+				end
+			else
+				Perl_Player_BuffFrame:SetPoint("TOPLEFT", "Perl_Player_StatsFrame", "BOTTOMLEFT", 0, -2);
+			end
+		end
+		-- End: Align the player_buff mod if appropriate
+
+		-- Begin: Are we showing combat text?
+		if (portraitcombattext == 1) then
+			Perl_Player_PortraitTextFrame:Show();
+		else
+			Perl_Player_PortraitTextFrame:Hide();
+		end
+		-- End: Are we showing combat text?
+
+		-- Begin: Are we in a raid and suppossed to be hidden?
+		Perl_Player_Check_Hidden();
+		-- End: Are we in a raid and suppossed to be hidden?
+
+		-- Update text for these bars
+		Perl_Player_Update_Health();
+		Perl_Player_Update_Mana();
+
+		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+			Perl_ArcaneBarFrame:SetPoint("TOPLEFT", "Perl_Player_NameFrame", "TOPLEFT", 5, -5);
+			Perl_ArcaneBar_CastTime:ClearAllPoints();
+			if (Perl_ArcaneBar_Config[UnitName("player")]["LeftTimer"] == 0) then
+				Perl_ArcaneBar_CastTime:SetPoint("LEFT", "Perl_Player_NameFrame", "RIGHT", 0, 0);
+			else
+				if (Perl_Player_PortraitFrame:IsVisible()) then
+					Perl_ArcaneBar_CastTime:SetPoint("RIGHT", "Perl_Player_PortraitFrame", "LEFT", 0, 0);
+				else
+					Perl_ArcaneBar_CastTime:SetPoint("RIGHT", "Perl_Player_NameFrame", "LEFT", 0, 0);
+				end
+			end
+
+			Perl_ArcaneBarFrame:SetWidth(Perl_Player_NameFrame:GetWidth() - 10);
+			Perl_ArcaneBar:SetWidth(Perl_Player_NameFrame:GetWidth() - 10);
+			Perl_ArcaneBarFlash:SetWidth(Perl_Player_NameFrame:GetWidth() + 5);
+		end
+	end
+end
+
+function Perl_Player_Check_Hidden()
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_Player_Check_Hidden);
+	else
+		if (hiddeninraid == 1) then
+			if (UnitInRaid("player")) then
+				Perl_Player_Frame:Hide();
+			else
+				Perl_Player_Frame:Show();
+			end
+		else
+			Perl_Player_Frame:Show();
+		end
+	end
+end
+
+
 --------------------------
 -- GUI Config Functions --
 --------------------------
-function Perl_Player_XPBar_Display(state)
-	if (state == 1) then							-- Experience
-		Perl_Player_StatsFrame:SetHeight(54);
-		Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
-		Perl_Player_XPBar:Show();
-		Perl_Player_XPBarBG:Show();
-		Perl_Player_XPRestBar:Show();
-		Perl_Player_XPBar_CastClickOverlay:Show();
-		Perl_Player_Update_Experience();
-	elseif (state == 2) then						-- PvP
-		Perl_Player_StatsFrame:SetHeight(54);
-		Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
-		Perl_Player_XPBar:Show();
-		Perl_Player_XPBarBG:Show();
-		Perl_Player_XPRestBar:Show();
-		Perl_Player_XPBar_CastClickOverlay:Show();
-		local rankNumber, rankName, rankProgress;
-		rankNumber = UnitPVPRank("player")
-		if (rankNumber < 1) then
-			rankName = "Unranked"
-		else
-			rankName = GetPVPRankInfo(rankNumber, "player");
-		end
-		Perl_Player_XPBar:SetMinMaxValues(0, 1);
-		Perl_Player_XPRestBar:SetMinMaxValues(0, 1);
-		Perl_Player_XPBar:SetValue(GetPVPRankProgress());
-		Perl_Player_XPRestBar:SetValue(GetPVPRankProgress());
-		Perl_Player_XPBarText:SetText(rankName);
-		Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
-		Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
-		Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
-	elseif (state == 3) then						-- Hidden
-		Perl_Player_XPBar:Hide();
-		Perl_Player_XPBarBG:Hide();
-		Perl_Player_XPRestBar:Hide();
-		Perl_Player_XPBar_CastClickOverlay:Hide();
-		Perl_Player_StatsFrame:SetHeight(42);
-		Perl_Player_StatsFrame_CastClickOverlay:SetHeight(42);
-	elseif (state == 4) then						-- Reputation
-		Perl_Player_StatsFrame:SetHeight(54);
-		Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
-		Perl_Player_XPBar:Show();
-		Perl_Player_XPBarBG:Show();
-		Perl_Player_XPRestBar:Show();
-		Perl_Player_XPBar_CastClickOverlay:Show();
-		Perl_Player_Update_Reputation();
-	end
-	if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID) and (UnitPowerType("player") > 0)) then		-- Only change the size if the player has Druid Bar, is a Druid, and is morphed currently
-		if (state == 3) then
-			Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is hidden
-			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
-		else
-			Perl_Player_StatsFrame:SetHeight(66);			-- Experience Bar is shown
-			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(66);
-		end
-	end
-	xpbarstate = state;
-	Perl_Player_Update_Portrait();		-- Update the Player_Buff position if needed
+function Perl_Player_XPBar_Display(newvalue)
+	xpbarstate = newvalue;
 	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
+end
+
+function Perl_Player_Set_DruidBar(newvalue)
+	showdruidbar = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
 end
 
 function Perl_Player_Set_Compact(newvalue)
 	compactmode = newvalue;
 	Perl_Player_UpdateVars();
-	Perl_Player_Set_Text_Positions();
-	Perl_Player_Set_CompactMode();
+	Perl_Player_Frame_Style();
 end
 
 function Perl_Player_Set_Healer(newvalue)
 	healermode = newvalue;
 	Perl_Player_UpdateVars();
-	Perl_Player_Set_Text_Positions();
-	Perl_Player_Update_Health();
-	Perl_Player_Update_Mana();
+	Perl_Player_Frame_Style();
 end
 
 function Perl_Player_Set_RaidGroupNumber(newvalue)
@@ -1418,40 +1494,33 @@ end
 function Perl_Player_Set_Portrait(newvalue)
 	showportrait = newvalue;
 	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
 	Perl_Player_Update_Portrait();
 end
 
 function Perl_Player_Set_3D_Portrait(newvalue)
 	threedportrait = newvalue;
 	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
 	Perl_Player_Update_Portrait();
 end
 
 function Perl_Player_Set_Portrait_Combat_Text(newvalue)
 	portraitcombattext = newvalue;
 	Perl_Player_UpdateVars();
-	Perl_Player_Portrait_Combat_Text();
+	Perl_Player_Frame_Style();
 end
 
 function Perl_Player_Set_Compact_Percent(newvalue)
 	compactpercent = newvalue;
 	Perl_Player_UpdateVars();
-	Perl_Player_Set_Text_Positions();
-	Perl_Player_Set_CompactMode();
+	Perl_Player_Frame_Style();
 end
 
 function Perl_Player_Set_Short_Bars(newvalue)
 	shortbars = newvalue;
 	Perl_Player_UpdateVars();
-	Perl_Player_Set_Text_Positions();
-	Perl_Player_Set_CompactMode();
-end
-
-function Perl_Player_Set_DruidBar(newvalue)
-	showdruidbar = newvalue;
-	Perl_Player_UpdateVars();
-	Perl_Player_Set_Text_Positions();
-	Perl_Player_Set_CompactMode();		-- Perl_Player_Update_Mana() called here
+	Perl_Player_Frame_Style();
 end
 
 function Perl_Player_Set_FiveSec(newvalue)
@@ -1470,14 +1539,13 @@ end
 function Perl_Player_Set_Hide_Class_Level_Frame(newvalue)
 	hideclasslevelframe = newvalue;
 	Perl_Player_UpdateVars();
-	Perl_Player_Set_Text_Positions();
-	Perl_Player_Set_CompactMode();
+	Perl_Player_Frame_Style();
 end
 
 function Perl_Player_Set_PvP_Rank_Icon(newvalue)
 	showpvprank = newvalue;
 	Perl_Player_UpdateVars();
-	Perl_Player_PvP_Rank_Icon();
+	Perl_Player_Frame_Style();
 end
 
 function Perl_Player_Set_Mana_Deficit(newvalue)
@@ -1506,21 +1574,19 @@ function Perl_Player_Set_Show_Bar_Values(newvalue)
 end
 
 function Perl_Player_Set_Scale(number)
-	local unsavedscale;
 	if (number ~= nil) then
-		scale = (number / 100);					-- convert the user input to a wow acceptable value
+		scale = (number / 100);						-- convert the user input to a wow acceptable value
 	end
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_Player_Frame:SetScale(unsavedscale);
 	Perl_Player_UpdateVars();
+	Perl_Player_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
 end
 
 function Perl_Player_Set_Transparency(number)
 	if (number ~= nil) then
-		transparency = (number / 100);				-- convert the user input to a wow acceptable value
+		transparency = (number / 100);					-- convert the user input to a wow acceptable value
 	end
-	Perl_Player_Frame:SetAlpha(transparency);
 	Perl_Player_UpdateVars();
+	Perl_Player_Frame:SetAlpha(transparency);
 end
 
 
@@ -1623,19 +1689,13 @@ function Perl_Player_GetVars(name, updateflag)
 		Perl_Player_UpdateVars();
 
 		-- Call any code we need to activate them
-		Perl_Player_XPBar_Display(xpbarstate);
-		Perl_Player_Set_Compact(compactmode);
-		Perl_Player_Set_Healer(healermode);
-		Perl_Player_Update_Raid_Group_Number();
-		Perl_Player_Update_Health();
-		Perl_Player_Update_Mana();
-		Perl_Player_Update_Portrait();
-		Perl_Player_Portrait_Combat_Text();
-		Perl_Player_Update_PvP_Status();
-		Perl_Player_PvP_Rank_Icon();
+--		Perl_Player_Update_Raid_Group_Number();
+--		Perl_Player_Update_Portrait();
+--		Perl_Player_Update_PvP_Status();
+--		Perl_Player_Frame_Style();
+		Perl_Player_Update_Once();
 		Perl_Player_Set_Scale();
 		Perl_Player_Set_Transparency();
-		Perl_Player_Check_Hidden();
 		return;
 	end
 
@@ -1842,25 +1902,19 @@ function Perl_Player_UpdateVars(vartable)
 		end
 
 		-- Call any code we need to activate them
-		Perl_Player_XPBar_Display(xpbarstate);
-		Perl_Player_Set_Compact(compactmode);
-		Perl_Player_Set_Healer(healermode);
-		Perl_Player_Update_Raid_Group_Number();
-		Perl_Player_Update_Health();
-		Perl_Player_Update_Mana();
-		Perl_Player_Update_Portrait();
-		Perl_Player_Portrait_Combat_Text();
-		Perl_Player_Update_PvP_Status();
-		Perl_Player_PvP_Rank_Icon();
+--		Perl_Player_Update_Raid_Group_Number();
+--		Perl_Player_Update_Portrait();
+--		Perl_Player_Update_PvP_Status();
+--		Perl_Player_Frame_Style();
+		Perl_Player_Update_Once();
 		Perl_Player_Set_Scale();
 		Perl_Player_Set_Transparency();
-		Perl_Player_Check_Hidden();
 	end
 
 	-- IFrameManager Support
-	if (IFrameManager) then
-		IFrameManager:Refresh();
-	end
+--	if (IFrameManager) then
+--		IFrameManager:Refresh();
+--	end
 
 	Perl_Player_Config[UnitName("player")] = {
 		["Locked"] = locked,
@@ -1891,6 +1945,19 @@ end
 --------------------
 -- Click Handlers --
 --------------------
+function Perl_Player_CastClickOverlay_OnLoad()
+	local showmenu = function()
+		ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
+	end
+	SecureUnitButton_OnLoad(this, "player", showmenu);
+
+	this:SetAttribute("unit", "player");
+	if (not ClickCastFrames) then
+		ClickCastFrames = {};
+	end
+	ClickCastFrames[this] = true;
+end
+
 function Perl_PlayerDropDown_OnLoad()
 	UIDropDownMenu_Initialize(this, Perl_PlayerDropDown_Initialize, "MENU");
 end
@@ -1899,61 +1966,61 @@ function Perl_PlayerDropDown_Initialize()
 	UnitPopup_ShowMenu(Perl_Player_DropDown, "SELF", "player");
 end
 
-function Perl_Player_MouseClick(button)
-	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
-		if (Perl_Custom_ClickFunction(button, "player")) then	-- If the function returns true, then we return
-			return;
-		end
-	end								-- Otherwise, it did nothing, so take default action
-
-	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
-			if (CastPartyConfig) then
-				CastParty.Event.OnClickByUnit(button, "player");
-				return;
-			elseif (Genesis_MouseHeal and Genesis_MouseHeal("player", button)) then
-				return;
-			elseif (CH_Config) then
-				if (CH_Config.PCUFEnabled) then
-					CH_UnitClicked("player", button);
-					return;
-				end
-			elseif (SmartHeal) then
-				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
-					local KeyDownType = SmartHeal:GetClickHealButton();
-					if(KeyDownType and KeyDownType ~= "undetermined") then
-						SmartHeal:ClickHeal(KeyDownType..button, "player");
-					else
-						SmartHeal:DefaultClick(button, "player");
-					end
-					return;
-				end
-			end
-		end
-	end
-
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("player");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("player");
-		else
-			TargetUnit("player");
-		end
-		return;
-	end
-
-	if (button == "RightButton") then
-		if (SpellIsTargeting()) then
-			SpellStopTargeting();
-			return;
-		end
-	end
-
-	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
-		ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
-	end
-end
+--function Perl_Player_MouseClick(button)
+--	if (Perl_Custom_ClickFunction) then				-- Check to see if someone defined a custom click function
+--		if (Perl_Custom_ClickFunction(button, "player")) then	-- If the function returns true, then we return
+--			return;
+--		end
+--	end								-- Otherwise, it did nothing, so take default action
+--
+--	if (PCUF_CASTPARTYSUPPORT == 1) then
+--		if (not string.find(GetMouseFocus():GetName(), "Name") or PCUF_NAMEFRAMECLICKCAST == 1) then
+--			if (CastPartyConfig) then
+--				CastParty.Event.OnClickByUnit(button, "player");
+--				return;
+--			elseif (Genesis_MouseHeal and Genesis_MouseHeal("player", button)) then
+--				return;
+--			elseif (CH_Config) then
+--				if (CH_Config.PCUFEnabled) then
+--					CH_UnitClicked("player", button);
+--					return;
+--				end
+--			elseif (SmartHeal) then
+--				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+--					local KeyDownType = SmartHeal:GetClickHealButton();
+--					if(KeyDownType and KeyDownType ~= "undetermined") then
+--						SmartHeal:ClickHeal(KeyDownType..button, "player");
+--					else
+--						SmartHeal:DefaultClick(button, "player");
+--					end
+--					return;
+--				end
+--			end
+--		end
+--	end
+--
+--	if (button == "LeftButton") then
+--		if (SpellIsTargeting()) then
+--			SpellTargetUnit("player");
+--		elseif (CursorHasItem()) then
+--			DropItemOnUnit("player");
+--		else
+--			TargetUnit("player");
+--		end
+--		return;
+--	end
+--
+--	if (button == "RightButton") then
+--		if (SpellIsTargeting()) then
+--			SpellStopTargeting();
+--			return;
+--		end
+--	end
+--
+--	if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+--		ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
+--	end
+--end
 
 function Perl_Player_DragStart(button)
 	if (button == "LeftButton" and locked == 0) then
@@ -2101,20 +2168,20 @@ end
 ----------------------
 -- myAddOns Support --
 ----------------------
-function Perl_Player_myAddOns_Support()
-	-- Register the addon in myAddOns
-	if (myAddOnsFrame_Register) then
-		local Perl_Player_myAddOns_Details = {
-			name = "Perl_Player",
-			version = PERL_LOCALIZED_VERSION,
-			releaseDate = PERL_LOCALIZED_DATE,
-			author = "Perl; Maintained by Global",
-			email = "global@g-ball.com",
-			website = "http://www.curse-gaming.com/mod.php?addid=2257",
-			category = MYADDONS_CATEGORY_OTHERS
-		};
-		Perl_Player_myAddOns_Help = {};
-		Perl_Player_myAddOns_Help[1] = "/perl";
-		myAddOnsFrame_Register(Perl_Player_myAddOns_Details, Perl_Player_myAddOns_Help);
-	end
-end
+--function Perl_Player_myAddOns_Support()
+--	-- Register the addon in myAddOns
+--	if (myAddOnsFrame_Register) then
+--		local Perl_Player_myAddOns_Details = {
+--			name = "Perl_Player",
+--			version = PERL_LOCALIZED_VERSION,
+--			releaseDate = PERL_LOCALIZED_DATE,
+--			author = "Perl; Maintained by Global",
+--			email = "global@g-ball.com",
+--			website = "http://www.curse-gaming.com/mod.php?addid=2257",
+--			category = MYADDONS_CATEGORY_OTHERS
+--		};
+--		Perl_Player_myAddOns_Help = {};
+--		Perl_Player_myAddOns_Help[1] = "/perl";
+--		myAddOnsFrame_Register(Perl_Player_myAddOns_Details, Perl_Player_myAddOns_Help);
+--	end
+--end

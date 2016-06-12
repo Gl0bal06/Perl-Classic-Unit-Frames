@@ -68,7 +68,7 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
-					<Button name="Perl_CombatDisplay_ManaFrame_CastClickOverlay">
+					<Button name="Perl_CombatDisplay_ManaFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="220" y="42"/>
 						</Size>
@@ -83,10 +83,8 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_CombatDisplay_CastClickOverlay_OnLoad();
 							</OnLoad>
-							<OnClick>
-								Perl_CombatDisplay_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_CombatDisplay_DragStart(arg1);
 							</OnDragStart>
@@ -229,7 +227,7 @@
 						<Layers>
 							<!-- Text -->
 							<Layer level="OVERLAY">
-								<Fontstring name="Perl_CombatDisplay_DruidBarText" inherits="GameFontNormalSmall" text="Error!">
+								<Fontstring name="Perl_CombatDisplay_DruidBarText" inherits="GameFontNormal" text="Error!">
 									<Anchors>
 										<Anchor point="TOP" relativePoint="TOP">
 											<Offset>
@@ -516,7 +514,7 @@
 					</BackgroundInsets>
 				</Backdrop>
 				<Frames>
-					<Button name="Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay">
+					<Button name="Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="220" y="42"/>
 						</Size>
@@ -531,10 +529,8 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 								this:RegisterForDrag('LeftButton');
+								Perl_CombatDisplay_Target_CastClickOverlay_OnLoad();
 							</OnLoad>
-							<OnClick>
-								Perl_CombatDisplay_Target_MouseClick(arg1);
-							</OnClick>
 							<OnDragStart>
 								Perl_CombatDisplay_Target_DragStart(arg1);
 							</OnDragStart>

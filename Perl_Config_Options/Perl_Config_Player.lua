@@ -98,6 +98,7 @@ function Perl_Config_Player_Set_Values()
 	else
 		Perl_Config_Player_Frame_CheckButton16:SetChecked(nil);
 	end
+	Perl_Config_Player_Frame_CheckButton16:Hide();
 
 	if (vartable["shortbars"] == 1) then
 		Perl_Config_Player_Frame_CheckButton17:SetChecked(1);

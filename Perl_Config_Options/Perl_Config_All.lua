@@ -53,6 +53,7 @@ function Perl_Config_All_Set_Values()
 	else
 		Perl_Config_All_Frame_CheckButton10:SetChecked(nil);
 	end
+	Perl_Config_All_Frame_CheckButton10:Hide();
 
 	if (vartable["PCUF_ColorHealth"] == 1) then
 		Perl_Config_All_Frame_CheckButton11:SetChecked(1);
@@ -77,6 +78,7 @@ function Perl_Config_All_Set_Values()
 	else
 		Perl_Config_All_Frame_CheckButton15:SetChecked(nil);
 	end
+	Perl_Config_All_Frame_CheckButton15:Hide();
 
 	if (vartable["PCUF_InvertBarValues"] == 1) then
 		Perl_Config_All_Frame_CheckButton16:SetChecked(1);
@@ -111,6 +113,10 @@ function Perl_Config_All_Set_Scale(value)
 
 	if (Perl_CombatDisplay_Frame) then
 		Perl_CombatDisplay_Set_Scale(value);
+	end
+
+	if (Perl_Focus_Frame) then
+		Perl_Focus_Set_Scale(value);
 	end
 
 	if (Perl_Party_Frame) then

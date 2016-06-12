@@ -158,7 +158,9 @@
 				<Anchors>
 					<Anchor point="CENTER">
 						<Offset>
-							<AbsDimension x="-210" y="185"/>
+							<!--<AbsDimension x="-210" y="185"/>-->
+							<!--<AbsDimension x="-240" y="185"/>-->
+							<AbsDimension x="-242" y="185"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -176,7 +178,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_ArcaneBar_Button">
 						<Offset>
-							<AbsDimension x="5" y="0"/>
+							<AbsDimension x="-3" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -187,14 +189,32 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Party_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PARTY">
+			<Button name="Perl_Config_Focus_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_FOCUS">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_CombatDisplay_Button">
 						<Offset>
-							<AbsDimension x="5" y="0"/>
+							<AbsDimension x="-3" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Config_Focus_Display();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="Perl_Config_Party_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PARTY">
+				<Size>
+					<AbsDimension x="100" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Focus_Button">
+						<Offset>
+							<AbsDimension x="-3" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -212,7 +232,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Party_Button">
 						<Offset>
-							<AbsDimension x="5" y="0"/>
+							<AbsDimension x="-3" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -230,7 +250,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Party_Pet_Button">
 						<Offset>
-							<AbsDimension x="5" y="0"/>
+							<AbsDimension x="-3" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -243,12 +263,13 @@
 
 			<Button name="Perl_Config_Player_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYER">
 				<Size>
-					<AbsDimension x="95" y="22"/>
+					<AbsDimension x="100" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Config_ArcaneBar_Button">
 						<Offset>
-							<AbsDimension x="-25" y="-5"/>
+							<!--<AbsDimension x="-25" y="-5"/>-->
+							<AbsDimension x="0" y="-5"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -261,12 +282,12 @@
 
 			<Button name="Perl_Config_Player_Buff_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYERBUFF">
 				<Size>
-					<AbsDimension x="95" y="22"/>
+					<AbsDimension x="100" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Player_Button">
 						<Offset>
-							<AbsDimension x="0" y="0"/>
+							<AbsDimension x="-3" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -279,12 +300,12 @@
 
 			<Button name="Perl_Config_Player_Pet_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYERPET">
 				<Size>
-					<AbsDimension x="95" y="22"/>
+					<AbsDimension x="100" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Player_Buff_Button">
 						<Offset>
-							<AbsDimension x="0" y="0"/>
+							<AbsDimension x="-3" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -297,12 +318,12 @@
 
 			<Button name="Perl_Config_Raid_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_RAID">
 				<Size>
-					<AbsDimension x="95" y="22"/>
+					<AbsDimension x="100" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Player_Pet_Button">
 						<Offset>
-							<AbsDimension x="0" y="0"/>
+							<AbsDimension x="-3" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -315,12 +336,12 @@
 
 			<Button name="Perl_Config_Target_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_TARGET">
 				<Size>
-					<AbsDimension x="95" y="22"/>
+					<AbsDimension x="100" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Raid_Button">
 						<Offset>
-							<AbsDimension x="0" y="0"/>
+							<AbsDimension x="-3" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -333,12 +354,12 @@
 
 			<Button name="Perl_Config_Target_Target_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_TARGETTARGET">
 				<Size>
-					<AbsDimension x="95" y="22"/>
+					<AbsDimension x="100" y="22"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Target_Button">
 						<Offset>
-							<AbsDimension x="0" y="0"/>
+							<AbsDimension x="-3" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
