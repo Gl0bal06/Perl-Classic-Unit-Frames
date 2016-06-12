@@ -1,49 +1,29 @@
-5.01 Beta 8 - August 19, 2012
- - Config: All unit frames now hide while taking part in a pet battle
-
-5.01 Beta 7 - July 14, 2012
- - All: Frame positions are now saved in saved variables
- - CombatDisplay/PartyPet/PartyTarget/Pet/Target/ToT: Changed the default frame position
- - Config: CombatDisplay now displays in positioning mode
- - PartyPet: Fixed a scaling issue
- - PartyTarget: Health bars now show the percent sign after hovering over a health bar
- - PartyTarget/Pet/ToT: Added some sanity checks for dividing by zero
- - Pet: Pet Target frame will now save position in the Global Save option
-
-5.01 Beta 6 - July 8, 2012
- - All: Added server specific saved variable support
- - Config: Fixed an issue that would prevent deleting profiles
- - Config: After deleting a profile it will no longer remain displayed in the dropdown menu
-
-5.01 Beta 5 - July 7, 2012
- - Config: Changed some option names regarding the new power bars
- - Player: Added support for additional Warlock power bars
-
-5.01 Beta 4 - July 2, 2012
- - Focus: Fixed a variable name causing a dividing by zero error
- - Party: Added some sanity checks for dividing by zero
- - Party: Updated to use UnitIsGroupLeader function
-
-5.01 Beta 3 - July 1, 2012
- - CombatDisplay/Focus: Added some sanity checks for dividing by zero
- - Target: Percents on NPCs with no power bar will properly display zero
-
-5.01 Beta 2 - July 1, 2012
- - Player: Added support for Priest Shadow Bar
- - Target: Added some sanity checks for dividing by zero
-
-5.01 Beta 1 - June 30, 2012
+5.01 - August 28, 2012
  - All: Updated TOC Interface version to 50001
  - All: Updated to use GROUP_ROSTER_UPDATE event
  - All: Updated right click menu code for target related frames
+ - All: Added server specific saved variable support
+ - All: Frame positions are now saved in saved variables
+ - CombatDisplay/Focus/Party/PartyTarget/Pet/Target/ToT: Added some sanity checks for dividing by zero
+ - CombatDisplay/PartyPet/PartyTarget/Pet/Target/ToT: Changed the default frame position
  - CombatDisplay/Player: Added Monk support to the Druid Bar
+ - Config: All unit frames now hide while taking part in a pet battle
+ - Config: Fixed an issue that would prevent deleting profiles
+ - Config: After deleting a profile it will no longer remain displayed in the dropdown menu
+ - Config: CombatDisplay now displays in positioning mode
+ - Config: Changed some option names regarding the new power bars
  - Config: Removed some localization strings that were no longer being used
  - Focus/Party/Player/Target: Updated to use CLASS_ICON_TCOORDS global for class icons
- - Focus/Party/Target: Added some sanity checks for dividing by zero
  - Party/Player/Target: Updated to use UnitIsGroupLeader function
+ - PartyPet: Fixed a scaling issue
+ - PartyTarget: Health bars now show the percent sign after hovering over a health bar
+ - Pet: Pet Target frame will now save position in the Global Save option
  - Player: Added support for Monk Harmony Bar
+ - Player: Added support for Priest Shadow Bar
+ - Player: Added support for additional Warlock power bars
  - Player: The experience bar now maxes out at Level 90
  - Player: Updated to use GetNumGroupMembers function
+ - Target: Percents on NPCs with no power bar will properly display zero
 
 4.09 - December 24, 2011
  - All: Updated TOC Interface version to 40300
