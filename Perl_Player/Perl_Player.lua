@@ -324,14 +324,14 @@ function Perl_Player_Update_Experience()
 
 	if (playerxprest) then
 		xptext = xptext .."(+"..(playerxprest)..")";
-		Perl_Player_XPBar:SetStatusBarColor(0.3, 0.3, 1, 1);
-		Perl_Player_XPRestBar:SetStatusBarColor(0.3, 0.3, 1, 0.5);
-		Perl_Player_XPBarBG:SetStatusBarColor(0.3, 0.3, 1, 0.25);
+		Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
+		Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
+		Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 		Perl_Player_XPRestBar:SetValue(playerxp + playerxprest);
 	else
-		Perl_Player_XPBar:SetStatusBarColor(0.6, 0, 0.6, 1);
-		Perl_Player_XPRestBar:SetStatusBarColor(0.6, 0, 0.6, 0.5);
-		Perl_Player_XPBarBG:SetStatusBarColor(0.6, 0, 0.6, 0.25);
+		Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
+		Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
+		Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 		Perl_Player_XPRestBar:SetValue(playerxp);
 	end
 
@@ -578,6 +578,7 @@ function Perl_Player_XPTooltip()
 	local playerxp = UnitXP("player");
 	local playerxpmax = UnitXPMax("player");
 	local playerxprest = GetXPExhaustion();
+	local playerlevel = UnitLevel("player") + 1;
 	local xptext = playerxp.."/"..playerxpmax;
 	local xptolevel = playerxpmax - playerxp
 
@@ -587,7 +588,7 @@ function Perl_Player_XPTooltip()
 
 	GameTooltip_SetDefaultAnchor(GameTooltip, this);
 	GameTooltip:SetText(xptext, 255/255, 209/255, 0/255);
-	GameTooltip:AddLine(xptolevel.." until level", 255/255, 209/255, 0/255);
+	GameTooltip:AddLine(xptolevel.." until level "..playerlevel, 255/255, 209/255, 0/255);
 	GameTooltip:Show();
 end
 
@@ -600,8 +601,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.14",
-			releaseDate = "October 30, 2005",
+			version = "v0.15",
+			releaseDate = "November 1, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

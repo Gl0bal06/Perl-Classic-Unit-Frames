@@ -190,8 +190,8 @@ function Perl_Target_SlashHandler(msg)
 		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
 		if (arg1 ~= "") then
 			local number = tonumber(arg1);
-			if (number > 0 and number < 17) then
-				Perl_Target_Set_Debuffs(arg1)
+			if (number >= 0 and number <= 16) then
+				Perl_Target_Set_Debuffs(number)
 			else
 				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-16)");
 			end
@@ -202,8 +202,8 @@ function Perl_Target_SlashHandler(msg)
 		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
 		if (arg1 ~= "") then
 			local number = tonumber(arg1);
-			if (number > 0 and number < 21) then
-				Perl_Target_Set_Buffs(arg1)
+			if (number >= 0 and number <= 20) then
+				Perl_Target_Set_Buffs(number)
 			else
 				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-20)");
 			end
@@ -631,6 +631,9 @@ function Perl_Target_ToggleClassFrame()
 end
 
 function Perl_Target_Set_Buffs(newbuffnumber)
+	if (newbuffnumber == nil) then
+		newbuffnumber = 0;
+	end
 	numbuffsshown = newbuffnumber;
 	Perl_Target_UpdateVars();
 	Perl_Target_Reset_Buffs();	-- Reset the buff icons
@@ -639,6 +642,9 @@ function Perl_Target_Set_Buffs(newbuffnumber)
 end
 
 function Perl_Target_Set_Debuffs(newdebuffnumber)
+	if (newdebuffnumber == nil) then
+		newdebuffnumber = 0;
+	end
 	numdebuffsshown = newdebuffnumber;
 	Perl_Target_UpdateVars();
 	Perl_Target_Reset_Buffs();	-- Reset the buff icons
@@ -914,8 +920,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.14",
-			releaseDate = "October 30, 2005",
+			version = "v0.15",
+			releaseDate = "November 1, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

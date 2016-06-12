@@ -293,8 +293,8 @@ function Perl_Player_Pet_Update_Experience()
 	-- Set xp text
 	local xptext = playerpetxp.."/"..playerpetxpmax;
 
-	Perl_Player_Pet_XPBar:SetStatusBarColor(0.6, 0, 0.6, 1);
-	Perl_Player_Pet_XPBarBG:SetStatusBarColor(0.6, 0, 0.6, 0.25);
+	Perl_Player_Pet_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
+	Perl_Player_Pet_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 	Perl_Player_Pet_XPBarText:SetText(xptext);
 end
 
@@ -469,8 +469,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.14",
-			releaseDate = "October 30, 2005",
+			version = "v0.15",
+			releaseDate = "November 1, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

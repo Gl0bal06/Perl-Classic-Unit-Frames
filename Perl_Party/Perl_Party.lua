@@ -15,6 +15,7 @@ local buffmapping = {
 };
 local locked = 0;
 local compactmode = 0;		-- compact mode is disabled by default
+local partyhidden = 0;
 
 -- Variables for position of the class icon texture.
 local Perl_Party_ClassPosRight = {
@@ -164,6 +165,8 @@ function Perl_Party_SlashHandler(msg)
 		Perl_Party_Lock();
 	elseif (string.find(msg, "compact")) then
 		Perl_Party_Toggle_CompactMode();
+	elseif (string.find(msg, "hide")) then
+		Perl_Party_Toggle_Hide();
 	elseif (string.find(msg, "status")) then
 		Perl_Party_Status();
 	else
@@ -171,6 +174,7 @@ function Perl_Party_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff compact |cffffff00- Toggle compact mode.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff hide |cffffff00- Toggle hidden mode.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 	end
 end
@@ -200,7 +204,7 @@ function Perl_Party_Initialize()
 	getglobal(this:GetName().."_StatsFrame"):SetBackdropColor(0, 0, 0, transparency);
 	getglobal(this:GetName().."_StatsFrame"):SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
 
-	if (compactmode == 0) then
+	if (compactmode == 0) then	-- I'd usually put this in a method, but this is just easier for the party frames
 		getglobal(this:GetName().."_StatsFrame"):SetWidth(240);
 	else
 		getglobal(this:GetName().."_StatsFrame"):SetWidth(170);
@@ -214,13 +218,11 @@ end
 -- Update Functions --
 ----------------------
 function Perl_Party_MembersUpdate()
-	local partymax = 0;
 	for partynum=1,4 do
 		local partyid = "party"..partynum;
 		local frame = getglobal("Perl_Party_MemberFrame"..partynum);
 		if (UnitName(partyid) ~= nil) then
 			frame:Show();
-			partymax = partynum;
 		else
 			frame:Hide();
 		end
@@ -385,26 +387,57 @@ end
 function Perl_Party_Toggle_CompactMode()
 	if (compactmode == 0) then
 		compactmode = 1;
-		--Perl_Party_Update_Health();
-		--Perl_Party_Update_Mana();
-		--getglobal(this:GetName().."_StatsFrame"):SetWidth(170);
+		Perl_Party_MemberFrame1_StatsFrame:SetWidth(170);
+		Perl_Party_MemberFrame2_StatsFrame:SetWidth(170);
+		Perl_Party_MemberFrame3_StatsFrame:SetWidth(170);
+		Perl_Party_MemberFrame4_StatsFrame:SetWidth(170);
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying in |cffffffffCompact Mode|cffffff00.");
 	else
 		compactmode = 0;
-		--Perl_Party_Update_Health();
-		--Perl_Party_Update_Mana();
-		--getglobal(this:GetName().."_StatsFrame"):SetWidth(240);
+		Perl_Party_MemberFrame1_StatsFrame:SetWidth(240);
+		Perl_Party_MemberFrame2_StatsFrame:SetWidth(240);
+		Perl_Party_MemberFrame3_StatsFrame:SetWidth(240);
+		Perl_Party_MemberFrame4_StatsFrame:SetWidth(240);
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying in |cffffffffNormal Mode|cffffff00.");
 	end
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Please relog or '/console reloadui' for changes to take effect.");
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Health and Mana values will show correctly on the next update given to your client.");
 	Perl_Party_UpdateVars();
 end
 
-function Perl_Party_Status()
-	if (Perl_Player_State == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffDisabled|cffffff00.");
+function Perl_Party_Toggle_Hide()
+	if (partyhidden == 0) then
+		partyhidden = 1;
+		Perl_Party_MemberFrame1:Hide();
+		Perl_Party_MemberFrame2:Hide();
+		Perl_Party_MemberFrame3:Hide();
+		Perl_Party_MemberFrame4:Hide();
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffHidden|cffffff00.");
 	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffEnabled|cffffff00.");
+		partyhidden = 0;
+		for partynum=1,4 do
+			local partyid = "party"..partynum;
+			local frame = getglobal("Perl_Party_MemberFrame"..partynum);
+			if (UnitName(partyid) ~= nil) then
+				frame:Show();
+			else
+				frame:Hide();
+			end
+		end
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying in |cffffffffShown|cffffff00.");
+	end
+end
+
+function Perl_Party_Status()
+--	if (Perl_Player_State == 0) then
+--		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffDisabled|cffffff00.");
+--	else
+--		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffEnabled|cffffff00.");
+--	end
+
+	if (partyhidden == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffShown|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffHidden|cffffff00.");
 	end
 
 	if (locked == 0) then
@@ -447,7 +480,7 @@ function Perl_Party_Buff_UpdateAll()
 	local partyid = "party"..this:GetID();
 	local mapid = "buffmapping"..this:GetID();
 	if (UnitName(partyid)) then
-		for buffnum=1,8 do
+		for buffnum=1,12 do
 			local button = getglobal(this:GetName().."_BuffFrame_Buff"..buffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
@@ -462,7 +495,9 @@ function Perl_Party_Buff_UpdateAll()
 		end
 
 		--DEFAULT_CHAT_FRAME:AddMessage(partyid..buffmapping[mapid]);
+		local debuffCount, debuffTexture, debuffApplications;
 		for buffnum=1,8 do
+			debuffTexture, debuffApplications = UnitDebuff(partyid, buffnum);
 			local button = getglobal(this:GetName().."_BuffFrame_Debuff"..(buffnum));
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
@@ -471,6 +506,13 @@ function Perl_Party_Buff_UpdateAll()
 				icon:SetTexture(UnitDebuff(partyid, buffnum));
 				debuff:Show();
 				button:Show();
+				debuffCount = getglobal(this:GetName().."_BuffFrame_Debuff"..(buffnum).."Count");
+				if (debuffApplications > 1) then
+					debuffCount:SetText(debuffApplications);
+					debuffCount:Show();
+				else
+					debuffCount:Hide();
+				end
 			else
 				button:Hide();
 			end
@@ -482,7 +524,7 @@ function Perl_Party_SetBuffTooltip()
 	local partyid = "party"..this:GetParent():GetParent():GetID();
 	GameTooltip:SetOwner(this,"ANCHOR_BOTTOMRIGHT");
 	if (this:GetID() > 8) then
-		GameTooltip:SetUnitDebuff(partyid, this:GetID()-8);
+		GameTooltip:SetUnitDebuff(partyid, this:GetID()-12);	-- 12 being the number of buffs before debuffs in the xml
 	else
 		GameTooltip:SetUnitBuff(partyid, this:GetID());
 	end
@@ -547,8 +589,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.14",
-			releaseDate = "October 30, 2005",
+			version = "v0.15",
+			releaseDate = "November 1, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

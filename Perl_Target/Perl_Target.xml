@@ -209,7 +209,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_NameFrame">
 						<Offset>
-							<AbsDimension x="40" y="0"/>
+							<AbsDimension x="20" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
