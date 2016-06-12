@@ -23,7 +23,7 @@ Perl_Config_Global_Target_Target_Config = {};
 -- Default Saved Variables (also set in Perl_Config_GetVars)
 local texture = 0;					-- no texture is set by default
 local showminimapbutton = 1;		-- minimap button is on by default
-local minimapbuttonpos = 270;		-- default minimap button position
+local minimapbuttonpos = 300;		-- default minimap button position
 local minimapbuttonrad = 80;		-- default minimap button radius
 local transparentbackground = 0;	-- use solid black background as default
 local texturedbarbackground = 0;	-- bar backgrounds are plain by default
@@ -1778,7 +1778,7 @@ function Perl_Config_GetVars(name, updateflag)
 		showminimapbutton = 1;
 	end
 	if (minimapbuttonpos == nil) then
-		minimapbuttonpos = 270;
+		minimapbuttonpos = 300;
 	end
 	if (transparentbackground == nil) then
 		transparentbackground = 0;
@@ -1929,7 +1929,7 @@ function Perl_Config_UpdateVars(vartable)
 			showminimapbutton = 1;
 		end
 		if (minimapbuttonpos == nil) then
-			minimapbuttonpos = 270;
+			minimapbuttonpos = 300;
 		end
 		if (transparentbackground == nil) then
 			transparentbackground = 0;

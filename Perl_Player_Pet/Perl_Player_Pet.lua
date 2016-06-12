@@ -58,7 +58,6 @@ function Perl_Player_Pet_OnLoad(self)
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_COMBAT");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
-	self:RegisterEvent("UNIT_HAPPINESS");	-- need to see if this one still fires the right info
 	self:RegisterEvent("UNIT_HEALTH");
 	self:RegisterEvent("UNIT_LEVEL");
 	self:RegisterEvent("UNIT_MAXHEALTH");
@@ -129,16 +128,17 @@ function Perl_Player_Pet_Events:UNIT_HEALTH(arg1)
 end
 Perl_Player_Pet_Events.UNIT_MAXHEALTH = Perl_Player_Pet_Events.UNIT_HEALTH;
 
-function Perl_Player_Pet_Events:UNIT_POWER(arg1)
+function Perl_Player_Pet_Events:UNIT_POWER(arg1, arg2)
 	if (arg1 == "pet") then
-		Perl_Player_Pet_Update_Mana();							-- Update energy/mana/rage values
+		if (arg2 ~= "HAPPINESS") then
+			Perl_Player_Pet_Update_Mana();						-- Update energy/mana/rage values
+		else
+			Perl_Player_PetFrame_SetHappiness();				-- Update pet happiness icon
+		end
+		
 	end
 end
 Perl_Player_Pet_Events.UNIT_MAXPOWER = Perl_Player_Pet_Events.UNIT_POWER;
-
-function Perl_Player_Pet_Events:UNIT_HAPPINESS()
-	Perl_Player_PetFrame_SetHappiness();
-end
 
 function Perl_Player_Pet_Events:UNIT_COMBAT(arg1)
 	if (arg1 == "pet") then
