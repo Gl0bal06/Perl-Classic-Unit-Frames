@@ -1,3 +1,6 @@
+2.09 Beta 2 - August 7, 2007
+ - CombatDisplay: Combo points correctly update when changing targets
+
 2.09 Beta 1 - August 7, 2007
  - All: Updated TOC Interface version to 20200
  - All: Updated tooltip code for 2.2

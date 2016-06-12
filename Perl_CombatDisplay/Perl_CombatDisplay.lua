@@ -60,6 +60,7 @@ local energytime = 0;
 ----------------------
 function Perl_CombatDisplay_OnLoad()
 	-- Events
+	this:RegisterEvent("PLAYER_COMBO_POINTS");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("PLAYER_LOGIN");
 	this:RegisterEvent("PLAYER_REGEN_DISABLED");
@@ -215,6 +216,7 @@ Perl_CombatDisplay_Events.UNIT_MAXFOCUS = Perl_CombatDisplay_Events.UNIT_FOCUS;
 
 function Perl_CombatDisplay_Events:PLAYER_TARGET_CHANGED()
 	Perl_CombatDisplay_UpdateDisplay();
+	Perl_CombatDisplay_Update_Combo_Points();
 end
 
 function Perl_CombatDisplay_Events:PLAYER_COMBO_POINTS()
@@ -645,7 +647,6 @@ function Perl_CombatDisplay_UpdateBars()
 		-- Hide CP Bar
 		return;
 	elseif (playerpower == 3) then		-- energy
-		this:RegisterEvent("PLAYER_COMBO_POINTS");
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 		Perl_CombatDisplay_Update_Combo_Points();	-- Setup CP Bar
