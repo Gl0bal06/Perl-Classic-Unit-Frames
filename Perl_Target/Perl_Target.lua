@@ -858,7 +858,7 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.11",
+			version = "v0.12",
 			releaseDate = "October 23, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",

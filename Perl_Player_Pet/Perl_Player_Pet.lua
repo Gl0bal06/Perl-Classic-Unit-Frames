@@ -25,6 +25,7 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("UNIT_HAPPINESS");
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_LEVEL");
+	this:RegisterEvent("UNIT_MANA");
 	this:RegisterEvent("UNIT_NAME_UPDATE");
 	this:RegisterEvent("UNIT_PET");
 	this:RegisterEvent("VARIABLES_LOADED");
@@ -55,7 +56,7 @@ function Perl_Player_Pet_OnEvent(event)
 				Perl_Player_Pet_Update_Health();	-- Update health values
 			end
 			return;
-		elseif (event == "UNIT_FOCUS") then
+		elseif (event == "UNIT_FOCUS" or event == "UNIT_MANA") then
 			if (arg1 == "pet") then
 				Perl_Player_Pet_Update_Mana();		-- Update energy/mana/rage values
 			end
@@ -404,7 +405,7 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.11",
+			version = "v0.12",
 			releaseDate = "October 23, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",

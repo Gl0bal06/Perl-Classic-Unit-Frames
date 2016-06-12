@@ -54,7 +54,9 @@ function Perl_CombatDisplay_OnEvent(event)
 		if (arg1 == "player") then
 			if (UnitHealth("player") == UnitHealthMax("player")) then
 				healthfull = 1;
-				Perl_CombatDisplay_UpdateDisplay();
+				if (healthpersist == 1) then
+					Perl_CombatDisplay_UpdateDisplay();
+				end
 			else
 				healthfull = 0;
 			end
@@ -65,7 +67,9 @@ function Perl_CombatDisplay_OnEvent(event)
 		if (arg1 == "player") then
 			if (UnitMana("player") == UnitManaMax("player")) then
 				manafull = 1;
-				Perl_CombatDisplay_UpdateDisplay();
+				if (manapersist == 1) then
+					Perl_CombatDisplay_UpdateDisplay();
+				end
 			else
 				manafull = 0;
 			end
@@ -76,7 +80,9 @@ function Perl_CombatDisplay_OnEvent(event)
 		if (arg1 == "player") then
 			if (UnitMana("player") == UnitManaMax("player")) then
 				manafull = 1;
-				Perl_CombatDisplay_UpdateDisplay();
+				if (manapersist == 1) then
+					Perl_CombatDisplay_UpdateDisplay();
+				end
 			else
 				manafull = 0;
 			end
@@ -87,7 +93,9 @@ function Perl_CombatDisplay_OnEvent(event)
 		if (arg1 == "player") then
 			if (UnitMana("player") == 0) then
 				manafull = 1;
-				Perl_CombatDisplay_UpdateDisplay();
+				if (manapersist == 1) then
+					Perl_CombatDisplay_UpdateDisplay();
+				end
 			else
 				manafull = 0;
 			end
@@ -125,6 +133,9 @@ function Perl_CombatDisplay_OnEvent(event)
 		if (arg1 == "player") then
 			Perl_CombatDisplay_UpdateBars();
 			Perl_CombatDisplay_Update_Mana();
+			if (InCombat == 0 and IsAggroed == 0) then
+				Perl_CombatDisplay_Frame:Hide();
+			end
 		end
 		return;
 	elseif ((event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD")) then
@@ -385,7 +396,7 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.11",
+			version = "v0.12",
 			releaseDate = "October 23, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
