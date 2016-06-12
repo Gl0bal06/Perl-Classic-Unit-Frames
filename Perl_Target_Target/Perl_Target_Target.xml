@@ -33,9 +33,10 @@
 		<Scripts>
 			<OnEnter>
 				Perl_Target_Target_Tip();
+				UnitFrame_OnEnter();
 			</OnEnter>
 			<OnLeave>
-				GameTooltip:Hide();
+				UnitFrame_OnLeave();
 			</OnLeave>
 			<OnMouseDown>
 				Perl_Target_Target_MouseDown(arg1);
@@ -256,16 +257,17 @@
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="500" y="-400"/>
+					<AbsDimension x="500" y="-200"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
 		<Scripts>
 			<OnEnter>
 				Perl_Target_Target_Target_Tip();
+				UnitFrame_OnEnter();
 			</OnEnter>
 			<OnLeave>
-				GameTooltip:Hide();
+				UnitFrame_OnLeave();
 			</OnLeave>
 			<OnMouseDown>
 				Perl_Target_Target_Target_MouseDown(arg1);

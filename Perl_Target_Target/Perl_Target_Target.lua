@@ -165,6 +165,7 @@ function Perl_Target_Target_OnUpdate(arg1)
 
 		if (UnitExists("targettarget") and totsupport == 1) then
 			Perl_Target_Target_Frame:Show();			-- Show the frame
+			Perl_Target_Target_Frame:SetScale(scale);		-- Set the scale
 
 			-- Begin: Set the name
 			local targettargetname = UnitName("targettarget");
@@ -314,6 +315,7 @@ function Perl_Target_Target_OnUpdate(arg1)
 
 		if (UnitExists("targettargettarget") and tototsupport == 1) then
 			Perl_Target_Target_Target_Frame:Show();			-- Show the frame
+			Perl_Target_Target_Target_Frame:SetScale(scale);	-- Set the scale
 
 			-- Begin: Set the name
 			local targettargettargetname = UnitName("targettargettarget");
@@ -910,13 +912,15 @@ end
 -- Tooltip --
 -------------
 function Perl_Target_Target_Tip()
-	GameTooltip_SetDefaultAnchor(GameTooltip, this);
-	GameTooltip:SetUnit("targettarget");
+	UnitFrame_Initialize("targettarget")
 end
 
 function Perl_Target_Target_Target_Tip()
-	GameTooltip_SetDefaultAnchor(GameTooltip, this);
-	GameTooltip:SetUnit("targettargettarget");
+	UnitFrame_Initialize("targettargettarget")
+end
+
+function UnitFrame_Initialize(unit)	-- Hopefully this doesn't break any mods
+	this.unit = unit;
 end
 
 
@@ -928,8 +932,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.26",
-			releaseDate = "December 19, 2005",
+			version = "v0.27",
+			releaseDate = "December 21, 2005",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

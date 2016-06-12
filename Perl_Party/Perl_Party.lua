@@ -1375,9 +1375,16 @@ function Perl_Party_MouseDown(button)
 	end
 end
 
-function Perl_Party_PlayerTip()
-	GameTooltip_SetDefaultAnchor(GameTooltip, this);
-	GameTooltip:SetUnit("party"..this:GetID());
+
+-------------
+-- Tooltip --
+-------------
+function Perl_Party_Tip()
+	UnitFrame_Initialize("party"..this:GetID())
+end
+
+function UnitFrame_Initialize(unit)	-- Hopefully this doesn't break any mods
+	this.unit = unit;
 end
 
 
@@ -1389,8 +1396,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.26",
-			releaseDate = "December 19, 2005",
+			version = "v0.27",
+			releaseDate = "December 21, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

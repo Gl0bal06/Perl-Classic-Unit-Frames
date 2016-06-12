@@ -92,14 +92,10 @@
 			</OnMouseUp>
 			<OnEnter>
 				Perl_Target_Tip();
-				<!-- UnitFrame_OnEnter(); -->
-				<!-- Perl_Target_Tooltip_Hook(); -->
-				<!-- UnitFrame_OnEnter(); -->
+				UnitFrame_OnEnter();
 			</OnEnter>
 			<OnLeave>
-				GameTooltip:Hide();
-				<!-- Perl_Target_Tooltip_Unhook(); -->
-				<!-- UnitFrame_OnLeave(); -->
+				UnitFrame_OnLeave();
 			</OnLeave>
 		</Scripts>
 

@@ -1224,55 +1224,12 @@ end
 -------------
 -- Tooltip --
 -------------
--- Some of my failed attempt at tooltip support is below
-
---local Original_UnitFrame_OnEnter = nil;
---
---function Perl_Target_Tooltip_Hook()
---	Original_UnitFrame_OnEnter = UnitFrame_OnEnter;
---	UnitFrame_OnEnter = Perl_Target_Replacement_UnitFrame_OnEnter;
---end
---
---function Perl_Target_Tooltip_Unhook()
---	UnitFrame_OnEnter = Original_UnitFrame_OnEnter;
---end
---
---function Perl_Target_Replacement_UnitFrame_OnEnter()	-- Taken from 1.8 UnitFrame_OnEnter()
---	this.unit = "target";
---	if (SpellIsTargeting()) then
---		if (SpellCanTargetUnit(this.unit)) then
---			SetCursor("CAST_CURSOR");
---		else
---			SetCursor("CAST_ERROR_CURSOR");
---		end
---	end
---
---	GameTooltip_SetDefaultAnchor(GameTooltip, this);
---	-- If showing newbie tips then only show the explanation
---	if (SHOW_NEWBIE_TIPS == "1" and this:GetName() ~= "PartyMemberFrame1" and this:GetName() ~= "PartyMemberFrame2" and this:GetName() ~= "PartyMemberFrame3" and this:GetName() ~= "PartyMemberFrame4") then
---		if (this:GetName() == "PlayerFrame") then
---			GameTooltip_AddNewbieTip(PARTY_OPTIONS_LABEL, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_PARTYOPTIONS);
---			return;
---		elseif (UnitPlayerControlled("target") and not UnitIsUnit("target", "player") and not UnitIsUnit("target", "pet")) then
---			GameTooltip_AddNewbieTip(PLAYER_OPTIONS_LABEL, 1.0, 1.0, 1.0, NEWBIE_TOOLTIP_PLAYEROPTIONS);
---			return;
---		end
---	end
---
---	if (GameTooltip:SetUnit(this.unit)) then
---		this.updateTooltip = TOOLTIP_UPDATE_TIME;
---	else
---		this.updateTooltip = nil;
---	end
---
---	this.r, this.g, this.b = GameTooltip_UnitColor(this.unit);
---	--GameTooltip:SetBackdropColor(this.r, this.g, this.b);
---	GameTooltipTextLeft1:SetTextColor(this.r, this.g, this.b);
---end
-
 function Perl_Target_Tip()
-	GameTooltip_SetDefaultAnchor(GameTooltip, this);
-	GameTooltip:SetUnit("target");
+	UnitFrame_Initialize("target")
+end
+
+function UnitFrame_Initialize(unit)	-- Hopefully this doesn't break any mods
+	this.unit = unit;
 end
 
 
@@ -1284,8 +1241,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.26",
-			releaseDate = "December 19, 2005",
+			version = "v0.27",
+			releaseDate = "December 21, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

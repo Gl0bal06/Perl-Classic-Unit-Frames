@@ -88,12 +88,12 @@
 				Perl_Party_MouseUp(arg1);
 			</OnMouseUp>
 			<OnEnter>
-				Perl_Party_PlayerTip();
-				<!-- UnitFrame_OnEnter(); -->
+				Perl_Party_Tip();
+				UnitFrame_OnEnter();
 			</OnEnter>
 			<OnLeave>
-				GameTooltip:Hide();
-				<!-- UnitFrame_OnLeave(); -->
+				<!-- GameTooltip:Hide(); -->
+				UnitFrame_OnLeave();
 			</OnLeave>
 		</Scripts>
 
