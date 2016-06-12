@@ -977,31 +977,37 @@ end
 
 function Perl_Player_Pet_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (CastPartyConfig) then
-			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "pet");
-			end
-		elseif (Genesis_MouseHeal) then
-			if (IsControlKeyDown() or IsShiftKeyDown()) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					Genesis_MouseHeal("pet", button);
-				end
-			end
-		elseif (CH_Config) then
-			if (CH_Config.PCUFEnabled) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					CH_UnitClicked("pet", button);
-				end
-			end
-		elseif (SmartHeal) then
-			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+				Genesis_MouseHeal("pet", button);
+			elseif (CH_Config and CH_Config.PCUFEnabled) then
+				CH_UnitClicked("pet", button);
+			elseif (SmartHeal) then
+				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 					local KeyDownType = SmartHeal:GetClickHealButton();
 					if(KeyDownType and KeyDownType ~= "undetermined") then
 						SmartHeal:ClickHeal(KeyDownType..button, "pet");
 					else
 						SmartHeal:DefaultClick(button, "pet");
 					end
+				end
+			else
+				if (button == "LeftButton") then
+					if (SpellIsTargeting()) then
+						SpellTargetUnit("pet");
+					elseif (CursorHasItem()) then
+						DropItemOnUnit("pet");
+					else
+						TargetUnit("pet");
+					end
+					return;
+				end
+
+				if (SpellIsTargeting() and button == "RightButton") then
+					SpellStopTargeting();
+					return;
 				end
 			end
 		else
@@ -1071,8 +1077,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "Version 0.73",
-			releaseDate = "June 24, 2006",
+			version = "Version 0.74",
+			releaseDate = "June 28, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

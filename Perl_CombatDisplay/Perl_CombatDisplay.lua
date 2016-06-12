@@ -1182,14 +1182,10 @@ function Perl_CombatDisplay_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (CastPartyConfig) then
 			CastParty_OnClickByUnit(button, "player");
-		elseif (Genesis_MouseHeal) then
-			if (IsControlKeyDown() or IsShiftKeyDown()) then
-				Genesis_MouseHeal("player", button);
-			end
-		elseif (CH_Config) then
-			if (CH_Config.PCUFEnabled) then
-				CH_UnitClicked("player", button);
-			end
+		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+			Genesis_MouseHeal("player", button);
+		elseif (CH_Config and CH_Config.PCUFEnabled) then
+			CH_UnitClicked("player", button);
 		elseif (SmartHeal) then
 			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 				local KeyDownType = SmartHeal:GetClickHealButton();
@@ -1287,14 +1283,10 @@ function Perl_CombatDisplay_Target_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (CastPartyConfig) then
 			CastParty_OnClickByUnit(button, "target");
-		elseif (Genesis_MouseHeal) then
-			if (IsControlKeyDown() or IsShiftKeyDown()) then
-				Genesis_MouseHeal("target", button);
-			end
-		elseif (CH_Config) then
-			if (CH_Config.PCUFEnabled) then
-				CH_UnitClicked("target", button);
-			end
+		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+			Genesis_MouseHeal("target", button);
+		elseif (CH_Config and CH_Config.PCUFEnabled) then
+			CH_UnitClicked("target", button);
 		elseif (SmartHeal) then
 			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 				local KeyDownType = SmartHeal:GetClickHealButton();
@@ -1371,8 +1363,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.73",
-			releaseDate = "June 24, 2006",
+			version = "Version 0.74",
+			releaseDate = "June 28, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

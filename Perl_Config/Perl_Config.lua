@@ -138,7 +138,7 @@ function Perl_Config_Set_Localization()
 		PERL_LOCALIZED_BUFF_CURSE = "Curse";
 		PERL_LOCALIZED_BUFF_DISEASE = "Disease";
 		PERL_LOCALIZED_BUFF_MAGIC = "Magic";
-		PERL_LOCALIZED_BUFF_NONE = "none";
+		PERL_LOCALIZED_BUFF_NONE = "none";		-- This line does NOT need to be localized
 		PERL_LOCALIZED_BUFF_POISON = "Poison";
 	--end
 
@@ -192,7 +192,6 @@ function Perl_Config_Set_Localization()
 		PERL_LOCALIZED_BUFF_CURSE = "저주";
 		PERL_LOCALIZED_BUFF_DISEASE = "질병";
 		PERL_LOCALIZED_BUFF_MAGIC = "마법";
-		PERL_LOCALIZED_BUFF_NONE = "무속성";
 		PERL_LOCALIZED_BUFF_POISON = "독";
 	end
 
@@ -1353,8 +1352,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.73",
-			releaseDate = "June 24, 2006",
+			version = "Version 0.74",
+			releaseDate = "June 28, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

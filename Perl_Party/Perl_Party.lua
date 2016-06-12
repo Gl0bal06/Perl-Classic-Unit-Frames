@@ -2495,25 +2495,15 @@ function Perl_Party_MouseClick(button)
 	end
 
 	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (CastPartyConfig) then
-			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "party"..id);
-			end
-		elseif (Genesis_MouseHeal) then
-			if (IsControlKeyDown() or IsShiftKeyDown()) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					Genesis_MouseHeal("party"..id, button);
-				end
-			end
-		elseif (CH_Config) then
-			if (CH_Config.PCUFEnabled) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					CH_UnitClicked("party"..id, button);
-				end
-			end
-		elseif (SmartHeal) then
-			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+				Genesis_MouseHeal("party"..id, button);
+			elseif (CH_Config and CH_Config.PCUFEnabled) then
+				CH_UnitClicked("party"..id, button);
+			elseif (SmartHeal) then
+				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 					local KeyDownType = SmartHeal:GetClickHealButton();
 					if(KeyDownType and KeyDownType ~= "undetermined") then
 						SmartHeal:ClickHeal(KeyDownType..button, "party"..id);
@@ -2521,13 +2511,24 @@ function Perl_Party_MouseClick(button)
 						SmartHeal:DefaultClick(button, "party"..id);
 					end
 				end
+			else
+				if (button == "LeftButton") then
+					if (SpellIsTargeting()) then
+						SpellTargetUnit("party"..id);
+					elseif (CursorHasItem()) then
+						DropItemOnUnit("party"..id);
+					else
+						TargetUnit("party"..id);
+					end
+					return;
+				end
+
+				if (SpellIsTargeting() and button == "RightButton") then
+					SpellStopTargeting();
+					return;
+				end
 			end
 		else
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
-
 			if (button == "LeftButton") then
 				if (SpellIsTargeting()) then
 					SpellTargetUnit("party"..id);
@@ -2536,14 +2537,15 @@ function Perl_Party_MouseClick(button)
 				else
 					TargetUnit("party"..id);
 				end
+				return;
+			end
+
+			if (SpellIsTargeting() and button == "RightButton") then
+				SpellStopTargeting();
+				return;
 			end
 		end
 	else
-		if (SpellIsTargeting() and button == "RightButton") then
-			SpellStopTargeting();
-			return;
-		end
-
 		if (button == "LeftButton") then
 			if (SpellIsTargeting()) then
 				SpellTargetUnit("party"..id);
@@ -2552,6 +2554,12 @@ function Perl_Party_MouseClick(button)
 			else
 				TargetUnit("party"..id);
 			end
+			return;
+		end
+
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
 		end
 	end
 end
@@ -2681,8 +2689,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.73",
-			releaseDate = "June 24, 2006",
+			version = "Version 0.74",
+			releaseDate = "June 28, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

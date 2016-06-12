@@ -1711,25 +1711,15 @@ end
 
 function Perl_Target_Target_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (CastPartyConfig) then
-			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "targettarget");
-			end
-		elseif (Genesis_MouseHeal) then
-			if (IsControlKeyDown() or IsShiftKeyDown()) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					Genesis_MouseHeal("targettarget", button);
-				end
-			end
-		elseif (CH_Config) then
-			if (CH_Config.PCUFEnabled) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					CH_UnitClicked("targettarget", button);
-				end
-			end
-		elseif (SmartHeal) then
-			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+				Genesis_MouseHeal("targettarget", button);
+			elseif (CH_Config and CH_Config.PCUFEnabled) then
+				CH_UnitClicked("targettarget", button);
+			elseif (SmartHeal) then
+				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 					local KeyDownType = SmartHeal:GetClickHealButton();
 					if(KeyDownType and KeyDownType ~= "undetermined") then
 						SmartHeal:ClickHeal(KeyDownType..button, "targettarget");
@@ -1737,13 +1727,24 @@ function Perl_Target_Target_MouseClick(button)
 						SmartHeal:DefaultClick(button, "targettarget");
 					end
 				end
+			else
+				if (button == "LeftButton") then
+					if (SpellIsTargeting()) then
+						SpellTargetUnit("targettarget");
+					elseif (CursorHasItem()) then
+						DropItemOnUnit("targettarget");
+					else
+						TargetUnit("targettarget");
+					end
+					return;
+				end
+
+				if (SpellIsTargeting() and button == "RightButton") then
+					SpellStopTargeting();
+					return;
+				end
 			end
 		else
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
-
 			if (button == "LeftButton") then
 				if (SpellIsTargeting()) then
 					SpellTargetUnit("targettarget");
@@ -1752,14 +1753,15 @@ function Perl_Target_Target_MouseClick(button)
 				else
 					TargetUnit("targettarget");
 				end
+				return;
+			end
+
+			if (SpellIsTargeting() and button == "RightButton") then
+				SpellStopTargeting();
+				return;
 			end
 		end
 	else
-		if (SpellIsTargeting() and button == "RightButton") then
-			SpellStopTargeting();
-			return;
-		end
-
 		if (button == "LeftButton") then
 			if (SpellIsTargeting()) then
 				SpellTargetUnit("targettarget");
@@ -1768,6 +1770,12 @@ function Perl_Target_Target_MouseClick(button)
 			else
 				TargetUnit("targettarget");
 			end
+			return;
+		end
+
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
 		end
 	end
 end
@@ -1823,31 +1831,37 @@ end
 
 function Perl_Target_Target_Target_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (CastPartyConfig) then
-			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "targettargettarget");
-			end
-		elseif (Genesis_MouseHeal) then
-			if (IsControlKeyDown() or IsShiftKeyDown()) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					Genesis_MouseHeal("targettargettarget", button);
-				end
-			end
-		elseif (CH_Config) then
-			if (CH_Config.PCUFEnabled) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					CH_UnitClicked("targettargettarget", button);
-				end
-			end
-		elseif (SmartHeal) then
-			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+				Genesis_MouseHeal("targettargettarget", button);
+			elseif (CH_Config and CH_Config.PCUFEnabled) then
+				CH_UnitClicked("targettargettarget", button);
+			elseif (SmartHeal) then
+				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 					local KeyDownType = SmartHeal:GetClickHealButton();
 					if(KeyDownType and KeyDownType ~= "undetermined") then
 						SmartHeal:ClickHeal(KeyDownType..button, "targettargettarget");
 					else
 						SmartHeal:DefaultClick(button, "targettargettarget");
 					end
+				end
+			else
+				if (button == "LeftButton") then
+					if (SpellIsTargeting()) then
+						SpellTargetUnit("targettargettarget");
+					elseif (CursorHasItem()) then
+						DropItemOnUnit("targettargettarget");
+					else
+						TargetUnit("targettargettarget");
+					end
+					return;
+				end
+
+				if (SpellIsTargeting() and button == "RightButton") then
+					SpellStopTargeting();
+					return;
 				end
 			end
 		else
@@ -1995,8 +2009,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "Version 0.73",
-			releaseDate = "June 24, 2006",
+			version = "Version 0.74",
+			releaseDate = "June 28, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

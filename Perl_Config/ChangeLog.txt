@@ -1,3 +1,9 @@
+0.74 - June 28, 2006
+ - All: Rewrote much of the click casting code
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - Player: Experience bar will now show the percentage of current rest experience
+ - Player: Added the percent until next level to the experience tooltip
+
 0.73 - June 24, 2006
  - Config: Target class colored names will now global save correctly
  - Party/Pet/Player: Fixed silent errors in the XML

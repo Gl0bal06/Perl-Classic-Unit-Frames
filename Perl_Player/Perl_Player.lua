@@ -337,27 +337,27 @@ function Perl_Player_Update_Health()
 	end
 
 	if (compactmode == 0) then
-		if (healermode == 1) then		-- compact mode off and healer mode on
+		if (healermode == 1) then									-- Compact mode OFF and Healer mode ON
 			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
 			if (mouseoverhealthflag == 0) then
-				Perl_Player_HealthBarTextPercent:SetText();
+				Perl_Player_HealthBarTextPercent:SetText();					-- Add text here if you dont't want the bar values hidden in healer mode.  Set the value in the function Perl_Player_HealthHide to the same as this.
 			else
 				Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 			end
-		else					-- compact mode off and healer mode off
+		else												-- Compact mode OFF and Healer mode OFF
 			Perl_Player_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
 			Perl_Player_HealthBarTextPercent:SetText(playerhealthpercent .. "%");
 		end
-		Perl_Player_HealthBarTextCompactPercent:SetText();							-- Hide the compact mode percent text in full mode
+		Perl_Player_HealthBarTextCompactPercent:SetText();						-- Hide the compact mode percent text in full mode
 	else
-		if (healermode == 1) then		-- compact mode on and healer mode on
+		if (healermode == 1) then									-- Compact mode ON and Healer mode ON
 			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
 			if (mouseoverhealthflag == 0) then
-				Perl_Player_HealthBarTextPercent:SetText();
+				Perl_Player_HealthBarTextPercent:SetText();					-- Add text here if you dont't want the bar values hidden in healer mode.  Set the value in the function Perl_Player_HealthHide to the same as this.
 			else
 				Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 			end
-		else					-- compact mode on and healer mode off
+		else												-- Compact mode ON and Healer mode OFF
 			Perl_Player_HealthBarText:SetText();
 			Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 		end
@@ -597,14 +597,14 @@ function Perl_Player_Update_Experience()
 			Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 			Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 			Perl_Player_XPRestBar:SetValue(playerxp + playerxprest);
+			Perl_Player_XPBarText:SetText(xptextpercent.."%".." (+"..floor(playerxprest/playerxpmax*100+0.5).."%)");
 		else
 			Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
 			Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 			Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 			Perl_Player_XPRestBar:SetValue(playerxp);
+			Perl_Player_XPBarText:SetText(xptextpercent.."%");
 		end
-
-		Perl_Player_XPBarText:SetText(xptextpercent.."%");
 	else
 		Perl_Player_XPBar:SetMinMaxValues(0, 1);
 		Perl_Player_XPRestBar:SetMinMaxValues(0, 1);
@@ -1498,31 +1498,37 @@ end
 
 function Perl_Player_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
-		if (CastPartyConfig) then
-			if (not string.find(GetMouseFocus():GetName(), "Name")) then
+		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			if (CastPartyConfig) then
 				CastParty_OnClickByUnit(button, "player");
-			end
-		elseif (Genesis_MouseHeal) then
-			if (IsControlKeyDown() or IsShiftKeyDown()) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					Genesis_MouseHeal("player", button);
-				end
-			end
-		elseif (CH_Config) then
-			if (CH_Config.PCUFEnabled) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
-					CH_UnitClicked("player", button);
-				end
-			end
-		elseif (SmartHeal) then
-			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
-				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
+				Genesis_MouseHeal("player", button);
+			elseif (CH_Config and CH_Config.PCUFEnabled) then
+				CH_UnitClicked("player", button);
+			elseif (SmartHeal) then
+				if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
 					local KeyDownType = SmartHeal:GetClickHealButton();
 					if(KeyDownType and KeyDownType ~= "undetermined") then
 						SmartHeal:ClickHeal(KeyDownType..button, "player");
 					else
 						SmartHeal:DefaultClick(button, "player");
 					end
+				end
+			else
+				if (button == "LeftButton") then
+					if (SpellIsTargeting()) then
+						SpellTargetUnit("player");
+					elseif (CursorHasItem()) then
+						DropItemOnUnit("player");
+					else
+						TargetUnit("player");
+					end
+					return;
+				end
+
+				if (SpellIsTargeting() and button == "RightButton") then
+					SpellStopTargeting();
+					return;
 				end
 			end
 		else
@@ -1605,7 +1611,7 @@ function Perl_Player_XPTooltip()
 			end
 
 			GameTooltip:SetText(xptext, 255/255, 209/255, 0/255);
-			GameTooltip:AddLine(xptolevel.." until level "..(playerlevel + 1), 255/255, 209/255, 0/255);
+			GameTooltip:AddLine(xptolevel.." ("..floor((playerxpmax-playerxp)/playerxpmax*100+0.5).."%) until level "..(playerlevel + 1), 255/255, 209/255, 0/255);
 		else
 			GameTooltip:SetText("You can't gain anymore experience!", 255/255, 209/255, 0/255);
 		end
@@ -1687,8 +1693,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.73",
-			releaseDate = "June 24, 2006",
+			version = "Version 0.74",
+			releaseDate = "June 28, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
