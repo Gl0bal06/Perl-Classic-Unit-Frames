@@ -1,3 +1,11 @@
+0.52 - April 2, 2006
+ - All: If Alt, Shift, or Ctrl is held while right clicking on a frame, the menu will not appear
+ - CombatDisplay: Can no longer open the menu from the CombatDisplay frames if CastParty is installed
+ - CombatDisplay/Party/Pet/Player/Target: Added CastParty support
+ - Party/Pet/Player/Target: Can only open the menu via right clicking on the name frame if CastParty is installed
+ - Party/Pet/Player/Target: CastParty clicks are no longer caught when clicking in the name frame
+ - ToT: Extended the width of the alert frame
+
 0.51 - March 28, 2006
  - Config: The Not Installed page is now formatted for the new wider config frame
  - Party: Mousing over the name frame will now display the proper tooltip

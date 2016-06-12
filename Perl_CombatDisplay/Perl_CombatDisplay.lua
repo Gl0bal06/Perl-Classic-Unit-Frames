@@ -918,18 +918,22 @@ function Perl_CombatDisplayDropDown_Initialize()
 end
 
 function Perl_CombatDisplay_MouseClick(button)
-	if (SpellIsTargeting() and button == "RightButton") then
-		SpellStopTargeting();
-		return;
-	end
+	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
+		CastParty_OnClickByUnit(button, "player");
+	else
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
+		end
 
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("player");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("player");
-		else
-			TargetUnit("player");
+		if (button == "LeftButton") then
+			if (SpellIsTargeting()) then
+				SpellTargetUnit("player");
+			elseif (CursorHasItem()) then
+				DropItemOnUnit("player");
+			else
+				TargetUnit("player");
+			end
 		end
 	end
 end
@@ -942,7 +946,13 @@ end
 
 function Perl_CombatDisplay_MouseUp(button)
 	if (button == "RightButton") then
-		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
+		if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty is installed
+			-- Do nothing
+		else
+			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then
+				ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
+			end
+		end
 	end
 
 	Perl_CombatDisplay_Frame:StopMovingOrSizing();
@@ -975,18 +985,22 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 end
 
 function Perl_CombatDisplay_Target_MouseClick(button)
-	if (SpellIsTargeting() and button == "RightButton") then
-		SpellStopTargeting();
-		return;
-	end
+	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
+		CastParty_OnClickByUnit(button, "target");
+	else
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
+		end
 
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("player");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("player");
-		else
-			TargetUnit("player");
+		if (button == "LeftButton") then
+			if (SpellIsTargeting()) then
+				SpellTargetUnit("player");
+			elseif (CursorHasItem()) then
+				DropItemOnUnit("player");
+			else
+				TargetUnit("player");
+			end
 		end
 	end
 end
@@ -999,7 +1013,13 @@ end
 
 function Perl_CombatDisplay_Target_MouseUp(button)
 	if (button == "RightButton") then
-		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
+		if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty is installed
+			-- Do nothing
+		else
+			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
+				ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
+			end
+		end
 	end
 
 	Perl_CombatDisplay_Target_Frame:StopMovingOrSizing();
@@ -1014,8 +1034,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.51",
-			releaseDate = "March 28, 2006",
+			version = "v0.52",
+			releaseDate = "April 2, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -2040,24 +2040,30 @@ function Perl_PartyDropDown_Initialize()
 end
 
 function Perl_Party_MouseClick(button)
-	if (SpellIsTargeting() and button == "RightButton") then
-		SpellStopTargeting();
-		return;
-	end
-
 	local id = this:GetID();
 	if (id == 0) then
 		local name = this:GetName();
 		id = string.sub(name, 23, 23);
 	end
 
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("party"..id);
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("party"..id);
-		else
-			TargetUnit("party"..id);
+	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
+		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			CastParty_OnClickByUnit(button, "party"..id);
+		end
+	else
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
+		end
+
+		if (button == "LeftButton") then
+			if (SpellIsTargeting()) then
+				SpellTargetUnit("party"..id);
+			elseif (CursorHasItem()) then
+				DropItemOnUnit("party"..id);
+			else
+				TargetUnit("party"..id);
+			end
 		end
 	end
 end
@@ -2074,31 +2080,47 @@ function Perl_Party_MouseUp(button)
 		local name = this:GetName();
 		id = string.sub(name, 23, 23);
 	end
+
 	if (button == "RightButton") then
-		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..id.."_DropDown"), "Perl_Party_MemberFrame"..id, 0, 0);
+		if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
+			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
+				ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..id.."_DropDown"), "Perl_Party_MemberFrame"..id, 0, 0);
+			end
+		else
+			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
+				ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..id.."_DropDown"), "Perl_Party_MemberFrame"..id, 0, 0);
+			end
+		end
 	end
+
 	Perl_Party_Frame:StopMovingOrSizing();
 end
 
 function Perl_Party_Pet_MouseClick(button)
-	if (SpellIsTargeting() and button == "RightButton") then
-		SpellStopTargeting();
-		return;
-	end
-
 	local id = this:GetID();
 	if (id == 0) then
-		local name=this:GetName();
+		local name = this:GetName();
 		id = string.sub(name, 23, 23);
 	end
 
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("partypet"..id);
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("partypet"..id);
-		else
-			TargetUnit("partypet"..id);
+	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
+		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			CastParty_OnClickByUnit(button, "partypet"..id);
+		end
+	else
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
+		end
+
+		if (button == "LeftButton") then
+			if (SpellIsTargeting()) then
+				SpellTargetUnit("partypet"..id);
+			elseif (CursorHasItem()) then
+				DropItemOnUnit("partypet"..id);
+			else
+				TargetUnit("partypet"..id);
+			end
 		end
 	end
 end
@@ -2129,8 +2151,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.51",
-			releaseDate = "March 28, 2006",
+			version = "v0.52",
+			releaseDate = "April 2, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

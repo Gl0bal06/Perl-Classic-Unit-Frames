@@ -460,6 +460,27 @@
 					</OnClick>
 				</Scripts>
 			</Button>
+
+			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="9">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
+						<Offset>
+							<AbsDimension  x="210" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("CastParty Support");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_All_Set_CastParty_Support();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
 		</Frames>
 
 	</Frame>

@@ -28,7 +28,6 @@ local compactmode = 0;		-- compact mode is disabled by default
 local compactpercent = 0;	-- percents are not shown in compact mode by default
 local hidebuffbackground = 0;	-- buff and debuff backgrounds are shown by default
 
-
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 
@@ -1796,16 +1795,22 @@ function Perl_TargetDropDown_Initialize()
 end
 
 function Perl_Target_MouseClick(button)
-	if (SpellIsTargeting() and button == "RightButton") then
-		SpellStopTargeting();
-		return;
-	end
+	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
+		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			CastParty_OnClickByUnit(button, "target");
+		end
+	else
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
+		end
 
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("target");
-		elseif (CursorHasItem()) then
-			DropItemOnUnit("target");
+		if (button == "LeftButton") then
+			if (SpellIsTargeting()) then
+				SpellTargetUnit("target");
+			elseif (CursorHasItem()) then
+				DropItemOnUnit("target");
+			end
 		end
 	end
 end
@@ -1818,7 +1823,15 @@ end
 
 function Perl_Target_MouseUp(button)
 	if (button == "RightButton") then
-		ToggleDropDownMenu(1, nil, Perl_Target_DropDown, "Perl_Target_NameFrame", 40, 0);
+		if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
+			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
+				ToggleDropDownMenu(1, nil, Perl_Target_DropDown, "Perl_Target_NameFrame", 40, 0);
+			end
+		else
+			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
+				ToggleDropDownMenu(1, nil, Perl_Target_DropDown, "Perl_Target_NameFrame", 40, 0);
+			end
+		end
 	end
 
 	Perl_Target_Frame:StopMovingOrSizing();
@@ -1855,8 +1868,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.51",
-			releaseDate = "March 28, 2006",
+			version = "v0.52",
+			releaseDate = "April 2, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

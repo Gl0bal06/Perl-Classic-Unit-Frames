@@ -1175,7 +1175,9 @@ end
 
 function Perl_Target_Target_MouseUp(button)
 	if (button == "RightButton") then
-		ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
+		if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
+			ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
+		end
 	end
 
 	Perl_Target_Target_Frame:StopMovingOrSizing();
@@ -1233,7 +1235,9 @@ end
 
 function Perl_Target_Target_Target_MouseUp(button)
 	if (button == "RightButton") then
-		ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
+		if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
+			ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
+		end
 	end
 
 	Perl_Target_Target_Target_Frame:StopMovingOrSizing();
@@ -1308,8 +1312,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.51",
-			releaseDate = "March 28, 2006",
+			version = "v0.52",
+			releaseDate = "April 2, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

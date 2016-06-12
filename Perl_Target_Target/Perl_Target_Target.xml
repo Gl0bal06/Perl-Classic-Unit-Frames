@@ -657,7 +657,7 @@
 			<Layer level="ARTWORK">
 				<FontString name="Perl_Target_Target_BigWarning_Text" inherits="Perl_Target_Target_Font" text="Error!">
 					<Size>
-						<AbsDimension x="512" y="128"/>
+						<AbsDimension x="800" y="128"/>
 					</Size>
 					<Anchors>
 						<Anchor point="CENTER" relativeTo="Perl_Target_Target_BigWarning" relativePoint="CENTER"/>

@@ -777,16 +777,22 @@ function Perl_Player_Pet_DropDown_Initialize()
 end
 
 function Perl_Player_Pet_MouseClick(button)
-	if (SpellIsTargeting() and button == "RightButton") then
-		SpellStopTargeting();
-		return;
-	end
+	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
+		if (not string.find(GetMouseFocus():GetName(), "Name")) then
+			CastParty_OnClickByUnit(button, "pet");
+		end
+	else
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
+		end
 
-	if (button == "LeftButton") then
-		if (SpellIsTargeting()) then
-			SpellTargetUnit("pet");
-		else
-			TargetUnit("pet");
+		if (button == "LeftButton") then
+			if (SpellIsTargeting()) then
+				SpellTargetUnit("pet");
+			else
+				TargetUnit("pet");
+			end
 		end
 	end
 end
@@ -799,7 +805,15 @@ end
 
 function Perl_Player_Pet_MouseUp(button)
 	if (button == "RightButton") then
-		ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
+		if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
+			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
+				ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
+			end
+		else
+			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown())) then		-- if alt, ctrl, or shift ARE NOT held, show the menu
+				ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
+			end
+		end
 	end
 
 	Perl_Player_Pet_Frame:StopMovingOrSizing();
@@ -814,8 +828,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.51",
-			releaseDate = "March 28, 2006",
+			version = "v0.52",
+			releaseDate = "April 2, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

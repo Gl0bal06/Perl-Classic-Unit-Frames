@@ -18,6 +18,7 @@ local texture = 0;			-- no texture is set by default
 local showminimapbutton = 1;		-- minimap button is on by default
 local minimapbuttonpos = 270;		-- default minimap button position
 local transparentbackground = 0;	-- use solid black background as default
+PCUF_CASTPARTYSUPPORT = 1;		-- CastParty support is enabled by default (global variable so i don't go insane)
 
 
 ----------------------
@@ -214,9 +215,9 @@ function Perl_Config_Get_Localization()
 	return localization;
 end
 
-----------------------
--- Update Functions --
-----------------------
+--------------------------
+-- Update/GUI Functions --
+--------------------------
 function Perl_Config_Set_Texture(newvalue)
 	if (newvalue ~= nil) then
 		texture = newvalue;
@@ -440,6 +441,11 @@ function Perl_Config_Set_MiniMap_Position(newvalue)
 	Perl_Config_Button_UpdatePosition();
 end
 
+function Perl_Config_Set_CastParty_Support(newvalue)
+	PCUF_CASTPARTYSUPPORT = newvalue;
+	Perl_Config_UpdateVars();
+end
+
 
 -----------------------------------
 -- Reset Frame Position Function --
@@ -521,6 +527,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShowMiniMapButton"] = vartable["showminimapbutton"],
 			["MiniMapButtonPos"] = vartable["minimapbuttonpos"],
 			["TransparentBackground"] = vartable["transparentbackground"],
+			["PCUF_CastPartySupport"] = vartable["PCUF_CastPartySupport"],
 		};
 	end
 
@@ -733,6 +740,7 @@ function Perl_Config_GetVars()
 	showminimapbutton = Perl_Config_Config[UnitName("player")]["ShowMiniMapButton"];
 	minimapbuttonpos = Perl_Config_Config[UnitName("player")]["MiniMapButtonPos"];
 	transparentbackground = Perl_Config_Config[UnitName("player")]["TransparentBackground"];
+	PCUF_CASTPARTYSUPPORT = Perl_Config_Config[UnitName("player")]["PCUF_CastPartySupport"];
 
 	if (texture == nil) then
 		texture = 0;
@@ -746,12 +754,16 @@ function Perl_Config_GetVars()
 	if (transparentbackground == nil) then
 		transparentbackground = 0;
 	end
+	if (PCUF_CASTPARTYSUPPORT == nil) then
+		PCUF_CASTPARTYSUPPORT = 1;
+	end
 
 	local vars = {
 		["texture"] = texture,
 		["showminimapbutton"] = showminimapbutton,
 		["minimapbuttonpos"] = minimapbuttonpos,
 		["transparentbackground"] = transparentbackground,
+		["PCUF_CastPartySupport"] = PCUF_CASTPARTYSUPPORT,
 	}
 	return vars;
 end
@@ -780,6 +792,11 @@ function Perl_Config_UpdateVars(vartable)
 			else
 				transparentbackground = nil;
 			end
+			if (vartable["Global Settings"]["PCUF_CastPartySupport"] ~= nil) then
+				PCUF_CASTPARTYSUPPORT = vartable["Global Settings"]["PCUF_CastPartySupport"];
+			else
+				PCUF_CASTPARTYSUPPORT = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -795,6 +812,9 @@ function Perl_Config_UpdateVars(vartable)
 		if (transparentbackground == nil) then
 			transparentbackground = 0;
 		end
+		if (PCUF_CASTPARTYSUPPORT == nil) then
+			PCUF_CASTPARTYSUPPORT = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Config_Set_Texture(texture);
@@ -808,6 +828,7 @@ function Perl_Config_UpdateVars(vartable)
 		["ShowMiniMapButton"] = showminimapbutton,
 		["MiniMapButtonPos"] = minimapbuttonpos,
 		["TransparentBackground"] = transparentbackground,
+		["PCUF_CastPartySupport"] = PCUF_CASTPARTYSUPPORT,
 	};
 end
 
@@ -873,8 +894,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.51",
-			releaseDate = "March 28, 2006",
+			version = "v0.52",
+			releaseDate = "April 2, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

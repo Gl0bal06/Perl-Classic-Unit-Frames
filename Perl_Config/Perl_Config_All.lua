@@ -46,6 +46,12 @@ function Perl_Config_All_Set_Values()
 	else
 		Perl_Config_All_Frame_CheckButton9:SetChecked(nil);
 	end
+
+	if (vartable["PCUF_CastPartySupport"] == 1) then
+		Perl_Config_All_Frame_CheckButton10:SetChecked(1);
+	else
+		Perl_Config_All_Frame_CheckButton10:SetChecked(nil);
+	end
 end
 
 function Perl_Config_All_Texture_Update(texturenum)
@@ -149,5 +155,13 @@ function Perl_Config_All_Set_Transparent_Background()
 		Perl_Config_Set_Background(1);
 	else
 		Perl_Config_Set_Background(0);
+	end
+end
+
+function Perl_Config_All_Set_CastParty_Support()
+	if (Perl_Config_All_Frame_CheckButton10:GetChecked() == 1) then
+		Perl_Config_Set_CastParty_Support(1);
+	else
+		Perl_Config_Set_CastParty_Support(0);
 	end
 end
