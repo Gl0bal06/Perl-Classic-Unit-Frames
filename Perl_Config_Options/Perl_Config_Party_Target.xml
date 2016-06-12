@@ -28,7 +28,7 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_PARTYTARGET">
+				<FontString inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_FOCUSPARTYTARGET">
 					<Anchors>
 						<Anchor point="TOP" relativeTo="Perl_Config_Party_Target_Header">
 							<Offset>
@@ -92,7 +92,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton7" inherits="UICheckButtonTemplate" id="7">
+			<CheckButton name="$parent_CheckButton8" inherits="UICheckButtonTemplate" id="8">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -100,6 +100,27 @@
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton6">
 						<Offset>
 							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_FOCUSTARGET_ENABLE);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Target_Enabled_Focus_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton7" inherits="UICheckButtonTemplate" id="7">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton8">
+						<Offset>
+							<AbsDimension  x="0" y="-40"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

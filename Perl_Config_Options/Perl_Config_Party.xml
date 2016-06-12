@@ -251,12 +251,33 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton18" inherits="UICheckButtonTemplate" id="18">
+			<CheckButton name="$parent_CheckButton16" inherits="UICheckButtonTemplate" id="16">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Class_Colored_Names_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton18" inherits="UICheckButtonTemplate" id="18">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton16">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>
@@ -327,10 +348,31 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFFDEBUFF);
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFF);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Class_Buffs_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton22" inherits="UICheckButtonTemplate" id="22">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton14">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_DEBUFF);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Class_Debuffs_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -524,23 +566,23 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton16" inherits="UICheckButtonTemplate" id="16">
+			<CheckButton name="$parent_CheckButton23" inherits="UICheckButtonTemplate" id="23">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton15">
 						<Offset>
-							<AbsDimension x="-20" y="-20"/>
+							<AbsDimension x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTY_PORTRAITBUFFS);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Party_Class_Colored_Names_Update();
+						Perl_Config_Party_Portrait_Buffs_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -550,9 +592,9 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton16">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton23">
 						<Offset>
-							<AbsDimension x="0" y="-20"/>
+							<AbsDimension x="-20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

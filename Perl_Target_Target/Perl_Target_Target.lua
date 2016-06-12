@@ -22,6 +22,7 @@ local showtototdebuffs = 0;	-- ToToT debuffs are off by default
 local displaycastablebuffs = 0;	-- display all buffs by default
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local showfriendlyhealth = 0;	-- show numerical friendly health is disbaled by default
+local displaycurabledebuff = 0;	-- display all debuffs by default
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
@@ -758,7 +759,7 @@ function Perl_Target_Target_Update_Buffs()
 	local numDebuffs = 0;														-- Debuff counter for correct layout
 	if (showtotdebuffs == 1) then
 		for debuffnum=1,16 do													-- Start main debuff loop
-			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("targettarget", debuffnum, displaycastablebuffs);	-- Get the texture and debuff stacking information if any
+			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("targettarget", debuffnum, displaycurabledebuff);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Target_Target_BuffFrame_Debuff"..debuffnum);						-- Create the main icon for the debuff
 			if (buffTexture) then												-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
@@ -865,7 +866,7 @@ function Perl_Target_Target_Target_Update_Buffs()
 	local numDebuffs = 0;														-- Debuff counter for correct layout
 	if (showtototdebuffs == 1) then
 		for debuffnum=1,16 do
-			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("targettargettarget", debuffnum, displaycastablebuffs);	-- Get the texture and debuff stacking information if any
+			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("targettargettarget", debuffnum, displaycurabledebuff);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum);					-- Create the main icon for the debuff
 			if (buffTexture) then
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);						-- Set the texture
@@ -1650,6 +1651,13 @@ function Perl_Target_Target_Set_Class_Buffs(newvalue)
 	Perl_Target_Target_Target_Reset_Buffs();
 end
 
+function Perl_Target_Target_Set_Class_Debuffs(newvalue)
+	displaycurabledebuff = newvalue;
+	Perl_Target_Target_UpdateVars();
+	Perl_Target_Target_Reset_Buffs();
+	Perl_Target_Target_Target_Reset_Buffs();
+end
+
 function Perl_Target_Target_Set_Show_Friendly_Health(newvalue)
 	showfriendlyhealth = newvalue;
 	Perl_Target_Target_UpdateVars();
@@ -1747,6 +1755,7 @@ function Perl_Target_Target_GetVars(name, updateflag)
 	displaycastablebuffs = Perl_Target_Target_Config[name]["DisplayCastableBuffs"];
 	classcolorednames = Perl_Target_Target_Config[name]["ClassColoredNames"];
 	showfriendlyhealth = Perl_Target_Target_Config[name]["ShowFriendlyHealth"];
+	displaycurabledebuff = Perl_Target_Target_Config[name]["DisplayCurableDebuff"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1799,6 +1808,9 @@ function Perl_Target_Target_GetVars(name, updateflag)
 	if (showfriendlyhealth == nil) then
 		showfriendlyhealth = 0;
 	end
+	if (displaycurabledebuff == nil) then
+		displaycurabledebuff = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1829,6 +1841,7 @@ function Perl_Target_Target_GetVars(name, updateflag)
 		["displaycastablebuffs"] = displaycastablebuffs,
 		["classcolorednames"] = classcolorednames,
 		["showfriendlyhealth"] = showfriendlyhealth,
+		["displaycurabledebuff"] = displaycurabledebuff,
 	}
 	return vars;
 end
@@ -1922,6 +1935,11 @@ function Perl_Target_Target_UpdateVars(vartable)
 			else
 				showfriendlyhealth = nil;
 			end
+			if (vartable["Global Settings"]["DisplayCurableDebuff"] ~= nil) then
+				displaycurabledebuff = vartable["Global Settings"]["DisplayCurableDebuff"];
+			else
+				displaycurabledebuff = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1976,6 +1994,9 @@ function Perl_Target_Target_UpdateVars(vartable)
 		if (showfriendlyhealth == nil) then
 			showfriendlyhealth = 0;
 		end
+		if (displaycurabledebuff == nil) then
+			displaycurabledebuff = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Target_Frame_Style();
@@ -2006,6 +2027,7 @@ function Perl_Target_Target_UpdateVars(vartable)
 		["DisplayCastableBuffs"] = displaycastablebuffs,
 		["ClassColoredNames"] = classcolorednames,
 		["ShowFriendlyHealth"] = showfriendlyhealth,
+		["DisplayCurableDebuff"] = displaycurabledebuff,
 	};
 end
 
@@ -2176,7 +2198,7 @@ end
 function Perl_Target_Target_SetBuffTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
 	if (this:GetID() > 16) then
-		GameTooltip:SetUnitDebuff("targettarget", this:GetID()-16, displaycastablebuffs);		-- 16 being the number of buffs before debuffs in the xml
+		GameTooltip:SetUnitDebuff("targettarget", this:GetID()-16, displaycurabledebuff);		-- 16 being the number of buffs before debuffs in the xml
 	else
 		GameTooltip:SetUnitBuff("targettarget", this:GetID(), displaycastablebuffs);
 	end
@@ -2185,7 +2207,7 @@ end
 function Perl_Target_Target_Target_SetBuffTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
 	if (this:GetID() > 16) then
-		GameTooltip:SetUnitDebuff("targettargettarget", this:GetID()-16, displaycastablebuffs);		-- 16 being the number of buffs before debuffs in the xml
+		GameTooltip:SetUnitDebuff("targettargettarget", this:GetID()-16, displaycurabledebuff);		-- 16 being the number of buffs before debuffs in the xml
 	else
 		GameTooltip:SetUnitBuff("targettargettarget", this:GetID(), displaycastablebuffs);
 	end

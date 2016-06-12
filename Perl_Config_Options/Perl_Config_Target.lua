@@ -170,6 +170,18 @@ function Perl_Config_Target_Set_Values()
 		Perl_Config_Target_Frame_CheckButton27:SetChecked(nil);
 	end
 
+	if (vartable["eliteraregraphic"] == 1) then
+		Perl_Config_Target_Frame_CheckButton28:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton28:SetChecked(nil);
+	end
+
+	if (vartable["displaycurabledebuff"] == 1) then
+		Perl_Config_Target_Frame_CheckButton29:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton29:SetChecked(nil);
+	end
+
 	Perl_Config_Target_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_Target_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -398,6 +410,22 @@ function Perl_Config_Target_Show_Guild_Name_Update()
 		Perl_Target_Set_Show_Guild_Name(1);
 	else
 		Perl_Target_Set_Show_Guild_Name(0);
+	end
+end
+
+function Perl_Config_Target_Elite_Rare_Graphic_Update()
+	if (Perl_Config_Target_Frame_CheckButton28:GetChecked() == 1) then
+		Perl_Target_Set_Elite_Rare_Graphic(1);
+	else
+		Perl_Target_Set_Elite_Rare_Graphic(0);
+	end
+end
+
+function Perl_Config_Target_Class_Debuffs_Update()
+	if (Perl_Config_Target_Frame_CheckButton29:GetChecked() == 1) then
+		Perl_Target_Set_Class_Debuffs(1);
+	else
+		Perl_Target_Set_Class_Debuffs(0);
 	end
 end
 

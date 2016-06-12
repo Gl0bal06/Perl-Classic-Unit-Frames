@@ -27,6 +27,7 @@ local hiddeninraid = 0;		-- player frame is shown in a raid by default
 local showpvpicon = 1;		-- show the pvp icon
 local showbarvalues = 0;	-- healer mode will have the bar values hidden by default
 local showraidgroupinname = 0;	-- raid number is not shown in the name by default
+local showenergyticker = 0;	-- energy ticker is off by default
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -46,6 +47,8 @@ local Perl_Player_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
 local playerhealth, playerhealthmax, playerhealthpercent, playermana, playermanamax, playermanapercent, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, playerpower, englishclass;
+local energylast = 0;
+local energytime = 0;
 
 
 ----------------------
@@ -133,15 +136,27 @@ function Perl_Player_Events:UNIT_MANA()
 	end
 end
 Perl_Player_Events.UNIT_MAXMANA = Perl_Player_Events.UNIT_MANA;
-Perl_Player_Events.UNIT_ENERGY = Perl_Player_Events.UNIT_MANA;
-Perl_Player_Events.UNIT_MAXENERGY = Perl_Player_Events.UNIT_MANA;
 Perl_Player_Events.UNIT_RAGE = Perl_Player_Events.UNIT_MANA;
 Perl_Player_Events.UNIT_MAXRAGE = Perl_Player_Events.UNIT_MANA;
+
+function Perl_Player_Events:UNIT_ENERGY()
+	if (arg1 == "player") then
+		Perl_Player_Update_Mana();		-- Update energy/mana/rage values
+
+		local e = UnitMana("player");
+		if (e == energylast + 20) then
+			energytime = GetTime();
+		end
+		energylast = e;
+	end
+end
+Perl_Player_Events.UNIT_MAXENERGY = Perl_Player_Events.UNIT_ENERGY;
 
 function Perl_Player_Events:UNIT_DISPLAYPOWER()
 	if (arg1 == "player") then
 		Perl_Player_Update_Mana_Bar();		-- What type of energy are we using now?
 		Perl_Player_Update_Mana();		-- Update the energy info immediately
+		Perl_Player_EnergyTicker_Display();	-- Are we using the energy ticker?
 	end
 end
 
@@ -277,7 +292,7 @@ function Perl_Player_IFrameManager()
 			top = 0;
 		end
 		if (compactmode == 0) then
-			right = 70;
+			right = 85;
 		else
 			if (compactpercent == 0) then
 				if (shortbars == 0) then
@@ -984,6 +999,21 @@ function Perl_Player_Update_Portrait()
 	end
 end
 
+function Perl_Player_EnergyTicker_Display()
+	if (showenergyticker == 1 and UnitPowerType("player") == 3) then
+		Perl_Player_EnergyTicker:Show();
+	else
+		Perl_Player_EnergyTicker:Hide();
+	end
+end
+
+function Perl_Player_EnergyTicker_OnUpdate()
+	-- Based on code by Zek
+	local remainder = mod((GetTime() - energytime), 2);
+	Perl_Player_EnergyTicker:SetValue(remainder);
+	Perl_Player_EnergyTickerSpark:SetPoint("CENTER", Perl_Player_EnergyTicker, "LEFT", Perl_Player_EnergyTicker:GetWidth() * (remainder / 2), 0);
+end
+
 
 ------------------------
 -- Fade Bar Functions --
@@ -1325,6 +1355,8 @@ function Perl_Player_Frame_Style()
 		Perl_Player_Update_Health();
 		Perl_Player_Update_Mana();
 
+		Perl_Player_EnergyTicker_Display();	-- Update the energy ticker
+
 		if (Initialized) then
 			if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 				Perl_ArcaneBar_player:SetPoint("TOPLEFT", "Perl_Player_NameFrame", "TOPLEFT", 5, -5);
@@ -1490,6 +1522,12 @@ function Perl_Player_Set_Show_Raid_Group_In_Name(newvalue)
 	Perl_Player_Update_Raid_Group_Number();
 end
 
+function Perl_Player_Set_Show_Energy_Ticker(newvalue)
+	showenergyticker = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
+end
+
 function Perl_Player_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);							-- convert the user input to a wow acceptable value
@@ -1548,6 +1586,7 @@ function Perl_Player_GetVars(name, updateflag)
 	showpvpicon = Perl_Player_Config[name]["ShowPvPIcon"];
 	showbarvalues = Perl_Player_Config[name]["ShowBarValues"];
 	showraidgroupinname = Perl_Player_Config[name]["ShowRaidGroupInName"];
+	showenergyticker = Perl_Player_Config[name]["ShowEnergyTicker"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1615,6 +1654,9 @@ function Perl_Player_GetVars(name, updateflag)
 	if (showraidgroupinname == nil) then
 		showraidgroupinname = 0;
 	end
+	if (showenergyticker == nil) then
+		showenergyticker = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1650,6 +1692,7 @@ function Perl_Player_GetVars(name, updateflag)
 		["showpvpicon"] = showpvpicon,
 		["showbarvalues"] = showbarvalues,
 		["showraidgroupinname"] = showraidgroupinname,
+		["showenergyticker"] = showenergyticker,
 	}
 	return vars;
 end
@@ -1768,6 +1811,11 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				showraidgroupinname = nil;
 			end
+			if (vartable["Global Settings"]["ShowEnergyTicker"] ~= nil) then
+				showenergyticker = vartable["Global Settings"]["ShowEnergyTicker"];
+			else
+				showenergyticker = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1837,6 +1885,9 @@ function Perl_Player_UpdateVars(vartable)
 		if (showraidgroupinname == nil) then
 			showraidgroupinname = 0;
 		end
+		if (showenergyticker == nil) then
+			showenergyticker = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Update_Once();
@@ -1872,6 +1923,7 @@ function Perl_Player_UpdateVars(vartable)
 		["ShowPvPIcon"] = showpvpicon,
 		["ShowBarValues"] = showbarvalues,
 		["ShowRaidGroupInName"] = showraidgroupinname,
+		["ShowEnergyTicker"] = showenergyticker,
 	};
 end
 

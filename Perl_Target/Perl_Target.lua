@@ -35,6 +35,8 @@ local classcolorednames = 0;	-- names are colored based on pvp status by default
 local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
 local invertbuffs = 0;		-- buffs and debuffs are below the target frame by default
 local showguildname = 0;	-- guild names are hidden by default
+local eliteraregraphic = 0;	-- the blizzard elite/rare graphic is off by default
+local displaycurabledebuff = 0;	-- display all debuffs by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -287,7 +289,7 @@ function Perl_Target_IFrameManager()
 			right = 41;
 		else
 			if (compactmode == 0) then
-				right = 60;
+				right = 75;
 			else
 				if (compactpercent == 0) then
 					if (shortbars == 0) then
@@ -1197,18 +1199,24 @@ function Perl_Target_Frame_Set_Level()
 
 	if (targetclassification == "worldboss") then
 		Perl_Target_RareEliteBarText:SetTextColor(1, 0, 0);
+		Perl_Target_EliteRareGraphic:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Elite");
 		targetclassificationframetext = PERL_LOCALIZED_TARGET_BOSS;
 	end
 
 	if (targetclassification == "rareelite") then
+		Perl_Target_EliteRareGraphic:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Rare-Elite");
 		targetclassificationframetext = PERL_LOCALIZED_TARGET_RAREELITE;
 		targetlevel = targetlevel.."r+";
 	elseif (targetclassification == "elite") then
+		Perl_Target_EliteRareGraphic:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Elite");
 		targetclassificationframetext = PERL_LOCALIZED_TARGET_ELITE;
 		targetlevel = targetlevel.."+";
 	elseif (targetclassification == "rare") then
+		Perl_Target_EliteRareGraphic:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Rare");
 		targetclassificationframetext = PERL_LOCALIZED_TARGET_RARE;
 		targetlevel = targetlevel.."r";
+	else
+		Perl_Target_EliteRareGraphic:SetTexture();
 	end
 
 	Perl_Target_LevelBarText:SetText(targetlevel);						-- Set level frame text
@@ -1475,6 +1483,18 @@ function Perl_Target_Main_Style()
 			Perl_Target_GuildFrame:Hide();
 		end
 
+		if (eliteraregraphic == 1) then
+			Perl_Target_EliteRareGraphicFrame:ClearAllPoints();
+			if (showportrait == 1) then
+				Perl_Target_EliteRareGraphicFrame:SetPoint("TOPLEFT", "Perl_Target_PortraitFrame", "TOPRIGHT", -210, 25);
+			else
+				Perl_Target_EliteRareGraphicFrame:SetPoint("TOPLEFT", "Perl_Target_LevelFrame", "TOPRIGHT", -210, 25);
+			end
+			Perl_Target_EliteRareGraphicFrame:Show();
+		else
+			Perl_Target_EliteRareGraphicFrame:Hide();
+		end
+
 		if (Initialized) then
 			Perl_Target_ArcaneBar_Support();
 		end
@@ -1596,6 +1616,15 @@ end
 function Perl_Target_Set_Class_Buffs(newvalue)
 	if (newvalue ~= nil) then
 		displaycastablebuffs = newvalue;
+	end
+	Perl_Target_UpdateVars();		-- Save the new setting
+	Perl_Target_Reset_Buffs();		-- Reset the buff icons
+	Perl_Target_Buff_UpdateAll();		-- Repopulate the buff icons
+end
+
+function Perl_Target_Set_Class_Debuffs(newvalue)
+	if (newvalue ~= nil) then
+		displaycurabledebuff = newvalue;
 	end
 	Perl_Target_UpdateVars();		-- Save the new setting
 	Perl_Target_Reset_Buffs();		-- Reset the buff icons
@@ -1807,6 +1836,15 @@ function Perl_Target_Set_Show_Guild_Name(newvalue)
 	end
 end
 
+function Perl_Target_Set_Elite_Rare_Graphic(newvalue)
+	eliteraregraphic = newvalue;
+	Perl_Target_UpdateVars();		-- Save the new setting
+	Perl_Target_Frame_Style();		-- Apply any showing/hiding of frames and enabling/disabling of events
+	if (UnitExists("target")) then
+		Perl_Target_Update_Once();	-- Update the target frame information if appropriate
+	end
+end
+
 function Perl_Target_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);		-- convert the user input to a wow acceptable value
@@ -1885,6 +1923,8 @@ function Perl_Target_GetVars(name, updateflag)
 	showmanadeficit = Perl_Target_Config[name]["ShowManaDeficit"];
 	invertbuffs = Perl_Target_Config[name]["InvertBuffs"];
 	showguildname = Perl_Target_Config[name]["ShowGuildName"];
+	eliteraregraphic = Perl_Target_Config[name]["EliteRareGraphic"];
+	displaycurabledebuff = Perl_Target_Config[name]["DisplayCurableDebuff"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1976,6 +2016,12 @@ function Perl_Target_GetVars(name, updateflag)
 	if (showguildname == nil) then
 		showguildname = 0;
 	end
+	if (eliteraregraphic == nil) then
+		eliteraregraphic = 0;
+	end
+	if (displaycurabledebuff == nil) then
+		displaycurabledebuff = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -2024,6 +2070,8 @@ function Perl_Target_GetVars(name, updateflag)
 		["showmanadeficit"] = showmanadeficit,
 		["invertbuffs"] = invertbuffs,
 		["showguildname"] = showguildname,
+		["eliteraregraphic"] = eliteraregraphic,
+		["displaycurabledebuff"] = displaycurabledebuff,
 	}
 	return vars;
 end
@@ -2182,6 +2230,16 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				showguildname = nil;
 			end
+			if (vartable["Global Settings"]["EliteRareGraphic"] ~= nil) then
+				eliteraregraphic = vartable["Global Settings"]["EliteRareGraphic"];
+			else
+				eliteraregraphic = nil;
+			end
+			if (vartable["Global Settings"]["DisplayCurableDebuff"] ~= nil) then
+				displaycurabledebuff = vartable["Global Settings"]["DisplayCurableDebuff"];
+			else
+				displaycurabledebuff = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2275,6 +2333,12 @@ function Perl_Target_UpdateVars(vartable)
 		if (showguildname == nil) then
 			showguildname = 0;
 		end
+		if (eliteraregraphic == nil) then
+			eliteraregraphic = 0;
+		end
+		if (displaycurabledebuff == nil) then
+			displaycurabledebuff = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();		-- Reset the buff icons
@@ -2323,6 +2387,8 @@ function Perl_Target_UpdateVars(vartable)
 		["ShowManaDeficit"] = showmanadeficit,
 		["InvertBuffs"] = invertbuffs,
 		["ShowGuildName"] = showguildname,
+		["EliteRareGraphic"] = eliteraregraphic,
+		["DisplayCurableDebuff"] = displaycurabledebuff,
 	};
 end
 
@@ -2362,7 +2428,7 @@ function Perl_Target_Buff_UpdateAll()
 
 		local numDebuffs = 0;											-- Debuff counter for correct layout
 		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
-			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("target", debuffnum, displaycastablebuffs);	-- Get the texture and debuff stacking information if any
+			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("target", debuffnum, displaycurabledebuff);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Target_Debuff"..debuffnum);						-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -2545,6 +2611,8 @@ function Perl_Target_Buff_UpdateCPMeter()
 		debuffapplications = Perl_Target_Buff_GetApplications(PERL_LOCALIZED_TARGET_SHADOW_VULNERABILITY);
 	elseif (playerclass == PERL_LOCALIZED_WARRIOR) then
 		debuffapplications = Perl_Target_Buff_GetApplications(PERL_LOCALIZED_TARGET_SUNDER_ARMOR);
+	elseif (playerclass == PERL_LOCALIZED_PALADIN) then
+		debuffapplications = Perl_Target_Buff_GetApplications(PERL_LOCALIZED_TARGET_HOLY_VENGEANCE);
 	elseif ((playerclass == PERL_LOCALIZED_ROGUE) or (playerclass == PERL_LOCALIZED_DRUID)) then
 		return;
 	else

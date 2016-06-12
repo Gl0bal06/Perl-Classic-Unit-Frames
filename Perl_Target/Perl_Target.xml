@@ -452,6 +452,37 @@
 			</Frame>
 
 
+			<!-- Elite/Rare Icon -->
+			<Frame name="Perl_Target_EliteRareGraphicFrame" frameStrata="BACKGROUND">
+				<Size>
+					<AbsDimension x="250" y="140"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_LevelFrame">
+						<Offset>
+							<AbsDimension x="-210" y="25"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="Perl_Target_EliteRareGraphic">
+							<Size>
+								<AbsDimension x="250" y="140"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Target_EliteRareGraphicFrame">
+									<Offset>
+										<AbsDimension x="0" y="-6"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+
+
 			<!-- Portrait Text Frame -->
 			<Frame name="Perl_Target_PortraitTextFrame">
 				<Size>

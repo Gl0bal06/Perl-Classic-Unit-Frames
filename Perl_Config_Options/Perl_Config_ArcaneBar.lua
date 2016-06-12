@@ -117,6 +117,30 @@ function Perl_Config_ArcaneBar_Set_Values()
 	Perl_Config_ArcaneBar_Frame_Slider1Low:SetText("0");
 	Perl_Config_ArcaneBar_Frame_Slider1High:SetText("100");
 	Perl_Config_ArcaneBar_Frame_Slider1:SetValue(vartable["transparency"]*100);
+
+	if (Perl_Target_Frame == nil) then
+		Perl_Config_ArcaneBar_Frame_Target_Text:Hide();
+		Perl_Config_ArcaneBar_Frame_CheckButton6:Hide();
+		Perl_Config_ArcaneBar_Frame_CheckButton7:Hide();
+		Perl_Config_ArcaneBar_Frame_CheckButton8:Hide();
+		Perl_Config_ArcaneBar_Frame_CheckButton9:Hide();
+	end
+
+	if (Perl_Focus_Frame == nil) then
+		Perl_Config_ArcaneBar_Frame_Focus_Text:Hide();
+		Perl_Config_ArcaneBar_Frame_CheckButton10:Hide();
+		Perl_Config_ArcaneBar_Frame_CheckButton11:Hide();
+		Perl_Config_ArcaneBar_Frame_CheckButton12:Hide();
+		Perl_Config_ArcaneBar_Frame_CheckButton13:Hide();
+	end
+
+	if (Perl_Party_Frame == nil) then
+		Perl_Config_ArcaneBar_Frame_Party_Text:Hide();
+		Perl_Config_ArcaneBar_Frame_CheckButton14:Hide();
+		Perl_Config_ArcaneBar_Frame_CheckButton15:Hide();
+		Perl_Config_ArcaneBar_Frame_CheckButton16:Hide();
+		Perl_Config_ArcaneBar_Frame_CheckButton17:Hide();
+	end
 end
 
 function Perl_Config_ArcaneBar_Player_Enabled_Update()

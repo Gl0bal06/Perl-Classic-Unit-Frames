@@ -1,3 +1,30 @@
+2.05 - April 9, 2007
+ - ArcaneBar: Added a sanity check for the line 207 error
+ - ArcaneBar: Focus, Party, and Target are no longer dependencies
+ - ArcaneBar: Hide blizzard cast bar is now set to on by default
+ - ArcaneBar/PartyPet/PartyTarget: Now part of the main download file
+ - CombatDisplay: Can now click through the frame
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - Config: Updated Traditional Chinese translations (Thanks hmj1026)
+ - Config: Removed a localization that is no longer used
+ - Config: The raid button is now hidden
+ - Config: Renamed the Party Target button since Focus support was added
+ - Focus: Fixed an issue regarding ArcaneBar support
+ - Focus: IFrameManager will now correctly update
+ - Focus/Party/Player/Target: Updated IFrameManager support
+ - Focus/Party/Target/ToT: Separated the Class Buff/Debuff option
+ - Party: Frames and buffs should no longer randomly shift down
+ - Party: Can now align buffs to be directly underneath or above the portrait frame
+ - Party/PartyTarget: Massive improvements in speed made by changing how frames are called
+ - Party/PartyTarget: Removed some unused code
+ - PartyPet: Changed the default state to off
+ - PartyTarget: Added focus support
+ - PartyTarget: Perl_Focus is now a dependency
+ - PartyTarget: Health is updated immediately after moving the mouse off the health bar
+ - Player: Added an energy ticker
+ - Target: Added elite/rare graphic support
+ - Target: Paladins can now track Holy Vengeance stacks in the combo point displays
+
 2.04 - February 28, 2007
  - All: Added frame debuff coloring support
  - All: Changed RegisterForClicks to AnyUp

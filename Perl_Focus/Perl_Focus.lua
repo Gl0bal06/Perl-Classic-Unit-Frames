@@ -32,6 +32,7 @@ local displaycastablebuffs = 0;	-- display all buffs by default
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
 local invertbuffs = 0;		-- buffs and debuffs are below the Focus frame by default
+local displaycurabledebuff = 0;	-- display all debuffs by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -272,7 +273,7 @@ function Perl_Focus_IFrameManager()
 			right = 41;
 		else
 			if (compactmode == 0) then
-				right = 60;
+				right = 75;
 			else
 				if (compactpercent == 0) then
 					if (shortbars == 0) then
@@ -1369,8 +1370,8 @@ function Perl_Focus_ArcaneBar_Support()
 			Perl_ArcaneBar_focus_CastTime:SetPoint("RIGHT", "Perl_Focus_NameFrame", "LEFT", 0, 0);
 		end
 
-		Perl_ArcaneBar_focus:SetWidth(Perl_Target_NameFrame:GetWidth() - 10);
-		Perl_ArcaneBar_focus_Flash:SetWidth(Perl_Target_NameFrame:GetWidth() + 5);
+		Perl_ArcaneBar_focus:SetWidth(Perl_Focus_NameFrame:GetWidth() - 10);
+		Perl_ArcaneBar_focus_Flash:SetWidth(Perl_Focus_NameFrame:GetWidth() + 5);
 		Perl_ArcaneBar_Set_Spark_Width(nil, nil, Perl_Focus_NameFrame:GetWidth(), nil);
 	end
 end
@@ -1470,6 +1471,15 @@ end
 function Perl_Focus_Set_Class_Buffs(newvalue)
 	if (newvalue ~= nil) then
 		displaycastablebuffs = newvalue;
+	end
+	Perl_Focus_UpdateVars();		-- Save the new setting
+	Perl_Focus_Reset_Buffs();		-- Reset the buff icons
+	Perl_Focus_Buff_UpdateAll();		-- Repopulate the buff icons
+end
+
+function Perl_Focus_Set_Class_Debuffs(newvalue)
+	if (newvalue ~= nil) then
+		displaycurabledebuff = newvalue;
 	end
 	Perl_Focus_UpdateVars();		-- Save the new setting
 	Perl_Focus_Reset_Buffs();		-- Reset the buff icons
@@ -1734,6 +1744,7 @@ function Perl_Focus_GetVars(name, updateflag)
 	classcolorednames = Perl_Focus_Config[name]["ClassColoredNames"];
 	showmanadeficit = Perl_Focus_Config[name]["ShowManaDeficit"];
 	invertbuffs = Perl_Focus_Config[name]["InvertBuffs"];
+	displaycurabledebuff = Perl_Focus_Config[name]["DisplayCurableDebuff"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1816,6 +1827,9 @@ function Perl_Focus_GetVars(name, updateflag)
 	if (invertbuffs == nil) then
 		invertbuffs = 0;
 	end
+	if (displaycurabledebuff == nil) then
+		displaycurabledebuff = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1861,6 +1875,7 @@ function Perl_Focus_GetVars(name, updateflag)
 		["classcolorednames"] = classcolorednames,
 		["showmanadeficit"] = showmanadeficit,
 		["invertbuffs"] = invertbuffs,
+		["displaycurabledebuff"] = displaycurabledebuff,
 	}
 	return vars;
 end
@@ -2004,6 +2019,11 @@ function Perl_Focus_UpdateVars(vartable)
 			else
 				invertbuffs = nil;
 			end
+			if (vartable["Global Settings"]["DisplayCurableDebuff"] ~= nil) then
+				displaycurabledebuff = vartable["Global Settings"]["DisplayCurableDebuff"];
+			else
+				displaycurabledebuff = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2088,6 +2108,9 @@ function Perl_Focus_UpdateVars(vartable)
 		if (invertbuffs == nil) then
 			invertbuffs = 0;
 		end
+		if (displaycurabledebuff == nil) then
+			displaycurabledebuff = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Focus_Reset_Buffs();		-- Reset the buff icons
@@ -2101,9 +2124,9 @@ function Perl_Focus_UpdateVars(vartable)
 	end
 
 	-- IFrameManager Support
---	if (IFrameManager) then
---		IFrameManager:Refresh();
---	end
+	if (IFrameManager) then
+		IFrameManager:Refresh();
+	end
 
 	Perl_Focus_Config[UnitName("player")] = {
 		["Locked"] = locked,
@@ -2133,6 +2156,7 @@ function Perl_Focus_UpdateVars(vartable)
 		["ClassColoredNames"] = classcolorednames,
 		["ShowManaDeficit"] = showmanadeficit,
 		["InvertBuffs"] = invertbuffs,
+		["DisplayCurableDebuff"] = displaycurabledebuff,
 	};
 end
 
@@ -2172,7 +2196,7 @@ function Perl_Focus_Buff_UpdateAll()
 
 		local numDebuffs = 0;											-- Debuff counter for correct layout
 		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
-			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("focus", debuffnum, displaycastablebuffs);	-- Get the texture and debuff stacking information if any
+			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("focus", debuffnum, displaycurabledebuff);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Focus_Debuff"..debuffnum);						-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -2426,7 +2450,7 @@ end
 function Perl_Focus_SetBuffTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
 	if (this:GetID() > 16) then
-		GameTooltip:SetUnitDebuff("focus", this:GetID()-16, displaycastablebuffs);
+		GameTooltip:SetUnitDebuff("focus", this:GetID()-16, displaycurabledebuff);
 	else
 		GameTooltip:SetUnitBuff("focus", this:GetID(), displaycastablebuffs);
 	end

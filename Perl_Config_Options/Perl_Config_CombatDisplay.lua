@@ -115,6 +115,12 @@ function Perl_Config_CombatDisplay_Set_Values()
 	else
 		Perl_Config_CombatDisplay_Frame_CheckButton17:SetChecked(nil);
 	end
+
+	if (vartable["clickthrough"] == 1) then
+		Perl_Config_CombatDisplay_Frame_CheckButton18:SetChecked(1);
+	else
+		Perl_Config_CombatDisplay_Frame_CheckButton18:SetChecked(nil);
+	end
 end
 
 function Perl_Config_CombatDisplay_Mode_Update()
@@ -217,6 +223,14 @@ function Perl_Config_CombatDisplay_ComboPoint_Bars_Update()
 		Perl_CombatDisplay_Set_ComboPoint_Bars(1);
 	else
 		Perl_CombatDisplay_Set_ComboPoint_Bars(0);
+	end
+end
+
+function Perl_Config_CombatDisplay_Click_Through_Update()
+	if (Perl_Config_CombatDisplay_Frame_CheckButton18:GetChecked() == 1) then
+		Perl_CombatDisplay_Set_Click_Through(1);
+	else
+		Perl_CombatDisplay_Set_Click_Through(0);
 	end
 end
 

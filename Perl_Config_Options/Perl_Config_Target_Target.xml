@@ -164,23 +164,23 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton19" inherits="UICheckButtonTemplate" id="19">
+			<CheckButton name="$parent_CheckButton21" inherits="UICheckButtonTemplate" id="21">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton7">
 						<Offset>
-							<AbsDimension  x="0" y="-20"/>
+							<AbsDimension x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFFDEBUFF);
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_FRIENDLY_HEALTH);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Target_Target_Class_Buffs_Update();
+						Perl_Config_Target_Target_Show_Friendly_Health_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -190,7 +190,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton19">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton21">
 						<Offset>
 							<AbsDimension  x="0" y="-20"/>
 						</Offset>
@@ -353,23 +353,44 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton21" inherits="UICheckButtonTemplate" id="21">
+			<CheckButton name="$parent_CheckButton19" inherits="UICheckButtonTemplate" id="19">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton18">
 						<Offset>
-							<AbsDimension x="0" y="-20"/>
+							<AbsDimension  x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_FRIENDLY_HEALTH);
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_BUFF);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Target_Target_Show_Friendly_Health_Update();
+						Perl_Config_Target_Target_Class_Buffs_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton22" inherits="UICheckButtonTemplate" id="22">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton19">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_DEBUFF);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Class_Debuffs_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

@@ -130,6 +130,17 @@ function Perl_Config_Party_Set_Values()
 		Perl_Config_Party_Frame_CheckButton21:SetChecked(nil);
 	end
 
+	if (vartable["displaycurabledebuff"] == 1) then
+		Perl_Config_Party_Frame_CheckButton22:SetChecked(1);
+	else
+		Perl_Config_Party_Frame_CheckButton22:SetChecked(nil);
+	end
+	if (vartable["portraitbuffs"] == 1) then
+		Perl_Config_Party_Frame_CheckButton23:SetChecked(1);
+	else
+		Perl_Config_Party_Frame_CheckButton23:SetChecked(nil);
+	end
+
 	Perl_Config_Party_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_Party_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Party_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -337,6 +348,22 @@ function Perl_Config_Party_Show_Bar_Values_Update()
 		Perl_Party_Set_Show_Bar_Values(1);
 	else
 		Perl_Party_Set_Show_Bar_Values(0);
+	end
+end
+
+function Perl_Config_Party_Class_Debuffs_Update()
+	if (Perl_Config_Party_Frame_CheckButton22:GetChecked() == 1) then
+		Perl_Party_Set_Class_Debuffs(1);
+	else
+		Perl_Party_Set_Class_Debuffs(0);
+	end
+end
+
+function Perl_Config_Party_Portrait_Buffs_Update()
+	if (Perl_Config_Party_Frame_CheckButton23:GetChecked() == 1) then
+		Perl_Party_Set_Portrait_Buffs(1);
+	else
+		Perl_Party_Set_Portrait_Buffs(0);
 	end
 end
 

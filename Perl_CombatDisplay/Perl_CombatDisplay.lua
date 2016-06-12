@@ -19,6 +19,7 @@ local rightclickmenu = 0;	-- The ability to open a menu from CombatDisplay is di
 local fivesecsupport = 0;	-- FiveSec support is disabled by default
 local displaypercents = 0;	-- percents are off by default
 local showcp = 0;		-- combo points are hidden by default
+local clickthrough = 0;		-- frames are clickable by default
 
 -- Default Local Variables
 local InCombat = 0;
@@ -1185,6 +1186,18 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_PetManaBarBG:Hide();
 	end
 
+	if (clickthrough == 1) then
+		Perl_CombatDisplay_Frame:EnableMouse(0);
+		Perl_CombatDisplay_ManaFrame_CastClickOverlay:EnableMouse(0);
+		Perl_CombatDisplay_Target_Frame:EnableMouse(0);
+		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:EnableMouse(0);
+	else
+		Perl_CombatDisplay_Frame:EnableMouse(1);
+		Perl_CombatDisplay_ManaFrame_CastClickOverlay:EnableMouse(1);
+		Perl_CombatDisplay_Target_Frame:EnableMouse(1);
+		Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:EnableMouse(1);
+	end
+
 	Perl_CombatDisplay_Update_Mana();
 	Perl_CombatDisplay_Update_Combo_Points();
 	Perl_CombatDisplay_CheckForPets();
@@ -1268,6 +1281,12 @@ function Perl_CombatDisplay_Set_ComboPoint_Bars(newvalue)
 	Perl_CombatDisplay_Frame_Style();
 end
 
+function Perl_CombatDisplay_Set_Click_Through(newvalue)
+	clickthrough = newvalue;
+	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_Frame_Style();
+end
+
 function Perl_CombatDisplay_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);					-- convert the user input to a wow acceptable value
@@ -1318,6 +1337,7 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 	fivesecsupport = Perl_CombatDisplay_Config[name]["FiveSecSupport"];
 	displaypercents = Perl_CombatDisplay_Config[name]["DisplayPercents"];
 	showcp = Perl_CombatDisplay_Config[name]["ShowCP"];
+	clickthrough = Perl_CombatDisplay_Config[name]["ClickThrough"];
 
 	if (state == nil) then
 		state = 3;
@@ -1361,6 +1381,9 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 	if (showcp == nil) then
 		showcp = 0;
 	end
+	if (clickthrough == nil) then
+		clickthrough = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1391,6 +1414,7 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 		["fivesecsupport"] = fivesecsupport,
 		["displaypercents"] = displaypercents,
 		["showcp"] = showcp,
+		["clickthrough"] = clickthrough,
 	}
 	return vars;
 end
@@ -1469,6 +1493,11 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			else
 				showcp = nil;
 			end
+			if (vartable["Global Settings"]["ClickThrough"] ~= nil) then
+				clickthrough = vartable["Global Settings"]["ClickThrough"];
+			else
+				clickthrough = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1514,6 +1543,9 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		if (showcp == nil) then
 			showcp = 0;
 		end
+		if (clickthrough == nil) then
+			clickthrough = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_CombatDisplay_Set_Target(showtarget)
@@ -1544,6 +1576,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		["FiveSecSupport"] = fivesecsupport,
 		["DisplayPercents"] = displaypercents,
 		["ShowCP"] = showcp,
+		["ClickThrough"] = clickthrough,
 	};
 end
 

@@ -45,7 +45,6 @@ if (GetLocale() == "frFR") then
 	PERL_LOCALIZED_CONFIG_HIDE_CLASSICON_FRAME = "Cacher l\'ic\195\180ne de classe";
 	PERL_LOCALIZED_CONFIG_HEALER_MODE = "Healeur Mode";
 	PERL_LOCALIZED_CONFIG_PET_SUPPORT = "Montrer la Barre du familier";
-	PERL_LOCALIZED_CONFIG_CLASS_BUFFDEBUFF = " Buffs/Debuffs de Classes";
 	PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES = "Nom color\195\169\n selon la classe";
 	PERL_LOCALIZED_CONFIG_PVP_RANK_ICON = "JcJ classement icon";
 	PERL_LOCALIZED_CONFIG_SMALL = "petit";

@@ -72,7 +72,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="240" y="-100"/>
+								<AbsDimension x="240" y="-80"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -641,6 +641,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Hidden_In_Raids_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton26" inherits="UICheckButtonTemplate" id="26">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton22">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYER_ENERGY_TICKER);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Show_Energy_Ticker_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

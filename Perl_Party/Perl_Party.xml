@@ -77,7 +77,7 @@
 		<!-- Script Events -->
 		<Scripts>
 			<OnLoad>
-				Perl_Party_OnLoad();
+				Perl_Party_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 
@@ -581,10 +581,10 @@
 								Perl_Party_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
-								Perl_Party_HealthShow();
+								Perl_Party_HealthShow(this:GetParent():GetParent());
 							</OnEnter>
 							<OnLeave>
-								Perl_Party_HealthHide();
+								Perl_Party_HealthHide(this:GetParent():GetParent());
 							</OnLeave>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
@@ -691,10 +691,10 @@
 								Perl_Party_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
-								Perl_Party_ManaShow();
+								Perl_Party_ManaShow(this:GetParent():GetParent());
 							</OnEnter>
 							<OnLeave>
-								Perl_Party_ManaHide();
+								Perl_Party_ManaHide(this:GetParent():GetParent());
 							</OnLeave>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
@@ -801,10 +801,10 @@
 								Perl_Party_Pet_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
-								Perl_Party_Pet_HealthShow();
+								Perl_Party_Pet_HealthShow(this:GetParent():GetParent());
 							</OnEnter>
 							<OnLeave>
-								Perl_Party_Pet_HealthHide();
+								Perl_Party_Pet_HealthHide(this:GetParent():GetParent());
 							</OnLeave>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
@@ -1334,7 +1334,7 @@
 	<Frame name="Perl_Party_Script_Frame" movable="true" parent="UIParent" hidden="false" enableMouse="true">
 		<Scripts>
 			<OnLoad>
-				Perl_Party_Script_OnLoad();
+				Perl_Party_Script_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 	</Frame>

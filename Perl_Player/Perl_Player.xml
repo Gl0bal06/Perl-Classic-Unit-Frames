@@ -936,6 +936,36 @@
 							</OnDragStop>
 						</Scripts>
 					</Button>
+
+					<StatusBar name="Perl_Player_EnergyTicker" hidden="false">
+						<Size>
+							<AbsDimension x="150" y="2"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Player_ManaBar"/>
+						</Anchors>
+						<BarColor r="1" g="1" b="0.5" a="1"/>
+						<Layers>
+							<Layer level="OVERLAY">
+								<Texture name="Perl_Player_EnergyTickerSpark" file="Interface\CastingBar\UI-CastingBar-Spark" alphaMode="ADD">
+									<Size>
+										<AbsDimension x="12" y="12"/>
+									</Size>
+									<Anchors>
+										<Anchor point="CENTER"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								Perl_Player_EnergyTicker:SetMinMaxValues(0, 2);
+							</OnLoad>
+							<OnUpdate>
+								Perl_Player_EnergyTicker_OnUpdate()
+							</OnUpdate>
+						</Scripts>
+					</StatusBar>
 				</Frames>
 			</Frame>
 		</Frames>
