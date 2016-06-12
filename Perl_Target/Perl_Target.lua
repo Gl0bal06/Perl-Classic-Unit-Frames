@@ -903,6 +903,8 @@ function Perl_Target_Frame_Style()
 		Perl_Target_RareEliteFrame:SetWidth(46);
 		Perl_Target_StatsFrame:SetWidth(221);
 
+		Perl_Target_NameFrame_CPMeter:SetWidth(170);
+
 		Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(95);
 		Perl_Target_NameFrame_CastClickOverlay:SetWidth(180);
 		Perl_Target_StatsFrame_CastClickOverlay:SetWidth(221);
@@ -923,6 +925,8 @@ function Perl_Target_Frame_Style()
 			Perl_Target_RareEliteFrame:SetWidth(46);
 			Perl_Target_StatsFrame:SetWidth(240);
 
+			Perl_Target_NameFrame_CPMeter:SetWidth(189);
+
 			Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(114);
 			Perl_Target_NameFrame_CastClickOverlay:SetWidth(199);
 			Perl_Target_StatsFrame_CastClickOverlay:SetWidth(240);
@@ -936,6 +940,8 @@ function Perl_Target_Frame_Style()
 				Perl_Target_RareEliteFrame:SetWidth(46);
 				Perl_Target_StatsFrame:SetWidth(170);
 
+				Perl_Target_NameFrame_CPMeter:SetWidth(119);
+
 				Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(85);
 				Perl_Target_NameFrame_CastClickOverlay:SetWidth(129);
 				Perl_Target_StatsFrame_CastClickOverlay:SetWidth(170);
@@ -947,6 +953,8 @@ function Perl_Target_Frame_Style()
 				Perl_Target_NameFrame:SetWidth(164);
 				Perl_Target_RareEliteFrame:SetWidth(46);
 				Perl_Target_StatsFrame:SetWidth(205);
+
+				Perl_Target_NameFrame_CPMeter:SetWidth(154);
 
 				Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(79);
 				Perl_Target_NameFrame_CastClickOverlay:SetWidth(164);
@@ -1872,7 +1880,7 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.53",
+			version = "v0.54",
 			releaseDate = "April 4, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",

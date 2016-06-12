@@ -239,9 +239,7 @@ function Perl_CombatDisplay_OnEvent(event)
 			Perl_CombatDisplay_UpdateDisplay();	-- what mode are we in?
 			Perl_CombatDisplay_Set_Scale();		-- set the correct scale
 			Perl_CombatDisplay_Set_Transparency();	-- set the transparency
-			if (showpetbars == 1) then
-				Perl_CombatDisplay_CheckForPets();	-- do we have a pet out?
-			end
+			Perl_CombatDisplay_CheckForPets();	-- do we have a pet out?
 		else
 			Perl_CombatDisplay_Initialize();
 		end
@@ -275,6 +273,7 @@ function Perl_CombatDisplay_Initialize()
 
 	Perl_CombatDisplay_UpdateBars();	-- Display the bars appropriate to your class
 	Perl_CombatDisplay_UpdateDisplay();	-- Show or hide the window based on whats happening
+	Perl_CombatDisplay_CheckForPets();	-- do we have a pet out?
 
 	Initialized = 1;
 end
@@ -1189,7 +1188,7 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.53",
+			version = "v0.54",
 			releaseDate = "April 4, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",

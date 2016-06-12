@@ -1,3 +1,7 @@
+0.54 - April 4, 2006
+ - CombatDisplay: The pet bars now correctly hide for non pet classes
+ - Target: Fixed a bug with the length of the name frame combo point bar
+
 0.53 - April 4, 2006
  - CombatDisplay: Added pet support to the player frame
  - CombatDisplay/Party/Pet/Player/Target: Added Genesis support
