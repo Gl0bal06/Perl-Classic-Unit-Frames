@@ -182,12 +182,12 @@
 			<!-- Portrait Frame -->
 			<Frame name="$parent_PortraitFrame">
 				<Size>
-					<AbsDimension x="53" y="54"/>
+					<AbsDimension x="56" y="56"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativePoint="TOPLEFT" relativeTo="$parent_NameFrame">
 						<Offset>
-							<AbsDimension x="5" y="0"/>
+							<AbsDimension x="2" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -205,7 +205,7 @@
 				<Frames>
 					<PlayerModel name="$parent_PartyModel" hidden="true">
 						<Size>
-							<AbsDimension x="43" y="43"/>
+							<AbsDimension x="45" y="45"/>
 						</Size>
 						<Anchors>
 							<Anchor point="CENTER">
@@ -222,7 +222,7 @@
 					</PlayerModel>
 					<Button name="$parent_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
-							<AbsDimension x="60" y="61"/>
+							<AbsDimension x="56" y="56"/>
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT">
@@ -251,7 +251,7 @@
 					<Layer level="ARTWORK">
 						<Texture name="$parent_Portrait">
 							<Size>
-								<AbsDimension x="41" y="41"/>
+								<AbsDimension x="43" y="43"/>
 							</Size>
 							<Anchors>
 								<Anchor point="TOP" relativePoint="TOP">
@@ -274,7 +274,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parent_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="4"/>
+							<AbsDimension x="0" y="2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -785,7 +785,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame1_StatsFrame" relativePoint="TOPRIGHT">
 				<Offset>
-					<AbsDimension x="-5" y="0"/>
+					<AbsDimension x="-2" y="0"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -799,7 +799,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame2_StatsFrame" relativePoint="TOPRIGHT">
 				<Offset>
-					<AbsDimension x="-5" y="0"/>
+					<AbsDimension x="-2" y="0"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -813,7 +813,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame3_StatsFrame" relativePoint="TOPRIGHT">
 				<Offset>
-					<AbsDimension x="-5" y="0"/>
+					<AbsDimension x="-2" y="0"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -827,7 +827,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame4_StatsFrame" relativePoint="TOPRIGHT">
 				<Offset>
-					<AbsDimension x="-5" y="0"/>
+					<AbsDimension x="-2" y="0"/>
 				</Offset>
 			</Anchor>
 		</Anchors>

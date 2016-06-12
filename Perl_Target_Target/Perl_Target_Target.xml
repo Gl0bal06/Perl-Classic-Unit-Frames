@@ -121,7 +121,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="516" y="-43"/>
+					<AbsDimension x="525" y="-43"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -215,7 +215,7 @@
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="Perl_Target_Target_NameFrame" relativePoint="LEFT">
 									<Offset>
-										<AbsDimension x="10" y="0"/>
+										<AbsDimension x="8" y="0"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -265,7 +265,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Target_Target_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="5"/>
+							<AbsDimension x="0" y="2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -836,7 +836,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="622" y="-43"/>
+					<AbsDimension x="633" y="-43"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -929,7 +929,7 @@
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="Perl_Target_Target_Target_NameFrame" relativePoint="LEFT">
 									<Offset>
-										<AbsDimension x="10" y="0"/>
+										<AbsDimension x="8" y="0"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -979,7 +979,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Target_Target_Target_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="5"/>
+							<AbsDimension x="0" y="2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

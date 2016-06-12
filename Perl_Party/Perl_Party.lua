@@ -9,8 +9,8 @@ local Perl_Party_Script_Events = {};	-- event manager
 local locked = 0;		-- unlocked by default
 local compactmode = 0;		-- compact mode is disabled by default
 local partyhidden = 0;		-- party frame is set to always show by default
-local partyspacing = -90;	-- default spacing between party member frames
-local scale = 1;		-- default scale
+local partyspacing = -95;	-- default spacing between party member frames
+local scale = 0.9;		-- default scale
 local showpets = 1;		-- show pets by default
 local healermode = 0;		-- nurfed unit frame style
 local transparency = 1.0;	-- transparency for frames
@@ -445,8 +445,9 @@ function Perl_Party_IFrameManager()
 				end
 			end
 			-- Offsets since the party frame is weird
+			bottom = bottom + 3;
 			left = left - 5;
-			right = right - 20;
+			right = right - 18;
 		else
 			if (partyspacing < 0) then
 				left = 3 * (-(partyspacing) + 195);
@@ -489,7 +490,7 @@ function Perl_Party_IFrameManager()
 				end
 			end
 			if (showportrait == 1) then
-				left = left + 55;
+				left = left + 62;
 			end
 			if (showpets == 0) then
 				bottom = 25;
@@ -509,8 +510,9 @@ function Perl_Party_IFrameManager()
 				end
 			end
 			-- Offsets since the party frame is weird
+			bottom = bottom + 3;
 			left = left - 5;
-			right = right - 20;
+			right = right - 18;
 			top = -5;
 		end
 		if (IFrameManagerLayout) then			-- this isn't in the old version
@@ -974,20 +976,6 @@ function Perl_Party_Set_Name(self)
 	-- Set Name
 	if (UnitName(self.unit) ~= nil) then
 		local partyname = UnitName(self.unit);
-
-		if (GetLocale() == "koKR") then
-			if (strlen(partyname) > 40) then
-				partyname = strsub(partyname, 1, 39).."...";
-			end
-		elseif (GetLocale() == "zhCN") then
-			if (strlen(partyname) > 40) then
-				partyname = strsub(partyname, 1, 39).."...";
-			end
-		else
-			if (strlen(partyname) > 20) then
-				partyname = strsub(partyname, 1, 19).."...";
-			end
-		end
 
 		if (showfkeys == 1) then
 			local key1 = GetBindingKey("TARGETPARTYMEMBER"..self.id);
@@ -1606,9 +1594,10 @@ function Perl_Party_Frame_Style()
 		-- Begin: Short Bars
 		if (compactmode == 1 and shortbars == 1) then
 			for num=1,4 do
-				getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"):SetWidth(165);
-				getglobal("Perl_Party_MemberFrame"..num.."_Name"):SetWidth(165);
-				getglobal("Perl_Party_MemberFrame"..num.."_Name_CastClickOverlay"):SetWidth(165);
+				getglobal("Perl_Party_MemberFrame"..num):SetWidth(167);
+				getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"):SetWidth(167);
+				getglobal("Perl_Party_MemberFrame"..num.."_Name"):SetWidth(167);
+				getglobal("Perl_Party_MemberFrame"..num.."_Name_CastClickOverlay"):SetWidth(167);
 
 				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):SetWidth(115);
 				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"):SetWidth(115);
@@ -1627,9 +1616,10 @@ function Perl_Party_Frame_Style()
 			end
 		else
 			for num=1,4 do
-				getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"):SetWidth(200);
-				getglobal("Perl_Party_MemberFrame"..num.."_Name"):SetWidth(200);
-				getglobal("Perl_Party_MemberFrame"..num.."_Name_CastClickOverlay"):SetWidth(200);
+				getglobal("Perl_Party_MemberFrame"..num):SetWidth(202);
+				getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"):SetWidth(202);
+				getglobal("Perl_Party_MemberFrame"..num.."_Name"):SetWidth(202);
+				getglobal("Perl_Party_MemberFrame"..num.."_Name_CastClickOverlay"):SetWidth(202);
 
 				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):SetWidth(150);
 				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarFadeBar"):SetWidth(150);
@@ -1653,7 +1643,7 @@ function Perl_Party_Frame_Style()
 		if (hideclasslevelframe == 1) then
 			for num=1,4 do
 				getglobal("Perl_Party_MemberFrame"..num.."_LevelFrame"):Hide();
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):SetPoint("TOPLEFT", getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"), "BOTTOMLEFT", 0, 5);
+				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):SetPoint("TOPLEFT", getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"), "BOTTOMLEFT", 0, 2);
 
 				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):GetWidth() + 30);
 				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_CastClickOverlay"):GetWidth() + 30);
@@ -1676,7 +1666,7 @@ function Perl_Party_Frame_Style()
 		else
 			for num=1,4 do
 				getglobal("Perl_Party_MemberFrame"..num.."_LevelFrame"):Show();
-				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):SetPoint("TOPLEFT", getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"), "BOTTOMLEFT", 30, 5);
+				getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):SetPoint("TOPLEFT", getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"), "BOTTOMLEFT", 32, 2);
 			end
 		end
 		-- End: Hide Class Level Frame
@@ -1734,6 +1724,12 @@ function Perl_Party_Frame_Style()
 		-- End: Show/Hide the portrait frame
 
 		Perl_Party_Update_All_Buff_Positions();	-- Update Buff Positions
+
+		for id=1,4 do				-- Update the name length
+			getglobal("Perl_Party_MemberFrame"..id.."_Name_NameBarText"):SetWidth(getglobal("Perl_Party_MemberFrame"..id.."_Name"):GetWidth() - 45);
+			getglobal("Perl_Party_MemberFrame"..id.."_Name_NameBarText"):SetHeight(getglobal("Perl_Party_MemberFrame"..id.."_Name"):GetHeight() - 10);
+			getglobal("Perl_Party_MemberFrame"..id.."_Name_NameBarText"):SetNonSpaceWrap(false);
+		end
 
 		if (Initialized) then
 			Perl_Party_ArcaneBar_Support();
@@ -2037,10 +2033,10 @@ function Perl_Party_GetVars(name, updateflag)
 		partyhidden = 0;
 	end
 	if (partyspacing == nil) then
-		partyspacing = -90;
+		partyspacing = -95;
 	end
 	if (scale == nil) then
-		scale = 1;
+		scale = 0.9;
 	end
 	if (showpets == nil) then
 		showpets = 1;
@@ -2319,10 +2315,10 @@ function Perl_Party_UpdateVars(vartable)
 			partyhidden = 0;
 		end
 		if (partyspacing == nil) then
-			partyspacing = -90;
+			partyspacing = -95;
 		end
 		if (scale == nil) then
-			scale = 1;
+			scale = 0.9;
 		end
 		if (showpets == nil) then
 			showpets = 1;

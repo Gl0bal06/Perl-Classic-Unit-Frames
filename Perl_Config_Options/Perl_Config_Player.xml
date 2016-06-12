@@ -72,7 +72,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="240" y="-80"/>
+								<AbsDimension x="240" y="-60"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -620,6 +620,48 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Show_Energy_Ticker_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton27" inherits="UICheckButtonTemplate" id="27">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton26">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYER_FIVE_SECOND_RULE);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Show_Five_second_Rule_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton28" inherits="UICheckButtonTemplate" id="28">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton27">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYER_TOTEM_TIMERS);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Show_Totem_Timers_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

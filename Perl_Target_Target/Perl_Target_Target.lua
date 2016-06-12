@@ -7,7 +7,7 @@ local Perl_Target_Target_Events = {};	-- event manager
 -- Default Saved Variables (also set in Perl_Target_Target_GetVars)
 local locked = 0;		-- unlocked by default
 local mobhealthsupport = 1;	-- mobhealth support is on by default
-local scale = 1;		-- default scale
+local scale = 0.9;		-- default scale
 local totsupport = 1;		-- target of target support enabled by default
 local tototsupport = 1;		-- target of target of target support enabled by default
 local transparency = 1;		-- transparency for frames
@@ -48,10 +48,10 @@ local Perl_Target_Target_Target_ManaBar_Fade_Time_Elapsed = 0;		-- set the updat
 
 -- Local variables to save memory
 -- ToT variables
-local targettargetname, targettargethealth, targettargethealthmax, targettargethealthpercent, targettargetmana, targettargetmanamax, targettargetpower, raidtargettargetindex;
+local targettargethealth, targettargethealthmax, targettargethealthpercent, targettargetmana, targettargetmanamax, targettargetpower, raidtargettargetindex;
 
 -- ToToT variables
-local targettargettargetname, targettargettargethealth, targettargettargethealthmax, targettargettargethealthpercent, targettargettargetmana, targettargettargetmanamax, targettargettargetpower, raidtargettargettargetindex;
+local targettargettargethealth, targettargettargethealthmax, targettargettargethealthpercent, targettargettargetmana, targettargettargetmanamax, targettargettargetpower, raidtargettargettargetindex;
 
 -- Shared
 local r, g, b, reaction, mobhealththreenumerics, englishclass;
@@ -132,6 +132,8 @@ function Perl_Target_Target_Initialize()
 	-- Major config options.
 	Perl_Target_Target_Initialize_Frame_Color();
 	Perl_Target_Target_Frame_Style();
+	Perl_Target_Target_Reset_Buffs();
+	Perl_Target_Target_Target_Reset_Buffs();
 
 	-- MyAddOns Support
 	Perl_Target_Target_myAddOns_Support();
@@ -162,22 +164,22 @@ function Perl_Target_Target_IFrameManager()
 		local top = 0;
 		if (frame == Perl_Target_Target_Frame) then
 			if (showtotbuffs == 1 and showtotdebuffs == 1) then
-				bottom = 88;
+				bottom = 91;
 			elseif ((showtotbuffs == 0 and showtotdebuffs == 1) or (showtotbuffs == 1 and showtotdebuffs == 0)) then
-				bottom = 58;
+				bottom = 61;
 			else
-				bottom = 38;
+				bottom = 41;
 			end
 			if (hidepowerbars == 1) then
 				bottom = bottom - 12;
 			end
 		else
 			if (showtototbuffs == 1 and showtototdebuffs == 1) then
-				bottom = 88;
+				bottom = 91;
 			elseif ((showtototbuffs == 0 and showtototdebuffs == 1) or (showtototbuffs == 1 and showtototdebuffs == 0)) then
-				bottom = 58;
+				bottom = 61;
 			else
-				bottom = 38;
+				bottom = 41;
 			end
 			if (hidepowerbars == 1) then
 				bottom = bottom - 12;
@@ -222,21 +224,7 @@ function Perl_Target_Target_OnUpdate()
 			Perl_Target_Target_Warn();				-- Display any warnings if needed
 
 			-- Begin: Set the name
-			targettargetname = UnitName("targettarget");
-			if (GetLocale() == "koKR") then
-				if (strlen(targettargetname) > 25) then
-					targettargetname = strsub(targettargetname, 1, 24).."...";
-				end
-			elseif (GetLocale() == "zhCN") then
-				if (strlen(targettargetname) > 21) then
-					targettargetname = strsub(targettargetname, 1, 20).."...";
-				end
-			else
-				if (strlen(targettargetname) > 11) then
-					targettargetname = strsub(targettargetname, 1, 10).."...";
-				end
-			end
-			Perl_Target_Target_NameBarText:SetText(targettargetname);
+			Perl_Target_Target_NameBarText:SetText(UnitName("targettarget"));
 			-- End: Set the name
 
 			-- Begin: Set the name text color
@@ -478,21 +466,7 @@ function Perl_Target_Target_OnUpdate()
 			end
 
 			-- Begin: Set the name
-			targettargettargetname = UnitName("targettargettarget");
-			if (GetLocale() == "koKR") then
-				if (strlen(targettargettargetname) > 25) then
-					targettargettargetname = strsub(targettargettargetname, 1, 24).."...";
-				end
-			elseif (GetLocale() == "zhCN") then
-				if (strlen(targettargettargetname) > 21) then
-					targettargettargetname = strsub(targettargettargetname, 1, 20).."...";
-				end
-			else
-				if (strlen(targettargettargetname) > 11) then
-					targettargettargetname = strsub(targettargettargetname, 1, 10).."...";
-				end
-			end
-			Perl_Target_Target_Target_NameBarText:SetText(targettargettargetname);
+			Perl_Target_Target_Target_NameBarText:SetText(UnitName("targettargettarget"));
 			-- End: Set the name
 
 			-- Begin: Set the name text color
@@ -1568,6 +1542,16 @@ function Perl_Target_Target_Frame_Style()
 		Perl_Target_Target_Target_StatsFrame:SetHeight(30);
 		Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
 	end
+
+	Perl_Target_Target_NameBarText:SetWidth(Perl_Target_Target_NameFrame:GetWidth() - 13);
+	Perl_Target_Target_NameBarText:SetHeight(Perl_Target_Target_NameFrame:GetHeight() - 10);
+	Perl_Target_Target_NameBarText:SetNonSpaceWrap(false);
+	Perl_Target_Target_NameBarText:SetJustifyH("LEFT");
+
+	Perl_Target_Target_Target_NameBarText:SetWidth(Perl_Target_Target_Target_NameFrame:GetWidth() - 13);
+	Perl_Target_Target_Target_NameBarText:SetHeight(Perl_Target_Target_Target_NameFrame:GetHeight() - 10);
+	Perl_Target_Target_Target_NameBarText:SetNonSpaceWrap(false);
+	Perl_Target_Target_Target_NameBarText:SetJustifyH("LEFT");
 end
 
 
@@ -1766,7 +1750,7 @@ function Perl_Target_Target_GetVars(name, updateflag)
 		mobhealthsupport = 1;
 	end
 	if (scale == nil) then
-		scale = 1;
+		scale = 0.9;
 	end
 	if (totsupport == nil) then
 		totsupport = 1;
@@ -1952,7 +1936,7 @@ function Perl_Target_Target_UpdateVars(vartable)
 			mobhealthsupport = 1;
 		end
 		if (scale == nil) then
-			scale = 1;
+			scale = 0.9;
 		end
 		if (totsupport == nil) then
 			totsupport = 1;

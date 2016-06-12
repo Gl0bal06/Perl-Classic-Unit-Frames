@@ -79,7 +79,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="278" y="-43"/>
+					<AbsDimension x="283" y="-43"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -281,7 +281,7 @@
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="Perl_Target_ClassTexture" relativePoint="RIGHT">
 									<Offset>
-										<AbsDimension x="5" y="0"/>
+										<AbsDimension x="2" y="0"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -375,7 +375,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_NameFrame">
 						<Offset>
-							<AbsDimension x="-5" y="0"/>
+							<AbsDimension x="-2" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -437,12 +437,12 @@
 			<!-- Portrait Frame -->
 			<Frame name="Perl_Target_PortraitFrame">
 				<Size>
-					<AbsDimension x="60" y="61"/>
+					<AbsDimension x="64" y="64"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_LevelFrame">
 						<Offset>
-							<AbsDimension x="-5" y="0"/>
+							<AbsDimension x="-2" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -460,7 +460,7 @@
 				<Frames>
 					<Button name="Perl_Target_PortraitFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
-							<AbsDimension x="60" y="61"/>
+							<AbsDimension x="64" y="64"/>
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT">
@@ -485,7 +485,7 @@
 					</Button>
 					<PlayerModel name="$parent_TargetModel" hidden="true">
 						<Size>
-							<AbsDimension x="50" y="50"/>
+							<AbsDimension x="54" y="54"/>
 						</Size>
 						<Anchors>
 							<Anchor point="CENTER">
@@ -506,7 +506,7 @@
 					<Layer level="ARTWORK">
 						<Texture name="Perl_Target_Portrait">
 							<Size>
-								<AbsDimension x="48" y="48"/>
+								<AbsDimension x="52" y="52"/>
 							</Size>
 							<Anchors>
 								<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Target_PortraitFrame">
@@ -555,7 +555,7 @@
 			<!-- Portrait Text Frame -->
 			<Frame name="Perl_Target_PortraitTextFrame" frameStrata="MEDIUM">
 				<Size>
-					<AbsDimension x="60" y="61"/>
+					<AbsDimension x="64" y="64"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_PortraitFrame">
@@ -592,7 +592,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Target_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="20"/>
+							<AbsDimension x="0" y="22"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -659,7 +659,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_ClassNameFrame">
 						<Offset>
-							<AbsDimension x="-5" y="0"/>
+							<AbsDimension x="-2" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -726,7 +726,7 @@
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Target_LevelFrame">
 						<Offset>
-							<AbsDimension x="0" y="-4"/>
+							<AbsDimension x="0" y="-2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -860,7 +860,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Target_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="5"/>
+							<AbsDimension x="0" y="2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

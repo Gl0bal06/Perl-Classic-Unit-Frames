@@ -153,7 +153,15 @@
 				</Backdrop>
 				<Layers>
 					<Layer level="OVERLAY">
-						<Fontstring name="Perl_Player_Pet_NameBarText" inherits="GameFontNormalSmall" text="Error!"/>
+						<Fontstring name="Perl_Player_Pet_NameBarText" inherits="GameFontNormalSmall" text="Error!">
+							<Anchors>
+								<Anchor point="CENTER">
+									<Offset>
+										<AbsDimension x="8" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Fontstring>
 						<Fontstring name="Perl_Player_Pet_LevelBarText" inherits="GameFontNormalSmall" text="Error!">
 							<Anchors>
 								<Anchor point="LEFT">
@@ -171,12 +179,12 @@
 			<!-- Portrait Frame -->
 			<Frame name="Perl_Player_Pet_PortraitFrame">
 				<Size>
-					<AbsDimension x="53" y="54"/>
+					<AbsDimension x="56" y="56"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPRIGHT" relativePoint="TOPLEFT" relativeTo="Perl_Player_Pet_NameFrame">
+					<Anchor point="TOPRIGHT" relativePoint="TOPLEFT" relativeTo="Perl_Player_Pet_Frame">
 						<Offset>
-							<AbsDimension x="5" y="0"/>
+							<AbsDimension x="2" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -194,7 +202,7 @@
 				<Frames>
 					<Button name="Perl_Player_Pet_PortraitFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
-							<AbsDimension x="60" y="61"/>
+							<AbsDimension x="56" y="56"/>
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT">
@@ -219,7 +227,7 @@
 					</Button>
 					<PlayerModel name="$parent_PetModel" hidden="true">
 						<Size>
-							<AbsDimension x="43" y="43"/>
+							<AbsDimension x="45" y="45"/>
 						</Size>
 						<Anchors>
 							<Anchor point="CENTER">
@@ -240,7 +248,7 @@
 					<Layer level="ARTWORK">
 						<Texture name="Perl_Player_Pet_Portrait">
 							<Size>
-								<AbsDimension x="41" y="41"/>
+								<AbsDimension x="43" y="43"/>
 							</Size>
 							<Anchors>
 								<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_Pet_PortraitFrame">
@@ -258,7 +266,7 @@
 			<!-- Portrait Text Frame -->
 			<Frame name="Perl_Player_Pet_PortraitTextFrame">
 				<Size>
-					<AbsDimension x="60" y="61"/>
+					<AbsDimension x="56" y="56"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Player_Pet_PortraitFrame">
@@ -295,7 +303,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Player_Pet_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="5"/>
+							<AbsDimension x="0" y="2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -370,7 +378,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Player_Pet_NameFrame">
 						<Offset>
-							<AbsDimension x="25" y="5"/>
+							<AbsDimension x="25" y="2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -941,7 +949,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Player_Pet_Frame">
 				<Offset>
-					<AbsDimension x="-4" y="0"/>
+					<AbsDimension x="-2" y="0"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -1072,7 +1080,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Player_Pet_Target_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="5"/>
+							<AbsDimension x="0" y="2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

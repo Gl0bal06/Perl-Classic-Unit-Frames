@@ -1,3 +1,37 @@
+2.16 - March 25, 2008
+ - All: Updated TOC Interface version to 20400
+ - All: Adjusted the frame borders so that they no longer clip
+ - All: Slightly adjusted the default frame positions
+ - All: The name, class, and guild text now truncates more accurately
+ - All: Changed the default scale from 100 to 90 to match the default Blizzard UI scale
+ - ArcaneBar: Cast times of 100 seconds or higher now display correctly
+ - ArcaneBar: Text tunating no longer takes place while casting
+ - Config: Added support for the Blizzard options menu in the interface options
+ - Config: Added an Align Horizontally button for the CombatDisplay
+ - Config: The pet target scale slider now shows its correct value
+ - Config: The Set to Current UI Scale checkbox for the player pet target is now visible
+ - Config: The scale slider on the All tab now correctly sets focus target and player pet target scales
+ - Config: The Reset Frame Positions button on the All tab now dynamically positions frames
+ - Config: The Reset Frame Positions button now also resets the player pet target frame
+ - Config: The Reset Frame Positions button now also resets the focus frame
+ - Config: ArcaneBar textures on party cast bars are now correctly textured
+ - Party: Changed the default spacing from 90 to 95
+ - PartyPet/Pet: The clickable surface for the portrait frame no longer extends outside of the portrait
+ - Pet: There is no longer a dead zone where the name frame used to be when hiding the name frame
+ - Pet: The combat text is now correctly centered for the pet portrait frame
+ - Pet: Buffs and debuffs in positions 6 and 7 now show up correctly for warlocks
+ - Pet: There is now less space below the experience bar when it is visible
+ - Focus/Pet/Player/Target: There is no longer a dead zone to the right of the name frame in compact mode
+ - Player: Added support for the Blizzard totem timers
+ - Player: Added support for the five second rule
+ - Player: The master looter icon will now correctly hide when leaving a party or raid
+ - Target: The master looter icon will now correctly display in raids
+ - Target: The elite, rare, and rare elite dragon graphics no longer display the Blizzard target frame
+ - Target: The PvP status icon will now correctly hide when entering a non PvP area
+ - Target: The combo point text no longer looks distorted
+ - Target: The combo point text for zero combo points is now always green
+ - ToT: There is no longer a dead zone below the stats frame under certain circumstances
+
 2.15 - February 20, 2008
  - All: Updated support for IFrameManager
  - PartyTarget: Can now scale the party and focus target frames independently

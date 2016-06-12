@@ -12,7 +12,7 @@ local showpvpicon = 1;		-- show the pvp icon
 local numbuffsshown = 16;	-- buff row is 16 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
 local mobhealthsupport = 1;	-- mobhealth support is on by default
-local scale = 1;		-- default scale
+local scale = 0.9;		-- default scale
 local transparency = 1;		-- transparency for frames
 local buffdebuffscale = 1;	-- default scale for buffs and debuffs
 local showportrait = 0;		-- portrait is hidden by default
@@ -44,7 +44,7 @@ local Perl_Focus_ManaBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Focus_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local focushealth, focushealthmax, focushealthpercent, focusmana, focusmanamax, focusmanapercent, focuspower, focusname, focuslevel, focuslevelcolor, focusclassification, focusclassificationframetext, englishclass, creatureType, r, g, b, namelengthrestrictor, mobhealththreenumerics;
+local focushealth, focushealthmax, focushealthpercent, focusmana, focusmanamax, focusmanapercent, focuspower, focuslevel, focuslevelcolor, focusclassification, focusclassificationframetext, englishclass, creatureType, r, g, b, mobhealththreenumerics;
 
 
 ----------------------
@@ -284,7 +284,7 @@ function Perl_Focus_IFrameManager()
 		local bottom, left, right, top;
 		left = 0;
 		if (showclassframe == 1 or showrareeliteframe == 1) then
-			top = 20;
+			top = 23;
 		else
 			top = 0;
 		end
@@ -310,7 +310,7 @@ function Perl_Focus_IFrameManager()
 			end
 		end
 		if (showportrait == 1) then
-			right = right + 55;
+			right = right + 62;
 		end
 		bottom = 0;
 --		if (invertbuffs == 0) then
@@ -912,103 +912,31 @@ function Perl_Focus_Update_PvP_Status_Icon()
 end
 
 function Perl_Focus_Update_Name()
-	focusname = UnitName("focus");
-	namelengthrestrictor = 0;
-
-	if (GetLocale() == "koKR") then
-		if (framestyle == 1) then
-			namelengthrestrictor = 38;
-		elseif (framestyle == 2) then
-			if (compactmode == 0) then
-				namelengthrestrictor = 36;
-			else
-				if (compactpercent == 0) then
-					if (shortbars == 0) then
-						namelengthrestrictor = 24;
-					else
-						namelengthrestrictor = 12;
-					end
-				else
-					if (shortbars == 0) then
-						namelengthrestrictor = 34;
-					else
-						namelengthrestrictor = 24;
-					end
-				end
-			end
-		end
-	elseif (GetLocale() == "zhCN") then
-		if (framestyle == 1) then
-			namelengthrestrictor = 32;
-		elseif (framestyle == 2) then
-			if (compactmode == 0) then
-				namelengthrestrictor = 30;
-			else
-				if (compactpercent == 0) then
-					if (shortbars == 0) then
-						namelengthrestrictor = 20;
-					else
-						namelengthrestrictor = 14;
-					end
-				else
-					if (shortbars == 0) then
-						namelengthrestrictor = 25;
-					else
-						namelengthrestrictor = 21;
-					end
-				end
-			end
-		end
-	else
-		if (framestyle == 1) then
-			namelengthrestrictor = 16;
-		elseif (framestyle == 2) then
-			if (compactmode == 0) then
-				namelengthrestrictor = 18;
-			else
-				if (compactpercent == 0) then
-					if (shortbars == 0) then
-						namelengthrestrictor = 8;
-					else
-						namelengthrestrictor = 2;
-					end
-				else
-					if (shortbars == 0) then
-						namelengthrestrictor = 13;
-					else
-						namelengthrestrictor = 9;
-					end
-				end
-			end
-		end
-	end
-
 	if (UnitIsPlayer("focus")) then
-		if (showpvpicon == 1) then
-			namelengthrestrictor = namelengthrestrictor + 2;
-		else
-			namelengthrestrictor = namelengthrestrictor + 4;
-		end
 		if (showclassicon == 1) then
-			Perl_Focus_NameBarText:SetPoint("LEFT", "Perl_Focus_ClassTexture", "RIGHT", 5, 0);
+			Perl_Focus_NameBarText:SetPoint("LEFT", "Perl_Focus_ClassTexture", "RIGHT", 2, 0);
+			if (showpvpicon == 1) then
+				Perl_Focus_NameBarText:SetWidth(Perl_Focus_Name:GetWidth() - 44);
+			else
+				Perl_Focus_NameBarText:SetWidth(Perl_Focus_Name:GetWidth() - 28);
+			end
 		else
-			namelengthrestrictor = namelengthrestrictor + 3;
-			Perl_Focus_NameBarText:SetPoint("LEFT", "Perl_Focus_ClassTexture", "RIGHT", -10, 0);
+			Perl_Focus_NameBarText:SetPoint("LEFT", "Perl_Focus_ClassTexture", "RIGHT", -13, 0);
+			if (showpvpicon == 1) then
+				Perl_Focus_NameBarText:SetWidth(Perl_Focus_Name:GetWidth() - 28);
+			else
+				Perl_Focus_NameBarText:SetWidth(Perl_Focus_Name:GetWidth() - 12);
+			end
 		end
 	else
+		Perl_Focus_NameBarText:SetPoint("LEFT", "Perl_Focus_ClassTexture", "RIGHT", -13, 0);
 		if (UnitIsPVP("focus") and showpvpicon == 1) then
-			namelengthrestrictor = namelengthrestrictor + 4;
+			Perl_Focus_NameBarText:SetWidth(Perl_Focus_Name:GetWidth() - 28);
 		else
-			namelengthrestrictor = namelengthrestrictor + 7;
+			Perl_Focus_NameBarText:SetWidth(Perl_Focus_Name:GetWidth() - 12);
 		end
-		Perl_Focus_NameBarText:SetPoint("LEFT", "Perl_Focus_ClassTexture", "RIGHT", -10, 0);
 	end
-
-	if (strlen(focusname) > (namelengthrestrictor + 1)) then
-		focusname = strsub(focusname, 1, namelengthrestrictor).."...";
-	end
-
-	Perl_Focus_NameBarText:SetText(focusname);
+	Perl_Focus_NameBarText:SetText(UnitName("focus"));
 end
 
 function Perl_Focus_Update_Text_Color()
@@ -1193,7 +1121,7 @@ end
 
 function Perl_Focus_Main_Style()
 	Perl_Focus_RareEliteFrame:ClearAllPoints();
-	Perl_Focus_RareEliteFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_LevelFrame", "TOPLEFT", 0, -4);
+	Perl_Focus_RareEliteFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_LevelFrame", "TOPLEFT", 0, -2);
 
 	if (framestyle == 1) then
 		Perl_Focus_HealthBar:SetWidth(200);
@@ -1208,8 +1136,9 @@ function Perl_Focus_Main_Style()
 		Perl_Focus_CivilianFrame:SetWidth(95);
 		Perl_Focus_ClassNameFrame:SetWidth(90);
 		Perl_Focus_LevelFrame:SetWidth(46);
-		Perl_Focus_Name:SetWidth(180);
-		Perl_Focus_NameFrame:SetWidth(180);
+		Perl_Focus_Frame:SetWidth(177);
+		Perl_Focus_Name:SetWidth(177);
+		Perl_Focus_NameFrame:SetWidth(177);
 		Perl_Focus_RareEliteFrame:SetWidth(46);
 		Perl_Focus_StatsFrame:SetWidth(221);
 
@@ -1232,8 +1161,9 @@ function Perl_Focus_Main_Style()
 			Perl_Focus_CivilianFrame:SetWidth(114);
 			Perl_Focus_ClassNameFrame:SetWidth(90);
 			Perl_Focus_LevelFrame:SetWidth(46);
-			Perl_Focus_Name:SetWidth(214);
-			Perl_Focus_NameFrame:SetWidth(214);
+			Perl_Focus_Frame:SetWidth(211);
+			Perl_Focus_Name:SetWidth(211);
+			Perl_Focus_NameFrame:SetWidth(211);
 			Perl_Focus_RareEliteFrame:SetWidth(46);
 			Perl_Focus_StatsFrame:SetWidth(255);
 
@@ -1248,8 +1178,9 @@ function Perl_Focus_Main_Style()
 					Perl_Focus_CivilianFrame:SetWidth(85);
 					Perl_Focus_ClassNameFrame:SetWidth(90);
 					Perl_Focus_LevelFrame:SetWidth(46);
-					Perl_Focus_Name:SetWidth(129);
-					Perl_Focus_NameFrame:SetWidth(129);
+					Perl_Focus_Frame:SetWidth(126);
+					Perl_Focus_Name:SetWidth(126);
+					Perl_Focus_NameFrame:SetWidth(126);
 					Perl_Focus_RareEliteFrame:SetWidth(46);
 					Perl_Focus_StatsFrame:SetWidth(170);
 
@@ -1262,8 +1193,9 @@ function Perl_Focus_Main_Style()
 					Perl_Focus_CivilianFrame:SetWidth(79);
 					Perl_Focus_ClassNameFrame:SetWidth(90);
 					Perl_Focus_LevelFrame:SetWidth(46);
-					Perl_Focus_Name:SetWidth(164);
-					Perl_Focus_NameFrame:SetWidth(164);
+					Perl_Focus_Frame:SetWidth(161);
+					Perl_Focus_Name:SetWidth(161);
+					Perl_Focus_NameFrame:SetWidth(161);
 					Perl_Focus_RareEliteFrame:SetWidth(46);
 					Perl_Focus_StatsFrame:SetWidth(205);
 
@@ -1285,8 +1217,9 @@ function Perl_Focus_Main_Style()
 					Perl_Focus_CivilianFrame:SetWidth(79);
 					Perl_Focus_ClassNameFrame:SetWidth(90);
 					Perl_Focus_LevelFrame:SetWidth(46);
-					Perl_Focus_Name:SetWidth(94);
-					Perl_Focus_NameFrame:SetWidth(94);
+					Perl_Focus_Frame:SetWidth(91);
+					Perl_Focus_Name:SetWidth(91);
+					Perl_Focus_NameFrame:SetWidth(91);
 					Perl_Focus_RareEliteFrame:SetWidth(46);
 					Perl_Focus_StatsFrame:SetWidth(135);
 
@@ -1299,8 +1232,9 @@ function Perl_Focus_Main_Style()
 					Perl_Focus_CivilianFrame:SetWidth(79);
 					Perl_Focus_ClassNameFrame:SetWidth(90);
 					Perl_Focus_LevelFrame:SetWidth(46);
-					Perl_Focus_Name:SetWidth(129);
-					Perl_Focus_NameFrame:SetWidth(129);
+					Perl_Focus_Frame:SetWidth(126);
+					Perl_Focus_Name:SetWidth(126);
+					Perl_Focus_NameFrame:SetWidth(126);
 					Perl_Focus_RareEliteFrame:SetWidth(46);
 					Perl_Focus_StatsFrame:SetWidth(170);
 
@@ -1350,6 +1284,14 @@ function Perl_Focus_Main_Style()
 	else
 		Perl_Focus_PortraitTextFrame:Hide();
 	end
+
+	Perl_Focus_NameBarText:SetHeight(Perl_Focus_Name:GetHeight() - 10);
+	Perl_Focus_NameBarText:SetNonSpaceWrap(false);
+	Perl_Focus_NameBarText:SetJustifyH("LEFT");
+
+	Perl_Focus_ClassNameBarText:SetWidth(Perl_Focus_ClassNameFrame:GetWidth() - 10);
+	Perl_Focus_ClassNameBarText:SetHeight(Perl_Focus_ClassNameFrame:GetHeight() - 10);
+	Perl_Focus_ClassNameBarText:SetNonSpaceWrap(false);
 
 	if (Initialized) then
 		Perl_Focus_ArcaneBar_Support();
@@ -1768,7 +1710,7 @@ function Perl_Focus_GetVars(name, updateflag)
 		mobhealthsupport = 1;
 	end
 	if (scale == nil) then
-		scale = 1;
+		scale = 0.9;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -2049,7 +1991,7 @@ function Perl_Focus_UpdateVars(vartable)
 			mobhealthsupport = 1;
 		end
 		if (scale == nil) then
-			scale = 1;
+			scale = 0.9;
 		end
 		if (transparency == nil) then
 			transparency = 1;
@@ -2266,34 +2208,34 @@ function Perl_Focus_Buff_UpdateAll()
 			if (invertbuffs == 0) then
 				Perl_Focus_BuffFrame:ClearAllPoints();
 				if (UnitIsFriend("player", "focus")) then
-					Perl_Focus_BuffFrame:SetPoint("TOPLEFT", "Perl_Focus_StatsFrame", "BOTTOMLEFT", 0, 5);
+					Perl_Focus_BuffFrame:SetPoint("TOPLEFT", "Perl_Focus_StatsFrame", "BOTTOMLEFT", 0, 2);
 				else
 					if (numDebuffs > 8) then
-						Perl_Focus_BuffFrame:SetPoint("TOPLEFT", "Perl_Focus_StatsFrame", "BOTTOMLEFT", 0, -51);
+						Perl_Focus_BuffFrame:SetPoint("TOPLEFT", "Perl_Focus_StatsFrame", "BOTTOMLEFT", 0, -56);
 					else
-						Perl_Focus_BuffFrame:SetPoint("TOPLEFT", "Perl_Focus_StatsFrame", "BOTTOMLEFT", 0, -25);
+						Perl_Focus_BuffFrame:SetPoint("TOPLEFT", "Perl_Focus_StatsFrame", "BOTTOMLEFT", 0, -29);
 					end
 				end
 			else
 				Perl_Focus_BuffFrame:ClearAllPoints();
 				if (UnitIsFriend("player", "focus")) then
 					if (showclassframe == 1 or showrareeliteframe == 1) then
-						Perl_Focus_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 16);
+						Perl_Focus_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 20);
 					else
-						Perl_Focus_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, -5);
+						Perl_Focus_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, -2);
 					end
 				else
 					if (showclassframe == 1 or showrareeliteframe == 1) then
 						if (numDebuffs > 8) then
-							Perl_Focus_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 72);
+							Perl_Focus_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 78);
 						else
-							Perl_Focus_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 46);
+							Perl_Focus_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 51);
 						end
 					else
 						if (numDebuffs > 8) then
-							Perl_Focus_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 51);
+							Perl_Focus_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 56);
 						else
-							Perl_Focus_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 25);
+							Perl_Focus_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 29);
 						end
 					end
 				end
@@ -2317,34 +2259,34 @@ function Perl_Focus_Buff_UpdateAll()
 				Perl_Focus_DebuffFrame:ClearAllPoints();
 				if (UnitIsFriend("player", "focus")) then
 					if (numBuffs > 8) then
-						Perl_Focus_DebuffFrame:SetPoint("TOPLEFT", "Perl_Focus_StatsFrame", "BOTTOMLEFT", 0, -51);
+						Perl_Focus_DebuffFrame:SetPoint("TOPLEFT", "Perl_Focus_StatsFrame", "BOTTOMLEFT", 0, -56);
 					else
-						Perl_Focus_DebuffFrame:SetPoint("TOPLEFT", "Perl_Focus_StatsFrame", "BOTTOMLEFT", 0, -25);
+						Perl_Focus_DebuffFrame:SetPoint("TOPLEFT", "Perl_Focus_StatsFrame", "BOTTOMLEFT", 0, -29);
 					end
 				else
-					Perl_Focus_DebuffFrame:SetPoint("TOPLEFT", "Perl_Focus_StatsFrame", "BOTTOMLEFT", 0, 5);
+					Perl_Focus_DebuffFrame:SetPoint("TOPLEFT", "Perl_Focus_StatsFrame", "BOTTOMLEFT", 0, 2);
 				end
 			else
 				Perl_Focus_DebuffFrame:ClearAllPoints();
 				if (UnitIsFriend("player", "focus")) then
 					if (showclassframe == 1 or showrareeliteframe == 1) then
 						if (numBuffs > 8) then
-							Perl_Focus_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 72);
+							Perl_Focus_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 78);
 						else
-							Perl_Focus_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 46);
+							Perl_Focus_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 51);
 						end
 					else
 						if (numBuffs > 8) then
-							Perl_Focus_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 51);
+							Perl_Focus_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 56);
 						else
-							Perl_Focus_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 25);
+							Perl_Focus_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 29);
 						end
 					end
 				else
 					if (showclassframe == 1 or showrareeliteframe == 1) then
-						Perl_Focus_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 16);
+						Perl_Focus_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, 20);
 					else
-						Perl_Focus_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, -5);
+						Perl_Focus_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 0, -2);
 					end
 				end
 			end

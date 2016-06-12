@@ -60,4 +60,31 @@
 			</Button>
 		</Frames>
 	</Frame>
+
+	<Frame name="Perl_BlizzardOptions_Frame">
+		<Scripts>
+			<OnLoad>
+				Perl_BlizzardOptions_OnLoad(self);
+			</OnLoad>
+		</Scripts>
+		<Frames>
+			<Button name="$parentButton" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_BLIZZARD_BUTTON">
+				<Size>
+					<AbsDimension x="125" y="25"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="125" y="-125"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Config_Toggle();
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+	</Frame>
 </Ui>

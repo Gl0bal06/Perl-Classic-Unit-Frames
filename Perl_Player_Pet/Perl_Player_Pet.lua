@@ -7,8 +7,8 @@ local Perl_Player_Pet_Events = {};	-- event manager
 -- Default Saved Variables (also set in Perl_Player_Pet_GetVars)
 local locked = 0;			-- unlocked by default
 local showxp = 0;			-- xp bar is hidden by default
-local scale = 1;			-- default scale for pet frame
-local targetscale = 1;			-- default scale for pet target frame
+local scale = 0.9;			-- default scale for pet frame
+local targetscale = 0.9;		-- default scale for pet target frame
 local numpetbuffsshown = 16;		-- buff row is 16 long
 local numpetdebuffsshown = 16;		-- debuff row is 16 long
 local transparency = 1;			-- transparency for frames
@@ -44,7 +44,7 @@ local Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;		-- the color fading interv
 local Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext, pettargetname, r, g, b, reaction, pettargethealth, pettargethealthmax, pettargethealthpercent, mobhealththreenumerics, pettargetmana, pettargetmanamax, pettargetpower, raidpettargetindex;
+local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext, r, g, b, reaction, pettargethealth, pettargethealthmax, pettargethealthpercent, mobhealththreenumerics, pettargetmana, pettargetmanamax, pettargetpower, raidpettargetindex;
 
 
 ----------------------
@@ -269,14 +269,14 @@ function Perl_Player_Pet_IFrameManager()
 		local bottom, left, right, top;
 		if (frame == Perl_Player_Pet_Frame) then
 			if (showxp == 0) then
-				bottom = 30;
+				bottom = 33;
 			else
-				bottom = 43;
+				bottom = 46;
 			end
 			if (showportrait == 0) then
 				left = 0;
 			else
-				left = 48;
+				left = 54;
 			end
 			if (compactmode == 0) then
 				right = 0;
@@ -291,7 +291,7 @@ function Perl_Player_Pet_IFrameManager()
 		else
 			top = 0;
 			right = 0;
-			bottom = 30;
+			bottom = 33;
 			left = 0;
 		end
 		if (IFrameManagerLayout) then			-- this isn't in the old version
@@ -495,8 +495,8 @@ function Perl_Player_Pet_ShowXP()
 				else
 					Perl_Player_Pet_XPBar:Show();
 					Perl_Player_Pet_XPBarBG:Show();
-					Perl_Player_Pet_StatsFrame:SetHeight(47);
-					Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(47);
+					Perl_Player_Pet_StatsFrame:SetHeight(45);
+					Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(45);
 					Perl_Player_Pet_Update_Experience();
 				end
 			else
@@ -553,14 +553,23 @@ function Perl_Player_Pet_Portrait_Combat_Text()
 end
 
 function Perl_Player_Pet_Set_Window_Layout()
+	Perl_Player_Pet_StatsFrame:ClearAllPoints();
+	Perl_Player_Pet_LevelFrame:ClearAllPoints();
 	if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+		if (hidename == 1) then
+			Perl_Player_Pet_LevelFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_Frame", "TOPLEFT", 0, 0);
+			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_Frame", "TOPLEFT", 28, 0);
+		else
+			Perl_Player_Pet_LevelFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_Frame", "BOTTOMLEFT", 0, 2);
+			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 28, 2);
+		end
 		if (compactmode == 0) then
 			Perl_Player_Pet_LevelFrame:Show();
-			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 25, 5);
+			Perl_Player_Pet_Frame:SetWidth(170);
 			Perl_Player_Pet_NameFrame:SetWidth(170);
 			Perl_Player_Pet_NameFrame_CastClickOverlay:SetWidth(170);
-			Perl_Player_Pet_StatsFrame:SetWidth(145);
-			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(145);
+			Perl_Player_Pet_StatsFrame:SetWidth(142);
+			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(142);
 			Perl_Player_Pet_HealthBar:SetWidth(133);
 			Perl_Player_Pet_HealthBarFadeBar:SetWidth(133);
 			Perl_Player_Pet_HealthBarBG:SetWidth(133);
@@ -571,11 +580,11 @@ function Perl_Player_Pet_Set_Window_Layout()
 			Perl_Player_Pet_XPBarBG:SetWidth(133);
 		else
 			Perl_Player_Pet_LevelFrame:Show();
-			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 25, 5);
+			Perl_Player_Pet_Frame:SetWidth(135);
 			Perl_Player_Pet_NameFrame:SetWidth(135);
 			Perl_Player_Pet_NameFrame_CastClickOverlay:SetWidth(135);
-			Perl_Player_Pet_StatsFrame:SetWidth(110);
-			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(110);
+			Perl_Player_Pet_StatsFrame:SetWidth(107);
+			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetWidth(107);
 			Perl_Player_Pet_HealthBar:SetWidth(98);
 			Perl_Player_Pet_HealthBarFadeBar:SetWidth(98);
 			Perl_Player_Pet_HealthBarBG:SetWidth(98);
@@ -586,9 +595,15 @@ function Perl_Player_Pet_Set_Window_Layout()
 			Perl_Player_Pet_XPBarBG:SetWidth(98);
 		end
 	else
+		if (hidename == 1) then
+			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_Frame", "TOPLEFT", 0, 0);
+		else
+			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 2);
+		end
+
 		if (compactmode == 0) then
 			Perl_Player_Pet_LevelFrame:Hide();
-			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 5);
+			Perl_Player_Pet_Frame:SetWidth(170);
 			Perl_Player_Pet_NameFrame:SetWidth(170);
 			Perl_Player_Pet_NameFrame_CastClickOverlay:SetWidth(170);
 			Perl_Player_Pet_StatsFrame:SetWidth(170);
@@ -603,7 +618,7 @@ function Perl_Player_Pet_Set_Window_Layout()
 			Perl_Player_Pet_XPBarBG:SetWidth(158);
 		else
 			Perl_Player_Pet_LevelFrame:Hide();
-			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 5);
+			Perl_Player_Pet_Frame:SetWidth(135);
 			Perl_Player_Pet_NameFrame:SetWidth(135);
 			Perl_Player_Pet_NameFrame_CastClickOverlay:SetWidth(135);
 			Perl_Player_Pet_StatsFrame:SetWidth(135);
@@ -641,6 +656,14 @@ function Perl_Player_Pet_Set_Window_Layout()
 		Perl_Player_Pet_Target_Frame:Hide();
 		UnregisterUnitWatch(Perl_Player_Pet_Target_Frame);
 	end
+
+	Perl_Player_Pet_NameBarText:SetWidth(Perl_Player_Pet_NameFrame:GetWidth() - 30);
+	Perl_Player_Pet_NameBarText:SetHeight(Perl_Player_Pet_NameFrame:GetHeight() - 10);
+	Perl_Player_Pet_NameBarText:SetNonSpaceWrap(false);
+
+	Perl_Player_Pet_Target_NameBarText:SetWidth(Perl_Player_Pet_Target_NameFrame:GetWidth() - 10);
+	Perl_Player_Pet_Target_NameBarText:SetHeight(Perl_Player_Pet_Target_NameFrame:GetHeight() - 10);
+	Perl_Player_Pet_Target_NameBarText:SetNonSpaceWrap(false);
 end
 
 
@@ -654,11 +677,7 @@ function Perl_Player_Pet_Target_OnUpdate()
 
 		if (UnitExists(Perl_Player_Pet_Target_Frame:GetAttribute("unit"))) then
 			-- Begin: Set the name
-			pettargetname = UnitName("pettarget");
-			if (strlen(pettargetname) > 20) then
-				pettargetname = strsub(pettargetname, 1, 19).."...";
-			end
-			Perl_Player_Pet_Target_NameBarText:SetText(pettargetname);
+			Perl_Player_Pet_Target_NameBarText:SetText(UnitName("pettarget"));
 			-- End: Set the name
 
 			-- Begin: Set the name text color
@@ -1114,15 +1133,20 @@ end
 function Perl_Player_Pet_Allign()
 	Perl_Player_Pet_Frame:SetUserPlaced(1);
 	Perl_Player_Pet_Target_Frame:SetUserPlaced(1);
-	Perl_Player_Pet_Frame:ClearAllPoints();
-	Perl_Player_Pet_Target_Frame:ClearAllPoints();
 
 	if (Perl_Player_Frame) then
-		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 4);
+		local vartable = Perl_Player_GetVars();
+		Perl_Player_Pet_Frame:ClearAllPoints();
+		if (vartable["showportrait"] == 0 and showportrait == 1) then
+			Perl_Player_Pet_Frame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 54, 2);
+		else
+			Perl_Player_Pet_Frame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 2);
+		end
 	end
-	Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", Perl_Player_Pet_Frame, "TOPRIGHT", -4, 0);
+	Perl_Player_Pet_Target_Frame:ClearAllPoints();
+	Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", Perl_Player_Pet_Frame, "TOPRIGHT", -2, 0);
 
-	Perl_Party_Target_UpdateVars();			-- Calling this to update the positions for IFrameManger
+	Perl_Party_Target_UpdateVars();			-- Calling this to update the positions for IFrameManager
 end
 
 function Perl_Player_Pet_Set_Buffs(newbuffnumber)
@@ -1328,10 +1352,10 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 		showxp = 0;
 	end
 	if (scale == nil) then
-		scale = 1;
+		scale = 0.9;
 	end
 	if (targetscale == nil) then
-		targetscale = 1;
+		targetscale = 0.9;
 	end
 	if (numpetbuffsshown == nil) then
 		numpetbuffsshown = 16;
@@ -1537,10 +1561,10 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			showxp = 0;
 		end
 		if (scale == nil) then
-			scale = 1;
+			scale = 0.9;
 		end
 		if (targetscale == nil) then
-			targetscale = 1;
+			targetscale = 0.9;
 		end
 		if (numpetbuffsshown == nil) then
 			numpetbuffsshown = 16;
@@ -1741,15 +1765,15 @@ function Perl_Player_Pet_Buff_Position_Update()
 		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
 	elseif (bufflocation == 6) then
 		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
-			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 0);
-		else
 			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, 0);
+		else
+			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", 5, 0);
 		end
 	elseif (bufflocation == 7) then
 		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
-			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, -15);
-		else
 			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, -15);
+		else
+			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", 5, -15);
 		end
 	end
 
@@ -1782,15 +1806,15 @@ function Perl_Player_Pet_Buff_Position_Update()
 		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
 	elseif (debufflocation == 6) then
 		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
-			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 0);
-		else
 			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, 0);
+		else
+			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", 5, 0);
 		end
 	elseif (debufflocation == 7) then
 		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
-			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, -15);
-		else
 			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, -15);
+		else
+			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", 5, -15);
 		end
 	end
 end

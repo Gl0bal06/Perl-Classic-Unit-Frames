@@ -13,7 +13,7 @@ local showpvpicon = 1;		-- show the pvp icon
 local numbuffsshown = 20;	-- buff row is 2x10
 local numdebuffsshown = 20;	-- debuff row is 4x10
 local mobhealthsupport = 1;	-- mobhealth support is on by default
-local scale = 1;		-- default scale
+local scale = 0.9;		-- default scale
 local transparency = 1;		-- transparency for frames
 local buffdebuffscale = 1;	-- default scale for buffs and debuffs
 local showportrait = 0;		-- portrait is hidden by default
@@ -48,7 +48,7 @@ local Perl_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, englishclass, creatureType, r, g, b, namelengthrestrictor, mobhealththreenumerics, guildName, guildnameallowedwidth;
+local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, englishclass, creatureType, r, g, b, mobhealththreenumerics, guildName;
 
 
 ----------------------
@@ -316,8 +316,8 @@ function Perl_Target_IFrameManager()
 	function iface:getBorder(frame)
 		local bottom, left, right, top;
 		left = 0;
-		if (showclassframe == 1 or showrareeliteframe == 1) then
-			top = 20;
+		if (showclassframe == 1 or showrareeliteframe == 1 or showguildname == 1) then
+			top = 22;
 		else
 			top = 0;
 		end
@@ -343,10 +343,10 @@ function Perl_Target_IFrameManager()
 			end
 		end
 		if (showportrait == 1) then
-			right = right + 55;
+			right = right + 62;
 		end
 		if (showcp == 1) then
-			right = right + 21;
+			right = right + 23;
 		end
 		bottom = 0;
 --		if (invertbuffs == 0) then
@@ -380,7 +380,7 @@ function Perl_Target_IFrameManager()
 --				top = top + 48;
 --			end
 --		end
-		bottom = bottom + 38;				-- Offset for the stats frame
+		bottom = bottom + 41;				-- Offset for the stats frame
 		if (IFrameManagerLayout) then			-- this isn't in the old version
 			return right, top, bottom, left;	-- new
 		else
@@ -473,10 +473,6 @@ function Perl_Target_Update_Once()
 			guildName = GetGuildInfo("target");
 			if (guildName == nil) then
 				guildName = PERL_LOCALIZED_TARGET_UNGUILDED;
-			else
-				if (strlen(guildName) > (guildnameallowedwidth + 1)) then
-					guildName = strsub(guildName, 1, guildnameallowedwidth).."...";
-				end
 			end
 		else
 			guildName = PERL_LOCALIZED_TARGET_NA;
@@ -968,7 +964,6 @@ function Perl_Target_Update_Combo_Points()
 
 		if (showcp == 1) then
 			Perl_Target_CPText:SetText(combopoints);
-			Perl_Target_CPText:SetTextHeight(20);
 			if (combopoints == 5) then
 				Perl_Target_CPText:SetTextColor(1, 0, 0);	-- red text
 			elseif (combopoints == 4) then
@@ -979,6 +974,8 @@ function Perl_Target_Update_Combo_Points()
 				Perl_Target_CPText:SetTextColor(0.5, 1, 0);	-- yellow-green text
 			elseif (combopoints == 1) then
 				Perl_Target_CPText:SetTextColor(0, 1, 0);	-- green text
+			else
+				Perl_Target_CPText:SetTextColor(0, 0.5, 0);	-- dark green text
 			end
 		end
 
@@ -1006,11 +1003,11 @@ function Perl_Target_Update_Combo_Points()
 end
 
 function Perl_Target_Update_PvP_Status_Icon()
-	if (showpvpicon == 1) then
+	if (showpvpicon == 1 and UnitIsPVP("target") and not UnitIsPVPSanctuary("target")) then
 		if (UnitIsPVPFreeForAll("target")) then
 			Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
 			Perl_Target_PVPStatus:Show();
-		elseif (UnitFactionGroup("target") and UnitIsPVP("target")) then
+		elseif (UnitFactionGroup("target")) then
 			Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..UnitFactionGroup("target"));
 			Perl_Target_PVPStatus:Show();
 		else
@@ -1022,103 +1019,31 @@ function Perl_Target_Update_PvP_Status_Icon()
 end
 
 function Perl_Target_Update_Name()
-	targetname = UnitName("target");
-	namelengthrestrictor = 0;
-
-	if (GetLocale() == "koKR") then
-		if (framestyle == 1) then
-			namelengthrestrictor = 38;
-		elseif (framestyle == 2) then
-			if (compactmode == 0) then
-				namelengthrestrictor = 36;
-			else
-				if (compactpercent == 0) then
-					if (shortbars == 0) then
-						namelengthrestrictor = 24;
-					else
-						namelengthrestrictor = 12;
-					end
-				else
-					if (shortbars == 0) then
-						namelengthrestrictor = 34;
-					else
-						namelengthrestrictor = 24;
-					end
-				end
-			end
-		end
-	elseif (GetLocale() == "zhCN") then
-		if (framestyle == 1) then
-			namelengthrestrictor = 32;
-		elseif (framestyle == 2) then
-			if (compactmode == 0) then
-				namelengthrestrictor = 30;
-			else
-				if (compactpercent == 0) then
-					if (shortbars == 0) then
-						namelengthrestrictor = 20;
-					else
-						namelengthrestrictor = 14;
-					end
-				else
-					if (shortbars == 0) then
-						namelengthrestrictor = 25;
-					else
-						namelengthrestrictor = 21;
-					end
-				end
-			end
-		end
-	else
-		if (framestyle == 1) then
-			namelengthrestrictor = 16;
-		elseif (framestyle == 2) then
-			if (compactmode == 0) then
-				namelengthrestrictor = 18;
-			else
-				if (compactpercent == 0) then
-					if (shortbars == 0) then
-						namelengthrestrictor = 8;
-					else
-						namelengthrestrictor = 2;
-					end
-				else
-					if (shortbars == 0) then
-						namelengthrestrictor = 13;
-					else
-						namelengthrestrictor = 9;
-					end
-				end
-			end
-		end
-	end
-
 	if (UnitIsPlayer("target")) then
-		if (showpvpicon == 1) then
-			namelengthrestrictor = namelengthrestrictor + 2;
-		else
-			namelengthrestrictor = namelengthrestrictor + 4;
-		end
 		if (showclassicon == 1) then
-			Perl_Target_NameBarText:SetPoint("LEFT", "Perl_Target_ClassTexture", "RIGHT", 5, 0);
+			Perl_Target_NameBarText:SetPoint("LEFT", "Perl_Target_ClassTexture", "RIGHT", 2, 0);
+			if (showpvpicon == 1) then
+				Perl_Target_NameBarText:SetWidth(Perl_Target_Name:GetWidth() - 44);
+			else
+				Perl_Target_NameBarText:SetWidth(Perl_Target_Name:GetWidth() - 28);
+			end
 		else
-			namelengthrestrictor = namelengthrestrictor + 3;
-			Perl_Target_NameBarText:SetPoint("LEFT", "Perl_Target_ClassTexture", "RIGHT", -10, 0);
+			Perl_Target_NameBarText:SetPoint("LEFT", "Perl_Target_ClassTexture", "RIGHT", -13, 0);
+			if (showpvpicon == 1) then
+				Perl_Target_NameBarText:SetWidth(Perl_Target_Name:GetWidth() - 28);
+			else
+				Perl_Target_NameBarText:SetWidth(Perl_Target_Name:GetWidth() - 12);
+			end
 		end
 	else
+		Perl_Target_NameBarText:SetPoint("LEFT", "Perl_Target_ClassTexture", "RIGHT", -13, 0);
 		if (UnitIsPVP("target") and showpvpicon == 1) then
-			namelengthrestrictor = namelengthrestrictor + 4;
+			Perl_Target_NameBarText:SetWidth(Perl_Target_Name:GetWidth() - 28);
 		else
-			namelengthrestrictor = namelengthrestrictor + 7;
+			Perl_Target_NameBarText:SetWidth(Perl_Target_Name:GetWidth() - 12);
 		end
-		Perl_Target_NameBarText:SetPoint("LEFT", "Perl_Target_ClassTexture", "RIGHT", -10, 0);
 	end
-
-	if (strlen(targetname) > (namelengthrestrictor + 1)) then
-		targetname = strsub(targetname, 1, namelengthrestrictor).."...";
-	end
-
-	Perl_Target_NameBarText:SetText(targetname);
+	Perl_Target_NameBarText:SetText(UnitName("target"));
 end	
 
 function Perl_Target_Update_Text_Color()
@@ -1225,18 +1150,18 @@ function Perl_Target_Frame_Set_Level()
 
 	if (targetclassification == "worldboss") then
 		Perl_Target_RareEliteBarText:SetTextColor(1, 0, 0);
-		Perl_Target_EliteRareGraphic:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Elite");
+		Perl_Target_EliteRareGraphic:SetTexture("Interface\\AddOns\\Perl_Config\\Perl_Elite");
 		targetclassificationframetext = PERL_LOCALIZED_TARGET_BOSS;
 	elseif (targetclassification == "rareelite") then
-		Perl_Target_EliteRareGraphic:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Rare-Elite");
+		Perl_Target_EliteRareGraphic:SetTexture("Interface\\AddOns\\Perl_Config\\Perl_RareElite");
 		targetclassificationframetext = PERL_LOCALIZED_TARGET_RAREELITE;
 		targetlevel = targetlevel.."r+";
 	elseif (targetclassification == "elite") then
-		Perl_Target_EliteRareGraphic:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Elite");
+		Perl_Target_EliteRareGraphic:SetTexture("Interface\\AddOns\\Perl_Config\\Perl_Elite");
 		targetclassificationframetext = PERL_LOCALIZED_TARGET_ELITE;
 		targetlevel = targetlevel.."+";
 	elseif (targetclassification == "rare") then
-		Perl_Target_EliteRareGraphic:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Rare");
+		Perl_Target_EliteRareGraphic:SetTexture("Interface\\AddOns\\Perl_Config\\Perl_Rare");
 		targetclassificationframetext = PERL_LOCALIZED_TARGET_RARE;
 		targetlevel = targetlevel.."r";
 	else
@@ -1274,13 +1199,20 @@ end
 
 function Perl_Target_Update_Loot_Method()
 	local lootmethod, masterlooterPartyID, masterlooterRaidID = GetLootMethod();
-	if (masterlooterPartyID ~= nil) then
-		if (UnitName("masterlooterPartyID") == UnitName("target")) then
-			Perl_Target_MasterIcon:Show();
-			return;
+	if (masterlooterRaidID ~= nil) then
+		if (masterlooterRaidID < 10) then
+			if (UnitName("raid0"..masterlooterRaidID) == UnitName("target")) then
+				Perl_Target_MasterIcon:Show();
+				return;
+			end
+		else
+			if (UnitName("raid"..masterlooterRaidID) == UnitName("target")) then
+				Perl_Target_MasterIcon:Show();
+				return;
+			end
 		end
-	elseif (masterlooterRaidID ~= nil) then
-		if (UnitName("masterlooterRaidID") == UnitName("target")) then
+	elseif (masterlooterPartyID ~= nil) then
+		if (UnitName("masterlooterPartyID") == UnitName("target")) then
 			Perl_Target_MasterIcon:Show();
 			return;
 		end
@@ -1335,7 +1267,7 @@ function Perl_Target_Main_Style()
 		Perl_Config_Queue_Add(Perl_Target_Main_Style);
 	else
 		Perl_Target_GuildFrame:ClearAllPoints();
-		Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_ClassNameFrame", "TOPRIGHT", -5, 0);
+		Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_ClassNameFrame", "TOPRIGHT", -2, 0);
 
 		if (framestyle == 1) then
 			Perl_Target_HealthBar:SetWidth(200);
@@ -1347,11 +1279,16 @@ function Perl_Target_Main_Style()
 			Perl_Target_HealthBar:SetPoint("TOP", "Perl_Target_StatsFrame", "TOP", 0, -10);
 			Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
 
-			Perl_Target_GuildFrame:SetWidth(136);
+			if (showrareeliteframe == 1) then				-- wtf is going on here, why is this working?!?
+				Perl_Target_GuildFrame:SetWidth(130);
+			else
+				Perl_Target_GuildFrame:SetWidth(133);
+			end
 			Perl_Target_ClassNameFrame:SetWidth(90);
 			Perl_Target_LevelFrame:SetWidth(46);
-			Perl_Target_Name:SetWidth(180);
-			Perl_Target_NameFrame:SetWidth(180);
+			Perl_Target_Frame:SetWidth(177);
+			Perl_Target_Name:SetWidth(177);
+			Perl_Target_NameFrame:SetWidth(177);
 			Perl_Target_RareEliteFrame:SetWidth(46);
 			Perl_Target_StatsFrame:SetWidth(221);
 
@@ -1367,11 +1304,16 @@ function Perl_Target_Main_Style()
 			Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
 
 			if (compactmode == 0) then
-				Perl_Target_GuildFrame:SetWidth(170);
+				if (showrareeliteframe == 1) then			-- wtf is going on here, why is this working?!?
+					Perl_Target_GuildFrame:SetWidth(164);
+				else
+					Perl_Target_GuildFrame:SetWidth(167);
+				end
 				Perl_Target_ClassNameFrame:SetWidth(90);
 				Perl_Target_LevelFrame:SetWidth(46);
-				Perl_Target_Name:SetWidth(214);
-				Perl_Target_NameFrame:SetWidth(214);
+				Perl_Target_Frame:SetWidth(211);
+				Perl_Target_Name:SetWidth(211);
+				Perl_Target_NameFrame:SetWidth(211);
 				Perl_Target_RareEliteFrame:SetWidth(46);
 				Perl_Target_StatsFrame:SetWidth(255);
 
@@ -1379,21 +1321,32 @@ function Perl_Target_Main_Style()
 			else
 				if (shortbars == 0) then
 					if (compactpercent == 0) then
-						Perl_Target_GuildFrame:SetWidth(85);
+						if (showrareeliteframe == 1) then
+							Perl_Target_GuildFrame:SetWidth(79);
+						else
+							Perl_Target_GuildFrame:SetWidth(82);
+						end
+						
 						Perl_Target_ClassNameFrame:SetWidth(90);
 						Perl_Target_LevelFrame:SetWidth(46);
-						Perl_Target_Name:SetWidth(129);
-						Perl_Target_NameFrame:SetWidth(129);
+						Perl_Target_Frame:SetWidth(126);
+						Perl_Target_Name:SetWidth(126);
+						Perl_Target_NameFrame:SetWidth(126);
 						Perl_Target_RareEliteFrame:SetWidth(46);
 						Perl_Target_StatsFrame:SetWidth(170);
 
 						Perl_Target_NameFrame_CPMeter:SetWidth(119);
 					else
-						Perl_Target_GuildFrame:SetWidth(120);
+						if (showrareeliteframe == 1) then
+							Perl_Target_GuildFrame:SetWidth(114);
+						else
+							Perl_Target_GuildFrame:SetWidth(117);
+						end
 						Perl_Target_ClassNameFrame:SetWidth(90);
 						Perl_Target_LevelFrame:SetWidth(46);
-						Perl_Target_Name:SetWidth(164);
-						Perl_Target_NameFrame:SetWidth(164);
+						Perl_Target_Frame:SetWidth(161);
+						Perl_Target_Name:SetWidth(161);
+						Perl_Target_NameFrame:SetWidth(161);
 						Perl_Target_RareEliteFrame:SetWidth(46);
 						Perl_Target_StatsFrame:SetWidth(205);
 
@@ -1408,11 +1361,16 @@ function Perl_Target_Main_Style()
 					Perl_Target_ManaBarBG:SetWidth(115);
 
 					if (compactpercent == 0) then
-						Perl_Target_GuildFrame:SetWidth(46);
-						Perl_Target_ClassNameFrame:SetWidth(94);
+						if (showrareeliteframe == 1) then
+							Perl_Target_GuildFrame:SetWidth(43);
+						else
+							Perl_Target_GuildFrame:SetWidth(46);
+						end
+						Perl_Target_ClassNameFrame:SetWidth(91);
 						Perl_Target_LevelFrame:SetWidth(46);
-						Perl_Target_Name:SetWidth(94);
-						Perl_Target_NameFrame:SetWidth(94);
+						Perl_Target_Frame:SetWidth(91);
+						Perl_Target_Name:SetWidth(91);
+						Perl_Target_NameFrame:SetWidth(91);
 						Perl_Target_RareEliteFrame:SetWidth(46);
 						Perl_Target_StatsFrame:SetWidth(135);
 
@@ -1420,15 +1378,20 @@ function Perl_Target_Main_Style()
 
 						if (showguildname == 1 and showrareeliteframe == 1) then
 							Perl_Target_GuildFrame:ClearAllPoints();
-							Perl_Target_GuildFrame:SetPoint("BOTTOMLEFT", "Perl_Target_ClassNameFrame", "TOPLEFT", 0, -5);
+							Perl_Target_GuildFrame:SetPoint("BOTTOMLEFT", "Perl_Target_ClassNameFrame", "TOPLEFT", 0, -2);
 							Perl_Target_GuildFrame:SetWidth(135);
 						end
 					else
-						Perl_Target_GuildFrame:SetWidth(85);
+						if (showrareeliteframe == 1) then
+							Perl_Target_GuildFrame:SetWidth(79);
+						else
+							Perl_Target_GuildFrame:SetWidth(82);
+						end
 						Perl_Target_ClassNameFrame:SetWidth(90);
 						Perl_Target_LevelFrame:SetWidth(46);
-						Perl_Target_Name:SetWidth(129);
-						Perl_Target_NameFrame:SetWidth(129);
+						Perl_Target_Frame:SetWidth(126);
+						Perl_Target_Name:SetWidth(126);
+						Perl_Target_NameFrame:SetWidth(126);
 						Perl_Target_RareEliteFrame:SetWidth(46);
 						Perl_Target_StatsFrame:SetWidth(170);
 
@@ -1451,7 +1414,7 @@ function Perl_Target_Main_Style()
 
 		if (showportrait == 1) then
 			Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 0, 0);			-- Position the Combat Text correctly on the portrait
-			Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -4, -31);		-- Reposition the combo point frame
+			Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -2, -34);		-- Reposition the combo point frame
 			Perl_Target_PortraitFrame:Show();									-- Show the main portrait frame
 
 			if (threedportrait == 0) then
@@ -1464,7 +1427,7 @@ function Perl_Target_Main_Style()
 			else
 				Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 0, 0);		-- Position the Combat Text correctly on the portrait
 			end
-			Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -4, 0);			-- Reposition the combo point frame
+			Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -2, 0);			-- Reposition the combo point frame
 			Perl_Target_PortraitFrame:Hide();									-- Hide the frame and 2d/3d portion
 		end
 
@@ -1499,29 +1462,6 @@ function Perl_Target_Main_Style()
 					Perl_Target_GuildFrame_CastClickOverlay:SetWidth(Perl_Target_GuildFrame:GetWidth());
 				end
 			end
-
-			if (framestyle == 1) then
-				guildnameallowedwidth = 16;
-			elseif (framestyle == 2) then
-				if (compactmode == 0) then
-					guildnameallowedwidth = 18;
-				else
-					if (compactpercent == 0) then
-						if (shortbars == 0) then
-							guildnameallowedwidth = 8;
-						else
-							guildnameallowedwidth = 2;
-						end
-					else
-						if (shortbars == 0) then
-							guildnameallowedwidth = 13;
-						else
-							guildnameallowedwidth = 9;
-						end
-					end
-				end
-			end
-
 			Perl_Target_GuildFrame:Show();
 		else
 			Perl_Target_GuildFrame:Hide();
@@ -1538,6 +1478,18 @@ function Perl_Target_Main_Style()
 		else
 			Perl_Target_EliteRareGraphicFrame:Hide();
 		end
+
+		Perl_Target_NameBarText:SetHeight(Perl_Target_Name:GetHeight() - 10);
+		Perl_Target_NameBarText:SetNonSpaceWrap(false);
+		Perl_Target_NameBarText:SetJustifyH("LEFT");
+
+		Perl_Target_GuildBarText:SetWidth(Perl_Target_GuildFrame:GetWidth() - 13);
+		Perl_Target_GuildBarText:SetHeight(Perl_Target_GuildFrame:GetHeight() - 10);
+		Perl_Target_GuildBarText:SetNonSpaceWrap(false);
+
+		Perl_Target_ClassNameBarText:SetWidth(Perl_Target_ClassNameFrame:GetWidth() - 10);
+		Perl_Target_ClassNameBarText:SetHeight(Perl_Target_ClassNameFrame:GetHeight() - 10);
+		Perl_Target_ClassNameBarText:SetNonSpaceWrap(false);
 
 		if (Initialized) then
 			Perl_Target_ArcaneBar_Support();
@@ -1995,7 +1947,7 @@ function Perl_Target_GetVars(name, updateflag)
 		mobhealthsupport = 1;
 	end
 	if (scale == nil) then
-		scale = 1;
+		scale = 0.9;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -2312,7 +2264,7 @@ function Perl_Target_UpdateVars(vartable)
 			mobhealthsupport = 1;
 		end
 		if (scale == nil) then
-			scale = 1;
+			scale = 0.9;
 		end
 		if (transparency == nil) then
 			transparency = 1;
@@ -2539,49 +2491,48 @@ function Perl_Target_Buff_UpdateAll()
 		if (numBuffs == 0) then
 			Perl_Target_BuffFrame:Hide();
 		else
+			Perl_Target_BuffFrame:ClearAllPoints();
 			if (invertbuffs == 0) then
-				Perl_Target_BuffFrame:ClearAllPoints();
 				if (UnitIsFriend("player", "target")) then
-					Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
+					Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 2);
 				else
 					if (numDebuffs > 30) then
-						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -103);
+						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -110);
 					elseif (numDebuffs > 20) then
-						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -77);
+						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -83);
 					elseif (numDebuffs > 10) then
-						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -51);
+						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -56);
 					else
-						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
+						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -29);
 					end
 				end
 			else
-				Perl_Target_BuffFrame:ClearAllPoints();
 				if (UnitIsFriend("player", "target")) then
 					if (showclassframe == 1 or showrareeliteframe == 1) then
-						Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 16);
+						Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 20);
 					else
-						Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, -5);
+						Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, -2);
 					end
 				else
 					if (showclassframe == 1 or showrareeliteframe == 1) then
 						if (numDebuffs > 30) then
-							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 124);
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 132);
 						elseif (numDebuffs > 20) then
-							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 98);
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 105);
 						elseif (numDebuffs > 10) then
-							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 72);
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 78);
 						else
-							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 46);
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 51);
 						end
 					else
 						if (numDebuffs > 30) then
-							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 103);
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 110);
 						elseif (numDebuffs > 20) then
-							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 77);
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 83);
 						elseif (numDebuffs > 10) then
-							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 51);
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 56);
 						else
-							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 25);
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 29);
 						end
 					end
 				end
@@ -2601,38 +2552,37 @@ function Perl_Target_Buff_UpdateAll()
 		if (numDebuffs == 0) then
 			Perl_Target_DebuffFrame:Hide();
 		else
+			Perl_Target_DebuffFrame:ClearAllPoints();
 			if (invertbuffs == 0) then
-				Perl_Target_DebuffFrame:ClearAllPoints();
 				if (UnitIsFriend("player", "target")) then
 					if (numBuffs > 10) then
-						Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -51);
+						Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -56);
 					else
-						Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
+						Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -29);
 					end
 				else
-					Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
+					Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 2);
 				end
 			else
-				Perl_Target_DebuffFrame:ClearAllPoints();
 				if (UnitIsFriend("player", "target")) then
 					if (showclassframe == 1 or showrareeliteframe == 1) then
 						if (numBuffs > 10) then
-							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 72);
+							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 78);
 						else
-							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 46);
+							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 51);
 						end
 					else
 						if (numBuffs > 10) then
-							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 51);
+							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 56);
 						else
-							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 25);
+							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 29);
 						end
 					end
 				else
 					if (showclassframe == 1 or showrareeliteframe == 1) then
-						Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 16);
+						Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 20);
 					else
-						Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, -5);
+						Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, -2);
 					end
 				end
 			end
@@ -2709,7 +2659,6 @@ function Perl_Target_Buff_UpdateCPMeter()
 	else
 		if (comboframedebuffs == 1) then
 			Perl_Target_CPText:SetText(debuffapplications);
-			Perl_Target_CPText:SetTextHeight(20);
 			if (debuffapplications == 5) then
 				Perl_Target_CPText:SetTextColor(1, 0, 0);	-- red text
 			elseif (debuffapplications == 4) then
@@ -2720,6 +2669,8 @@ function Perl_Target_Buff_UpdateCPMeter()
 				Perl_Target_CPText:SetTextColor(0.5, 1, 0);	-- yellow-green text
 			elseif (debuffapplications == 1) then
 				Perl_Target_CPText:SetTextColor(0, 1, 0);	-- green text
+			else
+				Perl_Target_CPText:SetTextColor(0, 0.5, 0);	-- dark green text
 			end
 		end
 

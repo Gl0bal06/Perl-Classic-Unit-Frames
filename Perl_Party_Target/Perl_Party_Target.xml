@@ -72,7 +72,7 @@
 							<Anchors>
 								<Anchor point="LEFT" relativePoint="LEFT">
 									<Offset>
-										<AbsDimension x="10" y="0"/>
+										<AbsDimension x="8" y="0"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -122,7 +122,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parent_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="4"/>
+							<AbsDimension x="0" y="2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -358,7 +358,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame1_StatsFrame" relativePoint="TOPRIGHT">
 				<Offset>
-					<AbsDimension x="-4" y="20"/>
+					<AbsDimension x="-2" y="22"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -394,7 +394,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame2_StatsFrame" relativePoint="TOPRIGHT">
 				<Offset>
-					<AbsDimension x="-4" y="20"/>
+					<AbsDimension x="-2" y="22"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -430,7 +430,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame3_StatsFrame" relativePoint="TOPRIGHT">
 				<Offset>
-					<AbsDimension x="-4" y="20"/>
+					<AbsDimension x="-2" y="22"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -466,7 +466,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT" relativeTo="Perl_Party_MemberFrame4_StatsFrame" relativePoint="TOPRIGHT">
 				<Offset>
-					<AbsDimension x="-4" y="20"/>
+					<AbsDimension x="-2" y="22"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -500,9 +500,9 @@
 
 	<Frame name="Perl_Party_Target5" inherits="Perl_Party_Target_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="5">
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="Perl_Focus_StatsFrame" relativePoint="TOPRIGHT">
+			<Anchor point="TOPLEFT" relativeTo="Perl_Focus_LevelFrame" relativePoint="TOPRIGHT">
 				<Offset>
-					<AbsDimension x="-4" y="20"/>
+					<AbsDimension x="-2" y="0"/>
 				</Offset>
 			</Anchor>
 		</Anchors>

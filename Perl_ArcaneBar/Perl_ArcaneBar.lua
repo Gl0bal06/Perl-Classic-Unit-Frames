@@ -131,27 +131,6 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1)
 		self:SetValue(self.startTime);
 
 		if (self.namereplace == 1) then
-			if (self.nameframewidth > 199) then
-				if (GetLocale() == "koKR") then
-					if (strlen(text) > (40)) then
-						text = strsub(text, 1, 39).."...";
-					end
-				else
-					if (strlen(text) > (25)) then
-						text = strsub(text, 1, 24).."...";
-					end
-				end
-			else
-				if (GetLocale() == "koKR") then
-					if (strlen(text) > (36)) then
-						text = strsub(text, 1, 35).."...";
-					end
-				else
-					if (strlen(text) > (20)) then
-						text = strsub(text, 1, 19).."...";
-					end
-				end
-			end
 			if (self.nameframetext == nil) then
 				if (self.unit == "player") then
 					self.nameframetext = Perl_Player_NameBarText;
@@ -501,7 +480,13 @@ function Perl_ArcaneBar_OnUpdate(self)
 			current_time = 0;
 		end
 
-		local text = string.sub(math.max(current_time, 0) + 0.001, 1, 4);
+		--local text = string.sub(math.max(current_time, 0) + 0.001, 1, 4);
+		local text = math.max(current_time, 0) + 0.001, 1, 4;
+		if (text >= 100) then
+			text = string.sub(text, 1, 3);
+		else
+			text = string.sub(text, 1, 4);
+		end
 		if (self.delaySum ~= 0) then
 			local delay = string.sub(math.max(self.delaySum / 1000, 0) + 0.001, 1, 4);
 			if (self.channeling == 1) then

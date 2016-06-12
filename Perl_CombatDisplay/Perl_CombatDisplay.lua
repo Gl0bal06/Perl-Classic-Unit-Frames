@@ -9,7 +9,7 @@ local state = 3;		-- hidden unless in combat by default
 local manapersist = 0;		-- mana persist is off by default
 local healthpersist = 0;	-- health persist is off by default
 local locked = 0;		-- unlocked by default
-local scale = 1;		-- default scale
+local scale = 0.9;		-- default scale
 local transparency = 1;		-- transparency for the frame
 local showtarget = 0;		-- target frame is disabled by default
 local mobhealthsupport = 1;	-- mobhealth is enabled by default
@@ -1243,6 +1243,15 @@ end
 --------------------------
 -- GUI Config Functions --
 --------------------------
+function Perl_CombatDisplay_Align_Horizontally()
+	Perl_CombatDisplay_Frame:SetUserPlaced(1);
+	Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
+	Perl_CombatDisplay_Frame:ClearAllPoints();
+	Perl_CombatDisplay_Target_Frame:ClearAllPoints();
+	Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", ((UIParent:GetWidth() / 2) / (1 - UIParent:GetEffectiveScale() + scale)) - (Perl_CombatDisplay_Frame:GetWidth() / 2), floor(Perl_CombatDisplay_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Frame:GetScale()) + 0.5))
+	Perl_CombatDisplay_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", ((UIParent:GetWidth() / 2) / (1 - UIParent:GetEffectiveScale() + scale)) - (Perl_CombatDisplay_Target_Frame:GetWidth() / 2), floor(Perl_CombatDisplay_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Target_Frame:GetScale()) + 0.5))
+end
+
 function Perl_CombatDisplay_Set_State(newvalue)
 	state = newvalue;
 	Perl_CombatDisplay_UpdateVars();
@@ -1386,7 +1395,7 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 		manapersist = 0;
 	end
 	if (scale == nil) then
-		scale = 1;
+		scale = 0.9;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -1548,7 +1557,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			manapersist = 0;
 		end
 		if (scale == nil) then
-			scale = 1;
+			scale = 0.9;
 		end
 		if (transparency == nil) then
 			transparency = 1;

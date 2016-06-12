@@ -517,6 +517,24 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
+			<Button name="$parent_Button1" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_ALIGN_HORIZONTALLY">
+				<Size>
+					<AbsDimension x="150" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Transparency_Text">
+						<Offset>
+							<AbsDimension x="45" y="-70"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_CombatDisplay_Align_Horizontally();
+					</OnClick>
+				</Scripts>
+			</Button>
 		</Frames>
 
 	</Frame>

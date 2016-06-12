@@ -8,7 +8,7 @@ local Perl_Party_Pet_Events = {};	-- event manager
 local locked = 0;			-- unlocked by default
 local showportrait = 0;			-- portrait is hidden by default
 local threedportrait = 0;		-- 3d portraits are off by default
-local scale = 1;			-- default scale
+local scale = 0.9;			-- default scale
 local transparency = 1;			-- transparency for frames
 local numpetbuffsshown = 16;		-- buff row is 16 long
 local numpetdebuffsshown = 16;		-- debuff row is 16 long
@@ -215,12 +215,12 @@ function Perl_Party_Pet_IFrameManager()
 	function iface:getBorder(frame)
 		local bottom, left;
 		if (showportrait == 1) then
-			left = 48;
+			left = 51;
 		else
 			left = 0;
 		end
 		-- Offsets
-		bottom = 30;
+		bottom = 33;
 		return 0, 0, bottom, left;
 	end
 	IFrameManager:Register(Perl_Party_Pet1, iface);
@@ -576,6 +576,12 @@ function Perl_Party_Pet_Frame_Style()
 				end
 			end
 
+			for id=1,4 do
+				getglobal("Perl_Party_Pet"..id.."_NameFrame_NameBarText"):SetWidth(getglobal("Perl_Party_Pet"..id.."_NameFrame"):GetWidth() - 13);
+				getglobal("Perl_Party_Pet"..id.."_NameFrame_NameBarText"):SetHeight(getglobal("Perl_Party_Pet"..id.."_NameFrame"):GetHeight() - 10);
+				getglobal("Perl_Party_Pet"..id.."_NameFrame_NameBarText"):SetNonSpaceWrap(false);
+			end
+
 			Perl_Party_Pet_Update();
 		else
 			Perl_Party_Pet_Disable_All();
@@ -664,15 +670,15 @@ function Perl_Party_Pet_Allign()
 	Perl_Party_Pet4:SetUserPlaced(1);
 
 	if (vartable["showportrait"] == 1) then
-		Perl_Party_Pet1:SetPoint("TOPLEFT", Perl_Party_MemberFrame1_StatsFrame, "TOPRIGHT", 44, 0);
-		Perl_Party_Pet2:SetPoint("TOPLEFT", Perl_Party_MemberFrame2_StatsFrame, "TOPRIGHT", 44, 0);
-		Perl_Party_Pet3:SetPoint("TOPLEFT", Perl_Party_MemberFrame3_StatsFrame, "TOPRIGHT", 44, 0);
-		Perl_Party_Pet4:SetPoint("TOPLEFT", Perl_Party_MemberFrame4_StatsFrame, "TOPRIGHT", 44, 0);
+		Perl_Party_Pet1:SetPoint("TOPLEFT", Perl_Party_MemberFrame1_StatsFrame, "TOPRIGHT", 52, 0);
+		Perl_Party_Pet2:SetPoint("TOPLEFT", Perl_Party_MemberFrame2_StatsFrame, "TOPRIGHT", 52, 0);
+		Perl_Party_Pet3:SetPoint("TOPLEFT", Perl_Party_MemberFrame3_StatsFrame, "TOPRIGHT", 52, 0);
+		Perl_Party_Pet4:SetPoint("TOPLEFT", Perl_Party_MemberFrame4_StatsFrame, "TOPRIGHT", 52, 0);
 	else
-		Perl_Party_Pet1:SetPoint("TOPLEFT", Perl_Party_MemberFrame1_StatsFrame, "TOPRIGHT", -4, 0);
-		Perl_Party_Pet2:SetPoint("TOPLEFT", Perl_Party_MemberFrame2_StatsFrame, "TOPRIGHT", -4, 0);
-		Perl_Party_Pet3:SetPoint("TOPLEFT", Perl_Party_MemberFrame3_StatsFrame, "TOPRIGHT", -4, 0);
-		Perl_Party_Pet4:SetPoint("TOPLEFT", Perl_Party_MemberFrame4_StatsFrame, "TOPRIGHT", -4, 0);
+		Perl_Party_Pet1:SetPoint("TOPLEFT", Perl_Party_MemberFrame1_StatsFrame, "TOPRIGHT", -2, 0);
+		Perl_Party_Pet2:SetPoint("TOPLEFT", Perl_Party_MemberFrame2_StatsFrame, "TOPRIGHT", -2, 0);
+		Perl_Party_Pet3:SetPoint("TOPLEFT", Perl_Party_MemberFrame3_StatsFrame, "TOPRIGHT", -2, 0);
+		Perl_Party_Pet4:SetPoint("TOPLEFT", Perl_Party_MemberFrame4_StatsFrame, "TOPRIGHT", -2, 0);
 	end
 
 	Perl_Party_Pet_UpdateVars();			-- Calling this to update the positions for IFrameManger
@@ -844,7 +850,7 @@ function Perl_Party_Pet_GetVars(name, updateflag)
 		threedportrait = 0;
 	end
 	if (scale == nil) then
-		scale = 1;
+		scale = 0.9;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -985,7 +991,7 @@ function Perl_Party_Pet_UpdateVars(vartable)
 			threedportrait = 0;
 		end
 		if (scale == nil) then
-			scale = 1;
+			scale = 0.9;
 		end
 		if (transparency == nil) then
 			transparency = 1;

@@ -108,7 +108,7 @@ if (GetLocale() == "esES") then
 	PERL_LOCALIZED_CONFIG_COMBATDISPLAY_ENABLE_TARGET = "Activar Ventana de Objetivo";
 
 	-- Perl Config Party
-	PERL_LOCALIZED_CONFIG_PARTY_SPACING = "Espacio (90 por defecto)";
+	PERL_LOCALIZED_CONFIG_PARTY_SPACING = "Espacio (95 por defecto)";
 	PERL_LOCALIZED_CONFIG_PARTY_FKEYS = "Mostrar Teclas F";
 	PERL_LOCALIZED_CONFIG_PARTY_LOCK = "Bloquear Ventanas "..PERL_LOCALIZED_CONFIG_PARTY;
 

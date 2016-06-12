@@ -7,12 +7,12 @@
 	<Frame name="Perl_Player_Frame" frameStrata="LOW" toplevel="true" movable="true" parent="UIParent" hidden="false" enableMouse="true">
 		<Size>
 			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. (This is no longer true in 0.48) -->
-			<AbsDimension x="200" y="24"/>
+			<AbsDimension x="202" y="24"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="-3" y="-43"/>
+					<AbsDimension x="-2" y="-43"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -51,7 +51,7 @@
 			<!-- Player Name -->
 			<Frame name="Perl_Player_NameFrame">
 				<Size>
-					<AbsDimension x="200" y="24"/>
+					<AbsDimension x="202" y="24"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -136,7 +136,7 @@
 			<!-- Player Name Frame for ArcaneBar improvement -->
 			<Frame name="Perl_Player_Name">
 				<Size>
-					<AbsDimension x="200" y="24"/>
+					<AbsDimension x="202" y="24"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Player_NameFrame">
@@ -148,7 +148,7 @@
 				<Frames>
 					<Button name="Perl_Player_Name_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
-							<AbsDimension x="200" y="24"/>
+							<AbsDimension x="202" y="24"/>
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT">
@@ -191,7 +191,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Player_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="20"/>
+							<AbsDimension x="0" y="22"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -302,7 +302,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Player_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="5"/>
+							<AbsDimension x="0" y="2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -378,12 +378,12 @@
 			<!-- Portrait Frame -->
 			<Frame name="Perl_Player_PortraitFrame">
 				<Size>
-					<AbsDimension x="60" y="61"/>
+					<AbsDimension x="64" y="64"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativePoint="TOPLEFT" relativeTo="Perl_Player_NameFrame">
 						<Offset>
-							<AbsDimension x="5" y="0"/>
+							<AbsDimension x="2" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -401,7 +401,7 @@
 				<Frames>
 					<Button name="Perl_Player_PortraitFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
-							<AbsDimension x="60" y="61"/>
+							<AbsDimension x="64" y="64"/>
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT">
@@ -426,7 +426,7 @@
 					</Button>
 					<PlayerModel name="$parent_PlayerModel" hidden="true">
 						<Size>
-							<AbsDimension x="50" y="50"/>
+							<AbsDimension x="54" y="54"/>
 						</Size>
 						<Anchors>
 							<Anchor point="CENTER">
@@ -447,7 +447,7 @@
 					<Layer level="ARTWORK">
 						<Texture name="Perl_Player_Portrait">
 							<Size>
-								<AbsDimension x="48" y="48"/>
+								<AbsDimension x="52" y="52"/>
 							</Size>
 							<Anchors>
 								<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_PortraitFrame">
@@ -465,7 +465,7 @@
 			<!-- Portrait Text Frame -->
 			<Frame name="Perl_Player_PortraitTextFrame" frameStrata="MEDIUM">
 				<Size>
-					<AbsDimension x="60" y="61"/>
+					<AbsDimension x="64" y="64"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Player_PortraitFrame">
@@ -502,7 +502,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Player_NameFrame">
 						<Offset>
-							<AbsDimension x="30" y="5"/>
+							<AbsDimension x="32" y="2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -993,6 +993,36 @@
 							</OnLoad>
 							<OnUpdate>
 								Perl_Player_EnergyTicker_OnUpdate()
+							</OnUpdate>
+						</Scripts>
+					</StatusBar>
+
+					<StatusBar name="Perl_Player_FiveSecondRule" hidden="true">
+						<Size>
+							<AbsDimension x="150" y="2"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Player_ManaBar"/>
+						</Anchors>
+						<BarColor r="1" g="1" b="0.5" a="1"/>
+						<Layers>
+							<Layer level="OVERLAY">
+								<Texture name="Perl_Player_FiveSecondRuleSpark" file="Interface\CastingBar\UI-CastingBar-Spark" alphaMode="ADD">
+									<Size>
+										<AbsDimension x="12" y="12"/>
+									</Size>
+									<Anchors>
+										<Anchor point="CENTER"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								Perl_Player_FiveSecondRule:SetMinMaxValues(0, 5);
+							</OnLoad>
+							<OnUpdate>
+								Perl_Player_FiveSecondRule_OnUpdate(self, elapsed)
 							</OnUpdate>
 						</Scripts>
 					</StatusBar>

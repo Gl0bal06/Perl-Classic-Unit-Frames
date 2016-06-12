@@ -139,6 +139,7 @@ function Perl_Config_All_Set_Scale(value)
 
 	if (Perl_Party_Target_Script_Frame) then
 		Perl_Party_Target_Set_Scale(value);
+		Perl_Party_Target_Focus_Set_Scale(value);
 	end
 
 	if (Perl_Player_Frame) then
@@ -151,6 +152,7 @@ function Perl_Config_All_Set_Scale(value)
 
 	if (Perl_Player_Pet_Frame) then
 		Perl_Player_Pet_Set_Scale(value);
+		Perl_Player_Pet_Target_Set_Scale(value);
 	end
 
 	if (Perl_Raid_Frame) then

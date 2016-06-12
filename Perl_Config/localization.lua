@@ -1,7 +1,7 @@
 --if (GetLocale() == "enUS") then	-- Bypassing this allows us to at least give other languages English since they aren't fully translated
 	-- Generic Globals that do NOT need localizing
-	PERL_LOCALIZED_VERSION_NUMBER = "2.15";
-	PERL_LOCALIZED_DATE = "February 20, 2008";
+	PERL_LOCALIZED_VERSION_NUMBER = "2.16";
+	PERL_LOCALIZED_DATE = "March 25, 2008";
 	PERL_LOCALIZED_BUFF_NONE = "none";
 
 	-- Title and Version
@@ -43,6 +43,7 @@
 	PERL_LOCALIZED_CONFIG_MINIMAP_LOCK = "Right clicking will LOCK all frames";
 	PERL_LOCALIZED_CONFIG_MINIMAP_UNLOCK = "Right clicking will UNLOCK all frames";
 	PERL_LOCALIZED_CONFIG_OPTIONS_UNAVAILABLE = PERL_LOCALIZED_NAME..": Options cannot be changed in combat.";
+	PERL_LOCALIZED_CONFIG_BLIZZARD_BUTTON = "Open Options"
 
 	-- Perl Player Strings
 	PERL_LOCALIZED_PLAYER_GROUP = "Group ";

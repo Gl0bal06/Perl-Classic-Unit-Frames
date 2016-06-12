@@ -104,6 +104,11 @@ function Perl_Config_OnLoad()
 	SLASH_PERL_CONFIG1 = "/perl";
 end
 
+function Perl_BlizzardOptions_OnLoad(panel)
+	panel.name = PERL_LOCALIZED_NAME;
+	InterfaceOptions_AddCategory(panel);
+end
+
 
 -------------------
 -- Event Handler --
@@ -346,6 +351,10 @@ function Perl_Config_Set_Texture(newvalue)
 		Perl_ArcaneBar_playerTex:SetTexture(texturename);
 		Perl_ArcaneBar_targetTex:SetTexture(texturename);
 		Perl_ArcaneBar_focusTex:SetTexture(texturename);
+		Perl_ArcaneBar_party1Tex:SetTexture(texturename);
+		Perl_ArcaneBar_party2Tex:SetTexture(texturename);
+		Perl_ArcaneBar_party3Tex:SetTexture(texturename);
+		Perl_ArcaneBar_party4Tex:SetTexture(texturename);
 	end
 
 	if (Perl_CombatDisplay_Frame) then
@@ -941,12 +950,17 @@ function Perl_Config_Frame_Reset_Positions()
 
 	if (Perl_Focus_Frame) then
 		Perl_Focus_Frame:SetUserPlaced(1);
---		Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 263, -43);	-- Find a good default location for this at some point
+		Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 200, -650);
 	end
 
 	if (Perl_Party_Frame) then
+		local vartable = Perl_Party_GetVars();
 		Perl_Party_Frame:SetUserPlaced(1);
-		Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -8, -187);
+		if (vartable["showportrait"] == 0) then
+			Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -7, -187);
+		else
+			Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 55, -187);
+		end
 	end
 
 	if (Perl_Party_Pet_Script_Frame) then
@@ -958,25 +972,68 @@ function Perl_Config_Frame_Reset_Positions()
 	end
 
 	if (Perl_Player_Frame) then
+		local vartable = Perl_Player_GetVars();
 		Perl_Player_Frame:SetUserPlaced(1);
-		Perl_Player_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -3, -43);
+		if (vartable["showportrait"] == 0) then
+			Perl_Player_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -2, -43);
+		else
+			Perl_Player_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 60, -43);
+		end
 	end
 
 	if (Perl_Player_Pet_Frame) then
 		Perl_Player_Pet_Frame:SetUserPlaced(1);
-		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 27, -112);
+		Perl_Player_Pet_Target_Frame:SetUserPlaced(1);
+		if (Perl_Player_Frame) then
+			local vartableone = Perl_Player_GetVars();
+			local vartabletwo = Perl_Player_Pet_GetVars();
+			Perl_Player_Pet_Frame:ClearAllPoints();
+			if (vartableone["showportrait"] == 0 and vartabletwo["showportrait"] == 1) then
+				Perl_Player_Pet_Frame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 54, 2);
+			else
+				Perl_Player_Pet_Frame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 2);
+			end
+		else
+			Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 27, -112);
+		end
+		Perl_Player_Pet_Target_Frame:ClearAllPoints();
+		Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", Perl_Player_Pet_Frame, "TOPRIGHT", -2, 0);
 	end
 
 	if (Perl_Target_Frame) then
 		Perl_Target_Frame:SetUserPlaced(1);
-		Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 278, -43);
+		if (Perl_Player_Frame) then
+			Perl_Target_Frame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "TOPRIGHT", -2, 22);
+		else
+			Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 283, -43);
+		end
 	end
 
 	if (Perl_Target_Target_Script_Frame) then
 		Perl_Target_Target_Frame:SetUserPlaced(1);
 		Perl_Target_Target_Target_Frame:SetUserPlaced(1);
-		Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 516, -43);
-		Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 622, -43);
+		if (Perl_Target_Frame) then
+			Perl_Target_Target_Frame:ClearAllPoints();
+			Perl_Target_Target_Target_Frame:ClearAllPoints();
+			local vartable = Perl_Target_GetVars();
+			if (vartable["showcp"] == 1) then
+				if (vartable["showportrait"] == 1) then
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_CPFrame, "TOPRIGHT", -2, 34);
+				else
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_CPFrame, "TOPRIGHT", -2, 22);
+				end
+			else
+				if (vartable["showportrait"] == 1) then
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -2, 0);
+				else
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_LevelFrame, "TOPRIGHT", -2, 0);
+				end
+			end
+			Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", -2, 0);
+		else
+			Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 525, -43);
+			Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 633, -43);
+		end
 	end
 end
 
@@ -1203,6 +1260,8 @@ function Perl_Config_Global_Save_Settings()
 			["ShowBarValues"] = vartable["showbarvalues"],
 			["ShowRaidGroupInName"] = vartable["showraidgroupinname"],
 			["ShowEnergyTicker"] = vartable["showenergyticker"],
+			["FiveSecondRule"] = vartable["fivesecondrule"],
+			["TotemTimers"] = vartable["totemtimers"],
 		};
 	end
 

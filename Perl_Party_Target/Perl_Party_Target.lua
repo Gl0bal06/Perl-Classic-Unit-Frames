@@ -6,8 +6,8 @@ local Perl_Party_Target_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Party_Target_GetVars)
 local locked = 0;		-- unlocked by default
-local scale = 1;		-- default scale for party target
-local focusscale = 1;		-- default scale for focus target
+local scale = 0.9;		-- default scale for party target
+local focusscale = 0.9;		-- default scale for focus target
 local transparency = 1;		-- transparency for frames
 local mobhealthsupport = 1;	-- mobhealth support is on by default
 local hidepowerbars = 0;	-- Power bars are shown by default
@@ -46,7 +46,7 @@ local Perl_Party_Target_Five_ManaBar_Fade_Color = 1;		-- the color fading interv
 local Perl_Party_Target_Five_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local r, g, b, currentunit, partytargetname, partytargethealth, partytargethealthmax, partytargethealthpercent, partytargetmana, partytargetmanamax, partytargetpower, englishclass, raidpartytargetindex;
+local r, g, b, currentunit, partytargethealth, partytargethealthmax, partytargethealthpercent, partytargetmana, partytargetmanamax, partytargetpower, englishclass, raidpartytargetindex;
 
 
 ----------------------
@@ -242,21 +242,7 @@ end
 
 function Perl_Party_Target_Work(self)
 	-- Begin: Set the name
-	partytargetname = UnitName(self.unit);
-	if (GetLocale() == "koKR") then
-		if (strlen(partytargetname) > 25) then
-			partytargetname = strsub(partytargetname, 1, 24).."...";
-		end
-	elseif (GetLocale() == "zhCN") then
-		if (strlen(partytargetname) > 21) then
-			partytargetname = strsub(partytargetname, 1, 20).."...";
-		end
-	else
-		if (strlen(partytargetname) > 11) then
-			partytargetname = strsub(partytargetname, 1, 10).."...";
-		end
-	end
-	self.nameText:SetText(partytargetname);
+	self.nameText:SetText(UnitName(self.unit));
 	-- End: Set the name
 
 	-- Begin: Set the name text color
@@ -837,6 +823,13 @@ function Perl_Party_Target_Frame_Style()
 				getglobal("Perl_Party_Target"..partynum.."_StatsFrame_CastClickOverlay"):SetHeight(42);
 			end
 		end
+
+		for partynum=1,5 do
+			getglobal("Perl_Party_Target"..partynum.."_NameFrame_NameBarText"):SetWidth(getglobal("Perl_Party_Target"..partynum.."_NameFrame"):GetWidth() - 13);
+			getglobal("Perl_Party_Target"..partynum.."_NameFrame_NameBarText"):SetHeight(getglobal("Perl_Party_Target"..partynum.."_NameFrame"):GetHeight() - 10);
+			getglobal("Perl_Party_Target"..partynum.."_NameFrame_NameBarText"):SetNonSpaceWrap(false);
+			getglobal("Perl_Party_Target"..partynum.."_NameFrame_NameBarText"):SetJustifyH("LEFT");
+		end
 	end
 end
 
@@ -902,14 +895,15 @@ function Perl_Party_Target_Allign()
 	Perl_Party_Target4:SetUserPlaced(1);
 	Perl_Party_Target5:SetUserPlaced(1);
 
-	Perl_Party_Target1:SetPoint("TOPLEFT", Perl_Party_MemberFrame1_StatsFrame, "TOPRIGHT", -4, 20);
-	Perl_Party_Target2:SetPoint("TOPLEFT", Perl_Party_MemberFrame2_StatsFrame, "TOPRIGHT", -4, 20);
-	Perl_Party_Target3:SetPoint("TOPLEFT", Perl_Party_MemberFrame3_StatsFrame, "TOPRIGHT", -4, 20);
-	Perl_Party_Target4:SetPoint("TOPLEFT", Perl_Party_MemberFrame4_StatsFrame, "TOPRIGHT", -4, 20);
+	Perl_Party_Target1:SetPoint("TOPLEFT", Perl_Party_MemberFrame1_StatsFrame, "TOPRIGHT", -2, 22);
+	Perl_Party_Target2:SetPoint("TOPLEFT", Perl_Party_MemberFrame2_StatsFrame, "TOPRIGHT", -2, 22);
+	Perl_Party_Target3:SetPoint("TOPLEFT", Perl_Party_MemberFrame3_StatsFrame, "TOPRIGHT", -2, 22);
+	Perl_Party_Target4:SetPoint("TOPLEFT", Perl_Party_MemberFrame4_StatsFrame, "TOPRIGHT", -2, 22);
+	Perl_Party_Target5:ClearAllPoints();
 	if (Perl_Focus_PortraitFrame:IsShown()) then
-		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_StatsFrame, "TOPRIGHT", 51, 19);
+		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_PortraitFrame, "TOPRIGHT", -2, 0);
 	else
-		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_StatsFrame, "TOPRIGHT", -4, 19);
+		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_LevelFrame, "TOPRIGHT", -2, 0);
 	end
 
 	Perl_Party_Target_UpdateVars();			-- Calling this to update the positions for IFrameManger
@@ -1027,10 +1021,10 @@ function Perl_Party_Target_GetVars(name, updateflag)
 		locked = 0;
 	end
 	if (scale == nil) then
-		scale = 1;
+		scale = 0.9;
 	end
 	if (focusscale == nil) then
-		focusscale = 1;
+		focusscale = 0.9;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -1150,10 +1144,10 @@ function Perl_Party_Target_UpdateVars(vartable)
 			locked = 0;
 		end
 		if (scale == nil) then
-			scale = 1;
+			scale = 0.9;
 		end
 		if (focusscale == nil) then
-			focusscale = 1;
+			focusscale = 0.9;
 		end
 		if (transparency == nil) then
 			transparency = 1;

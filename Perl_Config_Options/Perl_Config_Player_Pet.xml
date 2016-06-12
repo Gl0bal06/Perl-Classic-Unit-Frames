@@ -82,7 +82,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="250" y="-210"/>
+								<AbsDimension x="250" y="-170"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -92,7 +92,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="250" y="-270"/>
+								<AbsDimension x="250" y="-230"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -597,7 +597,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Slider1">
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Slider9">
 						<Offset>
 							<AbsDimension x="20" y="0"/>
 						</Offset>

@@ -108,7 +108,7 @@ if (GetLocale() == "deDE") then
 	PERL_LOCALIZED_CONFIG_COMBATDISPLAY_ENABLE_TARGET = "Aktiviere Target Frame";
 
 	-- Perl Config Party
-	PERL_LOCALIZED_CONFIG_PARTY_SPACING = "Leerstellen (90 ist standard)";
+	PERL_LOCALIZED_CONFIG_PARTY_SPACING = "Leerstellen (95 ist standard)";
 	PERL_LOCALIZED_CONFIG_PARTY_FKEYS = "Zeige F Tasten";
 	PERL_LOCALIZED_CONFIG_PARTY_LOCK = PERL_LOCALIZED_CONFIG_PARTY.." Frame fixieren";
 

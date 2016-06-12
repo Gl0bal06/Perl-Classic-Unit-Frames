@@ -79,7 +79,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="263" y="-343"/>
+					<AbsDimension x="200" y="-650"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -293,7 +293,7 @@
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="Perl_Focus_ClassTexture" relativePoint="RIGHT">
 									<Offset>
-										<AbsDimension x="5" y="0"/>
+										<AbsDimension x="2" y="0"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -355,7 +355,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Focus_NameFrame">
 						<Offset>
-							<AbsDimension x="-5" y="0"/>
+							<AbsDimension x="-2" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -417,12 +417,12 @@
 			<!-- Portrait Frame -->
 			<Frame name="Perl_Focus_PortraitFrame">
 				<Size>
-					<AbsDimension x="60" y="61"/>
+					<AbsDimension x="64" y="64"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Focus_LevelFrame">
 						<Offset>
-							<AbsDimension x="-5" y="0"/>
+							<AbsDimension x="-2" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -440,7 +440,7 @@
 				<Frames>
 					<Button name="Perl_Focus_PortraitFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
-							<AbsDimension x="60" y="61"/>
+							<AbsDimension x="64" y="64"/>
 						</Size>
 						<Anchors>
 							<Anchor point="TOPLEFT">
@@ -465,7 +465,7 @@
 					</Button>
 					<PlayerModel name="$parent_FocusModel" hidden="true">
 						<Size>
-							<AbsDimension x="50" y="50"/>
+							<AbsDimension x="54" y="54"/>
 						</Size>
 						<Anchors>
 							<Anchor point="CENTER">
@@ -486,7 +486,7 @@
 					<Layer level="ARTWORK">
 						<Texture name="Perl_Focus_Portrait">
 							<Size>
-								<AbsDimension x="48" y="48"/>
+								<AbsDimension x="52" y="52"/>
 							</Size>
 							<Anchors>
 								<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Focus_PortraitFrame">
@@ -504,7 +504,7 @@
 			<!-- Portrait Text Frame -->
 			<Frame name="Perl_Focus_PortraitTextFrame">
 				<Size>
-					<AbsDimension x="60" y="61"/>
+					<AbsDimension x="64" y="64"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Focus_PortraitFrame">
@@ -541,7 +541,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Focus_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="20"/>
+							<AbsDimension x="0" y="22"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -742,7 +742,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Focus_NameFrame">
 						<Offset>
-							<AbsDimension x="0" y="5"/>
+							<AbsDimension x="0" y="2"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

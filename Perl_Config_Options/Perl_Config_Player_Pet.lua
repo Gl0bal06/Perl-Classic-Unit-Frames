@@ -118,7 +118,7 @@ function Perl_Config_Player_Pet_Set_Values()
 
 	Perl_Config_Player_Pet_Frame_Slider9Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_Player_Pet_Frame_Slider9High:SetText(PERL_LOCALIZED_CONFIG_BIG);
-	Perl_Config_Player_Pet_Frame_Slider9:SetValue(floor(vartable["scale"]*100+0.5));
+	Perl_Config_Player_Pet_Frame_Slider9:SetValue(floor(vartable["targetscale"]*100+0.5));
 
 	if (floor(vartable["targetscale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
 		Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(1);

@@ -147,6 +147,18 @@ function Perl_Config_Player_Set_Values()
 		Perl_Config_Player_Frame_CheckButton26:SetChecked(nil);
 	end
 
+	if (vartable["fivesecondrule"] == 1) then
+		Perl_Config_Player_Frame_CheckButton27:SetChecked(1);
+	else
+		Perl_Config_Player_Frame_CheckButton27:SetChecked(nil);
+	end
+
+	if (vartable["totemtimers"] == 1) then
+		Perl_Config_Player_Frame_CheckButton28:SetChecked(1);
+	else
+		Perl_Config_Player_Frame_CheckButton28:SetChecked(nil);
+	end
+
 	Perl_Config_Player_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_Player_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Player_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -318,6 +330,22 @@ function Perl_Config_Player_Show_Energy_Ticker_Update()
 		Perl_Player_Set_Show_Energy_Ticker(1);
 	else
 		Perl_Player_Set_Show_Energy_Ticker(0);
+	end
+end
+
+function Perl_Config_Player_Show_Five_second_Rule_Update()
+	if (Perl_Config_Player_Frame_CheckButton27:GetChecked() == 1) then
+		Perl_Player_Set_Show_Five_second_Rule(1);
+	else
+		Perl_Player_Set_Show_Five_second_Rule(0);
+	end
+end
+
+function Perl_Config_Player_Show_Totem_Timers_Update()
+	if (Perl_Config_Player_Frame_CheckButton28:GetChecked() == 1) then
+		Perl_Player_Set_Show_Totem_Timers(1);
+	else
+		Perl_Player_Set_Show_Totem_Timers(0);
 	end
 end
 

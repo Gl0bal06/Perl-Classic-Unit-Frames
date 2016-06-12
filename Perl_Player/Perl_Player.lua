@@ -9,7 +9,7 @@ local locked = 0;		-- unlocked by default
 local xpbarstate = 1;		-- show default xp bar by default
 local compactmode = 0;		-- compact mode is disabled by default
 local showraidgroup = 1;	-- show the raid group number by default when in raids
-local scale = 1;		-- default scale
+local scale = 0.9;		-- default scale
 local healermode = 0;		-- nurfed unit frame style
 local transparency = 1;		-- transparency for frames
 local showportrait = 0;		-- portrait is hidden by default
@@ -26,6 +26,8 @@ local showpvpicon = 1;		-- show the pvp icon
 local showbarvalues = 0;	-- healer mode will have the bar values hidden by default
 local showraidgroupinname = 0;	-- raid number is not shown in the name by default
 local showenergyticker = 0;	-- energy ticker is off by default
+local fivesecondrule = 0;	-- five second rule is off by default
+local totemtimers = 1;		-- default for totem timers is on by default
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -47,6 +49,8 @@ local Perl_Player_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 local playerhealth, playerhealthmax, playerhealthpercent, playermana, playermanamax, playermanapercent, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, playerpower, englishclass;
 local energylast = 0;
 local energytime = 0;
+local fivesecondrulelastmana = 0;
+local fivesecondruletime = nil;
 
 
 ----------------------
@@ -106,6 +110,8 @@ function Perl_Player_OnLoad()
 	Perl_Player_HealthBarFadeBar:SetFrameLevel(Perl_Player_HealthBar:GetFrameLevel() - 1);
 	Perl_Player_ManaBarFadeBar:SetFrameLevel(Perl_Player_ManaBar:GetFrameLevel() - 1);
 	--Perl_Player_DruidBarFadeBar:SetFrameLevel(Perl_Player_DruidBar:GetFrameLevel() - 1);
+
+	TotemFrame:SetParent(Perl_Player_Frame);
 end
 
 
@@ -132,16 +138,21 @@ Perl_Player_Events.UNIT_MAXHEALTH = Perl_Player_Events.UNIT_HEALTH;
 
 function Perl_Player_Events:UNIT_MANA()
 	if (arg1 == "player") then
-		Perl_Player_Update_Mana();		-- Update energy/mana/rage values
+		Perl_Player_Update_Mana();		-- Update mana values
 	end
 end
-Perl_Player_Events.UNIT_MAXMANA = Perl_Player_Events.UNIT_MANA;
-Perl_Player_Events.UNIT_RAGE = Perl_Player_Events.UNIT_MANA;
-Perl_Player_Events.UNIT_MAXRAGE = Perl_Player_Events.UNIT_MANA;
+
+function Perl_Player_Events:UNIT_MAXMANA()
+	if (arg1 == "player") then
+		Perl_Player_Update_Mana();		-- Update mana/rage values
+	end
+end
+Perl_Player_Events.UNIT_RAGE = Perl_Player_Events.UNIT_MAXMANA;
+Perl_Player_Events.UNIT_MAXRAGE = Perl_Player_Events.UNIT_MAXMANA;
 
 function Perl_Player_Events:UNIT_ENERGY()
 	if (arg1 == "player") then
-		Perl_Player_Update_Mana();		-- Update energy/mana/rage values
+		Perl_Player_Update_Mana();		-- Update energy values
 
 		local e = UnitMana("player");
 		if (e == energylast + 20) then
@@ -214,6 +225,7 @@ end
 
 function Perl_Player_Events:PARTY_LEADER_CHANGED()
 	Perl_Player_Update_Leader();			-- Are we the party leader?
+	Perl_Player_Update_Loot_Method();
 end
 Perl_Player_Events.PARTY_MEMBERS_CHANGED = Perl_Player_Events.PARTY_LEADER_CHANGED;
 
@@ -292,15 +304,15 @@ function Perl_Player_IFrameManager()
 	function iface:getBorder(frame)
 		local bottom, left, right, top;
 		if (xpbarstate == 3) then
-			bottom = 38;
+			bottom = 41;
 		else
-			bottom = 50;
+			bottom = 53;
 		end
 		if (showdruidbar == 1 and UnitClass("player") == PERL_LOCALIZED_DRUID) then
 			bottom = bottom + 12;
 		end
 		if (showraidgroup == 1) then
-			top = 20;
+			top = 22;
 		else
 			top = 0;
 		end
@@ -311,11 +323,11 @@ function Perl_Player_IFrameManager()
 				if (shortbars == 0) then
 					right = 0;
 				else
-					right = -35;
+					right = -37;
 				end
 			else
 				if (shortbars == 0) then
-					right = 35;
+					right = 37;
 				else
 					right = 0;
 				end
@@ -324,7 +336,7 @@ function Perl_Player_IFrameManager()
 		if (showportrait == 0) then
 			left = 0;
 		else
-			left = 55;
+			left = 62;
 		end
 		if (IFrameManagerLayout) then			-- this isn't in the old version
 			return right, top, bottom, left;	-- new
@@ -611,6 +623,14 @@ function Perl_Player_Update_Mana()
 			Perl_Player_DruidBar:SetValue(0);
 		end
 	end
+
+	if (UnitPowerType("player") == 0 and fivesecondrule == 1) then
+		if (playermana < fivesecondrulelastmana) then
+			fivesecondruletime = GetTime();
+			Perl_Player_FiveSecondRule:Show();
+		end
+		fivesecondrulelastmana = playermana
+	end
 end
 
 function Perl_Player_Update_DruidBar(arg1)
@@ -714,6 +734,9 @@ function Perl_Player_Update_Mana_Bar()
 		Perl_Player_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 	end
+
+	Perl_Player_FiveSecondRule:Hide();	-- reset the five second rule ticker
+	fivesecondrulelastmana = 0;
 end
 
 function Perl_Player_Update_Experience()
@@ -842,12 +865,16 @@ function Perl_Player_Update_Raid_Group_Number()
 			Perl_ArcaneBar_player.unitname = Perl_Player_NameBarText:GetText();
 		end
 		if (showraidgroup == 0) then
+			if (numRaidMembers == 0) then
+				Perl_Player_MasterIcon:Hide();
+			end
 			return;
 		end
 	end
 
 	if (numRaidMembers == 0) then
 		Perl_Player_NameBarText:SetText(UnitName("player"));
+		Perl_Player_MasterIcon:Hide();
 		if (Perl_ArcaneBar_Frame_Loaded_Frame) then	-- ArcaneBar Support
 			Perl_ArcaneBar_player.unitname = Perl_Player_NameBarText:GetText();
 		end
@@ -1023,6 +1050,15 @@ function Perl_Player_EnergyTicker_OnUpdate()
 	local remainder = mod((GetTime() - energytime), 2);
 	Perl_Player_EnergyTicker:SetValue(remainder);
 	Perl_Player_EnergyTickerSpark:SetPoint("CENTER", Perl_Player_EnergyTicker, "LEFT", Perl_Player_EnergyTicker:GetWidth() * (remainder / 2), 0);
+end
+
+function Perl_Player_FiveSecondRule_OnUpdate(self, elapsed)
+	local bartime = GetTime() - fivesecondruletime;
+	Perl_Player_FiveSecondRuleSpark:SetPoint("CENTER", self, "LEFT", self:GetWidth() * (bartime / 5), 0);
+	if (bartime > 5) then
+		self:Hide();
+		fivesecondrulelastmana = 0;
+	end
 end
 
 
@@ -1206,9 +1242,10 @@ function Perl_Player_Frame_Style()
 		end
 
 		if (compactmode == 1 and shortbars == 1) then
-			Perl_Player_NameFrame:SetWidth(165);
-			Perl_Player_Name:SetWidth(165);
-			Perl_Player_Name_CastClickOverlay:SetWidth(165);
+			Perl_Player_Frame:SetWidth(167);
+			Perl_Player_NameFrame:SetWidth(167);
+			Perl_Player_Name:SetWidth(167);
+			Perl_Player_Name_CastClickOverlay:SetWidth(167);
 
 			Perl_Player_HealthBar:SetWidth(115);
 			Perl_Player_HealthBarFadeBar:SetWidth(115);
@@ -1223,9 +1260,10 @@ function Perl_Player_Frame_Style()
 			Perl_Player_DruidBarBG:SetWidth(115);
 			Perl_Player_DruidBar_CastClickOverlay:SetWidth(115);
 		else
-			Perl_Player_NameFrame:SetWidth(200);
-			Perl_Player_Name:SetWidth(200);
-			Perl_Player_Name_CastClickOverlay:SetWidth(200);
+			Perl_Player_Frame:SetWidth(202);
+			Perl_Player_NameFrame:SetWidth(202);
+			Perl_Player_Name:SetWidth(202);
+			Perl_Player_Name_CastClickOverlay:SetWidth(202);
 
 			Perl_Player_HealthBar:SetWidth(150);
 			Perl_Player_HealthBarFadeBar:SetWidth(150);
@@ -1243,8 +1281,8 @@ function Perl_Player_Frame_Style()
 
 		if (hideclasslevelframe == 1) then
 			Perl_Player_LevelFrame:Hide();
-			Perl_Player_StatsFrame:SetPoint("TOPLEFT", Perl_Player_NameFrame, "BOTTOMLEFT", 0, 5);
-			Perl_Player_StatsFrame:SetWidth(Perl_Player_StatsFrame:GetWidth() + 30);
+			Perl_Player_StatsFrame:SetPoint("TOPLEFT", Perl_Player_NameFrame, "BOTTOMLEFT", 0, 2);
+			Perl_Player_StatsFrame:SetWidth(Perl_Player_StatsFrame:GetWidth() + 32);
 			Perl_Player_StatsFrame_CastClickOverlay:SetWidth(Perl_Player_StatsFrame_CastClickOverlay:GetWidth() + 30);
 			
 			Perl_Player_HealthBar:SetWidth(Perl_Player_HealthBar:GetWidth() + 30);
@@ -1268,7 +1306,7 @@ function Perl_Player_Frame_Style()
 			Perl_Player_XPBar_CastClickOverlay:SetWidth(Perl_Player_XPBar_CastClickOverlay:GetWidth() + 30);
 		else
 			Perl_Player_LevelFrame:Show();
-			Perl_Player_StatsFrame:SetPoint("TOPLEFT", Perl_Player_NameFrame, "BOTTOMLEFT", 30, 5);
+			Perl_Player_StatsFrame:SetPoint("TOPLEFT", Perl_Player_NameFrame, "BOTTOMLEFT", 32, 2);
 		end
 		-- Begin: Are we using compact mode?
 
@@ -1347,7 +1385,21 @@ function Perl_Player_Frame_Style()
 		Perl_Player_Update_Health();
 		Perl_Player_Update_Mana();
 
+		-- Hi-jack the Blizzard totem frame
+		if (totemtimers == 1) then
+			TotemFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 0);
+		else
+			TotemFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+		end
+
 		Perl_Player_EnergyTicker_Display();	-- Update the energy ticker
+
+		-- Update the five second rule
+		Perl_Player_FiveSecondRule:SetWidth(Perl_Player_ManaBar:GetWidth());
+
+		Perl_Player_NameBarText:SetWidth(Perl_Player_Name:GetWidth() - 40);
+		Perl_Player_NameBarText:SetHeight(Perl_Player_Name:GetHeight() - 10);
+		Perl_Player_NameBarText:SetNonSpaceWrap(false);
 
 		if (Initialized) then
 			if (Perl_ArcaneBar_Frame_Loaded_Frame) then
@@ -1507,6 +1559,18 @@ function Perl_Player_Set_Show_Energy_Ticker(newvalue)
 	Perl_Player_Frame_Style();
 end
 
+function Perl_Player_Set_Show_Five_second_Rule(newvalue)
+	fivesecondrule = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
+end
+
+function Perl_Player_Set_Show_Totem_Timers(newvalue)
+	totemtimers = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
+end
+
 function Perl_Player_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);							-- convert the user input to a wow acceptable value
@@ -1564,6 +1628,8 @@ function Perl_Player_GetVars(name, updateflag)
 	showbarvalues = Perl_Player_Config[name]["ShowBarValues"];
 	showraidgroupinname = Perl_Player_Config[name]["ShowRaidGroupInName"];
 	showenergyticker = Perl_Player_Config[name]["ShowEnergyTicker"];
+	fivesecondrule = Perl_Player_Config[name]["FiveSecondRule"];
+	totemtimers = Perl_Player_Config[name]["TotemTimers"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1578,7 +1644,7 @@ function Perl_Player_GetVars(name, updateflag)
 		showraidgroup = 1;
 	end
 	if (scale == nil) then
-		scale = 1;
+		scale = 0.9;
 	end
 	if (healermode == nil) then
 		healermode = 0;
@@ -1628,6 +1694,12 @@ function Perl_Player_GetVars(name, updateflag)
 	if (showenergyticker == nil) then
 		showenergyticker = 0;
 	end
+	if (fivesecondrule == nil) then
+		fivesecondrule = 0;
+	end
+	if (totemtimers == nil) then
+		totemtimers = 1;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1662,6 +1734,8 @@ function Perl_Player_GetVars(name, updateflag)
 		["showbarvalues"] = showbarvalues,
 		["showraidgroupinname"] = showraidgroupinname,
 		["showenergyticker"] = showenergyticker,
+		["fivesecondrule"] = fivesecondrule,
+		["totemtimers"] = totemtimers,
 	}
 	return vars;
 end
@@ -1775,6 +1849,16 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				showenergyticker = nil;
 			end
+			if (vartable["Global Settings"]["FiveSecondRule"] ~= nil) then
+				fivesecondrule = vartable["Global Settings"]["FiveSecondRule"];
+			else
+				fivesecondrule = nil;
+			end
+			if (vartable["Global Settings"]["TotemTimers"] ~= nil) then
+				totemtimers = vartable["Global Settings"]["TotemTimers"];
+			else
+				totemtimers = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1791,7 +1875,7 @@ function Perl_Player_UpdateVars(vartable)
 			showraidgroup = 1;
 		end
 		if (scale == nil) then
-			scale = 1;
+			scale = 0.9;
 		end
 		if (healermode == nil) then
 			healermode = 0;
@@ -1841,6 +1925,12 @@ function Perl_Player_UpdateVars(vartable)
 		if (showenergyticker == nil) then
 			showenergyticker = 0;
 		end
+		if (fivesecondrule == nil) then
+			fivesecondrule = 0;
+		end
+		if (totemtimers == nil) then
+			totemtimers = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Update_Once();
@@ -1882,6 +1972,8 @@ function Perl_Player_UpdateVars(vartable)
 		["ShowBarValues"] = showbarvalues,
 		["ShowRaidGroupInName"] = showraidgroupinname,
 		["ShowEnergyTicker"] = showenergyticker,
+		["FiveSecondRule"] = fivesecondrule,
+		["TotemTimers"] = totemtimers,
 	};
 end
 
