@@ -85,8 +85,8 @@ function Perl_Player_Pet_OnEvent()
 	local func = Perl_Player_Pet_Events[event];
 	if (func) then
 		func();
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Player Pet: Report the following event error to the author: "..event);
+--	else
+--		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Player Pet: Report the following event error to the author: "..event);
 	end
 end
 

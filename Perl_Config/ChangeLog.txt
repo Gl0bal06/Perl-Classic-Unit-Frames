@@ -1,3 +1,6 @@
+0.81d - November 3, 2006
+ - All: Removed event error messages caused by other mods tampering with my events
+
 0.81c - November 2, 2006
  - Config: Removed some unused translation strings
  - Config: Updated Korean translations (Thanks gygabyte)

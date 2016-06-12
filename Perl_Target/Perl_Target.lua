@@ -122,8 +122,8 @@ function Perl_Target_OnEvent()
 	local func = Perl_Target_Events[event];
 	if (func) then
 		func();
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Target: Report the following event error to the author: "..event);
+--	else
+--		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Target: Report the following event error to the author: "..event);
 	end
 end
 

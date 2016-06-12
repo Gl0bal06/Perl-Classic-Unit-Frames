@@ -111,48 +111,14 @@ end
 
 
 -------------------
--- TEST Event Handler (DELETE LATER) --
--------------------
---/script Perl_IfLoopTest("UNIT_MANA")
---function Perl_IfLoopTest(event)
---	DEFAULT_CHAT_FRAME:AddMessage("IF processing time START = "..GetTime());
---	for i=1,10000000 do
---		if (event == "UNIT_MANA") then
---			if (arg1 == "player") then
---				--Perl_Player_Update_Mana()
---			end
---		end
---	end
---	DEFAULT_CHAT_FRAME:AddMessage("IF processing time END = "..GetTime());
---end
-
---/script Perl_TableLoopTest("UNIT_MANA")
---local perl_func;
---function Perl_TableLoopTest(event)
---	local test = GetTime()
---	DEFAULT_CHAT_FRAME:AddMessage("TABLE processing time START = "..GetTime());
---	for i=1,10000000 do
---		local func = Perl_Player_Test_Events[event]
---		--perl_func = Perl_Player_Test_Events[event]
---		if (func) then
---			--func()
---		end
---	end
---	DEFAULT_CHAT_FRAME:AddMessage("TABLE processing time END = "..GetTime());
---	test = GetTime()-test
---	DEFAULT_CHAT_FRAME:AddMessage(test);
---end
-
-
--------------------
 -- Event Handler --
 -------------------
 function Perl_Player_OnEvent()
 	local func = Perl_Player_Events[event];
 	if (func) then
 		func();
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Player: Report the following event error to the author: "..event);
+--	else
+--		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - Player: Report the following event error to the author: "..event);
 	end
 end
 

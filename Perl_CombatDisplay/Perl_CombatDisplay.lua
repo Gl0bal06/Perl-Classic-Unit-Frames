@@ -103,8 +103,8 @@ function Perl_CombatDisplay_OnEvent()
 	local func = Perl_CombatDisplay_Events[event];
 	if (func) then
 		func();
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - CombatDisplay: Report the following event error to the author: "..event);
+--	else
+--		DEFAULT_CHAT_FRAME:AddMessage("Perl Classic - CombatDisplay: Report the following event error to the author: "..event);
 	end
 end
 
