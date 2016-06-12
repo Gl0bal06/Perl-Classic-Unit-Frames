@@ -58,13 +58,13 @@ local energytime = 0;
 ----------------------
 function Perl_CombatDisplay_OnLoad(self)
 	-- Events
-	self:RegisterEvent("PLAYER_COMBO_POINTS");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
 	self:RegisterEvent("PLAYER_TARGET_CHANGED");
 	self:RegisterEvent("UNIT_AURA");
+	self:RegisterEvent("UNIT_COMBO_POINTS");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
 	self:RegisterEvent("UNIT_ENERGY");
 	self:RegisterEvent("UNIT_FOCUS");
@@ -221,8 +221,10 @@ function Perl_CombatDisplay_Events:PLAYER_TARGET_CHANGED()
 	Perl_CombatDisplay_Update_Combo_Points();
 end
 
-function Perl_CombatDisplay_Events:PLAYER_COMBO_POINTS()
-	Perl_CombatDisplay_Update_Combo_Points();
+function Perl_CombatDisplay_Events:UNIT_COMBO_POINTS()
+	if (arg1 == "player") then
+		Perl_CombatDisplay_Update_Combo_Points();
+	end
 end
 
 function Perl_CombatDisplay_Events:PLAYER_REGEN_ENABLED()

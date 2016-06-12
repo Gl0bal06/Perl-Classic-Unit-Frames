@@ -1,3 +1,6 @@
+3.01 Beta 7 - August 25, 2008
+ - CombatDisplay/Target: Combo points now correctly display
+
 3.01 Beta 6 - August 23, 2008
  - All: Added siege weapon support to the right click menus
  - Focus: Added the Blizzard Focus and Target of Focus frames to the disable list

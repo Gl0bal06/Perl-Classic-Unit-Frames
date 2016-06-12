@@ -63,7 +63,6 @@ function Perl_Target_OnLoad(self)
 	self:RegisterEvent("PARTY_MEMBER_DISABLE");
 	self:RegisterEvent("PARTY_MEMBER_ENABLE");
 	self:RegisterEvent("PARTY_MEMBERS_CHANGED");
-	self:RegisterEvent("PLAYER_COMBO_POINTS");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
 	self:RegisterEvent("PLAYER_TARGET_CHANGED");
@@ -71,6 +70,7 @@ function Perl_Target_OnLoad(self)
 	self:RegisterEvent("RAID_TARGET_UPDATE");
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_COMBAT");
+	self:RegisterEvent("UNIT_COMBO_POINTS");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
 	self:RegisterEvent("UNIT_DYNAMIC_FLAGS");
 	self:RegisterEvent("UNIT_ENERGY");
@@ -217,8 +217,10 @@ function Perl_Target_Events:UNIT_PORTRAIT_UPDATE()
 	end
 end
 
-function Perl_Target_Events:PLAYER_COMBO_POINTS()
-	Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
+function Perl_Target_Events:UNIT_COMBO_POINTS()
+	if (arg1 == "player") then
+		Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
+	end
 end
 
 function Perl_Target_Events:RAID_TARGET_UPDATE()
