@@ -149,20 +149,20 @@ function Perl_Config_Get_Localization()
 		perl_localized_notspecified = "Non indiqu\195\169";
 	end
 
-	if (GetLocale() == "krKR") then
-		perl_localized_druid = "&#46300;&#47336;&#51060;&#46300;";
-		perl_localized_hunter = "&#49324;&#45285;&#44988;";
-		perl_localized_mage = "&#47560;&#48277;&#49324;";
-		perl_localized_paladin = "&#49457;&#44592;&#49324;";
-		perl_localized_priest = "&#49324;&#51228;";
-		perl_localized_rogue = "&#46020;&#51201;";
-		perl_localized_shaman = "&#51452;&#49696;&#49324;";
-		perl_localized_warlock = "&#55121;&#47560;&#48277;&#49324;";
-		perl_localized_warrior = "&#51204;&#49324;";
+	if (GetLocale() == "koKR") then
+		perl_localized_druid = "드루이드";
+		perl_localized_hunter = "사냥꾼";
+		perl_localized_mage = "마법사";
+		perl_localized_paladin = "성기사";
+		perl_localized_priest = "사제";
+		perl_localized_rogue = "도적";
+		perl_localized_shaman = "주술사";
+		perl_localized_warlock = "흑마법사";
+		perl_localized_warrior = "전사";
 
-		perl_localized_civilian = "&#48124;&#44036;&#51064;";
-		perl_localized_creature = "&#50556;&#49688;";
-		perl_localized_notspecified = "&#47924;&#50631;&#51064;&#44032;";
+		perl_localized_civilian = "민간인";
+		perl_localized_creature = "동물";
+		perl_localized_notspecified = "무엇인가";
 	end
 
 	if (GetLocale() == "zhCN") then
@@ -744,8 +744,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.40",
-			releaseDate = "January 28, 2006",
+			version = "v0.41",
+			releaseDate = "February 5, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
