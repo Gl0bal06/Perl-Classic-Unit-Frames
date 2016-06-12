@@ -5,33 +5,33 @@ Perl_Party_Target_Config = {};
 local Perl_Party_Target_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Party_Target_GetVars)
-local locked = 0;		-- unlocked by default
-local scale = 0.9;		-- default scale for party target
-local focusscale = 0.9;		-- default scale for focus target
-local transparency = 1;		-- transparency for frames
-local hidepowerbars = 0;	-- Power bars are shown by default
-local classcolorednames = 0;	-- names are colored based on pvp status by default
-local enabled = 1;		-- mod is shown by default
-local partyhiddeninraid = 0;	-- party target is not hidden in raids by default
-local enabledfocus = 1;		-- focus target is on by default
-local focushiddeninraid = 0;	-- focus target is not hidden in raids by default
+local locked = 0;						-- unlocked by default
+local scale = 1.0;						-- default scale for party target
+local focusscale = 1.0;					-- default scale for focus target
+local transparency = 1;					-- transparency for frames
+local hidepowerbars = 0;				-- Power bars are shown by default
+local classcolorednames = 0;			-- names are colored based on pvp status by default
+local enabled = 1;						-- mod is shown by default
+local partyhiddeninraid = 0;			-- party target is not hidden in raids by default
+local enabledfocus = 1;					-- focus target is on by default
+local focushiddeninraid = 0;			-- focus target is not hidden in raids by default
 
 
 -- Default Local Variables
-local Initialized = nil;			-- waiting to be initialized
-local Perl_Party_Target_Time_Update_Rate = 0.2;	-- the update interval
-local mouseoverhealthflag = 0;			-- is the mouse over the health bar?
-local mouseovermanaflag = 0;			-- is the mouse over the mana bar?
-local Perl_Party_Target_One_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Two_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Three_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Four_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Five_HealthBar_Fade_Color = 1;		-- the color fading interval
+local Initialized = nil;				-- waiting to be initialized
+local Perl_Party_Target_Time_Update_Rate = 0.2;			-- the update interval
+local mouseoverhealthflag = 0;							-- is the mouse over the health bar?
+local mouseovermanaflag = 0;							-- is the mouse over the mana bar?
+local Perl_Party_Target_One_HealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Party_Target_Two_HealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Party_Target_Three_HealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Party_Target_Four_HealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Party_Target_Five_HealthBar_Fade_Color = 1;	-- the color fading interval
 local Perl_Party_Target_One_ManaBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Party_Target_Two_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Three_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Four_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Party_Target_Five_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Target_Three_ManaBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Party_Target_Four_ManaBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Party_Target_Five_ManaBar_Fade_Color = 1;	-- the color fading interval
 
 -- Local variables to save memory
 local r, g, b, currentunit, partytargethealth, partytargethealthmax, partytargethealthpercent, partytargetmana, partytargetmanamax, partytargetpower, englishclass, raidpartytargetindex;
@@ -101,8 +101,8 @@ Perl_Party_Target_Events.PLAYER_ENTERING_WORLD = Perl_Party_Target_Events.PLAYER
 function Perl_Party_Target_Initialize()
 	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
-		Perl_Party_Target_Set_Scale_Actual();		-- Set the frame scale
-		Perl_Party_Target_Set_Transparency();		-- Set the frame transparency
+		Perl_Party_Target_Set_Scale_Actual();	-- Set the frame scale
+		Perl_Party_Target_Set_Transparency();	-- Set the frame transparency
 		Perl_Party_Target_Check_Hidden();		-- Hide the frames if in a raid
 		return;
 	end
@@ -115,7 +115,7 @@ function Perl_Party_Target_Initialize()
 	end
 
 	-- Major config options.
-	Perl_Party_Target_Initialize_Frame_Color();		-- Color the frame borders
+	Perl_Party_Target_Initialize_Frame_Color();	-- Color the frame borders
 	Perl_Party_Target_Frame_Style();			-- Initialize the mod and set any frame settings
 
 	-- Set the ID of the frame
@@ -191,19 +191,19 @@ function Perl_Party_Target_Work(self)
 	-- End: Set the name
 
 	-- Begin: Set the name text color
-	if (UnitPlayerControlled(self.unit)) then						-- is it a player
-		if (UnitCanAttack(self.unit, "player")) then					-- are we in an enemy controlled zone
+	if (UnitPlayerControlled(self.unit)) then					-- is it a player
+		if (UnitCanAttack(self.unit, "player")) then			-- are we in an enemy controlled zone
 			-- Hostile players are red
-			if (not UnitCanAttack("player", self.unit)) then			-- enemy is not pvp enabled
+			if (not UnitCanAttack("player", self.unit)) then	-- enemy is not pvp enabled
 				r = 0.5;
 				g = 0.5;
 				b = 1.0;
-			else									-- enemy is pvp enabled
+			else												-- enemy is pvp enabled
 				r = 1.0;
 				g = 0.0;
 				b = 0.0;
 			end
-		elseif (UnitCanAttack("player", self.unit)) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+		elseif (UnitCanAttack("player", self.unit)) then		-- enemy in a zone controlled by friendlies or when we're a ghost
 			-- Players we can attack but which are not hostile are yellow
 			r = 1.0;
 			g = 1.0;
@@ -213,7 +213,7 @@ function Perl_Party_Target_Work(self)
 			r = 0.0;
 			g = 1.0;
 			b = 0.0;
-		else										-- friendly non pvp enabled character
+		else													-- friendly non pvp enabled character
 			-- All other players are blue (the usual state on the "blue" server)
 			r = 0.5;
 			g = 0.5;
@@ -221,7 +221,7 @@ function Perl_Party_Target_Work(self)
 		end
 		self.nameText:SetTextColor(r, g, b);
 	elseif (UnitIsTapped(self.unit) and not UnitIsTappedByPlayer(self.unit)) then
-		self.nameText:SetTextColor(0.5,0.5,0.5);					-- not our tap
+		self.nameText:SetTextColor(0.5,0.5,0.5);				-- not our tap
 	else
 		if (UnitIsVisible(self.unit)) then
 			reaction = UnitReaction(self.unit, "player");
@@ -234,18 +234,18 @@ function Perl_Party_Target_Work(self)
 				self.nameText:SetTextColor(0.5, 0.5, 1.0);
 			end
 		else
-			if (UnitCanAttack(self.unit, "player")) then					-- are we in an enemy controlled zone
+			if (UnitCanAttack(self.unit, "player")) then		-- are we in an enemy controlled zone
 				-- Hostile players are red
-				if (not UnitCanAttack("player", self.unit)) then			-- enemy is not pvp enabled
+				if (not UnitCanAttack("player", self.unit)) then	-- enemy is not pvp enabled
 					r = 0.5;
 					g = 0.5;
 					b = 1.0;
-				else									-- enemy is pvp enabled
+				else											-- enemy is pvp enabled
 					r = 1.0;
 					g = 0.0;
 					b = 0.0;
 				end
-			elseif (UnitCanAttack("player", self.unit)) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+			elseif (UnitCanAttack("player", self.unit)) then	-- enemy in a zone controlled by friendlies or when we're a ghost
 				-- Players we can attack but which are not hostile are yellow
 				r = 1.0;
 				g = 1.0;
@@ -255,7 +255,7 @@ function Perl_Party_Target_Work(self)
 				r = 0.0;
 				g = 1.0;
 				b = 0.0;
-			else										-- friendly non pvp enabled character
+			else												-- friendly non pvp enabled character
 				-- All other players are blue (the usual state on the "blue" server)
 				r = 0.5;
 				g = 0.5;
@@ -278,7 +278,7 @@ function Perl_Party_Target_Work(self)
 	partytargethealthmax = UnitHealthMax(self.unit);
 	partytargethealthpercent = floor(partytargethealth/partytargethealthmax*100+0.5);
 
-	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then				-- This prevents negative health
+	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then	-- This prevents negative health
 		partytargethealth = 0;
 		partytargethealthpercent = 0;
 	end
@@ -362,7 +362,7 @@ function Perl_Party_Target_Work(self)
 		partytargetmana = UnitPower(self.unit);
 		partytargetmanamax = UnitPowerMax(self.unit);
 
-		if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then				-- This prevents negative mana
+		if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then	-- This prevents negative mana
 			partytargetmana = 0;
 		end
 
@@ -400,7 +400,7 @@ function Perl_Party_Target_HealthShow(self)
 	partytargethealth = UnitHealth(self.unit);
 	partytargethealthmax = UnitHealthMax(self.unit);
 
-	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then				-- This prevents negative health
+	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then	-- This prevents negative health
 		partytargethealth = 0;
 		partytargethealthpercent = 0;
 	end
@@ -418,7 +418,7 @@ function Perl_Party_Target_ManaShow(self)
 	partytargetmana = UnitPower(self.unit);
 	partytargetmanamax = UnitPowerMax(self.unit);
 
-	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then						-- This prevents negative mana
+	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then	-- This prevents negative mana
 		partytargetmana = 0;
 	end
 
@@ -449,8 +449,8 @@ function Perl_Party_Target_Update_Buffs(self)
 	local debuffType;
 	local curableDebuffFound = 0;
 
-	for debuffnum=1,40 do											-- Start main debuff loop
-		_, _, _, _, debuffType, _, _ = UnitDebuff(self.unit, debuffnum, 1);		-- Get the texture and debuff stacking information if any
+	for debuffnum=1,40 do													-- Start main debuff loop
+		_, _, _, _, debuffType, _, _ = UnitDebuff(self.unit, debuffnum, 1);	-- Get the texture and debuff stacking information if any
 		if (debuffType) then
 			if (PCUF_COLORFRAMEDEBUFF == 1) then
 				if (curableDebuffFound == 0) then
@@ -795,7 +795,7 @@ end
 -- GUI Config Functions --
 --------------------------
 function Perl_Party_Target_Allign()
-	Perl_Party_Target1:SetUserPlaced(1);		-- This makes WoW remember the changes if the frames have never been moved before
+	Perl_Party_Target1:SetUserPlaced(1);	-- This makes WoW remember the changes if the frames have never been moved before
 	Perl_Party_Target2:SetUserPlaced(1);
 	Perl_Party_Target3:SetUserPlaced(1);
 	Perl_Party_Target4:SetUserPlaced(1);
@@ -873,7 +873,7 @@ function Perl_Party_Target_Set_Scale_Actual()
 	if (InCombatLockdown()) then
 		Perl_Config_Queue_Add(Perl_Party_Target_Set_Scale_Actual);
 	else
-		local unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+		local unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;			-- run it through the scaling formula introduced in 1.9
 		local unsavedscaletwo = 1 - UIParent:GetEffectiveScale() + focusscale;	-- run it through the scaling formula introduced in 1.9
 		Perl_Party_Target1:SetScale(unsavedscale);
 		Perl_Party_Target2:SetScale(unsavedscale);
@@ -919,10 +919,10 @@ function Perl_Party_Target_GetVars(name, updateflag)
 		locked = 0;
 	end
 	if (scale == nil) then
-		scale = 0.9;
+		scale = 1.0;
 	end
 	if (focusscale == nil) then
-		focusscale = 0.9;
+		focusscale = 1.0;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -1033,10 +1033,10 @@ function Perl_Party_Target_UpdateVars(vartable)
 			locked = 0;
 		end
 		if (scale == nil) then
-			scale = 0.9;
+			scale = 1.0;
 		end
 		if (focusscale == nil) then
-			focusscale = 0.9;
+			focusscale = 1.0;
 		end
 		if (transparency == nil) then
 			transparency = 1;
@@ -1138,7 +1138,7 @@ function Perl_Party_Target1DropDown_Initialize()
 		id = UnitInRaid(currentunit);
 		if (id) then
 			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id + 1);
+			name = GetRaidRosterInfo(id);
 		elseif (UnitInParty(currentunit)) then
 			menu = "PARTY";
 		else
@@ -1168,7 +1168,7 @@ function Perl_Party_Target2DropDown_Initialize()
 		id = UnitInRaid(currentunit);
 		if (id) then
 			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id + 1);
+			name = GetRaidRosterInfo(id);
 		elseif (UnitInParty(currentunit)) then
 			menu = "PARTY";
 		else
@@ -1199,7 +1199,7 @@ function Perl_Party_Target3DropDown_Initialize()
 		id = UnitInRaid(currentunit);
 		if (id) then
 			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id + 1);
+			name = GetRaidRosterInfo(id);
 		elseif (UnitInParty(currentunit)) then
 			menu = "PARTY";
 		else
@@ -1230,7 +1230,7 @@ function Perl_Party_Target4DropDown_Initialize()
 		id = UnitInRaid(currentunit);
 		if (id) then
 			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id + 1);
+			name = GetRaidRosterInfo(id);
 		elseif (UnitInParty(currentunit)) then
 			menu = "PARTY";
 		else
@@ -1261,7 +1261,7 @@ function Perl_Party_Target5DropDown_Initialize()
 		id = UnitInRaid(currentunit);
 		if (id) then
 			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id + 1);
+			name = GetRaidRosterInfo(id);
 		elseif (UnitInParty(currentunit)) then
 			menu = "PARTY";
 		else

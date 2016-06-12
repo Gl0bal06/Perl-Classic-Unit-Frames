@@ -70,13 +70,13 @@ function Perl_Config_Player_Buff_Hide_Seconds_Update()
 end
 
 function Perl_Config_Player_Buff_Set_Horizontal_Spacing(value)
-	if (Perl_Player_Buff_Script_Frame) then		-- this check is to prevent errors if you aren't using Party
+	if (Perl_Player_Buff_Script_Frame) then	-- this check is to prevent errors if you aren't using Party
 		Perl_Player_Buff_Set_Horizontal_Spacing(value);
 	end
 end
 
 function Perl_Config_Player_Buff_Set_Scale(value)
-	if (Perl_Player_Buff_Script_Frame) then		-- this check is to prevent errors if you aren't using Player_Buff
+	if (Perl_Player_Buff_Script_Frame) then	-- this check is to prevent errors if you aren't using Player_Buff
 		if (value == nil) then
 			value = floor(UIParent:GetScale()*100+0.5);
 			Perl_Config_Player_Buff_Frame_Slider1Text:SetText(value);

@@ -36,7 +36,7 @@ local transparency = 1;
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
 local runonce = 0;
-local Perl_ArcaneBar_Colors = {		-- color table
+local Perl_ArcaneBar_Colors = {	-- color table
 	main = {r = 1.0, g = 0.7, b = 0.0},
 	channel = {r = 0.0, g = 1.0, b = 0.0},
 	success = {r = 0.0, g = 1.0, b = 0.0},
@@ -493,7 +493,6 @@ function Perl_ArcaneBar_OnUpdate(self)
 			current_time = 0;
 		end
 
-		--local text = string.sub(math.max(current_time, 0) + 0.001, 1, 4);
 		local text = math.max(current_time, 0) + 0.001, 1, 4;
 		if (text >= 100) then
 			text = string.sub(text, 1, 3);
@@ -868,7 +867,7 @@ end
 
 function Perl_ArcaneBar_Set_Transparency(number)
 	if (number ~= nil) then
-		transparency = (number / 100);		-- convert the user input to a wow acceptable value
+		transparency = (number / 100);	-- convert the user input to a wow acceptable value
 	end
 	Perl_ArcaneBar_UpdateVars();
 end

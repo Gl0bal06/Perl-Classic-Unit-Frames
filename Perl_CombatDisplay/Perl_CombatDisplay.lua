@@ -5,40 +5,40 @@ Perl_CombatDisplay_Config = {};
 local Perl_CombatDisplay_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_CombatDisplay_GetVars)
-local state = 3;			-- hidden unless in combat by default
-local manapersist = 0;		-- mana persist is off by default
-local healthpersist = 0;	-- health persist is off by default
-local locked = 0;			-- unlocked by default
-local scale = 0.9;			-- default scale
-local transparency = 1;		-- transparency for the frame
-local showtarget = 0;		-- target frame is disabled by default
-local showdruidbar = 0;		-- Druid Bar support is enabled by default
-local showpetbars = 0;		-- Pet info is hidden by default
-local rightclickmenu = 0;	-- The ability to open a menu from CombatDisplay is disabled by default
-local displaypercents = 0;	-- percents are off by default
-local showcp = 0;			-- combo points are hidden by default
-local clickthrough = 0;		-- frames are clickable by default
+local state = 3;						-- hidden unless in combat by default
+local manapersist = 0;					-- mana persist is off by default
+local healthpersist = 0;				-- health persist is off by default
+local locked = 0;						-- unlocked by default
+local scale = 1.0;						-- default scale
+local transparency = 1;					-- transparency for the frame
+local showtarget = 0;					-- target frame is disabled by default
+local showdruidbar = 0;					-- Druid Bar support is enabled by default
+local showpetbars = 0;					-- Pet info is hidden by default
+local rightclickmenu = 0;				-- The ability to open a menu from CombatDisplay is disabled by default
+local displaypercents = 0;				-- percents are off by default
+local showcp = 0;						-- combo points are hidden by default
+local clickthrough = 0;					-- frames are clickable by default
 
 -- Default Local Variables
 local InCombat = 0;
 local Initialized = nil;
 local IsAggroed = 0;
-local Perl_CombatDisplay_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
+local Perl_CombatDisplay_ManaBar_Time_Update_Rate = 0.1;		-- the update interval
 local Perl_CombatDisplay_Target_ManaBar_Time_Update_Rate = 0.1;	-- the update interval
-local Perl_CombatDisplay_DruidBar_Time_Update_Rate = 0.2;	-- the update interval
+local Perl_CombatDisplay_DruidBar_Time_Update_Rate = 0.2;		-- the update interval
 local healthfull = 0;
 local manafull = 0;
 
 -- Fade Bar Variables
-local Perl_CombatDisplay_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_CombatDisplay_ManaBar_Fade_Color = 1;		-- the color fading interval
---local Perl_CombatDisplay_DruidBar_Fade_Color = 1;		-- the color fading interval
+local Perl_CombatDisplay_HealthBar_Fade_Color = 1;			-- the color fading interval
+local Perl_CombatDisplay_ManaBar_Fade_Color = 1;			-- the color fading interval
+--local Perl_CombatDisplay_DruidBar_Fade_Color = 1;			-- the color fading interval
 --local Perl_CombatDisplay_DruidBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
-local Perl_CombatDisplay_CPBar_Fade_Color = 1;			-- the color fading interval
+local Perl_CombatDisplay_CPBar_Fade_Color = 1;				-- the color fading interval
 local Perl_CombatDisplay_PetHealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_CombatDisplay_PetManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_CombatDisplay_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_CombatDisplay_Target_ManaBar_Fade_Color = 1;			-- the color fading interval
+local Perl_CombatDisplay_PetManaBar_Fade_Color = 1;			-- the color fading interval
+local Perl_CombatDisplay_Target_HealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_CombatDisplay_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
 
 -- Local variables to save memory
 local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, pethealth, pethealthmax, petmana, petmanamax, targethealth, targethealthmax, targetmana, targetmanamax, targetpowertype, englishclass, playeronupdatemana, targetonupdatemana;
@@ -142,7 +142,7 @@ function Perl_CombatDisplay_Events:UNIT_POWER(arg1)
 				Perl_CombatDisplay_Update_PetMana();
 			end
 		end
-	elseif (powertype == 1 or powertype == 6) then		-- rage or runic power
+	elseif (powertype == 1 or powertype == 6) then	-- rage or runic power
 		if (arg1 == "player") then
 			if (UnitPower("player") == 0) then
 				manafull = 1;
@@ -199,8 +199,8 @@ end
 function Perl_CombatDisplay_Events:PLAYER_REGEN_DISABLED()
 	IsAggroed = 1;
 	if (state == 3) then
-		if (not InCombatLockdown()) then		-- REMOVE THIS CHECK WHEN YOU CAN
-			Perl_CombatDisplay_Frame:Show();				-- Show the player frame if needed
+		if (not InCombatLockdown()) then							-- REMOVE THIS CHECK WHEN YOU CAN
+			Perl_CombatDisplay_Frame:Show();						-- Show the player frame if needed
 			if (showtarget == 1) then
 				RegisterUnitWatch(Perl_CombatDisplay_Target_Frame);	-- Register the target frame to show/hide on its own
 			end
@@ -226,8 +226,8 @@ function Perl_CombatDisplay_Events:UNIT_DISPLAYPOWER(arg1)
 		Perl_CombatDisplay_Target_Update_Mana();
 	elseif (arg1 == "pet") then
 		if (showpetbars == 1) then
-			Perl_CombatDisplay_Update_PetManaBarColor();	-- What type of energy are we using now?
-			Perl_CombatDisplay_Update_PetMana();		-- Update the energy info immediately
+			Perl_CombatDisplay_Update_PetManaBarColor();			-- What type of energy are we using now?
+			Perl_CombatDisplay_Update_PetMana();					-- Update the energy info immediately
 		end
 	end
 end
@@ -279,13 +279,13 @@ Perl_CombatDisplay_Events.PLAYER_ENTERING_WORLD = Perl_CombatDisplay_Events.PLAY
 function Perl_CombatDisplay_Initialize()
 	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
-		Perl_CombatDisplay_UpdateBars();	-- what class are we? display the right color bars
-		Perl_CombatDisplay_Update_Health();	-- make sure we dont display 0/0 on load
-		Perl_CombatDisplay_Update_Mana();	-- make sure we dont display 0/0 on load
-		Perl_CombatDisplay_UpdateDisplay();	-- what mode are we in?
+		Perl_CombatDisplay_UpdateBars();		-- what class are we? display the right color bars
+		Perl_CombatDisplay_Update_Health();		-- make sure we dont display 0/0 on load
+		Perl_CombatDisplay_Update_Mana();		-- make sure we dont display 0/0 on load
+		Perl_CombatDisplay_UpdateDisplay();		-- what mode are we in?
 		Perl_CombatDisplay_Set_Scale_Actual();	-- set the correct scale
 		Perl_CombatDisplay_Set_Transparency();	-- set the transparency
-		Perl_CombatDisplay_CheckForPets();	-- do we have a pet out?
+		Perl_CombatDisplay_CheckForPets();		-- do we have a pet out?
 		Perl_CombatDisplay_Update_Combo_Points();
 		return;
 	end
@@ -301,9 +301,9 @@ function Perl_CombatDisplay_Initialize()
 	Perl_CombatDisplay_Initialize_Frame_Color();
 	Perl_CombatDisplay_Target_Frame:Hide();
 
-	Perl_CombatDisplay_UpdateBars();		-- Display the bars appropriate to your class
-	Perl_CombatDisplay_UpdateDisplay();		-- Show or hide the window based on whats happening
-	Perl_CombatDisplay_CheckForPets();		-- do we have a pet out?
+	Perl_CombatDisplay_UpdateBars();			-- Display the bars appropriate to your class
+	Perl_CombatDisplay_UpdateDisplay();			-- Show or hide the window based on whats happening
+	Perl_CombatDisplay_CheckForPets();			-- do we have a pet out?
 
 	Perl_CombatDisplay_Frame_Style();
 	Perl_CombatDisplay_Buff_UpdateAll("player", Perl_CombatDisplay_ManaFrame);	-- call this so the energy ticker doesn't show up prematurely
@@ -353,13 +353,13 @@ function Perl_CombatDisplay_UpdateDisplay()
 		elseif (healthpersist == 1 and healthfull == 0) then
 			-- Do nothing
 		else
-			if (InCombatLockdown()) then						-- remove this line when zoning issue is fixed
+			if (InCombatLockdown()) then									-- remove this line when zoning issue is fixed
 				Perl_Config_Queue_Add(Perl_CombatDisplay_UpdateDisplay);	-- remove this line when zoning issue is fixed
-			else									-- remove this line when zoning issue is fixed
+			else															-- remove this line when zoning issue is fixed
 				Perl_CombatDisplay_Frame:Hide();
 				UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
 				Perl_CombatDisplay_Target_Frame:Hide();
-			end									-- remove this line when zoning issue is fixed
+			end																-- remove this line when zoning issue is fixed
 			return;
 		end
 		Perl_CombatDisplay_Target_UpdateAll();
@@ -370,7 +370,7 @@ function Perl_CombatDisplay_Update_Health()
 	playerhealth = UnitHealth("player");
 	playerhealthmax = UnitHealthMax("player");
 
-	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative health
+	if (UnitIsDead("player") or UnitIsGhost("player")) then	-- This prevents negative health
 		playerhealth = 0;
 	end
 
@@ -438,7 +438,7 @@ function Perl_CombatDisplay_Update_Mana()
 	playermanamax = UnitPowerMax("player");
 	playerpower = UnitPowerType("player");
 
-	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
+	if (UnitIsDead("player") or UnitIsGhost("player")) then					-- This prevents negative mana
 		playermana = 0;
 	end
 
@@ -482,7 +482,7 @@ function Perl_CombatDisplay_Update_Mana()
 				playerdruidbarmanamax = UnitPowerMax("player", 0);
 				playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
 
-				if (playerdruidbarmanapercent == 100) then		-- This is to ensure the value isn't 1 or 2 mana under max when 100%
+				if (playerdruidbarmanapercent == 100) then					-- This is to ensure the value isn't 1 or 2 mana under max when 100%
 					playerdruidbarmana = playerdruidbarmanamax;
 				end
 
@@ -575,9 +575,9 @@ end
 
 function Perl_CombatDisplay_Update_Combo_Points()
 	if (showcp == 1) then
-		local combopoints = GetComboPoints("vehicle","target");	-- How many Combo Points does the player have in their vehicle?
+		local combopoints = GetComboPoints("vehicle","target");				-- How many Combo Points does the player have in their vehicle?
 		if (combopoints == 0) then
-			combopoints = GetComboPoints("player");		-- We aren't in a vehicle, get regular combo points
+			combopoints = GetComboPoints("player");							-- We aren't in a vehicle, get regular combo points
 		end
 
 		if (PCUF_FADEBARS == 1) then
@@ -609,22 +609,22 @@ function Perl_CombatDisplay_UpdateBars()
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
 		-- Hide CP Bar
 		return;
-	elseif (playerpower == 1) then		-- rage
+	elseif (playerpower == 1) then	-- rage
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
 		-- Hide CP Bar
 		return;
-	elseif (playerpower == 2) then		-- focus
+	elseif (playerpower == 2) then	-- focus
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 		-- Hide CP Bar
 		return;
-	elseif (playerpower == 3) then		-- energy
+	elseif (playerpower == 3) then	-- energy
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 		Perl_CombatDisplay_Update_Combo_Points();	-- Setup CP Bar
 		return;
-	elseif (playerpower == 6) then		-- runic
+	elseif (playerpower == 6) then	-- runic
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
 		-- Hide CP Bar
@@ -649,10 +649,10 @@ end
 
 function Perl_CombatDisplay_Update_PetManaBarColor()
 	-- Set mana bar color
-	if (UnitPowerType("pet") == 0) then			-- mana
+	if (UnitPowerType("pet") == 0) then		-- mana
 		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-	elseif (UnitPowerType("pet") == 2) then			-- focus
+	elseif (UnitPowerType("pet") == 2) then	-- focus
 		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 	end
@@ -662,7 +662,7 @@ function Perl_CombatDisplay_Update_PetHealth()
 	pethealth = UnitHealth("pet");
 	pethealthmax = UnitHealthMax("pet");
 
-	if (UnitIsDead("pet") or UnitIsGhost("pet")) then				-- This prevents negative health
+	if (UnitIsDead("pet") or UnitIsGhost("pet")) then	-- This prevents negative health
 		pethealth = 0;
 	end
 
@@ -729,7 +729,7 @@ function Perl_CombatDisplay_Update_PetMana()
 	petmana = UnitPower("pet");
 	petmanamax = UnitPowerMax("pet");
 
-	if (UnitIsDead("pet") or UnitIsGhost("pet")) then				-- This prevents negative mana
+	if (UnitIsDead("pet") or UnitIsGhost("pet")) then	-- This prevents negative mana
 		petmana = 0;
 	end
 
@@ -781,7 +781,7 @@ function Perl_CombatDisplay_Target_Update_Health()
 	targethealth = UnitHealth("target");
 	targethealthmax = UnitHealthMax("target");
 
-	if (UnitIsDead("target") or UnitIsGhost("target")) then				-- This prevents negative health
+	if (UnitIsDead("target") or UnitIsGhost("target")) then	-- This prevents negative health
 		targethealth = 0;
 	end
 
@@ -854,7 +854,7 @@ function Perl_CombatDisplay_Target_Update_Mana()
 		return;
 	end
 
-	if (UnitIsDead("target") or UnitIsGhost("target")) then				-- This prevents negative mana
+	if (UnitIsDead("target") or UnitIsGhost("target")) then	-- This prevents negative mana
 		targetmana = 0;
 	end
 
@@ -1119,11 +1119,11 @@ function Perl_CombatDisplay_Frame_Style()
 	Perl_CombatDisplay_ManaFrame:SetHeight(42);
 	Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(42);
 
-	if (state == 0) then						-- Always Hidden
+	if (state == 0) then		-- Always Hidden
 		Perl_CombatDisplay_Frame:Hide();
 		UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
 		Perl_CombatDisplay_Target_Frame:Hide();
-	elseif (state == 1) then					-- Always Shown
+	elseif (state == 1) then	-- Always Shown
 		Perl_CombatDisplay_Frame:Show();
 		if (showtarget == 1) then
 			Perl_CombatDisplay_Target_UpdateAll();
@@ -1132,7 +1132,7 @@ function Perl_CombatDisplay_Frame_Style()
 			UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
 			Perl_CombatDisplay_Target_Frame:Hide();
 		end
-	elseif (state == 3) then					-- On Agro
+	elseif (state == 3) then	-- On Agro
 		UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
 		Perl_CombatDisplay_Target_Frame:Hide();
 	end
@@ -1288,7 +1288,7 @@ end
 
 function Perl_CombatDisplay_Set_Scale(number)
 	if (number ~= nil) then
-		scale = (number / 100);					-- convert the user input to a wow acceptable value
+		scale = (number / 100);											-- convert the user input to a wow acceptable value
 	end
 	Perl_CombatDisplay_UpdateVars();
 	Perl_CombatDisplay_Set_Scale_Actual();
@@ -1306,7 +1306,7 @@ end
 
 function Perl_CombatDisplay_Set_Transparency(number)
 	if (number ~= nil) then
-		transparency = (number / 100);				-- convert the user input to a wow acceptable value
+		transparency = (number / 100);									-- convert the user input to a wow acceptable value
 	end
 	Perl_CombatDisplay_Frame:SetAlpha(transparency);
 	Perl_CombatDisplay_Target_Frame:SetAlpha(transparency);
@@ -1349,7 +1349,7 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 		manapersist = 0;
 	end
 	if (scale == nil) then
-		scale = 0.9;
+		scale = 1.0;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -1493,7 +1493,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			manapersist = 0;
 		end
 		if (scale == nil) then
-			scale = 0.9;
+			scale = 1.0;
 		end
 		if (transparency == nil) then
 			transparency = 1;
@@ -1554,8 +1554,8 @@ function Perl_CombatDisplay_Buff_UpdateAll(unit, frame)
 	local debuffType;
 	local curableDebuffFound = 0;
 
-	for debuffnum=1,40 do											-- Start main debuff loop
-		_, _, _, _, debuffType, _, _ = UnitDebuff(unit, debuffnum, 1);		-- Get the texture and debuff stacking information if any
+	for debuffnum=1,40 do												-- Start main debuff loop
+		_, _, _, _, debuffType, _, _ = UnitDebuff(unit, debuffnum, 1);	-- Get the texture and debuff stacking information if any
 		if (PCUF_COLORFRAMEDEBUFF == 1) then
 			if (curableDebuffFound == 0) then
 				if (UnitIsFriend("player", unit)) then
@@ -1633,7 +1633,7 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 			id = UnitInRaid("target");
 			if (id) then
 				menu = "RAID_PLAYER";
-				name = GetRaidRosterInfo(id + 1);
+				name = GetRaidRosterInfo(id);
 			elseif (UnitInParty("target")) then
 				menu = "PARTY";
 			else

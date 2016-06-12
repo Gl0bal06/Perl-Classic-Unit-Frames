@@ -1,7 +1,15 @@
+4.01 Beta 3 - October 4, 2010
+ - All: Updated right click menu code for target related frames
+ - All: Default scale is now 100
+ - All: Code now reads best in Notepad++
+ - Focus: Added vehicle support to the right click menu
+ - Player: Added support for Druid Eclipse Bar
+ - ToT: Target of Target of Target frame is now disabled by default
+
 4.01 Beta 2 - September 27, 2010
  - CombatDisplay: Fade bars option works correctly on power bars with OnUpdate scripts
  - CombatDisplay/Player/Target: Fade bars used with inverted bars work again
- - Pet: Experience bar does not disappear when pet levels up to the same level as the player
+ - Pet: Experience bar correctly disappears when pet levels up to the same level as the player
  - Player: Added support for Paladin Holy Bar
  - Player: Added support for Warlock Shard Bar
  - Player: The combat status icon works again

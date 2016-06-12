@@ -12,7 +12,7 @@ local showclassframe = 1;			-- show the class frame
 local showpvpicon = 1;				-- show the pvp icon
 local numbuffsshown = 20;			-- buff row is 2x10
 local numdebuffsshown = 20;			-- debuff row is 4x10
-local scale = 0.9;					-- default scale
+local scale = 1.0;					-- default scale
 local transparency = 1;				-- transparency for frames
 local buffdebuffscale = 1;			-- default scale for buffs and debuffs
 local showportrait = 0;				-- portrait is hidden by default
@@ -129,7 +129,7 @@ end
 ------------
 function Perl_Target_Events:PLAYER_TARGET_CHANGED()
 	if (UnitExists(Perl_Target_Frame:GetAttribute("unit"))) then
-		Perl_Target_Update_Once();		-- Set the unchanging info for the target
+		Perl_Target_Update_Once();			-- Set the unchanging info for the target
 	end
 end
 Perl_Target_Events.PARTY_MEMBERS_CHANGED = Perl_Target_Events.PLAYER_TARGET_CHANGED;
@@ -151,7 +151,7 @@ Perl_Target_Events.UNIT_MAXHEALTH = Perl_Target_Events.UNIT_HEALTH;
 
 function Perl_Target_Events:UNIT_POWER(arg1)
 	if (arg1 == "target") then
-		Perl_Target_Update_Mana();		-- Update energy/focus/mana/rage/runicpower values
+		Perl_Target_Update_Mana();			-- Update energy/focus/mana/rage/runicpower values
 	end
 end
 Perl_Target_Events.UNIT_MAXPOWER = Perl_Target_Events.UNIT_POWER;
@@ -189,7 +189,7 @@ end
 
 function Perl_Target_Events:UNIT_FACTION()
 	Perl_Target_Update_Text_Color();		-- Is the character PvP flagged?
-	Perl_Target_Update_PvP_Status_Icon();		-- Set pvp status icon
+	Perl_Target_Update_PvP_Status_Icon();	-- Set pvp status icon
 end
 Perl_Target_Events.UNIT_PVP_UPDATE = Perl_Target_Events.UNIT_FACTION;
 
@@ -201,7 +201,7 @@ end
 
 function Perl_Target_Events:UNIT_COMBO_POINTS(arg1)
 	if (arg1 == "player" or arg1 == "vehicle") then
-		Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
+		Perl_Target_Update_Combo_Points();	-- How many combo points are we at?
 	end
 end
 
@@ -218,7 +218,7 @@ end
 function Perl_Target_Events:UNIT_DISPLAYPOWER(arg1)
 	if (arg1 == "target") then
 		Perl_Target_Update_Mana_Bar();		-- What type of energy are they using now?
-		Perl_Target_Update_Mana();		-- Update the energy info immediately
+		Perl_Target_Update_Mana();			-- Update the energy info immediately
 	end
 end
 
@@ -265,15 +265,15 @@ function Perl_Target_Initialize()
 	end
 
 	-- Major config options.
-	Perl_Target_Initialize_Frame_Color();		-- Give the borders (and background if applicable) that "Perl" look
-	Perl_Target_Frame_Style();			-- Layout the frame according to our mode
-	Perl_Target_Buff_Debuff_Background();		-- Do the buffs and debuffs have their transparent background frame?
-	Perl_Target_Reset_Buffs();			-- Hide any unnecessary buff/debuff buttons
+	Perl_Target_Initialize_Frame_Color();	-- Give the borders (and background if applicable) that "Perl" look
+	Perl_Target_Frame_Style();				-- Layout the frame according to our mode
+	Perl_Target_Buff_Debuff_Background();	-- Do the buffs and debuffs have their transparent background frame?
+	Perl_Target_Reset_Buffs();				-- Hide any unnecessary buff/debuff buttons
 
 	local _, class = UnitClass("player");
 	if (not (class == "ROGUE" or class == "DRUID" or class == "WARRIOR" or class == "PRIEST" or class == "PALADIN" or class == "MAGE")) then
 		showcp = 0;
-		Perl_Target_UpdateVars();		-- I suck, I know, go away
+		Perl_Target_UpdateVars();			-- I suck, I know, go away
 	end
 
 	Perl_Target_CPText:SetText(0);
@@ -337,23 +337,23 @@ end
 --------------------------
 function Perl_Target_Update_Once()
 	Perl_Target_HealthBarFadeBar:Hide();	-- Hide the fade bars so we don't see fading bars when we shouldn't
-	Perl_Target_ManaBarFadeBar:Hide();	-- Hide the fade bars so we don't see fading bars when we shouldn't
-	Perl_Target_HealthBar:SetValue(0);	-- Do this so we don't fade the bar on a fresh target switch
-	Perl_Target_ManaBar:SetValue(0);	-- Do this so we don't fade the bar on a fresh target switch
-	Perl_Target_Update_Combo_Points();	-- Do we have any combo points (we shouldn't)
-	Perl_Target_Update_Portrait();		-- Set the target's portrait and adjust the combo point frame
-	Perl_Target_Update_Health();		-- Set the target's health
-	Perl_Target_Update_Mana_Bar();		-- What type of mana bar is it?
-	Perl_Target_Update_Mana();		-- Set the target's mana
+	Perl_Target_ManaBarFadeBar:Hide();		-- Hide the fade bars so we don't see fading bars when we shouldn't
+	Perl_Target_HealthBar:SetValue(0);		-- Do this so we don't fade the bar on a fresh target switch
+	Perl_Target_ManaBar:SetValue(0);		-- Do this so we don't fade the bar on a fresh target switch
+	Perl_Target_Update_Combo_Points();		-- Do we have any combo points (we shouldn't)
+	Perl_Target_Update_Portrait();			-- Set the target's portrait and adjust the combo point frame
+	Perl_Target_Update_Health();			-- Set the target's health
+	Perl_Target_Update_Mana_Bar();			-- What type of mana bar is it?
+	Perl_Target_Update_Mana();				-- Set the target's mana
 	Perl_Target_Update_PvP_Status_Icon();	-- Set pvp status icon
-	Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
-	Perl_Target_Buff_UpdateAll();		-- Update the buffs
-	Perl_Target_UpdateRaidTargetIcon();	-- Display the raid target icon if needed
-	Perl_Target_Update_Name();		-- Update the name
-	Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
-	Perl_Target_Update_Leader();		-- Is the target the party/raid leader?
-	Perl_Target_Update_Loot_Method();	-- Is the target the loot master?
-	Perl_Target_Update_Threat();		-- Update the threat icon if needed
+	Perl_Target_Frame_Set_Level();			-- What level is it and is it rare/elite/boss
+	Perl_Target_Buff_UpdateAll();			-- Update the buffs
+	Perl_Target_UpdateRaidTargetIcon();		-- Display the raid target icon if needed
+	Perl_Target_Update_Name();				-- Update the name
+	Perl_Target_Update_Text_Color();		-- Has the target been tapped by someone else?
+	Perl_Target_Update_Leader();			-- Is the target the party/raid leader?
+	Perl_Target_Update_Loot_Method();		-- Is the target the loot master?
+	Perl_Target_Update_Threat();			-- Update the threat icon if needed
 
 	-- Begin: Draw the class icon?
 	if (showclassicon == 1) then
@@ -409,7 +409,7 @@ function Perl_Target_Update_Health()
 	targethealthmax = UnitHealthMax("target");
 	targethealthpercent = floor(targethealth/targethealthmax*100+0.5);
 
-	if (UnitIsDead("target") or UnitIsGhost("target")) then				-- This prevents negative health
+	if (UnitIsDead("target") or UnitIsGhost("target")) then	-- This prevents negative health
 		targethealth = 0;
 		targethealthpercent = 0;
 	end
@@ -473,17 +473,17 @@ function Perl_Target_Update_Health()
 	end
 
 	if (framestyle == 1) then
-		Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
+		Perl_Target_HealthBarTextRight:SetText();								-- Hide this text in this frame style
 		Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
 		Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..targethealthpercent.."%");
 	elseif (framestyle == 2) then
 		if (compactmode == 0) then
 			if (healermode == 0) then
-				Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+				Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
 				Perl_Target_HealthBarText:SetText(targethealthpercent.."%");
 				Perl_Target_HealthBarTextRight:SetText(targethealth.."/"..targethealthmax);
 			else
-				Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+				Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
 				Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
 				Perl_Target_HealthBarTextRight:SetText("-"..targethealthmax - targethealth);
 			end
@@ -492,10 +492,10 @@ function Perl_Target_Update_Health()
 			if (compactpercent == 0) then
 				if (healermode == 0) then
 					Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-					Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+					Perl_Target_HealthBarTextCompactPercent:SetText();			-- Hide this text in this frame style
 				else
 					Perl_Target_HealthBarTextRight:SetText("-"..targethealthmax - targethealth);
-					Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+					Perl_Target_HealthBarTextCompactPercent:SetText();			-- Hide this text in this frame style
 				end
 				Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
 			else
@@ -513,7 +513,7 @@ function Perl_Target_Update_Health()
 	if (UnitIsDead("target")) then
 		if (UnitIsPlayer("target")) then
 			_, englishclass = UnitClass("target");
-			if (englishclass == "HUNTER") then	-- If the dead is a hunter, check for Feign Death
+			if (englishclass == "HUNTER") then									-- If the dead is a hunter, check for Feign Death
 				local buffnum = 1;
 				local _, _, buffTexture = UnitBuff("target", buffnum);
 				while (buffTexture) do
@@ -534,7 +534,7 @@ function Perl_Target_Update_Mana()
 	targetmanamax = UnitPowerMax("target");
 	targetpower = UnitPowerType("target");
 
-	if (UnitIsDead("target") or UnitIsGhost("target")) then				-- This prevents negative mana
+	if (UnitIsDead("target") or UnitIsGhost("target")) then						-- This prevents negative mana
 		targetmana = 0;
 	end
 
@@ -574,8 +574,8 @@ end
 function Perl_Target_Update_Mana_Text()
 	if (framestyle == 1) then
 		Perl_Target_ManaBarTextRight:SetTextColor(1, 1, 1, 1);
-		Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
-		Perl_Target_ManaBarTextCompactPercent:SetText();	-- Hide this text in this frame style
+		Perl_Target_ManaBarTextRight:SetText();									-- Hide this text in this frame style
+		Perl_Target_ManaBarTextCompactPercent:SetText();						-- Hide this text in this frame style
 
 		if (targetpower == 1 or targetpower == 2 or targetpower == 6) then
 			Perl_Target_ManaBarText:SetText(targetmana);
@@ -586,7 +586,7 @@ function Perl_Target_Update_Mana_Text()
 		targetmanapercent = floor(targetmana/targetmanamax*100+0.5);
 
 		if (compactmode == 0) then
-			Perl_Target_ManaBarTextCompactPercent:SetText();	-- Hide this text in this frame style
+			Perl_Target_ManaBarTextCompactPercent:SetText();					-- Hide this text in this frame style
 
 			if (healermode == 0) then
 				Perl_Target_ManaBarTextRight:SetTextColor(1, 1, 1, 1);
@@ -612,16 +612,16 @@ function Perl_Target_Update_Mana_Text()
 			end
 		else
 			if (compactpercent == 0) then
-				Perl_Target_ManaBarTextCompactPercent:SetText();	-- Hide this text in this frame style
+				Perl_Target_ManaBarTextCompactPercent:SetText();				-- Hide this text in this frame style
 				if (healermode == 1) then
 					if (showmanadeficit == 1) then
 						Perl_Target_ManaBarTextRight:SetTextColor(0.5, 0.5, 0.5, 1);
-						Perl_Target_ManaBarTextRight:SetText("-"..targetmanamax - targetmana);			-- Hide this text in this frame style
+						Perl_Target_ManaBarTextRight:SetText("-"..targetmanamax - targetmana);	-- Hide this text in this frame style
 					else
-						Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+						Perl_Target_ManaBarTextRight:SetText();					-- Hide this text in this frame style
 					end
 				else
-					Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+					Perl_Target_ManaBarTextRight:SetText();						-- Hide this text in this frame style
 				end
 				if (targetpower == 1 or targetpower == 2 or targetpower == 6) then
 					Perl_Target_ManaBarText:SetText(targetmana);
@@ -632,12 +632,12 @@ function Perl_Target_Update_Mana_Text()
 				if (healermode == 1) then
 					if (showmanadeficit == 1) then
 						Perl_Target_ManaBarTextRight:SetTextColor(0.5, 0.5, 0.5, 1);
-						Perl_Target_ManaBarTextRight:SetText("-"..targetmanamax - targetmana);			-- Hide this text in this frame style
+						Perl_Target_ManaBarTextRight:SetText("-"..targetmanamax - targetmana);	-- Hide this text in this frame style
 					else
-						Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+						Perl_Target_ManaBarTextRight:SetText();					-- Hide this text in this frame style
 					end
 				else
-					Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+					Perl_Target_ManaBarTextRight:SetText();						-- Hide this text in this frame style
 				end
 
 				if (targetpower == 1 or targetpower == 2 or targetpower == 6) then
@@ -726,29 +726,29 @@ end
 function Perl_Target_Update_Combo_Points()
 	local _, playerclass = UnitClass("player");
 	if (playerclass == "ROGUE" or playerclass == "DRUID" or CanExitVehicle()) then	-- Noticed in 2.1.3 that this is being called for warriors also...huh?
-		local combopoints = GetComboPoints("vehicle","target");			-- How many Combo Points does the player have in their vehicle?
+		local combopoints = GetComboPoints("vehicle","target");						-- How many Combo Points does the player have in their vehicle?
 		if (combopoints == 0) then
-			combopoints = GetComboPoints("player");				-- We aren't in a vehicle, get regular combo points
+			combopoints = GetComboPoints("player");									-- We aren't in a vehicle, get regular combo points
 		end
 
 		if (showcp == 1) then
 			Perl_Target_CPText:SetText(combopoints);
 			if (combopoints == 5) then
-				Perl_Target_CPText:SetTextColor(1, 0, 0);		-- red text
+				Perl_Target_CPText:SetTextColor(1, 0, 0);	-- red text
 			elseif (combopoints == 4) then
-				Perl_Target_CPText:SetTextColor(1, 0.5, 0);		-- orange text
+				Perl_Target_CPText:SetTextColor(1, 0.5, 0);	-- orange text
 			elseif (combopoints == 3) then
-				Perl_Target_CPText:SetTextColor(1, 1, 0);		-- yellow text
+				Perl_Target_CPText:SetTextColor(1, 1, 0);	-- yellow text
 			elseif (combopoints == 2) then
-				Perl_Target_CPText:SetTextColor(0.5, 1, 0);		-- yellow-green text
+				Perl_Target_CPText:SetTextColor(0.5, 1, 0);	-- yellow-green text
 			elseif (combopoints == 1) then
-				Perl_Target_CPText:SetTextColor(0, 1, 0);		-- green text
+				Perl_Target_CPText:SetTextColor(0, 1, 0);	-- green text
 			else
-				Perl_Target_CPText:SetTextColor(0, 0.5, 0);		-- dark green text
+				Perl_Target_CPText:SetTextColor(0, 0.5, 0);	-- dark green text
 			end
 		end
 
-		if (nameframecombopoints == 1) then					-- this isn't nested since you can have both combo point styles on at the same time
+		if (nameframecombopoints == 1) then											-- this isn't nested since you can have both combo point styles on at the same time
 			Perl_Target_NameFrame_CPMeter:SetMinMaxValues(0, 5);
 			Perl_Target_NameFrame_CPMeter:SetValue(combopoints);
 			if (combopoints == 5) then
@@ -824,19 +824,19 @@ function Perl_Target_Update_Text_Color()
 		end
 	end
 
-	if (UnitPlayerControlled("target")) then						-- is it a player
-		if (UnitCanAttack("target", "player")) then					-- are we in an enemy controlled zone
+	if (UnitPlayerControlled("target")) then								-- is it a player
+		if (UnitCanAttack("target", "player")) then							-- are we in an enemy controlled zone
 			-- Hostile players are red
-			if (not UnitCanAttack("player", "target")) then				-- enemy is not pvp enabled
+			if (not UnitCanAttack("player", "target")) then					-- enemy is not pvp enabled
 				r = 0.5;
 				g = 0.5;
 				b = 1.0;
-			else									-- enemy is pvp enabled
+			else															-- enemy is pvp enabled
 				r = 1.0;
 				g = 0.0;
 				b = 0.0;
 			end
-		elseif (UnitCanAttack("player", "target")) then					-- enemy in a zone controlled by friendlies or when we're a ghost
+		elseif (UnitCanAttack("player", "target")) then						-- enemy in a zone controlled by friendlies or when we're a ghost
 			-- Players we can attack but which are not hostile are yellow
 			r = 1.0;
 			g = 1.0;
@@ -846,7 +846,7 @@ function Perl_Target_Update_Text_Color()
 			r = 0.0;
 			g = 1.0;
 			b = 0.0;
-		else										-- friendly non pvp enabled character
+		else																-- friendly non pvp enabled character
 			-- All other players are blue (the usual state on the "blue" server)
 			r = 0.5;
 			g = 0.5;
@@ -867,18 +867,18 @@ function Perl_Target_Update_Text_Color()
 				Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
 			end
 		else
-			if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
+			if (UnitCanAttack("target", "player")) then						-- are we in an enemy controlled zone
 				-- Hostile players are red
-				if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
+				if (not UnitCanAttack("player", "target")) then				-- enemy is not pvp enabled
 					r = 0.5;
 					g = 0.5;
 					b = 1.0;
-				else								-- enemy is pvp enabled
+				else														-- enemy is pvp enabled
 					r = 1.0;
 					g = 0.0;
 					b = 0.0;
 				end
-			elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+			elseif (UnitCanAttack("player", "target")) then					-- enemy in a zone controlled by friendlies or when we're a ghost
 				-- Players we can attack but which are not hostile are yellow
 				r = 1.0;
 				g = 1.0;
@@ -888,7 +888,7 @@ function Perl_Target_Update_Text_Color()
 				r = 0.0;
 				g = 1.0;
 				b = 0.0;
-			else									-- friendly non pvp enabled character
+			else															-- friendly non pvp enabled character
 				-- All other players are blue (the usual state on the "blue" server)
 				r = 0.5;
 				g = 0.5;
@@ -901,10 +901,10 @@ function Perl_Target_Update_Text_Color()
 end
 
 function Perl_Target_Frame_Set_Level()
-	targetlevel = UnitLevel("target");			-- Get and store the level of the target
-	targetlevelcolor = GetQuestDifficultyColor(targetlevel);-- Get the "con color" of the target
-	targetclassification = UnitClassification("target");	-- Get the type of character the target is (rare, elite, worldboss)
-	targetclassificationframetext = nil;			-- Variable set to nil so we can easily track if target is a player or not elite
+	targetlevel = UnitLevel("target");							-- Get and store the level of the target
+	targetlevelcolor = GetQuestDifficultyColor(targetlevel);	-- Get the "con color" of the target
+	targetclassification = UnitClassification("target");		-- Get the type of character the target is (rare, elite, worldboss)
+	targetclassificationframetext = nil;						-- Variable set to nil so we can easily track if target is a player or not elite
 
 	Perl_Target_LevelBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
 	if (displaynumbericthreat == 0) then
@@ -939,7 +939,7 @@ function Perl_Target_Frame_Set_Level()
 		Perl_Target_EliteRareGraphic:SetTexture();
 	end
 
-	Perl_Target_LevelBarText:SetText(targetlevel);						-- Set level frame text
+	Perl_Target_LevelBarText:SetText(targetlevel);				-- Set level frame text
 
 	if (showrareeliteframe == 1 and displaynumbericthreat == 0) then
 		if (targetclassificationframetext == nil) then
@@ -994,17 +994,17 @@ end
 function Perl_Target_Update_Portrait()
 	if (showportrait == 1) then
 		if (threedportrait == 0) then
-			SetPortraitTexture(Perl_Target_Portrait, "target");			-- Load the correct 2d graphic
+			SetPortraitTexture(Perl_Target_Portrait, "target");				-- Load the correct 2d graphic
 		else
 			if (UnitIsVisible("target")) then
 				Perl_Target_PortraitFrame_TargetModel:SetUnit("target");	-- Load the correct 3d graphic
 				Perl_Target_PortraitFrame_TargetModel:SetCamera(0);
-				Perl_Target_Portrait:Hide();					-- Hide the 2d graphic
-				Perl_Target_PortraitFrame_TargetModel:Show();			-- Show the 3d graphic
+				Perl_Target_Portrait:Hide();								-- Hide the 2d graphic
+				Perl_Target_PortraitFrame_TargetModel:Show();				-- Show the 3d graphic
 			else
-				SetPortraitTexture(Perl_Target_Portrait, "target");		-- Load the correct 2d graphic
-				Perl_Target_PortraitFrame_TargetModel:Hide();			-- Hide the 3d graphic
-				Perl_Target_Portrait:Show();					-- Show the 2d graphic
+				SetPortraitTexture(Perl_Target_Portrait, "target");			-- Load the correct 2d graphic
+				Perl_Target_PortraitFrame_TargetModel:Hide();				-- Hide the 3d graphic
+				Perl_Target_Portrait:Show();								-- Show the 2d graphic
 			end
 		end
 	end
@@ -1077,7 +1077,7 @@ function Perl_Target_Main_Style()
 			Perl_Target_HealthBar:SetPoint("TOP", "Perl_Target_StatsFrame", "TOP", 0, -10);
 			Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
 
-			if (showrareeliteframe == 1) then				-- wtf is going on here, why is this working?!?
+			if (showrareeliteframe == 1) then	-- wtf is going on here, why is this working?!?
 				Perl_Target_GuildFrame:SetWidth(125);
 			else
 				Perl_Target_GuildFrame:SetWidth(128);
@@ -1102,7 +1102,7 @@ function Perl_Target_Main_Style()
 			Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
 
 			if (compactmode == 0) then
-				if (showrareeliteframe == 1) then			-- wtf is going on here, why is this working?!?
+				if (showrareeliteframe == 1) then	-- wtf is going on here, why is this working?!?
 					Perl_Target_GuildFrame:SetWidth(159);
 				else
 					Perl_Target_GuildFrame:SetWidth(162);
@@ -1204,7 +1204,7 @@ function Perl_Target_Main_Style()
 		Perl_Target_NameFrame_CastClickOverlay:SetWidth(Perl_Target_NameFrame:GetWidth());
 		Perl_Target_StatsFrame_CastClickOverlay:SetWidth(Perl_Target_StatsFrame:GetWidth());
 
-		if (showcp == 1) then				-- Are we showing the combo point frame?
+		if (showcp == 1) then																				-- Are we showing the combo point frame?
 			Perl_Target_CPFrame:Show();
 		else
 			Perl_Target_CPFrame:Hide();
@@ -1213,11 +1213,11 @@ function Perl_Target_Main_Style()
 		if (showportrait == 1) then
 			Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 0, 0);			-- Position the Combat Text correctly on the portrait
 			Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -2, -34);		-- Reposition the combo point frame
-			Perl_Target_PortraitFrame:Show();									-- Show the main portrait frame
+			Perl_Target_PortraitFrame:Show();																-- Show the main portrait frame
 
 			if (threedportrait == 0) then
-				Perl_Target_PortraitFrame_TargetModel:Hide();							-- Hide the 3d graphic
-				Perl_Target_Portrait:Show();									-- Show the 2d graphic
+				Perl_Target_PortraitFrame_TargetModel:Hide();												-- Hide the 3d graphic
+				Perl_Target_Portrait:Show();																-- Show the 2d graphic
 			end
 		else
 			if (showcp == 1) then
@@ -1225,11 +1225,11 @@ function Perl_Target_Main_Style()
 			else
 				Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 0, 0);		-- Position the Combat Text correctly on the portrait
 			end
-			Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -2, 0);			-- Reposition the combo point frame
-			Perl_Target_PortraitFrame:Hide();									-- Hide the frame and 2d/3d portion
+			Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -2, 0);				-- Reposition the combo point frame
+			Perl_Target_PortraitFrame:Hide();																-- Hide the frame and 2d/3d portion
 		end
 
-		if (showrareeliteframe == 1 or displaynumbericthreat == 1) then		-- Are we showing the Rare/Elite frame?
+		if (showrareeliteframe == 1 or displaynumbericthreat == 1) then										-- Are we showing the Rare/Elite frame?
 			Perl_Target_RareEliteFrame:Show();
 		else
 			Perl_Target_RareEliteFrame:Hide();
@@ -1243,11 +1243,11 @@ function Perl_Target_Main_Style()
 			Perl_Target_GuildFrame:Hide();
 		end
 
-		if (showclassicon == 0) then			-- Are we showing the class icon?
+		if (showclassicon == 0) then																		-- Are we showing the class icon?
 			Perl_Target_ClassTexture:Hide();
 		end
 
-		if (portraitcombattext == 1) then		-- Are we showing combat text?
+		if (portraitcombattext == 1) then																	-- Are we showing combat text?
 			Perl_Target_PortraitTextFrame:Show();
 		else
 			Perl_Target_PortraitTextFrame:Hide();
@@ -1396,7 +1396,7 @@ function Perl_Target_Set_Buffs(newbuffnumber)
 	numbuffsshown = newbuffnumber;
 	Perl_Target_UpdateVars();		-- Save the new setting
 	Perl_Target_Reset_Buffs();		-- Reset the buff icons
-	Perl_Target_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Target_Set_Debuffs(newdebuffnumber)
@@ -1406,7 +1406,7 @@ function Perl_Target_Set_Debuffs(newdebuffnumber)
 	numdebuffsshown = newdebuffnumber;
 	Perl_Target_UpdateVars();		-- Save the new setting
 	Perl_Target_Reset_Buffs();		-- Reset the buff icons
-	Perl_Target_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Target_Set_Class_Buffs(newvalue)
@@ -1415,7 +1415,7 @@ function Perl_Target_Set_Class_Buffs(newvalue)
 	end
 	Perl_Target_UpdateVars();		-- Save the new setting
 	Perl_Target_Reset_Buffs();		-- Reset the buff icons
-	Perl_Target_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Target_Set_Buff_Timers(newvalue)
@@ -1424,7 +1424,7 @@ function Perl_Target_Set_Buff_Timers(newvalue)
 	end
 	Perl_Target_UpdateVars();		-- Save the new setting
 	Perl_Target_Reset_Buffs();		-- Reset the buff icons
-	Perl_Target_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Target_Set_Curable_Debuffs(newvalue)
@@ -1433,7 +1433,7 @@ function Perl_Target_Set_Curable_Debuffs(newvalue)
 	end
 	Perl_Target_UpdateVars();		-- Save the new setting
 	Perl_Target_Reset_Buffs();		-- Reset the buff icons
-	Perl_Target_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Target_Set_Only_Self_Debuffs(newvalue)
@@ -1442,7 +1442,7 @@ function Perl_Target_Set_Only_Self_Debuffs(newvalue)
 	end
 	Perl_Target_UpdateVars();		-- Save the new setting
 	Perl_Target_Reset_Buffs();		-- Reset the buff icons
-	Perl_Target_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Target_Set_Invert_Buffs(newvalue)
@@ -1451,7 +1451,7 @@ function Perl_Target_Set_Invert_Buffs(newvalue)
 	end
 	Perl_Target_UpdateVars();		-- Save the new setting
 	Perl_Target_Reset_Buffs();		-- Reset the buff icons
-	Perl_Target_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Target_Set_Class_Icon(newvalue)
@@ -1663,7 +1663,7 @@ function Perl_Target_Set_Scale_Actual()
 		Perl_Config_Queue_Add(Perl_Target_Set_Scale_Actual);
 	else
 		Perl_Target_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
-		Perl_Target_Set_BuffDebuff_Scale(buffdebuffscale*100);		-- maintain the buff/debuff scale
+		Perl_Target_Set_BuffDebuff_Scale(buffdebuffscale*100);					-- maintain the buff/debuff scale
 		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 			Perl_ArcaneBar_Set_Scale_Actual(nil, scale, nil, nil);
 		end
@@ -1673,20 +1673,20 @@ end
 function Perl_Target_Set_BuffDebuff_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
-		buffdebuffscale = (number / 100);				-- convert the user input to a wow acceptable value
+		buffdebuffscale = (number / 100);								-- convert the user input to a wow acceptable value
 	end
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + buffdebuffscale;	-- run it through the scaling formula introduced in 1.9
 	Perl_Target_BuffFrame:SetScale(buffdebuffscale);
 	Perl_Target_DebuffFrame:SetScale(buffdebuffscale);
-	Perl_Target_UpdateVars();		-- Save the new setting
+	Perl_Target_UpdateVars();											-- Save the new setting
 end
 
 function Perl_Target_Set_Transparency(number)
 	if (number ~= nil) then
-		transparency = (number / 100);					-- convert the user input to a wow acceptable value
+		transparency = (number / 100);									-- convert the user input to a wow acceptable value
 	end
 	Perl_Target_Frame:SetAlpha(transparency);
-	Perl_Target_UpdateVars();		-- Save the new setting
+	Perl_Target_UpdateVars();											-- Save the new setting
 end
 
 
@@ -1754,7 +1754,7 @@ function Perl_Target_GetVars(name, updateflag)
 		numdebuffsshown = 20;
 	end
 	if (scale == nil) then
-		scale = 0.9;
+		scale = 1.0;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -1837,11 +1837,11 @@ function Perl_Target_GetVars(name, updateflag)
 		Perl_Target_UpdateVars();
 
 		-- Call any code we need to activate them
-		Perl_Target_Reset_Buffs();		-- Reset the buff icons
-		Perl_Target_Frame_Style();		-- Reposition the frames
+		Perl_Target_Reset_Buffs();				-- Reset the buff icons
+		Perl_Target_Frame_Style();				-- Reposition the frames
 		Perl_Target_Buff_Debuff_Background();	-- Hide/Show the background frame
-		Perl_Target_Set_Scale_Actual();		-- Set the scale
-		Perl_Target_Set_Transparency();		-- Set the transparency
+		Perl_Target_Set_Scale_Actual();			-- Set the scale
+		Perl_Target_Set_Transparency();			-- Set the transparency
 		if (UnitExists("target")) then
 			Perl_Target_Update_Once();
 		end
@@ -2080,7 +2080,7 @@ function Perl_Target_UpdateVars(vartable)
 			numdebuffsshown = 20;
 		end
 		if (scale == nil) then
-			scale = 0.9;
+			scale = 1.0;
 		end
 		if (transparency == nil) then
 			transparency = 1;
@@ -2159,11 +2159,11 @@ function Perl_Target_UpdateVars(vartable)
 		end
 
 		-- Call any code we need to activate them
-		Perl_Target_Reset_Buffs();		-- Reset the buff icons
-		Perl_Target_Frame_Style();		-- Reposition the frames
+		Perl_Target_Reset_Buffs();				-- Reset the buff icons
+		Perl_Target_Frame_Style();				-- Reposition the frames
 		Perl_Target_Buff_Debuff_Background();	-- Hide/Show the background frame
-		Perl_Target_Set_Scale_Actual();		-- Set the scale
-		Perl_Target_Set_Transparency();		-- Set the transparency
+		Perl_Target_Set_Scale_Actual();			-- Set the scale
+		Perl_Target_Set_Transparency();			-- Set the transparency
 		if (UnitExists("target")) then
 			Perl_Target_Update_Once();
 		end
@@ -2220,7 +2220,7 @@ function Perl_Target_Buff_UpdateAll()
 		local button, buffCount, buffTexture, buffApplications, color, debuffType, duration, timeLeft, cooldown;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 		local curableDebuffFound = 0;
 
-		local numBuffs = 0;											-- Buff counter for correct layout
+		local numBuffs = 0;													-- Buff counter for correct layout
 		for buffnum=1,numbuffsshown do										-- Start main buff loop
 			if (displaycastablebuffs == 0) then								-- Which buff filter mode are we in?
 				bufffilter = "HELPFUL";
@@ -2229,18 +2229,18 @@ function Perl_Target_Buff_UpdateAll()
 			end
 			_, _, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura("target", buffnum, bufffilter);	-- Get the texture and buff stacking information if any
 			button = _G["Perl_Target_Buff"..buffnum];						-- Create the main icon for the buff
-			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
-				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
-				_G[button:GetName().."DebuffBorder"]:Hide();					-- Hide the debuff border
+			if (buffTexture) then											-- If there is a valid texture, proceed with buff icon creation
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);		-- Set the texture
+				_G[button:GetName().."DebuffBorder"]:Hide();				-- Hide the debuff border
 				buffCount = _G[button:GetName().."Count"];					-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
-					buffCount:Show();								-- Show the text
+					buffCount:SetText(buffApplications);					-- Set the text to the number of applications if greater than 0
+					buffCount:Show();										-- Show the text
 				else
-					buffCount:Hide();								-- Hide the text if equal to 0
+					buffCount:Hide();										-- Hide the text if equal to 0
 				end
 				if (displaybufftimers == 1) then
-					cooldown = _G[button:GetName().."Cooldown"];				-- Handle cooldowns
+					cooldown = _G[button:GetName().."Cooldown"];			-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
 							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
@@ -2254,20 +2254,20 @@ function Perl_Target_Buff_UpdateAll()
 						cooldown:Hide();
 					end
 				end
-				numBuffs = numBuffs + 1;								-- Increment the buff counter
-				button:Show();										-- Show the final buff icon
+				numBuffs = numBuffs + 1;									-- Increment the buff counter
+				button:Show();												-- Show the final buff icon
 			else
-				button:Hide();										-- Hide the icon since there isn't a buff in this position
+				button:Hide();												-- Hide the icon since there isn't a buff in this position
 			end
-		end													-- End main buff loop
+		end																	-- End main buff loop
 
-		local numDebuffs = 0;											-- Debuff counter for correct layout
+		local numDebuffs = 0;												-- Debuff counter for correct layout
 		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
 			Perl_Target_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
 			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura("target", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
-			button = _G["Perl_Target_Debuff"..debuffnum];						-- Create the main icon for the debuff
-			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
-				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
+			button = _G["Perl_Target_Debuff"..debuffnum];					-- Create the main icon for the debuff
+			if (buffTexture) then											-- If there is a valid texture, proceed with debuff icon creation
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);		-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
@@ -2291,16 +2291,16 @@ function Perl_Target_Buff_UpdateAll()
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
 				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
-				_G[button:GetName().."DebuffBorder"]:Show();					-- Show the debuff border
+				_G[button:GetName().."DebuffBorder"]:Show();				-- Show the debuff border
 				buffCount = _G[button:GetName().."Count"];					-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
-					buffCount:Show();								-- Show the text
+					buffCount:SetText(buffApplications);					-- Set the text to the number of applications if greater than 0
+					buffCount:Show();										-- Show the text
 				else
-					buffCount:Hide();								-- Hide the text if equal to 0
+					buffCount:Hide();										-- Hide the text if equal to 0
 				end
 				if (displaybufftimers == 1) then
-					cooldown = _G[button:GetName().."Cooldown"];					-- Handle cooldowns
+					cooldown = _G[button:GetName().."Cooldown"];			-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
 							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
@@ -2315,11 +2315,11 @@ function Perl_Target_Buff_UpdateAll()
 					end
 				end
 				numDebuffs = numDebuffs + 1;								-- Increment the debuff counter
-				button:Show();										-- Show the final debuff icon
+				button:Show();												-- Show the final debuff icon
 			else
-				button:Hide();										-- Hide the icon since there isn't a debuff in this position
+				button:Hide();												-- Hide the icon since there isn't a debuff in this position
 			end
-		end													-- End main debuff loop
+		end																	-- End main debuff loop
 
 		if (numBuffs == 0) then
 			Perl_Target_BuffFrame:Hide();
@@ -2373,11 +2373,11 @@ function Perl_Target_Buff_UpdateAll()
 
 			Perl_Target_BuffFrame:Show();
 			if (numBuffs > 10) then
-				Perl_Target_BuffFrame:SetWidth(275);			-- 5 + 10 * (24 + 3)	5 = border gap, 10 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
-				Perl_Target_BuffFrame:SetHeight(61);			-- 2 rows tall
+				Perl_Target_BuffFrame:SetWidth(275);				-- 5 + 10 * (24 + 3)	5 = border gap, 10 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
+				Perl_Target_BuffFrame:SetHeight(61);				-- 2 rows tall
 			else
 				Perl_Target_BuffFrame:SetWidth(5 + numBuffs * 27);	-- Dynamically extend the background frame
-				Perl_Target_BuffFrame:SetHeight(34);			-- 1 row tall
+				Perl_Target_BuffFrame:SetHeight(34);				-- 1 row tall
 			end
 		end
 
@@ -2421,17 +2421,17 @@ function Perl_Target_Buff_UpdateAll()
 
 			Perl_Target_DebuffFrame:Show();
 			if (numDebuffs > 30) then
-				Perl_Target_DebuffFrame:SetWidth(275);			-- 5 + 10 * (24 + 3)	5 = border gap, 10 debuffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
-				Perl_Target_DebuffFrame:SetHeight(115);			-- 4 rows tall
+				Perl_Target_DebuffFrame:SetWidth(275);					-- 5 + 10 * (24 + 3)	5 = border gap, 10 debuffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
+				Perl_Target_DebuffFrame:SetHeight(115);					-- 4 rows tall
 			elseif (numDebuffs > 20) then
-				Perl_Target_DebuffFrame:SetWidth(275);			-- 5 + 10 * (24 + 3)	5 = border gap, 10 debuffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
-				Perl_Target_DebuffFrame:SetHeight(88);			-- 3 rows tall
+				Perl_Target_DebuffFrame:SetWidth(275);					-- 5 + 10 * (24 + 3)	5 = border gap, 10 debuffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
+				Perl_Target_DebuffFrame:SetHeight(88);					-- 3 rows tall
 			elseif (numDebuffs > 10) then
-				Perl_Target_DebuffFrame:SetWidth(275);			-- 5 + 10 * (24 + 3)	5 = border gap, 10 debuffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
-				Perl_Target_DebuffFrame:SetHeight(61);			-- 2 rows tall
+				Perl_Target_DebuffFrame:SetWidth(275);					-- 5 + 10 * (24 + 3)	5 = border gap, 10 debuffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
+				Perl_Target_DebuffFrame:SetHeight(61);					-- 2 rows tall
 			else
 				Perl_Target_DebuffFrame:SetWidth(5 + numDebuffs * 27);	-- Dynamically extend the background frame
-				Perl_Target_DebuffFrame:SetHeight(34);			-- 1 row tall
+				Perl_Target_DebuffFrame:SetHeight(34);					-- 1 row tall
 			end
 		end
 
@@ -2503,7 +2503,7 @@ function Perl_Target_Buff_UpdateCPMeter()
 			end
 		end
 
-		if (nameframecombopoints == 1) then				-- this isn't nested since you can have both combo point styles on at the same time
+		if (nameframecombopoints == 1) then					-- this isn't nested since you can have both combo point styles on at the same time
 			Perl_Target_NameFrame_CPMeter:SetMinMaxValues(0, 5);
 			Perl_Target_NameFrame_CPMeter:SetValue(debuffapplications);
 			if (debuffapplications == 5) then
@@ -2603,7 +2603,7 @@ function Perl_TargetDropDown_Initialize()
 		id = UnitInRaid("target");
 		if (id) then
 			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id + 1);
+			name = GetRaidRosterInfo(id);
 		elseif (UnitInParty("target")) then
 			menu = "PARTY";
 		else

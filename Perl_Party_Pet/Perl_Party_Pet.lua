@@ -8,7 +8,7 @@ local Perl_Party_Pet_Events = {};	-- event manager
 local locked = 0;					-- unlocked by default
 local showportrait = 0;				-- portrait is hidden by default
 local threedportrait = 0;			-- 3d portraits are off by default
-local scale = 0.9;					-- default scale
+local scale = 1.0;					-- default scale
 local transparency = 1;				-- transparency for frames
 local numpetbuffsshown = 16;		-- buff row is 16 long
 local numpetdebuffsshown = 16;		-- debuff row is 16 long
@@ -85,7 +85,7 @@ end
 
 function Perl_Party_Pet_Events:UNIT_DISPLAYPOWER(arg1)
 	if ((arg1 == "partypet1") or (arg1 == "partypet2") or (arg1 == "partypet3") or (arg1 == "partypet4")) then
-		Perl_Party_Pet_Update_Mana_Bar(arg1);		-- What type of energy are we using now?
+		Perl_Party_Pet_Update_Mana_Bar(arg1);	-- What type of energy are we using now?
 		Perl_Party_Pet_Update_Mana(arg1);		-- Update the power info immediately
 	end
 end
@@ -146,9 +146,9 @@ Perl_Party_Pet_Events.PLAYER_ENTERING_WORLD = Perl_Party_Pet_Events.PLAYER_LOGIN
 function Perl_Party_Pet_Initialize()
 	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
-		Perl_Party_Pet_Set_Scale_Actual();	-- Set the frame scale
-		Perl_Party_Pet_Set_Transparency();	-- Set the frame transparency
-		Perl_Party_Pet_Update();		-- Refresh the info
+		Perl_Party_Pet_Set_Scale_Actual();		-- Set the frame scale
+		Perl_Party_Pet_Set_Transparency();		-- Set the frame transparency
+		Perl_Party_Pet_Update();				-- Refresh the info
 		return;
 	end
 
@@ -230,7 +230,7 @@ function Perl_Party_Pet_Update_Health(unit)
 	partypethealth = UnitHealth(unit);
 	partypethealthmax = UnitHealthMax(unit);
 
-	if (UnitIsDead(unit) or UnitIsGhost(unit)) then				-- This prevents negative health
+	if (UnitIsDead(unit) or UnitIsGhost(unit)) then	-- This prevents negative health
 		partypethealth = 0;
 	end
 
@@ -293,7 +293,7 @@ function Perl_Party_Pet_Update_Mana(unit)
 	partypetmana = UnitPower(unit);
 	partypetmanamax = UnitPowerMax(unit);
 
-	if (UnitIsDead(unit) or UnitIsGhost(unit)) then		-- This prevents negative mana
+	if (UnitIsDead(unit) or UnitIsGhost(unit)) then	-- This prevents negative mana
 		partypetmana = 0;
 	end
 
@@ -356,14 +356,14 @@ function Perl_Party_Pet_Update_Portrait(unit)
 			SetPortraitTexture(_G["Perl_Party_Pet"..id.."_PortraitFrame_Portrait"], unit);		-- Load the correct 2d graphic
 		else
 			if UnitIsVisible(unit) then
-				_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:SetUnit(unit);		-- Load the correct 3d graphic
+				_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:SetUnit(unit);			-- Load the correct 3d graphic
 				_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:SetCamera(0);
-				_G["Perl_Party_Pet"..id.."_PortraitFrame_Portrait"]:Hide();			-- Hide the 2d graphic
-				_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:Show();			-- Show the 3d graphic
+				_G["Perl_Party_Pet"..id.."_PortraitFrame_Portrait"]:Hide();						-- Hide the 2d graphic
+				_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:Show();					-- Show the 3d graphic
 			else
 				SetPortraitTexture(_G["Perl_Party_Pet"..id.."_PortraitFrame_Portrait"], unit);	-- Load the correct 2d graphic
-				_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:Hide();			-- Hide the 3d graphic
-				_G["Perl_Party_Pet"..id.."_PortraitFrame_Portrait"]:Show();			-- Show the 2d graphic
+				_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:Hide();					-- Hide the 3d graphic
+				_G["Perl_Party_Pet"..id.."_PortraitFrame_Portrait"]:Show();						-- Show the 2d graphic
 			end
 		end
 	end
@@ -545,13 +545,13 @@ function Perl_Party_Pet_Frame_Style()
 				Perl_Party_Pet_Buff_UpdateAll("partypet"..id);
 
 				if (showportrait == 1) then
-					_G["Perl_Party_Pet"..id.."_PortraitFrame"]:Show();						-- Show the main portrait frame
+					_G["Perl_Party_Pet"..id.."_PortraitFrame"]:Show();					-- Show the main portrait frame
 					if (threedportrait == 0) then
-						_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:Hide();				-- Hide the 3d graphic
-						_G["Perl_Party_Pet"..id.."_PortraitFrame_Portrait"]:Show();				-- Show the 2d graphic
+						_G["Perl_Party_Pet"..id.."_PortraitFrame_PartyModel"]:Hide();	-- Hide the 3d graphic
+						_G["Perl_Party_Pet"..id.."_PortraitFrame_Portrait"]:Show();		-- Show the 2d graphic
 					end
 				else
-					_G["Perl_Party_Pet"..id.."_PortraitFrame"]:Hide();						-- Hide the frame and 2d/3d portion
+					_G["Perl_Party_Pet"..id.."_PortraitFrame"]:Hide();					-- Hide the frame and 2d/3d portion
 				end
 			end
 
@@ -641,7 +641,7 @@ end
 function Perl_Party_Pet_Allign()
 	local vartable = Perl_Party_Pet_GetVars();	-- Get the party pet frame settings
 
-	Perl_Party_Pet1:SetUserPlaced(1);		-- This makes wow remember the changes if the frames have never been moved before
+	Perl_Party_Pet1:SetUserPlaced(1);			-- This makes wow remember the changes if the frames have never been moved before
 	Perl_Party_Pet2:SetUserPlaced(1);
 	Perl_Party_Pet3:SetUserPlaced(1);
 	Perl_Party_Pet4:SetUserPlaced(1);
@@ -690,7 +690,7 @@ function Perl_Party_Pet_Set_Buffs(newbuffnumber)
 	end
 	numpetbuffsshown = newbuffnumber;
 	Perl_Party_Pet_UpdateVars();
-	Perl_Party_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Party_Pet_Reset_Buffs();				-- Reset the buff icons and set the size
 	Perl_Party_Pet_Buff_UpdateAll("partypet1");	-- Repopulate the buff icons
 	Perl_Party_Pet_Buff_UpdateAll("partypet2");
 	Perl_Party_Pet_Buff_UpdateAll("partypet3");
@@ -703,7 +703,7 @@ function Perl_Party_Pet_Set_Debuffs(newdebuffnumber)
 	end
 	numpetdebuffsshown = newdebuffnumber;
 	Perl_Party_Pet_UpdateVars();
-	Perl_Party_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Party_Pet_Reset_Buffs();				-- Reset the buff icons and set the size
 	Perl_Party_Pet_Buff_UpdateAll("partypet1");	-- Repopulate the buff icons
 	Perl_Party_Pet_Buff_UpdateAll("partypet2");
 	Perl_Party_Pet_Buff_UpdateAll("partypet3");
@@ -715,7 +715,7 @@ function Perl_Party_Pet_Set_Buff_Size(newvalue)
 		buffsize = newvalue;
 	end
 	Perl_Party_Pet_UpdateVars();
-	Perl_Party_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Party_Pet_Reset_Buffs();				-- Reset the buff icons and set the size
 	Perl_Party_Pet_Buff_UpdateAll("partypet1");	-- Repopulate the buff icons
 	Perl_Party_Pet_Buff_UpdateAll("partypet2");
 	Perl_Party_Pet_Buff_UpdateAll("partypet3");
@@ -727,7 +727,7 @@ function Perl_Party_Pet_Set_Debuff_Size(newvalue)
 		debuffsize = newvalue;
 	end
 	Perl_Party_Pet_UpdateVars();
-	Perl_Party_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Party_Pet_Reset_Buffs();				-- Reset the buff icons and set the size
 	Perl_Party_Pet_Buff_UpdateAll("partypet1");	-- Repopulate the buff icons
 	Perl_Party_Pet_Buff_UpdateAll("partypet2");
 	Perl_Party_Pet_Buff_UpdateAll("partypet3");
@@ -739,7 +739,7 @@ function Perl_Party_Pet_Set_Buff_Location(newvalue)
 		bufflocation = newvalue;
 	end
 	Perl_Party_Pet_UpdateVars();
-	Perl_Party_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Party_Pet_Reset_Buffs();				-- Reset the buff icons and set the size
 	Perl_Party_Pet_Buff_Position_Update();
 	Perl_Party_Pet_Buff_UpdateAll("partypet1");	-- Repopulate the buff icons
 	Perl_Party_Pet_Buff_UpdateAll("partypet2");
@@ -752,7 +752,7 @@ function Perl_Party_Pet_Set_Debuff_Location(newvalue)
 		debufflocation = newvalue;
 	end
 	Perl_Party_Pet_UpdateVars();
-	Perl_Party_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Party_Pet_Reset_Buffs();				-- Reset the buff icons and set the size
 	Perl_Party_Pet_Buff_Position_Update();
 	Perl_Party_Pet_Buff_UpdateAll("partypet1");	-- Repopulate the buff icons
 	Perl_Party_Pet_Buff_UpdateAll("partypet2");
@@ -765,7 +765,7 @@ function Perl_Party_Pet_Set_Class_Buffs(newvalue)
 		displaycastablebuffs = newvalue;
 	end
 	Perl_Party_Pet_UpdateVars();
-	Perl_Party_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Party_Pet_Reset_Buffs();				-- Reset the buff icons and set the size
 	Perl_Party_Pet_Buff_Position_Update();
 	Perl_Party_Pet_Buff_UpdateAll("partypet1");	-- Repopulate the buff icons
 	Perl_Party_Pet_Buff_UpdateAll("partypet2");
@@ -778,7 +778,7 @@ function Perl_Party_Pet_Set_Curable_Debuffs(newvalue)
 		displaycurabledebuff = newvalue;
 	end
 	Perl_Party_Pet_UpdateVars();
-	Perl_Party_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Party_Pet_Reset_Buffs();				-- Reset the buff icons and set the size
 	Perl_Party_Pet_Buff_Position_Update();
 	Perl_Party_Pet_Buff_UpdateAll("partypet1");	-- Repopulate the buff icons
 	Perl_Party_Pet_Buff_UpdateAll("partypet2");
@@ -853,7 +853,7 @@ function Perl_Party_Pet_GetVars(name, updateflag)
 		threedportrait = 0;
 	end
 	if (scale == nil) then
-		scale = 0.9;
+		scale = 1.0;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -1012,7 +1012,7 @@ function Perl_Party_Pet_UpdateVars(vartable)
 			threedportrait = 0;
 		end
 		if (scale == nil) then
-			scale = 0.9;
+			scale = 1.0;
 		end
 		if (transparency == nil) then
 			transparency = 1;
@@ -1080,42 +1080,42 @@ end
 function Perl_Party_Pet_Buff_UpdateAll(unit)
 	if (UnitName(unit)) then
 		local id = string.sub(unit, 9, 9);
-		local button, buffCount, buffTexture, buffApplications, color, debuffType;				-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		local button, buffCount, buffTexture, buffApplications, color, debuffType;		-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 		local curableDebuffFound = 0;
 
-		for buffnum=1,numpetbuffsshown do									-- Start main buff loop
-			if (displaycastablebuffs == 0) then								-- Which buff filter mode are we in?
+		for buffnum=1,numpetbuffsshown do												-- Start main buff loop
+			if (displaycastablebuffs == 0) then											-- Which buff filter mode are we in?
 				bufffilter = "HELPFUL";
 			else
 				bufffilter = "HELPFUL RAID";
 			end
-			_, _, buffTexture, buffApplications = UnitAura(unit, buffnum, bufffilter);			-- Get the texture and buff stacking information if any
+			_, _, buffTexture, buffApplications = UnitAura(unit, buffnum, bufffilter);	-- Get the texture and buff stacking information if any
 			button = _G["Perl_Party_Pet"..id.."_BuffFrame_Buff"..buffnum];				-- Create the main icon for the buff
-			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
-				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
-				buffCount = _G[button:GetName().."Count"];					-- Declare the buff counting text variable
+			if (buffTexture) then														-- If there is a valid texture, proceed with buff icon creation
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);					-- Set the texture
+				buffCount = _G[button:GetName().."Count"];								-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
-					buffCount:Show();								-- Show the text
+					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
+					buffCount:Show();													-- Show the text
 				else
-					buffCount:Hide();								-- Hide the text if equal to 0
+					buffCount:Hide();													-- Hide the text if equal to 0
 				end
-				button:Show();										-- Show the final buff icon
+				button:Show();															-- Show the final buff icon
 			else
-				button:Hide();										-- Hide the icon since there isn't a buff in this position
+				button:Hide();															-- Hide the icon since there isn't a buff in this position
 			end
-		end													-- End main buff loop
+		end																				-- End main buff loop
 
-		for debuffnum=1,numpetdebuffsshown do									-- Start main debuff loop
-			if (displaycurabledebuff == 1) then								-- Are we targeting a friend or enemy and which filter do we need to apply?
+		for debuffnum=1,numpetdebuffsshown do											-- Start main debuff loop
+			if (displaycurabledebuff == 1) then											-- Are we targeting a friend or enemy and which filter do we need to apply?
 				debufffilter = "HARMFUL RAID";
 			else
 				debufffilter = "HARMFUL";
 			end
 			_, _, buffTexture, buffApplications, debuffType = UnitAura(unit, debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
 			button = _G["Perl_Party_Pet"..id.."_BuffFrame_DeBuff"..debuffnum];			-- Create the main icon for the debuff
-			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
-				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
+			if (buffTexture) then														-- If there is a valid texture, proceed with debuff icon creation
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);					-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
@@ -1132,19 +1132,19 @@ function Perl_Party_Pet_Buff_UpdateAll(unit)
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
 				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
-				_G[button:GetName().."DebuffBorder"]:Show();					-- Show the debuff border
-				buffCount = _G[button:GetName().."Count"];					-- Declare the debuff counting text variable
+				_G[button:GetName().."DebuffBorder"]:Show();							-- Show the debuff border
+				buffCount = _G[button:GetName().."Count"];								-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
-					buffCount:Show();								-- Show the text
+					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
+					buffCount:Show();													-- Show the text
 				else
-					buffCount:Hide();								-- Hide the text if equal to 0
+					buffCount:Hide();													-- Hide the text if equal to 0
 				end
-				button:Show();										-- Show the final debuff icon
+				button:Show();															-- Show the final debuff icon
 			else
-				button:Hide();										-- Hide the icon since there isn't a debuff in this position
+				button:Hide();															-- Hide the icon since there isn't a debuff in this position
 			end
-		end													-- End main debuff loop
+		end																				-- End main debuff loop
 
 		if (curableDebuffFound == 0) then
 			_G["Perl_Party_Pet"..id.."_NameFrame"]:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);

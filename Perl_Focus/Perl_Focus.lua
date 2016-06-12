@@ -5,41 +5,41 @@ Perl_Focus_Config = {};
 local Perl_Focus_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Focus_GetVars)
-local locked = 0;		-- unlocked by default
-local showclassicon = 1;	-- show the class icon
-local showclassframe = 1;	-- show the class frame
-local showpvpicon = 1;		-- show the pvp icon
-local numbuffsshown = 16;	-- buff row is 16 long
-local numdebuffsshown = 16;	-- debuff row is 16 long
-local scale = 0.9;		-- default scale
-local transparency = 1;		-- transparency for frames
-local buffdebuffscale = 1;	-- default scale for buffs and debuffs
-local showportrait = 0;		-- portrait is hidden by default
-local threedportrait = 0;	-- 3d portraits are off by default
+local locked = 0;				-- unlocked by default
+local showclassicon = 1;		-- show the class icon
+local showclassframe = 1;		-- show the class frame
+local showpvpicon = 1;			-- show the pvp icon
+local numbuffsshown = 16;		-- buff row is 16 long
+local numdebuffsshown = 16;		-- debuff row is 16 long
+local scale = 1.0;				-- default scale
+local transparency = 1;			-- transparency for frames
+local buffdebuffscale = 1;		-- default scale for buffs and debuffs
+local showportrait = 0;			-- portrait is hidden by default
+local threedportrait = 0;		-- 3d portraits are off by default
 local portraitcombattext = 0;	-- Combat text is disabled by default on the portrait frame
 local showrareeliteframe = 0;	-- rare/elite frame is hidden by default
 local nameframecombopoints = 0;	-- combo points are not displayed in the name frame by default
 local comboframedebuffs = 0;	-- combo point frame will not be used for debuffs by default
-local framestyle = 1;		-- default frame style is "classic"
-local compactmode = 0;		-- compact mode is disabled by default
-local compactpercent = 0;	-- percents are not shown in compact mode by default
+local framestyle = 1;			-- default frame style is "classic"
+local compactmode = 0;			-- compact mode is disabled by default
+local compactpercent = 0;		-- percents are not shown in compact mode by default
 local hidebuffbackground = 0;	-- buff and debuff backgrounds are shown by default
-local shortbars = 0;		-- Health/Power/Experience bars are all normal length
-local healermode = 0;		-- nurfed unit frame style
+local shortbars = 0;			-- Health/Power/Experience bars are all normal length
+local healermode = 0;			-- nurfed unit frame style
 local displaycastablebuffs = 0;	-- display all buffs by default
 local classcolorednames = 0;	-- names are colored based on pvp status by default
-local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
-local invertbuffs = 0;		-- buffs and debuffs are below the Focus frame by default
+local showmanadeficit = 0;		-- Mana deficit in healer mode is off by default
+local invertbuffs = 0;			-- buffs and debuffs are below the Focus frame by default
 local displaycurabledebuff = 0;	-- display all debuffs by default
 local displaybufftimers = 1;	-- buff/debuff timers are on by default
 local displayonlymydebuffs = 0;	-- display all debuffs by default
 
 -- Default Local Variables
-local Initialized = nil;	-- waiting to be initialized
+local Initialized = nil;		-- waiting to be initialized
 
 -- Fade Bar Variables
-local Perl_Focus_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Focus_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Focus_HealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Focus_ManaBar_Fade_Color = 1;	-- the color fading interval
 
 -- Local variables to save memory
 local focushealth, focushealthmax, focushealthpercent, focusmana, focusmanamax, focusmanapercent, focuspower, focuslevel, focuslevelcolor, focusclassification, focusclassificationframetext, englishclass, creatureType, r, g, b, bufffilter, debufffilter;
@@ -137,13 +137,13 @@ Perl_Focus_Events.UNIT_MAXPOWER = Perl_Focus_Events.UNIT_POWER;
 
 function Perl_Focus_Events:UNIT_AURA(arg1)
 	if (arg1 == "focus") then
-		Perl_Focus_Buff_UpdateAll();		-- Update the buffs
+		Perl_Focus_Buff_UpdateAll();	-- Update the buffs
 	end
 end
 
 function Perl_Focus_Events:UNIT_DYNAMIC_FLAGS(arg1)
 	if (arg1 == "focus") then
-		Perl_Focus_Update_Text_Color();		-- Has the Focus been tapped by someone else?
+		Perl_Focus_Update_Text_Color();	-- Has the Focus been tapped by someone else?
 	end
 end
 
@@ -167,8 +167,8 @@ function Perl_Focus_Events:UNIT_NAME_UPDATE(arg1)
 end
 
 function Perl_Focus_Events:UNIT_FACTION()
-	Perl_Focus_Update_Text_Color();			-- Is the character PvP flagged?
-	Perl_Focus_Update_PvP_Status_Icon();		-- Set pvp status icon
+	Perl_Focus_Update_Text_Color();		-- Is the character PvP flagged?
+	Perl_Focus_Update_PvP_Status_Icon();	-- Set pvp status icon
 end
 Perl_Focus_Events.UNIT_PVP_UPDATE = Perl_Focus_Events.UNIT_FACTION;
 
@@ -184,13 +184,13 @@ end
 
 function Perl_Focus_Events:UNIT_LEVEL(arg1)
 	if (arg1 == "focus") then
-		Perl_Focus_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
+		Perl_Focus_Frame_Set_Level();	-- What level is it and is it rare/elite/boss
 	end
 end
 
 function Perl_Focus_Events:UNIT_DISPLAYPOWER(arg1)
 	if (arg1 == "focus") then
-		Perl_Focus_Update_Mana_Bar();		-- What type of energy are they using now?
+		Perl_Focus_Update_Mana_Bar();	-- What type of energy are they using now?
 		Perl_Focus_Update_Mana();		-- Update the energy info immediately
 	end
 end
@@ -225,8 +225,8 @@ Perl_Focus_Events.PLAYER_ENTERING_WORLD = Perl_Focus_Events.PLAYER_LOGIN;
 function Perl_Focus_Initialize()
 	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
-		Perl_Focus_Set_Scale_Actual();		-- Set the scale
-		Perl_Focus_Set_Transparency();		-- Set the transparency
+		Perl_Focus_Set_Scale_Actual();	-- Set the scale
+		Perl_Focus_Set_Transparency();	-- Set the transparency
 		if (UnitExists("focus")) then
 			Perl_Focus_Update_Once();
 		end
@@ -241,13 +241,13 @@ function Perl_Focus_Initialize()
 	end
 
 	-- Major config options.
-	Perl_Focus_Initialize_Frame_Color();		-- Give the borders (and background if applicable) that "Perl" look
-	Perl_Focus_Frame_Style();			-- Layout the frame according to our mode
-	Perl_Focus_Buff_Debuff_Background();		-- Do the buffs and debuffs have their transparent background frame?
-	Perl_Focus_Reset_Buffs();			-- Hide any unnecessary buff/debuff buttons
+	Perl_Focus_Initialize_Frame_Color();	-- Give the borders (and background if applicable) that "Perl" look
+	Perl_Focus_Frame_Style();				-- Layout the frame according to our mode
+	Perl_Focus_Buff_Debuff_Background();	-- Do the buffs and debuffs have their transparent background frame?
+	Perl_Focus_Reset_Buffs();				-- Hide any unnecessary buff/debuff buttons
 
 	Perl_Focus_NameFrame_CPMeter:SetMinMaxValues(0, 5);	-- REMOVE THIS LATER
-	Perl_Focus_NameFrame_CPMeter:SetValue(0);		-- REMOVE THIS LATER
+	Perl_Focus_NameFrame_CPMeter:SetValue(0);			-- REMOVE THIS LATER
 
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(FocusFrame);
@@ -297,21 +297,21 @@ end
 -- The Update Functions --
 --------------------------
 function Perl_Focus_Update_Once()
-	Perl_Focus_HealthBarFadeBar:Hide();	-- Hide the fade bars so we don't see fading bars when we shouldn't
-	Perl_Focus_ManaBarFadeBar:Hide();	-- Hide the fade bars so we don't see fading bars when we shouldn't
-	Perl_Focus_HealthBar:SetValue(0);	-- Do this so we don't fade the bar on a fresh Focus switch
-	Perl_Focus_ManaBar:SetValue(0);		-- Do this so we don't fade the bar on a fresh Focus switch
-	Perl_Focus_Update_Portrait();		-- Set the Focus's portrait and adjust the combo point frame
-	Perl_Focus_Update_Health();		-- Set the Focus's health
-	Perl_Focus_Update_Mana_Bar();		-- What type of mana bar is it?
-	Perl_Focus_Update_Mana();		-- Set the Focus's mana
+	Perl_Focus_HealthBarFadeBar:Hide();		-- Hide the fade bars so we don't see fading bars when we shouldn't
+	Perl_Focus_ManaBarFadeBar:Hide();		-- Hide the fade bars so we don't see fading bars when we shouldn't
+	Perl_Focus_HealthBar:SetValue(0);		-- Do this so we don't fade the bar on a fresh Focus switch
+	Perl_Focus_ManaBar:SetValue(0);			-- Do this so we don't fade the bar on a fresh Focus switch
+	Perl_Focus_Update_Portrait();			-- Set the Focus's portrait and adjust the combo point frame
+	Perl_Focus_Update_Health();				-- Set the Focus's health
+	Perl_Focus_Update_Mana_Bar();			-- What type of mana bar is it?
+	Perl_Focus_Update_Mana();				-- Set the Focus's mana
 	Perl_Focus_Update_PvP_Status_Icon();	-- Set pvp status icon
-	Perl_Focus_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
-	Perl_Focus_Buff_UpdateAll();		-- Update the buffs
-	Perl_Focus_UpdateRaidFocusIcon();	-- Display the raid Focus icon if needed
-	Perl_Focus_Update_Name();		-- Update the name
-	Perl_Focus_Update_Text_Color();		-- Has the Focus been tapped by someone else?
-	Perl_Focus_Update_Threat();		-- Update the threat icon if needed
+	Perl_Focus_Frame_Set_Level();			-- What level is it and is it rare/elite/boss
+	Perl_Focus_Buff_UpdateAll();			-- Update the buffs
+	Perl_Focus_UpdateRaidFocusIcon();		-- Display the raid Focus icon if needed
+	Perl_Focus_Update_Name();				-- Update the name
+	Perl_Focus_Update_Text_Color();			-- Has the Focus been tapped by someone else?
+	Perl_Focus_Update_Threat();				-- Update the threat icon if needed
 
 	-- Begin: Draw the class icon?
 	if (showclassicon == 1) then
@@ -353,7 +353,7 @@ function Perl_Focus_Update_Health()
 	focushealthmax = UnitHealthMax("focus");
 	focushealthpercent = floor(focushealth/focushealthmax*100+0.5);
 
-	if (UnitIsDead("focus") or UnitIsGhost("focus")) then				-- This prevents negative health
+	if (UnitIsDead("focus") or UnitIsGhost("focus")) then	-- This prevents negative health
 		focushealth = 0;
 		focushealthpercent = 0;
 	end
@@ -417,17 +417,17 @@ function Perl_Focus_Update_Health()
 	end
 
 	if (framestyle == 1) then
-		Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-		Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
+		Perl_Focus_HealthBarTextRight:SetText();						-- Hide this text in this frame style
+		Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
 		Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax.." | "..focushealthpercent.."%");
 	elseif (framestyle == 2) then
 		if (compactmode == 0) then
 			if (healermode == 0) then
-				Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+				Perl_Focus_HealthBarTextCompactPercent:SetText();		-- Hide this text in this frame style
 				Perl_Focus_HealthBarText:SetText(focushealthpercent.."%");
 				Perl_Focus_HealthBarTextRight:SetText(focushealth.."/"..focushealthmax);
 			else
-				Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+				Perl_Focus_HealthBarTextCompactPercent:SetText();		-- Hide this text in this frame style
 				Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
 				Perl_Focus_HealthBarTextRight:SetText("-"..focushealthmax - focushealth);
 			end
@@ -435,16 +435,16 @@ function Perl_Focus_Update_Health()
 		else
 			if (compactpercent == 0) then
 				if (healermode == 0) then
-					Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-					Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+					Perl_Focus_HealthBarTextRight:SetText();			-- Hide this text in this frame style
+					Perl_Focus_HealthBarTextCompactPercent:SetText();	-- Hide this text in this frame style
 				else
 					Perl_Focus_HealthBarTextRight:SetText("-"..focushealthmax - focushealth);
-					Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+					Perl_Focus_HealthBarTextCompactPercent:SetText();	-- Hide this text in this frame style
 				end
 				Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
 			else
 				if (healermode == 0) then
-					Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+					Perl_Focus_HealthBarTextRight:SetText();			-- Hide this text in this frame style
 				else
 					Perl_Focus_HealthBarTextRight:SetText("-"..focushealthmax - focushealth);
 				end
@@ -457,7 +457,7 @@ function Perl_Focus_Update_Health()
 	if (UnitIsDead("focus")) then
 		if (UnitIsPlayer("focus")) then
 			_, englishclass = UnitClass("focus");
-			if (englishclass == "HUNTER") then	-- If the dead is a hunter, check for Feign Death
+			if (englishclass == "HUNTER") then							-- If the dead is a hunter, check for Feign Death
 				local buffnum = 1;
 				local _, _, buffTexture = UnitBuff("focus", buffnum);
 				while (buffTexture) do
@@ -478,7 +478,7 @@ function Perl_Focus_Update_Mana()
 	focusmanamax = UnitPowerMax("focus");
 	focuspower = UnitPowerType("focus");
 
-	if (UnitIsDead("focus") or UnitIsGhost("focus")) then				-- This prevents negative mana
+	if (UnitIsDead("focus") or UnitIsGhost("focus")) then	-- This prevents negative mana
 		focusmana = 0;
 	end
 
@@ -502,8 +502,8 @@ function Perl_Focus_Update_Mana()
 
 	if (framestyle == 1) then
 		Perl_Focus_ManaBarTextRight:SetTextColor(1, 1, 1, 1);
-		Perl_Focus_ManaBarTextRight:SetText();			-- Hide this text in this frame style
-		Perl_Focus_ManaBarTextCompactPercent:SetText();	-- Hide this text in this frame style
+		Perl_Focus_ManaBarTextRight:SetText();				-- Hide this text in this frame style
+		Perl_Focus_ManaBarTextCompactPercent:SetText();		-- Hide this text in this frame style
 
 		if (focuspower == 1 or focuspower == 2 or focuspower == 6) then
 			Perl_Focus_ManaBarText:SetText(focusmana);
@@ -544,12 +544,12 @@ function Perl_Focus_Update_Mana()
 				if (healermode == 1) then
 					if (showmanadeficit == 1) then
 						Perl_Focus_ManaBarTextRight:SetTextColor(0.5, 0.5, 0.5, 1);
-						Perl_Focus_ManaBarTextRight:SetText("-"..focusmanamax - focusmana);			-- Hide this text in this frame style
+						Perl_Focus_ManaBarTextRight:SetText("-"..focusmanamax - focusmana);	-- Hide this text in this frame style
 					else
-						Perl_Focus_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+						Perl_Focus_ManaBarTextRight:SetText();	-- Hide this text in this frame style
 					end
 				else
-					Perl_Focus_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+					Perl_Focus_ManaBarTextRight:SetText();		-- Hide this text in this frame style
 				end
 				if (focuspower == 1 or focuspower == 2 or focuspower == 6) then
 					Perl_Focus_ManaBarText:SetText(focusmana);
@@ -560,12 +560,12 @@ function Perl_Focus_Update_Mana()
 				if (healermode == 1) then
 					if (showmanadeficit == 1) then
 						Perl_Focus_ManaBarTextRight:SetTextColor(0.5, 0.5, 0.5, 1);
-						Perl_Focus_ManaBarTextRight:SetText("-"..focusmanamax - focusmana);			-- Hide this text in this frame style
+						Perl_Focus_ManaBarTextRight:SetText("-"..focusmanamax - focusmana);	-- Hide this text in this frame style
 					else
-						Perl_Focus_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+						Perl_Focus_ManaBarTextRight:SetText();	-- Hide this text in this frame style
 					end
 				else
-					Perl_Focus_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+					Perl_Focus_ManaBarTextRight:SetText();		-- Hide this text in this frame style
 				end
 
 				if (focuspower == 1 or focuspower == 2 or focuspower == 6) then
@@ -668,19 +668,19 @@ function Perl_Focus_Update_Text_Color()
 		end
 	end
 
-	if (UnitPlayerControlled("focus")) then					-- is it a player
+	if (UnitPlayerControlled("focus")) then						-- is it a player
 		if (UnitCanAttack("focus", "player")) then				-- are we in an enemy controlled zone
 			-- Hostile players are red
-			if (not UnitCanAttack("player", "focus")) then			-- enemy is not pvp enabled
+			if (not UnitCanAttack("player", "focus")) then		-- enemy is not pvp enabled
 				r = 0.5;
 				g = 0.5;
 				b = 1.0;
-			else								-- enemy is pvp enabled
+			else												-- enemy is pvp enabled
 				r = 1.0;
 				g = 0.0;
 				b = 0.0;
 			end
-		elseif (UnitCanAttack("player", "focus")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+		elseif (UnitCanAttack("player", "focus")) then			-- enemy in a zone controlled by friendlies or when we're a ghost
 			-- Players we can attack but which are not hostile are yellow
 			r = 1.0;
 			g = 1.0;
@@ -690,7 +690,7 @@ function Perl_Focus_Update_Text_Color()
 			r = 0.0;
 			g = 1.0;
 			b = 0.0;
-		else									-- friendly non pvp enabled character
+		else													-- friendly non pvp enabled character
 			-- All other players are blue (the usual state on the "blue" server)
 			r = 0.5;
 			g = 0.5;
@@ -698,7 +698,7 @@ function Perl_Focus_Update_Text_Color()
 		end
 		Perl_Focus_NameBarText:SetTextColor(r, g, b);
 	elseif (UnitIsTapped("focus") and not UnitIsTappedByPlayer("focus")) then
-		Perl_Focus_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
+		Perl_Focus_NameBarText:SetTextColor(0.5, 0.5, 0.5);		-- not our tap
 	else
 		if (UnitIsVisible("focus")) then
 			local reaction = UnitReaction("focus", "player");
@@ -711,18 +711,18 @@ function Perl_Focus_Update_Text_Color()
 				Perl_Focus_NameBarText:SetTextColor(0.5, 0.5, 1.0);
 			end
 		else
-			if (UnitCanAttack("focus", "player")) then				-- are we in an enemy controlled zone
+			if (UnitCanAttack("focus", "player")) then			-- are we in an enemy controlled zone
 				-- Hostile players are red
-				if (not UnitCanAttack("player", "focus")) then			-- enemy is not pvp enabled
+				if (not UnitCanAttack("player", "focus")) then	-- enemy is not pvp enabled
 					r = 0.5;
 					g = 0.5;
 					b = 1.0;
-				else								-- enemy is pvp enabled
+				else											-- enemy is pvp enabled
 					r = 1.0;
 					g = 0.0;
 					b = 0.0;
 				end
-			elseif (UnitCanAttack("player", "focus")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+			elseif (UnitCanAttack("player", "focus")) then		-- enemy in a zone controlled by friendlies or when we're a ghost
 				-- Players we can attack but which are not hostile are yellow
 				r = 1.0;
 				g = 1.0;
@@ -732,7 +732,7 @@ function Perl_Focus_Update_Text_Color()
 				r = 0.0;
 				g = 1.0;
 				b = 0.0;
-			else									-- friendly non pvp enabled character
+			else												-- friendly non pvp enabled character
 				-- All other players are blue (the usual state on the "blue" server)
 				r = 0.5;
 				g = 0.5;
@@ -744,10 +744,10 @@ function Perl_Focus_Update_Text_Color()
 end
 
 function Perl_Focus_Frame_Set_Level()
-	focuslevel = UnitLevel("focus");			-- Get and store the level of the Focus
+	focuslevel = UnitLevel("focus");						-- Get and store the level of the Focus
 	focuslevelcolor = GetQuestDifficultyColor(focuslevel);	-- Get the "con color" of the Focus
-	focusclassification = UnitClassification("focus");	-- Get the type of character the Focus is (rare, elite, worldboss)
-	focusclassificationframetext = nil;			-- Variable set to nil so we can easily track if Focus is a player or not elite
+	focusclassification = UnitClassification("focus");		-- Get the type of character the Focus is (rare, elite, worldboss)
+	focusclassificationframetext = nil;						-- Variable set to nil so we can easily track if Focus is a player or not elite
 
 	Perl_Focus_LevelBarText:SetVertexColor(focuslevelcolor.r, focuslevelcolor.g, focuslevelcolor.b);
 	Perl_Focus_RareEliteBarText:SetVertexColor(focuslevelcolor.r, focuslevelcolor.g, focuslevelcolor.b);
@@ -776,7 +776,7 @@ function Perl_Focus_Frame_Set_Level()
 		focuslevel = focuslevel.."r";
 	end
 
-	Perl_Focus_LevelBarText:SetText(focuslevel);						-- Set level frame text
+	Perl_Focus_LevelBarText:SetText(focuslevel);			-- Set level frame text
 
 	if (showrareeliteframe == 1) then
 		if (focusclassificationframetext == nil) then
@@ -805,12 +805,12 @@ function Perl_Focus_Update_Portrait()
 			if UnitIsVisible("focus") then
 				Perl_Focus_PortraitFrame_FocusModel:SetUnit("focus");	-- Load the correct 3d graphic
 				Perl_Focus_PortraitFrame_FocusModel:SetCamera(0);
-				Perl_Focus_Portrait:Hide();					-- Hide the 2d graphic
-				Perl_Focus_PortraitFrame_FocusModel:Show();			-- Show the 3d graphic
+				Perl_Focus_Portrait:Hide();								-- Hide the 2d graphic
+				Perl_Focus_PortraitFrame_FocusModel:Show();				-- Show the 3d graphic
 			else
 				SetPortraitTexture(Perl_Focus_Portrait, "focus");		-- Load the correct 2d graphic
-				Perl_Focus_PortraitFrame_FocusModel:Hide();			-- Hide the 3d graphic
-				Perl_Focus_Portrait:Show();					-- Show the 2d graphic
+				Perl_Focus_PortraitFrame_FocusModel:Hide();				-- Hide the 3d graphic
+				Perl_Focus_Portrait:Show();								-- Show the 2d graphic
 			end
 		end
 	end
@@ -949,7 +949,7 @@ function Perl_Focus_Main_Style()
 				Perl_Focus_ManaBarFadeBar:SetWidth(115);
 				Perl_Focus_ManaBarBG:SetWidth(115);
 
-				if (compactpercent == 0) then				-- civilian probably needs resizing
+				if (compactpercent == 0) then	-- civilian probably needs resizing
 					Perl_Focus_CivilianFrame:SetWidth(79);
 					Perl_Focus_ClassNameFrame:SetWidth(91);
 					Perl_Focus_LevelFrame:SetWidth(46);
@@ -985,19 +985,19 @@ function Perl_Focus_Main_Style()
 	end
 
 	if (showportrait == 1) then
-		Perl_Focus_HitIndicator:SetPoint("CENTER", Perl_Focus_PortraitFrame, "CENTER", 0, 0);			-- Position the Combat Text correctly on the portrait
-		Perl_Focus_PortraitFrame:Show();									-- Show the main portrait frame
+		Perl_Focus_HitIndicator:SetPoint("CENTER", Perl_Focus_PortraitFrame, "CENTER", 0, 0);	-- Position the Combat Text correctly on the portrait
+		Perl_Focus_PortraitFrame:Show();														-- Show the main portrait frame
 
 		if (threedportrait == 0) then
-			Perl_Focus_PortraitFrame_FocusModel:Hide();							-- Hide the 3d graphic
-			Perl_Focus_Portrait:Show();									-- Show the 2d graphic
+			Perl_Focus_PortraitFrame_FocusModel:Hide();											-- Hide the 3d graphic
+			Perl_Focus_Portrait:Show();															-- Show the 2d graphic
 		end
 	else
-		Perl_Focus_HitIndicator:SetPoint("CENTER", Perl_Focus_PortraitFrame, "CENTER", 0, 0);		-- Position the Combat Text correctly on the portrait
-		Perl_Focus_PortraitFrame:Hide();									-- Hide the frame and 2d/3d portion
+		Perl_Focus_HitIndicator:SetPoint("CENTER", Perl_Focus_PortraitFrame, "CENTER", 0, 0);	-- Position the Combat Text correctly on the portrait
+		Perl_Focus_PortraitFrame:Hide();														-- Hide the frame and 2d/3d portion
 	end
 
-	if (showrareeliteframe == 1) then		-- Are we showing the Rare/Elite frame?
+	if (showrareeliteframe == 1) then															-- Are we showing the Rare/Elite frame?
 		Perl_Focus_RareEliteFrame:Show();
 	else
 		Perl_Focus_RareEliteFrame:Hide();
@@ -1005,17 +1005,17 @@ function Perl_Focus_Main_Style()
 
 	if (showclassframe == 1) then
 		Perl_Focus_ClassNameFrame:Show();
-		Perl_Focus_CivilianFrame:Hide();	-- Hide is normally Show here, but we are changing what this frame does later to guild names
+		Perl_Focus_CivilianFrame:Hide();														-- Hide is normally Show here, but we are changing what this frame does later to guild names
 	else
 		Perl_Focus_ClassNameFrame:Hide();
 		Perl_Focus_CivilianFrame:Hide();
 	end
 
-	if (showclassicon == 0) then			-- Are we showing the class icon?
+	if (showclassicon == 0) then																-- Are we showing the class icon?
 		Perl_Focus_ClassTexture:Hide();
 	end
 
-	if (portraitcombattext == 1) then		-- Are we showing combat text?
+	if (portraitcombattext == 1) then															-- Are we showing combat text?
 		Perl_Focus_PortraitTextFrame:Show();
 	else
 		Perl_Focus_PortraitTextFrame:Hide();
@@ -1135,7 +1135,7 @@ function Perl_Focus_Set_Buffs(newbuffnumber)
 	numbuffsshown = newbuffnumber;
 	Perl_Focus_UpdateVars();		-- Save the new setting
 	Perl_Focus_Reset_Buffs();		-- Reset the buff icons
-	Perl_Focus_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Focus_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Focus_Set_Debuffs(newdebuffnumber)
@@ -1145,7 +1145,7 @@ function Perl_Focus_Set_Debuffs(newdebuffnumber)
 	numdebuffsshown = newdebuffnumber;
 	Perl_Focus_UpdateVars();		-- Save the new setting
 	Perl_Focus_Reset_Buffs();		-- Reset the buff icons
-	Perl_Focus_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Focus_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Focus_Set_Class_Buffs(newvalue)
@@ -1154,7 +1154,7 @@ function Perl_Focus_Set_Class_Buffs(newvalue)
 	end
 	Perl_Focus_UpdateVars();		-- Save the new setting
 	Perl_Focus_Reset_Buffs();		-- Reset the buff icons
-	Perl_Focus_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Focus_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Focus_Set_Buff_Timers(newvalue)
@@ -1163,7 +1163,7 @@ function Perl_Focus_Set_Buff_Timers(newvalue)
 	end
 	Perl_Focus_UpdateVars();		-- Save the new setting
 	Perl_Focus_Reset_Buffs();		-- Reset the buff icons
-	Perl_Focus_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Focus_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Focus_Set_Class_Debuffs(newvalue)
@@ -1172,7 +1172,7 @@ function Perl_Focus_Set_Class_Debuffs(newvalue)
 	end
 	Perl_Focus_UpdateVars();		-- Save the new setting
 	Perl_Focus_Reset_Buffs();		-- Reset the buff icons
-	Perl_Focus_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Focus_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Focus_Set_Only_Self_Debuffs(newvalue)
@@ -1181,7 +1181,7 @@ function Perl_Focus_Set_Only_Self_Debuffs(newvalue)
 	end
 	Perl_Focus_UpdateVars();		-- Save the new setting
 	Perl_Focus_Reset_Buffs();		-- Reset the buff icons
-	Perl_Focus_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Focus_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Focus_Set_Invert_Buffs(newvalue)
@@ -1190,7 +1190,7 @@ function Perl_Focus_Set_Invert_Buffs(newvalue)
 	end
 	Perl_Focus_UpdateVars();		-- Save the new setting
 	Perl_Focus_Reset_Buffs();		-- Reset the buff icons
-	Perl_Focus_Buff_UpdateAll();		-- Repopulate the buff icons
+	Perl_Focus_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
 function Perl_Focus_Set_Class_Icon(newvalue)
@@ -1362,7 +1362,7 @@ function Perl_Focus_Set_Scale_Actual()
 		Perl_Config_Queue_Add(Perl_Focus_Set_Scale_Actual);
 	else
 		Perl_Focus_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
-		Perl_Focus_Set_BuffDebuff_Scale(buffdebuffscale*100);			-- maintain the buff/debuff scale
+		Perl_Focus_Set_BuffDebuff_Scale(buffdebuffscale*100);					-- maintain the buff/debuff scale
 		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 			Perl_ArcaneBar_Set_Scale_Actual(nil, nil, scale, nil);
 		end
@@ -1372,20 +1372,20 @@ end
 function Perl_Focus_Set_BuffDebuff_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
-		buffdebuffscale = (number / 100);				-- convert the user input to a wow acceptable value
+		buffdebuffscale = (number / 100);										-- convert the user input to a wow acceptable value
 	end
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + buffdebuffscale;	-- run it through the scaling formula introduced in 1.9
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + buffdebuffscale;			-- run it through the scaling formula introduced in 1.9
 	Perl_Focus_BuffFrame:SetScale(buffdebuffscale);
 	Perl_Focus_DebuffFrame:SetScale(buffdebuffscale);
-	Perl_Focus_UpdateVars();		-- Save the new setting
+	Perl_Focus_UpdateVars();													-- Save the new setting
 end
 
 function Perl_Focus_Set_Transparency(number)
 	if (number ~= nil) then
-		transparency = (number / 100);					-- convert the user input to a wow acceptable value
+		transparency = (number / 100);											-- convert the user input to a wow acceptable value
 	end
 	Perl_Focus_Frame:SetAlpha(transparency);
-	Perl_Focus_UpdateVars();		-- Save the new setting
+	Perl_Focus_UpdateVars();													-- Save the new setting
 end
 
 
@@ -1446,7 +1446,7 @@ function Perl_Focus_GetVars(name, updateflag)
 		numdebuffsshown = 16;
 	end
 	if (scale == nil) then
-		scale = 0.9;
+		scale = 1.0;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -1517,11 +1517,11 @@ function Perl_Focus_GetVars(name, updateflag)
 		Perl_Focus_UpdateVars();
 
 		-- Call any code we need to activate them
-		Perl_Focus_Reset_Buffs();		-- Reset the buff icons
-		Perl_Focus_Frame_Style();		-- Reposition the frames
+		Perl_Focus_Reset_Buffs();				-- Reset the buff icons
+		Perl_Focus_Frame_Style();				-- Reposition the frames
 		Perl_Focus_Buff_Debuff_Background();	-- Hide/Show the background frame
-		Perl_Focus_Set_Scale_Actual();		-- Set the scale
-		Perl_Focus_Set_Transparency();		-- Set the transparency
+		Perl_Focus_Set_Scale_Actual();			-- Set the scale
+		Perl_Focus_Set_Transparency();			-- Set the transparency
 		if (UnitExists("focus")) then
 			Perl_Focus_Update_Once();
 		end
@@ -1727,7 +1727,7 @@ function Perl_Focus_UpdateVars(vartable)
 			numdebuffsshown = 16;
 		end
 		if (scale == nil) then
-			scale = 0.9;
+			scale = 1.0;
 		end
 		if (transparency == nil) then
 			transparency = 1;
@@ -1794,11 +1794,11 @@ function Perl_Focus_UpdateVars(vartable)
 		end
 
 		-- Call any code we need to activate them
-		Perl_Focus_Reset_Buffs();		-- Reset the buff icons
-		Perl_Focus_Frame_Style();		-- Reposition the frames
+		Perl_Focus_Reset_Buffs();				-- Reset the buff icons
+		Perl_Focus_Frame_Style();				-- Reposition the frames
 		Perl_Focus_Buff_Debuff_Background();	-- Hide/Show the background frame
-		Perl_Focus_Set_Scale_Actual();		-- Set the scale
-		Perl_Focus_Set_Transparency();		-- Set the transparency
+		Perl_Focus_Set_Scale_Actual();			-- Set the scale
+		Perl_Focus_Set_Transparency();			-- Set the transparency
 		if (UnitExists("focus")) then
 			Perl_Focus_Update_Once();
 		end
@@ -1850,27 +1850,27 @@ function Perl_Focus_Buff_UpdateAll()
 		local button, buffCount, buffTexture, buffApplications, color, debuffType, duration, timeLeft, cooldown;		-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 		local curableDebuffFound = 0;
 
-		local numBuffs = 0;											-- Buff counter for correct layout
-		for buffnum=1,numbuffsshown do										-- Start main buff loop
-			if (displaycastablebuffs == 0) then								-- Which buff filter mode are we in?
+		local numBuffs = 0;												-- Buff counter for correct layout
+		for buffnum=1,numbuffsshown do									-- Start main buff loop
+			if (displaycastablebuffs == 0) then							-- Which buff filter mode are we in?
 				bufffilter = "HELPFUL";
 			else
 				bufffilter = "HELPFUL RAID";
 			end
 			_, _, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura("focus", buffnum, bufffilter);	-- Get the texture and buff stacking information if any
-			button = _G["Perl_Focus_Buff"..buffnum];						-- Create the main icon for the buff
+			button = _G["Perl_Focus_Buff"..buffnum];					-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
-				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
-				_G[button:GetName().."DebuffBorder"]:Hide();					-- Hide the debuff border
-				buffCount = _G[button:GetName().."Count"];					-- Declare the buff counting text variable
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);	-- Set the texture
+				_G[button:GetName().."DebuffBorder"]:Hide();			-- Hide the debuff border
+				buffCount = _G[button:GetName().."Count"];				-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
-					buffCount:Show();								-- Show the text
+					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
+					buffCount:Show();									-- Show the text
 				else
-					buffCount:Hide();								-- Hide the text if equal to 0
+					buffCount:Hide();									-- Hide the text if equal to 0
 				end
 				if (displaybufftimers == 1) then
-					cooldown = _G[button:GetName().."Cooldown"];				-- Handle cooldowns
+					cooldown = _G[button:GetName().."Cooldown"];		-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
 							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
@@ -1885,19 +1885,19 @@ function Perl_Focus_Buff_UpdateAll()
 					end
 				end
 				numBuffs = numBuffs + 1;								-- Increment the buff counter
-				button:Show();										-- Show the final buff icon
+				button:Show();											-- Show the final buff icon
 			else
-				button:Hide();										-- Hide the icon since there isn't a buff in this position
+				button:Hide();											-- Hide the icon since there isn't a buff in this position
 			end
-		end													-- End main buff loop
+		end																-- End main buff loop
 
 		local numDebuffs = 0;											-- Debuff counter for correct layout
-		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
+		for debuffnum=1,numdebuffsshown do								-- Start main debuff loop
 			Perl_Focus_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
 			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura("focus", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
-			button = _G["Perl_Focus_Debuff"..debuffnum];						-- Create the main icon for the debuff
+			button = _G["Perl_Focus_Debuff"..debuffnum];				-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
-				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);	-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
@@ -1920,16 +1920,16 @@ function Perl_Focus_Buff_UpdateAll()
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
 				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
-				_G[button:GetName().."DebuffBorder"]:Show();					-- Show the debuff border
-				buffCount = _G[button:GetName().."Count"];					-- Declare the debuff counting text variable
+				_G[button:GetName().."DebuffBorder"]:Show();			-- Show the debuff border
+				buffCount = _G[button:GetName().."Count"];				-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
-					buffCount:Show();								-- Show the text
+					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
+					buffCount:Show();									-- Show the text
 				else
-					buffCount:Hide();								-- Hide the text if equal to 0
+					buffCount:Hide();									-- Hide the text if equal to 0
 				end
 				if (displaybufftimers == 1) then
-					cooldown = _G[button:GetName().."Cooldown"];				-- Handle cooldowns
+					cooldown = _G[button:GetName().."Cooldown"];		-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
 							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
@@ -1943,12 +1943,12 @@ function Perl_Focus_Buff_UpdateAll()
 						cooldown:Hide();
 					end
 				end
-				numDebuffs = numDebuffs + 1;								-- Increment the debuff counter
-				button:Show();										-- Show the final debuff icon
+				numDebuffs = numDebuffs + 1;							-- Increment the debuff counter
+				button:Show();											-- Show the final debuff icon
 			else
-				button:Hide();										-- Hide the icon since there isn't a debuff in this position
+				button:Hide();											-- Hide the icon since there isn't a debuff in this position
 			end
-		end													-- End main debuff loop
+		end																-- End main debuff loop
 
 		if (numBuffs == 0) then
 			Perl_Focus_BuffFrame:Hide();
@@ -1991,11 +1991,11 @@ function Perl_Focus_Buff_UpdateAll()
 
 			Perl_Focus_BuffFrame:Show();
 			if (numBuffs > 8) then
-				Perl_Focus_BuffFrame:SetWidth(221);			-- 5 + 8 * (24 + 3)	5 = border gap, 8 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
-				Perl_Focus_BuffFrame:SetHeight(61);			-- 2 rows tall
+				Perl_Focus_BuffFrame:SetWidth(221);						-- 5 + 8 * (24 + 3)	5 = border gap, 8 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
+				Perl_Focus_BuffFrame:SetHeight(61);						-- 2 rows tall
 			else
-				Perl_Focus_BuffFrame:SetWidth(5 + numBuffs * 27);	-- Dynamically extend the background frame
-				Perl_Focus_BuffFrame:SetHeight(34);			-- 1 row tall
+				Perl_Focus_BuffFrame:SetWidth(5 + numBuffs * 27);		-- Dynamically extend the background frame
+				Perl_Focus_BuffFrame:SetHeight(34);						-- 1 row tall
 			end
 		end
 
@@ -2040,11 +2040,11 @@ function Perl_Focus_Buff_UpdateAll()
 
 			Perl_Focus_DebuffFrame:Show();
 			if (numDebuffs > 8) then
-				Perl_Focus_DebuffFrame:SetWidth(221);			-- 5 + 8 * (24 + 3)	5 = border gap, 8 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
-				Perl_Focus_DebuffFrame:SetHeight(61);			-- 2 rows tall
+				Perl_Focus_DebuffFrame:SetWidth(221);					-- 5 + 8 * (24 + 3)	5 = border gap, 8 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
+				Perl_Focus_DebuffFrame:SetHeight(61);					-- 2 rows tall
 			else
 				Perl_Focus_DebuffFrame:SetWidth(5 + numDebuffs * 27);	-- Dynamically extend the background frame
-				Perl_Focus_DebuffFrame:SetHeight(34);			-- 1 row tall
+				Perl_Focus_DebuffFrame:SetHeight(34);					-- 1 row tall
 			end
 		end
 
@@ -2121,7 +2121,7 @@ function Perl_Focus_Buff_UpdateCPMeter()
 			--Perl_Focus_CPFrame:Hide();
 		end
 
-		if (nameframecombopoints == 1) then				-- this isn't nested since you can have both combo point styles on at the same time
+		if (nameframecombopoints == 1) then					-- this isn't nested since you can have both combo point styles on at the same time
 			Perl_Focus_NameFrame_CPMeter:SetMinMaxValues(0, 5);
 			Perl_Focus_NameFrame_CPMeter:SetValue(debuffapplications);
 			if (debuffapplications == 5) then
@@ -2212,12 +2212,19 @@ end
 
 function Perl_FocusDropDown_Initialize()
 	local menu, name;
+	local id = nil;
 	if (UnitIsUnit("focus", "player")) then
 		menu = "SELF";
+	elseif (UnitIsUnit("focus", "vehicle")) then
+		menu = "VEHICLE";
 	elseif (UnitIsUnit("focus", "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer("focus")) then
-		if (UnitInParty("focus")) then
+		id = UnitInRaid("focus");
+		if (id) then
+			menu = "RAID_PLAYER";
+			name = GetRaidRosterInfo(id);
+		elseif (UnitInParty("focus")) then
 			menu = "PARTY";
 		else
 			menu = "PLAYER";
@@ -2227,7 +2234,7 @@ function Perl_FocusDropDown_Initialize()
 		name = RAID_TARGET_ICON;
 	end
 	if (menu) then
-		UnitPopup_ShowMenu(Perl_Focus_DropDown, menu, "focus", name);
+		UnitPopup_ShowMenu(Perl_Focus_DropDown, menu, "focus", name, id);
 	end
 end
 

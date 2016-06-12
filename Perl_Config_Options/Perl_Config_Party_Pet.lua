@@ -150,43 +150,43 @@ function Perl_Config_Party_Pet_Curable_Debuffs_Update()
 end
 
 function Perl_Config_Party_Pet_Set_Buffs(value)
-	if (Perl_Party_Pet_Script_Frame) then		-- this check is to prevent errors if you aren't using Party_Pet
+	if (Perl_Party_Pet_Script_Frame) then	-- this check is to prevent errors if you aren't using Party_Pet
 		Perl_Party_Pet_Set_Buffs(value);
 	end
 end
 
 function Perl_Config_Party_Pet_Set_Debuffs(value)
-	if (Perl_Party_Pet_Script_Frame) then		-- this check is to prevent errors if you aren't using Party_Pet
+	if (Perl_Party_Pet_Script_Frame) then	-- this check is to prevent errors if you aren't using Party_Pet
 		Perl_Party_Pet_Set_Debuffs(value);
 	end
 end
 
 function Perl_Config_Party_Pet_Set_Buff_Size(value)
-	if (Perl_Party_Pet_Script_Frame) then		-- this check is to prevent errors if you aren't using Party_Pet
+	if (Perl_Party_Pet_Script_Frame) then	-- this check is to prevent errors if you aren't using Party_Pet
 		Perl_Party_Pet_Set_Buff_Size(value);
 	end
 end
 
 function Perl_Config_Party_Pet_Set_Debuff_Size(value)
-	if (Perl_Party_Pet_Script_Frame) then		-- this check is to prevent errors if you aren't using Party_Pet
+	if (Perl_Party_Pet_Script_Frame) then	-- this check is to prevent errors if you aren't using Party_Pet
 		Perl_Party_Pet_Set_Debuff_Size(value);
 	end
 end
 
 function Perl_Config_Party_Pet_Set_Buff_Location(value)
-	if (Perl_Party_Pet_Script_Frame) then		-- this check is to prevent errors if you aren't using Party_Pet
+	if (Perl_Party_Pet_Script_Frame) then	-- this check is to prevent errors if you aren't using Party_Pet
 		Perl_Party_Pet_Set_Buff_Location(value);
 	end
 end
 
 function Perl_Config_Party_Pet_Set_Debuff_Location(value)
-	if (Perl_Party_Pet_Script_Frame) then		-- this check is to prevent errors if you aren't using Party_Pet
+	if (Perl_Party_Pet_Script_Frame) then	-- this check is to prevent errors if you aren't using Party_Pet
 		Perl_Party_Pet_Set_Debuff_Location(value);
 	end
 end
 
 function Perl_Config_Party_Pet_Set_Scale(value)
-	if (Perl_Party_Pet_Script_Frame) then		-- this check is to prevent errors if you aren't using Party_Pet
+	if (Perl_Party_Pet_Script_Frame) then	-- this check is to prevent errors if you aren't using Party_Pet
 		if (value == nil) then
 			value = floor(UIParent:GetScale()*100+0.5);
 			Perl_Config_Party_Pet_Frame_Slider1Text:SetText(value);
@@ -204,7 +204,7 @@ function Perl_Config_Party_Pet_Set_Scale(value)
 end
 
 function Perl_Config_Party_Pet_Set_Transparency(value)
-	if (Perl_Party_Pet_Script_Frame) then		-- this check is to prevent errors if you aren't using Party_Pet
+	if (Perl_Party_Pet_Script_Frame) then	-- this check is to prevent errors if you aren't using Party_Pet
 		Perl_Party_Pet_Set_Transparency(value);
 	end
 end

@@ -1,11 +1,11 @@
 ---------------
 -- Variables --
 ---------------
-PCUF_SHOW_DEBUG_EVENTS = 0;	-- event hijack and forbidden action monitor
+PCUF_SHOW_DEBUG_EVENTS = 0;			-- event hijack and forbidden action monitor
 Perl_Config_Config = {};
 Perl_Config_Profiles = {};
-local Perl_Config_Events = {};	-- event manager
-local Perl_Config_Queue = {};	-- queue manager
+local Perl_Config_Events = {};		-- event manager
+local Perl_Config_Queue = {};		-- queue manager
 
 Perl_Config_Global_ArcaneBar_Config = {};
 Perl_Config_Global_CombatDisplay_Config = {};
@@ -21,25 +21,25 @@ Perl_Config_Global_Target_Config = {};
 Perl_Config_Global_Target_Target_Config = {};
 
 -- Default Saved Variables (also set in Perl_Config_GetVars)
-local texture = 0;			-- no texture is set by default
+local texture = 0;					-- no texture is set by default
 local showminimapbutton = 1;		-- minimap button is on by default
 local minimapbuttonpos = 270;		-- default minimap button position
 local minimapbuttonrad = 80;		-- default minimap button radius
 local transparentbackground = 0;	-- use solid black background as default
 local texturedbarbackground = 0;	-- bar backgrounds are plain by default
-PCUF_CASTPARTYSUPPORT = 0;		-- CastParty support is disabled by default
-PCUF_COLORHEALTH = 0;			-- progressively colored health bars are off by default
-PCUF_FADEBARS = 0;			-- fading status bars is off by default
+PCUF_CASTPARTYSUPPORT = 0;			-- CastParty support is disabled by default
+PCUF_COLORHEALTH = 0;				-- progressively colored health bars are off by default
+PCUF_FADEBARS = 0;					-- fading status bars is off by default
 PCUF_NAMEFRAMECLICKCAST = 0;		-- name frames will be the one safe spot for menus by default
-PCUF_INVERTBARVALUES = 0;		-- bars deplete when low
-PCUF_COLORFRAMEDEBUFF = 1;		-- frame debuff coloring is on by default
-local positioningmode = 0;		-- positioning mode is off by default
-PCUF_THREATICON = 0;			-- threat icon is off by default
+PCUF_INVERTBARVALUES = 0;			-- bars deplete when low
+PCUF_COLORFRAMEDEBUFF = 1;			-- frame debuff coloring is on by default
+local positioningmode = 0;			-- positioning mode is off by default
+PCUF_THREATICON = 0;				-- threat icon is off by default
 
 -- Default Local Variables
-local Initialized = nil;		-- waiting to be initialized
+local Initialized = nil;			-- waiting to be initialized
 local currentprofilenumber = 0;		-- easy way to make our profile system work
-local eventqueuetotal = 0;		-- variable to check how many queued events we have
+local eventqueuetotal = 0;			-- variable to check how many queued events we have
 
 -- Local variables to save memory
 local playerClass;
@@ -106,7 +106,6 @@ function Perl_Config_OnLoad(self)
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
 
 	-- Scripts
-	--self:SetScript("OnEvent", Perl_Config_OnEvent);
 	self:SetScript("OnEvent", 
 		function(self, event, ...)
 			Perl_Config_Events[event](self, ...);
@@ -392,7 +391,7 @@ end
 function Perl_Config_Queue_Add(incomingFunction)
 	if (incomingFunction ~= nil) then
 		table.insert(Perl_Config_Queue, incomingFunction);	-- Add our function to the queue
-		eventqueuetotal = eventqueuetotal + 1;			-- Increment our variable by one
+		eventqueuetotal = eventqueuetotal + 1;				-- Increment our variable by one
 	end
 end
 
@@ -403,8 +402,8 @@ function Perl_Config_Queue_Process()
 			func();
 		end
 	end
-	Perl_Config_Queue = {};						-- Empty the queue
-	eventqueuetotal = 0;						-- Reset our variable
+	Perl_Config_Queue = {};									-- Empty the queue
+	eventqueuetotal = 0;									-- Reset our variable
 end
 
 
@@ -1173,7 +1172,8 @@ end
 -----------------------------------
 function Perl_Config_Frame_Reset_Positions()
 	if (Perl_CombatDisplay_Frame) then
-		Perl_CombatDisplay_Frame:SetUserPlaced(1);		-- All the SetUserPlaced allows us to save the new location set by these functions even if the user has not moved the frames on their own yet.
+		-- All the SetUserPlaced allows us to save the new location set by these functions even if the user has not moved the frames on their own yet.
+		Perl_CombatDisplay_Frame:SetUserPlaced(1);
 		Perl_CombatDisplay_Target_Frame:SetUserPlaced(1);
 		Perl_CombatDisplay_Frame:ClearAllPoints();
 		Perl_CombatDisplay_Target_Frame:ClearAllPoints();
@@ -1500,6 +1500,7 @@ function Perl_Config_Global_Save_Settings()
 			["PvPTimer"] = vartable["pvptimer"],
 			["PaladinPowerBar"] = vartable["paladinpowerbar"],
 			["ShardBarFrame"] = vartable["shardbarframe"],
+			["EclipseBarFrame"] = vartable["eclipsebarframe"],
 		};
 	end
 

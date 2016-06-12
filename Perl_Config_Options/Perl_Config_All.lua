@@ -27,7 +27,7 @@ function Perl_Config_All_Set_Values()
 	Perl_Config_All_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_All_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	--Perl_Config_All_Frame_Slider1:SetValue(nil);			-- Figure out how to get the slider to poof on every open
-	--Perl_Config_All_Frame_CheckButton7:SetChecked(nil);		-- We want a clean scale bar when opening the frame since nothing is saved or loaded for it
+	--Perl_Config_All_Frame_CheckButton7:SetChecked(nil);	-- We want a clean scale bar when opening the frame since nothing is saved or loaded for it
 
 	Perl_Config_All_Frame_Slider2Low:SetText("0");
 	Perl_Config_All_Frame_Slider2High:SetText("100");
@@ -117,7 +117,7 @@ function Perl_Config_All_Texture_Update(texturenum)
 		texturenum = 0;
 	end
 
-	Perl_Config_Set_Texture(texturenum);		-- Go save the value and texture the bars
+	Perl_Config_Set_Texture(texturenum);					-- Go save the value and texture the bars
 end
 
 function Perl_Config_All_Set_Scale(value)

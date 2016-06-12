@@ -9,7 +9,7 @@ local locked = 0;				-- unlocked by default
 local xpbarstate = 1;			-- show default xp bar by default
 local compactmode = 0;			-- compact mode is disabled by default
 local showraidgroup = 1;		-- show the raid group number by default when in raids
-local scale = 0.9;				-- default scale
+local scale = 1.0;				-- default scale
 local healermode = 0;			-- nurfed unit frame style
 local transparency = 1;			-- transparency for frames
 local showportrait = 0;			-- portrait is hidden by default
@@ -26,11 +26,12 @@ local showpvpicon = 1;			-- show the pvp icon
 local showbarvalues = 0;		-- healer mode will have the bar values hidden by default
 local showraidgroupinname = 0;	-- raid number is not shown in the name by default
 local fivesecondrule = 0;		-- five second rule is off by default
-local totemtimers = 1;			-- default for totem timers is on by default
-local runeframe = 1;			-- default for rune frame is on by default
+local totemtimers = 1;			-- totem timers is on by default
+local runeframe = 1;			-- rune frame is on by default
 local pvptimer = 0;				-- pvp timer is hidden by default
-local paladinpowerbar = 1;		-- default for paladin power bar is on by default
-local shardbarframe = 1;		-- default for shard bar frame is on by default
+local paladinpowerbar = 1;		-- paladin power bar is on by default
+local shardbarframe = 1;		-- shard bar frame is on by default
+local eclipsebarframe = 1;		-- eclipse bar frame is on by default
 
 -- Default Local Variables
 local InCombat = 0;				-- used to track if the player is in combat and if the icon should be displayed
@@ -121,6 +122,7 @@ function Perl_Player_OnLoad(self)
 	RuneFrame:SetParent(Perl_Player_Frame);
 	PaladinPowerBar:SetParent(Perl_Player_Frame);
 	ShardBarFrame:SetParent(Perl_Player_Frame);
+	EclipseBarFrame:SetParent(Perl_Player_Frame);
 end
 
 
@@ -136,7 +138,7 @@ Perl_Player_Events.UNIT_MAXHEALTH = Perl_Player_Events.UNIT_HEALTH;
 
 function Perl_Player_Events:UNIT_POWER(arg1)
 	if (arg1 == "player") then
-		Perl_Player_Update_Mana();		-- Update mana values
+		Perl_Player_Update_Mana();			-- Update mana values
 	end
 end
 Perl_Player_Events.UNIT_MAXPOWER = Perl_Player_Events.UNIT_POWER;
@@ -144,7 +146,7 @@ Perl_Player_Events.UNIT_MAXPOWER = Perl_Player_Events.UNIT_POWER;
 function Perl_Player_Events:UNIT_DISPLAYPOWER(arg1)
 	if (arg1 == "player") then
 		Perl_Player_Update_Mana_Bar();		-- What type of energy are we using now?
-		Perl_Player_Update_Mana();		-- Update the energy info immediately
+		Perl_Player_Update_Mana();			-- Update the energy info immediately
 	end
 end
 
@@ -203,8 +205,8 @@ function Perl_Player_Events:UNIT_LEVEL(arg1)
 end
 
 function Perl_Player_Events:RAID_ROSTER_UPDATE()
-	Perl_Player_Update_Raid_Group_Number();		-- What raid group number are we in?
-	Perl_Player_Check_Hidden();			-- Are suppossed to hide the frame?
+	Perl_Player_Update_Raid_Group_Number();	-- What raid group number are we in?
+	Perl_Player_Check_Hidden();				-- Are suppossed to hide the frame?
 end
 
 function Perl_Player_Events:PARTY_LEADER_CHANGED()
@@ -260,10 +262,10 @@ Perl_Player_Events.PLAYER_ENTERING_WORLD = Perl_Player_Events.PLAYER_LOGIN;
 function Perl_Player_Initialize()
 	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
-		InCombat = 0;				-- You can't be fighting if you're zoning, and no event is sent, force it to no combat.
+		InCombat = 0;						-- You can't be fighting if you're zoning, and no event is sent, force it to no combat.
 		Perl_Player_Set_Scale_Actual();		-- Set the scale
 		Perl_Player_Set_Transparency();		-- Set the transparency
-		Perl_Player_Update_Once();		-- Set all the correct information
+		Perl_Player_Update_Once();			-- Set all the correct information
 		return;
 	end
 
@@ -275,7 +277,7 @@ function Perl_Player_Initialize()
 	end
 
 	-- Major config options.
-	Perl_Player_Initialize_Frame_Color();		-- Give the borders (and background if applicable) that "Perl" look
+	Perl_Player_Initialize_Frame_Color();	-- Give the borders (and background if applicable) that "Perl" look
 
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(PlayerFrame);
@@ -346,7 +348,7 @@ function Perl_Player_Update_Health()
 	playerhealthmax = UnitHealthMax("player");
 	playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
 
-	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative health
+	if (UnitIsDead("player") or UnitIsGhost("player")) then	-- This prevents negative health
 		playerhealth = 0;
 		playerhealthpercent = 0;
 	end
@@ -403,35 +405,35 @@ function Perl_Player_Update_Health()
 	end
 
 	if (compactmode == 0) then
-		if (healermode == 1) then									-- Compact mode OFF and Healer mode ON
+		if (healermode == 1) then										-- Compact mode OFF and Healer mode ON
 			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
 			if (showbarvalues == 0) then
 				if (mouseoverhealthflag == 0) then
-					Perl_Player_HealthBarTextPercent:SetText();					-- Add text here if you dont't want the bar values hidden in healer mode.  Set the value in the function Perl_Player_HealthHide to the same as this.
+					Perl_Player_HealthBarTextPercent:SetText();			-- Add text here if you dont't want the bar values hidden in healer mode.  Set the value in the function Perl_Player_HealthHide to the same as this.
 				else
 					Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 				end
 			else
 				Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 			end
-		else												-- Compact mode OFF and Healer mode OFF
+		else															-- Compact mode OFF and Healer mode OFF
 			Perl_Player_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
 			Perl_Player_HealthBarTextPercent:SetText(playerhealthpercent .. "%");
 		end
-		Perl_Player_HealthBarTextCompactPercent:SetText();						-- Hide the compact mode percent text in full mode
+		Perl_Player_HealthBarTextCompactPercent:SetText();				-- Hide the compact mode percent text in full mode
 	else
-		if (healermode == 1) then									-- Compact mode ON and Healer mode ON
+		if (healermode == 1) then										-- Compact mode ON and Healer mode ON
 			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
 			if (showbarvalues == 0) then
 				if (mouseoverhealthflag == 0) then
-					Perl_Player_HealthBarTextPercent:SetText();					-- Add text here if you dont't want the bar values hidden in healer mode.  Set the value in the function Perl_Player_HealthHide to the same as this.
+					Perl_Player_HealthBarTextPercent:SetText();			-- Add text here if you dont't want the bar values hidden in healer mode.  Set the value in the function Perl_Player_HealthHide to the same as this.
 				else
 					Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 				end
 			else
 				Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 			end
-		else												-- Compact mode ON and Healer mode OFF
+		else															-- Compact mode ON and Healer mode OFF
 			Perl_Player_HealthBarText:SetText();
 			Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 		end
@@ -449,7 +451,7 @@ function Perl_Player_Update_Mana()
 	playermanamax = UnitPowerMax("player");
 	playermanapercent = floor(playermana/playermanamax*100+0.5);
 
-	if (UnitIsDead("player") or UnitIsGhost("player") or playermanamax == 0) then			-- This prevents negative mana
+	if (UnitIsDead("player") or UnitIsGhost("player") or playermanamax == 0) then	-- This prevents negative mana
 		playermana = 0;
 		playermanapercent = 0;
 	end
@@ -486,13 +488,13 @@ function Perl_Player_Update_Mana()
 
 	if (showdruidbar == 1) then
 		_, englishclass = UnitClass("player");
-		if (englishclass == "DRUID") then				-- Are we a Druid?
-			if (UnitPowerType("player") > 0) then		-- Are we in a manaless form?
+		if (englishclass == "DRUID") then								-- Are we a Druid?
+			if (UnitPowerType("player") > 0) then						-- Are we in a manaless form?
 				playerdruidbarmana = UnitPower("player", 0);
 				playerdruidbarmanamax = UnitPowerMax("player", 0);
 				playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
 
-				if (playerdruidbarmanapercent == 100) then			-- This is to ensure the value isn't 1 or 2 mana under max when 100%
+				if (playerdruidbarmanapercent == 100) then				-- This is to ensure the value isn't 1 or 2 mana under max when 100%
 					playerdruidbarmana = playerdruidbarmanamax;
 				end
 
@@ -633,7 +635,7 @@ function Perl_Player_Update_Mana_Text()
 				Perl_Player_ManaBarTextPercent:SetText(playermanapercent.."%");
 			end
 		end
-		Perl_Player_ManaBarTextCompactPercent:SetText();		-- Hide the compact mode percent text in full mode
+		Perl_Player_ManaBarTextCompactPercent:SetText();				-- Hide the compact mode percent text in full mode
 	else
 		if (healermode == 1) then
 			Perl_Player_ManaBarText:SetTextColor(0.5, 0.5, 0.5, 1);
@@ -720,26 +722,26 @@ function Perl_Player_Update_Mana_Bar()
 	if (playerpower == 0) then		-- mana
 		Perl_Player_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-	elseif (playerpower == 1) then		-- rage
+	elseif (playerpower == 1) then	-- rage
 		Perl_Player_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-	elseif (playerpower == 2) then		-- focus
+	elseif (playerpower == 2) then	-- focus
 		Perl_Player_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-	elseif (playerpower == 3) then		-- energy
+	elseif (playerpower == 3) then	-- energy
 		Perl_Player_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-	elseif (playerpower == 6) then		-- runic
+	elseif (playerpower == 6) then	-- runic
 		Perl_Player_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
 	end
 
-	Perl_Player_FiveSecondRule:Hide();	-- reset the five second rule ticker
+	Perl_Player_FiveSecondRule:Hide();									-- reset the five second rule ticker
 	fivesecondrulelastmana = 0;
 end
 
 function Perl_Player_Update_Experience()
-	Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);		-- move this to the frame style function later
+	Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);				-- move this to the frame style function later
 	Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 	Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 
@@ -847,7 +849,7 @@ function Perl_Player_Update_Raid_Group_Number()
 		if (showraidgroup == 1) then
 			if (numRaidMembers == 0) then
 				Perl_Player_RaidGroupNumberFrame:Hide();
-				Perl_Player_MasterIcon:Hide();		-- This was added to correctly hide the master loot icon after leaving a party/raid
+				Perl_Player_MasterIcon:Hide();							-- This was added to correctly hide the master loot icon after leaving a party/raid
 			else
 				Perl_Player_RaidGroupNumberFrame:Show();
 			end
@@ -858,7 +860,7 @@ function Perl_Player_Update_Raid_Group_Number()
 
 	if (showraidgroupinname == 0) then
 		Perl_Player_NameBarText:SetText(UnitName("player"));
-		if (Perl_ArcaneBar_Frame_Loaded_Frame) then	-- ArcaneBar Support
+		if (Perl_ArcaneBar_Frame_Loaded_Frame) then						-- ArcaneBar Support
 			Perl_ArcaneBar_player.unitname = Perl_Player_NameBarText:GetText();
 		end
 		if (showraidgroup == 0) then
@@ -872,7 +874,7 @@ function Perl_Player_Update_Raid_Group_Number()
 	if (numRaidMembers == 0) then
 		Perl_Player_NameBarText:SetText(UnitName("player"));
 		Perl_Player_MasterIcon:Hide();
-		if (Perl_ArcaneBar_Frame_Loaded_Frame) then	-- ArcaneBar Support
+		if (Perl_ArcaneBar_Frame_Loaded_Frame) then						-- ArcaneBar Support
 			Perl_ArcaneBar_player.unitname = Perl_Player_NameBarText:GetText();
 		end
 		return;
@@ -887,7 +889,7 @@ function Perl_Player_Update_Raid_Group_Number()
 				Perl_Player_RaidGroupNumberBarText:SetText(PERL_LOCALIZED_PLAYER_GROUP..subgroup);
 				if (showraidgroupinname == 1) then
 					Perl_Player_NameBarText:SetText(UnitName("player")..":"..subgroup);
-					if (Perl_ArcaneBar_Frame_Loaded_Frame) then	-- ArcaneBar Support
+					if (Perl_ArcaneBar_Frame_Loaded_Frame) then			-- ArcaneBar Support
 						Perl_ArcaneBar_player.unitname = Perl_Player_NameBarText:GetText();
 					end
 				end
@@ -940,7 +942,7 @@ function Perl_Player_Update_PvP_Status()
 				Perl_Player_PVPStatus:Hide();
 			end
 		elseif (UnitFactionGroup("player")) then
-			Perl_Player_NameBarText:SetTextColor(0, 1, 0);		-- Green if PvP flagged
+			Perl_Player_NameBarText:SetTextColor(0, 1, 0);				-- Green if PvP flagged
 			if (showpvpicon == 1) then
 				Perl_Player_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..UnitFactionGroup("player"));
 				Perl_Player_PVPStatus:Show();
@@ -948,15 +950,15 @@ function Perl_Player_Update_PvP_Status()
 				Perl_Player_PVPStatus:Hide();
 			end
 		else
-			Perl_Player_NameBarText:SetTextColor(1, 0, 0);		-- Red if charmed
+			Perl_Player_NameBarText:SetTextColor(1, 0, 0);				-- Red if charmed
 			Perl_Player_PVPStatus:Hide();
 		end
 	else
-		Perl_Player_NameBarText:SetTextColor(0.5, 0.5, 1);		-- Blue if not PvP flagged
+		Perl_Player_NameBarText:SetTextColor(0.5, 0.5, 1);				-- Blue if not PvP flagged
 		Perl_Player_PVPStatus:Hide();
 	end
 
-	if (classcolorednames == 1) then				-- Color by class
+	if (classcolorednames == 1) then									-- Color by class
 		_, englishclass = UnitClass("player");
 		Perl_Player_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
 	end
@@ -1009,7 +1011,7 @@ function Perl_Player_HealthShow()
 			playerhealth = UnitHealth("player");
 			playerhealthmax = UnitHealthMax("player");
 
-			if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative health
+			if (UnitIsDead("player") or UnitIsGhost("player")) then	-- This prevents negative health
 				playerhealth = 0;
 			end
 
@@ -1034,7 +1036,7 @@ function Perl_Player_ManaShow()
 			playermana = UnitPower("player");
 			playermanamax = UnitPowerMax("player");
 
-			if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
+			if (UnitIsDead("player") or UnitIsGhost("player")) then		-- This prevents negative mana
 				playermana = 0;
 			end
 
@@ -1065,7 +1067,7 @@ function Perl_Player_DruidBarManaShow()
 			playerdruidbarmanamax = DruidBarKey.maxmana;
 			playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
 
-			if (playerdruidbarmanapercent == 100) then			-- This is to ensure the value isn't 1 or 2 mana under max when 100%
+			if (playerdruidbarmanapercent == 100) then					-- This is to ensure the value isn't 1 or 2 mana under max when 100%
 				playerdruidbarmana = playerdruidbarmanamax;
 			end
 
@@ -1090,7 +1092,7 @@ end
 function Perl_Player_Update_Portrait()
 	if (showportrait == 1) then
 		if (threedportrait == 0) then
-			SetPortraitTexture(Perl_Player_Portrait, "player");		-- Load the correct 2d graphic
+			SetPortraitTexture(Perl_Player_Portrait, "player");			-- Load the correct 2d graphic
 		else
 			Perl_Player_PortraitFrame_PlayerModel:SetUnit("player");	-- Load the correct 3d graphic
 			Perl_Player_PortraitFrame_PlayerModel:SetCamera(0);
@@ -1172,7 +1174,7 @@ function Perl_Player_Frame_Style()
 		Perl_Config_Queue_Add(Perl_Player_Frame_Style);
 	else
 		-- Begin: Set the xp bar mode and update the experience if needed
-		if (xpbarstate == 1) then						-- Experience
+		if (xpbarstate == 1) then		-- Experience
 			Perl_Player_StatsFrame:SetHeight(54);
 			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
 			Perl_Player_XPBar:Show();
@@ -1180,7 +1182,7 @@ function Perl_Player_Frame_Style()
 			Perl_Player_XPRestBar:Show();
 			Perl_Player_XPBar_CastClickOverlay:Show();
 			Perl_Player_Update_Experience();
-		elseif (xpbarstate == 2) then						-- PvP
+		elseif (xpbarstate == 2) then	-- PvP
 			Perl_Player_StatsFrame:SetHeight(54);
 			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
 			Perl_Player_XPBar:Show();
@@ -1202,14 +1204,14 @@ function Perl_Player_Frame_Style()
 			Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
 			Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 			Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
-		elseif (xpbarstate == 3) then						-- Hidden
+		elseif (xpbarstate == 3) then	-- Hidden
 			Perl_Player_XPBar:Hide();
 			Perl_Player_XPBarBG:Hide();
 			Perl_Player_XPRestBar:Hide();
 			Perl_Player_XPBar_CastClickOverlay:Hide();
 			Perl_Player_StatsFrame:SetHeight(42);
 			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(42);
-		elseif (xpbarstate == 4) then						-- Reputation
+		elseif (xpbarstate == 4) then	-- Reputation
 			Perl_Player_StatsFrame:SetHeight(54);
 			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
 			Perl_Player_XPBar:Show();
@@ -1229,10 +1231,10 @@ function Perl_Player_Frame_Style()
 			Perl_Player_XPBar:SetPoint("TOPLEFT", "Perl_Player_DruidBar", "BOTTOMLEFT", 0, -2);
 
 			if (xpbarstate == 3) then
-				Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is hidden
+				Perl_Player_StatsFrame:SetHeight(54);	-- Experience Bar is hidden
 				Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
 			else
-				Perl_Player_StatsFrame:SetHeight(66);			-- Experience Bar is shown
+				Perl_Player_StatsFrame:SetHeight(66);	-- Experience Bar is shown
 				Perl_Player_StatsFrame_CastClickOverlay:SetHeight(66);
 			end
 		else
@@ -1394,11 +1396,11 @@ function Perl_Player_Frame_Style()
 		if (showportrait == 1) then
 			Perl_Player_PortraitFrame:Show();					-- Show the main portrait frame
 			if (threedportrait == 0) then
-				Perl_Player_PortraitFrame_PlayerModel:Hide();			-- Hide the 3d graphic
+				Perl_Player_PortraitFrame_PlayerModel:Hide();	-- Hide the 3d graphic
 				Perl_Player_Portrait:Show();					-- Show the 2d graphic
 			else
 				Perl_Player_Portrait:Hide();					-- Hide the 2d graphic
-				Perl_Player_PortraitFrame_PlayerModel:Show();			-- Show the 3d graphic
+				Perl_Player_PortraitFrame_PlayerModel:Show();	-- Show the 3d graphic
 			end
 		else
 			Perl_Player_PortraitFrame:Hide();					-- Hide the frame and 2d/3d portion
@@ -1461,6 +1463,13 @@ function Perl_Player_Frame_Style()
 			ShardBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 28, 0);
 		else
 			ShardBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+		end
+
+		-- Hi-jack the Blizzard eclipse bar frame
+		if (eclipsebarframe == 1) then
+			EclipseBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 14, 3);
+		else
+			EclipseBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
 		-- Update the five second rule
@@ -1666,9 +1675,15 @@ function Perl_Player_Set_Show_Shard_Bar_Frame(newvalue)
 	Perl_Player_Frame_Style();
 end
 
+function Perl_Player_Set_Show_Eclipse_Bar_Frame(newvalue)
+	eclipsebarframe = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
+end
+
 function Perl_Player_Set_Scale(number)
 	if (number ~= nil) then
-		scale = (number / 100);							-- convert the user input to a wow acceptable value
+		scale = (number / 100);													-- convert the user input to a wow acceptable value
 	end
 	Perl_Player_UpdateVars();
 	Perl_Player_Set_Scale_Actual();
@@ -1687,7 +1702,7 @@ end
 
 function Perl_Player_Set_Transparency(number)
 	if (number ~= nil) then
-		transparency = (number / 100);						-- convert the user input to a wow acceptable value
+		transparency = (number / 100);											-- convert the user input to a wow acceptable value
 	end
 	Perl_Player_UpdateVars();
 	Perl_Player_Frame:SetAlpha(transparency);
@@ -1728,6 +1743,7 @@ function Perl_Player_GetVars(name, updateflag)
 	pvptimer = Perl_Player_Config[name]["PvPTimer"];
 	paladinpowerbar = Perl_Player_Config[name]["PaladinPowerBar"];
 	shardbarframe = Perl_Player_Config[name]["ShardBarFrame"];
+	eclipsebarframe = Perl_Player_Config[name]["EclipseBarFrame"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1742,7 +1758,7 @@ function Perl_Player_GetVars(name, updateflag)
 		showraidgroup = 1;
 	end
 	if (scale == nil) then
-		scale = 0.9;
+		scale = 1.0;
 	end
 	if (healermode == nil) then
 		healermode = 0;
@@ -1807,6 +1823,9 @@ function Perl_Player_GetVars(name, updateflag)
 	if (shardbarframe == nil) then
 		shardbarframe = 1;
 	end
+	if (eclipsebarframe == nil) then
+		eclipsebarframe = 1;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1846,6 +1865,7 @@ function Perl_Player_GetVars(name, updateflag)
 		["pvptimer"] = pvptimer,
 		["paladinpowerbar"] = paladinpowerbar,
 		["shardbarframe"] = shardbarframe,
+		["eclipsebarframe"] = eclipsebarframe,
 	}
 	return vars;
 end
@@ -1984,6 +2004,11 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				shardbarframe = nil;
 			end
+			if (vartable["Global Settings"]["EclipseBarFrame"] ~= nil) then
+				eclipsebarframe = vartable["Global Settings"]["EclipseBarFrame"];
+			else
+				eclipsebarframe = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2000,7 +2025,7 @@ function Perl_Player_UpdateVars(vartable)
 			showraidgroup = 1;
 		end
 		if (scale == nil) then
-			scale = 0.9;
+			scale = 1.0;
 		end
 		if (healermode == nil) then
 			healermode = 0;
@@ -2065,6 +2090,9 @@ function Perl_Player_UpdateVars(vartable)
 		if (shardbarframe == nil) then
 			shardbarframe = 1;
 		end
+		if (eclipsebarframe == nil) then
+			eclipsebarframe = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Update_Once();
@@ -2099,6 +2127,7 @@ function Perl_Player_UpdateVars(vartable)
 		["PvPTimer"] = pvptimer,
 		["PaladinPowerBar"] = paladinpowerbar,
 		["ShardBarFrame"] = shardbarframe,
+		["EclipseBarFrame"] = eclipsebarframe,
 	};
 end
 
@@ -2110,8 +2139,8 @@ function Perl_Player_BuffUpdateAll()
 	local color, debuffType;
 	local curableDebuffFound = 0;
 
-	for debuffnum=1,20 do											-- Start main debuff loop
-		_, _, _, _, debuffType, _, _ = UnitDebuff("player", debuffnum, 1);		-- Get the texture and debuff stacking information if any
+	for debuffnum=1,20 do													-- Start main debuff loop
+		_, _, _, _, debuffType, _, _ = UnitDebuff("player", debuffnum, 1);	-- Get the texture and debuff stacking information if any
 			if (debuffType) then
 				if (PCUF_COLORFRAMEDEBUFF == 1) then
 					if (curableDebuffFound == 0) then
@@ -2182,17 +2211,17 @@ function Perl_Player_XPTooltip(self)
 	local playerxp, playerxpmax, xptext
 	GameTooltip_SetDefaultAnchor(GameTooltip, self);
 	if (xpbarstate == 1) then
-		local playerlevel = UnitLevel("player");			-- Player's next level
+		local playerlevel = UnitLevel("player");		-- Player's next level
 		if (playerlevel < 85) then
 			playerxp = UnitXP("player");				-- Player's current XP
 			playerxpmax = UnitXPMax("player");			-- Experience for the current level
-			local playerxprest = GetXPExhaustion();			-- Amount of bonus xp we have
-			local xptolevel = playerxpmax - playerxp		-- XP till level
+			local playerxprest = GetXPExhaustion();		-- Amount of bonus xp we have
+			local xptolevel = playerxpmax - playerxp	-- XP till level
 
 			if (playerxprest) then
 				xptext = playerxp.."/"..playerxpmax .." (+"..(playerxprest)..")";	-- Create the experience string w/ rest xp
 			else
-				xptext = playerxp.."/"..playerxpmax;		-- Create the experience string w/ no rest xp
+				xptext = playerxp.."/"..playerxpmax;	-- Create the experience string w/ no rest xp
 			end
 
 			GameTooltip:SetText(xptext, 255/255, 209/255, 0/255);
@@ -2210,7 +2239,7 @@ function Perl_Player_XPTooltip(self)
 		end
 		
 	elseif (xpbarstate == 2) then
-		local rankNumber, rankName, rankProgress;			-- Some variables
+		local rankNumber, rankName, rankProgress;		-- Some variables
 		rankNumber = UnitPVPRank("player")
 		if (rankNumber < 1) then
 			rankName = "Unranked"

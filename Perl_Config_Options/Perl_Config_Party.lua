@@ -188,31 +188,31 @@ function Perl_Config_Party_Set_Values()
 end
 
 function Perl_Config_Party_Set_Space(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
+	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Space(value);
 	end
 end
 
 function Perl_Config_Party_Set_Buff_Location(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
+	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Buff_Location(value);
 	end
 end
 
 function Perl_Config_Party_Set_Debuff_Location(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
+	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Debuff_Location(value);
 	end
 end
 
 function Perl_Config_Party_Set_Buff_Size(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
+	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Buff_Size(value);
 	end
 end
 
 function Perl_Config_Party_Set_Debuff_Size(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
+	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Debuff_Size(value);
 	end
 end
@@ -383,19 +383,19 @@ function Perl_Config_Party_Buff_Timers_Update()
 end
 
 function Perl_Config_Party_Set_Buffs(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
+	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Buffs(value);
 	end
 end
 
 function Perl_Config_Party_Set_Debuffs(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
+	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Debuffs(value);
 	end
 end
 
 function Perl_Config_Party_Set_Scale(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
+	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Party
 		if (value == nil) then
 			value = floor(UIParent:GetScale()*100+0.5);
 			Perl_Config_Party_Frame_Slider1Text:SetText(value);
@@ -413,7 +413,7 @@ function Perl_Config_Party_Set_Scale(value)
 end
 
 function Perl_Config_Party_Set_Transparency(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
+	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Transparency(value);
 	end
 end

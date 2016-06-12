@@ -134,37 +134,37 @@ function Perl_Config_Player_Pet_Set_Values()
 end
 
 function Perl_Config_Player_Pet_Set_Buffs(value)
-	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Player_Pet_Frame) then	-- this check is to prevent errors if you aren't using Player_Pet
 		Perl_Player_Pet_Set_Buffs(value);
 	end
 end
 
 function Perl_Config_Player_Pet_Set_Debuffs(value)
-	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Player_Pet_Frame) then	-- this check is to prevent errors if you aren't using Player_Pet
 		Perl_Player_Pet_Set_Debuffs(value);
 	end
 end
 
 function Perl_Config_Player_Pet_Set_Buff_Location(value)
-	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Player_Pet_Frame) then	-- this check is to prevent errors if you aren't using Player_Pet
 		Perl_Player_Pet_Set_Buff_Location(value);
 	end
 end
 
 function Perl_Config_Player_Pet_Set_Debuff_Location(value)
-	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Player_Pet_Frame) then	-- this check is to prevent errors if you aren't using Player_Pet
 		Perl_Player_Pet_Set_Debuff_Location(value);
 	end
 end
 
 function Perl_Config_Player_Pet_Set_Buff_Size(value)
-	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Player_Pet_Frame) then	-- this check is to prevent errors if you aren't using Player_Pet
 		Perl_Player_Pet_Set_Buff_Size(value);
 	end
 end
 
 function Perl_Config_Player_Pet_Set_Debuff_Size(value)
-	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Player_Pet_Frame) then	-- this check is to prevent errors if you aren't using Player_Pet
 		Perl_Player_Pet_Set_Debuff_Size(value);
 	end
 end
@@ -266,7 +266,7 @@ function Perl_Config_Player_Pet_Curable_Debuffs_Update()
 end
 
 function Perl_Config_Player_Pet_Set_Scale(value)
-	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Player_Pet_Frame) then	-- this check is to prevent errors if you aren't using Player_Pet
 		if (value == nil) then
 			value = floor(UIParent:GetScale()*100+0.5);
 			Perl_Config_Player_Pet_Frame_Slider1Text:SetText(value);
@@ -284,7 +284,7 @@ function Perl_Config_Player_Pet_Set_Scale(value)
 end
 
 function Perl_Config_Player_Pet_Target_Set_Scale(value)
-	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Player_Pet_Frame) then	-- this check is to prevent errors if you aren't using Player_Pet
 		if (value == nil) then
 			value = floor(UIParent:GetScale()*100+0.5);
 			Perl_Config_Player_Pet_Frame_Slider9Text:SetText(value);
@@ -302,7 +302,7 @@ function Perl_Config_Player_Pet_Target_Set_Scale(value)
 end
 
 function Perl_Config_Player_Pet_Set_Transparency(value)
-	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Player_Pet_Frame) then	-- this check is to prevent errors if you aren't using Player_Pet
 		Perl_Player_Pet_Set_Transparency(value);
 	end
 end

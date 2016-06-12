@@ -10,7 +10,7 @@ local locked = 0;						-- unlocked by default
 local compactmode = 0;					-- compact mode is disabled by default
 local partyhidden = 0;					-- party frame is set to always show by default
 local partyspacing = -95;				-- default spacing between party member frames
-local scale = 0.9;						-- default scale
+local scale = 1.0;						-- default scale
 local showpets = 1;						-- show pets by default
 local healermode = 0;					-- nurfed unit frame style
 local transparency = 1.0;				-- transparency for frames
@@ -43,18 +43,18 @@ local mouseovermanaflag = 0;			-- is the mouse over the mana bar for healer mode
 local mouseoverpethealthflag = 0;		-- is the mouse over the pet health bar for healer mode?
 
 -- Fade Bar Variables
-local Perl_Party_One_HealthBar_Fade_Color = 1;				-- the color fading interval
-local Perl_Party_Two_HealthBar_Fade_Color = 1;				-- the color fading interval
-local Perl_Party_Three_HealthBar_Fade_Color = 1;			-- the color fading interval
-local Perl_Party_Four_HealthBar_Fade_Color = 1;				-- the color fading interval
-local Perl_Party_One_ManaBar_Fade_Color = 1;				-- the color fading interval
-local Perl_Party_Two_ManaBar_Fade_Color = 1;				-- the color fading interval
-local Perl_Party_Three_ManaBar_Fade_Color = 1;				-- the color fading interval
-local Perl_Party_Four_ManaBar_Fade_Color = 1;				-- the color fading interval
-local Perl_Party_One_PetHealthBar_Fade_Color = 1;			-- the color fading interval
-local Perl_Party_Two_PetHealthBar_Fade_Color = 1;			-- the color fading interval
-local Perl_Party_Three_PetHealthBar_Fade_Color = 1;			-- the color fading interval
-local Perl_Party_Four_PetHealthBar_Fade_Color = 1;			-- the color fading interval
+local Perl_Party_One_HealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Two_HealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Three_HealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Party_Four_HealthBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_One_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Two_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Three_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_Four_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Party_One_PetHealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Party_Two_PetHealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Party_Three_PetHealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Party_Four_PetHealthBar_Fade_Color = 1;	-- the color fading interval
 
 -- Local variables to save memory
 local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, partymanapercent, partypethealth, partypethealthmax, partypethealthpercent, englishclass, bufffilter, debufffilter;
@@ -158,7 +158,7 @@ end
 ------------
 function Perl_Party_Script_Events:PLAYER_LOGIN()
 	if (Initialized) then
-		Perl_Party_Check_Hidden();		-- Are we running a hidden mode?
+		Perl_Party_Check_Hidden();			-- Are we running a hidden mode?
 	end
 end
 Perl_Party_Script_Events.PLAYER_ENTERING_WORLD = Perl_Party_Script_Events.PLAYER_LOGIN;
@@ -208,7 +208,7 @@ Perl_Party_Events.UNIT_PVP_UPDATE = Perl_Party_Events.UNIT_FACTION;
 
 function Perl_Party_Events:UNIT_NAME_UPDATE(arg1)
 	if (arg1 == self.unit) then
-		Perl_Party_Set_Name(self);		-- Set the player's name and class icon
+		Perl_Party_Set_Name(self);			-- Set the player's name and class icon
 	end
 end
 
@@ -240,11 +240,11 @@ end
 Perl_Party_Events.UNIT_MODEL_CHANGED = Perl_Party_Events.UNIT_PORTRAIT_UPDATE;
 
 function Perl_Party_Events:PARTY_LOOT_METHOD_CHANGED()
-	Perl_Party_Update_Loot_Method(self);		-- Who is the master looter if any
+	Perl_Party_Update_Loot_Method(self);	-- Who is the master looter if any
 end
 
 function Perl_Party_Events:PLAYER_ALIVE()
-	Perl_Party_Check_Hidden();			-- Are we running a hidden mode? (Hopefully the last check we need to add for this)
+	Perl_Party_Check_Hidden();				-- Are we running a hidden mode? (Hopefully the last check we need to add for this)
 end
 
 function Perl_Party_Events:VOICE_START(arg1)
@@ -266,7 +266,7 @@ function Perl_Party_Events:UNIT_THREAT_SITUATION_UPDATE(arg1)
 end
 
 function Perl_Party_Events:PLAYER_ENTERING_WORLD()
-	Perl_Party_Initialize();			-- We also force update info here in case of a /console reloadui
+	Perl_Party_Initialize();				-- We also force update info here in case of a /console reloadui
 end
 
 
@@ -278,9 +278,9 @@ function Perl_Party_Initialize()
 	if (Initialized) then
 		Perl_Party_Set_Scale_Actual();		-- Set the frame scale
 		Perl_Party_Set_Transparency();		-- Set the frame transparency
-		Perl_Party_Force_Update()		-- Attempt to forcefully update information
+		Perl_Party_Force_Update()			-- Attempt to forcefully update information
 		Perl_Party_Update_Health_Mana();	-- You know the drill
-		Perl_Party_Check_Hidden();		-- Are we running a hidden mode?
+		Perl_Party_Check_Hidden();			-- Are we running a hidden mode?
 		return;
 	end
 
@@ -292,7 +292,7 @@ function Perl_Party_Initialize()
 	end
 
 	-- Major config options.
-	Perl_Party_Initialize_Frame_Color();		-- Color the frame borders
+	Perl_Party_Initialize_Frame_Color();	-- Color the frame borders
 	Perl_Party_Frame_Style();
 
 	-- Unregister and Hide the Blizzard frames
@@ -397,7 +397,7 @@ function Perl_Party_Update_Health(self)
 	partyhealthmax = UnitHealthMax(self.unit);
 	partyhealthpercent = floor(partyhealth/partyhealthmax*100+0.5);
 
-	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then			-- This prevents negative health
+	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then	-- This prevents negative health
 		partyhealth = 0;
 		partyhealthpercent = 0;
 	end
@@ -407,7 +407,7 @@ function Perl_Party_Update_Health(self)
 			self.healthBarFadeBar:SetMinMaxValues(0, partyhealthmax);
 			self.healthBarFadeBar:SetValue(self.healthBar:GetValue());
 			self.healthBarFadeBar:Show();
-			if (self.id == 1) then						-- This makes the bars fade much smoother when lots of change is happening to a given bar
+			if (self.id == 1) then								-- This makes the bars fade much smoother when lots of change is happening to a given bar
 				Perl_Party_One_HealthBar_Fade_Color = 1;
 				Perl_Party_1_HealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 				Perl_Party_1_HealthBar_Fade_OnUpdate_Frame:Show();
@@ -483,7 +483,7 @@ function Perl_Party_Update_Health(self)
 			self.healthBarText:SetText(partyhealth.."/"..partyhealthmax);
 			self.healthBarTextPercent:SetText(partyhealthpercent.."%");
 		end
-		self.healthBarTextCompactPercent:SetText();						-- Hide the compact mode percent text in full mode
+		self.healthBarTextCompactPercent:SetText();				-- Hide the compact mode percent text in full mode
 	else
 		if (healermode == 1) then
 			self.healthBarText:SetText("-"..partyhealthmax - partyhealth);
@@ -512,7 +512,7 @@ function Perl_Party_Update_Health(self)
 	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then
 		self.deadStatus:Show();
 		_, englishclass = UnitClass(self.unit);
-		if (englishclass == "HUNTER") then	-- If the dead is a hunter, check for Feign Death
+		if (englishclass == "HUNTER") then						-- If the dead is a hunter, check for Feign Death
 			local buffnum = 1;
 			local currentlyfd = 0;
 			local _, _, buffTexture = UnitBuff(self.unit, buffnum);
@@ -529,14 +529,14 @@ function Perl_Party_Update_Health(self)
 				buffnum = buffnum + 1;
 				_, _, buffTexture = UnitBuff(self.unit, buffnum);
 			end
-			if (currentlyfd == 0) then				-- If the hunter is not Feign Death, then lol
+			if (currentlyfd == 0) then							-- If the hunter is not Feign Death, then lol
 				if (compactmode == 0) then
 					self.healthBarText:SetText(PERL_LOCALIZED_STATUS_DEAD);
 				else
 					self.healthBarTextPercent:SetText(PERL_LOCALIZED_STATUS_DEAD);
 				end
 			end
-		else								-- If the dead is not a hunter, well...
+		else													-- If the dead is not a hunter, well...
 			if (compactmode == 0) then
 				self.healthBarText:SetText(PERL_LOCALIZED_STATUS_DEAD);
 			else
@@ -565,7 +565,7 @@ function Perl_Party_Update_Mana(self)
 	partymanamax = UnitPowerMax(self.unit);
 	partymanapercent = floor(partymana/partymanamax*100+0.5);
 
-	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit) or partymanamax == 0) then			-- This prevents negative mana
+	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit) or partymanamax == 0) then	-- This prevents negative mana
 		partymana = 0;
 		partymanapercent = 0;
 	end
@@ -575,7 +575,7 @@ function Perl_Party_Update_Mana(self)
 			self.manaBarFadeBar:SetMinMaxValues(0, partymanamax);
 			self.manaBarFadeBar:SetValue(self.manaBar:GetValue());
 			self.manaBarFadeBar:Show();
-			if (self.id == 1) then						-- This makes the bars fade much smoother when lots of change is happening to a given bar
+			if (self.id == 1) then								-- This makes the bars fade much smoother when lots of change is happening to a given bar
 				Perl_Party_One_ManaBar_Fade_Color = 1;
 				Perl_Party_1_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 				Perl_Party_1_ManaBar_Fade_OnUpdate_Frame:Show();
@@ -636,7 +636,7 @@ function Perl_Party_Update_Mana(self)
 				self.manaBarTextPercent:SetText(partymanapercent.."%");
 			end
 		end
-		self.manaBarTextCompactPercent:SetText();						-- Hide the compact mode percent text in full mode
+		self.manaBarTextCompactPercent:SetText();				-- Hide the compact mode percent text in full mode
 	else
 		if (healermode == 1) then
 			self.manaBarText:SetTextColor(0.5, 0.5, 0.5, 1);
@@ -707,7 +707,7 @@ function Perl_Party_Update_Pet_Health(self)
 		partypethealthmax = UnitHealthMax(self.unitpet);
 		partypethealthpercent = floor(partypethealth/partypethealthmax*100+0.5);
 
-		if (UnitIsDead(self.unitpet) or UnitIsGhost(self.unitpet)) then				-- This prevents negative health
+		if (UnitIsDead(self.unitpet) or UnitIsGhost(self.unitpet)) then	-- This prevents negative health
 			partypethealth = 0;
 			partypethealthpercent = 0;
 		end
@@ -717,7 +717,7 @@ function Perl_Party_Update_Pet_Health(self)
 				self.petHealthBarFadeBar:SetMinMaxValues(0, partypethealthmax);
 				self.petHealthBarFadeBar:SetValue(self.petHealthBar:GetValue());
 				self.petHealthBarFadeBar:Show();
-				if (self.id == 1) then						-- This makes the bars fade much smoother when lots of change is happening to a given bar
+				if (self.id == 1) then							-- This makes the bars fade much smoother when lots of change is happening to a given bar
 					Perl_Party_One_PetHealthBar_Fade_Color = 1;
 					Perl_Party_1_PetHealthBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
 					Perl_Party_1_PetHealthBar_Fade_OnUpdate_Frame:Show();
@@ -779,7 +779,7 @@ function Perl_Party_Update_Pet_Health(self)
 				self.petHealthBarText:SetText(partypethealth.."/"..partypethealthmax);
 				self.petHealthBarTextPercent:SetText(partypethealthpercent.."%");
 			end
-			self.petHealthBarTextCompactPercent:SetText();				-- Hide the compact mode percent text in full mode
+			self.petHealthBarTextCompactPercent:SetText();		-- Hide the compact mode percent text in full mode
 		else
 			if (healermode == 1) then
 				self.petHealthBarText:SetText("-"..partypethealthmax - partypethealth);
@@ -844,7 +844,7 @@ function Perl_Party_Set_Name(self)
 	end
 end
 
-function Perl_Party_Update_PvP_Status(self)				-- Modeled after 1.9 code
+function Perl_Party_Update_PvP_Status(self)						-- Modeled after 1.9 code
 	local factionGroup = UnitFactionGroup(self.unit);
 	if (factionGroup == nil) then
 		factionGroup = UnitFactionGroup("player");
@@ -852,7 +852,7 @@ function Perl_Party_Update_PvP_Status(self)				-- Modeled after 1.9 code
 
 	-- Color their name if PvP flagged
 	if (UnitIsPVPFreeForAll(self.unit)) then
-		self.nameText:SetTextColor(0,1,0);							-- FFA PvP will still use normal PvP coloring since you're grouped
+		self.nameText:SetTextColor(0,1,0);						-- FFA PvP will still use normal PvP coloring since you're grouped
 		if (showpvpicon == 1) then
 			self.pvpStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");		-- Set the FFA PvP icon
 			self.pvpStatus:Show();								-- Show the icon
@@ -860,7 +860,7 @@ function Perl_Party_Update_PvP_Status(self)				-- Modeled after 1.9 code
 			self.pvpStatus:Hide();								-- Hide the icon
 		end
 	elseif (factionGroup and UnitIsPVP(self.unit) and not UnitIsPVPSanctuary(self.unit)) then
-		self.nameText:SetTextColor(0,1,0);							-- Color the name for PvP
+		self.nameText:SetTextColor(0,1,0);						-- Color the name for PvP
 		if (showpvpicon == 1) then
 			self.pvpStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);	-- Set the correct team icon
 			self.pvpStatus:Show();								-- Show the icon
@@ -868,11 +868,11 @@ function Perl_Party_Update_PvP_Status(self)				-- Modeled after 1.9 code
 			self.pvpStatus:Hide();								-- Hide the icon
 		end
 	else
-		self.nameText:SetTextColor(0.5,0.5,1);							-- Set the non PvP name color
+		self.nameText:SetTextColor(0.5,0.5,1);					-- Set the non PvP name color
 		self.pvpStatus:Hide();									-- Hide the icon
 	end
 
-	if (not UnitPlayerControlled(self.unit)) then													-- is it a player (added this check for charmed party members)
+	if (not UnitPlayerControlled(self.unit)) then				-- is it a player (added this check for charmed party members)
 		if (UnitIsVisible(self.unit)) then
 			local reaction = UnitReaction(self.unit, "player");
 			if (reaction) then
@@ -890,7 +890,7 @@ function Perl_Party_Update_PvP_Status(self)				-- Modeled after 1.9 code
 end
 
 function Perl_Party_Update_Level(self)
-	if (id ~= 0) then		-- Do this check to prevent showing a player level of zero when the player is zoning or dead or cant have info received (linkdead)
+	if (id ~= 0) then	-- Do this check to prevent showing a player level of zero when the player is zoning or dead or cant have info received (linkdead)
 		self.levelText:SetText(UnitLevel(self.unit));
 	end
 end
@@ -1112,14 +1112,14 @@ function Perl_Party_Update_Portrait(self)
 			SetPortraitTexture(self.portrait2D, self.unit);		-- Load the correct 2d graphic
 		else
 			if (UnitIsVisible(self.unit)) then
-				self.portrait3D:SetUnit(self.unit);		-- Load the correct 3d graphic
+				self.portrait3D:SetUnit(self.unit);				-- Load the correct 3d graphic
 				self.portrait3D:SetCamera(0);
-				self.portrait2D:Hide();				-- Hide the 2d graphic
-				self.portrait3D:Show();				-- Show the 3d graphic
+				self.portrait2D:Hide();							-- Hide the 2d graphic
+				self.portrait3D:Show();							-- Show the 3d graphic
 			else
 				SetPortraitTexture(self.portrait2D, self.unit);	-- Load the correct 2d graphic
-				self.portrait3D:Hide();				-- Hide the 3d graphic
-				self.portrait2D:Show();				-- Show the 2d graphic
+				self.portrait3D:Hide();							-- Hide the 3d graphic
+				self.portrait2D:Show();							-- Show the 2d graphic
 			end
 		end
 	end
@@ -1146,18 +1146,18 @@ function Perl_Party_Update_Health_Mana()
 end
 
 function Perl_Party_Force_Update()
-	Perl_Party_Reset_Buffs();			-- Reset Buffs
+	Perl_Party_Reset_Buffs();									-- Reset Buffs
 
 	local self;
 	for id = 1, 4 do
 		self = _G["Perl_Party_MemberFrame"..id];
-		Perl_Party_Set_Name(self);		-- Set Name & Class Icon
-		Perl_Party_Update_Level(self);		-- Set Level
-		Perl_Party_Update_Health(self);		-- Set Death State & Disconnected State
-		Perl_Party_Update_PvP_Status(self);	-- Set PvP Info & Name Color
-		Perl_Party_Update_Mana_Bar(self);	-- Set Power Bar Color
-		Perl_Party_Update_Portrait(self);	-- Set Portraits
-		Perl_Party_Buff_UpdateAll(self);	-- Set Buffs
+		Perl_Party_Set_Name(self);								-- Set Name & Class Icon
+		Perl_Party_Update_Level(self);							-- Set Level
+		Perl_Party_Update_Health(self);							-- Set Death State & Disconnected State
+		Perl_Party_Update_PvP_Status(self);						-- Set PvP Info & Name Color
+		Perl_Party_Update_Mana_Bar(self);						-- Set Power Bar Color
+		Perl_Party_Update_Portrait(self);						-- Set Portraits
+		Perl_Party_Buff_UpdateAll(self);						-- Set Buffs
 	end
 end
 
@@ -1401,9 +1401,9 @@ function Perl_Party_Frame_Style()
 
 			if (showpets == 1) then
 				local partypetspacing;
-				if (partyspacing < 0) then			-- Frames are normal
+				if (partyspacing < 0) then						-- Frames are normal
 					partypetspacing = partyspacing - 12;
-				else						-- Frames are inverted
+				else											-- Frames are inverted
 					partypetspacing = partyspacing + 12;
 				end
 			end
@@ -1596,20 +1596,20 @@ function Perl_Party_Frame_Style()
 		-- Begin: Show/Hide the portrait frame
 		for id=1,4 do
 			if (showportrait == 1) then
-				_G["Perl_Party_MemberFrame"..id.."_PortraitFrame"]:Show();			-- Show the main portrait frame
+				_G["Perl_Party_MemberFrame"..id.."_PortraitFrame"]:Show();					-- Show the main portrait frame
 				if (threedportrait == 0) then
 					_G["Perl_Party_MemberFrame"..id.."_PortraitFrame_PartyModel"]:Hide();	-- Hide the 3d graphic
-					_G["Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"]:Show();	-- Show the 2d graphic
+					_G["Perl_Party_MemberFrame"..id.."_PortraitFrame_Portrait"]:Show();		-- Show the 2d graphic
 				end
 			else
-				_G["Perl_Party_MemberFrame"..id.."_PortraitFrame"]:Hide();			-- Hide the frame and 2d/3d portion
+				_G["Perl_Party_MemberFrame"..id.."_PortraitFrame"]:Hide();					-- Hide the frame and 2d/3d portion
 			end
 		end
 		-- End: Show/Hide the portrait frame
 
-		Perl_Party_Update_All_Buff_Positions();	-- Update Buff Positions
+		Perl_Party_Update_All_Buff_Positions();												-- Update Buff Positions
 
-		for id=1,4 do				-- Update the name length
+		for id=1,4 do																		-- Update the name length
 			_G["Perl_Party_MemberFrame"..id.."_Name_NameBarText"]:SetWidth(_G["Perl_Party_MemberFrame"..id.."_Name"]:GetWidth() - 45);
 			_G["Perl_Party_MemberFrame"..id.."_Name_NameBarText"]:SetHeight(_G["Perl_Party_MemberFrame"..id.."_Name"]:GetHeight() - 10);
 			_G["Perl_Party_MemberFrame"..id.."_Name_NameBarText"]:SetNonSpaceWrap(false);
@@ -1749,8 +1749,8 @@ function Perl_Party_Set_Class_Buffs(newvalue)
 		displaycastablebuffs = newvalue;
 	end
 	Perl_Party_UpdateVars();
-	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
-	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+	Perl_Party_Reset_Buffs();	-- Reset the buff icons and set size
+	Perl_Party_Update_Buffs();	-- Repopulate the buff icons
 end
 
 function Perl_Party_Set_Class_Debuffs(newvalue)
@@ -1758,17 +1758,17 @@ function Perl_Party_Set_Class_Debuffs(newvalue)
 		displaycurabledebuff = newvalue;
 	end
 	Perl_Party_UpdateVars();
-	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
-	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+	Perl_Party_Reset_Buffs();	-- Reset the buff icons and set size
+	Perl_Party_Update_Buffs();	-- Repopulate the buff icons
 end
 
 function Perl_Party_Set_Buff_Timers(newvalue)
 	if (newvalue ~= nil) then
 		displaybufftimers = newvalue;
 	end
-	Perl_Party_UpdateVars();		-- Save the new setting
-	Perl_Party_Reset_Buffs();		-- Reset the buff icons
-	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+	Perl_Party_UpdateVars();	-- Save the new setting
+	Perl_Party_Reset_Buffs();	-- Reset the buff icons
+	Perl_Party_Update_Buffs();	-- Repopulate the buff icons
 end
 
 function Perl_Party_Set_Buff_Location(newvalue)
@@ -1792,8 +1792,8 @@ function Perl_Party_Set_Buff_Size(newvalue)
 		buffsize = newvalue;
 	end
 	Perl_Party_UpdateVars();
-	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
-	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+	Perl_Party_Reset_Buffs();	-- Reset the buff icons and set size
+	Perl_Party_Update_Buffs();	-- Repopulate the buff icons
 end
 
 function Perl_Party_Set_Debuff_Size(newvalue)
@@ -1801,8 +1801,8 @@ function Perl_Party_Set_Debuff_Size(newvalue)
 		debuffsize = newvalue;
 	end
 	Perl_Party_UpdateVars();
-	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
-	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+	Perl_Party_Reset_Buffs();	-- Reset the buff icons and set size
+	Perl_Party_Update_Buffs();	-- Repopulate the buff icons
 end
 
 function Perl_Party_Set_Buffs(newvalue)
@@ -1810,8 +1810,8 @@ function Perl_Party_Set_Buffs(newvalue)
 		numbuffsshown = newvalue;
 	end
 	Perl_Party_UpdateVars();
-	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
-	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+	Perl_Party_Reset_Buffs();	-- Reset the buff icons and set size
+	Perl_Party_Update_Buffs();	-- Repopulate the buff icons
 end
 
 function Perl_Party_Set_Debuffs(newvalue)
@@ -1819,8 +1819,8 @@ function Perl_Party_Set_Debuffs(newvalue)
 		numdebuffsshown = newvalue;
 	end
 	Perl_Party_UpdateVars();
-	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
-	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+	Perl_Party_Reset_Buffs();	-- Reset the buff icons and set size
+	Perl_Party_Update_Buffs();	-- Repopulate the buff icons
 end
 
 function Perl_Party_Set_Class_Colored_Names(newvalue)
@@ -1936,7 +1936,7 @@ function Perl_Party_GetVars(name, updateflag)
 		partyspacing = -95;
 	end
 	if (scale == nil) then
-		scale = 0.9;
+		scale = 1.0;
 	end
 	if (showpets == nil) then
 		showpets = 1;
@@ -2227,7 +2227,7 @@ function Perl_Party_UpdateVars(vartable)
 			partyspacing = -95;
 		end
 		if (scale == nil) then
-			scale = 0.9;
+			scale = 1.0;
 		end
 		if (showpets == nil) then
 			showpets = 1;
@@ -2363,19 +2363,19 @@ function Perl_Party_Buff_UpdateAll(self)
 				bufffilter = "HELPFUL RAID";
 			end
 			_, _, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura(self.unit, buffnum, bufffilter);	-- Get the texture and buff stacking information if any
-			button = _G["Perl_Party_MemberFrame"..self.id.."_BuffFrame_Buff"..buffnum];				-- Create the main icon for the buff
-			if (buffTexture) then												-- If there is a valid texture, proceed with buff icon creation
-				_G[button:GetName().."Icon"]:SetTexture(buffTexture);						-- Set the texture
-				_G[button:GetName().."DebuffBorder"]:Hide();							-- Hide the debuff border
-				buffCount = _G[button:GetName().."Count"];							-- Declare the buff counting text variable
+			button = _G["Perl_Party_MemberFrame"..self.id.."_BuffFrame_Buff"..buffnum];	-- Create the main icon for the buff
+			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);	-- Set the texture
+				_G[button:GetName().."DebuffBorder"]:Hide();			-- Hide the debuff border
+				buffCount = _G[button:GetName().."Count"];				-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
-					buffCount:Show();										-- Show the text
+					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
+					buffCount:Show();									-- Show the text
 				else
-					buffCount:Hide();										-- Hide the text if equal to 0
+					buffCount:Hide();									-- Hide the text if equal to 0
 				end
 				if (displaybufftimers == 1) then
-					cooldown = _G[button:GetName().."Cooldown"];				-- Handle cooldowns
+					cooldown = _G[button:GetName().."Cooldown"];		-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
 							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
@@ -2389,22 +2389,22 @@ function Perl_Party_Buff_UpdateAll(self)
 						cooldown:Hide();
 					end
 				end
-				button:Show();												-- Show the final buff icon
+				button:Show();											-- Show the final buff icon
 			else
-				button:Hide();												-- Hide the icon since there isn't a buff in this position
+				button:Hide();											-- Hide the icon since there isn't a buff in this position
 			end
-		end															-- End main buff loop
+		end																-- End main buff loop
 
-		for debuffnum=1,numdebuffsshown do											-- Start main debuff loop
-			if (displaycurabledebuff == 1) then								-- Are we targeting a friend or enemy and which filter do we need to apply?
+		for debuffnum=1,numdebuffsshown do								-- Start main debuff loop
+			if (displaycurabledebuff == 1) then							-- Are we targeting a friend or enemy and which filter do we need to apply?
 				debufffilter = "HARMFUL RAID";
 			else
 				debufffilter = "HARMFUL";
 			end
 			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura(self.unit, debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
-			button = _G["Perl_Party_MemberFrame"..self.id.."_BuffFrame_Debuff"..debuffnum];				-- Create the main icon for the debuff
-			if (buffTexture) then												-- If there is a valid texture, proceed with debuff icon creation
-				_G[button:GetName().."Icon"]:SetTexture(buffTexture);						-- Set the texture
+			button = _G["Perl_Party_MemberFrame"..self.id.."_BuffFrame_Debuff"..debuffnum];	-- Create the main icon for the debuff
+			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);	-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
@@ -2421,17 +2421,17 @@ function Perl_Party_Buff_UpdateAll(self)
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
-				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);		-- Set the debuff border color
-				_G[button:GetName().."DebuffBorder"]:Show();						-- Show the debuff border
-				buffCount = _G[button:GetName().."Count"];						-- Declare the debuff counting text variable
+				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
+				_G[button:GetName().."DebuffBorder"]:Show();			-- Show the debuff border
+				buffCount = _G[button:GetName().."Count"];				-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);							-- Set the text to the number of applications if greater than 0
+					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
 					buffCount:Show();									-- Show the text
 				else
 					buffCount:Hide();									-- Hide the text if equal to 0
 				end
 				if (displaybufftimers == 1) then
-					cooldown = _G[button:GetName().."Cooldown"];					-- Handle cooldowns
+					cooldown = _G[button:GetName().."Cooldown"];		-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
 							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
@@ -2449,7 +2449,7 @@ function Perl_Party_Buff_UpdateAll(self)
 			else
 				button:Hide();											-- Hide the icon since there isn't a debuff in this position
 			end
-		end														-- End main debuff loop
+		end																-- End main debuff loop
 
 		if (curableDebuffFound == 0) then
 			_G["Perl_Party_MemberFrame"..self.id.."_NameFrame"]:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);

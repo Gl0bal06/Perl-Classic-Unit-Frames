@@ -5,40 +5,40 @@ Perl_Player_Pet_Config = {};
 local Perl_Player_Pet_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Player_Pet_GetVars)
-local locked = 0;		-- unlocked by default
-local showxp = 0;		-- xp bar is hidden by default
-local scale = 0.9;		-- default scale for pet frame
-local targetscale = 0.9;	-- default scale for pet target frame
-local numpetbuffsshown = 16;	-- buff row is 16 long
-local numpetdebuffsshown = 16;	-- debuff row is 16 long
-local transparency = 1;		-- transparency for frames
-local bufflocation = 4;		-- default buff location
-local debufflocation = 5;	-- default debuff location
-local buffsize = 12;		-- default buff size is 12
-local debuffsize = 12;		-- default debuff size is 12
-local showportrait = 0;		-- portrait is hidden by default
-local threedportrait = 0;	-- 3d portraits are off by default
-local portraitcombattext = 0;	-- Combat text is disabled by default on the portrait frame
-local compactmode = 0;		-- compact mode is disabled by default
-local hidename = 0;		-- name and level frame is enabled by default
-local displaypettarget = 0;	-- pet's target is off by default
-local classcolorednames = 0;	-- names are colored based on pvp status by default
-local showfriendlyhealth = 0;	-- show numerical friendly health is disbaled by default
-local displaycastablebuffs = 0;	-- display all buffs by default
-local displaycurabledebuff = 0;	-- display all debuffs by default
+local locked = 0;					-- unlocked by default
+local showxp = 0;					-- xp bar is hidden by default
+local scale = 1.0;					-- default scale for pet frame
+local targetscale = 1.0;			-- default scale for pet target frame
+local numpetbuffsshown = 16;		-- buff row is 16 long
+local numpetdebuffsshown = 16;		-- debuff row is 16 long
+local transparency = 1;				-- transparency for frames
+local bufflocation = 4;				-- default buff location
+local debufflocation = 5;			-- default debuff location
+local buffsize = 12;				-- default buff size is 12
+local debuffsize = 12;				-- default debuff size is 12
+local showportrait = 0;				-- portrait is hidden by default
+local threedportrait = 0;			-- 3d portraits are off by default
+local portraitcombattext = 0;		-- Combat text is disabled by default on the portrait frame
+local compactmode = 0;				-- compact mode is disabled by default
+local hidename = 0;					-- name and level frame is enabled by default
+local displaypettarget = 0;			-- pet's target is off by default
+local classcolorednames = 0;		-- names are colored based on pvp status by default
+local showfriendlyhealth = 0;		-- show numerical friendly health is disbaled by default
+local displaycastablebuffs = 0;		-- display all buffs by default
+local displaycurabledebuff = 0;		-- display all debuffs by default
 
 -- Default Local Variables
-local Initialized = nil;				-- waiting to be initialized
+local Initialized = nil;			-- waiting to be initialized
 --local Perl_Player_Pet_Target_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Player_Pet_Target_Time_Update_Rate = 0.2;	-- the update interval
-local mouseoverpettargethealthflag = 0;			-- are we showing detailed health info?
-local mouseoverpettargetmanaflag = 0;			-- are we showing detailed mana info?
+local mouseoverpettargethealthflag = 0;					-- are we showing detailed health info?
+local mouseoverpettargetmanaflag = 0;					-- are we showing detailed mana info?
 
 -- Fade Bar Variables
 local Perl_Player_Pet_HealthBar_Fade_Color = 1;			-- the color fading interval
 local Perl_Player_Pet_ManaBar_Fade_Color = 1;			-- the color fading interval
-local Perl_Player_Pet_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
+local Perl_Player_Pet_Target_HealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;	-- the color fading interval
 
 -- Local variables to save memory
 local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext, r, g, b, reaction, pettargethealth, pettargethealthmax, pettargethealthpercent, pettargetmana, pettargetmanamax, pettargetpower, raidpettargetindex, englishclass, bufffilter, debufffilter;
@@ -124,14 +124,14 @@ end
 ------------
 function Perl_Player_Pet_Events:UNIT_HEALTH(arg1)
 	if (arg1 == "pet") then
-		Perl_Player_Pet_Update_Health();	-- Update health values
+		Perl_Player_Pet_Update_Health();						-- Update health values
 	end
 end
 Perl_Player_Pet_Events.UNIT_MAXHEALTH = Perl_Player_Pet_Events.UNIT_HEALTH;
 
 function Perl_Player_Pet_Events:UNIT_POWER(arg1)
 	if (arg1 == "pet") then
-		Perl_Player_Pet_Update_Mana();		-- Update energy/mana/rage values
+		Perl_Player_Pet_Update_Mana();							-- Update energy/mana/rage values
 	end
 end
 Perl_Player_Pet_Events.UNIT_MAXPOWER = Perl_Player_Pet_Events.UNIT_POWER;
@@ -160,19 +160,19 @@ end
 
 function Perl_Player_Pet_Events:UNIT_AURA(arg1)
 	if (arg1 == "pet") then
-		Perl_Player_Pet_Buff_UpdateAll();	-- Update the buff/debuff list
+		Perl_Player_Pet_Buff_UpdateAll();						-- Update the buff/debuff list
 	end
 end
 
 function Perl_Player_Pet_Events:UNIT_PET_EXPERIENCE()
 	if (showxp == 1) then
-		Perl_Player_Pet_Update_Experience();	-- Set the experience bar info
+		Perl_Player_Pet_Update_Experience();					-- Set the experience bar info
 	end
 end
 
 function Perl_Player_Pet_Events:UNIT_LEVEL(arg1)
 	if (arg1 == "pet") then
-		Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
+		Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));	-- Set Level
 	elseif (arg1 == "player") then
 		Perl_Player_Pet_ShowXP();
 	end
@@ -180,8 +180,8 @@ end
 
 function Perl_Player_Pet_Events:UNIT_DISPLAYPOWER(arg1)
 	if (arg1 == "pet") then
-		Perl_Player_Pet_Update_Mana_Bar();	-- What type of energy are we using now?
-		Perl_Player_Pet_Update_Mana();		-- Update the energy info immediately
+		Perl_Player_Pet_Update_Mana_Bar();						-- What type of energy are we using now?
+		Perl_Player_Pet_Update_Mana();							-- Update the energy info immediately
 	end
 end
 
@@ -197,8 +197,8 @@ end
 
 function Perl_Player_Pet_Events:UNIT_PORTRAIT_UPDATE(arg1)
 	if (arg1 == "pet") then
-		--Perl_Player_Pet_Update_Portrait();	-- Uncomment this line if the line below is ever removed
-		Perl_Player_Pet_Update_Once();		-- As of 1.10 the stable is partially broken, this event however is always called after a pet is swapped, so we will just update the whole mod here too to ensure a clean switch.
+		--Perl_Player_Pet_Update_Portrait();					-- Uncomment this line if the line below is ever removed
+		Perl_Player_Pet_Update_Once();							-- As of 1.10 the stable is partially broken, this event however is always called after a pet is swapped, so we will just update the whole mod here too to ensure a clean switch.
 	end
 end
 Perl_Player_Pet_Events.UNIT_MODEL_CHANGED = Perl_Player_Pet_Events.UNIT_PORTRAIT_UPDATE;
@@ -237,7 +237,7 @@ function Perl_Player_Pet_Initialize()
 	-- Major config options.
 	Perl_Player_Pet_Initialize_Frame_Color();
 	Perl_Player_Pet_Reset_Buffs();			-- Set correct buff sizes
-	Perl_Player_Pet_Set_Window_Layout();		-- Warlocks don't need the happiness frame
+	Perl_Player_Pet_Set_Window_Layout();	-- Warlocks don't need the happiness frame
 
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(PetFrame);
@@ -287,19 +287,19 @@ end
 -- The Update Function --
 -------------------------
 function Perl_Player_Pet_Update_Once()
-	if (UnitExists(Perl_Player_Pet_Frame:GetAttribute("unit"))) then				-- Show the frame if applicable
-		Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));		-- Set name
-		Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
-		Perl_Player_Pet_Update_Portrait();				-- Set the pet's portrait
-		Perl_Player_Pet_Update_Health();				-- Set health
-		Perl_Player_Pet_Update_Mana();					-- Set mana values
-		Perl_Player_Pet_Update_Mana_Bar();				-- Set the type of mana
-		Perl_Player_PetFrame_SetHappiness();				-- Set Happiness
-		Perl_Player_Pet_Buff_Position_Update();				-- Set the buff positions
-		Perl_Player_Pet_Buff_UpdateAll();				-- Set buff frame
-		Perl_Player_Pet_Portrait_Combat_Text();				-- Set the combat text frame
-		Perl_Player_Pet_ShowXP();					-- Are we showing the xp bar?
-		Perl_Player_Pet_Update_Threat();				-- Update the threat icon if needed
+	if (UnitExists(Perl_Player_Pet_Frame:GetAttribute("unit"))) then	-- Show the frame if applicable
+		Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));			-- Set name
+		Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));			-- Set Level
+		Perl_Player_Pet_Update_Portrait();								-- Set the pet's portrait
+		Perl_Player_Pet_Update_Health();								-- Set health
+		Perl_Player_Pet_Update_Mana();									-- Set mana values
+		Perl_Player_Pet_Update_Mana_Bar();								-- Set the type of mana
+		Perl_Player_PetFrame_SetHappiness();							-- Set Happiness
+		Perl_Player_Pet_Buff_Position_Update();							-- Set the buff positions
+		Perl_Player_Pet_Buff_UpdateAll();								-- Set buff frame
+		Perl_Player_Pet_Portrait_Combat_Text();							-- Set the combat text frame
+		Perl_Player_Pet_ShowXP();										-- Are we showing the xp bar?
+		Perl_Player_Pet_Update_Threat();								-- Update the threat icon if needed
 	end
 end
 
@@ -307,7 +307,7 @@ function Perl_Player_Pet_Update_Health()
 	pethealth = UnitHealth("pet");
 	pethealthmax = UnitHealthMax("pet");
 
-	if (UnitIsDead("pet") or UnitIsGhost("pet")) then				-- This prevents negative health
+	if (UnitIsDead("pet") or UnitIsGhost("pet")) then					-- This prevents negative health
 		pethealth = 0;
 	end
 
@@ -374,7 +374,7 @@ function Perl_Player_Pet_Update_Mana()
 	petmana = UnitPower("pet");
 	petmanamax = UnitPowerMax("pet");
 
-	if (UnitIsDead("pet") or UnitIsGhost("pet")) then				-- This prevents negative mana
+	if (UnitIsDead("pet") or UnitIsGhost("pet")) then	-- This prevents negative mana
 		petmana = 0;
 	end
 
@@ -499,13 +499,13 @@ function Perl_Player_Pet_Update_Portrait()
 		else
 			if UnitIsVisible("pet") then
 				Perl_Player_Pet_PortraitFrame_PetModel:SetUnit("pet");	-- Load the correct 3d graphic
-				Perl_Player_Pet_Portrait:Hide();			-- Hide the 2d graphic
-				Perl_Player_Pet_PortraitFrame_PetModel:Show();		-- Show the 3d graphic
+				Perl_Player_Pet_Portrait:Hide();						-- Hide the 2d graphic
+				Perl_Player_Pet_PortraitFrame_PetModel:Show();			-- Show the 3d graphic
 				Perl_Player_Pet_PortraitFrame_PetModel:SetCamera(0);
 			else
 				SetPortraitTexture(Perl_Player_Pet_Portrait, "pet");	-- Load the correct 2d graphic
-				Perl_Player_Pet_PortraitFrame_PetModel:Hide();		-- Hide the 3d graphic
-				Perl_Player_Pet_Portrait:Show();			-- Show the 2d graphic
+				Perl_Player_Pet_PortraitFrame_PetModel:Hide();			-- Hide the 3d graphic
+				Perl_Player_Pet_Portrait:Show();						-- Show the 2d graphic
 			end
 		end
 	end
@@ -628,7 +628,7 @@ function Perl_Player_Pet_Set_Window_Layout()
 		Perl_Player_Pet_PortraitFrame:Show();
 		if (threedportrait == 0) then
 			Perl_Player_Pet_PortraitFrame_PetModel:Hide();	-- Hide the 3d graphic
-			Perl_Player_Pet_Portrait:Show();		-- Show the 2d graphic
+			Perl_Player_Pet_Portrait:Show();				-- Show the 2d graphic
 		end
 	else
 		Perl_Player_Pet_PortraitFrame:Hide();
@@ -666,19 +666,19 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 			-- End: Set the name
 
 			-- Begin: Set the name text color
-			if (UnitPlayerControlled("pettarget")) then						-- is it a player
-				if (UnitCanAttack("pettarget", "player")) then				-- are we in an enemy controlled zone
+			if (UnitPlayerControlled("pettarget")) then					-- is it a player
+				if (UnitCanAttack("pettarget", "player")) then			-- are we in an enemy controlled zone
 					-- Hostile players are red
-					if (not UnitCanAttack("player", "pettarget")) then			-- enemy is not pvp enabled
+					if (not UnitCanAttack("player", "pettarget")) then	-- enemy is not pvp enabled
 						r = 0.5;
 						g = 0.5;
 						b = 1.0;
-					else									-- enemy is pvp enabled
+					else												-- enemy is pvp enabled
 						r = 1.0;
 						g = 0.0;
 						b = 0.0;
 					end
-				elseif (UnitCanAttack("player", "pettarget")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+				elseif (UnitCanAttack("player", "pettarget")) then		-- enemy in a zone controlled by friendlies or when we're a ghost
 					-- Players we can attack but which are not hostile are yellow
 					r = 1.0;
 					g = 1.0;
@@ -688,7 +688,7 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 					r = 0.0;
 					g = 1.0;
 					b = 0.0;
-				else										-- friendly non pvp enabled character
+				else													-- friendly non pvp enabled character
 					-- All other players are blue (the usual state on the "blue" server)
 					r = 0.5;
 					g = 0.5;
@@ -696,7 +696,7 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 				end
 				Perl_Player_Pet_Target_NameBarText:SetTextColor(r, g, b);
 			elseif (UnitIsTapped("pettarget") and not UnitIsTappedByPlayer("pettarget")) then
-				Perl_Player_Pet_Target_NameBarText:SetTextColor(0.5,0.5,0.5);			-- not our tap
+				Perl_Player_Pet_Target_NameBarText:SetTextColor(0.5,0.5,0.5);	-- not our tap
 			else
 				if (UnitIsVisible("pettarget")) then
 					reaction = UnitReaction("pettarget", "player");
@@ -709,18 +709,18 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 						Perl_Player_Pet_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
 					end
 				else
-					if (UnitCanAttack("pettarget", "player")) then					-- are we in an enemy controlled zone
+					if (UnitCanAttack("pettarget", "player")) then		-- are we in an enemy controlled zone
 						-- Hostile players are red
-						if (not UnitCanAttack("player", "pettarget")) then			-- enemy is not pvp enabled
+						if (not UnitCanAttack("player", "pettarget")) then	-- enemy is not pvp enabled
 							r = 0.5;
 							g = 0.5;
 							b = 1.0;
-						else									-- enemy is pvp enabled
+						else											-- enemy is pvp enabled
 							r = 1.0;
 							g = 0.0;
 							b = 0.0;
 						end
-					elseif (UnitCanAttack("player", "pettarget")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+					elseif (UnitCanAttack("player", "pettarget")) then	-- enemy in a zone controlled by friendlies or when we're a ghost
 						-- Players we can attack but which are not hostile are yellow
 						r = 1.0;
 						g = 1.0;
@@ -730,7 +730,7 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 						r = 0.0;
 						g = 1.0;
 						b = 0.0;
-					else										-- friendly non pvp enabled character
+					else												-- friendly non pvp enabled character
 						-- All other players are blue (the usual state on the "blue" server)
 						r = 0.5;
 						g = 0.5;
@@ -753,7 +753,7 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 			pettargethealthmax = UnitHealthMax("pettarget");
 			pettargethealthpercent = floor(pettargethealth/pettargethealthmax*100+0.5);
 
-			if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then				-- This prevents negative health
+			if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then	-- This prevents negative health
 				pettargethealth = 0;
 				pettargethealthpercent = 0;
 			end
@@ -819,7 +819,7 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 			pettargetmana = UnitPower("pettarget");
 			pettargetmanamax = UnitPowerMax("pettarget");
 
-			if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then				-- This prevents negative mana
+			if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then	-- This prevents negative mana
 				pettargetmana = 0;
 			end
 
@@ -919,7 +919,7 @@ function Perl_Player_Pet_Target_ManaBar_Fade_Check()
 			Perl_Player_Pet_Target_ManaBarFadeBar:Show();
 			Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;
 			Perl_Player_Pet_Target_ManaBar_Fade_OnUpdate_Frame.TimeSinceLastUpdate = 0;
-			if (pettargetpower == 0) then			-- Forcing an initial value will prevent the fade from starting incorrectly
+			if (pettargetpower == 0) then	-- Forcing an initial value will prevent the fade from starting incorrectly
 				Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color);
 			elseif (pettargetpower == 1) then
 				Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_Target_ManaBar_Fade_Color, 0, 0, Perl_Player_Pet_Target_ManaBar_Fade_Color);
@@ -939,7 +939,7 @@ function Perl_Player_Pet_Target_HealthShow()
 	pettargethealth = UnitHealth("pettarget");
 	pettargethealthmax = UnitHealthMax("pettarget");
 
-	if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then				-- This prevents negative health
+	if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then	-- This prevents negative health
 		pettargethealth = 0;
 		pettargethealthpercent = 0;
 	end
@@ -952,7 +952,7 @@ end
 function Perl_Player_Pet_Target_HealthHide()
 	pettargethealthpercent = floor(UnitHealth("pettarget")/UnitHealthMax("pettarget")*100+0.5);
 
-	if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then				-- This prevents negative health
+	if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then	-- This prevents negative health
 		pettargethealthpercent = 0;
 	end
 
@@ -964,7 +964,7 @@ function Perl_Player_Pet_Target_ManaShow()
 	pettargetmana = UnitPower("pettarget");
 	pettargetmanamax = UnitPowerMax("pettarget");
 
-	if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then				-- This prevents negative mana
+	if (UnitIsDead("pettarget") or UnitIsGhost("pettarget")) then	-- This prevents negative mana
 		pettargetmana = 0;
 	end
 
@@ -1083,8 +1083,8 @@ function Perl_Player_Pet_Set_Buffs(newbuffnumber)
 	end
 	numpetbuffsshown = newbuffnumber;
 	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
-	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	Perl_Player_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Player_Pet_Buff_UpdateAll();		-- Repopulate the buff icons
 end
 
 function Perl_Player_Pet_Set_Debuffs(newdebuffnumber)
@@ -1093,8 +1093,8 @@ function Perl_Player_Pet_Set_Debuffs(newdebuffnumber)
 	end
 	numpetdebuffsshown = newdebuffnumber;
 	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
-	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	Perl_Player_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Player_Pet_Buff_UpdateAll();		-- Repopulate the buff icons
 end
 
 function Perl_Player_Pet_Set_Buff_Location(newvalue)
@@ -1103,8 +1103,8 @@ function Perl_Player_Pet_Set_Buff_Location(newvalue)
 	end
 	Perl_Player_Pet_UpdateVars();
 	Perl_Player_Pet_Buff_Position_Update();	-- Set the buff positions
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
-	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	Perl_Player_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Player_Pet_Buff_UpdateAll();		-- Repopulate the buff icons
 end
 
 function Perl_Player_Pet_Set_Debuff_Location(newvalue)
@@ -1113,8 +1113,8 @@ function Perl_Player_Pet_Set_Debuff_Location(newvalue)
 	end
 	Perl_Player_Pet_UpdateVars();
 	Perl_Player_Pet_Buff_Position_Update();	-- Set the buff positions
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
-	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	Perl_Player_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Player_Pet_Buff_UpdateAll();		-- Repopulate the buff icons
 end
 
 function Perl_Player_Pet_Set_Buff_Size(newvalue)
@@ -1123,8 +1123,8 @@ function Perl_Player_Pet_Set_Buff_Size(newvalue)
 	end
 	Perl_Player_Pet_UpdateVars();
 	Perl_Player_Pet_Buff_Position_Update();	-- Set the buff positions
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
-	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	Perl_Player_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Player_Pet_Buff_UpdateAll();		-- Repopulate the buff icons
 end
 
 function Perl_Player_Pet_Set_Debuff_Size(newvalue)
@@ -1133,34 +1133,34 @@ function Perl_Player_Pet_Set_Debuff_Size(newvalue)
 	end
 	Perl_Player_Pet_UpdateVars();
 	Perl_Player_Pet_Buff_Position_Update();	-- Set the buff positions
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
-	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	Perl_Player_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Player_Pet_Buff_UpdateAll();		-- Repopulate the buff icons
 end
 
 function Perl_Player_Pet_Set_Class_Buffs(newvalue)
 	if (newvalue ~= nil) then
 		displaycastablebuffs = newvalue;
 	end
-	Perl_Player_Pet_UpdateVars();		-- Save the new setting
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
-	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	Perl_Player_Pet_UpdateVars();			-- Save the new setting
+	Perl_Player_Pet_Reset_Buffs();			-- Reset the buff icons
+	Perl_Player_Pet_Buff_UpdateAll();		-- Repopulate the buff icons
 end
 
 function Perl_Player_Pet_Set_Curable_Debuffs(newvalue)
 	if (newvalue ~= nil) then
 		displaycurabledebuff = newvalue;
 	end
-	Perl_Player_Pet_UpdateVars();		-- Save the new setting
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
-	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	Perl_Player_Pet_UpdateVars();			-- Save the new setting
+	Perl_Player_Pet_Reset_Buffs();			-- Reset the buff icons
+	Perl_Player_Pet_Buff_UpdateAll();		-- Repopulate the buff icons
 end
 
 function Perl_Player_Pet_Set_Compact_Mode(newvalue)
 	compactmode = newvalue;
 	Perl_Player_Pet_UpdateVars();
 	Perl_Player_Pet_Buff_Position_Update();	-- Set the buff positions
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
-	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	Perl_Player_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Player_Pet_Buff_UpdateAll();		-- Repopulate the buff icons
 	Perl_Player_Pet_Set_Window_Layout();
 end
 
@@ -1168,8 +1168,8 @@ function Perl_Player_Pet_Set_Hide_Name(newvalue)
 	hidename = newvalue;
 	Perl_Player_Pet_UpdateVars();
 	Perl_Player_Pet_Buff_Position_Update();	-- Set the buff positions
-	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
-	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+	Perl_Player_Pet_Reset_Buffs();			-- Reset the buff icons and set the size
+	Perl_Player_Pet_Buff_UpdateAll();		-- Repopulate the buff icons
 	Perl_Player_Pet_Set_Window_Layout();
 end
 
@@ -1222,7 +1222,7 @@ end
 
 function Perl_Player_Pet_Set_Scale(number)
 	if (number ~= nil) then
-		scale = (number / 100);						-- convert the user input to a wow acceptable value
+		scale = (number / 100);				-- convert the user input to a wow acceptable value
 	end
 	Perl_Player_Pet_UpdateVars();
 	Perl_Player_Pet_Set_Scale_Actual();
@@ -1230,7 +1230,7 @@ end
 
 function Perl_Player_Pet_Target_Set_Scale(number)
 	if (number ~= nil) then
-		targetscale = (number / 100);					-- convert the user input to a wow acceptable value
+		targetscale = (number / 100);		-- convert the user input to a wow acceptable value
 	end
 	Perl_Player_Pet_UpdateVars();
 	Perl_Player_Pet_Set_Scale_Actual();
@@ -1240,7 +1240,7 @@ function Perl_Player_Pet_Set_Scale_Actual()
 	if (InCombatLockdown()) then
 		Perl_Config_Queue_Add(Perl_Player_Pet_Set_Scale_Actual);
 	else
-		local unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+		local unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;			-- run it through the scaling formula introduced in 1.9
 		local unsavedscaletwo = 1 - UIParent:GetEffectiveScale() + targetscale;	-- run it through the scaling formula introduced in 1.9
 		Perl_Player_Pet_Frame:SetScale(unsavedscale);
 		Perl_Player_Pet_Target_Frame:SetScale(unsavedscaletwo);
@@ -1249,7 +1249,7 @@ end
 
 function Perl_Player_Pet_Set_Transparency(number)
 	if (number ~= nil) then
-		transparency = (number / 100);					-- convert the user input to a wow acceptable value
+		transparency = (number / 100);		-- convert the user input to a wow acceptable value
 	end
 	Perl_Player_Pet_Frame:SetAlpha(transparency);
 	Perl_Player_Pet_Target_Frame:SetAlpha(transparency);
@@ -1294,10 +1294,10 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 		showxp = 0;
 	end
 	if (scale == nil) then
-		scale = 0.9;
+		scale = 1.0;
 	end
 	if (targetscale == nil) then
-		targetscale = 0.9;
+		targetscale = 1.0;
 	end
 	if (numpetbuffsshown == nil) then
 		numpetbuffsshown = 16;
@@ -1512,10 +1512,10 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			showxp = 0;
 		end
 		if (scale == nil) then
-			scale = 0.9;
+			scale = 1.0;
 		end
 		if (targetscale == nil) then
-			targetscale = 0.9;
+			targetscale = 1.0;
 		end
 		if (numpetbuffsshown == nil) then
 			numpetbuffsshown = 16;
@@ -1611,42 +1611,42 @@ end
 --------------------
 function Perl_Player_Pet_Buff_UpdateAll()
 	if (UnitName("pet")) then
-		local button, buffCount, buffTexture, buffApplications, color, debuffType;				-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		local button, buffCount, buffTexture, buffApplications, color, debuffType;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 		local curableDebuffFound = 0;
 
-		for buffnum=1,numpetbuffsshown do									-- Start main buff loop
-			if (displaycastablebuffs == 0) then								-- Which buff filter mode are we in?
+		for buffnum=1,numpetbuffsshown do											-- Start main buff loop
+			if (displaycastablebuffs == 0) then										-- Which buff filter mode are we in?
 				bufffilter = "HELPFUL";
 			else
 				bufffilter = "HELPFUL RAID";
 			end
-			_, _, buffTexture, buffApplications = UnitAura("pet", buffnum, bufffilter);			-- Get the texture and buff stacking information if any
-			button = _G["Perl_Player_Pet_Buff"..buffnum];						-- Create the main icon for the buff
-			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
+			_, _, buffTexture, buffApplications = UnitAura("pet", buffnum, bufffilter);	-- Get the texture and buff stacking information if any
+			button = _G["Perl_Player_Pet_Buff"..buffnum];							-- Create the main icon for the buff
+			if (buffTexture) then													-- If there is a valid texture, proceed with buff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
-				_G[button:GetName().."DebuffBorder"]:Hide();					-- Hide the debuff border
-				buffCount = _G[button:GetName().."Count"];					-- Declare the buff counting text variable
+				_G[button:GetName().."DebuffBorder"]:Hide();						-- Hide the debuff border
+				buffCount = _G[button:GetName().."Count"];							-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
-					buffCount:Show();								-- Show the text
+					buffCount:SetText(buffApplications);							-- Set the text to the number of applications if greater than 0
+					buffCount:Show();												-- Show the text
 				else
-					buffCount:Hide();								-- Hide the text if equal to 0
+					buffCount:Hide();												-- Hide the text if equal to 0
 				end
-				button:Show();										-- Show the final buff icon
+				button:Show();														-- Show the final buff icon
 			else
-				button:Hide();										-- Hide the icon since there isn't a buff in this position
+				button:Hide();														-- Hide the icon since there isn't a buff in this position
 			end
-		end													-- End main buff loop
+		end																			-- End main buff loop
 
 		for debuffnum=1,numpetdebuffsshown do
-			if (displaycurabledebuff == 1) then								-- Are we targeting a friend or enemy and which filter do we need to apply?
+			if (displaycurabledebuff == 1) then										-- Are we targeting a friend or enemy and which filter do we need to apply?
 				debufffilter = "HARMFUL RAID";
 			else
 				debufffilter = "HARMFUL";
 			end
 			_, _, buffTexture, buffApplications, debuffType = UnitAura("pet", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
-			button = _G["Perl_Player_Pet_Debuff"..debuffnum];					-- Create the main icon for the debuff
-			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
+			button = _G["Perl_Player_Pet_Debuff"..debuffnum];						-- Create the main icon for the debuff
+			if (buffTexture) then													-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
@@ -1665,19 +1665,19 @@ function Perl_Player_Pet_Buff_UpdateAll()
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
 				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
-				_G[button:GetName().."DebuffBorder"]:Show();					-- Show the debuff border
-				buffCount = _G[button:GetName().."Count"];					-- Declare the debuff counting text variable
+				_G[button:GetName().."DebuffBorder"]:Show();						-- Show the debuff border
+				buffCount = _G[button:GetName().."Count"];							-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
-					buffCount:Show();								-- Show the text
+					buffCount:SetText(buffApplications);							-- Set the text to the number of applications if greater than 0
+					buffCount:Show();												-- Show the text
 				else
-					buffCount:Hide();								-- Hide the text if equal to 0
+					buffCount:Hide();												-- Hide the text if equal to 0
 				end
-				button:Show();										-- Show the final debuff icon
+				button:Show();														-- Show the final debuff icon
 			else
-				button:Hide();										-- Hide the icon since there isn't a debuff in this position
+				button:Hide();														-- Hide the icon since there isn't a debuff in this position
 			end
-		end													-- End main debuff loop
+		end																			-- End main debuff loop
 
 		if (curableDebuffFound == 0) then
 			Perl_Player_Pet_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
@@ -1886,7 +1886,7 @@ function Perl_Player_Pet_Target_DropDown_Initialize()
 		id = UnitInRaid("pettarget");
 		if (id) then
 			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id + 1);
+			name = GetRaidRosterInfo(id);
 		elseif (UnitInParty("pettarget")) then
 			menu = "PARTY";
 		else

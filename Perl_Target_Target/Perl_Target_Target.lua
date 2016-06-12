@@ -5,42 +5,42 @@ Perl_Target_Target_Config = {};
 local Perl_Target_Target_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Target_Target_GetVars)
-local locked = 0;		-- unlocked by default
-local scale = 0.9;		-- default scale
-local totsupport = 1;		-- target of target support enabled by default
-local tototsupport = 1;		-- target of target of target support enabled by default
-local transparency = 1;		-- transparency for frames
-local alertsound = 0;		-- audible alert disabled by default
-local alertmode = 0;		-- DPS, Tank, Healer modes
-local alertsize = 0;		-- Variable which controls the size of the text
-local showtotbuffs = 0;		-- ToT buffs are off by default
-local showtototbuffs = 0;	-- ToToT buffs are off by default
-local hidepowerbars = 0;	-- Power bars are shown by default
-local showtotdebuffs = 0;	-- ToT debuffs are off by default
-local showtototdebuffs = 0;	-- ToToT debuffs are off by default
-local displaycastablebuffs = 0;	-- display all buffs by default
-local classcolorednames = 0;	-- names are colored based on pvp status by default
-local showfriendlyhealth = 0;	-- show numerical friendly health is disbaled by default
-local displaycurabledebuff = 0;	-- display all debuffs by default
-local displayonlymydebuffs = 0;	-- display all debuffs by default
+local locked = 0;						-- unlocked by default
+local scale = 1.0;						-- default scale
+local totsupport = 1;					-- target of target support enabled by default
+local tototsupport = 0;					-- target of target of target support disabled by default
+local transparency = 1;					-- transparency for frames
+local alertsound = 0;					-- audible alert disabled by default
+local alertmode = 0;					-- DPS, Tank, Healer modes
+local alertsize = 0;					-- Variable which controls the size of the text
+local showtotbuffs = 0;					-- ToT buffs are off by default
+local showtototbuffs = 0;				-- ToToT buffs are off by default
+local hidepowerbars = 0;				-- Power bars are shown by default
+local showtotdebuffs = 0;				-- ToT debuffs are off by default
+local showtototdebuffs = 0;				-- ToToT debuffs are off by default
+local displaycastablebuffs = 0;			-- display all buffs by default
+local classcolorednames = 0;			-- names are colored based on pvp status by default
+local showfriendlyhealth = 0;			-- show numerical friendly health is disbaled by default
+local displaycurabledebuff = 0;			-- display all debuffs by default
+local displayonlymydebuffs = 0;			-- display all debuffs by default
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
 --local Perl_Target_Target_Time_Elapsed = 0;		-- set the update timer to 0
 local Perl_Target_Target_Time_Update_Rate = 0.2;	-- the update interval
-local aggroWarningCount = 0;				-- the check to see if we have alerted the player of a ToT event
-local aggroToToTWarningCount = 0;			-- the check to see if we have alerted the player of a ToToT event
+local aggroWarningCount = 0;			-- the check to see if we have alerted the player of a ToT event
+local aggroToToTWarningCount = 0;		-- the check to see if we have alerted the player of a ToToT event
 local startTime = 0;					-- used to keep track of fading the big alert text
-local mouseovertargettargethealthflag = 0;		-- is the mouse over the health bar for healer mode?
-local mouseovertargettargetmanaflag = 0;		-- is the mouse over the mana bar for healer mode?
+local mouseovertargettargethealthflag = 0;			-- is the mouse over the health bar for healer mode?
+local mouseovertargettargetmanaflag = 0;			-- is the mouse over the mana bar for healer mode?
 local mouseovertargettargettargethealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovertargettargettargetmanaflag = 0;		-- is the mouse over the mana bar for healer mode?
 
 -- Fade Bar Variables
-local Perl_Target_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Target_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Target_Target_Target_HealthBar_Fade_Color = 1;		-- the color fading interval
-local Perl_Target_Target_Target_ManaBar_Fade_Color = 1;			-- the color fading interval
+local Perl_Target_Target_HealthBar_Fade_Color = 1;			-- the color fading interval
+local Perl_Target_Target_ManaBar_Fade_Color = 1;			-- the color fading interval
+local Perl_Target_Target_Target_HealthBar_Fade_Color = 1;	-- the color fading interval
+local Perl_Target_Target_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
 
 -- Local variables to save memory
 -- ToT variables
@@ -109,7 +109,7 @@ Perl_Target_Target_Events.PLAYER_ENTERING_WORLD = Perl_Target_Target_Events.PLAY
 -------------------------------
 function Perl_Target_Target_Initialize()
 	if (Initialized) then
-		Perl_Target_Target_Set_Scale_Actual();		-- Set the scale
+		Perl_Target_Target_Set_Scale_Actual();	-- Set the scale
 		Perl_Target_Target_Set_Transparency();	-- Set the transparency
 		return;
 	end
@@ -163,26 +163,26 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 		self.TimeSinceLastUpdate = 0;
 
 		if (UnitExists(Perl_Target_Target_Frame:GetAttribute("unit"))) then
-			Perl_Target_Target_Warn();				-- Display any warnings if needed
+			Perl_Target_Target_Warn();										-- Display any warnings if needed
 
 			-- Begin: Set the name
 			Perl_Target_Target_NameBarText:SetText(UnitName("targettarget"));
 			-- End: Set the name
 
 			-- Begin: Set the name text color
-			if (UnitPlayerControlled("targettarget")) then		-- is it a player
-				if (UnitCanAttack("targettarget", "player")) then				-- are we in an enemy controlled zone
+			if (UnitPlayerControlled("targettarget")) then					-- is it a player
+				if (UnitCanAttack("targettarget", "player")) then			-- are we in an enemy controlled zone
 					-- Hostile players are red
-					if (not UnitCanAttack("player", "targettarget")) then			-- enemy is not pvp enabled
+					if (not UnitCanAttack("player", "targettarget")) then	-- enemy is not pvp enabled
 						r = 0.5;
 						g = 0.5;
 						b = 1.0;
-					else									-- enemy is pvp enabled
+					else													-- enemy is pvp enabled
 						r = 1.0;
 						g = 0.0;
 						b = 0.0;
 					end
-				elseif (UnitCanAttack("player", "targettarget")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+				elseif (UnitCanAttack("player", "targettarget")) then		-- enemy in a zone controlled by friendlies or when we're a ghost
 					-- Players we can attack but which are not hostile are yellow
 					r = 1.0;
 					g = 1.0;
@@ -192,7 +192,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 					r = 0.0;
 					g = 1.0;
 					b = 0.0;
-				else										-- friendly non pvp enabled character
+				else														-- friendly non pvp enabled character
 					-- All other players are blue (the usual state on the "blue" server)
 					r = 0.5;
 					g = 0.5;
@@ -200,7 +200,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 				end
 				Perl_Target_Target_NameBarText:SetTextColor(r, g, b);
 			elseif (UnitIsTapped("targettarget") and not UnitIsTappedByPlayer("targettarget")) then
-				Perl_Target_Target_NameBarText:SetTextColor(0.5,0.5,0.5);			-- not our tap
+				Perl_Target_Target_NameBarText:SetTextColor(0.5,0.5,0.5);	-- not our tap
 			else
 				if (UnitIsVisible("targettarget")) then
 					reaction = UnitReaction("targettarget", "player");
@@ -213,18 +213,18 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 						Perl_Target_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
 					end
 				else
-					if (UnitCanAttack("targettarget", "player")) then				-- are we in an enemy controlled zone
+					if (UnitCanAttack("targettarget", "player")) then		-- are we in an enemy controlled zone
 						-- Hostile players are red
-						if (not UnitCanAttack("player", "targettarget")) then			-- enemy is not pvp enabled
+						if (not UnitCanAttack("player", "targettarget")) then	-- enemy is not pvp enabled
 							r = 0.5;
 							g = 0.5;
 							b = 1.0;
-						else									-- enemy is pvp enabled
+						else												-- enemy is pvp enabled
 							r = 1.0;
 							g = 0.0;
 							b = 0.0;
 						end
-					elseif (UnitCanAttack("player", "targettarget")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+					elseif (UnitCanAttack("player", "targettarget")) then	-- enemy in a zone controlled by friendlies or when we're a ghost
 						-- Players we can attack but which are not hostile are yellow
 						r = 1.0;
 						g = 1.0;
@@ -234,7 +234,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 						r = 0.0;
 						g = 1.0;
 						b = 0.0;
-					else										-- friendly non pvp enabled character
+					else													-- friendly non pvp enabled character
 						-- All other players are blue (the usual state on the "blue" server)
 						r = 0.5;
 						g = 0.5;
@@ -257,7 +257,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 			targettargethealthmax = UnitHealthMax("targettarget");
 			targettargethealthpercent = floor(targettargethealth/targettargethealthmax*100+0.5);
 
-			if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative health
+			if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then	-- This prevents negative health
 				targettargethealth = 0;
 				targettargethealthpercent = 0;
 			end
@@ -324,7 +324,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 				targettargetmana = UnitPower("targettarget");
 				targettargetmanamax = UnitPowerMax("targettarget");
 
-				if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative mana
+				if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then	-- This prevents negative mana
 					targettargetmana = 0;
 				end
 
@@ -379,7 +379,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 			-- End: Raid Icon
 
 			-- Begin: Update buffs and debuffs
-			Perl_Target_Target_Update_Buffs();			-- Apparently too many nested if's make lua cry, slow function call MUST be done here to avoid errors.
+			Perl_Target_Target_Update_Buffs();	-- Apparently too many nested if's make lua cry, slow function call MUST be done here to avoid errors.
 			-- End: Update buffs and debuffs
 		end
 
@@ -392,14 +392,14 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 				else
 					if (UnitName("targettargettarget")) then
 						if (UnitIsEnemy("targettarget", "player")) then
-							if (UnitName("targettargettarget") == UnitName("player")) then			-- play the warning sound if needed
+							if (UnitName("targettargettarget") == UnitName("player")) then	-- play the warning sound if needed
 								if (aggroWarningCount == 0 and aggroToToTWarningCount == 0) then
 									-- Its coming right for us!
 									aggroToToTWarningCount = 1;
 									Perl_Target_Target_Play_Sound();
 								end
 							else
-								-- Whew it isnt fighting us
+								-- Whew it isn't fighting us
 								aggroToToTWarningCount = 0;
 							end
 						else
@@ -415,19 +415,19 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 			-- End: Set the name
 
 			-- Begin: Set the name text color
-			if (UnitPlayerControlled("targettargettarget")) then	-- is it a player
-				if (UnitCanAttack("targettargettarget", "player")) then					-- are we in an enemy controlled zone
+			if (UnitPlayerControlled("targettargettarget")) then				-- is it a player
+				if (UnitCanAttack("targettargettarget", "player")) then			-- are we in an enemy controlled zone
 					-- Hostile players are red
-					if (not UnitCanAttack("player", "targettargettarget")) then			-- enemy is not pvp enabled
+					if (not UnitCanAttack("player", "targettargettarget")) then	-- enemy is not pvp enabled
 						r = 0.5;
 						g = 0.5;
 						b = 1.0;
-					else										-- enemy is pvp enabled
+					else														-- enemy is pvp enabled
 						r = 1.0;
 						g = 0.0;
 						b = 0.0;
 					end
-				elseif (UnitCanAttack("player", "targettargettarget")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+				elseif (UnitCanAttack("player", "targettargettarget")) then		-- enemy in a zone controlled by friendlies or when we're a ghost
 					-- Players we can attack but which are not hostile are yellow
 					r = 1.0;
 					g = 1.0;
@@ -437,7 +437,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 					r = 0.0;
 					g = 1.0;
 					b = 0.0;
-				else											-- friendly non pvp enabled character
+				else															-- friendly non pvp enabled character
 					-- All other players are blue (the usual state on the "blue" server)
 					r = 0.5;
 					g = 0.5;
@@ -445,7 +445,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 				end
 				Perl_Target_Target_Target_NameBarText:SetTextColor(r, g, b);
 			elseif (UnitIsTapped("targettargettarget") and not UnitIsTappedByPlayer("targettargettarget")) then
-				Perl_Target_Target_Target_NameBarText:SetTextColor(0.5,0.5,0.5);			-- not our tap
+				Perl_Target_Target_Target_NameBarText:SetTextColor(0.5,0.5,0.5);	-- not our tap
 			else
 				if (UnitIsVisible("targettargettarget")) then
 					reaction = UnitReaction("targettargettarget", "player");
@@ -459,18 +459,18 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 						Perl_Target_Target_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
 					end
 				else
-					if (UnitCanAttack("targettargettarget", "player")) then					-- are we in an enemy controlled zone
+					if (UnitCanAttack("targettargettarget", "player")) then		-- are we in an enemy controlled zone
 						-- Hostile players are red
-						if (not UnitCanAttack("player", "targettargettarget")) then			-- enemy is not pvp enabled
+						if (not UnitCanAttack("player", "targettargettarget")) then	-- enemy is not pvp enabled
 							r = 0.5;
 							g = 0.5;
 							b = 1.0;
-						else										-- enemy is pvp enabled
+						else													-- enemy is pvp enabled
 							r = 1.0;
 							g = 0.0;
 							b = 0.0;
 						end
-					elseif (UnitCanAttack("player", "targettargettarget")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+					elseif (UnitCanAttack("player", "targettargettarget")) then	-- enemy in a zone controlled by friendlies or when we're a ghost
 						-- Players we can attack but which are not hostile are yellow
 						r = 1.0;
 						g = 1.0;
@@ -480,7 +480,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 						r = 0.0;
 						g = 1.0;
 						b = 0.0;
-					else											-- friendly non pvp enabled character
+					else														-- friendly non pvp enabled character
 						-- All other players are blue (the usual state on the "blue" server)
 						r = 0.5;
 						g = 0.5;
@@ -503,7 +503,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 			targettargettargethealthmax = UnitHealthMax("targettargettarget");
 			targettargettargethealthpercent = floor(targettargettargethealth/targettargettargethealthmax*100+0.5);
 
-			if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative health
+			if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then	-- This prevents negative health
 				targettargettargethealth = 0;
 				targettargettargethealthpercent = 0;
 			end
@@ -570,7 +570,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 				targettargettargetmana = UnitPower("targettargettarget");
 				targettargettargetmanamax = UnitPowerMax("targettargettarget");
 
-				if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative mana
+				if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then	-- This prevents negative mana
 					targettargettargetmana = 0;
 				end
 
@@ -625,7 +625,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 			-- End: Raid Icon
 
 			-- Begin: Update buffs and debuffs
-			Perl_Target_Target_Target_Update_Buffs();		-- Apparently too many nested if's make lua cry, slow function call MUST be done here to avoid errors.
+			Perl_Target_Target_Target_Update_Buffs();	-- Apparently too many nested if's make lua cry, slow function call MUST be done here to avoid errors.
 			-- End: Update buffs and debuffs
 		end
 
@@ -653,37 +653,37 @@ function Perl_Target_Target_Target_Update_Raid_Icon()
 end
 
 function Perl_Target_Target_Update_Buffs()
-	local button, buffCount, buffTexture, buffApplications, color, debuffType;							-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+	local button, buffCount, buffTexture, buffApplications, color, debuffType;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 	local curableDebuffFound = 0;
 
-	local numBuffs = 0;														-- Buff counter for correct layout
+	local numBuffs = 0;															-- Buff counter for correct layout
 	if (showtotbuffs == 1) then
-		for buffnum=1,16 do													-- Start main buff loop
-			if (displaycastablebuffs == 0) then								-- Which buff filter mode are we in?
+		for buffnum=1,16 do														-- Start main buff loop
+			if (displaycastablebuffs == 0) then									-- Which buff filter mode are we in?
 				targettargetbufffilter = "HELPFUL";
 			else
 				targettargetbufffilter = "HELPFUL RAID";
 			end
 			_, _, buffTexture, buffApplications = UnitAura("targettarget", buffnum, targettargetbufffilter);	-- Get the texture and buff stacking information if any
-			button = _G["Perl_Target_Target_BuffFrame_Buff"..buffnum];						-- Create the main icon for the buff
+			button = _G["Perl_Target_Target_BuffFrame_Buff"..buffnum];			-- Create the main icon for the buff
 			if (buffTexture) then												-- If there is a valid texture, proceed with buff icon creation
-				_G[button:GetName().."Icon"]:SetTexture(buffTexture);						-- Set the texture
-				_G[button:GetName().."DebuffBorder"]:Hide();							-- Hide the debuff border
-				buffCount = _G[button:GetName().."Count"];							-- Declare the buff counting text variable
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);			-- Set the texture
+				_G[button:GetName().."DebuffBorder"]:Hide();					-- Hide the debuff border
+				buffCount = _G[button:GetName().."Count"];						-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
-					buffCount:Show();										-- Show the text
+					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
+					buffCount:Show();											-- Show the text
 				else
-					buffCount:Hide();										-- Hide the text if equal to 0
+					buffCount:Hide();											-- Hide the text if equal to 0
 				end
 				numBuffs = numBuffs + 1;										-- Increment the buff counter
-				button:Show();												-- Show the final buff icon
+				button:Show();													-- Show the final buff icon
 			else
-				button:Hide();												-- Hide the icon since there isn't a buff in this position
+				button:Hide();													-- Hide the icon since there isn't a buff in this position
 			end
-		end															-- End main buff loop
+		end																		-- End main buff loop
 	else
-		numBuffs = 0;														-- ToT Buffs are disabled
+		numBuffs = 0;															-- ToT Buffs are disabled
 	end
 
 	local numDebuffs = 0;														-- Debuff counter for correct layout
@@ -691,9 +691,9 @@ function Perl_Target_Target_Update_Buffs()
 		for debuffnum=1,16 do													-- Start main debuff loop
 			Perl_Target_Target_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
 			_, _, buffTexture, buffApplications, debuffType = UnitAura("targettarget", debuffnum, targettargetdebufffilter);	-- Get the texture and debuff stacking information if any
-			button = _G["Perl_Target_Target_BuffFrame_Debuff"..debuffnum];						-- Create the main icon for the debuff
+			button = _G["Perl_Target_Target_BuffFrame_Debuff"..debuffnum];		-- Create the main icon for the debuff
 			if (buffTexture) then												-- If there is a valid texture, proceed with debuff icon creation
-				_G[button:GetName().."Icon"]:SetTexture(buffTexture);						-- Set the texture
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);			-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
@@ -710,26 +710,26 @@ function Perl_Target_Target_Update_Buffs()
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
-				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);			-- Set the debuff border color
-				_G[button:GetName().."DebuffBorder"]:Show();							-- Show the debuff border
-				buffCount = _G[button:GetName().."Count"];							-- Declare the debuff counting text variable
+				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
+				_G[button:GetName().."DebuffBorder"]:Show();					-- Show the debuff border
+				buffCount = _G[button:GetName().."Count"];						-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
-					buffCount:Show();										-- Show the text
+					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
+					buffCount:Show();											-- Show the text
 				else
-					buffCount:Hide();										-- Hide the text if equal to 0
+					buffCount:Hide();											-- Hide the text if equal to 0
 				end
-				numDebuffs = numDebuffs + 1;										-- Increment the debuff counter
-				button:Show();												-- Show the final debuff icon
+				numDebuffs = numDebuffs + 1;									-- Increment the debuff counter
+				button:Show();													-- Show the final debuff icon
 			else
-				button:Hide();												-- Hide the icon since there isn't a debuff in this position
+				button:Hide();													-- Hide the icon since there isn't a debuff in this position
 			end
-		end															-- End main debuff loop
+		end																		-- End main debuff loop
 	else
-		numDebuffs = 0;														-- ToT Debuffs are disabled
+		numDebuffs = 0;															-- ToT Debuffs are disabled
 	end
 
-	if (UnitIsFriend("player", "targettarget")) then										-- Position the buffs according to friendly or enemy status
+	if (UnitIsFriend("player", "targettarget")) then							-- Position the buffs according to friendly or enemy status
 		if (numBuffs < 9) then
 			if (showtotbuffs == 0) then
 				Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
@@ -761,54 +761,54 @@ function Perl_Target_Target_Update_Buffs()
 	end
 
 	if (showtotbuffs == 1 or showtotdebuffs == 1) then
-		Perl_Target_Target_BuffFrame:Show();											-- Show the final buff/debuff frame
+		Perl_Target_Target_BuffFrame:Show();									-- Show the final buff/debuff frame
 	else
-		Perl_Target_Target_BuffFrame:Hide();											-- Hide the buff/debuff frame since it's disabled
+		Perl_Target_Target_BuffFrame:Hide();									-- Hide the buff/debuff frame since it's disabled
 	end
 end
 
 function Perl_Target_Target_Target_Update_Buffs()
-	local button, buffCount, buffTexture, buffApplications, color, debuffType;							-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+	local button, buffCount, buffTexture, buffApplications, color, debuffType;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 	local curableDebuffFound = 0;
 
-	local numBuffs = 0;														-- Buff counter for correct layout
+	local numBuffs = 0;															-- Buff counter for correct layout
 	if (showtototbuffs == 1) then
 		for buffnum=1,16 do
-			if (displaycastablebuffs == 0) then								-- Which buff filter mode are we in?
+			if (displaycastablebuffs == 0) then									-- Which buff filter mode are we in?
 				targettargettargetbufffilter = "HELPFUL";
 			else
 				targettargettargetbufffilter = "HELPFUL RAID";
 			end
 			_, _, buffTexture, buffApplications = UnitAura("targettargettarget", buffnum, targettargettargetbufffilter);	-- Get the texture and buff stacking information if any
-			button = _G["Perl_Target_Target_Target_BuffFrame_Buff"..buffnum];					-- Create the main icon for the buff
+			button = _G["Perl_Target_Target_Target_BuffFrame_Buff"..buffnum];	-- Create the main icon for the buff
 			if (buffTexture) then
-				_G[button:GetName().."Icon"]:SetTexture(buffTexture);						-- Set the texture
-				_G[button:GetName().."DebuffBorder"]:Hide();							-- Hide the debuff border
-				buffCount = _G[button:GetName().."Count"];							-- Declare the buff counting text variable
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);			-- Set the texture
+				_G[button:GetName().."DebuffBorder"]:Hide();					-- Hide the debuff border
+				buffCount = _G[button:GetName().."Count"];						-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
-					buffCount:Show();										-- Show the text
+					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
+					buffCount:Show();											-- Show the text
 				else
-					buffCount:Hide();										-- Hide the text if equal to 0
+					buffCount:Hide();											-- Hide the text if equal to 0
 				end
 				numBuffs = numBuffs + 1;										-- Increment the buff counter
-				button:Show();												-- Show the final buff icon
+				button:Show();													-- Show the final buff icon
 			else
-				button:Hide();												-- Hide the icon since there isn't a buff in this position
+				button:Hide();													-- Hide the icon since there isn't a buff in this position
 			end
 		end
 	else
-		numBuffs = 0;														-- ToToT Buffs are disabled
+		numBuffs = 0;															-- ToToT Buffs are disabled
 	end
 
 	local numDebuffs = 0;														-- Debuff counter for correct layout
 	if (showtototdebuffs == 1) then
 		for debuffnum=1,16 do
-			Perl_Target_Target_Target_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
+			Perl_Target_Target_Target_Debuff_Set_Filter();						-- Are we targeting a friend or enemy and which filter do we need to apply?
 			_, _, buffTexture, buffApplications, debuffType = UnitAura("targettargettarget", debuffnum, targettargettargetdebufffilter);	-- Get the texture and debuff stacking information if any
-			button = _G["Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum];					-- Create the main icon for the debuff
+			button = _G["Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum];	-- Create the main icon for the debuff
 			if (buffTexture) then
-				_G[button:GetName().."Icon"]:SetTexture(buffTexture);						-- Set the texture
+				_G[button:GetName().."Icon"]:SetTexture(buffTexture);			-- Set the texture
 				if (debuffType) then
 					color = DebuffTypeColor[debuffType];
 					if (PCUF_COLORFRAMEDEBUFF == 1) then
@@ -825,26 +825,26 @@ function Perl_Target_Target_Target_Update_Buffs()
 				else
 					color = DebuffTypeColor[PERL_LOCALIZED_BUFF_NONE];
 				end
-				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);			-- Set the debuff border color
-				_G[button:GetName().."DebuffBorder"]:Show();							-- Show the debuff border
-				buffCount = _G[button:GetName().."Count"];							-- Declare the debuff counting text variable
+				_G[button:GetName().."DebuffBorder"]:SetVertexColor(color.r, color.g, color.b);	-- Set the debuff border color
+				_G[button:GetName().."DebuffBorder"]:Show();					-- Show the debuff border
+				buffCount = _G[button:GetName().."Count"];						-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);								-- Set the text to the number of applications if greater than 0
-					buffCount:Show();										-- Show the text
+					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
+					buffCount:Show();											-- Show the text
 				else
-					buffCount:Hide();										-- Hide the text if equal to 0
+					buffCount:Hide();											-- Hide the text if equal to 0
 				end
-				numDebuffs = numDebuffs + 1;										-- Increment the debuff counter
-				button:Show();												-- Show the final debuff icon
+				numDebuffs = numDebuffs + 1;									-- Increment the debuff counter
+				button:Show();													-- Show the final debuff icon
 			else
-				button:Hide();												-- Hide the icon since there isn't a debuff in this position
+				button:Hide();													-- Hide the icon since there isn't a debuff in this position
 			end
 		end
 	else
-		numBuffs = 0;														-- ToToT Debuffs are disabled
+		numBuffs = 0;															-- ToToT Debuffs are disabled
 	end
 
-	if (UnitIsFriend("player", "targettargettarget")) then										-- Position the buffs according to friendly or enemy status
+	if (UnitIsFriend("player", "targettargettarget")) then						-- Position the buffs according to friendly or enemy status
 		if (numBuffs < 9) then
 			if (showtototbuffs == 0) then
 				Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
@@ -876,9 +876,9 @@ function Perl_Target_Target_Target_Update_Buffs()
 	end
 
 	if (showtototbuffs == 1 or showtototdebuffs == 1) then
-		Perl_Target_Target_Target_BuffFrame:Show();										-- Show the final buff/debuff frame
+		Perl_Target_Target_Target_BuffFrame:Show();								-- Show the final buff/debuff frame
 	else
-		Perl_Target_Target_Target_BuffFrame:Hide();										-- Hide the buff/debuff frame since it's disabled
+		Perl_Target_Target_Target_BuffFrame:Hide();								-- Hide the buff/debuff frame since it's disabled
 	end
 end
 
@@ -914,13 +914,13 @@ end
 
 function Perl_Target_Target_Warn()
 	-- Player has something targetted
-	if (UnitAffectingCombat("target")) then								-- Target is in an active combat situation
-		if (UnitIsDead("targettarget") or UnitIsCorpse("targettarget")) then			-- Target is dead, do nothing
+	if (UnitAffectingCombat("target")) then										-- Target is in an active combat situation
+		if (UnitIsDead("targettarget") or UnitIsCorpse("targettarget")) then	-- Target is dead, do nothing
 			-- Previous author had this in as a safety check
 		else
-			if (not UnitIsFriend("target", "player")) then					-- Target isn't dead
+			if (not UnitIsFriend("target", "player")) then						-- Target isn't dead
 				-- Stupid mobs dont have targets when they are trapped/polyd/sapped/stunned, check for this
-				if (alertmode == 0) then	-- Disabled but still have audible alert enabled
+				if (alertmode == 0) then										-- Disabled but still have audible alert enabled
 					if (UnitName("targettarget") == UnitName("player")) then	-- play the warning sound if needed
 						-- Its coming right for us!
 						if (aggroWarningCount == 0) then
@@ -928,7 +928,7 @@ function Perl_Target_Target_Warn()
 							Perl_Target_Target_Play_Sound();
 						end
 					else
-						-- Whew it isnt fighting us
+						-- Whew it isn't fighting us
 						aggroWarningCount = 0;
 					end
 				elseif (alertmode == 1) then	-- DPS Mode
@@ -946,7 +946,7 @@ function Perl_Target_Target_Warn()
 							Perl_Target_Target_Play_Sound();
 						end
 					else
-						-- Whew it isnt fighting us
+						-- Whew it isn't fighting us
 						aggroWarningCount = 0;
 					end
 				elseif (alertmode == 2) then	-- Tank mode
@@ -1002,7 +1002,7 @@ function Perl_Target_Target_Warn()
 	end
 end
 
-function Perl_Target_Target_Warn_Healer_Mode()		-- This chunk of code is called in 2 places so may as well place it as it's own function
+function Perl_Target_Target_Warn_Healer_Mode()						-- This chunk of code is called in 2 places so may as well place it as it's own function
 	if (UnitIsPlayer("target")) then
 		if (UnitIsFriend("player", "target")) then
 			if (UnitIsUnit("target", "targettargettarget")) then	-- The target and the targets target target (whew) are the same
@@ -1037,7 +1037,7 @@ function Perl_Target_Target_Warn_Healer_Mode()		-- This chunk of code is called 
 					aggroWarningCount = 1;
 				end
 			else
-				-- Lazy warrior isnt tanking anything!
+				-- Lazy warrior isn't tanking anything!
 				aggroWarningCount = 0;
 			end
 		else
@@ -1055,7 +1055,7 @@ function Perl_Target_Target_Warn_Healer_Mode()		-- This chunk of code is called 
 					Perl_Target_Target_Play_Sound();
 				end
 			else
-				-- Whew it isnt fighting us
+				-- Whew it isn't fighting us
 				aggroWarningCount = 0;
 			end
 		end
@@ -1074,7 +1074,7 @@ function Perl_Target_Target_Warn_Healer_Mode()		-- This chunk of code is called 
 				Perl_Target_Target_Play_Sound();
 			end
 		else
-			-- Whew it isnt fighting us
+			-- Whew it isn't fighting us
 			aggroWarningCount = 0;
 		end
 	end
@@ -1127,7 +1127,7 @@ function Perl_Target_Target_HealthShow()
 	targettargethealth = UnitHealth("targettarget");
 	targettargethealthmax = UnitHealthMax("targettarget");
 
-	if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative health
+	if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then	-- This prevents negative health
 		targettargethealth = 0;
 		targettargethealthpercent = 0;
 	end
@@ -1140,7 +1140,7 @@ end
 function Perl_Target_Target_HealthHide()
 	targettargethealthpercent = floor(UnitHealth("targettarget")/UnitHealthMax("targettarget")*100+0.5);
 
-	if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative health
+	if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then	-- This prevents negative health
 		targettargethealthpercent = 0;
 	end
 
@@ -1152,7 +1152,7 @@ function Perl_Target_Target_ManaShow()
 	targettargetmana = UnitPower("targettarget");
 	targettargetmanamax = UnitPowerMax("targettarget");
 
-	if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative mana
+	if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then	-- This prevents negative mana
 		targettargetmana = 0;
 	end
 
@@ -1176,7 +1176,7 @@ function Perl_Target_Target_Target_HealthShow()
 	targettargettargethealth = UnitHealth("targettargettarget");
 	targettargettargethealthmax = UnitHealthMax("targettargettarget");
 
-	if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative health
+	if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then	-- This prevents negative health
 		targettargettargethealth = 0;
 		targettargettargethealthpercent = 0;
 	end
@@ -1189,7 +1189,7 @@ end
 function Perl_Target_Target_Target_HealthHide()
 	targettargettargethealthpercent = floor(UnitHealth("targettargettarget")/UnitHealthMax("targettargettarget")*100+0.5);
 
-	if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative health
+	if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then	-- This prevents negative health
 		targettargettargethealthpercent = 0;
 	end
 
@@ -1201,7 +1201,7 @@ function Perl_Target_Target_Target_ManaShow()
 	targettargettargetmana = UnitPower("targettargettarget");
 	targettargettargetmanamax = UnitPowerMax("targettargettarget");
 
-	if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative mana
+	if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then	-- This prevents negative mana
 		targettargettargetmana = 0;
 	end
 
@@ -1531,7 +1531,7 @@ end
 
 function Perl_Target_Target_Set_Scale(number)
 	if (number ~= nil) then
-		scale = (number / 100);						-- convert the user input to a wow acceptable value
+		scale = (number / 100);											-- convert the user input to a wow acceptable value
 	end
 	Perl_Target_Target_UpdateVars();
 	Perl_Target_Target_Set_Scale_Actual();
@@ -1549,7 +1549,7 @@ end
 
 function Perl_Target_Target_Set_Transparency(number)
 	if (number ~= nil) then
-		transparency = (number / 100);					-- convert the user input to a wow acceptable value
+		transparency = (number / 100);									-- convert the user input to a wow acceptable value
 	end
 	Perl_Target_Target_Frame:SetAlpha(transparency);
 	Perl_Target_Target_Target_Frame:SetAlpha(transparency);
@@ -1558,9 +1558,9 @@ end
 
 function Perl_Target_Target_Allign(button)
 	if (Perl_Target_Frame) then
-		local vartable = Perl_Target_GetVars();			-- Get the target frame settings
+		local vartable = Perl_Target_GetVars();							-- Get the target frame settings
 
-		Perl_Target_Target_Frame:SetUserPlaced(1);		-- This makes wow remember the changes if the frames have never been moved before
+		Perl_Target_Target_Frame:SetUserPlaced(1);						-- This makes wow remember the changes if the frames have never been moved before
 		Perl_Target_Target_Target_Frame:SetUserPlaced(1);
 
 		if (button == 1) then
@@ -1627,13 +1627,13 @@ function Perl_Target_Target_GetVars(name, updateflag)
 		locked = 0;
 	end
 	if (scale == nil) then
-		scale = 0.9;
+		scale = 1.0;
 	end
 	if (totsupport == nil) then
 		totsupport = 1;
 	end
 	if (tototsupport == nil) then
-		tototsupport = 1;
+		tototsupport = 0;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -1813,13 +1813,13 @@ function Perl_Target_Target_UpdateVars(vartable)
 			locked = 0;
 		end
 		if (scale == nil) then
-			scale = 0.9;
+			scale = 1.0;
 		end
 		if (totsupport == nil) then
 			totsupport = 1;
 		end
 		if (tototsupport == nil) then
-			tototsupport = 1;
+			tototsupport = 0;
 		end
 		if (transparency == nil) then
 			transparency = 1;
@@ -1927,7 +1927,7 @@ function Perl_TargetTargetDropDown_Initialize()
 		id = UnitInRaid("targettarget");
 		if (id) then
 			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id + 1);
+			name = GetRaidRosterInfo(id);
 		elseif (UnitInParty("targettarget")) then
 			menu = "PARTY";
 		else
@@ -1984,7 +1984,7 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 		id = UnitInRaid("targettargettarget");
 		if (id) then
 			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id + 1);
+			name = GetRaidRosterInfo(id);
 		elseif (UnitInParty("targettargettarget")) then
 			menu = "PARTY";
 		else
@@ -2072,7 +2072,7 @@ end
 function Perl_Target_Target_Target_SetBuffTooltip(self)
 	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT");
 	if (self:GetID() > 16) then
-		GameTooltip:SetUnitDebuff("targettargettarget", self:GetID()-16, displaycurabledebuff);		-- 16 being the number of buffs before debuffs in the xml
+		GameTooltip:SetUnitDebuff("targettargettarget", self:GetID()-16, displaycurabledebuff);	-- 16 being the number of buffs before debuffs in the xml
 	else
 		GameTooltip:SetUnitBuff("targettargettarget", self:GetID(), displaycastablebuffs);
 	end
