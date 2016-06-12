@@ -1113,28 +1113,28 @@ function Perl_Target_Main_Style()
 			if (compactmode == 0) then
 				if (showrareeliteframe == 1 or displaynumbericthreat == 1) then
 					if (showclassframe == 1) then
-						Perl_Target_GuildFrame:SetWidth(159);
+						Perl_Target_GuildFrame:SetWidth(174);
 					else
 						Perl_Target_GuildFrame:ClearAllPoints();
 						Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
-						Perl_Target_GuildFrame:SetWidth(252);
+						Perl_Target_GuildFrame:SetWidth(267);
 					end
 				else
 					if (showclassframe == 1) then
-						Perl_Target_GuildFrame:SetWidth(162);
+						Perl_Target_GuildFrame:SetWidth(177);
 					else
 						Perl_Target_GuildFrame:ClearAllPoints();
 						Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 22);
-						Perl_Target_GuildFrame:SetWidth(255);
+						Perl_Target_GuildFrame:SetWidth(270);
 					end
 				end
 				Perl_Target_ClassNameFrame:SetWidth(95);
 				Perl_Target_LevelFrame:SetWidth(46);
-				Perl_Target_Frame:SetWidth(211);
-				Perl_Target_Name:SetWidth(211);
-				Perl_Target_NameFrame:SetWidth(211);
+				Perl_Target_Frame:SetWidth(226);
+				Perl_Target_Name:SetWidth(226);
+				Perl_Target_NameFrame:SetWidth(226);
 				Perl_Target_RareEliteFrame:SetWidth(46);
-				Perl_Target_StatsFrame:SetWidth(255);
+				Perl_Target_StatsFrame:SetWidth(270);
 
 				Perl_Target_NameFrame_CPMeter:SetWidth(189);
 			else
@@ -1394,8 +1394,8 @@ function Perl_Target_Text_Positions()
 		if (compactmode == 0) then
 			Perl_Target_HealthBarText:SetPoint("TOP", 0, 1);
 			Perl_Target_ManaBarText:SetPoint("TOP", 0, 1);
-			Perl_Target_HealthBarTextRight:SetPoint("RIGHT", 85, 0);
-			Perl_Target_ManaBarTextRight:SetPoint("RIGHT", 85, 0);
+			Perl_Target_HealthBarTextRight:SetPoint("RIGHT", 100, 0);
+			Perl_Target_ManaBarTextRight:SetPoint("RIGHT", 100, 0);
 		else
 			if (healermode == 0) then
 				Perl_Target_HealthBarText:SetPoint("TOP", 0, 1);

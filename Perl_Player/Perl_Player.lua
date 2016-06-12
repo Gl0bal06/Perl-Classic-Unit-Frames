@@ -1248,12 +1248,12 @@ function Perl_Player_Frame_Style()
 
 		-- Begin: Are we using compact mode?
 		if (compactmode == 0) then
-			Perl_Player_XPBar:SetWidth(235);
-			Perl_Player_XPRestBar:SetWidth(235);
-			Perl_Player_XPBarBG:SetWidth(235);
-			Perl_Player_XPBar_CastClickOverlay:SetWidth(235);
-			Perl_Player_StatsFrame:SetWidth(255);
-			Perl_Player_StatsFrame_CastClickOverlay:SetWidth(255);
+			Perl_Player_XPBar:SetWidth(250);
+			Perl_Player_XPRestBar:SetWidth(250);
+			Perl_Player_XPBarBG:SetWidth(250);
+			Perl_Player_XPBar_CastClickOverlay:SetWidth(250);
+			Perl_Player_StatsFrame:SetWidth(270);
+			Perl_Player_StatsFrame_CastClickOverlay:SetWidth(270);
 		else
 			if (compactpercent == 0) then
 				if (shortbars == 0) then
@@ -1364,11 +1364,11 @@ function Perl_Player_Frame_Style()
 		Perl_Player_ManaBarTextPercent:ClearAllPoints();
 		Perl_Player_DruidBarTextPercent:ClearAllPoints();
 		if (compactmode == 0) then
-			Perl_Player_HealthBarText:SetPoint("RIGHT", 85, 0);
+			Perl_Player_HealthBarText:SetPoint("RIGHT", 100, 0);
 			Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
-			Perl_Player_ManaBarText:SetPoint("RIGHT", 85, 0);
+			Perl_Player_ManaBarText:SetPoint("RIGHT", 100, 0);
 			Perl_Player_ManaBarTextPercent:SetPoint("TOP", 0, 1);
-			Perl_Player_DruidBarText:SetPoint("RIGHT", 85, 0);
+			Perl_Player_DruidBarText:SetPoint("RIGHT", 100, 0);
 			Perl_Player_DruidBarTextPercent:SetPoint("TOP", 0, 1);
 		else
 			if (healermode == 0) then

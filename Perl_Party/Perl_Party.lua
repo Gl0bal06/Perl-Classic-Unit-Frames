@@ -1419,14 +1419,14 @@ function Perl_Party_Frame_Style()
 
 		-- Begin: Compact Mode
 		if (compactmode == 0) then
-			Perl_Party_MemberFrame1_StatsFrame:SetWidth(255);
-			Perl_Party_MemberFrame2_StatsFrame:SetWidth(255);
-			Perl_Party_MemberFrame3_StatsFrame:SetWidth(255);
-			Perl_Party_MemberFrame4_StatsFrame:SetWidth(255);
-			Perl_Party_MemberFrame1_StatsFrame_CastClickOverlay:SetWidth(255);
-			Perl_Party_MemberFrame2_StatsFrame_CastClickOverlay:SetWidth(255);
-			Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetWidth(255);
-			Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetWidth(255);
+			Perl_Party_MemberFrame1_StatsFrame:SetWidth(270);
+			Perl_Party_MemberFrame2_StatsFrame:SetWidth(270);
+			Perl_Party_MemberFrame3_StatsFrame:SetWidth(270);
+			Perl_Party_MemberFrame4_StatsFrame:SetWidth(270);
+			Perl_Party_MemberFrame1_StatsFrame_CastClickOverlay:SetWidth(270);
+			Perl_Party_MemberFrame2_StatsFrame_CastClickOverlay:SetWidth(270);
+			Perl_Party_MemberFrame3_StatsFrame_CastClickOverlay:SetWidth(270);
+			Perl_Party_MemberFrame4_StatsFrame_CastClickOverlay:SetWidth(270);
 		else
 			if (shortbars == 0) then
 				if (compactpercent == 0) then
@@ -1560,11 +1560,11 @@ function Perl_Party_Frame_Style()
 		end
 		if (compactmode == 0) then
 			for partynum=1,4 do
-				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"]:SetPoint("RIGHT", 85, 0);
+				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"]:SetPoint("RIGHT", 100, 0);
 				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"]:SetPoint("TOP", 0, 1);
-				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"]:SetPoint("RIGHT", 85, 0);
+				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarText"]:SetPoint("RIGHT", 100, 0);
 				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"]:SetPoint("TOP", 0, 1);
-				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"]:SetPoint("RIGHT", 85, 0);
+				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"]:SetPoint("RIGHT", 100, 0);
 				_G["Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"]:SetPoint("TOP", 0, 1);
 			end
 		else

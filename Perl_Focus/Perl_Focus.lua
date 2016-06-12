@@ -898,13 +898,13 @@ function Perl_Focus_Main_Style()
 			Perl_Focus_Name:SetWidth(211);
 			Perl_Focus_NameFrame:SetWidth(211);
 			Perl_Focus_RareEliteFrame:SetWidth(46);
-			Perl_Focus_StatsFrame:SetWidth(255);
+			Perl_Focus_StatsFrame:SetWidth(270);
 
 			Perl_Focus_NameFrame_CPMeter:SetWidth(189);
 
 			Perl_Focus_CivilianFrame_CastClickOverlay:SetWidth(114);
 			Perl_Focus_NameFrame_CastClickOverlay:SetWidth(214);
-			Perl_Focus_StatsFrame_CastClickOverlay:SetWidth(255);
+			Perl_Focus_StatsFrame_CastClickOverlay:SetWidth(270);
 		else
 			if (shortbars == 0) then
 				if (compactpercent == 0) then
@@ -1062,8 +1062,8 @@ function Perl_Focus_Text_Positions()
 		if (compactmode == 0) then
 			Perl_Focus_HealthBarText:SetPoint("TOP", 0, 1);
 			Perl_Focus_ManaBarText:SetPoint("TOP", 0, 1);
-			Perl_Focus_HealthBarTextRight:SetPoint("RIGHT", 85, 0);
-			Perl_Focus_ManaBarTextRight:SetPoint("RIGHT", 85, 0);
+			Perl_Focus_HealthBarTextRight:SetPoint("RIGHT", 100, 0);
+			Perl_Focus_ManaBarTextRight:SetPoint("RIGHT", 100, 0);
 		else
 			if (healermode == 0) then
 				Perl_Focus_HealthBarText:SetPoint("TOP", 0, 1);

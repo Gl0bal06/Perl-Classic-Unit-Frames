@@ -1,3 +1,6 @@
+4.06 - January 30, 2011
+ - Focus/Party/Player/Target: Adjusted the frame size to fit 100,000 health
+
 4.05 - January 8, 2011
  - All: Updated curable debuff list for Cataclysm
  - All: Removed myAddOns support
