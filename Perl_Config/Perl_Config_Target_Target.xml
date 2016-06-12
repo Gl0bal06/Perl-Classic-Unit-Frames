@@ -198,7 +198,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_HIDE_POWER_BARS);
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDE_POWER_BARS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Hide_Power_Bars_Update();

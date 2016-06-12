@@ -212,6 +212,18 @@ function Perl_Party_Initialize()
 	Perl_clearBlizzardFrameDisable(PartyMemberFrame4);
 	Perl_clearBlizzardFrameDisable(PartyMemberFrame4PetFrame);
 
+	-- Set the ID of the frame
+	for num = 1, 4 do
+		getglobal("Perl_Party_MemberFrame"..num.."_NameFrame_CastClickOverlay"):SetID(num);
+		getglobal("Perl_Party_MemberFrame"..num.."_LevelFrame_CastClickOverlay"):SetID(num);
+		getglobal("Perl_Party_MemberFrame"..num.."_PortraitFrame_CastClickOverlay"):SetID(num);
+		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_CastClickOverlay"):SetID(num);
+		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetID(num);
+		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetID(num);
+		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetID(num);
+		getglobal("Perl_Party_MemberFrame"..num):Hide();	-- Hide the frame
+	end
+
 	-- Button Click Overlays (in order of occurrence in XML)
 	for num = 1, 4 do
 		getglobal("Perl_Party_MemberFrame"..num.."_NameFrame_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"):GetFrameLevel() + 1);
@@ -514,6 +526,7 @@ function Perl_Party_Update_Health()
 				getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealth.."/"..partyhealthmax);
 			else
 				getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText();
+				-- maybe add something here
 			end
 		else
 			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText();
@@ -527,18 +540,54 @@ function Perl_Party_Update_Health()
 		end
 	end
 
+	-- Handle death state
+	if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then
+		getglobal(this:GetName().."_NameFrame_DeadStatus"):Show();
+		if (UnitClass(partyid) == PERL_LOCALIZED_HUNTER) then	-- If the dead is a hunter, check for Feign Death
+			local buffnum = 1;
+			local currentlyfd = 0;
+			local buffTexture = UnitBuff(partyid, buffnum);
+			while (buffTexture) do
+				if (buffTexture == "Interface\\Icons\\Ability_Rogue_FeignDeath") then
+					if (compactmode == 0) then
+						getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
+					else
+						getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
+					end
+					currentlyfd = 1;
+					break;
+				end
+				buffnum = buffnum + 1;
+				buffTexture = UnitBuff(partyid, buffnum);
+			end
+			if (currentlyfd == 0) then				-- If the hunter is not Feign Death, then lol
+				if (compactmode == 0) then
+					getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText(PERL_LOCALIZED_STATUS_DEAD);
+				else
+					getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_DEAD);
+				end
+			end
+		else								-- If the dead is not a hunter, well...
+			if (compactmode == 0) then
+				getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText(PERL_LOCALIZED_STATUS_DEAD);
+			else
+				getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_DEAD);
+			end
+		end
+	else
+		getglobal(this:GetName().."_NameFrame_DeadStatus"):Hide();
+	end
+
 	-- Handle disconnected state
 	if (UnitIsConnected(partyid)) then
 		getglobal(this:GetName().."_NameFrame_DisconnectStatus"):Hide();
 	else
 		getglobal(this:GetName().."_NameFrame_DisconnectStatus"):Show();
-	end
-
-	-- Handle death state
-	if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then
-		getglobal(this:GetName().."_NameFrame_DeadStatus"):Show();
-	else
-		getglobal(this:GetName().."_NameFrame_DeadStatus"):Hide();
+		if (compactmode == 0) then
+			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText(PERL_LOCALIZED_STATUS_OFFLINE);
+		else
+			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_OFFLINE);
+		end
 	end
 end
 
@@ -829,8 +878,18 @@ function Perl_Party_Set_Name()
 	if (UnitName(partyid) ~= nil) then
 		local partyname = UnitName(partyid);
 
-		if (strlen(partyname) > 20) then
-			partyname = strsub(partyname, 1, 19).."...";
+		if (GetLocale() == "koKR") then
+			if (strlen(partyname) > 40) then
+				partyname = strsub(partyname, 1, 39).."...";
+			end
+		elseif (GetLocale() == "zhCN") then
+			if (strlen(partyname) > 40) then
+				partyname = strsub(partyname, 1, 39).."...";
+			end
+		else
+			if (strlen(partyname) > 20) then
+				partyname = strsub(partyname, 1, 19).."...";
+			end
 		end
 
 		if (showfkeys == 1) then
@@ -932,10 +991,12 @@ end
 
 function Perl_Party_Check_Raid_Hidden()
 	if (partyhidden == 2) then
-		Perl_Party_MemberFrame1:Hide();
-		Perl_Party_MemberFrame2:Hide();
-		Perl_Party_MemberFrame3:Hide();
-		Perl_Party_MemberFrame4:Hide();
+		if (UnitInRaid("player")) then
+			Perl_Party_MemberFrame1:Hide();
+			Perl_Party_MemberFrame2:Hide();
+			Perl_Party_MemberFrame3:Hide();
+			Perl_Party_MemberFrame4:Hide();
+		end
 	end
 end
 
@@ -986,10 +1047,6 @@ end
 function Perl_Party_HealthShow()
 	if (healermode == 1) then
 		local id = this:GetID();
-		if (id == 0) then
-			local name=this:GetName();
-			id = string.sub(name, 23, 23);
-		end
 		local partyid = "party"..id;
 		partyhealth = UnitHealth(partyid);
 		partyhealthmax = UnitHealthMax(partyid);
@@ -1006,22 +1063,39 @@ end
 function Perl_Party_HealthHide()
 	if (healermode == 1) then
 		local id = this:GetID();
-		if (id == 0) then
-			local name=this:GetName();
-			id = string.sub(name, 23, 23);
-		end
 		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText();
 		mouseoverhealthflag = 0;
+
+		if (compactmode == 1) then
+			local partyid = "party"..id;
+			if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then
+				if (UnitClass(partyid) == PERL_LOCALIZED_HUNTER) then
+					local buffnum = 1;
+					local currentlyfd = 0;
+					local buffTexture = UnitBuff(partyid, buffnum);
+					while (buffTexture) do
+						if (buffTexture == "Interface\\Icons\\Ability_Rogue_FeignDeath") then
+							getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
+							currentlyfd = 1;
+							break;
+						end
+						buffnum = buffnum + 1;
+						buffTexture = UnitBuff(partyid, buffnum);
+					end
+					if (currentlyfd == 0) then
+						getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_DEAD);
+					end
+				else
+					getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_DEAD);
+				end
+			end
+		end
 	end
 end
 
 function Perl_Party_ManaShow()
 	if (healermode == 1) then
 		local id = this:GetID();
-		if (id == 0) then
-			local name=this:GetName();
-			id = string.sub(name, 23, 23);
-		end
 		local partyid = "party"..id;
 		partymana = UnitMana(partyid);
 		partymanamax = UnitManaMax(partyid);
@@ -1042,10 +1116,6 @@ end
 function Perl_Party_ManaHide()
 	if (healermode == 1) then
 		local id = this:GetID();
-		if (id == 0) then
-			local name=this:GetName();
-			id = string.sub(name, 23, 23);
-		end
 		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText();
 		mouseovermanaflag = 0;
 	end
@@ -1054,10 +1124,6 @@ end
 function Perl_Party_Pet_HealthShow()
 	if (healermode == 1) then
 		local id = this:GetID();
-		if (id == 0) then
-			local name=this:GetName();
-			id = string.sub(name, 23, 23);
-		end
 		local partyid = "partypet"..id;
 		partypethealth = UnitHealth(partyid);
 		partypethealthmax = UnitHealthMax(partyid);
@@ -1074,10 +1140,6 @@ end
 function Perl_Party_Pet_HealthHide()
 	if (healermode == 1) then
 		local id = this:GetID();
-		if (id == 0) then
-			local name=this:GetName();
-			id = string.sub(name, 23, 23);
-		end
 		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
 		mouseoverpethealthflag = 0;
 	end
@@ -1185,6 +1247,50 @@ function Perl_Party_Update_Health_Mana()
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText();
 				end
 			end
+
+			-- Handle death state
+			if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then
+				if (UnitClass(partyid) == PERL_LOCALIZED_HUNTER) then	-- If the dead is a hunter, check for Feign Death
+					local buffnum = 1;
+					local currentlyfd = 0;
+					local buffTexture = UnitBuff(partyid, buffnum);
+					while (buffTexture) do
+						if (buffTexture == "Interface\\Icons\\Ability_Rogue_FeignDeath") then
+							if (compactmode == 0) then
+								getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
+							else
+								getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
+							end
+							currentlyfd = 1;
+							break;
+						end
+						buffnum = buffnum + 1;
+						buffTexture = UnitBuff(partyid, buffnum);
+					end
+					if (currentlyfd == 0) then				-- If the hunter is not Feign Death, then lol
+						if (compactmode == 0) then
+							getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText(PERL_LOCALIZED_STATUS_DEAD);
+						else
+							getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_DEAD);
+						end
+					end
+				else								-- If the dead is not a hunter, well...
+					if (compactmode == 0) then
+						getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText(PERL_LOCALIZED_STATUS_DEAD);
+					else
+						getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_DEAD);
+					end
+				end
+			end
+
+			-- Handle disconnected state
+			if (not UnitIsConnected(partyid)) then
+				if (compactmode == 0) then
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText(PERL_LOCALIZED_STATUS_OFFLINE);
+				else
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_OFFLINE);
+				end
+			end
 		else
 			-- Do nothing since it's hidden anyway
 		end
@@ -1198,8 +1304,18 @@ function Perl_Party_Force_Update()
 
 		-- Set name
 		if (UnitName(partyid) ~= nil) then
-			if (strlen(partyname) > 20) then
-				partyname = strsub(partyname, 1, 19).."...";
+			if (GetLocale() == "koKR") then
+				if (strlen(partyname) > 40) then
+					partyname = strsub(partyname, 1, 39).."...";
+				end
+			elseif (GetLocale() == "zhCN") then
+				if (strlen(partyname) > 40) then
+					partyname = strsub(partyname, 1, 39).."...";
+				end
+			else
+				if (strlen(partyname) > 20) then
+					partyname = strsub(partyname, 1, 19).."...";
+				end
 			end
 			if (showfkeys == 1) then
 				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_FKeyText"):SetText("F"..(partynum + 1));
@@ -1221,18 +1337,18 @@ function Perl_Party_Force_Update()
 		-- Set Level
 		getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_LevelBarText"):SetText(UnitLevel(partyid));
 
-		-- Handle disconnected state
-		if (UnitIsConnected(partyid)) then
-			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_DisconnectStatus"):Hide();
-		else
-			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_DisconnectStatus"):Show();
-		end
-
 		-- Handle death state
 		if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then
 			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_DeadStatus"):Show();
 		else
 			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_DeadStatus"):Hide();
+		end
+
+		-- Handle disconnected state
+		if (UnitIsConnected(partyid)) then
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_DisconnectStatus"):Hide();
+		else
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_DisconnectStatus"):Show();
 		end
 
 		-- Set PvP info
@@ -1703,8 +1819,11 @@ function Perl_Party_Set_Compact(newvalue)
 end
 
 function Perl_Party_Set_Healer(newvalue)
-	healermode = newvalue;
-	Perl_Party_UpdateVars();
+	if (newvalue ~= nil) then
+		healermode = newvalue;
+		Perl_Party_UpdateVars();
+	end
+
 	Perl_Party_Set_Text_Positions();
 	Perl_Party_Update_Health_Mana();
 end
@@ -2264,10 +2383,14 @@ function Perl_Party_UpdateVars(vartable)
 
 		-- Call any code we need to activate them
 		Perl_Party_Set_Space();				-- This probably isn't needed, but one extra call for this won't matter
-		Perl_Party_Set_Hidden(partyhidden);
-		Perl_Party_Set_Compact(compactmode);
-		Perl_Party_Set_Healer(healermode);
-		Perl_Party_Set_Pets(showpets);
+		--Perl_Party_Set_Hidden(partyhidden);
+		--Perl_Party_Set_Compact(compactmode);
+		--Perl_Party_Set_Healer(healermode);
+		--Perl_Party_Set_Pets(showpets);
+		Perl_Party_Set_Hidden();
+		Perl_Party_Set_Compact();
+		Perl_Party_Set_Healer();
+		Perl_Party_Set_Pets();
 		Perl_Party_Reset_Buffs();		-- Reset the buff icons and set sizes
 		Perl_Party_Update_Buffs();		-- Repopulate the buff icons
 		Perl_Party_Set_Scale();
@@ -2366,6 +2489,25 @@ function Perl_Party_Buff_UpdateAll(partymember)
 				button:Hide();											-- Hide the icon since there isn't a debuff in this position
 			end
 		end														-- End main debuff loop
+
+		if (UnitIsDead(partyid)) then
+			if (UnitClass(partyid) == PERL_LOCALIZED_HUNTER) then	-- If the dead is a hunter, check for Feign Death
+				local buffnum = 1;
+				buffTexture = UnitBuff(partyid, buffnum);
+				while (buffTexture) do
+					if (buffTexture == "Interface\\Icons\\Ability_Rogue_FeignDeath") then
+						if (compactmode == 0) then
+							getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_HealthBarText"):SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
+						else
+							getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
+						end
+						break;
+					end
+					buffnum = buffnum + 1;
+					buffTexture = UnitBuff(partyid, buffnum);
+				end
+			end
+		end
 	end
 end
 
@@ -2473,25 +2615,16 @@ end
 
 function Perl_PartyDropDown_Initialize()
 	local dropdown;
-	local id = this:GetID();
 	if (UIDROPDOWNMENU_OPEN_MENU) then
 		dropdown = getglobal(UIDROPDOWNMENU_OPEN_MENU);
 	else
 		dropdown = this;
 	end
-	if (id == 0) then
-		local name = this:GetName();
-		id = string.sub(name, 23, 23);
-	end
-	UnitPopup_ShowMenu(dropdown, "PARTY", "party"..id);
+	UnitPopup_ShowMenu(dropdown, "PARTY", "party"..dropdown:GetParent():GetID());
 end
 
 function Perl_Party_MouseClick(button)
 	local id = this:GetID();
-	if (id == 0) then
-		local name = this:GetName();
-		id = string.sub(name, 23, 23);
-	end
 
 	if (Perl_Custom_ClickFunction) then					-- Check to see if someone defined a custom click function
 		if (Perl_Custom_ClickFunction(button, "party"..id)) then	-- If the function returns true, then we return
@@ -2560,10 +2693,6 @@ end
 
 function Perl_Party_Pet_MouseClick(button)
 	local id = this:GetID();
-	if (id == 0) then
-		local name = this:GetName();
-		id = string.sub(name, 23, 23);
-	end
 
 	if (Perl_Custom_ClickFunction) then					-- Check to see if someone defined a custom click function
 		if (Perl_Custom_ClickFunction(button, "partypet"..id)) then	-- If the function returns true, then we return
@@ -2619,12 +2748,7 @@ end
 -- Tooltip --
 -------------
 function Perl_Party_Tip()
-	local id = this:GetID();
-	if (id == 0) then
-		local name=this:GetName();
-		id = string.sub(name, 23, 23);
-	end
-	UnitFrame_Initialize("party"..id)
+	UnitFrame_Initialize("party"..this:GetID());
 end
 
 function UnitFrame_Initialize(unit)	-- Hopefully this doesn't break any mods

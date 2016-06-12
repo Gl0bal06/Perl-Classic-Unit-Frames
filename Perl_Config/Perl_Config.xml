@@ -205,7 +205,7 @@
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Player_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYER">
+			<Button name="Perl_Config_Party_Target_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PARTYTARGET">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -218,12 +218,12 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						Perl_Config_Player_Display();
+						Perl_Config_Party_Target_Display();
 					</OnClick>
 				</Scripts>
 			</Button>
 
-			<Button name="Perl_Config_Player_Buff_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYERBUFF">
+			<Button name="Perl_Config_Player_Button" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_PLAYER">
 				<Size>
 					<AbsDimension x="100" y="22"/>
 				</Size>
@@ -236,7 +236,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						Perl_Config_Player_Buff_Display();
+						Perl_Config_Player_Display();
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -246,7 +246,7 @@
 					<AbsDimension x="100" y="22"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Player_Buff_Button">
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Config_Player_Button">
 						<Offset>
 							<AbsDimension x="5" y="0"/>
 						</Offset>

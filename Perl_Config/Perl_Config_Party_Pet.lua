@@ -73,6 +73,12 @@ function Perl_Config_Party_Pet_Set_Values()
 	else
 		Perl_Config_Party_Pet_Frame_CheckButton5:SetChecked(nil);
 	end
+
+	if (vartable["enabled"] == 1) then
+		Perl_Config_Party_Pet_Frame_CheckButton6:SetChecked(1);
+	else
+		Perl_Config_Party_Pet_Frame_CheckButton6:SetChecked(nil);
+	end
 end
 
 function Perl_Config_Party_Pet_Portrait_Update()
@@ -104,6 +110,14 @@ function Perl_Config_Party_Pet_Hidden_Update()
 		Perl_Party_Pet_Set_Hidden(1);
 	else
 		Perl_Party_Pet_Set_Hidden(0);
+	end
+end
+
+function Perl_Config_Party_Enabled_Update()
+	if (Perl_Config_Party_Pet_Frame_CheckButton6:GetChecked() == 1) then
+		Perl_Party_Set_Enabled(1);
+	else
+		Perl_Party_Set_Enabled(0);
 	end
 end
 

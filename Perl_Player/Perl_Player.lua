@@ -1626,8 +1626,12 @@ function Perl_Player_XPTooltip()
 			end
 
 			GameTooltip:SetText(xptext, 255/255, 209/255, 0/255);
-			if (GetLocale() == "koKR") then
+			if (GetLocale() == "deDE") then
+				GameTooltip:AddLine(xptolevel.." ("..floor((playerxpmax-playerxp)/playerxpmax*100+0.5).."%) bis Level "..(playerlevel + 1), 255/255, 209/255, 0/255);
+			elseif (GetLocale() == "koKR") then
 				GameTooltip:AddLine((playerlevel + 1).." 레벨 까지 "..xptolevel.." ("..floor((playerxpmax-playerxp)/playerxpmax*100+0.5).."%) 남음", 255/255, 209/255, 0/255);
+			elseif (GetLocale() == "zhCN") then
+				GameTooltip:AddLine("还有"..xptolevel.." ("..floor((playerxpmax-playerxp)/playerxpmax*100+0.5).."%) 才能到达级别 "..(playerlevel + 1), 255/255, 209/255, 0/255);
 			else
 				GameTooltip:AddLine(xptolevel.." ("..floor((playerxpmax-playerxp)/playerxpmax*100+0.5).."%) until level "..(playerlevel + 1), 255/255, 209/255, 0/255);
 			end
@@ -1644,16 +1648,24 @@ function Perl_Player_XPTooltip()
 		else
 			rankName = GetPVPRankInfo(rankNumber, "player");
 			rankProgress = floor(GetPVPRankProgress() * 100);
-			if (GetLocale() == "koKR") then
+			if (GetLocale() == "deDE") then
+				GameTooltip:SetText(rankProgress.."% in Rang "..(rankNumber - 4).." ("..rankName..")", 255/255, 209/255, 0/255);
+			elseif (GetLocale() == "koKR") then
 				GameTooltip:SetText((rankNumber - 4).."등급 ("..rankName..")의 "..rankProgress.."% 입니다", 255/255, 209/255, 0/255);
+			elseif (GetLocale() == "zhCN") then
+				GameTooltip:SetText(rankProgress.."% 处于荣誉 "..(rankNumber - 4).." ("..rankName..")", 255/255, 209/255, 0/255);
 			else
 				GameTooltip:SetText(rankProgress.."% into Rank "..(rankNumber - 4).." ("..rankName..")", 255/255, 209/255, 0/255);
 			end
 			if (rankNumber < 18) then
 				rankNumber = rankNumber + 1;
 				rankName = GetPVPRankInfo(rankNumber, "player");
-				if (GetLocale() == "koKR") then
+				if (GetLocale() == "deDE") then
+					GameTooltip:AddLine((100 - rankProgress).."% bis Rang "..(rankNumber - 4).." ("..rankName..")", 255/255, 209/255, 0/255);
+				elseif (GetLocale() == "koKR") then
 					GameTooltip:AddLine((rankNumber - 4).."등급 ("..rankName..")까지 "..(100 - rankProgress).."% 남음", 255/255, 209/255, 0/255);
+				elseif (GetLocale() == "zhCN") then
+					GameTooltip:AddLine("还有"..(100 - rankProgress).."% 将达到荣誉 "..(rankNumber - 4).." ("..rankName..")", 255/255, 209/255, 0/255);
 				else
 					GameTooltip:AddLine((100 - rankProgress).."% until Rank "..(rankNumber - 4).." ("..rankName..")", 255/255, 209/255, 0/255);
 				end
@@ -1667,6 +1679,8 @@ function Perl_Player_XPTooltip()
 			min = 0;
 			if (GetLocale() == "koKR") then
 				GameTooltip:SetText(Perl_Player_Get_Reaction_Name(reaction).."의 "..floor(value/max*100+0.5).."%", 255/255, 209/255, 0/255);
+			elseif (GetLocale() == "zhCN") then
+				GameTooltip:SetText(Perl_Player_Get_Reaction_Name( reaction).."进度 "..floor(value/max*100+0.5).."%", 255/255, 209/255, 0/255);
 			else
 				GameTooltip:SetText(floor(value/max*100+0.5).."% into "..Perl_Player_Get_Reaction_Name(reaction), 255/255, 209/255, 0/255);
 			end
@@ -1674,6 +1688,8 @@ function Perl_Player_XPTooltip()
 			if (reaction ~= 8) then
 				if (GetLocale() == "koKR") then
 					GameTooltip:AddLine(Perl_Player_Get_Reaction_Name(reaction + 1).."까지 "..(max - value).." 남음", 255/255, 209/255, 0/255);
+				elseif (GetLocale() == "zhCN") then
+					GameTooltip:AddLine("还有"..(max - value).." 到达 "..Perl_Player_Get_Reaction_Name(reaction + 1), 255/255, 209/255, 0/255);
 				else
 					GameTooltip:AddLine((max - value).." until "..Perl_Player_Get_Reaction_Name(reaction + 1), 255/255, 209/255, 0/255);
 				end

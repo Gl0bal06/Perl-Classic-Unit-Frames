@@ -192,8 +192,18 @@ function Perl_Target_Target_OnUpdate(arg1)
 
 			-- Begin: Set the name
 			targettargetname = UnitName("targettarget");
-			if (strlen(targettargetname) > 11) then
-				targettargetname = strsub(targettargetname, 1, 10).."...";
+			if (GetLocale() == "koKR") then
+				if (strlen(targettargetname) > 25) then
+					targettargetname = strsub(targettargetname, 1, 24).."...";
+				end
+			elseif (GetLocale() == "zhCN") then
+				if (strlen(targettargetname) > 21) then
+					targettargetname = strsub(targettargetname, 1, 20).."...";
+				end
+			else
+				if (strlen(targettargetname) > 11) then
+					targettargetname = strsub(targettargetname, 1, 10).."...";
+				end
 			end
 			Perl_Target_Target_NameBarText:SetText(targettargetname);
 			-- End: Set the name
@@ -466,8 +476,18 @@ function Perl_Target_Target_OnUpdate(arg1)
 
 			-- Begin: Set the name
 			targettargettargetname = UnitName("targettargettarget");
-			if (strlen(targettargettargetname) > 11) then
-				targettargettargetname = strsub(targettargettargetname, 1, 10).."...";
+			if (GetLocale() == "koKR") then
+				if (strlen(targettargettargetname) > 25) then
+					targettargettargetname = strsub(targettargettargetname, 1, 24).."...";
+				end
+			elseif (GetLocale() == "zhCN") then
+				if (strlen(targettargettargetname) > 21) then
+					targettargettargetname = strsub(targettargettargetname, 1, 20).."...";
+				end
+			else
+				if (strlen(targettargettargetname) > 11) then
+					targettargettargetname = strsub(targettargettargetname, 1, 10).."...";
+				end
 			end
 			Perl_Target_Target_Target_NameBarText:SetText(targettargettargetname);
 			-- End: Set the name
@@ -940,14 +960,22 @@ function Perl_Target_Target_Warn()
 						-- Some dumb hunter pulled aggro
 						if (aggroWarningCount == 0) then
 							if (alertsize == 0) then
-								if (GetLocale() == "koKR") then
+								if (GetLocale() == "deDE") then
+									UIErrorsFrame:AddMessage("Du hast die Aggro verloren an "..UnitName("targettarget").."!",1,0,0,1,3);
+								elseif (GetLocale() == "koKR") then
 									UIErrorsFrame:AddMessage("당신은 "..UnitName("targettarget").."의 어그로 획득에 실패했습니다!",1,0,0,1,3);
+								elseif (GetLocale() == "zhCN") then
+									UIErrorsFrame:AddMessage("你的目标已经转移到 "..UnitName("targettarget").."!",1,0,0,1,3);
 								else
 									UIErrorsFrame:AddMessage("You have lost aggro to "..UnitName("targettarget").."!",1,0,0,1,3);
 								end
 							elseif (alertsize == 1) then
-								if (GetLocale() == "koKR") then
+								if (GetLocale() == "deDE") then
+									Perl_Target_Target_BigWarning_Show("Du hast die Aggro verloren an "..UnitName("targettarget").."!");
+								elseif (GetLocale() == "koKR") then
 									Perl_Target_Target_BigWarning_Show("당신은 "..UnitName("targettarget").."의 어그로 획득에 실패했습니다!");
+								elseif (GetLocale() == "zhCN") then
+									Perl_Target_Target_BigWarning_Show("你的目标已经转移到 "..UnitName("targettarget").."!");
 								else
 									Perl_Target_Target_BigWarning_Show("You have lost aggro to "..UnitName("targettarget").."!");
 								end
@@ -983,8 +1011,12 @@ function Perl_Target_Target_Warn_Healer_Mode()		-- This chunk of code is called 
 			if (UnitIsUnit("target", "targettargettarget")) then	-- The target and the targets target target (whew) are the same
 				if (aggroWarningCount == 0) then
 					if (alertsize == 0) then
-						if (GetLocale() == "koKR") then
+						if (GetLocale() == "deDE") then
+							UUIErrorsFrame:AddMessage(UnitName("target").." tankt nun "..UnitName("targettarget"),1,0,0,1,3);
+						elseif (GetLocale() == "koKR") then
 							UIErrorsFrame:AddMessage(UnitName("target").."님이 "..UnitName("targettarget").."|1을;를; 탱킹중입니다.",1,0,0,1,3);
+						elseif (GetLocale() == "zhCN") then
+							UIErrorsFrame:AddMessage(UnitName("targettarget").." 正在攻击 "..UnitName("target"),1,0,0,1,3);
 						else
 							UIErrorsFrame:AddMessage(UnitName("target").." is now tanking "..UnitName("targettarget"),1,0,0,1,3);
 						end
@@ -992,8 +1024,12 @@ function Perl_Target_Target_Warn_Healer_Mode()		-- This chunk of code is called 
 						if ((UnitName("player") == UnitName("target")) or (UnitName("target") == UnitName("targettarget"))) then
 							-- Do nothing
 						else
-							if (GetLocale() == "koKR") then
+							if (GetLocale() == "deDE") then
+								Perl_Target_Target_BigWarning_Show(UnitName("target").." tankt nun "..UnitName("targettarget"));
+							elseif (GetLocale() == "koKR") then
 								Perl_Target_Target_BigWarning_Show(UnitName("target").."님이 "..UnitName("targettarget").."|1을;를; 탱킹중입니다.");
+							elseif (GetLocale() == "zhCN") then
+								Perl_Target_Target_BigWarning_Show(UnitName("targettarget").." 正在攻击 "..UnitName("target"));
 							else
 								Perl_Target_Target_BigWarning_Show(UnitName("target").." is now tanking "..UnitName("targettarget"));
 							end

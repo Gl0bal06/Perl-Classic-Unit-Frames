@@ -8,8 +8,8 @@ Perl_Config_Global_CombatDisplay_Config = {};
 Perl_Config_Global_Config_Config = {};
 Perl_Config_Global_Party_Config = {};
 Perl_Config_Global_Party_Pet_Config = {};
+Perl_Config_Global_Party_Target_Config = {};
 Perl_Config_Global_Player_Config = {};
-Perl_Config_Global_Player_Buff_Config = {};
 Perl_Config_Global_Player_Pet_Config = {};
 Perl_Config_Global_Raid_Config = {};
 Perl_Config_Global_Target_Config = {};
@@ -94,14 +94,6 @@ function Perl_Config_Initialize()
 end
 
 
----------------------------
--- Localization Function --
----------------------------
---function Perl_Config_Set_Localization()
---	
---end
-
-
 --------------------------
 -- Update/GUI Functions --
 --------------------------
@@ -157,6 +149,17 @@ function Perl_Config_Set_Texture(newvalue)
 		Perl_Party_Pet3_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
 		Perl_Party_Pet4_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
 		Perl_Party_Pet4_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
+	end
+
+	if (Perl_Party_Target_Script_Frame) then
+		Perl_Party_Target1_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
+		Perl_Party_Target1_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
+		Perl_Party_Target2_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
+		Perl_Party_Target2_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
+		Perl_Party_Target3_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
+		Perl_Party_Target3_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
+		Perl_Party_Target4_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
+		Perl_Party_Target4_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
 	end
 
 	if (Perl_Player_Frame) then
@@ -222,7 +225,15 @@ function Perl_Config_Set_Background(newvalue)
 				getglobal("Perl_Party_Pet"..partynum.."_PortraitFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 				getglobal("Perl_Party_Pet"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			end
-			Perl_Party_Pet_Initialize_Frame_Color(1);
+			Perl_Party_Pet_Initialize_Frame_Color();
+		end
+
+		if (Perl_Party_Target_Script_Frame) then
+			for partynum=1,4 do
+				getglobal("Perl_Party_Target"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+				getglobal("Perl_Party_Target"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			end
+			Perl_Party_Target_Initialize_Frame_Color();
 		end
 
 		if (Perl_Player_Frame) then
@@ -292,7 +303,15 @@ function Perl_Config_Set_Background(newvalue)
 				getglobal("Perl_Party_Pet"..partynum.."_PortraitFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 				getglobal("Perl_Party_Pet"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			end
-			Perl_Party_Pet_Initialize_Frame_Color(1);
+			Perl_Party_Pet_Initialize_Frame_Color();
+		end
+
+		if (Perl_Party_Target_Script_Frame) then
+			for partynum=1,4 do
+				getglobal("Perl_Party_Target"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+				getglobal("Perl_Party_Target"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			end
+			Perl_Party_Target_Initialize_Frame_Color();
 		end
 
 		if (Perl_Player_Frame) then
@@ -359,6 +378,10 @@ function Perl_Config_Set_Transparency(newvalue)
 		Perl_Party_Pet_Set_Transparency(newvalue);
 	end
 
+	if (Perl_Party_Target_Script_Frame) then
+		Perl_Party_Target_Set_Transparency(newvalue);
+	end
+
 	if (Perl_Player_Frame) then
 		Perl_Player_Set_Transparency(newvalue);
 	end
@@ -420,6 +443,10 @@ function Perl_Config_Frame_Reset_Positions()
 
 	if (Perl_Party_Pet_Script_Frame) then
 		Perl_Party_Pet_Allign();
+	end
+
+	if (Perl_Party_Target_Script_Frame) then
+		Perl_Party_Target_Allign();
 	end
 
 	if (Perl_Player_Frame) then
@@ -547,6 +574,37 @@ function Perl_Config_Global_Save_Settings()
 			["BuffLocation"] = vartable["bufflocation"],
 			["DebuffLocation"] = vartable["debufflocation"],
 			["HiddenInRaids"] = vartable["hiddeninraids"],
+			["XPosition1"] = floor(Perl_Party_Pet1:GetLeft() + 0.5),
+			["YPosition1"] = floor(Perl_Party_Pet1:GetTop() - (UIParent:GetTop() / Perl_Party_Pet1:GetScale()) + 0.5),
+			["XPosition2"] = floor(Perl_Party_Pet2:GetLeft() + 0.5),
+			["YPosition2"] = floor(Perl_Party_Pet2:GetTop() - (UIParent:GetTop() / Perl_Party_Pet2:GetScale()) + 0.5),
+			["XPosition3"] = floor(Perl_Party_Pet3:GetLeft() + 0.5),
+			["YPosition3"] = floor(Perl_Party_Pet3:GetTop() - (UIParent:GetTop() / Perl_Party_Pet3:GetScale()) + 0.5),
+			["XPosition4"] = floor(Perl_Party_Pet4:GetLeft() + 0.5),
+			["YPosition4"] = floor(Perl_Party_Pet4:GetTop() - (UIParent:GetTop() / Perl_Party_Pet4:GetScale()) + 0.5),
+			["Enabled"] = vartable["enabled"],
+		};
+	end
+
+	if (Perl_Party_Target_Script_Frame) then
+		local vartable = Perl_Party_Target_GetVars();
+		Perl_Config_Global_Party_Target_Config["Global Settings"] = {
+			["Locked"] = vartable["locked"],
+			["Scale"] = vartable["scale"],
+			["Transparency"] = vartable["transparency"],
+			["MobHealthSupport"] = vartable["mobhealthsupport"],
+			["HidePowerBars"] = vartable["hidepowerbars"],
+			["ClassColoredNames"] = vartable["classcolorednames"],
+			["XPosition1"] = floor(Perl_Party_Target1:GetLeft() + 0.5),
+			["YPosition1"] = floor(Perl_Party_Target1:GetTop() - (UIParent:GetTop() / Perl_Party_Target1:GetScale()) + 0.5),
+			["XPosition2"] = floor(Perl_Party_Target2:GetLeft() + 0.5),
+			["YPosition2"] = floor(Perl_Party_Target2:GetTop() - (UIParent:GetTop() / Perl_Party_Target2:GetScale()) + 0.5),
+			["XPosition3"] = floor(Perl_Party_Target3:GetLeft() + 0.5),
+			["YPosition3"] = floor(Perl_Party_Target3:GetTop() - (UIParent:GetTop() / Perl_Party_Target3:GetScale()) + 0.5),
+			["XPosition4"] = floor(Perl_Party_Target4:GetLeft() + 0.5),
+			["YPosition4"] = floor(Perl_Party_Target4:GetTop() - (UIParent:GetTop() / Perl_Party_Target4:GetScale()) + 0.5),
+			["Enabled"] = vartable["enabled"],
+			["HiddenInRaid"] = vartable["hiddeninraid"],
 		};
 	end
 
@@ -572,15 +630,6 @@ function Perl_Config_Global_Save_Settings()
 			["ClassColoredNames"] = vartable["classcolorednames"],
 			["HideClassLevelFrame"] = vartable["hideclasslevelframe"],
 			["ShowPvPRank"] = vartable["showpvprank"],
-		};
-	end
-
-	if (Perl_Player_Buff_Script_Frame) then
-		local vartable = Perl_Player_Buff_GetVars();
-		Perl_Config_Global_Player_Buff_Config["Global Settings"] = {
-			["BuffAlerts"] = vartable["buffalerts"],
-			["ShowBuffs"] = vartable["showbuffs"],
-			["Scale"] = vartable["scale"],
 		};
 	end
 
@@ -618,6 +667,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShowGroup6"] = vartable["showgroup6"],
 			["ShowGroup7"] = vartable["showgroup7"],
 			["ShowGroup8"] = vartable["showgroup8"],
+			["ShowGroup9"] = vartable["showgroup9"],
 			["ShowPercents"] = vartable["showpercents"],
 			["SortRaidByClass"] = vartable["sortraidbyclass"],
 			["Transparency"] = vartable["transparency"],
@@ -646,6 +696,11 @@ function Perl_Config_Global_Save_Settings()
 			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
 			["ShowBuffs"] = vartable["showraidbuffs"],
 			["ColorDebuffNames"] = vartable["colordebuffnames"],
+			["FrameStyle"] = vartable["framestyle"],
+			["ShowBorder"] = vartable["showborder"],
+			["RemoveSpace"] = vartable["removespace"],
+			["HidePowerBars"] = vartable["hidepowerbars"],
+			["CTRAStyleTip"] = vartable["ctrastyletip"],
 		};
 	end
 
@@ -758,6 +813,23 @@ function Perl_Config_Global_Load_Settings()
 				Perl_Party_Pet2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition2"], Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition2"]);
 				Perl_Party_Pet3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition3"], Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition3"]);
 				Perl_Party_Pet4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition4"], Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition4"]);
+			end
+		end
+	end
+
+	if (Perl_Party_Target_Script_Frame) then
+		Perl_Party_Target_UpdateVars(Perl_Config_Global_Party_Target_Config);
+
+		if (Perl_Config_Global_Party_Target_Config["Global Settings"] ~= nil) then
+			if ((Perl_Config_Global_Party_Target_Config["Global Settings"]["XPosition1"] ~= nil) and (Perl_Config_Global_Party_Target_Config["Global Settings"]["YPosition1"] ~= nil)) then
+				Perl_Party_Target1:SetUserPlaced(1);
+				Perl_Party_Target2:SetUserPlaced(1);
+				Perl_Party_Target3:SetUserPlaced(1);
+				Perl_Party_Target4:SetUserPlaced(1);
+				Perl_Party_Target1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Target_Config["Global Settings"]["XPosition1"], Perl_Config_Global_Party_Target_Config["Global Settings"]["YPosition1"]);
+				Perl_Party_Target2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Target_Config["Global Settings"]["XPosition2"], Perl_Config_Global_Party_Target_Config["Global Settings"]["YPosition2"]);
+				Perl_Party_Target3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Target_Config["Global Settings"]["XPosition3"], Perl_Config_Global_Party_Target_Config["Global Settings"]["YPosition3"]);
+				Perl_Party_Target4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Target_Config["Global Settings"]["XPosition4"], Perl_Config_Global_Party_Target_Config["Global Settings"]["YPosition4"]);
 			end
 		end
 	end
@@ -975,8 +1047,8 @@ function Perl_Config_Hide_All()
 	Perl_Config_NotInstalled_Frame:Hide();
 	Perl_Config_Party_Frame:Hide();
 	Perl_Config_Party_Pet_Frame:Hide();
+	Perl_Config_Party_Target_Frame:Hide();
 	Perl_Config_Player_Frame:Hide();
-	Perl_Config_Player_Buff_Frame:Hide();
 	Perl_Config_Player_Pet_Frame:Hide();
 	Perl_Config_Raid_Frame:Hide();
 	Perl_Config_Target_Frame:Hide();
@@ -1015,6 +1087,12 @@ function Perl_Config_Button_OnClick(button)
 
 		if (Perl_Party_Pet_Script_Frame) then
 			if (Perl_Party_Pet_Config[UnitName("player")]["Locked"] == 0) then
+				unlockedflag = 1;
+			end
+		end
+
+		if (Perl_Party_Target_Script_Frame) then
+			if (Perl_Party_Target_Config[UnitName("player")]["Locked"] == 0) then
 				unlockedflag = 1;
 			end
 		end
@@ -1105,6 +1183,20 @@ function Perl_Config_Button_Tooltip()
 		else
 			Perl_Party_Pet_UpdateVars();
 			GameTooltip:AddLine("Perl_Party_Pet could not verify its status.");
+		end
+	end
+
+	if (Perl_Party_Target_Script_Frame) then
+		if (type(Perl_Party_Target_Config[UnitName("player")]) == "table") then
+			if (Perl_Party_Target_Config[UnitName("player")]["Locked"] == 0) then
+				GameTooltip:AddLine("Perl_Party_Target is unlocked");
+				unlockedflag = 1;
+			else
+				GameTooltip:AddLine("Perl_Party_Target is locked");
+			end
+		else
+			Perl_Party_Target_UpdateVars();
+			GameTooltip:AddLine("Perl_Party_Target could not verify its status.");
 		end
 	end
 

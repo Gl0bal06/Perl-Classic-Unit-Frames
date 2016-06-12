@@ -113,6 +113,10 @@ function Perl_Player_Pet_OnEvent(event)
 	elseif (event == "UNIT_LEVEL") then
 		if (arg1 == "pet") then
 			Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
+			return;
+		end
+		if (arg1 == "player") then
+			Perl_Player_Pet_ShowXP();
 		end
 		return;
 	elseif (event == "UNIT_DISPLAYPOWER") then
@@ -353,10 +357,6 @@ function Perl_Player_Pet_ShowXP()
 		Perl_Player_Pet_StatsFrame:SetHeight(34);
 		Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(34);
 	else
-		Perl_Player_Pet_XPBar:Show();
-		Perl_Player_Pet_XPBarBG:Show();
-		Perl_Player_Pet_StatsFrame:SetHeight(47);
-		Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(47);
 		if (UnitLevel("pet") == UnitLevel("player")) then
 			Perl_Player_Pet_XPBar:Hide();
 			Perl_Player_Pet_XPBarBG:Hide();
@@ -364,6 +364,10 @@ function Perl_Player_Pet_ShowXP()
 			Perl_Player_Pet_StatsFrame:SetHeight(34);
 			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(34);
 		else
+			Perl_Player_Pet_XPBar:Show();
+			Perl_Player_Pet_XPBarBG:Show();
+			Perl_Player_Pet_StatsFrame:SetHeight(47);
+			Perl_Player_Pet_StatsFrame_CastClickOverlay:SetHeight(47);
 			Perl_Player_Pet_Update_Experience();
 		end
 	end

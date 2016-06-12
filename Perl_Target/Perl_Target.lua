@@ -395,6 +395,39 @@ function Perl_Target_Update_Once()
 		end
 		-- End: Set the pvp rank icon
 
+		-- Begin: Set the text positions
+		if (UnitHealthMax("target") == 100) then
+			Perl_Target_HealthBarText:SetPoint("TOP", 0, 1);
+			Perl_Target_ManaBarText:SetPoint("TOP", 0, 1);
+		else
+			if (framestyle == 1) then
+				Perl_Target_HealthBarText:SetPoint("TOP", 0, 1);
+				Perl_Target_ManaBarText:SetPoint("TOP", 0, 1);
+			elseif (framestyle == 2) then
+				if (compactmode == 0) then
+					Perl_Target_HealthBarText:SetPoint("TOP", 0, 1);
+					Perl_Target_ManaBarText:SetPoint("TOP", 0, 1);
+					Perl_Target_HealthBarTextRight:SetPoint("RIGHT", 70, 0);
+				else
+					if (healermode == 0) then
+						Perl_Target_HealthBarText:SetPoint("TOP", 0, 1);
+						Perl_Target_ManaBarText:SetPoint("TOP", 0, 1);
+					else
+						if (shortbars == 0) then
+							Perl_Target_HealthBarText:SetPoint("TOP", -40, 1);
+							Perl_Target_ManaBarText:SetPoint("TOP", -40, 1);
+							Perl_Target_HealthBarTextRight:SetPoint("RIGHT", -10, 0);
+						else
+							Perl_Target_HealthBarText:SetPoint("TOP", -25, 1);
+							Perl_Target_ManaBarText:SetPoint("TOP", -25, 1);
+							Perl_Target_HealthBarTextRight:SetPoint("RIGHT", -10, 0);
+						end
+					end
+				end
+			end
+		end
+		-- End: Set the text positions
+
 		Perl_Target_Frame:Show();		-- Show frame
 	end
 end
@@ -620,13 +653,39 @@ function Perl_Target_Update_Health()
 				
 			else
 				if (compactpercent == 0) then
-					Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-					Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+					if (healermode == 0) then
+						Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+						Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+					else
+						Perl_Target_HealthBarTextRight:SetText("-"..targethealthmax - targethealth);
+						Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+					end
 					Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
 				else
-					Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+					if (healermode == 0) then
+						Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+					else
+						Perl_Target_HealthBarTextRight:SetText("-"..targethealthmax - targethealth);
+					end
 					Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
 					Perl_Target_HealthBarTextCompactPercent:SetText(targethealthpercent.."%");
+				end
+			end
+		end
+	end
+
+	if (UnitIsDead("target")) then
+		if (UnitIsPlayer("target")) then
+			if (UnitClass("target") == PERL_LOCALIZED_HUNTER) then	-- If the dead is a hunter, check for Feign Death
+				local buffnum = 1;
+				local buffTexture = UnitBuff("target", buffnum);
+				while (buffTexture) do
+					if (buffTexture == "Interface\\Icons\\Ability_Rogue_FeignDeath") then
+						Perl_Target_HealthBarText:SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
+						break;
+					end
+					buffnum = buffnum + 1;
+					buffTexture = UnitBuff("target", buffnum);
 				end
 			end
 		end
@@ -812,23 +871,69 @@ function Perl_Target_Update_Name()
 	targetname = UnitName("target");
 	namelengthrestrictor = 0;
 
-	if (framestyle == 1) then
-		namelengthrestrictor = 16;
-	elseif (framestyle == 2) then
-		if (compactmode == 0) then
-			namelengthrestrictor = 18;
-		else
-			if (compactpercent == 0) then
-				if (shortbars == 0) then
-					namelengthrestrictor = 8;
-				else
-					namelengthrestrictor = 2;
-				end
+	if (GetLocale() == "koKR") then
+		if (framestyle == 1) then
+			namelengthrestrictor = 38;
+		elseif (framestyle == 2) then
+			if (compactmode == 0) then
+				namelengthrestrictor = 36;
 			else
-				if (shortbars == 0) then
-					namelengthrestrictor = 13;
+				if (compactpercent == 0) then
+					if (shortbars == 0) then
+						namelengthrestrictor = 24;
+					else
+						namelengthrestrictor = 12;
+					end
 				else
-					namelengthrestrictor = 9;
+					if (shortbars == 0) then
+						namelengthrestrictor = 34;
+					else
+						namelengthrestrictor = 24;
+					end
+				end
+			end
+		end
+	elseif (GetLocale() == "zhCN") then
+		if (framestyle == 1) then
+			namelengthrestrictor = 32;
+		elseif (framestyle == 2) then
+			if (compactmode == 0) then
+				namelengthrestrictor = 30;
+			else
+				if (compactpercent == 0) then
+					if (shortbars == 0) then
+						namelengthrestrictor = 20;
+					else
+						namelengthrestrictor = 14;
+					end
+				else
+					if (shortbars == 0) then
+						namelengthrestrictor = 25;
+					else
+						namelengthrestrictor = 21;
+					end
+				end
+			end
+		end
+	else
+		if (framestyle == 1) then
+			namelengthrestrictor = 16;
+		elseif (framestyle == 2) then
+			if (compactmode == 0) then
+				namelengthrestrictor = 18;
+			else
+				if (compactpercent == 0) then
+					if (shortbars == 0) then
+						namelengthrestrictor = 8;
+					else
+						namelengthrestrictor = 2;
+					end
+				else
+					if (shortbars == 0) then
+						namelengthrestrictor = 13;
+					else
+						namelengthrestrictor = 9;
+					end
 				end
 			end
 		end

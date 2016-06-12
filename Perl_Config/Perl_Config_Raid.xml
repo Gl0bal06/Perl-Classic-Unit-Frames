@@ -249,6 +249,27 @@
 				</Scripts>
 			</CheckButton>
 
+			<CheckButton name="$parent_CheckButton26" inherits="UICheckButtonTemplate" id="26">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton8">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_GROUP_NINE);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_Show_Group_Nine_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
 			<CheckButton name="$parent_CheckButton9" inherits="UICheckButtonTemplate" id="9">
 				<Size>
 					<AbsDimension x="20" y="20"/>
@@ -319,7 +340,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
 						<Offset>
-							<AbsDimension x="220" y="100"/>
+							<AbsDimension x="220" y="130"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -369,9 +390,9 @@
 					<AbsDimension x="150" y="22"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Button1">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Button2">
 						<Offset>
-							<AbsDimension x="20" y="0"/>
+							<AbsDimension x="0" y="-30"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -525,6 +546,27 @@
 				</Scripts>
 			</CheckButton>
 
+			<CheckButton name="$parent_CheckButton25" inherits="UICheckButtonTemplate" id="25">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton16">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_TOOLTIP);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_CTRA_Style_Tip_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
 			<CheckButton name="$parent_CheckButton17" inherits="UICheckButtonTemplate" id="17">
 				<Size>
 					<AbsDimension x="20" y="20"/>
@@ -605,6 +647,90 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Color_Debuff_Names_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton21" inherits="UICheckButtonTemplate" id="21">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Button1">
+						<Offset>
+							<AbsDimension  x="20" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_ALTERNATE_FRAME_STYLE);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_Alternate_Frame_Style_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton24" inherits="UICheckButtonTemplate" id="24">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton21">
+						<Offset>
+							<AbsDimension  x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDE_POWER_BARS);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_Hide_Power_Bars_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton22" inherits="UICheckButtonTemplate" id="22">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton24">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_HIDE_BORDER);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_Show_Border_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton23" inherits="UICheckButtonTemplate" id="23">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton22">
+						<Offset>
+							<AbsDimension  x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_RAID_REMOVE_SPACE);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_Remove_Space_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

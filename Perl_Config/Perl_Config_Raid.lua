@@ -60,6 +60,12 @@ function Perl_Config_Raid_Set_Values()
 		Perl_Config_Raid_Frame_CheckButton8:SetChecked(nil);
 	end
 
+	if (vartable["showgroup9"] == 1) then
+		Perl_Config_Raid_Frame_CheckButton26:SetChecked(1);
+	else
+		Perl_Config_Raid_Frame_CheckButton26:SetChecked(nil);
+	end
+
 	if (vartable["sortraidbyclass"] == 1) then
 		Perl_Config_Raid_Frame_CheckButton9:SetChecked(1);
 	else
@@ -124,6 +130,36 @@ function Perl_Config_Raid_Set_Values()
 		Perl_Config_Raid_Frame_CheckButton20:SetChecked(1);
 	else
 		Perl_Config_Raid_Frame_CheckButton20:SetChecked(nil);
+	end
+
+	if (vartable["framestyle"] == 2) then
+		Perl_Config_Raid_Frame_CheckButton21:SetChecked(1);
+	else
+		Perl_Config_Raid_Frame_CheckButton21:SetChecked(nil);
+	end
+
+	if (vartable["showborder"] == 1) then
+		Perl_Config_Raid_Frame_CheckButton22:SetChecked(nil);
+	else
+		Perl_Config_Raid_Frame_CheckButton22:SetChecked(1);
+	end
+
+	if (vartable["removespace"] == 1) then
+		Perl_Config_Raid_Frame_CheckButton23:SetChecked(1);
+	else
+		Perl_Config_Raid_Frame_CheckButton23:SetChecked(nil);
+	end
+
+	if (vartable["hidepowerbars"] == 1) then
+		Perl_Config_Raid_Frame_CheckButton24:SetChecked(1);
+	else
+		Perl_Config_Raid_Frame_CheckButton24:SetChecked(nil);
+	end
+
+	if (vartable["ctrastyletip"] == 1) then
+		Perl_Config_Raid_Frame_CheckButton25:SetChecked(1);
+	else
+		Perl_Config_Raid_Frame_CheckButton25:SetChecked(nil);
 	end
 
 	Perl_Config_Raid_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
@@ -202,6 +238,14 @@ function Perl_Config_Raid_Show_Group_Eight_Update()
 		Perl_Raid_Set_Show_Group_Eight(1);
 	else
 		Perl_Raid_Set_Show_Group_Eight(0);
+	end
+end
+
+function Perl_Config_Raid_Show_Group_Nine_Update()
+	if (Perl_Config_Raid_Frame_CheckButton26:GetChecked() == 1) then
+		Perl_Raid_Set_Show_Group_Nine(1);
+	else
+		Perl_Raid_Set_Show_Group_Nine(0);
 	end
 end
 
@@ -290,6 +334,46 @@ function Perl_Config_Raid_Color_Debuff_Names_Update()
 		Perl_Raid_Set_Color_Debuff_Names(1);
 	else
 		Perl_Raid_Set_Color_Debuff_Names(0);
+	end
+end
+
+function Perl_Config_Raid_Alternate_Frame_Style_Update()
+	if (Perl_Config_Raid_Frame_CheckButton21:GetChecked() == 1) then
+		Perl_Raid_Set_Alternate_Frame_Style(2);
+	else
+		Perl_Raid_Set_Alternate_Frame_Style(1);
+	end
+end
+
+function Perl_Config_Raid_Show_Border_Update()
+	if (Perl_Config_Raid_Frame_CheckButton22:GetChecked() == 1) then
+		Perl_Raid_Set_Show_Border(0);
+	else
+		Perl_Raid_Set_Show_Border(1);
+	end
+end
+
+function Perl_Config_Raid_Remove_Space_Update()
+	if (Perl_Config_Raid_Frame_CheckButton23:GetChecked() == 1) then
+		Perl_Raid_Set_Remove_Space(1);
+	else
+		Perl_Raid_Set_Remove_Space(0);
+	end
+end
+
+function Perl_Config_Raid_Hide_Power_Bars_Update()
+	if (Perl_Config_Raid_Frame_CheckButton24:GetChecked() == 1) then
+		Perl_Raid_Set_Hide_Power_Bars(1);
+	else
+		Perl_Raid_Set_Hide_Power_Bars(0);
+	end
+end
+
+function Perl_Config_Raid_CTRA_Style_Tip_Update()
+	if (Perl_Config_Raid_Frame_CheckButton25:GetChecked() == 1) then
+		Perl_Raid_Set_CTRA_Style_Tip(1);
+	else
+		Perl_Raid_Set_CTRA_Style_Tip(0);
 	end
 end
 

@@ -1,3 +1,24 @@
+0.76 - July 24, 2006
+ - Config: Added an options page for Party_Target
+ - Config: Added a key binding to toggle the options frame
+ - Config: Fixed a typo in the Raid options
+ - Config: Party_Pet positions are now saved correctly on a global save
+ - Config: Removed Player_Buff from the options (support for this mod is now finished)
+ - Config: Updated options available for Perl_Party_Pet
+ - Config: Updated options available for Perl_Raid
+ - Config: Updated French translations (Thanks namatsar)
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - Config/Player/ToT: Updated German translations (Thanks archiv)
+ - Config/Player/ToT: Updated Simplified Chinese translations (Thanks middle007)
+ - Party: Sped up tooltip and click function calls
+ - Party: Can now reliably set raid icons via the menu
+ - Party: Name text will now be below the disconnect icon when applicable
+ - Party: Reloading the interface with hidden in raids enabled now works correctly
+ - Party/Target: Added Feign Death detection (Thanks pluste)
+ - Party/Target/ToT: Text lengths adjusted for Korean and Simplified Chinese clients
+ - Pet: The experience bar will correctly appear automatically when the hunter levels
+ - Target: Healer mode can now be used in any alternate frame style mode
+
 0.75 - July 14, 2006
  - All: Mod authors can now hook into the click function
  - All: Cleaned up the OnMouseClick code

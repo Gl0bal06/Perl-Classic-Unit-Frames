@@ -323,7 +323,7 @@
 				</Scripts>
 			</Button>
 
-			<CheckButton name="$parent_CheckButton2" inherits="UICheckButtonTemplate" id="2">
+			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -331,6 +331,48 @@
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
 						<Offset>
 							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYPET_ENABLE);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Enabled_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton5" inherits="UICheckButtonTemplate" id="5">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton6">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDDEN_IN_RAID);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Pet_Hidden_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton2" inherits="UICheckButtonTemplate" id="2">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton5">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -365,7 +407,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton5" inherits="UICheckButtonTemplate" id="5">
+			<CheckButton name="$parent_CheckButton4" inherits="UICheckButtonTemplate" id="4">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -373,27 +415,6 @@
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton3">
 						<Offset>
 							<AbsDimension x="-20" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDDEN_IN_RAID);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Party_Pet_Hidden_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton4" inherits="UICheckButtonTemplate" id="4">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton5">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

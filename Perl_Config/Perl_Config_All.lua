@@ -85,6 +85,10 @@ function Perl_Config_All_Lock_Unlock(value)
 		Perl_Party_Pet_Set_Lock(value);
 	end
 
+	if (Perl_Party_Target_Script_Frame) then
+		Perl_Party_Target_Set_Lock(value);
+	end
+
 	if (Perl_Player_Frame) then
 		Perl_Player_Set_Lock(value);
 	end
@@ -129,6 +133,10 @@ function Perl_Config_All_Set_Scale(value)
 
 	if (Perl_Party_Pet_Script_Frame) then
 		Perl_Party_Pet_Set_Scale(value);
+	end
+
+	if (Perl_Party_Target_Script_Frame) then
+		Perl_Party_Target_Set_Scale(value);
 	end
 
 	if (Perl_Player_Frame) then
