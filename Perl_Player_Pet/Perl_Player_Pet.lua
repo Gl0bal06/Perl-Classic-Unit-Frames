@@ -493,7 +493,7 @@ function Perl_Player_Pet_Buff_UpdateAll()
 		local debuffmax = 0;
 		local debuffCount, debuffTexture, debuffApplications;
 		for debuffnum=1,numpetdebuffsshown do
-			debuffTexture, debuffApplications = UnitDebuff("target", debuffnum);
+			debuffTexture, debuffApplications = UnitDebuff("pet", debuffnum);
 			local button = getglobal("Perl_Player_Pet_Debuff"..debuffnum);
 			local icon = getglobal(button:GetName().."Icon");
 			local debuff = getglobal(button:GetName().."DebuffBorder");
@@ -602,8 +602,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.21",
-			releaseDate = "November 21, 2005",
+			version = "v0.22",
+			releaseDate = "November 22, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
