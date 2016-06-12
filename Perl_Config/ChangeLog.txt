@@ -1,3 +1,6 @@
+3.04 - January 25, 2009
+ - Party: Fixed an error when right clicking on party members
+
 3.03 - December 6, 2008
  - All: Debuff highlighting works correctly again
  - CombatDisplay: Added faster power bar updates

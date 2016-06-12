@@ -2588,13 +2588,8 @@ function Perl_PartyDropDown_OnLoad(self)
 	UIDropDownMenu_Initialize(self, Perl_PartyDropDown_Initialize, "MENU");
 end
 
-function Perl_PartyDropDown_Initialize()
-	local dropdown;
-	if (UIDROPDOWNMENU_OPEN_MENU) then
-		dropdown = getglobal(UIDROPDOWNMENU_OPEN_MENU);
-	else
-		dropdown = this;
-	end
+function Perl_PartyDropDown_Initialize(self)
+	local dropdown = UIDROPDOWNMENU_OPEN_MENU or self;
 	UnitPopup_ShowMenu(dropdown, "PARTY", "party"..dropdown:GetParent():GetID());
 end
 
