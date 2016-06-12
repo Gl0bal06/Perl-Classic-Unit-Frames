@@ -18,14 +18,16 @@ local rightclickmenu = 0;	-- The ability to open a menu from CombatDisplay is di
 local fivesecsupport = 0;	-- FiveSec support is disabled by default
 
 -- Default Local Variables
-local IsAggroed = 0;
 local InCombat = 0;
 local Initialized = nil;
+local IsAggroed = 0;
+local Perl_CombatDisplay_DruidBar_Time_Elapsed = 0;		-- set the update timer to 0
+local Perl_CombatDisplay_DruidBar_Time_Update_Rate = 0.2;	-- the update interval
 local healthfull = 0;
 local manafull = 0;
 
 -- Local variables to save memory
-local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, pethealth, pethealthmax, petmana, petmanamax, targethealth, targethealthmax, targetmana, targetmanamax, targetpowertype;
+local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, pethealth, pethealthmax, petmana, petmanamax, targethealth, targethealthmax, targetmana, targetmanamax, targetpowertype, mobhealththreenumerics;
 
 
 ----------------------
@@ -450,34 +452,10 @@ function Perl_CombatDisplay_Update_Mana()
 	if (showdruidbar == 1) then
 		if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID)) then
 			if (playerpower > 0) then
-				-- Show the bars and set the text and reposition the original mana bar below the druid bar
-				playerdruidbarmana = floor(DruidBarKey.keepthemana);
-				playerdruidbarmanamax = DruidBarKey.maxmana;
-				playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
-
-				if (playerdruidbarmanapercent == 100) then		-- This is to ensure the value isn't 1 or 2 mana under max when 100%
-					playerdruidbarmana = playerdruidbarmanamax;
-				end
-
-				Perl_CombatDisplay_DruidBar:SetMinMaxValues(0, playerdruidbarmanamax);
-				Perl_CombatDisplay_DruidBar:SetValue(playerdruidbarmana);
-
-				-- Show the bar and adjust the stats frame
-				Perl_CombatDisplay_DruidBar:Show();
-				Perl_CombatDisplay_DruidBarBG:Show();
-				Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_DruidBar", "BOTTOM", 0, -2);
-				if (playerpower == 3) then
-					Perl_CombatDisplay_ManaFrame:SetHeight(66);		-- Energy and Combo Points
-					Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(66);
-				else
-					Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Rage
-					Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
-				end
-
-				-- Display the needed text
-				Perl_CombatDisplay_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+				Perl_CombatDisplay_DruidBar_OnUpdate_Frame:Show();		-- Do all our work here (OnUpdate since it's very random if it works with just the UNIT_MANA event)
 			else
 				-- Hide it all (bars and text)
+				Perl_CombatDisplay_DruidBar_OnUpdate_Frame:Hide();
 				Perl_CombatDisplay_DruidBarText:SetText();
 				Perl_CombatDisplay_DruidBar:Hide();
 				Perl_CombatDisplay_DruidBarBG:Hide();
@@ -492,6 +470,7 @@ function Perl_CombatDisplay_Update_Mana()
 			end
 		else
 			-- Hide it all (bars and text)
+			Perl_CombatDisplay_DruidBar_OnUpdate_Frame:Hide();
 			Perl_CombatDisplay_DruidBarText:SetText();
 			Perl_CombatDisplay_DruidBar:Hide();
 			Perl_CombatDisplay_DruidBarBG:Hide();
@@ -506,6 +485,7 @@ function Perl_CombatDisplay_Update_Mana()
 		end
 	else
 		-- Hide it all (bars and text)
+		Perl_CombatDisplay_DruidBar_OnUpdate_Frame:Hide();
 		Perl_CombatDisplay_DruidBarText:SetText();
 		Perl_CombatDisplay_DruidBar:Hide();
 		Perl_CombatDisplay_DruidBarBG:Hide();
@@ -540,6 +520,39 @@ function Perl_CombatDisplay_Update_Mana()
 				end
 			end
 		end
+	end
+end
+
+function Perl_CombatDisplay_Update_DruidBar(arg1)
+	Perl_CombatDisplay_DruidBar_Time_Elapsed = Perl_CombatDisplay_DruidBar_Time_Elapsed + arg1;
+	if (Perl_CombatDisplay_DruidBar_Time_Elapsed > Perl_CombatDisplay_DruidBar_Time_Update_Rate) then
+		Perl_CombatDisplay_DruidBar_Time_Elapsed = 0;
+		-- Show the bars and set the text and reposition the original mana bar below the druid bar
+		playerdruidbarmana = floor(DruidBarKey.keepthemana);
+		playerdruidbarmanamax = DruidBarKey.maxmana;
+		playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
+
+		if (playerdruidbarmanapercent == 100) then		-- This is to ensure the value isn't 1 or 2 mana under max when 100%
+			playerdruidbarmana = playerdruidbarmanamax;
+		end
+
+		Perl_CombatDisplay_DruidBar:SetMinMaxValues(0, playerdruidbarmanamax);
+		Perl_CombatDisplay_DruidBar:SetValue(playerdruidbarmana);
+
+		-- Show the bar and adjust the stats frame
+		Perl_CombatDisplay_DruidBar:Show();
+		Perl_CombatDisplay_DruidBarBG:Show();
+		Perl_CombatDisplay_ManaBar:SetPoint("TOP", "Perl_CombatDisplay_DruidBar", "BOTTOM", 0, -2);
+		if (playerpower == 3) then
+			Perl_CombatDisplay_ManaFrame:SetHeight(66);		-- Energy and Combo Points
+			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(66);
+		else
+			Perl_CombatDisplay_ManaFrame:SetHeight(54);		-- Rage
+			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(54);
+		end
+
+		-- Display the needed text
+		Perl_CombatDisplay_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
 	end
 end
 
@@ -745,7 +758,14 @@ function Perl_CombatDisplay_Target_Update_Health()
 	if (targethealthmax == 100) then
 		-- Begin Mobhealth support
 		if (mobhealthsupport == 1) then
-			if (MobHealthFrame) then
+			if (MobHealth3) then
+				targethealth, targethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("target", UnitHealth("target"), UnitHealthMax("target"), UnitName("target"), UnitLevel("target"));
+				if (mobhealththreenumerics) then
+					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);	-- Stored unit info from the DB
+				else
+					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");	-- Unit not in MobHealth DB
+				end
+			elseif (MobHealthFrame) then
 				local index;
 				if UnitIsPlayer("target") then
 					index = UnitName("target");
@@ -964,19 +984,23 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_CombatDisplay_GetVars()
-	state = Perl_CombatDisplay_Config[UnitName("player")]["State"];
-	locked = Perl_CombatDisplay_Config[UnitName("player")]["Locked"];
-	healthpersist = Perl_CombatDisplay_Config[UnitName("player")]["HealthPersist"];
-	manapersist = Perl_CombatDisplay_Config[UnitName("player")]["ManaPersist"];
-	scale = Perl_CombatDisplay_Config[UnitName("player")]["Scale"];
-	transparency = Perl_CombatDisplay_Config[UnitName("player")]["Transparency"];
-	showtarget = Perl_CombatDisplay_Config[UnitName("player")]["ShowTarget"];
-	mobhealthsupport = Perl_CombatDisplay_Config[UnitName("player")]["MobHealthSupport"];
-	showdruidbar = Perl_CombatDisplay_Config[UnitName("player")]["ShowDruidBar"];
-	showpetbars = Perl_CombatDisplay_Config[UnitName("player")]["ShowPetBars"];
-	rightclickmenu = Perl_CombatDisplay_Config[UnitName("player")]["RightClickMenu"];
-	fivesecsupport = Perl_CombatDisplay_Config[UnitName("player")]["FiveSecSupport"];
+function Perl_CombatDisplay_GetVars(name, updateflag)
+	if (name == nil) then
+		name = UnitName("player");
+	end
+
+	state = Perl_CombatDisplay_Config[name]["State"];
+	locked = Perl_CombatDisplay_Config[name]["Locked"];
+	healthpersist = Perl_CombatDisplay_Config[name]["HealthPersist"];
+	manapersist = Perl_CombatDisplay_Config[name]["ManaPersist"];
+	scale = Perl_CombatDisplay_Config[name]["Scale"];
+	transparency = Perl_CombatDisplay_Config[name]["Transparency"];
+	showtarget = Perl_CombatDisplay_Config[name]["ShowTarget"];
+	mobhealthsupport = Perl_CombatDisplay_Config[name]["MobHealthSupport"];
+	showdruidbar = Perl_CombatDisplay_Config[name]["ShowDruidBar"];
+	showpetbars = Perl_CombatDisplay_Config[name]["ShowPetBars"];
+	rightclickmenu = Perl_CombatDisplay_Config[name]["RightClickMenu"];
+	fivesecsupport = Perl_CombatDisplay_Config[name]["FiveSecSupport"];
 
 	if (state == nil) then
 		state = 3;
@@ -1013,6 +1037,20 @@ function Perl_CombatDisplay_GetVars()
 	end
 	if (fivesecsupport == nil) then
 		fivesecsupport = 0;
+	end
+
+	if (updateflag == 1) then
+		-- Save the new values
+		Perl_CombatDisplay_UpdateVars();
+
+		-- Call any code we need to activate them
+		Perl_CombatDisplay_Set_Target(showtarget)
+		Perl_CombatDisplay_Target_Update_Health();
+		Perl_CombatDisplay_Update_Mana();
+		Perl_CombatDisplay_Set_Scale()
+		Perl_CombatDisplay_Set_Transparency()
+		Perl_CombatDisplay_UpdateDisplay();
+		return;
 	end
 
 	local vars = {

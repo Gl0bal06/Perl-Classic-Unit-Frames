@@ -1,3 +1,25 @@
+0.78 - August 22, 2006
+ - All: Updated TOC Interface version to 11200
+ - CombatDisplay/Player: Changed how Druid Bar support is implemented
+ - CombatDisplay/Target/ToT: Added MobHealth3 support
+ - Config: Added a profile system for character settings
+ - Config: The Global Load button is no longer covered by some text
+ - Config: Updated German translations (Thanks archiv)
+ - Config: Updated Korean translations (Thanks gygabyte) 
+ - Config: Updated Simplified Chinese translations (Thanks middle007)
+ - Config: Changed the layout on the party frame to be more space efficient
+ - Party: Rage will now share the same consistency throughout all options
+ - Party/Player: Can now toggle bar values while in healer mode
+ - Party/Player: Can now toggle the PvP status icon
+ - Party/Player/Target: Can now toggle the mana deficit in healer mode
+ - Party/Player/Target: Text in compact healer mode is now left aligned correctly
+ - Player: Can now hide the player frame when in a raid
+ - Player: The reputation bar will now display the numeric value
+ - Player: The reputation name has been moved to the tooltip
+ - Target: Can now align buffs and debuffs along the top of the frame
+ - Target: Fixed a potential text location problem
+ - ToT: Can now display the health values of friendly units at all times
+
 0.77 - July 30, 2006
  - ToT: Fixed an error in the German translations
 

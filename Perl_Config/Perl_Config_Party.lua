@@ -112,6 +112,24 @@ function Perl_Config_Party_Set_Values()
 		Perl_Config_Party_Frame_CheckButton18:SetChecked(nil);
 	end
 
+	if (vartable["showmanadeficit"] == 1) then
+		Perl_Config_Party_Frame_CheckButton19:SetChecked(1);
+	else
+		Perl_Config_Party_Frame_CheckButton19:SetChecked(nil);
+	end
+
+	if (vartable["showpvpicon"] == 1) then
+		Perl_Config_Party_Frame_CheckButton20:SetChecked(1);
+	else
+		Perl_Config_Party_Frame_CheckButton20:SetChecked(nil);
+	end
+
+	if (vartable["showbarvalues"] == 1) then
+		Perl_Config_Party_Frame_CheckButton21:SetChecked(1);
+	else
+		Perl_Config_Party_Frame_CheckButton21:SetChecked(nil);
+	end
+
 	Perl_Config_Party_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_Party_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Party_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -295,6 +313,30 @@ function Perl_Config_Party_Hide_Class_Level_Frame_Update()
 		Perl_Party_Set_Hide_Class_Level_Frame(1);
 	else
 		Perl_Party_Set_Hide_Class_Level_Frame(0);
+	end
+end
+
+function Perl_Config_Party_Mana_Deficit_Update()
+	if (Perl_Config_Party_Frame_CheckButton19:GetChecked() == 1) then
+		Perl_Party_Set_Mana_Deficit(1);
+	else
+		Perl_Party_Set_Mana_Deficit(0);
+	end
+end
+
+function Perl_Config_Party_PvP_Icon_Update()
+	if (Perl_Config_Party_Frame_CheckButton20:GetChecked() == 1) then
+		Perl_Party_Set_PvP_Icon(1);
+	else
+		Perl_Party_Set_PvP_Icon(0);
+	end
+end
+
+function Perl_Config_Party_Show_Bar_Values_Update()
+	if (Perl_Config_Party_Frame_CheckButton21:GetChecked() == 1) then
+		Perl_Party_Set_Show_Bar_Values(1);
+	else
+		Perl_Party_Set_Show_Bar_Values(0);
 	end
 end
 

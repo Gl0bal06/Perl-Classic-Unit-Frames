@@ -553,4 +553,12 @@
 		</Frames>
 
 	</Frame>
+
+	<Frame name="Perl_CombatDisplay_DruidBar_OnUpdate_Frame" movable="true" parent="UIParent" hidden="false" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_CombatDisplay_Update_DruidBar(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
 </Ui>

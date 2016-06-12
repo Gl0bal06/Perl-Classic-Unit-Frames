@@ -920,4 +920,12 @@
 			</Frame>
 		</Frames>
 	</Frame>
+
+	<Frame name="Perl_Player_DruidBar_OnUpdate_Frame" movable="true" parent="UIParent" hidden="false" enableMouse="true">
+		<Scripts>
+			<OnUpdate>
+				Perl_Player_Update_DruidBar(arg1);
+			</OnUpdate>
+		</Scripts>
+	</Frame>
 </Ui>

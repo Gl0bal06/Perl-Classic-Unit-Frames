@@ -21,10 +21,16 @@ local shortbars = 0;		-- Health/Power/Experience bars are all normal length
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local hideclasslevelframe = 0;	-- Showing the class icon and level frame by default
 local showpvprank = 0;		-- hide the pvp rank by default
+local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
+local hiddeninraid = 0;		-- player frame is shown in a raid by default
+local showpvpicon = 1;		-- show the pvp icon
+local showbarvalues = 0;	-- healer mode will have the bar values hidden by default
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
 local Initialized = nil;	-- waiting to be initialized
+local Perl_Player_DruidBar_Time_Elapsed = 0;		-- set the update timer to 0
+local Perl_Player_DruidBar_Time_Update_Rate = 0.2;	-- the update interval
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 
@@ -145,6 +151,7 @@ function Perl_Player_OnEvent(event)
 		return;
 	elseif (event == "RAID_ROSTER_UPDATE") then
 		Perl_Player_Update_Raid_Group_Number();		-- What raid group number are we in?
+		Perl_Player_Check_Hidden();			-- Are suppossed to hide the frame?
 		return;
 	elseif (event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBERS_CHANGED") then
 		Perl_Player_Update_Leader();			-- Are we the party leader?
@@ -262,7 +269,7 @@ function Perl_Player_Initialize_Frame_Color()
 	Perl_Player_PortraitFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 
 	Perl_Player_HealthBarText:SetTextColor(1, 1, 1, 1);
-	Perl_Player_ManaBarText:SetTextColor(1, 1, 1, 1);
+	--Perl_Player_ManaBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Player_RaidGroupNumberBarText:SetTextColor(1, 1, 1);
 end
 
@@ -290,6 +297,7 @@ function Perl_Player_Update_Once()
 	Perl_Player_Update_Combat_Status();					-- Are we already fighting or resting?
 	Perl_Player_Set_CompactMode();						-- Are we using compact mode?
 	Perl_Player_PvP_Rank_Icon();						-- Are we displaying our rank icon?
+	Perl_Player_Check_Hidden();						-- Are we in a raid and suppossed to be hidden?
 end
 
 function Perl_Player_Update_Health()
@@ -341,8 +349,12 @@ function Perl_Player_Update_Health()
 	if (compactmode == 0) then
 		if (healermode == 1) then									-- Compact mode OFF and Healer mode ON
 			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
-			if (mouseoverhealthflag == 0) then
-				Perl_Player_HealthBarTextPercent:SetText();					-- Add text here if you dont't want the bar values hidden in healer mode.  Set the value in the function Perl_Player_HealthHide to the same as this.
+			if (showbarvalues == 0) then
+				if (mouseoverhealthflag == 0) then
+					Perl_Player_HealthBarTextPercent:SetText();					-- Add text here if you dont't want the bar values hidden in healer mode.  Set the value in the function Perl_Player_HealthHide to the same as this.
+				else
+					Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
+				end
 			else
 				Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 			end
@@ -354,8 +366,12 @@ function Perl_Player_Update_Health()
 	else
 		if (healermode == 1) then									-- Compact mode ON and Healer mode ON
 			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
-			if (mouseoverhealthflag == 0) then
-				Perl_Player_HealthBarTextPercent:SetText();					-- Add text here if you dont't want the bar values hidden in healer mode.  Set the value in the function Perl_Player_HealthHide to the same as this.
+			if (showbarvalues == 0) then
+				if (mouseoverhealthflag == 0) then
+					Perl_Player_HealthBarTextPercent:SetText();					-- Add text here if you dont't want the bar values hidden in healer mode.  Set the value in the function Perl_Player_HealthHide to the same as this.
+				else
+					Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
+				end
 			else
 				Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 			end
@@ -387,9 +403,22 @@ function Perl_Player_Update_Mana()
 
 	if (compactmode == 0) then
 		if (healermode == 1) then
-			if (mouseovermanaflag == 0) then
+			Perl_Player_ManaBarText:SetTextColor(0.5, 0.5, 0.5, 1);
+			if (showmanadeficit == 1) then
+				Perl_Player_ManaBarText:SetText("-"..playermanamax - playermana);
+			else
 				Perl_Player_ManaBarText:SetText();
-				Perl_Player_ManaBarTextPercent:SetText();
+			end
+			if (showbarvalues == 0) then
+				if (mouseovermanaflag == 0) then
+					Perl_Player_ManaBarTextPercent:SetText();
+				else
+					if (UnitPowerType("player") == 1) then
+						Perl_Player_ManaBarTextPercent:SetText(playermana);
+					else
+						Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+					end
+				end
 			else
 				if (UnitPowerType("player") == 1) then
 					Perl_Player_ManaBarTextPercent:SetText(playermana);
@@ -398,6 +427,7 @@ function Perl_Player_Update_Mana()
 				end
 			end
 		else
+			Perl_Player_ManaBarText:SetTextColor(1, 1, 1, 1);
 			Perl_Player_ManaBarText:SetText(playermana.."/"..playermanamax);
 			if (UnitPowerType("player") == 1) then
 				Perl_Player_ManaBarTextPercent:SetText(playermana);
@@ -408,9 +438,22 @@ function Perl_Player_Update_Mana()
 		Perl_Player_ManaBarTextCompactPercent:SetText();		-- Hide the compact mode percent text in full mode
 	else
 		if (healermode == 1) then
-			if (mouseovermanaflag == 0) then
+			Perl_Player_ManaBarText:SetTextColor(0.5, 0.5, 0.5, 1);
+			if (showmanadeficit == 1) then
+				Perl_Player_ManaBarText:SetText("-"..playermanamax - playermana);
+			else
 				Perl_Player_ManaBarText:SetText();
-				Perl_Player_ManaBarTextPercent:SetText();
+			end
+			if (showbarvalues == 0) then
+				if (mouseovermanaflag == 0) then
+					Perl_Player_ManaBarTextPercent:SetText();
+				else
+					if (UnitPowerType("player") == 1) then
+						Perl_Player_ManaBarTextPercent:SetText(playermana);
+					else
+						Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+					end
+				end
 			else
 				if (UnitPowerType("player") == 1) then
 					Perl_Player_ManaBarTextPercent:SetText(playermana);
@@ -419,6 +462,7 @@ function Perl_Player_Update_Mana()
 				end
 			end
 		else
+			Perl_Player_ManaBarText:SetTextColor(1, 1, 1, 1);
 			Perl_Player_ManaBarText:SetText();
 			if (UnitPowerType("player") == 1) then
 				Perl_Player_ManaBarTextPercent:SetText(playermana);
@@ -437,66 +481,10 @@ function Perl_Player_Update_Mana()
 	if (showdruidbar == 1) then
 		if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID)) then		-- Is Druid Bar installed and are we a Druid?
 			if (UnitPowerType("player") > 0) then					-- Are we in a manaless form?
-				-- Show the bars and set the text and reposition the original mana bar below the druid bar
-				playerdruidbarmana = floor(DruidBarKey.keepthemana);
-				playerdruidbarmanamax = DruidBarKey.maxmana;
-				playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
-
-				if (playerdruidbarmanapercent == 100) then			-- This is to ensure the value isn't 1 or 2 mana under max when 100%
-					playerdruidbarmana = playerdruidbarmanamax;
-				end
-
-				Perl_Player_DruidBar:SetMinMaxValues(0, playerdruidbarmanamax);
-				Perl_Player_DruidBar:SetValue(playerdruidbarmana);
-
-				-- Show the bar and adjust the stats frame
-				Perl_Player_DruidBar:Show();
-				Perl_Player_DruidBarBG:Show();
-				Perl_Player_DruidBar_CastClickOverlay:Show();
-				Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_DruidBar", "BOTTOM", 0, -2);
-				if (xpbarstate == 3) then
-					Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is hidden
-					Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
-				else
-					Perl_Player_StatsFrame:SetHeight(66);			-- Experience Bar is shown
-					Perl_Player_StatsFrame_CastClickOverlay:SetHeight(66);
-				end
-
-				-- Display the needed text
-				if (compactmode == 0) then
-					if (healermode == 1) then
-						if (mouseovermanaflag == 0) then
-							Perl_Player_DruidBarText:SetText();
-							Perl_Player_DruidBarTextPercent:SetText();
-						else
-							Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
-						end
-					else
-						Perl_Player_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
-						Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmanapercent.."%");
-					end
-					Perl_Player_DruidBarTextCompactPercent:SetText();	-- Hide the compact mode percent text in full mode
-				else
-					if (healermode == 1) then
-						if (mouseovermanaflag == 0) then
-							Perl_Player_DruidBarText:SetText();
-							Perl_Player_DruidBarTextPercent:SetText();
-						else
-							Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
-						end
-					else
-						Perl_Player_DruidBarText:SetText();
-						Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
-					end
-
-					if (compactpercent == 1) then
-						Perl_Player_DruidBarTextCompactPercent:SetText(playerdruidbarmanapercent.."%");
-					else
-						Perl_Player_DruidBarTextCompactPercent:SetText();
-					end
-				end
+				Perl_Player_DruidBar_OnUpdate_Frame:Show();			-- Do all our work here (OnUpdate since it's very random if it works with just the UNIT_MANA event)
 			else
 				-- Hide it all (bars and text)
+				Perl_Player_DruidBar_OnUpdate_Frame:Hide();
 				Perl_Player_DruidBarText:SetText();
 				Perl_Player_DruidBarTextPercent:SetText();
 				Perl_Player_DruidBarTextCompactPercent:SetText();
@@ -514,6 +502,7 @@ function Perl_Player_Update_Mana()
 			end
 		else
 			-- Hide it all (bars and text)
+			Perl_Player_DruidBar_OnUpdate_Frame:Hide();
 			Perl_Player_DruidBarText:SetText();
 			Perl_Player_DruidBarTextPercent:SetText();
 			Perl_Player_DruidBarTextCompactPercent:SetText();
@@ -531,6 +520,7 @@ function Perl_Player_Update_Mana()
 		end
 	else
 		-- Hide it all (bars and text)
+		Perl_Player_DruidBar_OnUpdate_Frame:Hide();
 		Perl_Player_DruidBarText:SetText();
 		Perl_Player_DruidBarTextPercent:SetText();
 		Perl_Player_DruidBarTextCompactPercent:SetText();
@@ -557,6 +547,71 @@ function Perl_Player_Update_Mana()
 					Perl_Player_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 					Perl_Player_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
 				end
+			end
+		end
+	end
+end
+
+function Perl_Player_Update_DruidBar(arg1)
+	Perl_Player_DruidBar_Time_Elapsed = Perl_Player_DruidBar_Time_Elapsed + arg1;
+	if (Perl_Player_DruidBar_Time_Elapsed > Perl_Player_DruidBar_Time_Update_Rate) then
+		Perl_Player_DruidBar_Time_Elapsed = 0;
+		-- Show the bars and set the text and reposition the original mana bar below the druid bar
+		playerdruidbarmana = floor(DruidBarKey.keepthemana);
+		playerdruidbarmanamax = DruidBarKey.maxmana;
+		playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
+
+		if (playerdruidbarmanapercent == 100) then			-- This is to ensure the value isn't 1 or 2 mana under max when 100%
+			playerdruidbarmana = playerdruidbarmanamax;
+		end
+
+		Perl_Player_DruidBar:SetMinMaxValues(0, playerdruidbarmanamax);
+		Perl_Player_DruidBar:SetValue(playerdruidbarmana);
+
+		-- Show the bar and adjust the stats frame
+		Perl_Player_DruidBar:Show();
+		Perl_Player_DruidBarBG:Show();
+		Perl_Player_DruidBar_CastClickOverlay:Show();
+		Perl_Player_ManaBar:SetPoint("TOP", "Perl_Player_DruidBar", "BOTTOM", 0, -2);
+		if (xpbarstate == 3) then
+			Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is hidden
+			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
+		else
+			Perl_Player_StatsFrame:SetHeight(66);			-- Experience Bar is shown
+			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(66);
+		end
+
+		-- Display the needed text
+		if (compactmode == 0) then
+			if (healermode == 1) then
+				if (mouseovermanaflag == 0) then
+					Perl_Player_DruidBarText:SetText();
+					Perl_Player_DruidBarTextPercent:SetText();
+				else
+					Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+				end
+			else
+				Perl_Player_DruidBarText:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+				Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmanapercent.."%");
+			end
+			Perl_Player_DruidBarTextCompactPercent:SetText();	-- Hide the compact mode percent text in full mode
+		else
+			if (healermode == 1) then
+				if (mouseovermanaflag == 0) then
+					Perl_Player_DruidBarText:SetText();
+					Perl_Player_DruidBarTextPercent:SetText();
+				else
+					Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+				end
+			else
+				Perl_Player_DruidBarText:SetText();
+				Perl_Player_DruidBarTextPercent:SetText(playerdruidbarmana.."/"..playerdruidbarmanamax);
+			end
+
+			if (compactpercent == 1) then
+				Perl_Player_DruidBarTextCompactPercent:SetText(playerdruidbarmanapercent.."%");
+			else
+				Perl_Player_DruidBarTextCompactPercent:SetText();
 			end
 		end
 	end
@@ -639,7 +694,7 @@ function Perl_Player_Update_Reputation()
 		Perl_Player_XPRestBar:SetStatusBarColor(color.r, color.g, color.b, 0.5);
 		Perl_Player_XPBarBG:SetStatusBarColor(color.r, color.g, color.b, 0.25);
 
-		Perl_Player_XPBarText:SetText(name);
+		Perl_Player_XPBarText:SetText(value.."/"..max);
 	else
 		Perl_Player_XPBar:SetMinMaxValues(0, 1);
 		Perl_Player_XPRestBar:SetMinMaxValues(0, 1);
@@ -727,8 +782,12 @@ function Perl_Player_Update_PvP_Status()
 	if (UnitIsPVP("player")) then
 		if (UnitFactionGroup("player")) then
 			Perl_Player_NameBarText:SetTextColor(0, 1, 0);		-- Green if PvP flagged
-			Perl_Player_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..UnitFactionGroup("player"));
-			Perl_Player_PVPStatus:Show();
+			if (showpvpicon == 1) then
+				Perl_Player_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..UnitFactionGroup("player"));
+				Perl_Player_PVPStatus:Show();
+			else
+				Perl_Player_PVPStatus:Hide();
+			end
 		else
 			Perl_Player_NameBarText:SetTextColor(1, 0, 0);		-- Red if charmed
 			Perl_Player_PVPStatus:Hide();
@@ -738,7 +797,7 @@ function Perl_Player_Update_PvP_Status()
 		Perl_Player_PVPStatus:Hide();
 	end
 
-	if (classcolorednames == 1) then
+		if (classcolorednames == 1) then				-- Color by class
 		if (UnitClass("player") == PERL_LOCALIZED_WARRIOR) then
 			Perl_Player_NameBarText:SetTextColor(0.78, 0.61, 0.43);
 		elseif (UnitClass("player") == PERL_LOCALIZED_MAGE) then
@@ -867,6 +926,9 @@ function Perl_Player_Set_CompactMode()
 end
 
 function Perl_Player_Set_Text_Positions()
+	Perl_Player_HealthBarTextPercent:ClearAllPoints();
+	Perl_Player_ManaBarTextPercent:ClearAllPoints();
+	Perl_Player_DruidBarTextPercent:ClearAllPoints();
 	if (compactmode == 0) then
 		Perl_Player_HealthBarText:SetPoint("RIGHT", 70, 0);
 		Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
@@ -883,68 +945,82 @@ function Perl_Player_Set_Text_Positions()
 			Perl_Player_DruidBarText:SetPoint("RIGHT", 70, 0);
 			Perl_Player_DruidBarTextPercent:SetPoint("TOP", 0, 1);
 		else
-			if (shortbars == 0) then
-				Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
-				Perl_Player_HealthBarTextPercent:SetPoint("TOP", -40, 1);
-				Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
-				Perl_Player_ManaBarTextPercent:SetPoint("TOP", -40, 1);
-				Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
-				Perl_Player_DruidBarTextPercent:SetPoint("TOP", -40, 1);
-			else
-				Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
-				Perl_Player_HealthBarTextPercent:SetPoint("TOP", -25, 1);
-				Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
-				Perl_Player_ManaBarTextPercent:SetPoint("TOP", -25, 1);
-				Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
-				Perl_Player_DruidBarTextPercent:SetPoint("TOP", -25, 1);
-			end
+			Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
+			Perl_Player_HealthBarTextPercent:SetPoint("TOPLEFT", 5, 1);
+			Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
+			Perl_Player_ManaBarTextPercent:SetPoint("TOPLEFT", 5, 1);
+			Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
+			Perl_Player_DruidBarTextPercent:SetPoint("TOPLEFT", 5, 1);
+--			if (shortbars == 0) then
+--				Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
+--				Perl_Player_HealthBarTextPercent:SetPoint("TOP", -40, 1);
+--				Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
+--				Perl_Player_ManaBarTextPercent:SetPoint("TOP", -40, 1);
+--				Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
+--				Perl_Player_DruidBarTextPercent:SetPoint("TOP", -40, 1);
+--			else
+--				Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
+--				Perl_Player_HealthBarTextPercent:SetPoint("TOP", -25, 1);
+--				Perl_Player_ManaBarText:SetPoint("RIGHT", -10, 0);
+--				Perl_Player_ManaBarTextPercent:SetPoint("TOP", -25, 1);
+--				Perl_Player_DruidBarText:SetPoint("RIGHT", -10, 0);
+--				Perl_Player_DruidBarTextPercent:SetPoint("TOP", -25, 1);
+--			end
 		end
 	end
 end
 
 function Perl_Player_HealthShow()
 	if (healermode == 1) then
-		playerhealth = UnitHealth("player");
-		playerhealthmax = UnitHealthMax("player");
+		if (showbarvalues == 0) then
+			playerhealth = UnitHealth("player");
+			playerhealthmax = UnitHealthMax("player");
 
-		if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative health
-			playerhealth = 0;
+			if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative health
+				playerhealth = 0;
+			end
+
+			Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
+			mouseoverhealthflag = 1;
 		end
-
-		Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
-		mouseoverhealthflag = 1;
 	end
 end
 
 function Perl_Player_HealthHide()
 	if (healermode == 1) then
-		Perl_Player_HealthBarTextPercent:SetText();
-		mouseoverhealthflag = 0;
+		if (showbarvalues == 0) then
+			Perl_Player_HealthBarTextPercent:SetText();
+			mouseoverhealthflag = 0;
+		end
 	end
 end
 
 function Perl_Player_ManaShow()
 	if (healermode == 1) then
-		playermana = UnitMana("player");
-		playermanamax = UnitManaMax("player");
+		if (showbarvalues == 0) then
+			playermana = UnitMana("player");
+			playermanamax = UnitManaMax("player");
 
-		if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
-			playermana = 0;
-		end
+			if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
+				playermana = 0;
+			end
 
-		if (UnitPowerType("player") == 1) then
-			Perl_Player_ManaBarTextPercent:SetText(playermana);
-		else
-			Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+			if (UnitPowerType("player") == 1) then
+				Perl_Player_ManaBarTextPercent:SetText(playermana);
+			else
+				Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
+			end
+			mouseovermanaflag = 1;
 		end
-		mouseovermanaflag = 1;
 	end
 end
 
 function Perl_Player_ManaHide()
 	if (healermode == 1) then
-		Perl_Player_ManaBarTextPercent:SetText();
-		mouseovermanaflag = 0;
+		if (showbarvalues == 0) then
+			Perl_Player_ManaBarTextPercent:SetText();
+			mouseovermanaflag = 0;
+		end
 	end
 end
 
@@ -1020,6 +1096,18 @@ function Perl_Player_PvP_Rank_Icon()
 		end
 	else
 		Perl_Player_PVPRank:Hide();
+	end
+end
+
+function Perl_Player_Check_Hidden()
+	if (hiddeninraid == 1) then
+		if (UnitInRaid("player")) then
+			Perl_Player_Frame:Hide();
+		else
+			Perl_Player_Frame:Show();
+		end
+	else
+		Perl_Player_Frame:Show();
 	end
 end
 
@@ -1226,6 +1314,31 @@ function Perl_Player_Set_PvP_Rank_Icon(newvalue)
 	Perl_Player_PvP_Rank_Icon();
 end
 
+function Perl_Player_Set_Mana_Deficit(newvalue)
+	showmanadeficit = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Update_Mana();
+end
+
+function Perl_Player_Set_Hidden_In_Raids(newvalue)
+	hiddeninraid = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Check_Hidden();
+end
+
+function Perl_Player_Set_PvP_Icon(newvalue)
+	showpvpicon =  newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Update_PvP_Status();
+end
+
+function Perl_Player_Set_Show_Bar_Values(newvalue)
+	showbarvalues = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Update_Health();
+	Perl_Player_Update_Mana();
+end
+
 function Perl_Player_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1248,24 +1361,32 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Player_GetVars()
-	locked = Perl_Player_Config[UnitName("player")]["Locked"];
-	xpbarstate = Perl_Player_Config[UnitName("player")]["XPBarState"];
-	compactmode = Perl_Player_Config[UnitName("player")]["CompactMode"];
-	showraidgroup = Perl_Player_Config[UnitName("player")]["ShowRaidGroup"];
-	scale = Perl_Player_Config[UnitName("player")]["Scale"];
-	healermode = Perl_Player_Config[UnitName("player")]["HealerMode"];
-	transparency = Perl_Player_Config[UnitName("player")]["Transparency"];
-	showportrait = Perl_Player_Config[UnitName("player")]["ShowPortrait"];
-	compactpercent = Perl_Player_Config[UnitName("player")]["CompactPercent"];
-	threedportrait = Perl_Player_Config[UnitName("player")]["ThreeDPortrait"];
-	portraitcombattext = Perl_Player_Config[UnitName("player")]["PortraitCombatText"];
-	showdruidbar = Perl_Player_Config[UnitName("player")]["ShowDruidBar"];
-	fivesecsupport = Perl_Player_Config[UnitName("player")]["FiveSecSupport"];
-	shortbars = Perl_Player_Config[UnitName("player")]["ShortBars"];
-	classcolorednames = Perl_Player_Config[UnitName("player")]["ClassColoredNames"];
-	hideclasslevelframe = Perl_Player_Config[UnitName("player")]["HideClassLevelFrame"];
-	showpvprank = Perl_Player_Config[UnitName("player")]["ShowPvPRank"];
+function Perl_Player_GetVars(name, updateflag)
+	if (name == nil) then
+		name = UnitName("player");
+	end
+
+	locked = Perl_Player_Config[name]["Locked"];
+	xpbarstate = Perl_Player_Config[name]["XPBarState"];
+	compactmode = Perl_Player_Config[name]["CompactMode"];
+	showraidgroup = Perl_Player_Config[name]["ShowRaidGroup"];
+	scale = Perl_Player_Config[name]["Scale"];
+	healermode = Perl_Player_Config[name]["HealerMode"];
+	transparency = Perl_Player_Config[name]["Transparency"];
+	showportrait = Perl_Player_Config[name]["ShowPortrait"];
+	compactpercent = Perl_Player_Config[name]["CompactPercent"];
+	threedportrait = Perl_Player_Config[name]["ThreeDPortrait"];
+	portraitcombattext = Perl_Player_Config[name]["PortraitCombatText"];
+	showdruidbar = Perl_Player_Config[name]["ShowDruidBar"];
+	fivesecsupport = Perl_Player_Config[name]["FiveSecSupport"];
+	shortbars = Perl_Player_Config[name]["ShortBars"];
+	classcolorednames = Perl_Player_Config[name]["ClassColoredNames"];
+	hideclasslevelframe = Perl_Player_Config[name]["HideClassLevelFrame"];
+	showpvprank = Perl_Player_Config[name]["ShowPvPRank"];
+	showmanadeficit = Perl_Player_Config[name]["ShowManaDeficit"];
+	hiddeninraid = Perl_Player_Config[name]["HiddenInRaid"];
+	showpvpicon = Perl_Player_Config[name]["ShowPvPIcon"];
+	showbarvalues = Perl_Player_Config[name]["ShowBarValues"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1318,6 +1439,39 @@ function Perl_Player_GetVars()
 	if (showpvprank == nil) then
 		showpvprank = 0;
 	end
+	if (showmanadeficit == nil) then
+		showmanadeficit = 0;
+	end
+	if (hiddeninraid == nil) then
+		hiddeninraid = 0;
+	end
+	if (showpvpicon == nil) then
+		showpvpicon = 1;
+	end
+	if (showbarvalues == nil) then
+		showbarvalues = 0;
+	end
+
+	if (updateflag == 1) then
+		-- Save the new values
+		Perl_Player_UpdateVars();
+
+		-- Call any code we need to activate them
+		Perl_Player_XPBar_Display(xpbarstate);
+		Perl_Player_Set_Compact(compactmode);
+		Perl_Player_Set_Healer(healermode);
+		Perl_Player_Update_Raid_Group_Number();
+		Perl_Player_Update_Health();
+		Perl_Player_Update_Mana();
+		Perl_Player_Update_Portrait();
+		Perl_Player_Portrait_Combat_Text();
+		Perl_Player_Update_PvP_Status();
+		Perl_Player_PvP_Rank_Icon();
+		Perl_Player_Set_Scale();
+		Perl_Player_Set_Transparency();
+		Perl_Player_Check_Hidden();
+		return;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1337,6 +1491,10 @@ function Perl_Player_GetVars()
 		["classcolorednames"] = classcolorednames,
 		["hideclasslevelframe"] = hideclasslevelframe,
 		["showpvprank"] = showpvprank,
+		["showmanadeficit"] = showmanadeficit,
+		["hiddeninraid"] = hiddeninraid,
+		["showpvpicon"] = showpvpicon,
+		["showbarvalues"] = showbarvalues,
 	}
 	return vars;
 end
@@ -1430,6 +1588,26 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				showpvprank = nil;
 			end
+			if (vartable["Global Settings"]["ShowManaDeficit"] ~= nil) then
+				showmanadeficit = vartable["Global Settings"]["ShowManaDeficit"];
+			else
+				showmanadeficit = nil;
+			end
+			if (vartable["Global Settings"]["HiddenInRaid"] ~= nil) then
+				hiddeninraid = vartable["Global Settings"]["HiddenInRaid"];
+			else
+				hiddeninraid = nil;
+			end
+			if (vartable["Global Settings"]["ShowPvPIcon"] ~= nil) then
+				showpvpicon = vartable["Global Settings"]["ShowPvPIcon"];
+			else
+				showpvpicon = nil;
+			end
+			if (vartable["Global Settings"]["ShowBarValues"] ~= nil) then
+				showbarvalues = vartable["Global Settings"]["ShowBarValues"];
+			else
+				showbarvalues = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1484,6 +1662,18 @@ function Perl_Player_UpdateVars(vartable)
 		if (showpvprank == nil) then
 			showpvprank = 0;
 		end
+		if (showmanadeficit == nil) then
+			showmanadeficit = 0;
+		end
+		if (hiddeninraid == nil) then
+			hiddeninraid = 0;
+		end
+		if (showpvpicon == nil) then
+			showpvpicon = 1;
+		end
+		if (showbarvalues == nil) then
+			showbarvalues = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_XPBar_Display(xpbarstate);
@@ -1498,6 +1688,7 @@ function Perl_Player_UpdateVars(vartable)
 		Perl_Player_PvP_Rank_Icon();
 		Perl_Player_Set_Scale();
 		Perl_Player_Set_Transparency();
+		Perl_Player_Check_Hidden();
 	end
 
 	-- IFrameManager Support
@@ -1523,6 +1714,10 @@ function Perl_Player_UpdateVars(vartable)
 		["ClassColoredNames"] = classcolorednames,
 		["HideClassLevelFrame"] = hideclasslevelframe,
 		["ShowPvPRank"] = showpvprank,
+		["ShowManaDeficit"] = showmanadeficit,
+		["HiddenInRaid"] = hiddeninraid,
+		["ShowPvPIcon"] = showpvpicon,
+		["ShowBarValues"] = showbarvalues,
 	};
 end
 
@@ -1677,12 +1872,13 @@ function Perl_Player_XPTooltip()
 			value = value - min;
 			max = max - min;
 			min = 0;
+			GameTooltip:SetText(name, 255/255, 209/255, 0/255);
 			if (GetLocale() == "koKR") then
-				GameTooltip:SetText(Perl_Player_Get_Reaction_Name(reaction).."의 "..floor(value/max*100+0.5).."%", 255/255, 209/255, 0/255);
+				GameTooltip:AddLine(Perl_Player_Get_Reaction_Name(reaction).."의 "..floor(value/max*100+0.5).."%", 255/255, 209/255, 0/255);
 			elseif (GetLocale() == "zhCN") then
-				GameTooltip:SetText(Perl_Player_Get_Reaction_Name( reaction).."进度 "..floor(value/max*100+0.5).."%", 255/255, 209/255, 0/255);
+				GameTooltip:AddLine(Perl_Player_Get_Reaction_Name( reaction).."进度 "..floor(value/max*100+0.5).."%", 255/255, 209/255, 0/255);
 			else
-				GameTooltip:SetText(floor(value/max*100+0.5).."% into "..Perl_Player_Get_Reaction_Name(reaction), 255/255, 209/255, 0/255);
+				GameTooltip:AddLine(floor(value/max*100+0.5).."% into "..Perl_Player_Get_Reaction_Name(reaction), 255/255, 209/255, 0/255);
 			end
 			GameTooltip:AddLine(value.."/"..max, 255/255, 209/255, 0/255);
 			if (reaction ~= 8) then

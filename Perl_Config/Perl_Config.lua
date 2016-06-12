@@ -2,6 +2,7 @@
 -- Variables --
 ---------------
 Perl_Config_Config = {};
+Perl_Config_Profiles = {};
 
 Perl_Config_Global_ArcaneBar_Config = {};
 Perl_Config_Global_CombatDisplay_Config = {};
@@ -25,6 +26,7 @@ PCUF_COLORHEALTH = 0;			-- progressively colored health bars are off by default
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
+local currentprofilenumber = 0;		-- easy way to make our profile system work
 
 
 ----------------------
@@ -86,11 +88,123 @@ function Perl_Config_Initialize()
 		Perl_Config_UpdateVars();
 	end
 
+	-- Profile Support
+	Perl_Config_Profile_Work();
+
 	-- MyAddOns Support
 	Perl_Config_myAddOns_Support();
 
 	-- Set the initialization flag
 	Initialized = 1;
+end
+
+
+-----------------------
+-- Profile Functions --
+-----------------------
+function Perl_Config_Profile_Work()
+	local name = UnitName("player");
+	local found = 0;
+
+	for i=1,table.getn(Perl_Config_Profiles),1 do
+		if (Perl_Config_Profiles[i] == name) then
+			found = 1;
+			break;
+		end
+	end
+
+	if (found == 0) then
+		table.insert(Perl_Config_Profiles, name);
+	end
+end
+
+function Perl_Config_Profile_OnShow()
+	UIDropDownMenu_Initialize(Perl_Config_All_Frame_DropDown1, Perl_Config_Profile_Initialize);
+	UIDropDownMenu_SetSelectedID(Perl_Config_All_Frame_DropDown1, 0);
+	UIDropDownMenu_SetWidth(100, Perl_Config_All_Frame_DropDown1);
+end
+
+function Perl_Config_Profile_Initialize()
+	local info;
+	for i = 1, getn(Perl_Config_Profiles), 1 do
+		info = {
+			text = Perl_Config_Profiles[i];
+			func = Perl_Config_Profile_OnClick;
+		};
+		UIDropDownMenu_AddButton(info);
+	end
+end
+
+function Perl_Config_Profile_OnClick()
+	currentprofilenumber = this:GetID();
+	UIDropDownMenu_SetSelectedID(Perl_Config_All_Frame_DropDown1, this:GetID());
+end
+
+function Perl_Config_Profile_Load()
+	local name = Perl_Config_Profiles[currentprofilenumber];
+	if (name ~= nil) then
+		Perl_Config_GetVars(name, 1);
+
+		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+			Perl_ArcaneBar_GetVars(name, 1);
+		end
+
+		if (Perl_CombatDisplay_Frame) then
+			Perl_CombatDisplay_GetVars(name, 1);
+		end
+
+		if (Perl_Party_Frame) then
+			Perl_Party_GetVars(name, 1);
+		end
+
+		if (Perl_Party_Pet_Script_Frame) then
+			Perl_Party_Pet_GetVars(name, 1);
+		end
+
+		if (Perl_Party_Target_Script_Frame) then
+			Perl_Party_Target_GetVars(name, 1);
+		end
+
+		if (Perl_Player_Frame) then
+			Perl_Player_GetVars(name, 1);
+		end
+
+		if (Perl_Player_Pet_Frame) then
+			Perl_Player_Pet_GetVars(name, 1);
+		end
+
+		if (Perl_Raid_Frame) then
+			Perl_Raid_GetVars(name, 1);
+		end
+
+		if (Perl_Target_Frame) then
+			Perl_Target_GetVars(name, 1);
+		end
+
+		if (Perl_Target_Target_Script_Frame) then
+			Perl_Target_Target_GetVars(name, 1);
+		end
+
+		DEFAULT_CHAT_FRAME:AddMessage(PERL_LOCALIZED_CONFIG_ALL_LOAD_PROFILE_OUTPUT..name);
+	else
+		DEFAULT_CHAT_FRAME:AddMessage(PERL_LOCALIZED_CONFIG_ALL_NO_PROFILE_SELECTED_OUTPUT);
+	end
+end
+
+function Perl_Config_Profile_Delete()
+	local name = Perl_Config_Profiles[currentprofilenumber];
+	local indexfound = nil;
+	for i = 1, getn(Perl_Config_Profiles), 1 do
+		if (name == Perl_Config_Profiles[i]) then
+			indexfound = i;
+			break;
+		end
+	end
+
+	if (indexfound ~= nil) then
+		DEFAULT_CHAT_FRAME:AddMessage(PERL_LOCALIZED_CONFIG_ALL_DELETE_PROFILE_OUTPUT..Perl_Config_Profiles[indexfound]);
+		Perl_Config_Profiles[indexfound] = table.remove(Perl_Config_Profiles);
+	end
 end
 
 
@@ -556,6 +670,9 @@ function Perl_Config_Global_Save_Settings()
 			["ClassColoredNames"] = vartable["classcolorednames"],
 			["ShortBars"] = vartable["shortbars"],
 			["HideClassLevelFrame"] = vartable["hideclasslevelframe"],
+			["ShowManaDeficit"] = vartable["showmanadeficit"],
+			["ShowPvPIcon"] = vartable["showpvpicon"],
+			["ShowBarValues"] = vartable["showbarvalues"],
 		};
 	end
 
@@ -630,6 +747,10 @@ function Perl_Config_Global_Save_Settings()
 			["ClassColoredNames"] = vartable["classcolorednames"],
 			["HideClassLevelFrame"] = vartable["hideclasslevelframe"],
 			["ShowPvPRank"] = vartable["showpvprank"],
+			["ShowManaDeficit"] = vartable["showmanadeficit"],
+			["HiddenInRaid"] = vartable["hiddeninraid"],
+			["ShowPvPIcon"] = vartable["showpvpicon"],
+			["ShowBarValues"] = vartable["showbarvalues"],
 		};
 	end
 
@@ -736,6 +857,8 @@ function Perl_Config_Global_Save_Settings()
 			["SoundTargetChange"] = vartable["soundtargetchange"],
 			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
 			["ClassColoredNames"] = vartable["classcolorednames"],
+			["ShowManaDeficit"] = vartable["showmanadeficit"],
+			["InvertBuffs"] = vartable["invertbuffs"],
 		};
 	end
 
@@ -762,6 +885,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShowToToTDebuffs"] = vartable["showtototdebuffs"],
 			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
 			["ClassColoredNames"] = vartable["classcolorednames"],
+			["ShowFriendlyHealth"] = vartable["showfriendlyhealth"],
 		};
 	end
 end
@@ -915,13 +1039,17 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Config_GetVars()
-	texture = Perl_Config_Config[UnitName("player")]["Texture"];
-	showminimapbutton = Perl_Config_Config[UnitName("player")]["ShowMiniMapButton"];
-	minimapbuttonpos = Perl_Config_Config[UnitName("player")]["MiniMapButtonPos"];
-	transparentbackground = Perl_Config_Config[UnitName("player")]["TransparentBackground"];
-	PCUF_CASTPARTYSUPPORT = Perl_Config_Config[UnitName("player")]["PCUF_CastPartySupport"];
-	PCUF_COLORHEALTH = Perl_Config_Config[UnitName("player")]["PCUF_ColorHealth"];
+function Perl_Config_GetVars(name, updateflag)
+	if (name == nil) then
+		name = UnitName("player");
+	end
+
+	texture = Perl_Config_Config[name]["Texture"];
+	showminimapbutton = Perl_Config_Config[name]["ShowMiniMapButton"];
+	minimapbuttonpos = Perl_Config_Config[name]["MiniMapButtonPos"];
+	transparentbackground = Perl_Config_Config[name]["TransparentBackground"];
+	PCUF_CASTPARTYSUPPORT = Perl_Config_Config[name]["PCUF_CastPartySupport"];
+	PCUF_COLORHEALTH = Perl_Config_Config[name]["PCUF_ColorHealth"];
 
 	if (texture == nil) then
 		texture = 0;
@@ -940,6 +1068,18 @@ function Perl_Config_GetVars()
 	end
 	if (PCUF_COLORHEALTH == nil) then
 		PCUF_COLORHEALTH = 0;
+	end
+
+	if (updateflag == 1) then
+		-- Save the new values
+		Perl_Config_UpdateVars();
+
+		-- Call any code we need to activate them
+		Perl_Config_Set_Texture(texture);
+		Perl_Config_Set_MiniMap_Button(showminimapbutton);
+		Perl_Config_Set_MiniMap_Position(minimapbuttonpos);
+		Perl_Config_Set_Background();
+		return;
 	end
 
 	local vars = {
@@ -1299,14 +1439,13 @@ function Perl_clearBlizzardOnEventHandler()	-- Changed function names as to not 
 end
 
 function Perl_clearBlizzardOnShowHandler()
-	this:Hide()
+	this:Hide();
 end
 
 function Perl_clearBlizzardFrameDisable(frameObject)
-	frameObject:SetScript("OnEvent", Perl_clearBlizzardOnEventHandler)
-	frameObject:SetScript("OnShow", Perl_clearBlizzardOnShowHandler)
-	
-	frameObject:Hide()
+	frameObject:SetScript("OnEvent", Perl_clearBlizzardOnEventHandler);
+	frameObject:SetScript("OnShow", Perl_clearBlizzardOnShowHandler);
+	frameObject:Hide();
 end
 
 

@@ -20,6 +20,7 @@ local showtotdebuffs = 0;	-- ToT debuffs are off by default
 local showtototdebuffs = 0;	-- ToToT debuffs are off by default
 local displaycastablebuffs = 0;	-- display all buffs by default
 local classcolorednames = 0;	-- names are colored based on pvp status by default
+local showfriendlyhealth = 0;	-- show numerical friendly health is disbaled by default
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
@@ -41,7 +42,7 @@ local targettargetname, targettargethealth, targettargethealthmax, targettargeth
 local targettargettargetname, targettargettargethealth, targettargettargethealthmax, targettargettargethealthpercent, targettargettargetmana, targettargettargetmanamax, targettargettargetpower;
 
 -- Shared
-local r, g, b, reaction;
+local r, g, b, reaction, mobhealththreenumerics;
 
 ----------------------
 -- Loading Function --
@@ -357,7 +358,15 @@ function Perl_Target_Target_OnUpdate(arg1)
 			if (mouseovertargettargethealthflag == 1) then
 				Perl_Target_Target_HealthShow();
 			else
-				Perl_Target_Target_HealthBarText:SetText(targettargethealthpercent.."%");
+				if (showfriendlyhealth == 1) then
+					if (targettargethealthmax == 100) then
+						Perl_Target_Target_HealthBarText:SetText(targettargethealthpercent.."%");
+					else
+						Perl_Target_Target_HealthBarText:SetText(targettargethealth.."/"..targettargethealthmax);
+					end
+				else
+					Perl_Target_Target_HealthBarText:SetText(targettargethealthpercent.."%");
+				end
 			end
 			-- End: Update the health bar
 
@@ -642,7 +651,15 @@ function Perl_Target_Target_OnUpdate(arg1)
 			if (mouseovertargettargettargethealthflag == 1) then
 				Perl_Target_Target_Target_HealthShow();
 			else
-				Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealthpercent.."%");
+				if (showfriendlyhealth == 1) then
+					if (targettargettargethealthmax == 100) then
+						Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealthpercent.."%");
+					else
+						Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."/"..targettargettargethealthmax);
+					end
+				else
+					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealthpercent.."%");
+				end
 			end
 			-- End: Update the health bar
 
@@ -1138,7 +1155,14 @@ function Perl_Target_Target_HealthShow()
 	if (targettargethealthmax == 100) then
 		-- Begin Mobhealth support
 		if (mobhealthsupport == 1) then
-			if (MobHealthFrame) then
+			if (MobHealth3) then
+				targettargethealth, targettargethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("targettarget", UnitHealth("targettarget"), UnitHealthMax("targettarget"), UnitName("targettarget"), UnitLevel("targettarget"));
+				if (mobhealththreenumerics) then
+					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."/"..targettargethealthmax);	-- Stored unit info from the DB
+				else
+					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- Unit not in MobHealth DB
+				end
+			elseif (MobHealthFrame) then
 
 				local index;
 				if UnitIsPlayer("targettarget") then
@@ -1242,7 +1266,14 @@ function Perl_Target_Target_Target_HealthShow()
 	if (targettargettargethealthmax == 100) then
 		-- Begin Mobhealth support
 		if (mobhealthsupport == 1) then
-			if (MobHealthFrame) then
+			if (MobHealth3) then
+				targettargettargethealth, targettargettargethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("targettargettarget", UnitHealth("targettargettarget"), UnitHealthMax("targettargettarget"), UnitName("targettargettarget"), UnitLevel("targettargettarget"));
+				if (mobhealththreenumerics) then
+					Perl_Target_Target_HealthBarText:SetText(targettargettargethealth.."/"..targettargettargethealthmax);	-- Stored unit info from the DB
+				else
+					Perl_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Unit not in MobHealth DB
+				end
+			elseif (MobHealthFrame) then
 
 				local index;
 				if UnitIsPlayer("targettargettarget") then
@@ -1413,6 +1444,11 @@ function Perl_Target_Target_Set_Class_Buffs(newvalue)
 	Perl_Target_Target_Target_Reset_Buffs();
 end
 
+function Perl_Target_Target_Set_Show_Friendly_Health(newvalue)
+	showfriendlyhealth = newvalue;
+	Perl_Target_Target_UpdateVars();
+end
+
 function Perl_Target_Target_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1477,23 +1513,28 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Target_Target_GetVars()
-	locked = Perl_Target_Target_Config[UnitName("player")]["Locked"];
-	mobhealthsupport = Perl_Target_Target_Config[UnitName("player")]["MobHealthSupport"];
-	scale = Perl_Target_Target_Config[UnitName("player")]["Scale"];
-	totsupport = Perl_Target_Target_Config[UnitName("player")]["ToTSupport"];
-	tototsupport = Perl_Target_Target_Config[UnitName("player")]["ToToTSupport"];
-	transparency = Perl_Target_Target_Config[UnitName("player")]["Transparency"];
-	alertsound = Perl_Target_Target_Config[UnitName("player")]["AlertSound"];
-	alertmode = Perl_Target_Target_Config[UnitName("player")]["AlertMode"];
-	alertsize = Perl_Target_Target_Config[UnitName("player")]["AlertSize"];
-	showtotbuffs = Perl_Target_Target_Config[UnitName("player")]["ShowToTBuffs"];
-	showtototbuffs = Perl_Target_Target_Config[UnitName("player")]["ShowToToTBuffs"];
-	hidepowerbars = Perl_Target_Target_Config[UnitName("player")]["HidePowerBars"];
-	showtotdebuffs = Perl_Target_Target_Config[UnitName("player")]["ShowToTDebuffs"];
-	showtototdebuffs = Perl_Target_Target_Config[UnitName("player")]["ShowToToTDebuffs"];
-	displaycastablebuffs = Perl_Target_Target_Config[UnitName("player")]["DisplayCastableBuffs"];
-	classcolorednames = Perl_Target_Target_Config[UnitName("player")]["ClassColoredNames"];
+function Perl_Target_Target_GetVars(name, updateflag)
+	if (name == nil) then
+		name = UnitName("player");
+	end
+
+	locked = Perl_Target_Target_Config[name]["Locked"];
+	mobhealthsupport = Perl_Target_Target_Config[name]["MobHealthSupport"];
+	scale = Perl_Target_Target_Config[name]["Scale"];
+	totsupport = Perl_Target_Target_Config[name]["ToTSupport"];
+	tototsupport = Perl_Target_Target_Config[name]["ToToTSupport"];
+	transparency = Perl_Target_Target_Config[name]["Transparency"];
+	alertsound = Perl_Target_Target_Config[name]["AlertSound"];
+	alertmode = Perl_Target_Target_Config[name]["AlertMode"];
+	alertsize = Perl_Target_Target_Config[name]["AlertSize"];
+	showtotbuffs = Perl_Target_Target_Config[name]["ShowToTBuffs"];
+	showtototbuffs = Perl_Target_Target_Config[name]["ShowToToTBuffs"];
+	hidepowerbars = Perl_Target_Target_Config[name]["HidePowerBars"];
+	showtotdebuffs = Perl_Target_Target_Config[name]["ShowToTDebuffs"];
+	showtototdebuffs = Perl_Target_Target_Config[name]["ShowToToTDebuffs"];
+	displaycastablebuffs = Perl_Target_Target_Config[name]["DisplayCastableBuffs"];
+	classcolorednames = Perl_Target_Target_Config[name]["ClassColoredNames"];
+	showfriendlyhealth = Perl_Target_Target_Config[name]["ShowFriendlyHealth"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1543,6 +1584,19 @@ function Perl_Target_Target_GetVars()
 	if (classcolorednames == nil) then
 		classcolorednames = 0;
 	end
+	if (showfriendlyhealth == nil) then
+		showfriendlyhealth = 0;
+	end
+
+	if (updateflag == 1) then
+		-- Save the new values
+		Perl_Target_Target_UpdateVars();
+
+		-- Call any code we need to activate them
+		Perl_Target_Target_Set_Scale();
+		Perl_Target_Target_Set_Transparency();
+		return;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1561,6 +1615,7 @@ function Perl_Target_Target_GetVars()
 		["showtototdebuffs"] = showtototdebuffs,
 		["displaycastablebuffs"] = displaycastablebuffs,
 		["classcolorednames"] = classcolorednames,
+		["showfriendlyhealth"] = showfriendlyhealth,
 	}
 	return vars;
 end
@@ -1649,6 +1704,11 @@ function Perl_Target_Target_UpdateVars(vartable)
 			else
 				classcolorednames = nil;
 			end
+			if (vartable["Global Settings"]["ShowFriendlyHealth"] ~= nil) then
+				showfriendlyhealth = vartable["Global Settings"]["ShowFriendlyHealth"];
+			else
+				showfriendlyhealth = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1700,6 +1760,9 @@ function Perl_Target_Target_UpdateVars(vartable)
 		if (classcolorednames == nil) then
 			classcolorednames = 0;
 		end
+		if (showfriendlyhealth == nil) then
+			showfriendlyhealth = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Target_Set_Scale();
@@ -1728,6 +1791,7 @@ function Perl_Target_Target_UpdateVars(vartable)
 		["ShowToToTDebuffs"] = showtototdebuffs,
 		["DisplayCastableBuffs"] = displaycastablebuffs,
 		["ClassColoredNames"] = classcolorednames,
+		["ShowFriendlyHealth"] = showfriendlyhealth,
 	};
 end
 

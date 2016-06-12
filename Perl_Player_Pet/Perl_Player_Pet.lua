@@ -603,7 +603,11 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Player_Pet_GetVars()
+function Perl_Player_Pet_GetVars(name, updateflag)
+	if (name == nil) then
+		name = UnitName("player");
+	end
+
 	locked = Perl_Player_Pet_Config[UnitName("player")]["Locked"];
 	showxp = Perl_Player_Pet_Config[UnitName("player")]["ShowXP"];
 	scale = Perl_Player_Pet_Config[UnitName("player")]["Scale"];
@@ -660,6 +664,22 @@ function Perl_Player_Pet_GetVars()
 	end
 	if (compactmode == nil) then
 		compactmode = 0;
+	end
+
+	if (updateflag == 1) then
+		-- Save the new values
+		Perl_Player_Pet_UpdateVars();
+
+		-- Call any code we need to activate them
+		Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
+		Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
+		Perl_Player_Pet_Update_Health();	-- Update the health in case progrssive health color was set
+		Perl_Player_Pet_Update_Portrait();
+		Perl_Player_Pet_Portrait_Combat_Text();
+		Perl_Player_Pet_Set_Window_Layout();
+		Perl_Player_Pet_Set_Scale();		-- Set the scale
+		Perl_Player_Pet_Set_Transparency();	-- Set the transparency
+		return;
 	end
 
 	local vars = {

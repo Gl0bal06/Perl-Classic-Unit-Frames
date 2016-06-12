@@ -88,6 +88,16 @@
 					</Anchors>
 				</FontString>
 
+				<FontString name="$parent_Misc2_Text" inherits="GameFontNormal" text=" ">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="180" y="-30"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
 				<FontString name="$parent_Combo_Location_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_TARGET_COMBO_LOCATION">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
@@ -166,7 +176,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_PVP_STATUS_ICON);
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PVP_STATUS_ICON);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_PvP_Status_Icon_Update();
@@ -626,14 +636,35 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton17" inherits="UICheckButtonTemplate" id="17">
+			<CheckButton name="$parent_CheckButton25" inherits="UICheckButtonTemplate" id="25">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton21">
 						<Offset>
-							<AbsDimension x="0" y="-20"/>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_DISPLAY_MANA_DEFICIT);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Mana_Deficit_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton17" inherits="UICheckButtonTemplate" id="17">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton25">
+						<Offset>
+							<AbsDimension x="-20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -685,6 +716,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Short_Bars_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton26" inherits="UICheckButtonTemplate" id="26">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc2_Text">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_INVERT_BUFFS_DEBUFFS);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Invert_Buffs_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

@@ -443,7 +443,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Button1">
 						<Offset>
-							<AbsDimension x="200" y="0"/>
+							<AbsDimension x="220" y="-25"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -535,6 +535,70 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
+			<Button name="$parent_DropDown1" inherits="UIDropDownMenuTemplate">
+				<Layers>
+					<Layer level="BACKGROUND">
+						<FontString name="$parentLabel" inherits="GameFontNormalSmall" text="PERL_LOCALIZED_CONFIG_ALL_LOAD_PROFILE_HEADER">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
+									<Offset>
+										<AbsDimension x="21" y="0"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Button5">
+						<Offset>
+							<AbsDimension  x="5" y="20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnShow>
+						Perl_Config_Profile_OnShow();
+					</OnShow>
+				</Scripts>
+			</Button>
+
+			<Button name="$parent_Button6" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_ALL_LOAD_PROFILE_BUTTON">
+				<Size>
+					<AbsDimension x="50" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_DropDown1">
+						<Offset>
+							<AbsDimension x="-10" y="-2"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Config_Profile_Load();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<Button name="$parent_Button7" inherits="UIPanelButtonTemplate" text="PERL_LOCALIZED_CONFIG_ALL_DELETE_PROFILE_BUTTON">
+				<Size>
+					<AbsDimension x="50" y="22"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parent_Button6">
+						<Offset>
+							<AbsDimension x="0" y="-5"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Perl_Config_Profile_Delete();
+					</OnClick>
+				</Scripts>
+			</Button>
 		</Frames>
 
 	</Frame>

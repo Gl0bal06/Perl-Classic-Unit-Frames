@@ -353,6 +353,27 @@
 				</Scripts>
 			</CheckButton>
 
+			<CheckButton name="$parent_CheckButton21" inherits="UICheckButtonTemplate" id="21">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton18">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SHOW_FRIENDLY_HEALTH);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Show_Friendly_Health_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
 			<Slider name="$parent_Slider1" inherits="OptionsSliderTemplate" minValue="1" maxValue="149" valueStep="1">
 				<Size>
 					<AbsDimension x="200" y="15"/>

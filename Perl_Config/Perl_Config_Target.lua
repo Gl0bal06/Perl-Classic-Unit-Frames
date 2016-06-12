@@ -152,6 +152,18 @@ function Perl_Config_Target_Set_Values()
 		Perl_Config_Target_Frame_CheckButton24:SetChecked(nil);
 	end
 
+	if (vartable["showmanadeficit"] == 1) then
+		Perl_Config_Target_Frame_CheckButton25:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton25:SetChecked(nil);
+	end
+
+	if (vartable["invertbuffs"] == 1) then
+		Perl_Config_Target_Frame_CheckButton26:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton26:SetChecked(nil);
+	end
+
 	Perl_Config_Target_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_Target_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -356,6 +368,22 @@ function Perl_Config_Target_Class_Colored_Names_Update()
 		Perl_Target_Set_Class_Colored_Names(1);
 	else
 		Perl_Target_Set_Class_Colored_Names(0);
+	end
+end
+
+function Perl_Config_Target_Mana_Deficit_Update()
+	if (Perl_Config_Target_Frame_CheckButton25:GetChecked() == 1) then
+		Perl_Target_Set_Mana_Deficit(1);
+	else
+		Perl_Target_Set_Mana_Deficit(0);
+	end
+end
+
+function Perl_Config_Target_Invert_Buffs_Update()
+	if (Perl_Config_Target_Frame_CheckButton26:GetChecked() == 1) then
+		Perl_Target_Set_Invert_Buffs(1);
+	else
+		Perl_Target_Set_Invert_Buffs(0);
 	end
 end
 

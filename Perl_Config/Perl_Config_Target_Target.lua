@@ -120,6 +120,12 @@ function Perl_Config_Target_Target_Set_Values()
 		Perl_Config_Target_Target_Frame_CheckButton20:SetChecked(nil);
 	end
 
+	if (vartable["showfriendlyhealth"] == 1) then
+		Perl_Config_Target_Target_Frame_CheckButton21:SetChecked(1);
+	else
+		Perl_Config_Target_Target_Frame_CheckButton21:SetChecked(nil);
+	end
+
 	Perl_Config_Target_Target_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_Target_Target_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Target_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -224,6 +230,14 @@ function Perl_Config_Target_Target_Class_Colored_Names_Update()
 		Perl_Target_Target_Set_Class_Colored_Names(1);
 	else
 		Perl_Target_Target_Set_Class_Colored_Names(0);
+	end
+end
+
+function Perl_Config_Target_Target_Show_Friendly_Health_Update()
+	if (Perl_Config_Target_Target_Frame_CheckButton21:GetChecked() == 1) then
+		Perl_Target_Target_Set_Show_Friendly_Health(1);
+	else
+		Perl_Target_Target_Set_Show_Friendly_Health(0);
 	end
 end
 

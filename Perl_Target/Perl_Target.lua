@@ -31,12 +31,14 @@ local healermode = 0;		-- nurfed unit frame style
 local soundtargetchange = 0;	-- sound when changing targets is off by default
 local displaycastablebuffs = 0;	-- display all buffs by default
 local classcolorednames = 0;	-- names are colored based on pvp status by default
+local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
+local invertbuffs = 1;		-- buffs and debuffs are below the target frame by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 
 -- Local variables to save memory
-local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, localizedclass, creatureType, r, g, b, namelengthrestrictor;
+local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, localizedclass, creatureType, r, g, b, namelengthrestrictor, mobhealththreenumerics;
 
 -- Variables for position of the class icon texture.
 local Perl_Target_ClassPosRight = {};
@@ -265,19 +267,36 @@ function Perl_Target_IFrameManager()
 			right = right + 21;
 		end
 		bottom = 0;
-		if (numbuffsshown == 0) then
-			-- bottom is already 0
-		elseif (numbuffsshown < 9) then
-			bottom = 24;
+		if (invertbuffs == 0) then
+			if (numbuffsshown == 0) then
+				-- bottom is already 0
+			elseif (numbuffsshown < 9) then
+				bottom = 24;
+			else
+				bottom = 48;
+			end
+			if (numdebuffsshown == 0) then
+				-- add nothing to bottom
+			elseif (numdebuffsshown < 9) then
+				bottom = bottom + 24;
+			else
+				bottom = bottom + 48;
+			end
 		else
-			bottom = 48;
-		end
-		if (numdebuffsshown == 0) then
-			-- add nothing to bottom
-		elseif (numdebuffsshown < 9) then
-			bottom = bottom + 24;
-		else
-			bottom = bottom + 48;
+			if (numbuffsshown == 0) then
+				-- top is already set
+			elseif (numbuffsshown < 9) then
+				top = top + 24;
+			else
+				top = top + 48;
+			end
+			if (numdebuffsshown == 0) then
+				-- add nothing to top
+			elseif (numdebuffsshown < 9) then
+				top = top + 24;
+			else
+				top = top + 48;
+			end
 		end
 		bottom = bottom + 38;	-- Offset for the stats frame
 		return top, right, bottom, 0;
@@ -396,33 +415,26 @@ function Perl_Target_Update_Once()
 		-- End: Set the pvp rank icon
 
 		-- Begin: Set the text positions
-		if (UnitHealthMax("target") == 100) then
+		Perl_Target_HealthBarText:ClearAllPoints();
+		Perl_Target_ManaBarText:ClearAllPoints();
+		if (framestyle == 1) then
 			Perl_Target_HealthBarText:SetPoint("TOP", 0, 1);
 			Perl_Target_ManaBarText:SetPoint("TOP", 0, 1);
-		else
-			if (framestyle == 1) then
+		elseif (framestyle == 2) then
+			if (compactmode == 0) then
 				Perl_Target_HealthBarText:SetPoint("TOP", 0, 1);
 				Perl_Target_ManaBarText:SetPoint("TOP", 0, 1);
-			elseif (framestyle == 2) then
-				if (compactmode == 0) then
+				Perl_Target_HealthBarTextRight:SetPoint("RIGHT", 70, 0);
+				Perl_Target_ManaBarTextRight:SetPoint("RIGHT", 70, 0);
+			else
+				if (healermode == 0) then
 					Perl_Target_HealthBarText:SetPoint("TOP", 0, 1);
 					Perl_Target_ManaBarText:SetPoint("TOP", 0, 1);
-					Perl_Target_HealthBarTextRight:SetPoint("RIGHT", 70, 0);
 				else
-					if (healermode == 0) then
-						Perl_Target_HealthBarText:SetPoint("TOP", 0, 1);
-						Perl_Target_ManaBarText:SetPoint("TOP", 0, 1);
-					else
-						if (shortbars == 0) then
-							Perl_Target_HealthBarText:SetPoint("TOP", -40, 1);
-							Perl_Target_ManaBarText:SetPoint("TOP", -40, 1);
-							Perl_Target_HealthBarTextRight:SetPoint("RIGHT", -10, 0);
-						else
-							Perl_Target_HealthBarText:SetPoint("TOP", -25, 1);
-							Perl_Target_ManaBarText:SetPoint("TOP", -25, 1);
-							Perl_Target_HealthBarTextRight:SetPoint("RIGHT", -10, 0);
-						end
-					end
+					Perl_Target_HealthBarText:SetPoint("TOPLEFT", 5, 1);
+					Perl_Target_ManaBarText:SetPoint("TOPLEFT", 5, 1);
+					Perl_Target_HealthBarTextRight:SetPoint("RIGHT", -5, 0);
+					Perl_Target_ManaBarTextRight:SetPoint("RIGHT", -5, 0);
 				end
 			end
 		end
@@ -488,7 +500,62 @@ function Perl_Target_Update_Health()
 	if (targethealthmax == 100) then
 		-- Begin Mobhealth support
 		if (mobhealthsupport == 1) then
-			if (MobHealthFrame) then
+			if (MobHealth3) then
+				targethealth, targethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("target", UnitHealth("target"), UnitHealthMax("target"), UnitName("target"), UnitLevel("target"));
+				if (mobhealththreenumerics) then
+					-- MobHealth3 was successful in getting a numeric value
+					if (framestyle == 1) then
+						Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
+						Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
+						Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..targethealthpercent.."%");
+					elseif (framestyle == 2) then
+						if (compactmode == 0) then
+							Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+							if (targethealthmax > 9999) then
+								Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+								Perl_Target_HealthBarTextRight:SetText(targethealthpercent.."%");
+							else
+								Perl_Target_HealthBarText:SetText(targethealthpercent.."%");
+								Perl_Target_HealthBarTextRight:SetText(targethealth.."/"..targethealthmax);
+							end
+							
+						else
+							if (compactpercent == 0) then
+								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+								Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+								Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+							else
+								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+								Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+								Perl_Target_HealthBarTextCompactPercent:SetText(targethealthpercent.."%");
+							end
+						end
+					end
+				else
+					-- MobHealth3 was unable to give us a numeric value, fall back to percentage
+					if (framestyle == 1) then
+						Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
+						Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
+						Perl_Target_HealthBarText:SetText(targethealth.."%");
+					elseif (framestyle == 2) then
+						if (compactmode == 0) then
+							Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+							Perl_Target_HealthBarText:SetText(targethealth.."%");
+							Perl_Target_HealthBarTextRight:SetText(targethealth.."%");
+						else
+							if (compactpercent == 0) then
+								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+								Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+								Perl_Target_HealthBarText:SetText(targethealth.."%");
+							else
+								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+								Perl_Target_HealthBarText:SetText(targethealth.."%");
+								Perl_Target_HealthBarTextCompactPercent:SetText(targethealth.."%");
+							end
+						end
+					end
+				end
+			elseif (MobHealthFrame) then	-- mobhealth2, telo, and mobinfo
 				MobHealthFrame:Hide();
 
 				local index;
@@ -705,6 +772,7 @@ function Perl_Target_Update_Mana()
 	Perl_Target_ManaBar:SetValue(targetmana);
 
 	if (framestyle == 1) then
+		Perl_Target_ManaBarTextRight:SetTextColor(1, 1, 1, 1);
 		Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
 		Perl_Target_ManaBarTextCompactPercent:SetText();	-- Hide this text in this frame style
 
@@ -720,6 +788,7 @@ function Perl_Target_Update_Mana()
 			Perl_Target_ManaBarTextCompactPercent:SetText();	-- Hide this text in this frame style
 
 			if (healermode == 0) then
+				Perl_Target_ManaBarTextRight:SetTextColor(1, 1, 1, 1);
 				if (targetpower == 1 or targetpower == 2) then
 					Perl_Target_ManaBarText:SetText(targetmana.."%");
 					Perl_Target_ManaBarTextRight:SetText(targetmana);
@@ -728,26 +797,47 @@ function Perl_Target_Update_Mana()
 					Perl_Target_ManaBarTextRight:SetText(targetmana.."/"..targetmanamax);
 				end
 			else
+				Perl_Target_ManaBarTextRight:SetTextColor(0.5, 0.5, 0.5, 1);
+				if (showmanadeficit == 1) then
+					Perl_Target_ManaBarTextRight:SetText("-"..targetmanamax - targetmana);
+				else
+					Perl_Target_ManaBarTextRight:SetText();
+				end
 				if (targetpower == 1 or targetpower == 2) then
 					Perl_Target_ManaBarText:SetText(targetmana);
-					Perl_Target_ManaBarTextRight:SetText();
 				else
 					Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
-					Perl_Target_ManaBarTextRight:SetText();
 				end
 			end
 		else
 			if (compactpercent == 0) then
-				Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
 				Perl_Target_ManaBarTextCompactPercent:SetText();	-- Hide this text in this frame style
-
+				if (healermode == 1) then
+					if (showmanadeficit == 1) then
+						Perl_Target_ManaBarTextRight:SetTextColor(0.5, 0.5, 0.5, 1);
+						Perl_Target_ManaBarTextRight:SetText("-"..targetmanamax - targetmana);			-- Hide this text in this frame style
+					else
+						Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+					end
+				else
+					Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+				end
 				if (targetpower == 1 or targetpower == 2) then
 					Perl_Target_ManaBarText:SetText(targetmana);
 				else
 					Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
 				end
 			else
-				Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+				if (healermode == 1) then
+					if (showmanadeficit == 1) then
+						Perl_Target_ManaBarTextRight:SetTextColor(0.5, 0.5, 0.5, 1);
+						Perl_Target_ManaBarTextRight:SetText("-"..targetmanamax - targetmana);			-- Hide this text in this frame style
+					else
+						Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+					end
+				else
+					Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
+				end
 
 				if (targetpower == 1 or targetpower == 2) then
 					Perl_Target_ManaBarText:SetText(targetmana);
@@ -1421,6 +1511,15 @@ function Perl_Target_Set_Class_Buffs(newvalue)
 	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
+function Perl_Target_Set_Invert_Buffs(newvalue)
+	if (newvalue ~= nil) then
+		invertbuffs = newvalue;
+	end
+	Perl_Target_UpdateVars();
+	Perl_Target_Reset_Buffs();	-- Reset the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
+end
+
 function Perl_Target_Set_Class_Icon(newvalue)
 	showclassicon = newvalue;
 	Perl_Target_UpdateVars();
@@ -1549,6 +1648,12 @@ function Perl_Target_Set_Sound_Target_Change(newvalue)
 	Perl_Target_UpdateVars();
 end
 
+function Perl_Target_Set_Mana_Deficit(newvalue)
+	showmanadeficit = newvalue;
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
 function Perl_Target_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1583,34 +1688,40 @@ end
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
-function Perl_Target_GetVars()
-	locked = Perl_Target_Config[UnitName("player")]["Locked"];
-	showcp = Perl_Target_Config[UnitName("player")]["ComboPoints"];
-	showclassicon = Perl_Target_Config[UnitName("player")]["ClassIcon"];
-	showclassframe = Perl_Target_Config[UnitName("player")]["ClassFrame"];
-	showpvpicon = Perl_Target_Config[UnitName("player")]["PvPIcon"]; 
-	numbuffsshown = Perl_Target_Config[UnitName("player")]["Buffs"];
-	numdebuffsshown = Perl_Target_Config[UnitName("player")]["Debuffs"];
-	mobhealthsupport = Perl_Target_Config[UnitName("player")]["MobHealthSupport"];
-	scale = Perl_Target_Config[UnitName("player")]["Scale"];
-	showpvprank = Perl_Target_Config[UnitName("player")]["ShowPvPRank"];
-	transparency = Perl_Target_Config[UnitName("player")]["Transparency"];
-	buffdebuffscale = Perl_Target_Config[UnitName("player")]["BuffDebuffScale"];
-	showportrait = Perl_Target_Config[UnitName("player")]["ShowPortrait"];
-	threedportrait = Perl_Target_Config[UnitName("player")]["ThreeDPortrait"];
-	portraitcombattext = Perl_Target_Config[UnitName("player")]["PortraitCombatText"];
-	showrareeliteframe = Perl_Target_Config[UnitName("player")]["ShowRareEliteFrame"];
-	nameframecombopoints = Perl_Target_Config[UnitName("player")]["NameFrameComboPoints"];
-	comboframedebuffs = Perl_Target_Config[UnitName("player")]["ComboFrameDebuffs"];
-	framestyle = Perl_Target_Config[UnitName("player")]["FrameStyle"];
-	compactmode = Perl_Target_Config[UnitName("player")]["CompactMode"];
-	compactpercent = Perl_Target_Config[UnitName("player")]["CompactPercent"];
-	hidebuffbackground = Perl_Target_Config[UnitName("player")]["HideBuffBackground"];
-	shortbars = Perl_Target_Config[UnitName("player")]["ShortBars"];
-	healermode = Perl_Target_Config[UnitName("player")]["HealerMode"];
-	soundtargetchange = Perl_Target_Config[UnitName("player")]["SoundTargetChange"];
-	displaycastablebuffs = Perl_Target_Config[UnitName("player")]["DisplayCastableBuffs"];
-	classcolorednames = Perl_Target_Config[UnitName("player")]["ClassColoredNames"];
+function Perl_Target_GetVars(name, updateflag)
+	if (name == nil) then
+		name = UnitName("player");
+	end
+
+	locked = Perl_Target_Config[name]["Locked"];
+	showcp = Perl_Target_Config[name]["ComboPoints"];
+	showclassicon = Perl_Target_Config[name]["ClassIcon"];
+	showclassframe = Perl_Target_Config[name]["ClassFrame"];
+	showpvpicon = Perl_Target_Config[name]["PvPIcon"]; 
+	numbuffsshown = Perl_Target_Config[name]["Buffs"];
+	numdebuffsshown = Perl_Target_Config[name]["Debuffs"];
+	mobhealthsupport = Perl_Target_Config[name]["MobHealthSupport"];
+	scale = Perl_Target_Config[name]["Scale"];
+	showpvprank = Perl_Target_Config[name]["ShowPvPRank"];
+	transparency = Perl_Target_Config[name]["Transparency"];
+	buffdebuffscale = Perl_Target_Config[name]["BuffDebuffScale"];
+	showportrait = Perl_Target_Config[name]["ShowPortrait"];
+	threedportrait = Perl_Target_Config[name]["ThreeDPortrait"];
+	portraitcombattext = Perl_Target_Config[name]["PortraitCombatText"];
+	showrareeliteframe = Perl_Target_Config[name]["ShowRareEliteFrame"];
+	nameframecombopoints = Perl_Target_Config[name]["NameFrameComboPoints"];
+	comboframedebuffs = Perl_Target_Config[name]["ComboFrameDebuffs"];
+	framestyle = Perl_Target_Config[name]["FrameStyle"];
+	compactmode = Perl_Target_Config[name]["CompactMode"];
+	compactpercent = Perl_Target_Config[name]["CompactPercent"];
+	hidebuffbackground = Perl_Target_Config[name]["HideBuffBackground"];
+	shortbars = Perl_Target_Config[name]["ShortBars"];
+	healermode = Perl_Target_Config[name]["HealerMode"];
+	soundtargetchange = Perl_Target_Config[name]["SoundTargetChange"];
+	displaycastablebuffs = Perl_Target_Config[name]["DisplayCastableBuffs"];
+	classcolorednames = Perl_Target_Config[name]["ClassColoredNames"];
+	showmanadeficit = Perl_Target_Config[name]["ShowManaDeficit"];
+	invertbuffs = Perl_Target_Config[name]["InvertBuffs"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1693,6 +1804,26 @@ function Perl_Target_GetVars()
 	if (classcolorednames == nil) then
 		classcolorednames = 0;
 	end
+	if (showmanadeficit == nil) then
+		showmanadeficit = 0;
+	end
+	if (invertbuffs == nil) then
+		invertbuffs = 0;
+	end
+
+	if (updateflag == 1) then
+		-- Save the new values
+		Perl_Target_UpdateVars();
+
+		-- Call any code we need to activate them
+		Perl_Target_Reset_Buffs();		-- Reset the buff icons
+		Perl_Target_Frame_Style();		-- Reposition the frames
+		Perl_Target_Buff_Debuff_Background();	-- Hide/Show the background frame
+		Perl_Target_Set_Scale();		-- Set the scale
+		Perl_Target_Set_Transparency();		-- Set the transparency
+		Perl_Target_Update_Once();
+		return;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1722,6 +1853,8 @@ function Perl_Target_GetVars()
 		["soundtargetchange"] = soundtargetchange,
 		["displaycastablebuffs"] = displaycastablebuffs,
 		["classcolorednames"] = classcolorednames,
+		["showmanadeficit"] = showmanadeficit,
+		["invertbuffs"] = invertbuffs,
 	}
 	return vars;
 end
@@ -1865,6 +1998,16 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				classcolorednames = nil;
 			end
+			if (vartable["Global Settings"]["ShowManaDeficit"] ~= nil) then
+				showmanadeficit = vartable["Global Settings"]["ShowManaDeficit"];
+			else
+				showmanadeficit = nil;
+			end
+			if (vartable["Global Settings"]["InvertBuffs"] ~= nil) then
+				invertbuffs = vartable["Global Settings"]["InvertBuffs"];
+			else
+				invertbuffs = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1949,6 +2092,12 @@ function Perl_Target_UpdateVars(vartable)
 		if (classcolorednames == nil) then
 			classcolorednames = 0;
 		end
+		if (showmanadeficit == nil) then
+			showmanadeficit = 0;
+		end
+		if (invertbuffs == nil) then
+			invertbuffs = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();		-- Reset the buff icons
@@ -1992,6 +2141,8 @@ function Perl_Target_UpdateVars(vartable)
 		["SoundTargetChange"] = soundtargetchange,
 		["DisplayCastableBuffs"] = displaycastablebuffs,
 		["ClassColoredNames"] = classcolorednames,
+		["ShowManaDeficit"] = showmanadeficit,
+		["InvertBuffs"] = invertbuffs,
 	};
 end
 
@@ -2059,15 +2210,42 @@ function Perl_Target_Buff_UpdateAll()
 		if (numBuffs == 0) then
 			Perl_Target_BuffFrame:Hide();
 		else
-			if (UnitIsFriend("player", "target")) then
-				Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
-			else
-				if (numDebuffs > 8) then
-					Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -51);
+			if (invertbuffs == 0) then
+				Perl_Target_BuffFrame:ClearAllPoints();
+				if (UnitIsFriend("player", "target")) then
+					Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
 				else
-					Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
+					if (numDebuffs > 8) then
+						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -51);
+					else
+						Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
+					end
+				end
+			else
+				Perl_Target_BuffFrame:ClearAllPoints();
+				if (UnitIsFriend("player", "target")) then
+					if (showclassframe == 1 or showrareeliteframe == 1) then
+						Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 16);
+					else
+						Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, -5);
+					end
+				else
+					if (showclassframe == 1 or showrareeliteframe == 1) then
+						if (numDebuffs > 8) then
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 72);
+						else
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 46);
+						end
+					else
+						if (numDebuffs > 8) then
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 51);
+						else
+							Perl_Target_BuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 25);
+						end
+					end
 				end
 			end
+
 			Perl_Target_BuffFrame:Show();
 			if (numBuffs > 8) then
 				Perl_Target_BuffFrame:SetWidth(221);			-- 5 + 8 * (24 + 3)	5 = border gap, 8 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
@@ -2081,15 +2259,42 @@ function Perl_Target_Buff_UpdateAll()
 		if (numDebuffs == 0) then
 			Perl_Target_DebuffFrame:Hide();
 		else
-			if (UnitIsFriend("player", "target")) then
-				if (numBuffs > 8) then
-					Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -51);
+			if (invertbuffs == 0) then
+				Perl_Target_DebuffFrame:ClearAllPoints();
+				if (UnitIsFriend("player", "target")) then
+					if (numBuffs > 8) then
+						Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -51);
+					else
+						Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
+					end
 				else
-					Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
+					Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
 				end
 			else
-				Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
+				Perl_Target_DebuffFrame:ClearAllPoints();
+				if (UnitIsFriend("player", "target")) then
+					if (showclassframe == 1 or showrareeliteframe == 1) then
+						if (numBuffs > 8) then
+							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 72);
+						else
+							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 46);
+						end
+					else
+						if (numBuffs > 8) then
+							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 51);
+						else
+							Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 25);
+						end
+					end
+				else
+					if (showclassframe == 1 or showrareeliteframe == 1) then
+						Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, 16);
+					else
+						Perl_Target_DebuffFrame:SetPoint("BOTTOMLEFT", "Perl_Target_NameFrame", "TOPLEFT", 0, -5);
+					end
+				end
 			end
+
 			Perl_Target_DebuffFrame:Show();
 			if (numDebuffs > 8) then
 				Perl_Target_DebuffFrame:SetWidth(221);			-- 5 + 8 * (24 + 3)	5 = border gap, 8 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
