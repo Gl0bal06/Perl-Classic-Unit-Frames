@@ -119,7 +119,7 @@ function Perl_Party_OnEvent(event)
 	elseif (event == "UNIT_DISPLAYPOWER") then
 		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
 			Perl_Party_Update_Mana_Bar();		-- What type of energy are we using now?
-			Perl_Party_Update_Mana();		-- Update the energy info immediately
+			Perl_Party_Update_Mana();		-- Update the power info immediately
 		end
 		return;
 	elseif (event == "UNIT_PVP_UPDATE") then
@@ -639,7 +639,8 @@ function Perl_Party_Update_Pet_Health()
 end
 
 function Perl_Party_Set_Name()
-	local partyid = "party"..this:GetID();
+	local id = this:GetID();
+	local partyid = "party"..id;
 	local partyname = UnitName(partyid);
 
 	-- Set name
@@ -648,7 +649,7 @@ function Perl_Party_Set_Name()
 			partyname = strsub(partyname, 1, 19).."...";
 		end
 		if (showfkeys == 1) then
-			getglobal(this:GetName().."_NameFrame_FKeyText"):SetText("F"..this:GetID());
+			getglobal(this:GetName().."_NameFrame_FKeyText"):SetText("F"..(id + 1));
 		else
 			getglobal(this:GetName().."_NameFrame_FKeyText"):SetText();
 		end
@@ -973,7 +974,7 @@ function Perl_Party_Force_Update()
 				partyname = strsub(partyname, 1, 19).."...";
 			end
 			if (showfkeys == 1) then
-				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_FKeyText"):SetText("F"..partynum);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_FKeyText"):SetText("F"..(partynum + 1));
 			else
 				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_FKeyText"):SetText();
 			end
@@ -1011,6 +1012,7 @@ function Perl_Party_Force_Update()
 		if (factionGroup == nil) then
 			factionGroup = UnitFactionGroup("player");
 		end
+
 		-- Color their name if PvP flagged
 		if (UnitIsPVP(partyid)) then
 			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0,1,0);
@@ -1062,16 +1064,19 @@ function Perl_Party_Force_Update()
 		local id = partynum;	-- Easier than changing all variables below, I'll do it later
 		if (showpets == 1) then
 			if (UnitIsConnected("party"..id) and UnitExists("partypet"..id)) then
-				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):Show();
-				getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):Show();
-				getglobal(this:GetName().."_StatsFrame"):SetHeight(54);
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):Show();
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBarBG"):Show();
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetHeight(54);
 
 				if (verticalalign == 1) then
-					local idspace = id + 1;
-					local partypetspacing = partyspacing - 12;
 					if (id == 1 or id == 2 or id == 3) then
 						local idspace = id + 1;
-						local partypetspacing = partyspacing - 12;
+						local partypetspacing;
+						if (partyspacing < 0) then			-- Frames are normal
+							partypetspacing = partyspacing - 12;
+						else						-- Frames are inverted
+							partypetspacing = partyspacing + 12;
+						end
 						getglobal("Perl_Party_MemberFrame"..idspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id, "TOPLEFT", 0, partypetspacing);
 					end
 				else
@@ -1940,7 +1945,7 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.48",
+			version = "v0.49",
 			releaseDate = "March 10, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
