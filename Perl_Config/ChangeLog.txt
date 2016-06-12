@@ -1,19 +1,15 @@
-2.09 Beta 4 - September 7, 2007
- - All: Frame strata are now all on the same level as the Blizzard unit frames
- - ArcaneBar: Cast bars no longer appear when the UI is hidden
- - Target: The combo point frame no longer appears if your class has no ability that utilizes it
-
-2.09 Beta 3 - August 20, 2007
- - Config: Updated German translations (Thanks Humpfldump)
-
-2.09 Beta 2 - August 20, 2007
- - CombatDisplay: Combo points correctly update when changing targets
-
-2.09 Beta 1 - August 7, 2007
+2.09 - September 25, 2007
  - All: Updated TOC Interface version to 20200
  - All: Updated tooltip code for 2.2
+ - All: Frame strata are now all on the same level as the Blizzard unit frames
+ - ArcaneBar: Cast bars no longer appear when the UI is hidden
+ - CombatDisplay: Combo points correctly update when changing targets
+ - Config: Updated German translations (Thanks Humpfldump)
+ - PartyTarget: Can now hide party and focus target frames independently
+ - Player: The energy ticker now goes the correct length in compact mode
  - Target: Fixed an issue with class specific debuff counting
  - Target: Updated code to retrieve the number of applications a specific debuff has
+ - Target: The combo point frame no longer appears if your class has no ability that utilizes it
  - ToT: Removed a redundant if check (Thanks SisterNicky)
 
 2.08d - July 2, 2007

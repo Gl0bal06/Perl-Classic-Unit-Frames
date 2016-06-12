@@ -1230,8 +1230,9 @@ function Perl_Config_Global_Save_Settings()
 			["XPosition5"] = floor(Perl_Party_Target5:GetLeft() + 0.5),
 			["YPosition5"] = floor(Perl_Party_Target5:GetTop() - (UIParent:GetTop() / Perl_Party_Target5:GetScale()) + 0.5),
 			["Enabled"] = vartable["enabled"],
-			["HiddenInRaid"] = vartable["hiddeninraid"],
+			["PartyHiddenInRaid"] = vartable["partyhiddeninraid"],
 			["EnabledFocus"] = vartable["enabledfocus"],
+			["FocusHiddenInRaid"] = vartable["focushiddeninraid"],
 		};
 	end
 

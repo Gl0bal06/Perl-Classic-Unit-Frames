@@ -42,7 +42,7 @@ function Perl_Config_Party_Target_Set_Values()
 		Perl_Config_Party_Target_Frame_CheckButton6:SetChecked(nil);
 	end
 
-	if (vartable["hiddeninraid"] == 1) then
+	if (vartable["partyhiddeninraid"] == 1) then
 		Perl_Config_Party_Target_Frame_CheckButton7:SetChecked(1);
 	else
 		Perl_Config_Party_Target_Frame_CheckButton7:SetChecked(nil);
@@ -52,6 +52,12 @@ function Perl_Config_Party_Target_Set_Values()
 		Perl_Config_Party_Target_Frame_CheckButton8:SetChecked(1);
 	else
 		Perl_Config_Party_Target_Frame_CheckButton8:SetChecked(nil);
+	end
+
+	if (vartable["focushiddeninraid"] == 1) then
+		Perl_Config_Party_Target_Frame_CheckButton9:SetChecked(1);
+	else
+		Perl_Config_Party_Target_Frame_CheckButton9:SetChecked(nil);
 	end
 
 	Perl_Config_Party_Target_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
@@ -69,11 +75,19 @@ function Perl_Config_Party_Target_Set_Values()
 	Perl_Config_Party_Target_Frame_Slider2:SetValue(vartable["transparency"]*100);
 end
 
-function Perl_Config_Party_Target_Hidden_In_Raid_Update()
+function Perl_Config_Party_Target_Party_Hidden_In_Raid_Update()
 	if (Perl_Config_Party_Target_Frame_CheckButton7:GetChecked() == 1) then
-		Perl_Party_Target_Set_Hidden_In_Raid(1);
+		Perl_Party_Target_Set_Party_Hidden_In_Raid(1);
 	else
-		Perl_Party_Target_Set_Hidden_In_Raid(0);
+		Perl_Party_Target_Set_Party_Hidden_In_Raid(0);
+	end
+end
+
+function Perl_Config_Party_Target_Focus_Hidden_In_Raid_Update()
+	if (Perl_Config_Party_Target_Frame_CheckButton9:GetChecked() == 1) then
+		Perl_Party_Target_Set_Focus_Hidden_In_Raid(1);
+	else
+		Perl_Party_Target_Set_Focus_Hidden_In_Raid(0);
 	end
 end
 

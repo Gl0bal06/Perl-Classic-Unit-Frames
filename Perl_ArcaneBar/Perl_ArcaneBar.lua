@@ -426,16 +426,16 @@ end
 
 function Perl_ArcaneBar_Set_Scale_Actual(player, target, focus, party)
 	if (player ~= nil) then
-		Perl_ArcaneBar_player:SetScale(1 - UIParent:GetEffectiveScale() + player);
+		Perl_ArcaneBar_player:SetScale(1);
 	elseif (target ~= nil) then
-		Perl_ArcaneBar_target:SetScale(1 - UIParent:GetEffectiveScale() + target);
+		Perl_ArcaneBar_target:SetScale(1);
 	elseif (focus ~= nil) then
-		Perl_ArcaneBar_focus:SetScale(1 - UIParent:GetEffectiveScale() + focus);
+		Perl_ArcaneBar_focus:SetScale(1);
 	elseif (party ~= nil) then
-		Perl_ArcaneBar_party1:SetScale(1 - UIParent:GetEffectiveScale() + party);
-		Perl_ArcaneBar_party2:SetScale(1 - UIParent:GetEffectiveScale() + party);
-		Perl_ArcaneBar_party3:SetScale(1 - UIParent:GetEffectiveScale() + party);
-		Perl_ArcaneBar_party4:SetScale(1 - UIParent:GetEffectiveScale() + party);
+		Perl_ArcaneBar_party1:SetScale(1);
+		Perl_ArcaneBar_party2:SetScale(1);
+		Perl_ArcaneBar_party3:SetScale(1);
+		Perl_ArcaneBar_party4:SetScale(1);
 	end
 end
 

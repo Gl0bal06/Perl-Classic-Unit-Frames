@@ -1008,6 +1008,7 @@ end
 
 function Perl_Player_EnergyTicker_Display()
 	if (showenergyticker == 1 and UnitPowerType("player") == 3) then
+		Perl_Player_EnergyTicker:SetWidth(Perl_Player_ManaBar:GetWidth());
 		Perl_Player_EnergyTicker:Show();
 	else
 		Perl_Player_EnergyTicker:Hide();

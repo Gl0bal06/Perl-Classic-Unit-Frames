@@ -12,8 +12,10 @@ local mobhealthsupport = 1;	-- mobhealth support is on by default
 local hidepowerbars = 0;	-- Power bars are shown by default
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local enabled = 1;		-- mod is shown by default
-local hiddeninraid = 0;		-- mod is not hidden in raids by default
+local partyhiddeninraid = 0;	-- party target is not hidden in raids by default
 local enabledfocus = 1;		-- focus target is on by default
+local focushiddeninraid = 0;	-- focus target is not hidden in raids by default
+
 
 -- Default Local Variables
 local Initialized = nil;			-- waiting to be initialized
@@ -834,9 +836,9 @@ function Perl_Party_Target_Check_Hidden()
 	if (InCombatLockdown()) then
 		Perl_Config_Queue_Add(Perl_Party_Target_Check_Hidden);
 	else
-		if (hiddeninraid == 1) then
+		if (partyhiddeninraid == 1 or focushiddeninraid == 1) then
 			if (UnitInRaid("player")) then
-				Perl_Party_Target_Unregister_All(1, 1);
+				Perl_Party_Target_Unregister_All(partyhiddeninraid, focushiddeninraid);
 			else
 				Perl_Party_Target_Register_All(enabled, enabledfocus);
 			end
@@ -917,8 +919,14 @@ function Perl_Party_Target_Set_Enabled_Focus(newvalue)
 	Perl_Party_Target_Frame_Style();
 end
 
-function Perl_Party_Target_Set_Hidden_In_Raid(newvalue)
-	hiddeninraid = newvalue;
+function Perl_Party_Target_Set_Party_Hidden_In_Raid(newvalue)
+	partyhiddeninraid = newvalue;
+	Perl_Party_Target_UpdateVars();
+	Perl_Party_Target_Frame_Style();
+end
+
+function Perl_Party_Target_Set_Focus_Hidden_In_Raid(newvalue)
+	focushiddeninraid = newvalue;
 	Perl_Party_Target_UpdateVars();
 	Perl_Party_Target_Frame_Style();
 end
@@ -993,8 +1001,9 @@ function Perl_Party_Target_GetVars(name, updateflag)
 	hidepowerbars = Perl_Party_Target_Config[name]["HidePowerBars"];
 	classcolorednames = Perl_Party_Target_Config[name]["ClassColoredNames"];
 	enabled = Perl_Party_Target_Config[name]["Enabled"];
-	hiddeninraid = Perl_Party_Target_Config[name]["HiddenInRaid"];
+	partyhiddeninraid = Perl_Party_Target_Config[name]["PartyHiddenInRaid"];
 	enabledfocus = Perl_Party_Target_Config[name]["EnabledFocus"];
+	focushiddeninraid = Perl_Party_Target_Config[name]["FocusHiddenInRaid"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1017,11 +1026,14 @@ function Perl_Party_Target_GetVars(name, updateflag)
 	if (enabled == nil) then
 		enabled = 1;
 	end
-	if (hiddeninraid == nil) then
-		hiddeninraid = 0;
+	if (partyhiddeninraid == nil) then
+		partyhiddeninraid = 0;
 	end
 	if (enabledfocus == nil) then
 		enabledfocus = 1;
+	end
+	if (focushiddeninraid == nil) then
+		focushiddeninraid = 0;
 	end
 
 	if (updateflag == 1) then
@@ -1043,8 +1055,9 @@ function Perl_Party_Target_GetVars(name, updateflag)
 		["hidepowerbars"] = hidepowerbars,
 		["classcolorednames"] = classcolorednames,
 		["enabled"] = enabled,
-		["hiddeninraid"] = hiddeninraid,
+		["partyhiddeninraid"] = partyhiddeninraid,
 		["enabledfocus"] = enabledfocus,
+		["focushiddeninraid"] = focushiddeninraid,
 	}
 	return vars;
 end
@@ -1088,15 +1101,20 @@ function Perl_Party_Target_UpdateVars(vartable)
 			else
 				enabled = nil;
 			end
-			if (vartable["Global Settings"]["HiddenInRaid"] ~= nil) then
-				hiddeninraid = vartable["Global Settings"]["HiddenInRaid"];
+			if (vartable["Global Settings"]["PartyHiddenInRaid"] ~= nil) then
+				partyhiddeninraid = vartable["Global Settings"]["PartyHiddenInRaid"];
 			else
-				hiddeninraid = nil;
+				partyhiddeninraid = nil;
 			end
 			if (vartable["Global Settings"]["EnabledFocus"] ~= nil) then
 				enabledfocus = vartable["Global Settings"]["EnabledFocus"];
 			else
 				enabledfocus = nil;
+			end
+			if (vartable["Global Settings"]["FocusHiddenInRaid"] ~= nil) then
+				focushiddeninraid = vartable["Global Settings"]["FocusHiddenInRaid"];
+			else
+				focushiddeninraid = nil;
 			end
 		end
 
@@ -1122,11 +1140,14 @@ function Perl_Party_Target_UpdateVars(vartable)
 		if (enabled == nil) then
 			enabled = 1;
 		end
-		if (hiddeninraid == nil) then
-			hiddeninraid = 0;
+		if (partyhiddeninraid == nil) then
+			partyhiddeninraid = 0;
 		end
 		if (enabledfocus == nil) then
 			enabledfocus = 1;
+		end
+		if (focushiddeninraid == nil) then
+			focushiddeninraid = 0;
 		end
 
 		-- Call any code we need to activate them
@@ -1148,8 +1169,9 @@ function Perl_Party_Target_UpdateVars(vartable)
 		["HidePowerBars"] = hidepowerbars,
 		["ClassColoredNames"] = classcolorednames,
 		["Enabled"] = enabled,
-		["HiddenInRaid"] = hiddeninraid,
+		["PartyHiddenInRaid"] = partyhiddeninraid,
 		["EnabledFocus"] = enabledfocus,
+		["FocusHiddenInRaid"] = focushiddeninraid,
 	};
 end
 

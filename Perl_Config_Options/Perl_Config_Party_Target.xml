@@ -126,10 +126,31 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDDEN_IN_RAID);
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_PARTY_HIDDEN_IN_RAID);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Party_Target_Hidden_In_Raid_Update();
+						Perl_Config_Party_Target_Party_Hidden_In_Raid_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton9" inherits="UICheckButtonTemplate" id="9">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton7">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_FOCUS_HIDDEN_IN_RAID);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Target_Focus_Hidden_In_Raid_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -139,7 +160,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton7">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton9">
 						<Offset>
 							<AbsDimension  x="0" y="-20"/>
 						</Offset>
