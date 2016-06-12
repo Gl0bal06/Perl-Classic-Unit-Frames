@@ -1,3 +1,6 @@
+2.23 - August 8, 2008
+ - Config: Added LibStub to prevent errors when checking for LibMobHealth-4.0
+
 2.22 - July 18, 2008
  - All: Added support for LibMobHealth-4.0
  - All: Frame backgrounds now correctly extend to the borders of the frame
