@@ -226,7 +226,7 @@
 
 
 			<!-- Raid Icon -->
-			<Frame name="Perl_Target_Target_RaidIconFrame">
+			<Frame name="Perl_Target_Target_RaidIconFrame" frameStrata="MEDIUM">
 				<Size>
 					<AbsDimension x="110" y="24"/>
 				</Size>
@@ -940,7 +940,7 @@
 
 
 			<!-- Raid Icon -->
-			<Frame name="Perl_Target_Target_Target_RaidIconFrame">
+			<Frame name="Perl_Target_Target_Target_RaidIconFrame" frameStrata="MEDIUM">
 				<Size>
 					<AbsDimension x="110" y="24"/>
 				</Size>

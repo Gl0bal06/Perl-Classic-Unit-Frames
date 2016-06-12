@@ -721,7 +721,7 @@ function Perl_Party_Update_Mana(self)
 	partymanamax = UnitManaMax(self.unit);
 	partymanapercent = floor(partymana/partymanamax*100+0.5);
 
-	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit)) then			-- This prevents negative mana
+	if (UnitIsDead(self.unit) or UnitIsGhost(self.unit) or partymanamax == 0) then			-- This prevents negative mana
 		partymana = 0;
 		partymanapercent = 0;
 	end

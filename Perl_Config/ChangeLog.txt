@@ -1,3 +1,8 @@
+2.11 - October 12, 2007
+ - All: Reversed previous strata change and correctly made raid icons appear on top of all frames
+ - ArcaneBar: Added a sanity check for line 258
+ - Party/Player: Added checks for 0 max mana to prevent incorrect text from appearing
+
 2.10 - October 11, 2007
  - All: Changed frame strata so target of unit frames are lower than the parent unit
  - Focus/Party/Player/Target: Added voice chat display support

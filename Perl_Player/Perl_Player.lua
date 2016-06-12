@@ -486,7 +486,7 @@ function Perl_Player_Update_Mana()
 	playermanamax = UnitManaMax("player");
 	playermanapercent = floor(playermana/playermanamax*100+0.5);
 
-	if (UnitIsDead("player") or UnitIsGhost("player")) then			-- This prevents negative mana
+	if (UnitIsDead("player") or UnitIsGhost("player") or playermanamax == 0) then			-- This prevents negative mana
 		playermana = 0;
 		playermanapercent = 0;
 	end

@@ -255,11 +255,13 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1)
 		if(self:IsShown()) then
 			local _, _, _, _, startTime, endTime, _ = UnitCastingInfo(arg1);
 
-			self.delaySum = self.delaySum + (endTime - self.maxValue * 1000);
-			self.startTime = startTime / 1000;
-			self.maxValue = endTime / 1000;
+			if (endTime ~= nil) then
+				self.delaySum = self.delaySum + (endTime - self.maxValue * 1000);
+				self.startTime = startTime / 1000;
+				self.maxValue = endTime / 1000;
 
-			self:SetMinMaxValues(self.startTime, self.maxValue);
+				self:SetMinMaxValues(self.startTime, self.maxValue);
+			end
 		end
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
 		local text, _, _, _, startTime, endTime, _ = UnitChannelInfo(arg1);
