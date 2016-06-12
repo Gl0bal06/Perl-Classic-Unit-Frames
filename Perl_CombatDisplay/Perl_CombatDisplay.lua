@@ -45,7 +45,7 @@ function Perl_CombatDisplay_OnLoad()
 	table.insert(UnitPopupFrames,"Perl_CombatDisplay_Target_DropDown");
 
 	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Combat Display by Perl loaded successfully.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: CombatDisplay loaded successfully.");
 	end
 end
 
@@ -868,8 +868,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.37",
-			releaseDate = "January 25, 2006",
+			version = "v0.38",
+			releaseDate = "January 26, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

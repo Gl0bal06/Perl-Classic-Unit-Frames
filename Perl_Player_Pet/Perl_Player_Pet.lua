@@ -38,15 +38,10 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("UNIT_PET_EXPERIENCE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
-	-- Slash Commands
-	SlashCmdList["Perl_Player_Pet"] = Perl_Player_Pet_SlashHandler;
-	SLASH_Perl_Player_Pet1 = "/perlplayerpet";
-	SLASH_Perl_Player_Pet2 = "/ppp";
-
 	table.insert(UnitPopupFrames,"Perl_Player_Pet_DropDown");
 
 	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame by Perl loaded successfully.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Player_Pet loaded successfully.");
 	end
 end
 
@@ -117,81 +112,6 @@ function Perl_Player_Pet_OnEvent(event)
 end
 
 
--------------------
--- Slash Handler --
--------------------
-function Perl_Player_Pet_SlashHandler(msg)
-	if (string.find(msg, "unlock")) then
-		Perl_Player_Pet_Unlock();
-	elseif (string.find(msg, "lock")) then
-		Perl_Player_Pet_Lock();
-	elseif (string.find(msg, "xp")) then
-		Perl_Player_Pet_Toggle_XPMode();
-	elseif (string.find(msg, "health")) then
-		Perl_Player_Pet_ToggleColoredHealth();
-		return;
-	elseif (string.find(msg, "debuffs")) then
-		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
-		if (arg1 ~= "") then
-			local number = tonumber(arg1);
-			if (number >= 0 and number <= 16) then
-				Perl_Player_Pet_Set_Debuffs(number)
-			else
-				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-16)");
-			end
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of debuffs to display (0-16): /ppp debuffs #");
-		end
-	elseif (string.find(msg, "buffs")) then
-		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
-		if (arg1 ~= "") then
-			local number = tonumber(arg1);
-			if (number >= 0 and number <= 16) then
-				Perl_Player_Pet_Set_Buffs(number)
-				return;
-			else
-				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-16)");
-				return;
-			end
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of buffs to display (0-16): /ppp buffs #");
-			return;
-		end
-	elseif (string.find(msg, "scale")) then
-		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
-		if (arg1 ~= "") then
-			if (arg1 == "ui") then
-				Perl_Player_Pet_Set_ParentUI_Scale();
-				return;
-			end
-			local number = tonumber(arg1);
-			if (number > 0 and number < 150) then
-				Perl_Player_Pet_Set_Scale(number);
-				return;
-			else
-				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/ppp scale ui' to set to the current UI scale.");
-				return;
-			end
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/ppp scale ui' to set to the current UI scale.");
-			return;
-		end
-	elseif (string.find(msg, "status")) then
-		Perl_Player_Pet_Status();
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Player Pet Frame ---");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp |cffffff00- Toggle the pet experience bar.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff health |cffffff00- Toggle the displaying of progressively colored health bars.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs # |cffffff00- Show the number of buffs to display.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuffs # |cffffff00- Show the number of debuffs to display.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/ppp scale ui' to set to the current UI scale.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
-	end
-end
-
-
 -------------------------------
 -- Loading Settings Function --
 -------------------------------
@@ -211,17 +131,6 @@ function Perl_Player_Pet_Initialize()
 
 	-- Major config options.
 	Perl_Player_Pet_Initialize_Frame_Color();
-
---	-- The following UnregisterEvent calls were taken from Nymbia's Perl
---	-- Blizz Pet Frame Events
---	PetFrame:UnregisterEvent("UNIT_COMBAT");
---	PetFrame:UnregisterEvent("UNIT_SPELLMISS");
---	PetFrame:UnregisterEvent("UNIT_AURA");
---	PetFrame:UnregisterEvent("PLAYER_PET_CHANGED");
---	PetFrame:UnregisterEvent("PET_ATTACK_START");
---	PetFrame:UnregisterEvent("PET_ATTACK_STOP");
---	PetFrame:UnregisterEvent("UNIT_HAPPINESS");
---	PetFrame:UnregisterEvent("PLAYER_ENTERING_WORLD");
 
 	-- Unregister the Blizzard frames via the 1.8 function
 	PetFrame:UnregisterAllEvents();
@@ -465,80 +374,6 @@ function Perl_Player_Pet_Set_Transparency(number)
 	end
 	Perl_Player_Pet_Frame:SetAlpha(transparency);
 	Perl_Player_Pet_UpdateVars();
-end
-
-
-----------------------
--- Config functions --
-----------------------
-function Perl_Player_Pet_Lock()
-	locked = 1;
-	Perl_Player_Pet_UpdateVars();
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now |cffffffffLocked|cffffff00.");
-end
-
-function Perl_Player_Pet_Unlock()
-	locked = 0;
-	Perl_Player_Pet_UpdateVars();
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now |cffffffffUnlocked|cffffff00.");
-end
-
-function Perl_Player_Pet_Toggle_XPMode()
-	if (showxp == 1) then
-		showxp = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now |cffffffffHiding Experience|cffffff00.");
-	else
-		showxp = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now |cffffffffShowing Experience|cffffff00.");
-	end
-	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_ShowXP();
-end
-
-function Perl_Player_Pet_Set_ParentUI_Scale()
-	local unsavedscale;
-	scale = UIParent:GetEffectiveScale();
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_Player_Pet_Frame:SetScale(unsavedscale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Pet Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
-	Perl_Player_Pet_UpdateVars();
-end
-
-function Perl_Player_Pet_ToggleColoredHealth()
-	if (colorhealth == 1) then
-		colorhealth = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now displaying |cffffffffSingle Colored Health Bars|cffffff00.");
-	else
-		colorhealth = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
-	end
-	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_Update_Health();
-end
-
-function Perl_Player_Pet_Status()
-	if (locked == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffUnlocked|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffLocked|cffffff00.");
-	end
-
-	if (colorhealth == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying |cffffffffSingle Colored Health Bars|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
-	end
-
-	if (showxp == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffHiding Experience|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffShowing Experience|cffffff00.");
-	end
-
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetbuffsshown.."|cffffff00 buffs.");
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying |cffffffff"..numpetdebuffsshown.."|cffffff00 debuffs.");
-
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is displaying at a scale of |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 end
 
 
@@ -854,8 +689,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.37",
-			releaseDate = "January 25, 2006",
+			version = "v0.38",
+			releaseDate = "January 26, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

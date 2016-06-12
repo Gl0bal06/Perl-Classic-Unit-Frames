@@ -56,15 +56,10 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
-	-- Slash Commands
-	SlashCmdList["PERL_TARGET"] = Perl_Target_SlashHandler;
-	SLASH_PERL_TARGET1 = "/perltarget";
-	SLASH_PERL_TARGET2 = "/pt";
-
 	table.insert(UnitPopupFrames,"Perl_Target_DropDown");
 
 	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame by Perl loaded successfully.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Target loaded successfully.");
 	end
 end
 
@@ -77,7 +72,7 @@ function Perl_Target_OnEvent(event)
 		if (UnitExists("target")) then
 			Perl_Target_Update_Once();		-- Set the unchanging info for the target
 		else
-			Perl_Target_Frame:Hide();
+			Perl_Target_Frame:Hide();		-- There is no target, hide the frame
 		end
 		return;
 	elseif (event == "UNIT_HEALTH") then
@@ -123,110 +118,10 @@ function Perl_Target_OnEvent(event)
 		return;
 	elseif (event == "ADDON_LOADED") then
 		if (arg1 == "Perl_Target") then
-			Perl_Target_myAddOns_Support();
+			Perl_Target_myAddOns_Support();		-- Attempt to load MyAddOns support
 		end
 		return;
 	else
-		return;
-	end
-end
-
-
--------------------
--- Slash Handler --
--------------------
-function Perl_Target_SlashHandler(msg)
-	if (string.find(msg, "unlock")) then
-		Perl_Target_Unlock();
-		return;
-	elseif (string.find(msg, "lock")) then
-		Perl_Target_Lock();
-		return;
-	elseif (string.find(msg, "combopoints")) then
-		Perl_Target_ToggleCP();
-		return;
-	elseif (string.find(msg, "icon")) then
-		Perl_Target_ToggleClassIcon();
-		return;
-	elseif (string.find(msg, "class")) then
-		Perl_Target_ToggleClassFrame();
-		return;
-	elseif (string.find(msg, "pvp")) then
-		Perl_Target_TogglePvPIcon();
-		return;
-	elseif (string.find(msg, "mobhealth")) then
-		Perl_Target_ToggleMobHealth();
-		return;
-	elseif (string.find(msg, "health")) then
-		Perl_Target_ToggleColoredHealth();
-		return;
-	elseif (string.find(msg, "rank")) then
-		Perl_Target_TogglePvPRank();
-		return;
-	elseif (string.find(msg, "status")) then
-		Perl_Target_Status();
-		return;
-	elseif (string.find(msg, "debuffs")) then
-		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
-		if (arg1 ~= "") then
-			local number = tonumber(arg1);
-			if (number >= 0 and number <= 16) then
-				Perl_Target_Set_Debuffs(number)
-			else
-				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-16)");
-			end
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of debuffs to display (0-16): /pt debuffs #");
-		end
-	elseif (string.find(msg, "buffs")) then
-		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
-		if (arg1 ~= "") then
-			local number = tonumber(arg1);
-			if (number >= 0 and number <= 16) then
-				Perl_Target_Set_Buffs(number)
-				return;
-			else
-				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-16)");
-				return;
-			end
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of buffs to display (0-16): /pt buffs #");
-			return;
-		end
-	elseif (string.find(msg, "scale")) then
-		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
-		if (arg1 ~= "") then
-			if (arg1 == "ui") then
-				Perl_Target_Set_ParentUI_Scale();
-				return;
-			end
-			local number = tonumber(arg1);
-			if (number > 0 and number < 150) then
-				Perl_Target_Set_Scale(number);
-				return;
-			else
-				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pt scale ui' to set to the current UI scale.");
-				return;
-			end
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pt scale ui' to set to the current UI scale.");
-			return;
-		end
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Target Frame ---");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff health |cffffff00- Toggle the displaying of progressively colored health bars.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff combopoints |cffffff00- Toggle the displaying of combo points.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff class |cffffff00- Toggle the displaying of class frame.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff icon |cffffff00- Toggle the displaying of class icon.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff pvp |cffffff00- Toggle the displaying of pvp status icon.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff rank |cffffff00- Toggle the displaying of pvp rank icon.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff mobhealth |cffffff00- Toggle the displaying of integrated MobHealth support.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs # |cffffff00- Show the number of buffs to display.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuffs # |cffffff00- Show the number of debuffs to display.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/pt scale ui' to set to the current UI scale.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 		return;
 	end
 end
@@ -803,7 +698,7 @@ function Perl_Target_Set_Scale(number)
 	end
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 	Perl_Target_Frame:SetScale(unsavedscale);
-	Perl_Target_Set_BuffDebuff_Scale(buffdebuffscale*100);				-- maintain the buff/debuff scale
+	Perl_Target_Set_BuffDebuff_Scale(buffdebuffscale*100);		-- maintain the buff/debuff scale
 	Perl_Target_UpdateVars();
 end
 
@@ -824,181 +719,6 @@ function Perl_Target_Set_Transparency(number)
 	end
 	Perl_Target_Frame:SetAlpha(transparency);
 	Perl_Target_UpdateVars();
-end
-
-
-----------------------
--- Config functions --
-----------------------
-function Perl_Target_Lock()
-	locked = 1;
-	Perl_Target_UpdateVars();
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is now |cffffffffLocked|cffffff00.");
-end
-
-function Perl_Target_Unlock()
-	locked = 0;
-	Perl_Target_UpdateVars();
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is now |cffffffffUnlocked|cffffff00.");
-end
-
-function Perl_Target_ToggleCP()
-	if (showcp == 1) then
-		showcp = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Combo Points are now |cffffffffHidden|cffffff00.");
-	else
-		showcp = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Combo Points are now |cffffffffShown|cffffff00.");
-	end
-	Perl_Target_UpdateVars();
-end
-
-function Perl_Target_ToggleClassIcon()
-	if (showclassicon == 1) then
-		showclassicon = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is now |cffffffffHidden|cffffff00.");
-	else
-		showclassicon = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is now |cffffffffShown|cffffff00.");
-	end
-	Perl_Target_UpdateVars();
-	Perl_Target_Update_Once();
-end
-
-function Perl_Target_ToggleClassIcon()
-	if (showclassicon == 1) then
-		showclassicon = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is now |cffffffffHidden|cffffff00.");
-	else
-		showclassicon = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is now |cffffffffShown|cffffff00.");
-	end
-	Perl_Target_UpdateVars();
-	Perl_Target_Update_Once();
-end
-
-function Perl_Target_ToggleClassFrame()
-	if (showclassframe == 1) then
-		showclassframe = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame is now |cffffffffHidden|cffffff00.");
-	else
-		showclassframe = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame is now |cffffffffShown|cffffff00.");
-	end
-	Perl_Target_UpdateVars();
-	Perl_Target_Update_Once();
-end
-
-function Perl_Target_TogglePvPIcon()
-	if (showpvpicon == 1) then
-		showpvpicon = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame PvP Icon is now |cffffffffHidden|cffffff00.");
-	else
-		showpvpicon = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame PvP Icon is now |cffffffffShown|cffffff00.");
-	end
-	Perl_Target_UpdateVars();
-	Perl_Target_Update_Once();
-end
-
-function Perl_Target_ToggleMobHealth()
-	if (mobhealthsupport == 1) then
-		mobhealthsupport = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame MobHealth support is now |cffffffffDisabled|cffffff00.");
-	else
-		mobhealthsupport = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame MobHealth support is now |cffffffffEnabled|cffffff00.");
-	end
-	Perl_Target_UpdateVars();
-	Perl_Target_Update_Once();
-end
-
-function Perl_Target_Set_ParentUI_Scale()
-	local unsavedscale;
-	scale = UIParent:GetEffectiveScale();
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_Target_Frame:SetScale(unsavedscale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
-	Perl_Target_UpdateVars();
-end
-
-function Perl_Target_ToggleColoredHealth()
-	if (colorhealth == 1) then
-		colorhealth = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is now displaying |cffffffffSingle Colored Health Bars|cffffff00.");
-	else
-		colorhealth = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is now displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
-	end
-	Perl_Target_UpdateVars();
-	Perl_Target_Update_Once();
-end
-
-function Perl_Target_TogglePvPRank()
-	if (showpvprank == 1) then
-		showpvprank = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is now |cffffffffHiding PvP Rank|cffffff00.");
-	else
-		showpvprank = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is now |cffffffffDisplaying PvP Rank|cffffff00.");
-	end
-	Perl_Target_UpdateVars();
-	Perl_Target_Update_Once();
-end
-
-function Perl_Target_Status()
-	if (locked == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffUnlocked|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffLocked|cffffff00.");
-	end
-
-	if (colorhealth == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffffSingle Colored Health Bars|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
-	end
-
-	if (showcp == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Combo Points are |cffffffffHidden|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Combo Points are |cffffffffShown|cffffff00.");
-	end
-
-	if (showclassicon == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is |cffffffffHidden|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is |cffffffffShown|cffffff00.");
-	end
-
-	if (showclassframe == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame is |cffffffffHidden|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame is |cffffffffShown|cffffff00.");
-	end
-
-	if (showpvpicon == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame PvP Icon is |cffffffffHidden|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame PvP Icon is |cffffffffShown|cffffff00.");
-	end
-
-	if (showpvprank == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffHiding PvP Rank|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffDisplaying PvP Rank|cffffff00.");
-	end
-
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 buffs.");
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numdebuffsshown.."|cffffff00 debuffs.");
-
-	if (mobhealthsupport == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame has MobHealth support |cffffffffDisabled|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Frame has MobHealth support |cffffffffEnabled|cffffff00.");
-	end
-
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying at a scale of |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
 end
 
 
@@ -1422,8 +1142,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.37",
-			releaseDate = "January 25, 2006",
+			version = "v0.38",
+			releaseDate = "January 26, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

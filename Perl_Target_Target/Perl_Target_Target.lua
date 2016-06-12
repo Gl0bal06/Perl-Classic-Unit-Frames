@@ -31,11 +31,6 @@ function Perl_Target_Target_OnLoad()
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("VARIABLES_LOADED");
 
-	-- Slash Commands
-	SlashCmdList["PERL_TARGET_TARGET"] = Perl_Target_Target_SlashHandler;
-	SLASH_PERL_TARGET_TARGET1 = "/perltargettarget";
-	SLASH_PERL_TARGET_TARGET2 = "/ptt";
-
 	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame by Global loaded successfully.");
 	end
@@ -55,65 +50,6 @@ function Perl_Target_Target_OnEvent(event)
 		end
 		return;
 	else
-		return;
-	end
-end
-
-
--------------------
--- Slash Handler --
--------------------
-function Perl_Target_Target_SlashHandler(msg)
-	if (string.find(msg, "unlock")) then
-		Perl_Target_Target_Unlock();
-		return;
-	elseif (string.find(msg, "lock")) then
-		Perl_Target_Target_Lock();
-		return;
-	elseif (string.find(msg, "totot")) then
-		Perl_Target_Target_ToggleToToT();
-		return;
-	elseif (string.find(msg, "tot")) then
-		Perl_Target_Target_ToggleToT();
-		return;
-	elseif (string.find(msg, "mobhealth")) then
-		Perl_Target_Target_ToggleMobHealth();
-		return;
-	elseif (string.find(msg, "health")) then
-		Perl_Target_Target_ToggleColoredHealth();
-		return;
-	elseif (string.find(msg, "scale")) then
-		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
-		if (arg1 ~= "") then
-			if (arg1 == "ui") then
-				Perl_Target_Target_Set_ParentUI_Scale();
-				return;
-			end
-			local number = tonumber(arg1);
-			if (number > 0 and number < 150) then
-				Perl_Target_Target_Set_Scale(number);
-				return;
-			else
-				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/ptt scale ui' to set to the current UI scale.");
-				return;
-			end
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/ptt scale ui' to set to the current UI scale.");
-			return;
-		end
-	elseif (string.find(msg, "status")) then
-		Perl_Target_Target_Status();
-		return;
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Target of Target Frame ---");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff tot |cffffff00- Toggle the Target of Target frame.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff totot |cffffff00- Toggle the Target of Target of Target frame.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff health |cffffff00- Toggle the displaying of progressively colored health bars.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff mobhealth |cffffff00- Toggle the displaying of integrated MobHealth support.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/ptt scale ui' to set to the current UI scale.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 		return;
 	end
 end
@@ -711,110 +647,6 @@ function Perl_Target_Target_Set_Transparency(number)
 end
 
 
-----------------------
--- Config functions --
-----------------------
-function Perl_Target_Target_Lock()
-	locked = 1;
-	Perl_Target_Target_UpdateVars();
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is now |cffffffffLocked|cffffff00.");
-end
-
-function Perl_Target_Target_Unlock()
-	locked = 0;
-	Perl_Target_Target_UpdateVars();
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is now |cffffffffUnlocked|cffffff00.");
-end
-
-function Perl_Target_Target_ToggleToT()
-	if (totsupport == 1) then
-		totsupport = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is now |cffffffffHiding Target of Target Frame|cffffff00.");
-	else
-		totsupport = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is now |cffffffffDisplaying Target of Target Frame|cffffff00.");
-	end
-	Perl_Target_Target_UpdateVars();
-end
-
-function Perl_Target_Target_ToggleToToT()
-	if (tototsupport == 1) then
-		tototsupport = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is now |cffffffffHiding Target of Target of Target Frame|cffffff00.");
-	else
-		tototsupport = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is now |cffffffffDisplaying Target of Target of Target Frame|cffffff00.");
-	end
-	Perl_Target_Target_UpdateVars();
-end
-
-function Perl_Target_Target_ToggleMobHealth()
-	if (mobhealthsupport == 1) then
-		mobhealthsupport = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame MobHealth support is now |cffffffffDisabled|cffffff00.");
-	else
-		mobhealthsupport = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame MobHealth support is now |cffffffffEnabled|cffffff00.");
-	end
-	Perl_Target_Target_UpdateVars();
-end
-
-function Perl_Target_Target_ToggleColoredHealth()
-	if (colorhealth == 1) then
-		colorhealth = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is now displaying |cffffffffSingle Colored Health Bars|cffffff00.");
-	else
-		colorhealth = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is now displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
-	end
-	Perl_Target_Target_UpdateVars();
-end
-
-function Perl_Target_Target_Set_ParentUI_Scale()
-	local unsavedscale;
-	scale = UIParent:GetEffectiveScale();
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_Target_Target_Frame:SetScale(unsavedscale);
-	Perl_Target_Target_Target_Frame:SetScale(unsavedscale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
-	Perl_Target_Target_UpdateVars();
-end
-
-function Perl_Target_Target_Status()
-	if (locked == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is |cffffffffUnlocked|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is |cffffffffLocked|cffffff00.");
-	end
-
-	if (totsupport == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is |cffffffffHiding Target of Target|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is |cffffffffDisplaying Target of Target|cffffff00.");
-	end
-
-	if (tototsupport == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is |cffffffffHiding Target of Target of Target|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is |cffffffffDisplaying Target of Target of Target|cffffff00.");
-	end
-
-	if (colorhealth == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is displaying |cffffffffSingle Colored Health Bars|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
-	end
-
-	if (mobhealthsupport == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame Class Frame has MobHealth support |cffffffffDisabled|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame Class Frame has MobHealth support |cffffffffEnabled|cffffff00.");
-	end
-
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame is displaying at a scale of |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
-end
-
-
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
@@ -1076,8 +908,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.37",
-			releaseDate = "January 25, 2006",
+			version = "v0.38",
+			releaseDate = "January 26, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

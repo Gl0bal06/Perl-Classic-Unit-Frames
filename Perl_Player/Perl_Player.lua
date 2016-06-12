@@ -50,15 +50,10 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
-	-- Slash Commands
-	SlashCmdList["PERL_PLAYER"] = Perl_Player_SlashHandler;
-	SLASH_PERL_PLAYER1 = "/perlplayer";
-	SLASH_PERL_PLAYER2 = "/pp";
-	
 	table.insert(UnitPopupFrames,"Perl_Player_DropDown");
 
 	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame by Perl loaded successfully.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Player loaded successfully.");
 	end
 end
 
@@ -110,7 +105,7 @@ function Perl_Player_OnEvent(event)
 		return;
 	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Player_Initialize();
-		InCombat = 0;				-- You can't be fighting if you're zoning, and no event is sent, force it to no combat.
+		InCombat = 0;					-- You can't be fighting if you're zoning, and no event is sent, force it to no combat.
 		Perl_Player_Update_Once();
 		return;
 	elseif (event == "ADDON_LOADED") then
@@ -120,71 +115,6 @@ function Perl_Player_OnEvent(event)
 		return;
 	else
 		return;
-	end
-end
-
-
--------------------
--- Slash Handler --
--------------------
-function Perl_Player_SlashHandler(msg)
-	if (string.find(msg, "unlock")) then
-		Perl_Player_Unlock();
-	elseif (string.find(msg, "lock")) then
-		Perl_Player_Lock();
-	elseif (string.find(msg, "compact")) then
-		Perl_Player_Toggle_CompactMode();
-	elseif (string.find(msg, "health")) then
-		Perl_Player_ToggleColoredHealth();
-		return;
-	elseif (string.find(msg, "raid")) then
-		Perl_Player_Toggle_RaidGroupNumber();
-	elseif (string.find(msg, "healer")) then
-		Perl_Player_ToggleHealerMode();
-	elseif (string.find(msg, "scale")) then
-		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
-		if (arg1 ~= "") then
-			if (arg1 == "ui") then
-				Perl_Player_Set_ParentUI_Scale();
-				return;
-			end
-			local number = tonumber(arg1);
-			if (number > 0 and number < 150) then
-				Perl_Player_Set_Scale(number);
-				return;
-			else
-				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pp scale ui' to set to the current UI scale.");
-				return;
-			end
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pp scale ui' to set to the current UI scale.");
-			return;
-		end
-	elseif (string.find(msg, "status")) then
-		Perl_Player_Status();
-	elseif (string.find(msg, "xp")) then
-		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
-		if (arg1 ~= "") then
-			local number = tonumber(arg1);
-			if (number > 0 and number < 4) then
-				Perl_Player_XPBar_Display(number);
-			else
-				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number: 1, 2, or 3");
-			end
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number: 1, 2, or 3");
-		end
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Player Frame ---");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff compact |cffffff00- Toggle compact mode.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff health |cffffff00- Toggle the displaying of progressively colored health bars.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff raid |cffffff00- Toggle the displaying of your group number while in a raid.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff healer |cffffff00- Toggle the 'healer' mode.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp # |cffffff00- Set the display mode of the experience bar: 1) default, 2) pvp rank, 3) off");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/pp scale ui' to set to the current UI scale.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 	end
 end
 
@@ -208,43 +138,7 @@ function Perl_Player_Initialize()
 
 	-- Major config options.
 	Perl_Player_Initialize_Frame_Color();
-
 	Perl_Player_Set_Localized_ClassIcons();
-
---	-- The following UnregisterEvent calls were taken from Nymbia's Perl
---	-- Blizz Player Frame Events
---	PlayerFrame:UnregisterEvent("UNIT_LEVEL");
---	PlayerFrame:UnregisterEvent("UNIT_COMBAT");
---	PlayerFrame:UnregisterEvent("UNIT_SPELLMISS");
---	PlayerFrame:UnregisterEvent("UNIT_PVP_UPDATE");
---	PlayerFrame:UnregisterEvent("UNIT_MAXMANA");
---	PlayerFrame:UnregisterEvent("PLAYER_ENTER_COMBAT");
---	PlayerFrame:UnregisterEvent("PLAYER_LEAVE_COMBAT");
---	PlayerFrame:UnregisterEvent("PLAYER_UPDATE_RESTING");
---	PlayerFrame:UnregisterEvent("PARTY_MEMBERS_CHANGED");
---	PlayerFrame:UnregisterEvent("PARTY_LEADER_CHANGED");
---	PlayerFrame:UnregisterEvent("PARTY_LOOT_METHOD_CHANGED");
---	PlayerFrame:UnregisterEvent("PLAYER_ENTERING_WORLD");
---	PlayerFrame:UnregisterEvent("PLAYER_REGEN_DISABLED");
---	PlayerFrame:UnregisterEvent("PLAYER_REGEN_ENABLED");
---	PlayerFrameHealthBar:UnregisterEvent("UNIT_HEALTH");
---	PlayerFrameHealthBar:UnregisterEvent("UNIT_MAXHEALTH");
---	-- ManaBar Events
---	PlayerFrameManaBar:UnregisterEvent("UNIT_MANA");
---	PlayerFrameManaBar:UnregisterEvent("UNIT_RAGE");
---	PlayerFrameManaBar:UnregisterEvent("UNIT_FOCUS");
---	PlayerFrameManaBar:UnregisterEvent("UNIT_ENERGY");
---	PlayerFrameManaBar:UnregisterEvent("UNIT_HAPPINESS");
---	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXMANA");
---	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXRAGE");
---	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXFOCUS");
---	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXENERGY");
---	PlayerFrameManaBar:UnregisterEvent("UNIT_MAXHAPPINESS");
---	PlayerFrameManaBar:UnregisterEvent("UNIT_DISPLAYPOWER");
---	-- UnitFrame Events
---	PlayerFrame:UnregisterEvent("UNIT_NAME_UPDATE");
---	PlayerFrame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
---	PlayerFrame:UnregisterEvent("UNIT_DISPLAYPOWER");
 
 	-- Unregister the Blizzard frames via the 1.8 function
 	PlayerFrame:UnregisterAllEvents();
@@ -786,124 +680,6 @@ function Perl_Player_Set_Transparency(number)
 end
 
 
-----------------------
--- Config Functions --
-----------------------
-function Perl_Player_Lock()
-	locked = 1;
-	Perl_Player_UpdateVars();
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffLocked|cffffff00.");
-end
-
-function Perl_Player_Unlock()
-	locked = 0;
-	Perl_Player_UpdateVars();
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffUnlocked|cffffff00.");
-end
-
-function Perl_Player_Toggle_CompactMode()
-	if (compactmode == 0) then
-		compactmode = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now displaying in |cffffffffCompact Mode|cffffff00.");
-	else
-		compactmode = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now displaying in |cffffffffNormal Mode|cffffff00.");
-	end
-	Perl_Player_UpdateVars();
-	Perl_Player_Set_Text_Positions();
-	Perl_Player_Set_CompactMode();
-end
-
-function Perl_Player_Toggle_RaidGroupNumber()
-	if (showraidgroup == 0) then
-		showraidgroup = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffDisplaying Raid Group Numbers|cffffff00.");
-	else
-		showraidgroup = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffHiding Raid Group Numbers|cffffff00.");
-	end
-	Perl_Player_Update_Raid_Group_Number();
-	Perl_Player_UpdateVars();
-end
-
-function Perl_Player_Set_ParentUI_Scale()
-	local unsavedscale;
-	scale = UIParent:GetEffectiveScale();
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_Player_Frame:SetScale(unsavedscale);
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
-	Perl_Player_UpdateVars();
-end
-
-function Perl_Player_ToggleColoredHealth()
-	if (colorhealth == 1) then
-		colorhealth = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now displaying |cffffffffSingle Colored Health Bars|cffffff00.");
-	else
-		colorhealth = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
-	end
-	Perl_Player_UpdateVars();
-	Perl_Player_Update_Health();
-end
-
-function Perl_Player_ToggleHealerMode()
-	if (healermode == 1) then
-		healermode = 0;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffNot Displaying in Healer Mode|cffffff00.");
-	else
-		healermode = 1;
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffDisplaying in Healer Mode|cffffff00.");
-	end
-	Perl_Player_UpdateVars();
-	Perl_Player_Set_Text_Positions();
-	Perl_Player_Update_Health();
-	Perl_Player_Update_Mana();
-end
-
-function Perl_Player_Status()
-	if (locked == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffUnlocked|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffLocked|cffffff00.");
-	end
-
-	if (colorhealth == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying |cffffffffSingle Colored Health Bars|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
-	end
-
-	if (xpbarstate == 1) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisplaying Experience|cffffff00.");
-	elseif (xpbarstate == 2) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisplaying PvP Rank|cffffff00.");
-	elseif (xpbarstate == 3) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffHiding Experience Bar|cffffff00.");
-	end
-
-	if (compactmode == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying in |cffffffffNormal Mode|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying in |cffffffffCompact Mode|cffffff00.");
-	end
-
-	if (showraidgroup == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffHiding Raid Group Numbers|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisplaying Raid Group Numbers|cffffff00.");
-	end
-
-	if (healermode == 0) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffNot Displaying in Healer Mode|cffffff00.");
-	else
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisplaying in Healer Mode|cffffff00.");
-	end
-
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying at a scale of |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");
-end
-
-
 ------------------------------
 -- Saved Variable Functions --
 ------------------------------
@@ -1125,7 +901,7 @@ function Perl_Player_XPTooltip()
 		
 	else
 		local rankNumber, rankName, rankProgress;			-- Some variables
-		rankNumber = UnitPVPRank("player")				-- 
+		rankNumber = UnitPVPRank("player")
 		if (rankNumber < 1) then
 			rankName = "Unranked"
 			GameTooltip:SetText("You are Unranked.", 255/255, 209/255, 0/255);
@@ -1164,8 +940,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.37",
-			releaseDate = "January 25, 2006",
+			version = "v0.38",
+			releaseDate = "January 26, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
