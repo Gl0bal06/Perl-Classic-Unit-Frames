@@ -81,19 +81,6 @@
 			<OnEvent>
 				Perl_Party_OnEvent(event);
 			</OnEvent>
-			<OnMouseDown>
-				Perl_Party_MouseDown(arg1);
-			</OnMouseDown>
-			<OnMouseUp>
-				Perl_Party_MouseUp(arg1);
-			</OnMouseUp>
-			<OnEnter>
-				Perl_Party_Tip();
-				UnitFrame_OnEnter();
-			</OnEnter>
-			<OnLeave>
-				UnitFrame_OnLeave();
-			</OnLeave>
 		</Scripts>
 
 		<Frames>
@@ -154,6 +141,13 @@
 							<OnMouseUp>
 								Perl_Party_MouseUp(arg1);
 							</OnMouseUp>
+							<OnEnter>
+								Perl_Party_Tip();
+								UnitFrame_OnEnter();
+							</OnEnter>
+							<OnLeave>
+								UnitFrame_OnLeave();
+							</OnLeave>
 						</Scripts>
 					</Button>
 				</Frames>

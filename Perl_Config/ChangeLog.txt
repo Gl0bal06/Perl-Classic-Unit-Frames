@@ -1,3 +1,7 @@
+0.51 - March 28, 2006
+ - Config: The Not Installed page is now formatted for the new wider config frame
+ - Party: Mousing over the name frame will now display the proper tooltip
+
 0.50 - March 28, 2006
  - All: Updated TOC Interface version to 11000
  - All: Changed a lot of XML regarding 1.10 click to cast functionality

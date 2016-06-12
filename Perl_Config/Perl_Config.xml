@@ -63,7 +63,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Version_Text" inherits="GameFontNormal" text="Version 0.50">
+				<FontString name="$parent_Version_Text" inherits="GameFontNormal" text="Version 0.51">
 					<Anchors>
 						<Anchor point="TOPRIGHT">
 							<Offset>
@@ -276,7 +276,7 @@
 
 	<Frame name="Perl_Config_NotInstalled_Frame" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Size>
-			<AbsDimension x="450" y="380"/>
+			<AbsDimension x="600" y="380"/>
 		</Size>
 		<Anchors>
 			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Config_Frame">
@@ -285,19 +285,6 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
-		<!--
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<TileSize>
-				<AbsValue val="32"/>
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="32"/>
-			</EdgeSize>
-			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11"/>
-			</BackgroundInsets>
-		</Backdrop>
-		-->
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="Perl_Config_NotInstalled_Header" file="Interface\DialogFrame\UI-DialogBox-Header">

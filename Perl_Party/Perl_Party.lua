@@ -2108,7 +2108,12 @@ end
 -- Tooltip --
 -------------
 function Perl_Party_Tip()
-	UnitFrame_Initialize("party"..this:GetID())
+	local id = this:GetID();
+	if (id == 0) then
+		local name=this:GetName();
+		id = string.sub(name, 23, 23);
+	end
+	UnitFrame_Initialize("party"..id)
 end
 
 function UnitFrame_Initialize(unit)	-- Hopefully this doesn't break any mods
@@ -2124,7 +2129,7 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.50",
+			version = "v0.51",
 			releaseDate = "March 28, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
