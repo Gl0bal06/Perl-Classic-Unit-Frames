@@ -87,7 +87,6 @@ function Perl_Focus_OnLoad()
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Focus_OnEvent);
-	this:SetScript("OnHide", Perl_Focus_OnHide);
 	this:SetScript("OnUpdate", CombatFeedback_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)

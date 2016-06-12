@@ -90,14 +90,6 @@
 			<OnLoad>
 				Perl_Focus_OnLoad();
 			</OnLoad>
-			<!--
-			<OnHide>
-				Perl_Focus_OnHide();
-			</OnHide>
-			<OnShow>
-				Perl_Focus_OnShow();
-			</OnShow>
-			-->
 		</Scripts>
 
 		<Frames>

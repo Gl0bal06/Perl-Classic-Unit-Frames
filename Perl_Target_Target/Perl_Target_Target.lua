@@ -1175,7 +1175,7 @@ function Perl_Target_Target_ManaShow()
 		targettargetmana = 0;
 	end
 
-	if (UnitPowerType("targettarget") == 1) then
+	if (UnitPowerType("targettarget") == 1 or UnitPowerType("targettarget") == 2) then
 		Perl_Target_Target_ManaBarText:SetText(targettargetmana);
 	else
 		Perl_Target_Target_ManaBarText:SetText(targettargetmana.."/"..targettargetmanamax);
@@ -1287,7 +1287,7 @@ function Perl_Target_Target_Target_ManaShow()
 		targettargettargetmana = 0;
 	end
 
-	if (UnitPowerType("targettargettarget") == 1) then
+	if (UnitPowerType("targettargettarget") == 1 or UnitPowerType("targettargettarget") == 2) then
 		Perl_Target_Target_Target_ManaBarText:SetText(targettargettargetmana);
 	else
 		Perl_Target_Target_Target_ManaBarText:SetText(targettargettargetmana.."/"..targettargettargetmanamax);

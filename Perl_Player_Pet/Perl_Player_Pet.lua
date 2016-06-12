@@ -993,7 +993,7 @@ function Perl_Player_Pet_Target_ManaShow()
 		pettargetmana = 0;
 	end
 
-	if (UnitPowerType("pettarget") == 1) then
+	if (UnitPowerType("pettarget") == 1 or UnitPowerType("pettarget") == 2) then
 		Perl_Player_Pet_Target_ManaBarText:SetText(pettargetmana);
 	else
 		Perl_Player_Pet_Target_ManaBarText:SetText(pettargetmana.."/"..pettargetmanamax);

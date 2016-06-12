@@ -499,7 +499,7 @@ function Perl_Party_Target_ManaShow(self)
 		partytargetmana = 0;
 	end
 
-	if (UnitPowerType(self.unit) == 1) then
+	if (UnitPowerType(self.unit) == 1 or UnitPowerType(self.unit) == 2) then
 		self.manaBarText:SetText(partytargetmana);
 	else
 		self.manaBarText:SetText(partytargetmana.."/"..partytargetmanamax);

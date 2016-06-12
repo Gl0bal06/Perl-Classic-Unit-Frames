@@ -1,3 +1,10 @@
+2.25 - August 10, 2008
+ - All: Removed some optional dependencies that are no longer supported
+ - Focus: Removed an unused OnHide script
+ - Party: Fixed an issue with the fade bars
+ - PartyTarget/ToT: Focus now displays correctly when mousing over the power bar
+ - Pet: Focus now displays correctly when mousing over the pet target power bar
+
 2.24 - August 9, 2008
  - PartyTarget: Health values will correctly display a percent when no MobHealth is installed
  - Player: Changed the opacity of the experience bar to more easily see the texture

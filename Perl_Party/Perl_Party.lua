@@ -1230,11 +1230,11 @@ function Perl_Party_Two_ManaBar_Fade(arg1)
 	Perl_Party_Two_ManaBar_Fade_Time_Elapsed = Perl_Party_Two_ManaBar_Fade_Time_Elapsed + arg1;
 
 	if (UnitPowerType("party2") == 0) then
-		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_One_ManaBar_Fade_Color, Perl_Party_One_ManaBar_Fade_Color);
+		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, 0, Perl_Party_Two_ManaBar_Fade_Color, Perl_Party_Two_ManaBar_Fade_Color);
 	elseif (UnitPowerType("party2") == 1) then
-		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_One_ManaBar_Fade_Color, 0, 0, Perl_Party_One_ManaBar_Fade_Color);
+		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Two_ManaBar_Fade_Color, 0, 0, Perl_Party_Two_ManaBar_Fade_Color);
 	elseif (UnitPowerType("party2") == 3) then
-		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_One_ManaBar_Fade_Color, Perl_Party_One_ManaBar_Fade_Color, 0, Perl_Party_One_ManaBar_Fade_Color);
+		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Two_ManaBar_Fade_Color, Perl_Party_Two_ManaBar_Fade_Color, 0, Perl_Party_Two_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Party_One_ManaBar_Fade_Time_Elapsed > 1) then
