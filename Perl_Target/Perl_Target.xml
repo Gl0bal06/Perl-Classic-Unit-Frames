@@ -248,7 +248,7 @@
 			<!-- Target Class Frame -->
 			<Frame name="Perl_Target_ClassNameFrame">
 				<Size>
-					<AbsDimension x="70" y="24"/>
+					<AbsDimension x="90" y="24"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Target_NameFrame">

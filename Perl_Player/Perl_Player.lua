@@ -9,6 +9,7 @@ local xpbarstate = 1;		-- show default xp bar by default
 local compactmode = 0;		-- compact mode is disabled by default
 local showraidgroup = 1;	-- show the raid group number by default when in raids
 local scale = 1;		-- default scale
+local colorhealth = 0;		-- progressively colored health bars are off by default
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -166,6 +167,9 @@ function Perl_Player_SlashHandler(msg)
 		Perl_Player_Lock();
 	elseif (string.find(msg, "compact")) then
 		Perl_Player_Toggle_CompactMode();
+	elseif (string.find(msg, "health")) then
+		Perl_Player_ToggleColoredHealth();
+		return;
 	elseif (string.find(msg, "raid")) then
 		Perl_Player_Toggle_RaidGroupNumber();
 	elseif (string.find(msg, "scale")) then
@@ -206,6 +210,7 @@ function Perl_Player_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff compact |cffffff00- Toggle compact mode.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff health |cffffff00- Toggle the displaying of progressively colored health bars.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff raid |cffffff00- Toggle the displaying of your group number while in a raid.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp # |cffffff00- Set the display mode of the experience bar: 1) default, 2) pvp rank, 3) off");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/pp scale ui' to set to the current UI scale.");
@@ -239,7 +244,6 @@ function Perl_Player_Initialize()
 	Perl_Player_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Player_RaidGroupNumberFrame:SetBackdropColor(0, 0, 0, transparency);
 	Perl_Player_RaidGroupNumberFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, transparency);
-	Perl_Player_Frame:Hide();
 
 	Perl_Player_HealthBarText:SetTextColor(1,1,1,1);
 	Perl_Player_ManaBarText:SetTextColor(1,1,1,1);
@@ -319,6 +323,20 @@ function Perl_Player_Update_Health()
 	Perl_Player_HealthBar:SetMinMaxValues(0, playerhealthmax);
 	Perl_Player_HealthBar:SetValue(playerhealth);
 
+	if (colorhealth == 1) then
+		if ((playerhealthpercent <= 100) and (playerhealthpercent > 75)) then
+			Perl_Player_HealthBar:SetStatusBarColor(0, 0.8, 0);
+		elseif ((playerhealthpercent <= 75) and (playerhealthpercent > 50)) then
+			Perl_Player_HealthBar:SetStatusBarColor(1, 1, 0);
+		elseif ((playerhealthpercent <= 50) and (playerhealthpercent > 25)) then
+			Perl_Player_HealthBar:SetStatusBarColor(1, 0.5, 0);
+		else
+			Perl_Player_HealthBar:SetStatusBarColor(1, 0, 0);
+		end
+	else
+		Perl_Player_HealthBar:SetStatusBarColor(0, 0.8, 0);
+	end
+
 	if (compactmode == 0) then
 		Perl_Player_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
 		Perl_Player_HealthBarTextPercent:SetText(playerhealthpercent .. "%");
@@ -338,7 +356,11 @@ function Perl_Player_Update_Mana()
 
 	if (compactmode == 0) then
 		Perl_Player_ManaBarText:SetText(playermana.."/"..playermanamax);
-		Perl_Player_ManaBarTextPercent:SetText(playermanapercent .. "%");
+		if (UnitPowerType("player") == 0) then
+			Perl_Player_ManaBarTextPercent:SetText(playermanapercent .. "%");
+		else
+			Perl_Player_ManaBarTextPercent:SetText(playermana);
+		end
 	else
 		Perl_Player_ManaBarText:SetText();
 		Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
@@ -582,11 +604,29 @@ function Perl_Player_Set_Scale(number)
 	Perl_Player_UpdateVars();
 end
 
+function Perl_Player_ToggleColoredHealth()
+	if (colorhealth == 1) then
+		colorhealth = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now displaying |cffffffffSingle Colored Health Bars|cffffff00.");
+	else
+		colorhealth = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
+	end
+	Perl_Player_UpdateVars();
+	Perl_Player_Update_Health();
+end
+
 function Perl_Player_Status()
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffUnlocked|cffffff00.");
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffLocked|cffffff00.");
+	end
+
+	if (colorhealth == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying |cffffffffSingle Colored Health Bars|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
 	end
 
 	if (xpbarstate == 1) then
@@ -618,6 +658,7 @@ function Perl_Player_GetVars()
 	compactmode = Perl_Player_Config[UnitName("player")]["CompactMode"];
 	showraidgroup = Perl_Player_Config[UnitName("player")]["ShowRaidGroup"];
 	scale = Perl_Player_Config[UnitName("player")]["Scale"];
+	colorhealth = Perl_Player_Config[UnitName("player")]["ColorHealth"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -634,6 +675,9 @@ function Perl_Player_GetVars()
 	if (scale == nil) then
 		scale = 1;
 	end
+	if (colorhealth == nil) then
+		colorhealth = 0;
+	end
 end
 
 function Perl_Player_UpdateVars()
@@ -643,6 +687,7 @@ function Perl_Player_UpdateVars()
 						["CompactMode"] = compactmode,
 						["ShowRaidGroup"] = showraidgroup,
 						["Scale"] = scale,
+						["ColorHealth"] = colorhealth,
 	};
 end
 
@@ -745,8 +790,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.22",
-			releaseDate = "November 22, 2005",
+			version = "v0.23",
+			releaseDate = "November 28, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

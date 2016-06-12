@@ -10,6 +10,7 @@ local partyhidden = 0;		-- party frame is set to always show by default
 local partyspacing = -80;	-- default spacing between party member frames
 local scale = 1;		-- default scale
 local showpets = 1;		-- show pets by default
+local colorhealth = 0;		-- progressively colored health bars are off by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -178,6 +179,8 @@ function Perl_Party_SlashHandler(msg)
 		Perl_Party_Lock();
 	elseif (string.find(msg, "compact")) then
 		Perl_Party_Toggle_CompactMode();
+	elseif (string.find(msg, "health")) then
+		Perl_Party_ToggleColoredHealth();
 	elseif (string.find(msg, "hide")) then
 		Perl_Party_Toggle_Hide();
 	elseif (string.find(msg, "pets")) then
@@ -216,6 +219,7 @@ function Perl_Party_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff compact |cffffff00- Toggle compact mode.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff health |cffffff00- Toggle the displaying of progressively colored health bars.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff pets |cffffff00- Toggle the display of party pets.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff space # |cffffff00- Set the distance between the party member frames (80 is default)");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/ppty scale ui' to set to the current UI scale.");
@@ -345,6 +349,20 @@ function Perl_Party_Update_Health()
 	getglobal(this:GetName().."_StatsFrame_HealthBar"):SetMinMaxValues(0, partyhealthmax);
 	getglobal(this:GetName().."_StatsFrame_HealthBar"):SetValue(partyhealth);
 
+	if (colorhealth == 1) then
+		if ((partyhealthpercent <= 100) and (partyhealthpercent > 75)) then
+			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(0, 0.8, 0);
+		elseif ((partyhealthpercent <= 75) and (partyhealthpercent > 50)) then
+			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(1, 1, 0);
+		elseif ((partyhealthpercent <= 50) and (partyhealthpercent > 25)) then
+			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(1, 0.5, 0);
+		else
+			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(1, 0, 0);
+		end
+	else
+		getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(0, 0.8, 0);
+	end
+
 	if (compactmode == 0) then
 		getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText(partyhealth.."/"..partyhealthmax);
 		getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealthpercent.."%");
@@ -365,7 +383,13 @@ function Perl_Party_Update_Mana()
 
 	if (compactmode == 0) then
 		getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarText"):SetText(partymana.."/"..partymanamax);
-		getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymanapercent.."%");
+		if (UnitPowerType(partyid) == 0) then
+			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymanapercent.."%");
+		else
+			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana);
+			--Perl_Player_ManaBarTextPercent:SetText(playermana);
+		end
+		--getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymanapercent.."%");
 	else
 		getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarText"):SetText();
 		getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana.."/"..partymanamax);
@@ -446,6 +470,20 @@ function Perl_Party_Update_Pet_Health()
 
 		getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetMinMaxValues(0, partypethealthmax);
 		getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetValue(partypethealth);
+
+		if (colorhealth == 1) then
+			if ((partypethealthpercent <= 100) and (partypethealthpercent > 75)) then
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(0, 0.8, 0);
+			elseif ((partypethealthpercent <= 75) and (partypethealthpercent > 50)) then
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(1, 1, 0);
+			elseif ((partypethealthpercent <= 50) and (partypethealthpercent > 25)) then
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(1, 0.5, 0);
+			else
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(1, 0, 0);
+			end
+		else
+			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(0, 0.8, 0);
+		end
 
 		if (compactmode == 0) then
 			getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText(partypethealth.."/"..partypethealthmax);
@@ -765,11 +803,28 @@ function Perl_Party_Set_Scale(number)
 	Perl_Party_UpdateVars();
 end
 
+function Perl_Party_ToggleColoredHealth()
+	if (colorhealth == 1) then
+		colorhealth = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying |cffffffffSingle Colored Health Bars|cffffff00.");
+	else
+		colorhealth = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
+	end
+	Perl_Party_UpdateVars();
+end
+
 function Perl_Party_Status()
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffUnlocked|cffffff00.");
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is |cffffffffLocked|cffffff00.");
+	end
+
+	if (colorhealth == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is displaying |cffffffffSingle Colored Health Bars|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
 	end
 
 	if (partyhidden == 0) then
@@ -804,6 +859,7 @@ function Perl_Party_GetVars()
 	partyspacing = Perl_Party_Config[UnitName("player")]["PartySpacing"];
 	scale = Perl_Party_Config[UnitName("player")]["Scale"];
 	showpets = Perl_Party_Config[UnitName("player")]["ShowPets"];
+	colorhealth = Perl_Party_Config[UnitName("player")]["ColorHealth"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -823,6 +879,9 @@ function Perl_Party_GetVars()
 	if (showpets == nil) then
 		showpets = 1;
 	end
+	if (colorhealth == nil) then
+		colorhealth = 0;
+	end
 end
 
 function Perl_Party_UpdateVars()
@@ -833,7 +892,35 @@ function Perl_Party_UpdateVars()
 					["PartySpacing"] = partyspacing,
 					["Scale"] = scale,
 					["ShowPets"] = showpets,
+					["ColorHealth"] = colorhealth,
 	};
+end
+
+
+------------------------------
+-- Common Related Functions --
+------------------------------
+function Perl_Party_SetVars(vartable)
+	if (vartable["locked"]) then
+		state = vartable["locked"];
+	end
+	if (vartable["compactmode"]) then
+		healthpersist = vartable["compactmode"];
+	end
+	if (vartable["partyhidden"]) then
+		manapersist = vartable["partyhidden"];
+	end
+	if (vartable["partyspacing"]) then
+		locked = vartable["partyspacing"];
+	end
+	if (vartable["scale"]) then
+		locked = vartable["scale"];
+	end
+	if (vartable["showpets"]) then
+		locked = vartable["showpets"];
+	end
+	--Perl_CombatDisplay_UpdateDisplay();
+	Perl_Party_UpdateVars();
 end
 
 
@@ -841,7 +928,8 @@ end
 -- Buff Functions --
 --------------------
 function Perl_Party_Buff_UpdateAll()
-	local partyid = "party"..this:GetID();
+	local id = this:GetID();
+	local partyid = "party"..id;
 	if (UnitName(partyid)) then
 		for buffnum=1,12 do
 			local button = getglobal(this:GetName().."_BuffFrame_Buff"..buffnum);
@@ -855,6 +943,12 @@ function Perl_Party_Buff_UpdateAll()
 			else
 				button:Hide();
 			end
+		end
+
+		if (showpets == 1 and UnitIsConnected(partyid) and UnitExists("partypet"..id)) then
+			getglobal(this:GetName().."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "$parent_Buff1", "BOTTOMLEFT", 197, 86);
+		else
+			getglobal(this:GetName().."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "$parent_Buff1", "BOTTOMLEFT", 197, 74);
 		end
 
 		local debuffCount, debuffTexture, debuffApplications;
@@ -980,8 +1074,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.22",
-			releaseDate = "November 22, 2005",
+			version = "v0.23",
+			releaseDate = "November 28, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

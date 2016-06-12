@@ -13,10 +13,20 @@ local numbuffsshown = 16;	-- buff row is 16 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
 local mobhealthsupport = 1;	-- mobhealth support is on by default
 local scale = 1;		-- default scale
+local colorhealth = 0;		-- progressively colored health bars are off by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 local transparency = 1;		-- 0.8 default from perl
+local UnitReactionColor = {
+	{ r = 1.0, g = 0.0, b = 0.0 },
+	{ r = 1.0, g = 0.0, b = 0.0 },
+	{ r = 1.0, g = 0.5, b = 0.0 },
+	{ r = 1.0, g = 1.0, b = 0.0 },
+	{ r = 0.0, g = 1.0, b = 0.0 },
+	{ r = 0.0, g = 1.0, b = 0.0 },
+	{ r = 0.0, g = 1.0, b = 0.0 },
+};
 
 -- Variables for position of the class icon texture.
 local Perl_Target_ClassPosRight = {
@@ -192,6 +202,9 @@ function Perl_Target_SlashHandler(msg)
 	elseif (string.find(msg, "mobhealth")) then
 		Perl_Target_ToggleMobHealth();
 		return;
+	elseif (string.find(msg, "health")) then
+		Perl_Target_ToggleColoredHealth();
+		return;
 	elseif (string.find(msg, "status")) then
 		Perl_Target_Status();
 		return;
@@ -245,6 +258,7 @@ function Perl_Target_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Target Frame ---");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff health |cffffff00- Toggle the displaying of progressively colored health bars.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff combopoints |cffffff00- Toggle the displaying of combo points.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff class |cffffff00- Toggle the displaying of class frame.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff icon |cffffff00- Toggle the displaying of class icon.");
@@ -360,9 +374,24 @@ end
 function Perl_Target_Update_Health()
 	local targethealth = UnitHealth("target");
 	local targethealthmax = UnitHealthMax("target");
+	local targethealthpercent = floor(targethealth/targethealthmax*100+0.5);
 
 	Perl_Target_HealthBar:SetMinMaxValues(0, targethealthmax);
 	Perl_Target_HealthBar:SetValue(targethealth);
+
+	if (colorhealth == 1) then
+		if ((targethealthpercent <= 100) and (targethealthpercent > 75)) then
+			Perl_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
+		elseif ((targethealthpercent <= 75) and (targethealthpercent > 50)) then
+			Perl_Target_HealthBar:SetStatusBarColor(1, 1, 0);
+		elseif ((targethealthpercent <= 50) and (targethealthpercent > 25)) then
+			Perl_Target_HealthBar:SetStatusBarColor(1, 0.5, 0);
+		else
+			Perl_Target_HealthBar:SetStatusBarColor(1, 0, 0);
+		end
+	else
+		Perl_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
+	end
 
 	if (targethealthmax == 100) then
 		-- Begin Mobhealth support
@@ -433,8 +462,8 @@ function Perl_Target_Update_Mana()
 	Perl_Target_ManaBar:SetMinMaxValues(0, targetmanamax);
 	Perl_Target_ManaBar:SetValue(targetmana);
 
-	if (targetmanamax == 100) then
-		Perl_Target_ManaBarText:SetText(targetmana.."%");
+	if (UnitPowerType("target") == 1 or UnitPowerType("target") == 2) then
+		Perl_Target_ManaBarText:SetText(targetmana);
 	else
 		Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
 	end
@@ -522,15 +551,12 @@ end
 
 function Perl_Target_Update_PvP_Status_Icon()
 	if (showpvpicon == 1) then
-		-- Set pvp status icon
-		if (UnitIsPVP("target")) then
-			if (UnitFactionGroup("target") == "Alliance") then
-				Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-Alliance");
-			elseif (UnitFactionGroup("target") == "Horde") then
-				Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-Horde");
-			else
-				Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
-			end
+		local factionGroup = UnitFactionGroup("target");
+		if (UnitIsPVPFreeForAll("target")) then
+			Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
+			Perl_Target_PVPStatus:Show();
+		elseif (factionGroup and UnitIsPVP("target")) then
+			Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
 			Perl_Target_PVPStatus:Show();
 		else
 			Perl_Target_PVPStatus:Hide();
@@ -541,30 +567,48 @@ function Perl_Target_Update_PvP_Status_Icon()
 end
 
 function Perl_Target_Update_Text_Color()
-	-- Set Text Color
-	if (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
-		Perl_Target_NameBarText:SetTextColor(0.5,0.5,0.5);
-	elseif (UnitIsPlayer("target")) then
-		if (UnitFactionGroup("player") == UnitFactionGroup("target")) then
-			if (UnitIsPVP("target")) then
-				Perl_Target_NameBarText:SetTextColor(0,1,0);		-- friendly pvp enabled character
-			else
-				Perl_Target_NameBarText:SetTextColor(0.5,0.5,1);	-- friendly non pvp enabled character
+	if (UnitIsPlayer("target") or UnitPlayerControlled("target")) then		-- is it a player
+		local r, g, b;
+		if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
+			-- Hostile players are red
+			if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
+				r = 0.5;
+				g = 0.5;
+				b = 1.0;
+			else								-- enemy is pvp enabled
+				r = 1.0;
+				g = 0.0;
+				b = 0.0;
 			end
-		else
-			if (UnitIsPVP("target")) then
-				Perl_Target_NameBarText:SetTextColor(1,1,0);		-- hostile pvp enabled character
-			else
-				Perl_Target_NameBarText:SetTextColor(0.5,0.5,1);	-- hostile non pvp enabled character
-			end
+		elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
+			-- Players we can attack but which are not hostile are yellow
+			r = 1.0;
+			g = 1.0;
+			b = 0.0;
+		elseif (UnitIsPVP("target")) then					-- friendly pvp enabled character
+			-- Players we can assist but are PvP flagged are green
+			r = 0.0;
+			g = 1.0;
+			b = 0.0;
+		else									-- friendly non pvp enabled character
+			-- All other players are blue (the usual state on the "blue" server)
+			r = 0.5;
+			g = 0.5;
+			b = 1.0;
 		end
+		Perl_Target_NameBarText:SetTextColor(r, g, b);
+	elseif (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
+		Perl_Target_NameBarText:SetTextColor(0.5,0.5,0.5);			-- not our tap
 	else
-		if (UnitFactionGroup("player") == UnitFactionGroup("target")) then
-			Perl_Target_NameBarText:SetTextColor(0,1,0);			-- friendly npc
-		elseif (UnitIsEnemy("player", "target")) then
-			Perl_Target_NameBarText:SetTextColor(1,0,0);			-- hostile npc
+		local reaction = UnitReaction("target", "player");
+		if (reaction) then
+			local r, g, b;
+			r = UnitReactionColor[reaction].r;
+			g = UnitReactionColor[reaction].g;
+			b = UnitReactionColor[reaction].b;
+			Perl_Target_NameBarText:SetTextColor(r, g, b);
 		else
-			Perl_Target_NameBarText:SetTextColor(1,1,0);			-- everything else
+			Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
 		end
 	end
 end
@@ -756,11 +800,29 @@ function Perl_Target_Set_Scale(number)
 	Perl_Target_UpdateVars();
 end
 
+function Perl_Target_ToggleColoredHealth()
+	if (colorhealth == 1) then
+		colorhealth = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is now displaying |cffffffffSingle Colored Health Bars|cffffff00.");
+	else
+		colorhealth = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is now displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
+	end
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
+end
+
 function Perl_Target_Status()
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffUnlocked|cffffff00.");
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is |cffffffffLocked|cffffff00.");
+	end
+
+	if (colorhealth == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffffSingle Colored Health Bars|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
 	end
 
 	if (showcp == 0) then
@@ -803,6 +865,7 @@ function Perl_Target_GetVars()
 	numdebuffsshown = Perl_Target_Config[UnitName("player")]["Debuffs"];
 	mobhealthsupport = Perl_Target_Config[UnitName("player")]["MobHealthSupport"];
 	scale = Perl_Target_Config[UnitName("player")]["Scale"];
+	colorhealth = Perl_Target_Config[UnitName("player")]["ColorHealth"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -835,6 +898,9 @@ function Perl_Target_GetVars()
 	if (scale == nil) then
 		scale = 1;
 	end
+	if (colorhealth == nil) then
+		colorhealth = 0;
+	end
 end
 
 function Perl_Target_UpdateVars()
@@ -848,6 +914,7 @@ function Perl_Target_UpdateVars()
 						["Debuffs"] = numdebuffsshown,
 						["MobHealthSupport"] = mobhealthsupport,
 						["Scale"] = scale,
+						["ColorHealth"] = colorhealth,
 						};
 end
 
@@ -1100,8 +1167,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.22",
-			releaseDate = "November 22, 2005",
+			version = "v0.23",
+			releaseDate = "November 28, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

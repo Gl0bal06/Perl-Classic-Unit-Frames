@@ -9,6 +9,7 @@ local showxp = 0;			-- xp bar is hidden by default
 local scale = 1;			-- default scale
 local numpetbuffsshown = 16;		-- buff row is 16 long
 local numpetdebuffsshown = 16;		-- debuff row is 16 long
+local colorhealth = 0;			-- progressively colored health bars are off by default
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -22,7 +23,6 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("PLAYER_PET_CHANGED");
-	this:RegisterEvent("PLAYER_XP_UPDATE");
 	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_FOCUS");
@@ -32,6 +32,7 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("UNIT_MANA");
 	this:RegisterEvent("UNIT_NAME_UPDATE");
 	this:RegisterEvent("UNIT_PET");
+	this:RegisterEvent("UNIT_PET_EXPERIENCE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Slash Commands
@@ -74,7 +75,7 @@ function Perl_Player_Pet_OnEvent(event)
 			Perl_Player_Pet_Buff_UpdateAll();	-- Update the buff/debuff list
 		end
 		return;
-	elseif (event == "PLAYER_XP_UPDATE") then
+	elseif (event == "UNIT_PET_EXPERIENCE") then
 		if (showxp == 1) then
 			Perl_Player_Pet_Update_Experience();	-- Set the experience bar info
 		end
@@ -123,6 +124,9 @@ function Perl_Player_Pet_SlashHandler(msg)
 		Perl_Player_Pet_Lock();
 	elseif (string.find(msg, "xp")) then
 		Perl_Player_Pet_Toggle_XPMode();
+	elseif (string.find(msg, "health")) then
+		Perl_Player_Pet_ToggleColoredHealth();
+		return;
 	elseif (string.find(msg, "debuffs")) then
 		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
 		if (arg1 ~= "") then
@@ -176,6 +180,7 @@ function Perl_Player_Pet_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp |cffffff00- Toggle the pet experience bar.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff health |cffffff00- Toggle the displaying of progressively colored health bars.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs # |cffffff00- Show the number of buffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuffs # |cffffff00- Show the number of debuffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff scale # |cffffff00- Set the scale. (1-149) You may also do '/ppp scale ui' to set to the current UI scale.");
@@ -256,6 +261,21 @@ function Perl_Player_Pet_Update_Health()
 
 	Perl_Player_Pet_HealthBar:SetMinMaxValues(0, pethealthmax);
 	Perl_Player_Pet_HealthBar:SetValue(pethealth);
+
+	if (colorhealth == 1) then
+		local playerpethealthpercent = floor(pethealth/pethealthmax*100+0.5);
+		if ((playerpethealthpercent <= 100) and (playerpethealthpercent > 75)) then
+			Perl_Player_Pet_HealthBar:SetStatusBarColor(0, 0.8, 0);
+		elseif ((playerpethealthpercent <= 75) and (playerpethealthpercent > 50)) then
+			Perl_Player_Pet_HealthBar:SetStatusBarColor(1, 1, 0);
+		elseif ((playerpethealthpercent <= 50) and (playerpethealthpercent > 25)) then
+			Perl_Player_Pet_HealthBar:SetStatusBarColor(1, 0.5, 0);
+		else
+			Perl_Player_Pet_HealthBar:SetStatusBarColor(1, 0, 0);
+		end
+	else
+		Perl_Player_Pet_HealthBar:SetStatusBarColor(0, 0.8, 0);
+	end
 
 	if (pethealthmax == 100) then
 		Perl_Player_Pet_HealthBarText:SetText(pethealth.."%");
@@ -414,11 +434,29 @@ function Perl_Player_Pet_Set_Scale(number)
 	Perl_Player_Pet_UpdateVars();
 end
 
+function Perl_Player_Pet_ToggleColoredHealth()
+	if (colorhealth == 1) then
+		colorhealth = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now displaying |cffffffffSingle Colored Health Bars|cffffff00.");
+	else
+		colorhealth = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is now displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
+	end
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Update_Health();
+end
+
 function Perl_Player_Pet_Status()
 	if (locked == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffUnlocked|cffffff00.");
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Pet Frame is |cffffffffLocked|cffffff00.");
+	end
+
+	if (colorhealth == 0) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying |cffffffffSingle Colored Health Bars|cffffff00.");
+	else
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
 	end
 
 	if (showxp == 0) then
@@ -439,6 +477,7 @@ function Perl_Player_Pet_GetVars()
 	scale = Perl_Player_Pet_Config[UnitName("player")]["Scale"];
 	numpetbuffsshown = Perl_Player_Pet_Config[UnitName("player")]["Buffs"];
 	numpetdebuffsshown = Perl_Player_Pet_Config[UnitName("player")]["Debuffs"];
+	colorhealth = Perl_Player_Pet_Config[UnitName("player")]["ColorHealth"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -455,6 +494,9 @@ function Perl_Player_Pet_GetVars()
 	if (numpetdebuffsshown == nil) then
 		numpetdebuffsshown = 16;
 	end
+	if (colorhealth == nil) then
+		colorhealth = 0;
+	end
 end
 
 function Perl_Player_Pet_UpdateVars()
@@ -464,6 +506,7 @@ function Perl_Player_Pet_UpdateVars()
 		["Scale"] = scale,
 		["Buffs"] = numpetbuffsshown,
 		["Debuffs"] = numpetdebuffsshown,
+		["ColorHealth"] = colorhealth,
 	};
 end
 
@@ -602,8 +645,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.22",
-			releaseDate = "November 22, 2005",
+			version = "v0.23",
+			releaseDate = "November 28, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

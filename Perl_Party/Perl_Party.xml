@@ -622,7 +622,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Buff1" relativePoint="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="197" y="74"/> <!-- 0, -5 -->
+									<AbsDimension x="197" y="74"/> <!-- 197, 74 -->
 								</Offset>
 							</Anchor>
 						</Anchors>

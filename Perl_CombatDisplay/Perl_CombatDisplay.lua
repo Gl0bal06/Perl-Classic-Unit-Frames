@@ -9,6 +9,7 @@ local manapersist = 0;
 local healthpersist = 0;
 local locked = 0;
 local scale = 1;
+local colorhealth = 0;		-- progressively colored health bars are off by default
 
 -- Default Local Variables
 local healthfull = 0;
@@ -211,6 +212,9 @@ function Perl_CombatDisplay_SlashHandler(msg)
 			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number. (1-149)  You may also do '/pcd scale ui' to set to the current UI scale.");
 			return;
 		end
+	elseif (string.find(msg, "health")) then
+		Perl_CombatDisplay_ToggleColoredHealth();
+		return;
 	else
 		Perl_CombatDisplay_Options_Toggle();
 	end
@@ -285,6 +289,21 @@ function Perl_CombatDisplay_Update_Health()
 	local playerhealth = UnitHealth("player");
 	local playerhealthmax = UnitHealthMax("player");
 
+	if (colorhealth == 1) then
+		local playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
+		if ((playerhealthpercent <= 100) and (playerhealthpercent > 75)) then
+			Perl_CombatDisplay_HealthBar:SetStatusBarColor(0, 0.8, 0);
+		elseif ((playerhealthpercent <= 75) and (playerhealthpercent > 50)) then
+			Perl_CombatDisplay_HealthBar:SetStatusBarColor(1, 1, 0);
+		elseif ((playerhealthpercent <= 50) and (playerhealthpercent > 25)) then
+			Perl_CombatDisplay_HealthBar:SetStatusBarColor(1, 0.5, 0);
+		else
+			Perl_CombatDisplay_HealthBar:SetStatusBarColor(1, 0, 0);
+		end
+	else
+		Perl_CombatDisplay_HealthBar:SetStatusBarColor(0, 0.8, 0);
+	end
+
 	Perl_CombatDisplay_HealthBar:SetMinMaxValues(0, playerhealthmax);
 	Perl_CombatDisplay_HealthBar:SetValue(playerhealth);
 	Perl_CombatDisplay_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
@@ -358,12 +377,25 @@ function Perl_CombatDisplay_Set_Scale(number)
 	Perl_CombatDisplay_UpdateVars();
 end
 
+function Perl_CombatDisplay_ToggleColoredHealth()
+	if (colorhealth == 1) then
+		colorhealth = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00CombatDisplay Frame is now displaying |cffffffffSingle Colored Health Bars|cffffff00.");
+	else
+		colorhealth = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00CombatDisplay Frame is now displaying |cffffffffProgressively Colored Health Bars|cffffff00.");
+	end
+	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_Update_Health();
+end
+
 function Perl_CombatDisplay_GetVars()
 	state = Perl_CombatDisplay_Config[UnitName("player")]["State"];
 	locked = Perl_CombatDisplay_Config[UnitName("player")]["Locked"];
 	healthpersist = Perl_CombatDisplay_Config[UnitName("player")]["HealthPersist"];
 	manapersist = Perl_CombatDisplay_Config[UnitName("player")]["ManaPersist"];
 	scale = Perl_CombatDisplay_Config[UnitName("player")]["Scale"];
+	colorhealth = Perl_CombatDisplay_Config[UnitName("player")]["ColorHealth"];
 
 	if (state == nil) then
 		state = 3;
@@ -379,6 +411,9 @@ function Perl_CombatDisplay_GetVars()
 	end
 	if (scale == nil) then
 		scale = 1;
+	end
+	if (colorhealth == nil) then
+		colorhealth = 0;
 	end
 
 	local vars = {
@@ -398,6 +433,7 @@ function Perl_CombatDisplay_UpdateVars()
 							["HealthPersist"] = healthpersist,
 							["ManaPersist"] = manapersist,
 							["Scale"] = scale,
+							["ColorHealth"] = colorhealth,
 	};
 end
 
@@ -405,7 +441,7 @@ end
 ------------------------------
 -- Common Related Functions --
 ------------------------------
-function Perl_CombatDisplay_SetVars (vartable)
+function Perl_CombatDisplay_SetVars(vartable)
 	if (vartable["state"]) then
 		state = vartable["state"];
 	end
@@ -445,8 +481,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.22",
-			releaseDate = "November 22, 2005",
+			version = "v0.23",
+			releaseDate = "November 28, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
