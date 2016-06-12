@@ -1879,6 +1879,9 @@ function Perl_Player_Pet_Target_DropDown_Initialize()
 		menu = "VEHICLE";
 	elseif (UnitIsUnit("pettarget", "pet")) then
 		menu = "PET";
+	elseif (UnitIsOtherPlayersPet("pettarget")) then
+		SetPendingReportTarget("pettarget");
+		menu = "OTHERPET";
 	elseif (UnitIsPlayer("pettarget")) then
 		id = UnitInRaid("pettarget");
 		if (id) then

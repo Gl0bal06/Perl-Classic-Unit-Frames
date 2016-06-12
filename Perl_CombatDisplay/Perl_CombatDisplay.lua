@@ -473,7 +473,7 @@ function Perl_CombatDisplay_Update_Mana()
 
 	if (showdruidbar == 1) then
 		_, englishclass = UnitClass("player");
-		if (englishclass == "DRUID") then
+		if (englishclass == "DRUID" or englishclass == "MONK") then
 			if (playerpower > 0) then
 				playerdruidbarmana = UnitPower("player", 0);
 				playerdruidbarmanamax = UnitPowerMax("player", 0);
@@ -1134,7 +1134,7 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_Target_Frame:Hide();
 	end
 
-	if (showdruidbar == 1 and englishclass == "DRUID") then
+	if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK")) then
 		Perl_CombatDisplay_ManaFrame:SetHeight(Perl_CombatDisplay_ManaFrame:GetHeight() + 12);
 		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 12);
 		Perl_CombatDisplay_DruidBar:Show();
@@ -1154,7 +1154,7 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_CPBar:Show();
 		Perl_CombatDisplay_CPBarBG:Show();
 		Perl_CombatDisplay_CPBar:SetMinMaxValues(0, 5);
-		if (showdruidbar == 1 and englishclass == "DRUID") then
+		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK")) then
 			Perl_CombatDisplay_CPBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_DruidBar", "BOTTOMLEFT", 0, -2);
 		else
 			Perl_CombatDisplay_CPBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_ManaBar", "BOTTOMLEFT", 0, -2);
@@ -1171,9 +1171,9 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_PetHealthBarBG:Show();
 		Perl_CombatDisplay_PetManaBar:Show();
 		Perl_CombatDisplay_PetManaBarBG:Show();
-		if (showdruidbar == 1 and showcp == 0 and englishclass == "DRUID") then
+		if (showdruidbar == 1 and showcp == 0 and (englishclass == "DRUID" or englishclass == "MONK")) then
 			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_DruidBar", "BOTTOMLEFT", 0, -2);
-		elseif (showdruidbar == 1 and showcp == 1 and englishclass == "DRUID") then
+		elseif (showdruidbar == 1 and showcp == 1 and (englishclass == "DRUID" or englishclass == "MONK")) then
 			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_CPBar", "BOTTOMLEFT", 0, -2);
 		elseif (showcp == 1) then
 			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_CPBar", "BOTTOMLEFT", 0, -2);
@@ -1626,6 +1626,9 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 			menu = "VEHICLE";
 		elseif (UnitIsUnit("target", "pet")) then
 			menu = "PET";
+		elseif (UnitIsOtherPlayersPet("target")) then
+			SetPendingReportTarget("target");
+			menu = "OTHERPET";
 		elseif (UnitIsPlayer("target")) then
 			id = UnitInRaid("target");
 			if (id) then

@@ -1,24 +1,12 @@
 --if (GetLocale() == "enUS") then	-- Bypassing this allows us to at least give other languages English since they aren't fully translated
 	-- Generic Globals that do NOT need localizing
-	PERL_LOCALIZED_VERSION_NUMBER = "4.09";
-	PERL_LOCALIZED_DATE = "December 24, 2011";
+	PERL_LOCALIZED_VERSION_NUMBER = "5.01 Beta 1";
+	PERL_LOCALIZED_DATE = "June 30, 2012";
 	PERL_LOCALIZED_BUFF_NONE = "none";
 
 	-- Title and Version
 	PERL_LOCALIZED_NAME = "Perl Classic Unit Frames";
 	PERL_LOCALIZED_VERSION = "Version "..PERL_LOCALIZED_VERSION_NUMBER;
-
-	-- Class Names
-	PERL_LOCALIZED_DEATHKNIGHT = "Death Knight";
-	PERL_LOCALIZED_DRUID = "Druid";
-	PERL_LOCALIZED_HUNTER = "Hunter";
-	PERL_LOCALIZED_MAGE = "Mage";
-	PERL_LOCALIZED_PALADIN = "Paladin";
-	PERL_LOCALIZED_PRIEST = "Priest";
-	PERL_LOCALIZED_ROGUE = "Rogue";
-	PERL_LOCALIZED_SHAMAN = "Shaman";
-	PERL_LOCALIZED_WARLOCK = "Warlock";
-	PERL_LOCALIZED_WARRIOR = "Warrior";
 
 	-- Creature Types
 	PERL_LOCALIZED_CREATURE = "Creature";
@@ -48,7 +36,7 @@
 
 	-- Perl Player Strings
 	PERL_LOCALIZED_PLAYER_GROUP = "Group ";
-	PERL_LOCALIZED_PLAYER_LEVEL_EIGHTY_FIVE = "Level 85";
+	PERL_LOCALIZED_PLAYER_LEVEL_NINETY = "Level 90";
 	PERL_LOCALIZED_PLAYER_NOMORE_EXPERIENCE = "You can't gain anymore experience!";
 	PERL_LOCALIZED_PLAYER_REACTIONNAME_ONE = "Hated";
 	PERL_LOCALIZED_PLAYER_REACTIONNAME_TWO = "Hostile";

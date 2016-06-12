@@ -1,16 +1,4 @@
 if (GetLocale() == "deDE") then
-	-- Class Names
-	PERL_LOCALIZED_DEATHKNIGHT = "Todesritter";
-	PERL_LOCALIZED_DRUID = "Druide";
-	PERL_LOCALIZED_HUNTER = "J\195\164ger";
-	PERL_LOCALIZED_MAGE = "Magier";
-	PERL_LOCALIZED_PALADIN = "Paladin";
-	PERL_LOCALIZED_PRIEST = "Priester";
-	PERL_LOCALIZED_ROGUE = "Schurke";
-	PERL_LOCALIZED_SHAMAN = "Schamane";
-	PERL_LOCALIZED_WARLOCK = "Hexenmeister";
-	PERL_LOCALIZED_WARRIOR = "Krieger";
-
 	-- Creature Types
 	PERL_LOCALIZED_CREATURE = "Kreatur";
 	PERL_LOCALIZED_NOTSPECIFIED = "Nicht spezifiziert";
@@ -39,7 +27,7 @@ if (GetLocale() == "deDE") then
 
 	-- Perl Player Strings
 	PERL_LOCALIZED_PLAYER_GROUP = "Gruppe ";
-	PERL_LOCALIZED_PLAYER_LEVEL_EIGHTY_FIVE = "Level 85";
+	PERL_LOCALIZED_PLAYER_LEVEL_NINETY = "Level 90";
 	PERL_LOCALIZED_PLAYER_NOMORE_EXPERIENCE = "Du kannst keine Erfahrung mehr erhalten!";
 	PERL_LOCALIZED_PLAYER_REACTIONNAME_ONE = "Hasserf\195\188llt";
 	PERL_LOCALIZED_PLAYER_REACTIONNAME_TWO = "Feindselig";

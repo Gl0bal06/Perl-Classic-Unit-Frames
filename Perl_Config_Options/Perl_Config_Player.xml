@@ -749,6 +749,27 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton34" inherits="UICheckButtonTemplate" id="34">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton33">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_HARMONY_BAR_FRAME);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Show_Harmony_Bar_Frame_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
 		</Frames>
 
 	</Frame>

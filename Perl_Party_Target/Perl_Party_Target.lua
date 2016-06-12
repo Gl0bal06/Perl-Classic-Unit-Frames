@@ -47,7 +47,7 @@ function Perl_Party_Target_Script_OnLoad(self)
 	-- Events
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
-	self:RegisterEvent("RAID_ROSTER_UPDATE");
+	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 
 	-- Scripts
 	self:SetScript("OnEvent", 
@@ -85,7 +85,7 @@ end
 ------------
 -- Events --
 ------------
-function Perl_Party_Target_Events:RAID_ROSTER_UPDATE()
+function Perl_Party_Target_Events:GROUP_ROSTER_UPDATE()
 	Perl_Party_Target_Check_Hidden();
 end
 
@@ -1133,6 +1133,9 @@ function Perl_Party_Target1DropDown_Initialize()
 		menu = "VEHICLE";
 	elseif (UnitIsUnit(currentunit, "pet")) then
 		menu = "PET";
+	elseif (UnitIsOtherPlayersPet(currentunit)) then
+		SetPendingReportTarget(currentunit);
+		menu = "OTHERPET";
 	elseif (UnitIsPlayer(currentunit)) then
 		id = UnitInRaid(currentunit);
 		if (id) then
@@ -1163,6 +1166,9 @@ function Perl_Party_Target2DropDown_Initialize()
 		menu = "VEHICLE";
 	elseif (UnitIsUnit(currentunit, "pet")) then
 		menu = "PET";
+	elseif (UnitIsOtherPlayersPet(currentunit)) then
+		SetPendingReportTarget(currentunit);
+		menu = "OTHERPET";
 	elseif (UnitIsPlayer(currentunit)) then
 		id = UnitInRaid(currentunit);
 		if (id) then
@@ -1194,6 +1200,9 @@ function Perl_Party_Target3DropDown_Initialize()
 		menu = "VEHICLE";
 	elseif (UnitIsUnit(currentunit, "pet")) then
 		menu = "PET";
+	elseif (UnitIsOtherPlayersPet(currentunit)) then
+		SetPendingReportTarget(currentunit);
+		menu = "OTHERPET";
 	elseif (UnitIsPlayer(currentunit)) then
 		id = UnitInRaid(currentunit);
 		if (id) then
@@ -1225,6 +1234,9 @@ function Perl_Party_Target4DropDown_Initialize()
 		menu = "VEHICLE";
 	elseif (UnitIsUnit(currentunit, "pet")) then
 		menu = "PET";
+	elseif (UnitIsOtherPlayersPet(currentunit)) then
+		SetPendingReportTarget(currentunit);
+		menu = "OTHERPET";
 	elseif (UnitIsPlayer(currentunit)) then
 		id = UnitInRaid(currentunit);
 		if (id) then
@@ -1256,6 +1268,9 @@ function Perl_Party_Target5DropDown_Initialize()
 		menu = "VEHICLE";
 	elseif (UnitIsUnit(currentunit, "pet")) then
 		menu = "PET";
+	elseif (UnitIsOtherPlayersPet(currentunit)) then
+		SetPendingReportTarget(currentunit);
+		menu = "OTHERPET";
 	elseif (UnitIsPlayer(currentunit)) then
 		id = UnitInRaid(currentunit);
 		if (id) then

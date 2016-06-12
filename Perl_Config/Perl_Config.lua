@@ -44,56 +44,6 @@ local eventqueuetotal = 0;			-- variable to check how many queued events we have
 -- Local variables to save memory
 local playerClass;
 
--- Variables for position of the class icon texture.
-PCUF_CLASSPOSRIGHT = {
-	["DEATHKNIGHT"] = 0.25,
-	["DRUID"] = 0.75,
-	["HUNTER"] = 0,
-	["MAGE"] = 0.25,
-	["PALADIN"] = 0,
-	["PRIEST"] = 0.5,
-	["ROGUE"] = 0.5,
-	["SHAMAN"] = 0.25,
-	["WARLOCK"] = 0.75,
-	["WARRIOR"] = 0,
-};
-PCUF_CLASSPOSLEFT = {
-	["DEATHKNIGHT"] = 0.5,
-	["DRUID"] = 1,
-	["HUNTER"] = 0.25,
-	["MAGE"] = 0.5,
-	["PALADIN"] = 0.25,
-	["PRIEST"] = 0.75,
-	["ROGUE"] = 0.75,
-	["SHAMAN"] = 0.5,
-	["WARLOCK"] = 1,
-	["WARRIOR"] = 0.25,
-};
-PCUF_CLASSPOSTOP = {
-	["DEATHKNIGHT"] = 0.5,
-	["DRUID"] = 0,
-	["HUNTER"] = 0.25,
-	["MAGE"] = 0,
-	["PALADIN"] = 0.5,
-	["PRIEST"] = 0.25,
-	["ROGUE"] = 0,
-	["SHAMAN"] = 0.25,
-	["WARLOCK"] = 0.25,
-	["WARRIOR"] = 0,
-};
-PCUF_CLASSPOSBOTTOM = {
-	["DEATHKNIGHT"] = 0.75,
-	["DRUID"] = 0.25,
-	["HUNTER"] = 0.5,
-	["MAGE"] = 0.25,
-	["PALADIN"] = 0.75,
-	["PRIEST"] = 0.5,
-	["ROGUE"] = 0.25,
-	["SHAMAN"] = 0.5,
-	["WARLOCK"] = 0.5,
-	["WARRIOR"] = 0.25,
-};
-
 
 ----------------------
 -- Loading Function --
@@ -1498,6 +1448,7 @@ function Perl_Config_Global_Save_Settings()
 			["PaladinPowerBar"] = vartable["paladinpowerbar"],
 			["ShardBarFrame"] = vartable["shardbarframe"],
 			["EclipseBarFrame"] = vartable["eclipsebarframe"],
+			["HarmonyBarFrame"] = vartable["harmonybarframe"],
 		};
 	end
 

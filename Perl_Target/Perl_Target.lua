@@ -62,15 +62,14 @@ function Perl_Target_OnLoad(self)
 	CombatFeedback_Initialize(self, Perl_Target_HitIndicator, 30);
 
 	-- Events
+	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 	self:RegisterEvent("PARTY_LEADER_CHANGED");
 	self:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
 	self:RegisterEvent("PARTY_MEMBER_DISABLE");
 	self:RegisterEvent("PARTY_MEMBER_ENABLE");
-	self:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
 	self:RegisterEvent("PLAYER_TARGET_CHANGED");
-	self:RegisterEvent("RAID_ROSTER_UPDATE");
 	self:RegisterEvent("RAID_TARGET_UPDATE");
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_COMBAT");
@@ -132,7 +131,7 @@ function Perl_Target_Events:PLAYER_TARGET_CHANGED()
 		Perl_Target_Update_Once();			-- Set the unchanging info for the target
 	end
 end
-Perl_Target_Events.PARTY_MEMBERS_CHANGED = Perl_Target_Events.PLAYER_TARGET_CHANGED;
+Perl_Target_Events.GROUP_ROSTER_UPDATE = Perl_Target_Events.PLAYER_TARGET_CHANGED;
 Perl_Target_Events.PARTY_LEADER_CHANGED = Perl_Target_Events.PLAYER_TARGET_CHANGED;
 Perl_Target_Events.PARTY_MEMBER_ENABLE = Perl_Target_Events.PLAYER_TARGET_CHANGED;
 Perl_Target_Events.PARTY_MEMBER_DISABLE = Perl_Target_Events.PLAYER_TARGET_CHANGED;
@@ -140,7 +139,6 @@ Perl_Target_Events.PARTY_MEMBER_DISABLE = Perl_Target_Events.PLAYER_TARGET_CHANG
 function Perl_Target_Events:PARTY_LOOT_METHOD_CHANGED()
 	Perl_Target_Update_Loot_Method();
 end
-Perl_Target_Events.RAID_ROSTER_UPDATE = Perl_Target_Events.PARTY_LOOT_METHOD_CHANGED;
 
 function Perl_Target_Events:UNIT_HEALTH(arg1)
 	if (arg1 == "target") then
@@ -333,72 +331,74 @@ end
 -- The Update Functions --
 --------------------------
 function Perl_Target_Update_Once()
-	Perl_Target_HealthBarFadeBar:Hide();	-- Hide the fade bars so we don't see fading bars when we shouldn't
-	Perl_Target_ManaBarFadeBar:Hide();		-- Hide the fade bars so we don't see fading bars when we shouldn't
-	Perl_Target_HealthBar:SetValue(0);		-- Do this so we don't fade the bar on a fresh target switch
-	Perl_Target_ManaBar:SetValue(0);		-- Do this so we don't fade the bar on a fresh target switch
-	Perl_Target_Update_Combo_Points();		-- Do we have any combo points (we shouldn't)
-	Perl_Target_Update_Portrait();			-- Set the target's portrait and adjust the combo point frame
-	Perl_Target_Update_Health();			-- Set the target's health
-	Perl_Target_Update_Mana_Bar();			-- What type of mana bar is it?
-	Perl_Target_Update_Mana();				-- Set the target's mana
-	Perl_Target_Update_PvP_Status_Icon();	-- Set pvp status icon
-	Perl_Target_Frame_Set_Level();			-- What level is it and is it rare/elite/boss
-	Perl_Target_Buff_UpdateAll();			-- Update the buffs
-	Perl_Target_UpdateRaidTargetIcon();		-- Display the raid target icon if needed
-	Perl_Target_Update_Name();				-- Update the name
-	Perl_Target_Update_Text_Color();		-- Has the target been tapped by someone else?
-	Perl_Target_Update_Leader();			-- Is the target the party/raid leader?
-	Perl_Target_Update_Loot_Method();		-- Is the target the loot master?
-	Perl_Target_Update_Threat();			-- Update the threat icon if needed
+	if (UnitExists("target")) then
+		Perl_Target_HealthBarFadeBar:Hide();	-- Hide the fade bars so we don't see fading bars when we shouldn't
+		Perl_Target_ManaBarFadeBar:Hide();		-- Hide the fade bars so we don't see fading bars when we shouldn't
+		Perl_Target_HealthBar:SetValue(0);		-- Do this so we don't fade the bar on a fresh target switch
+		Perl_Target_ManaBar:SetValue(0);		-- Do this so we don't fade the bar on a fresh target switch
+		Perl_Target_Update_Combo_Points();		-- Do we have any combo points (we shouldn't)
+		Perl_Target_Update_Portrait();			-- Set the target's portrait and adjust the combo point frame
+		Perl_Target_Update_Health();			-- Set the target's health
+		Perl_Target_Update_Mana_Bar();			-- What type of mana bar is it?
+		Perl_Target_Update_Mana();				-- Set the target's mana
+		Perl_Target_Update_PvP_Status_Icon();	-- Set pvp status icon
+		Perl_Target_Frame_Set_Level();			-- What level is it and is it rare/elite/boss
+		Perl_Target_Buff_UpdateAll();			-- Update the buffs
+		Perl_Target_UpdateRaidTargetIcon();		-- Display the raid target icon if needed
+		Perl_Target_Update_Name();				-- Update the name
+		Perl_Target_Update_Text_Color();		-- Has the target been tapped by someone else?
+		Perl_Target_Update_Leader();			-- Is the target the party/raid leader?
+		Perl_Target_Update_Loot_Method();		-- Is the target the loot master?
+		Perl_Target_Update_Threat();			-- Update the threat icon if needed
 
-	-- Begin: Draw the class icon?
-	if (showclassicon == 1) then
-		if (UnitIsPlayer("target")) then
-			_, englishclass = UnitClass("target");
-			Perl_Target_ClassTexture:SetTexCoord(PCUF_CLASSPOSRIGHT[englishclass], PCUF_CLASSPOSLEFT[englishclass], PCUF_CLASSPOSTOP[englishclass], PCUF_CLASSPOSBOTTOM[englishclass]);
-			Perl_Target_ClassTexture:Show();
-		else
-			Perl_Target_ClassTexture:Hide();
-		end
-	end
-	-- End: Draw the class icon?
-
-	-- Begin: Set the target's class in the class frame
-	if (showclassframe == 1) then
-		if (UnitIsPlayer("target")) then
-			Perl_Target_ClassNameBarText:SetText(UnitClass("target"));
-		else
-			creatureType = UnitCreatureType("target");
-			if (creatureType == PERL_LOCALIZED_NOTSPECIFIED) then
-				creatureType = PERL_LOCALIZED_CREATURE;
+		-- Begin: Draw the class icon?
+		if (showclassicon == 1) then
+			if (UnitIsPlayer("target")) then
+				_, englishclass = UnitClass("target");
+				Perl_Target_ClassTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));
+				Perl_Target_ClassTexture:Show();
+			else
+				Perl_Target_ClassTexture:Hide();
 			end
-			Perl_Target_ClassNameBarText:SetText(creatureType);
 		end
-	end
-	-- End: Set the target's class in the class frame
+		-- End: Draw the class icon?
 
-	-- Begin: Set the guild name
-	if (showguildname == 1) then
-		if (UnitIsPlayer("target") and UnitIsVisible("target")) then
-			guildName = GetGuildInfo("target");
-			if (guildName == nil) then
-				guildName = PERL_LOCALIZED_TARGET_UNGUILDED;
+		-- Begin: Set the target's class in the class frame
+		if (showclassframe == 1) then
+			if (UnitIsPlayer("target")) then
+				Perl_Target_ClassNameBarText:SetText(UnitClass("target"));
+			else
+				creatureType = UnitCreatureType("target");
+				if (creatureType == PERL_LOCALIZED_NOTSPECIFIED) then
+					creatureType = PERL_LOCALIZED_CREATURE;
+				end
+				Perl_Target_ClassNameBarText:SetText(creatureType);
 			end
-		else
-			guildName = PERL_LOCALIZED_TARGET_NA;
 		end
-		Perl_Target_GuildBarText:SetText(guildName);
-	end
-	-- End: Set the guild name
+		-- End: Set the target's class in the class frame
 
-	-- Begin: Voice Chat Icon already in progress?
-	if (UnitIsTalking(UnitName("target"))) then
-		Perl_Target_VoiceChatIconFrame:Show();
-	else
-		Perl_Target_VoiceChatIconFrame:Hide();
+		-- Begin: Set the guild name
+		if (showguildname == 1) then
+			if (UnitIsPlayer("target") and UnitIsVisible("target")) then
+				guildName = GetGuildInfo("target");
+				if (guildName == nil) then
+					guildName = PERL_LOCALIZED_TARGET_UNGUILDED;
+				end
+			else
+				guildName = PERL_LOCALIZED_TARGET_NA;
+			end
+			Perl_Target_GuildBarText:SetText(guildName);
+		end
+		-- End: Set the guild name
+
+		-- Begin: Voice Chat Icon already in progress?
+		if (UnitIsTalking(UnitName("target"))) then
+			Perl_Target_VoiceChatIconFrame:Show();
+		else
+			Perl_Target_VoiceChatIconFrame:Hide();
+		end
+		-- End: Voice Chat Icon already in progress?
 	end
-	-- End: Voice Chat Icon already in progress?
 end
 
 function Perl_Target_Update_Health()
@@ -958,7 +958,7 @@ function Perl_Target_UpdateRaidTargetIcon()
 end
 
 function Perl_Target_Update_Leader()
-	if (UnitIsPartyLeader("target")) then
+	if (UnitIsGroupLeader("target")) then
 		Perl_Target_LeaderIcon:Show();
 	else
 		Perl_Target_LeaderIcon:Hide();
@@ -2667,6 +2667,9 @@ function Perl_TargetDropDown_Initialize()
 		menu = "VEHICLE";
 	elseif (UnitIsUnit("target", "pet")) then
 		menu = "PET";
+	elseif (UnitIsOtherPlayersPet("target")) then
+		SetPendingReportTarget("target");
+		menu = "OTHERPET";
 	elseif (UnitIsPlayer("target")) then
 		id = UnitInRaid("target");
 		if (id) then

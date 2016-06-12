@@ -30,8 +30,9 @@ local totemtimers = 1;			-- totem timers is on by default
 local runeframe = 1;			-- rune frame is on by default
 local pvptimer = 0;				-- pvp timer is hidden by default
 local paladinpowerbar = 1;		-- paladin power bar is on by default
-local shardbarframe = 1;		-- shard bar frame is on by default
-local eclipsebarframe = 1;		-- eclipse bar frame is on by default
+local shardbarframe = 1;		-- warlock shard bar frame is on by default
+local eclipsebarframe = 1;		-- druid eclipse bar frame is on by default
+local harmonybarframe = 1;		-- monk harmony bar frame is on by default
 
 -- Default Local Variables
 local InCombat = 0;				-- used to track if the player is in combat and if the icon should be displayed
@@ -66,9 +67,9 @@ function Perl_Player_OnLoad(self)
 	CombatFeedback_Initialize(self, Perl_Player_HitIndicator, 30);
 
 	-- Events
+	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 	self:RegisterEvent("PARTY_LEADER_CHANGED");
 	self:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
-	self:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_FLAGS_CHANGED");
 	self:RegisterEvent("PLAYER_LOGIN");
@@ -76,7 +77,6 @@ function Perl_Player_OnLoad(self)
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
 	self:RegisterEvent("PLAYER_UPDATE_RESTING");
 	self:RegisterEvent("PLAYER_XP_UPDATE");
-	self:RegisterEvent("RAID_ROSTER_UPDATE");
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_COMBAT");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
@@ -123,6 +123,7 @@ function Perl_Player_OnLoad(self)
 	PaladinPowerBar:SetParent(Perl_Player_Frame);
 	ShardBarFrame:SetParent(Perl_Player_Frame);
 	EclipseBarFrame:SetParent(Perl_Player_Frame);
+	MonkHarmonyBar:SetParent(Perl_Player_Frame);
 end
 
 
@@ -204,7 +205,10 @@ function Perl_Player_Events:UNIT_LEVEL(arg1)
 	end
 end
 
-function Perl_Player_Events:RAID_ROSTER_UPDATE()
+function Perl_Player_Events:GROUP_ROSTER_UPDATE()
+	Perl_Player_Update_Leader();			-- Are we the party leader?
+	Perl_Player_Update_Loot_Method();
+	Perl_Player_Update_Role();
 	Perl_Player_Update_Raid_Group_Number();	-- What raid group number are we in?
 	Perl_Player_Check_Hidden();				-- Are suppossed to hide the frame?
 end
@@ -214,7 +218,6 @@ function Perl_Player_Events:PARTY_LEADER_CHANGED()
 	Perl_Player_Update_Loot_Method();
 	Perl_Player_Update_Role();
 end
-Perl_Player_Events.PARTY_MEMBERS_CHANGED = Perl_Player_Events.PARTY_LEADER_CHANGED;
 
 function Perl_Player_Events:PARTY_LOOT_METHOD_CHANGED()
 	Perl_Player_Update_Loot_Method();
@@ -318,7 +321,7 @@ function Perl_Player_Update_Once()
 		Perl_ArcaneBar_player.unitname = Perl_Player_NameBarText:GetText();
 	end
 	Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
-	Perl_Player_ClassTexture:SetTexCoord(PCUF_CLASSPOSRIGHT[englishclass], PCUF_CLASSPOSLEFT[englishclass], PCUF_CLASSPOSTOP[englishclass], PCUF_CLASSPOSBOTTOM[englishclass]);	-- Set the player's class icon
+	Perl_Player_ClassTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));	-- Set the player's class icon
 	Perl_Player_Update_Portrait();										-- Set the player's portrait
 	Perl_Player_Update_PvP_Status();									-- Is the character PvP flagged?
 	Perl_Player_Update_PvP_Timer();										-- Is the PvP timer counting down?
@@ -485,7 +488,7 @@ function Perl_Player_Update_Mana()
 
 	if (showdruidbar == 1) then
 		_, englishclass = UnitClass("player");
-		if (englishclass == "DRUID") then								-- Are we a Druid?
+		if (englishclass == "DRUID" or englishclass == "MONK") then								-- Are we a Druid?
 			if (UnitPowerType("player") > 0) then						-- Are we in a manaless form?
 				playerdruidbarmana = UnitPower("player", 0);
 				playerdruidbarmanamax = UnitPowerMax("player", 0);
@@ -742,7 +745,7 @@ function Perl_Player_Update_Experience()
 	Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 	Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 
-	if (UnitLevel("player") ~= 85) then
+	if (UnitLevel("player") ~= 90) then
 		-- XP Bar stuff
 		local playerxp = UnitXP("player");
 		local playerxpmax = UnitXPMax("player");
@@ -770,7 +773,7 @@ function Perl_Player_Update_Experience()
 		Perl_Player_XPBar:SetValue(1);
 		Perl_Player_XPRestBar:SetValue(1);
 
-		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_LEVEL_EIGHTY_FIVE);
+		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_LEVEL_NINETY);
 	end
 	
 end
@@ -838,7 +841,7 @@ function Perl_Player_Update_Combat_Status(event)
 end
 
 function Perl_Player_Update_Raid_Group_Number()
-	local numRaidMembers = GetNumRaidMembers();
+	local numRaidMembers = GetNumGroupMembers();
 
 	if (InCombatLockdown()) then
 		Perl_Config_Queue_Add(Perl_Player_Update_Raid_Group_Number);
@@ -897,7 +900,7 @@ function Perl_Player_Update_Raid_Group_Number()
 end
 
 function Perl_Player_Update_Leader()
-	if (IsPartyLeader()) then
+	if (UnitIsGroupLeader("player")) then
 		Perl_Player_LeaderIcon:Show();
 	else
 		Perl_Player_LeaderIcon:Hide();
@@ -1221,7 +1224,7 @@ function Perl_Player_Frame_Style()
 
 		-- Begin: Set the druid bar and tweak the experience bar if needed
 		_, englishclass = UnitClass("player");
-		if (showdruidbar == 1 and englishclass == "DRUID") then
+		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK")) then
 			Perl_Player_DruidBar:Show();
 			Perl_Player_DruidBarBG:Show();
 			Perl_Player_DruidBar_CastClickOverlay:Show();
@@ -1469,6 +1472,18 @@ function Perl_Player_Frame_Style()
 			EclipseBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
+		-- Hi-jack the Blizzard eclipse bar frame
+		if (harmonybarframe == 1) then
+			if (compactmode == 1 and shortbars == 1) then
+				MonkHarmonyBar:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 67, 14);
+			else
+				MonkHarmonyBar:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 82, 14);
+			end
+		else
+			MonkHarmonyBar:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+		end
+		
+
 		-- Update the five second rule
 		Perl_Player_FiveSecondRule:SetWidth(Perl_Player_ManaBar:GetWidth());
 
@@ -1678,6 +1693,12 @@ function Perl_Player_Set_Show_Eclipse_Bar_Frame(newvalue)
 	Perl_Player_Frame_Style();
 end
 
+function Perl_Player_Set_Show_Harmony_Bar_Frame(newvalue)
+	harmonybarframe = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
+end
+
 function Perl_Player_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);													-- convert the user input to a wow acceptable value
@@ -1741,6 +1762,7 @@ function Perl_Player_GetVars(name, updateflag)
 	paladinpowerbar = Perl_Player_Config[name]["PaladinPowerBar"];
 	shardbarframe = Perl_Player_Config[name]["ShardBarFrame"];
 	eclipsebarframe = Perl_Player_Config[name]["EclipseBarFrame"];
+	harmonybarframe = Perl_Player_Config[name]["HarmonyBarFrame"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1823,6 +1845,9 @@ function Perl_Player_GetVars(name, updateflag)
 	if (eclipsebarframe == nil) then
 		eclipsebarframe = 1;
 	end
+	if (harmonybarframe == nil) then
+		harmonybarframe = 1;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1863,6 +1888,7 @@ function Perl_Player_GetVars(name, updateflag)
 		["paladinpowerbar"] = paladinpowerbar,
 		["shardbarframe"] = shardbarframe,
 		["eclipsebarframe"] = eclipsebarframe,
+		["harmonybarframe"] = harmonybarframe,
 	}
 	return vars;
 end
@@ -2006,6 +2032,11 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				eclipsebarframe = nil;
 			end
+			if (vartable["Global Settings"]["HarmonyBarFrame"] ~= nil) then
+				harmonybarframe = vartable["Global Settings"]["HarmonyBarFrame"];
+			else
+				harmonybarframe = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2090,6 +2121,9 @@ function Perl_Player_UpdateVars(vartable)
 		if (eclipsebarframe == nil) then
 			eclipsebarframe = 1;
 		end
+		if (harmonybarframe == nil) then
+			harmonybarframe = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Update_Once();
@@ -2125,6 +2159,7 @@ function Perl_Player_UpdateVars(vartable)
 		["PaladinPowerBar"] = paladinpowerbar,
 		["ShardBarFrame"] = shardbarframe,
 		["EclipseBarFrame"] = eclipsebarframe,
+		["HarmonyBarFrame"] = harmonybarframe,
 	};
 end
 
@@ -2209,7 +2244,7 @@ function Perl_Player_XPTooltip(self)
 	GameTooltip_SetDefaultAnchor(GameTooltip, self);
 	if (xpbarstate == 1) then
 		local playerlevel = UnitLevel("player");		-- Player's next level
-		if (playerlevel < 85) then
+		if (playerlevel < 90) then
 			playerxp = UnitXP("player");				-- Player's current XP
 			playerxpmax = UnitXPMax("player");			-- Experience for the current level
 			local playerxprest = GetXPExhaustion();		-- Amount of bonus xp we have

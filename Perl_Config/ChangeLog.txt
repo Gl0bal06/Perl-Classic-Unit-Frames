@@ -1,3 +1,16 @@
+5.01 Beta 1 - June 30, 2012
+ - All: Updated TOC Interface version to 50001
+ - All: Updated to use GROUP_ROSTER_UPDATE event
+ - All: Updated right click menu code for target related frames
+ - CombatDisplay/Player: Added Monk support to the Druid Bar
+ - Config: Removed some localization strings that were no longer being used
+ - Focus/Party/Player/Target: Updated to use CLASS_ICON_TCOORDS global for class icons
+ - Focus/Party/Target: Added some sanity checks for dividing by zero
+ - Party/Player/Target: Updated to use UnitIsGroupLeader function
+ - Player: Added support for Monk Harmony Bar
+ - Player: The experience bar now maxes out at Level 90
+ - Player: Updated to use GetNumGroupMembers function
+
 4.09 - December 24, 2011
  - All: Updated TOC Interface version to 40300
  - All: Changed the icon for the threat icon so it displays properly

@@ -1916,6 +1916,9 @@ function Perl_TargetTargetDropDown_Initialize()
 		menu = "VEHICLE";
 	elseif (UnitIsUnit("targettarget", "pet")) then
 		menu = "PET";
+	elseif (UnitIsOtherPlayersPet("targettarget")) then
+		SetPendingReportTarget("targettarget");
+		menu = "OTHERPET";
 	elseif (UnitIsPlayer("targettarget")) then
 		id = UnitInRaid("targettarget");
 		if (id) then
@@ -1973,6 +1976,9 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 		menu = "VEHICLE";
 	elseif (UnitIsUnit("targettargettarget", "pet")) then
 		menu = "PET";
+	elseif (UnitIsOtherPlayersPet("targettargettarget")) then
+		SetPendingReportTarget("targettargettarget");
+		menu = "OTHERPET";
 	elseif (UnitIsPlayer("targettargettarget")) then
 		id = UnitInRaid("targettargettarget");
 		if (id) then

@@ -65,9 +65,9 @@ local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, 
 ----------------------
 function Perl_Party_Script_OnLoad(self)
 	-- Events
+	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
-	self:RegisterEvent("RAID_ROSTER_UPDATE");
 
 	-- Scripts
 	self:SetScript("OnEvent", 
@@ -119,9 +119,9 @@ function Perl_Party_OnLoad(self)
 	self.petHealthBarTextCompactPercent = _G["Perl_Party_MemberFrame"..self.id.."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"];
 
 	-- Events
+	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 	self:RegisterEvent("PARTY_LEADER_CHANGED");
 	self:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
-	self:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	self:RegisterEvent("PLAYER_ALIVE");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("UNIT_AURA");
@@ -163,7 +163,7 @@ function Perl_Party_Script_Events:PLAYER_LOGIN()
 end
 Perl_Party_Script_Events.PLAYER_ENTERING_WORLD = Perl_Party_Script_Events.PLAYER_LOGIN;
 
-function Perl_Party_Script_Events:RAID_ROSTER_UPDATE()
+function Perl_Party_Script_Events:GROUP_ROSTER_UPDATE()
 	Perl_Party_Check_Hidden();
 end
 
@@ -224,7 +224,7 @@ function Perl_Party_Events:UNIT_LEVEL(arg1)
 	end
 end
 
-function Perl_Party_Events:PARTY_MEMBERS_CHANGED()
+function Perl_Party_Events:GROUP_ROSTER_UPDATE()
 	Perl_Party_MembersUpdate(self);			-- How many members are in the group and show the correct frames and do UpdateOnce things
 end
 
@@ -373,20 +373,22 @@ end
 -- Update Functions --
 ----------------------
 function Perl_Party_MembersUpdate(self)
-	Perl_Party_Set_Name(self);
-	Perl_Party_Update_PvP_Status(self);
-	Perl_Party_Update_Level(self);
-	Perl_Party_Update_Health(self);
-	Perl_Party_Update_Mana(self);
-	Perl_Party_Update_Mana_Bar(self);
-	Perl_Party_Update_Pet_Health(self);
-	Perl_Party_Update_Leader(self);
-	Perl_Party_Update_Loot_Method(self);
-	Perl_Party_Update_Role(self);
-	Perl_Party_Update_Portrait(self);
-	Perl_Party_Buff_UpdateAll(self);
-	Perl_Party_VoiceChat(self);
-	Perl_Party_Update_Threat(self);
+	if (UnitExists(self.unit)) then
+		Perl_Party_Set_Name(self);
+		Perl_Party_Update_PvP_Status(self);
+		Perl_Party_Update_Level(self);
+		Perl_Party_Update_Health(self);
+		Perl_Party_Update_Mana(self);
+		Perl_Party_Update_Mana_Bar(self);
+		Perl_Party_Update_Pet_Health(self);
+		Perl_Party_Update_Leader(self);
+		Perl_Party_Update_Loot_Method(self);
+		Perl_Party_Update_Role(self);
+		Perl_Party_Update_Portrait(self);
+		Perl_Party_Buff_UpdateAll(self);
+		Perl_Party_VoiceChat(self);
+		Perl_Party_Update_Threat(self);
+	end
 end
 
 function Perl_Party_Update_Health(self)
@@ -834,7 +836,7 @@ function Perl_Party_Set_Name(self)
 	-- Set Class Icon
 	if (UnitIsPlayer(self.unit)) then
 		_, englishclass = UnitClass(self.unit);
-		self.classTexture:SetTexCoord(PCUF_CLASSPOSRIGHT[englishclass], PCUF_CLASSPOSLEFT[englishclass], PCUF_CLASSPOSTOP[englishclass], PCUF_CLASSPOSBOTTOM[englishclass]);	-- Set the party member's class icon
+		self.classTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));	-- Set the party member's class icon
 		self.classTexture:Show();
 	else
 		self.classTexture:Hide();
@@ -1148,13 +1150,15 @@ function Perl_Party_Force_Update()
 	local self;
 	for id = 1, 4 do
 		self = _G["Perl_Party_MemberFrame"..id];
-		Perl_Party_Set_Name(self);								-- Set Name & Class Icon
-		Perl_Party_Update_Level(self);							-- Set Level
-		Perl_Party_Update_Health(self);							-- Set Death State & Disconnected State
-		Perl_Party_Update_PvP_Status(self);						-- Set PvP Info & Name Color
-		Perl_Party_Update_Mana_Bar(self);						-- Set Power Bar Color
-		Perl_Party_Update_Portrait(self);						-- Set Portraits
-		Perl_Party_Buff_UpdateAll(self);						-- Set Buffs
+		if (UnitExists(self.unit)) then
+			Perl_Party_Set_Name(self);								-- Set Name & Class Icon
+			Perl_Party_Update_Level(self);							-- Set Level
+			Perl_Party_Update_Health(self);							-- Set Death State & Disconnected State
+			Perl_Party_Update_PvP_Status(self);						-- Set PvP Info & Name Color
+			Perl_Party_Update_Mana_Bar(self);						-- Set Power Bar Color
+			Perl_Party_Update_Portrait(self);						-- Set Portraits
+			Perl_Party_Buff_UpdateAll(self);						-- Set Buffs
+		end
 	end
 end
 

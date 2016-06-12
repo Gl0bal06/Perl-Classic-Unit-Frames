@@ -55,7 +55,7 @@ function Perl_Focus_OnLoad(self)
 	-- Events
 	self:RegisterEvent("PARTY_MEMBER_DISABLE");
 	self:RegisterEvent("PARTY_MEMBER_ENABLE");
-	self:RegisterEvent("PARTY_MEMBERS_CHANGED");
+	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
 	self:RegisterEvent("PLAYER_FOCUS_CHANGED");
@@ -116,7 +116,7 @@ function Perl_Focus_Events:PLAYER_FOCUS_CHANGED()
 		Perl_Focus_Update_Once();		-- Set the unchanging info for the Focus
 	end
 end
-Perl_Focus_Events.PARTY_MEMBERS_CHANGED = Perl_Focus_Events.PLAYER_FOCUS_CHANGED;
+Perl_Focus_Events.GROUP_ROSTER_UPDATE = Perl_Focus_Events.PLAYER_FOCUS_CHANGED;
 Perl_Focus_Events.PARTY_MEMBER_ENABLE = Perl_Focus_Events.PLAYER_FOCUS_CHANGED;
 Perl_Focus_Events.PARTY_MEMBER_DISABLE = Perl_Focus_Events.PLAYER_FOCUS_CHANGED;
 
@@ -294,55 +294,57 @@ end
 -- The Update Functions --
 --------------------------
 function Perl_Focus_Update_Once()
-	Perl_Focus_HealthBarFadeBar:Hide();		-- Hide the fade bars so we don't see fading bars when we shouldn't
-	Perl_Focus_ManaBarFadeBar:Hide();		-- Hide the fade bars so we don't see fading bars when we shouldn't
-	Perl_Focus_HealthBar:SetValue(0);		-- Do this so we don't fade the bar on a fresh Focus switch
-	Perl_Focus_ManaBar:SetValue(0);			-- Do this so we don't fade the bar on a fresh Focus switch
-	Perl_Focus_Update_Portrait();			-- Set the Focus's portrait and adjust the combo point frame
-	Perl_Focus_Update_Health();				-- Set the Focus's health
-	Perl_Focus_Update_Mana_Bar();			-- What type of mana bar is it?
-	Perl_Focus_Update_Mana();				-- Set the Focus's mana
-	Perl_Focus_Update_PvP_Status_Icon();	-- Set pvp status icon
-	Perl_Focus_Frame_Set_Level();			-- What level is it and is it rare/elite/boss
-	Perl_Focus_Buff_UpdateAll();			-- Update the buffs
-	Perl_Focus_UpdateRaidFocusIcon();		-- Display the raid Focus icon if needed
-	Perl_Focus_Update_Name();				-- Update the name
-	Perl_Focus_Update_Text_Color();			-- Has the Focus been tapped by someone else?
-	Perl_Focus_Update_Threat();				-- Update the threat icon if needed
+	if (UnitExists("focus")) then
+		Perl_Focus_HealthBarFadeBar:Hide();		-- Hide the fade bars so we don't see fading bars when we shouldn't
+		Perl_Focus_ManaBarFadeBar:Hide();		-- Hide the fade bars so we don't see fading bars when we shouldn't
+		Perl_Focus_HealthBar:SetValue(0);		-- Do this so we don't fade the bar on a fresh Focus switch
+		Perl_Focus_ManaBar:SetValue(0);			-- Do this so we don't fade the bar on a fresh Focus switch
+		Perl_Focus_Update_Portrait();			-- Set the Focus's portrait and adjust the combo point frame
+		Perl_Focus_Update_Health();				-- Set the Focus's health
+		Perl_Focus_Update_Mana_Bar();			-- What type of mana bar is it?
+		Perl_Focus_Update_Mana();				-- Set the Focus's mana
+		Perl_Focus_Update_PvP_Status_Icon();	-- Set pvp status icon
+		Perl_Focus_Frame_Set_Level();			-- What level is it and is it rare/elite/boss
+		Perl_Focus_Buff_UpdateAll();			-- Update the buffs
+		Perl_Focus_UpdateRaidFocusIcon();		-- Display the raid Focus icon if needed
+		Perl_Focus_Update_Name();				-- Update the name
+		Perl_Focus_Update_Text_Color();			-- Has the Focus been tapped by someone else?
+		Perl_Focus_Update_Threat();				-- Update the threat icon if needed
 
-	-- Begin: Draw the class icon?
-	if (showclassicon == 1) then
-		if (UnitIsPlayer("focus")) then
-			_, englishclass = UnitClass("focus");
-			Perl_Focus_ClassTexture:SetTexCoord(PCUF_CLASSPOSRIGHT[englishclass], PCUF_CLASSPOSLEFT[englishclass], PCUF_CLASSPOSTOP[englishclass], PCUF_CLASSPOSBOTTOM[englishclass]);
-			Perl_Focus_ClassTexture:Show();
-		else
-			Perl_Focus_ClassTexture:Hide();
-		end
-	end
-	-- End: Draw the class icon?
-
-	-- Begin: Set the Focus's class in the class frame
-	if (showclassframe == 1) then
-		if (UnitIsPlayer("focus")) then
-			Perl_Focus_ClassNameBarText:SetText(UnitClass("focus"));
-		else
-			creatureType = UnitCreatureType("focus");
-			if (creatureType == PERL_LOCALIZED_NOTSPECIFIED) then
-				creatureType = PERL_LOCALIZED_CREATURE;
+		-- Begin: Draw the class icon?
+		if (showclassicon == 1) then
+			if (UnitIsPlayer("focus")) then
+				_, englishclass = UnitClass("focus");
+				Perl_Focus_ClassTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));
+				Perl_Focus_ClassTexture:Show();
+			else
+				Perl_Focus_ClassTexture:Hide();
 			end
-			Perl_Focus_ClassNameBarText:SetText(creatureType);
 		end
-	end
-	-- End: Set the Focus's class in the class frame
+		-- End: Draw the class icon?
 
-	-- Begin: Voice Chat Icon already in progress?
-	if (UnitIsTalking(UnitName("focus"))) then
-		Perl_Focus_VoiceChatIconFrame:Show();
-	else
-		Perl_Focus_VoiceChatIconFrame:Hide();
+		-- Begin: Set the Focus's class in the class frame
+		if (showclassframe == 1) then
+			if (UnitIsPlayer("focus")) then
+				Perl_Focus_ClassNameBarText:SetText(UnitClass("focus"));
+			else
+				creatureType = UnitCreatureType("focus");
+				if (creatureType == PERL_LOCALIZED_NOTSPECIFIED) then
+					creatureType = PERL_LOCALIZED_CREATURE;
+				end
+				Perl_Focus_ClassNameBarText:SetText(creatureType);
+			end
+		end
+		-- End: Set the Focus's class in the class frame
+
+		-- Begin: Voice Chat Icon already in progress?
+		if (UnitIsTalking(UnitName("focus"))) then
+			Perl_Focus_VoiceChatIconFrame:Show();
+		else
+			Perl_Focus_VoiceChatIconFrame:Hide();
+		end
+		-- End: Voice Chat Icon already in progress?
 	end
-	-- End: Voice Chat Icon already in progress?
 end
 
 function Perl_Focus_Update_Health()
@@ -2216,6 +2218,9 @@ function Perl_FocusDropDown_Initialize()
 		menu = "VEHICLE";
 	elseif (UnitIsUnit("focus", "pet")) then
 		menu = "PET";
+	elseif (UnitIsOtherPlayersPet("focus")) then
+		SetPendingReportTarget("focus");
+		menu = "OTHERPET";
 	elseif (UnitIsPlayer("focus")) then
 		id = UnitInRaid("focus");
 		if (id) then

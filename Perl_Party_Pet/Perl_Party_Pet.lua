@@ -44,11 +44,11 @@ local partypethealth, partypethealthmax, partypetmana, partypetmanamax, partypet
 ----------------------
 function Perl_Party_Pet_Script_OnLoad(self)
 	-- Events
-	self:RegisterEvent("PARTY_MEMBERS_CHANGED");
+	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 	self:RegisterEvent("PLAYER_ALIVE");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
-	self:RegisterEvent("RAID_ROSTER_UPDATE");
+	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 	self:RegisterEvent("UNIT_PET");
 
 	-- Scripts
@@ -104,7 +104,7 @@ function Perl_Party_Pet_Events:UNIT_MODEL_CHANGED(arg1)
 end
 Perl_Party_Pet_Events.UNIT_PORTRAIT_UPDATE = Perl_Party_Pet_Events.UNIT_MODEL_CHANGED;
 
-function Perl_Party_Pet_Events:RAID_ROSTER_UPDATE()
+function Perl_Party_Pet_Events:GROUP_ROSTER_UPDATE()
 	Perl_Party_Pet_Check_Hidden();
 end
 
@@ -112,7 +112,7 @@ function Perl_Party_Pet_Events:PLAYER_ALIVE()
 	Perl_Party_Pet_Check_Hidden();
 end
 
-function Perl_Party_Pet_Events:PARTY_MEMBERS_CHANGED()
+function Perl_Party_Pet_Events:GROUP_ROSTER_UPDATE()
 	Perl_Party_Pet_Update();
 end
 
