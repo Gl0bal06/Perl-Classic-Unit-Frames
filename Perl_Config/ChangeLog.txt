@@ -1,48 +1,25 @@
-3.01 Beta 9 - September 20, 2008
- - All: Switched from UnitReactionColor to FACTION_BAR_COLORS
-
-3.01 Beta 8 - August 30, 2008
- - All: Added Perl_Config as a dependency in the TOC, this issue appears to be fixed now
- - All: Updated right click menu code for target related frames
- - All: Removed remaining references to the Perl_White graphic
-
-3.01 Beta 7 - August 25, 2008
- - CombatDisplay/Target: Combo points now correctly display
-
-3.01 Beta 6 - August 23, 2008
- - All: Added siege weapon support to the right click menus
- - Focus: Added the Blizzard Focus and Target of Focus frames to the disable list
- - Pet: The power bar is now the correct color for siege weapons
- - Target: Added the Blizzard Target of Target frame to the disable list
-
-3.01 Beta 5 - August 23, 2008
- - CombatDisplay/Target: Fixed the error regarding the GetComboPoints() function
-
-3.01 Beta 4 - August 17, 2008
- - All: Added a threat icon
- - Config: The player rest experience bar is now correctly textured
- - Focus/Party/Player/Target: Moved the PvP status icon down 1 pixel
-
-3.01 Beta 3 - August 10, 2008
- - Focus: Readded the health percent to the default frame layout
-
-3.01 Beta 2 - August 10, 2008
- - Target: Readded the health percent to the default frame layout
-
-3.01 Beta 1 - August 10, 2008
+3.01 - October 14, 2008
  - All: Updated TOC Interface version to 30000
  - All: Added support for Death Knights
+ - All: Added a threat icon
  - All: Converted to the Blizzard scheme of "self"
  - All: Updated to the new UnitBuff and UnitDebuff functions
+ - All: Switched from UnitReactionColor to FACTION_BAR_COLORS
  - All: Cleaned up how unit tooltips are displayed
+ - All: Updated right click menu code for target related frames
+ - All: Added siege weapon support to the right click menus
  - All: Removed all forms of MobHealth support
- - All: Removed Perl_Config as a dependency in the TOC, Perl_Config is still required to function
  - All: Removed some optional dependencies that are no longer supported
+ - All: Removed remaining references to the Perl_White graphic
+ - Config: The player rest experience bar is now correctly textured
  - Config: Updated the drop down menu to the 3.0 standard
  - Config: Removed the LibStub library
+ - Focus: Added the Blizzard Focus and Target of Focus frames to the disable list
+ - Focus/Party/Player/Target: Moved the PvP status icon down 1 pixel
  - Focus/Pet/Player/Target: Updated the combat text to the 3.0 standard
  - Focus/Target: Extended the class frame so Death Knight does not get truncated
  - Player: The experience bar now maxes out at Level 80
+ - Target: Added the Blizzard Target of Target frame to the disable list
 
 2.25 - August 10, 2008
  - All: Removed some optional dependencies that are no longer supported
