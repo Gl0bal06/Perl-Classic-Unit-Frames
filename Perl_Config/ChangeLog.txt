@@ -1,3 +1,6 @@
+2.13 - November 25, 2007
+ - Target: Fixed a source of action taint
+
 2.12b - November 16, 2007
  - Config: Fixed an error when performing a global save
 

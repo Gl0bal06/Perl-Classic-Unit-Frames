@@ -2665,19 +2665,14 @@ function Perl_Target_Buff_UpdateCPMeter()
 			Perl_Target_CPText:SetText(debuffapplications);
 			Perl_Target_CPText:SetTextHeight(20);
 			if (debuffapplications == 5) then
-				Perl_Target_CPFrame:Show();
 				Perl_Target_CPText:SetTextColor(1, 0, 0);	-- red text
 			elseif (debuffapplications == 4) then
-				Perl_Target_CPFrame:Show();
 				Perl_Target_CPText:SetTextColor(1, 0.5, 0);	-- orange text
 			elseif (debuffapplications == 3) then
-				Perl_Target_CPFrame:Show();
 				Perl_Target_CPText:SetTextColor(1, 1, 0);	-- yellow text
 			elseif (debuffapplications == 2) then
-				Perl_Target_CPFrame:Show();
 				Perl_Target_CPText:SetTextColor(0.5, 1, 0);	-- yellow-green text
 			elseif (debuffapplications == 1) then
-				Perl_Target_CPFrame:Show();
 				Perl_Target_CPText:SetTextColor(0, 1, 0);	-- green text
 			end
 		end
