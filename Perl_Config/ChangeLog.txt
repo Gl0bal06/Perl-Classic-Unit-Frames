@@ -1,3 +1,18 @@
+3.01 Beta 1 - August 10, 2008
+ - All: Updated TOC Interface version to 30000
+ - All: Added support for Death Knights
+ - All: Converted to the Blizzard scheme of "self"
+ - All: Updated to the new UnitBuff and UnitDebuff functions
+ - All: Cleaned up how unit tooltips are displayed
+ - All: Removed all forms of MobHealth support
+ - All: Removed Perl_Config as a dependency in the TOC, Perl_Config is still required to function
+ - All: Removed some optional dependencies that are no longer supported
+ - Config: Updated the drop down menu to the 3.0 standard
+ - Config: Removed the LibStub library
+ - Focus/Pet/Player/Target: Updated the combat text to the 3.0 standard
+ - Focus/Target: Extended the class frame so Death Knight does not get truncated
+ - Player: The experience bar now maxes out at Level 80
+
 2.25 - August 10, 2008
  - All: Removed some optional dependencies that are no longer supported
  - Focus: Removed an unused OnHide script

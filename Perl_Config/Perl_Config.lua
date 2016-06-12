@@ -42,6 +42,7 @@ local eventqueuetotal = 0;		-- variable to check how many queued events we have
 
 -- Variables for position of the class icon texture.
 PCUF_CLASSPOSRIGHT = {
+	["DEATHKNIGHT"] = 0.25,
 	["DRUID"] = 0.75,
 	["HUNTER"] = 0,
 	["MAGE"] = 0.25,
@@ -53,6 +54,7 @@ PCUF_CLASSPOSRIGHT = {
 	["WARRIOR"] = 0,
 };
 PCUF_CLASSPOSLEFT = {
+	["DEATHKNIGHT"] = 0.5,
 	["DRUID"] = 1,
 	["HUNTER"] = 0.25,
 	["MAGE"] = 0.5,
@@ -64,6 +66,7 @@ PCUF_CLASSPOSLEFT = {
 	["WARRIOR"] = 0.25,
 };
 PCUF_CLASSPOSTOP = {
+	["DEATHKNIGHT"] = 0.5,
 	["DRUID"] = 0,
 	["HUNTER"] = 0.25,
 	["MAGE"] = 0,
@@ -75,6 +78,7 @@ PCUF_CLASSPOSTOP = {
 	["WARRIOR"] = 0,
 };
 PCUF_CLASSPOSBOTTOM = {
+	["DEATHKNIGHT"] = 0.75,
 	["DRUID"] = 0.25,
 	["HUNTER"] = 0.5,
 	["MAGE"] = 0.25,
@@ -90,15 +94,15 @@ PCUF_CLASSPOSBOTTOM = {
 ----------------------
 -- Loading Function --
 ----------------------
-function Perl_Config_OnLoad()
+function Perl_Config_OnLoad(self)
 	-- Events
-	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	this:RegisterEvent("PLAYER_LOGIN");
-	this:RegisterEvent("PLAYER_REGEN_DISABLED");
-	this:RegisterEvent("PLAYER_REGEN_ENABLED");
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
+	self:RegisterEvent("PLAYER_LOGIN");
+	self:RegisterEvent("PLAYER_REGEN_DISABLED");
+	self:RegisterEvent("PLAYER_REGEN_ENABLED");
 
 	-- Scripts
-	this:SetScript("OnEvent", Perl_Config_OnEvent);
+	self:SetScript("OnEvent", Perl_Config_OnEvent);
 
 	-- Slash Commands
 	SlashCmdList["PERL_CONFIG"] = Perl_Config_SlashHandler;
@@ -392,7 +396,7 @@ end
 function Perl_Config_Profile_OnShow()
 	UIDropDownMenu_Initialize(Perl_Config_All_Frame_DropDown1, Perl_Config_Profile_Initialize);
 	UIDropDownMenu_SetSelectedID(Perl_Config_All_Frame_DropDown1, 0);
-	UIDropDownMenu_SetWidth(100, Perl_Config_All_Frame_DropDown1);
+	UIDropDownMenu_SetWidth(Perl_Config_All_Frame_DropDown1, 100);
 end
 
 function Perl_Config_Profile_Initialize()
@@ -406,9 +410,9 @@ function Perl_Config_Profile_Initialize()
 	end
 end
 
-function Perl_Config_Profile_OnClick()
-	currentprofilenumber = this:GetID();
-	UIDropDownMenu_SetSelectedID(Perl_Config_All_Frame_DropDown1, this:GetID());
+function Perl_Config_Profile_OnClick(self)
+	currentprofilenumber = self:GetID();
+	UIDropDownMenu_SetSelectedID(Perl_Config_All_Frame_DropDown1, self:GetID());
 end
 
 function Perl_Config_Profile_Load()
@@ -1234,7 +1238,6 @@ function Perl_Config_Global_Save_Settings()
 			["Scale"] = vartable["scale"],
 			["Transparency"] = vartable["transparency"],
 			["ShowTarget"] = vartable["showtarget"],
-			["MobHealthSupport"] = vartable["mobhealthsupport"],
 			["XPositionCD"] = floor(Perl_CombatDisplay_Frame:GetLeft() + 0.5),
 			["YPositionCD"] = floor(Perl_CombatDisplay_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Frame:GetScale()) + 0.5),
 			["XPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetLeft() + 0.5),
@@ -1276,7 +1279,6 @@ function Perl_Config_Global_Save_Settings()
 			["PvPIcon"] = vartable["showpvpicon"],
 			["Buffs"] = vartable["numbuffsshown"],
 			["Debuffs"] = vartable["numdebuffsshown"],
-			["MobHealthSupport"] = vartable["mobhealthsupport"],
 			["Scale"] = vartable["scale"],
 			["Transparency"] = vartable["transparency"],
 			["BuffDebuffScale"] = vartable["buffdebuffscale"],
@@ -1373,7 +1375,6 @@ function Perl_Config_Global_Save_Settings()
 			["Scale"] = vartable["scale"],
 			["FocusScale"] = vartable["focusscale"],
 			["Transparency"] = vartable["transparency"],
-			["MobHealthSupport"] = vartable["mobhealthsupport"],
 			["HidePowerBars"] = vartable["hidepowerbars"],
 			["ClassColoredNames"] = vartable["classcolorednames"],
 			["XPosition1"] = floor(Perl_Party_Target1:GetLeft() + 0.5),
@@ -1421,6 +1422,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShowEnergyTicker"] = vartable["showenergyticker"],
 			["FiveSecondRule"] = vartable["fivesecondrule"],
 			["TotemTimers"] = vartable["totemtimers"],
+			["RuneFrame"] = vartable["runeframe"],
 		};
 	end
 
@@ -1459,7 +1461,6 @@ function Perl_Config_Global_Save_Settings()
 			["DisplayPetTarget"] = vartable["displaypettarget"],
 			["ClassColoredNames"] = vartable["classcolorednames"],
 			["ShowFriendlyHealth"] = vartable["showfriendlyhealth"],
-			["MobHealthSupport"] = vartable["mobhealthsupport"],
 		};
 	end
 
@@ -1473,7 +1474,6 @@ function Perl_Config_Global_Save_Settings()
 			["PvPIcon"] = vartable["showpvpicon"],
 			["Buffs"] = vartable["numbuffsshown"],
 			["Debuffs"] = vartable["numdebuffsshown"],
-			["MobHealthSupport"] = vartable["mobhealthsupport"],
 			["Scale"] = vartable["scale"],
 			["Transparency"] = vartable["transparency"],
 			["BuffDebuffScale"] = vartable["buffdebuffscale"],
@@ -1507,7 +1507,6 @@ function Perl_Config_Global_Save_Settings()
 		local vartable = Perl_Target_Target_GetVars();
 		Perl_Config_Global_Target_Target_Config["Global Settings"] = {
 			["Locked"] = vartable["locked"],
-			["MobHealthSupport"] = vartable["mobhealthsupport"],
 			["Scale"] = vartable["scale"],
 			["ToTSupport"] = vartable["totsupport"],
 			["ToToTSupport"] = vartable["tototsupport"],
@@ -1948,7 +1947,7 @@ end
 ---------------------------
 -- The Minimap Functions --
 ---------------------------
-function Perl_Config_Button_OnClick(button)
+function Perl_Config_Button_OnClick(button, self)
 	if (button == "LeftButton") then
 		Perl_Config_Toggle();
 	elseif (button == "RightButton") then
@@ -2015,14 +2014,14 @@ function Perl_Config_Button_OnClick(button)
 		end
 
 		GameTooltip:Hide();
-		Perl_Config_Button_Tooltip();
+		Perl_Config_Button_Tooltip(self);
 	end
 end
 
-function Perl_Config_Button_Tooltip()
+function Perl_Config_Button_Tooltip(self)
 	local unlockedflag = 0;
 
-	GameTooltip_SetDefaultAnchor(GameTooltip, this);
+	GameTooltip_SetDefaultAnchor(GameTooltip, self);
 	GameTooltip:SetText("Perl Classic Options");
 
 	if (Perl_CombatDisplay_Frame) then

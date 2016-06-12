@@ -12,7 +12,6 @@ local locked = 0;		-- unlocked by default
 local scale = 0.9;		-- default scale
 local transparency = 1;		-- transparency for the frame
 local showtarget = 0;		-- target frame is disabled by default
-local mobhealthsupport = 1;	-- mobhealth is enabled by default
 local showdruidbar = 0;		-- Druid Bar support is enabled by default
 local showpetbars = 0;		-- Pet info is hidden by default
 local rightclickmenu = 0;	-- The ability to open a menu from CombatDisplay is disabled by default
@@ -49,7 +48,7 @@ local Perl_CombatDisplay_Target_ManaBar_Fade_Color = 1;			-- the color fading in
 local Perl_CombatDisplay_Target_ManaBar_Fade_Time_Elapsed = 0;		-- set the update timer to 0
 
 -- Local variables to save memory
-local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, pethealth, pethealthmax, petmana, petmanamax, targethealth, targethealthmax, targetmana, targetmanamax, targetpowertype, mobhealththreenumerics, englishclass;
+local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, pethealth, pethealthmax, petmana, petmanamax, targethealth, targethealthmax, targetmana, targetmanamax, targetpowertype, englishclass;
 local energylast = 0;
 local energytime = 0;
 
@@ -57,30 +56,32 @@ local energytime = 0;
 ----------------------
 -- Loading Function --
 ----------------------
-function Perl_CombatDisplay_OnLoad()
+function Perl_CombatDisplay_OnLoad(self)
 	-- Events
-	this:RegisterEvent("PLAYER_COMBO_POINTS");
-	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	this:RegisterEvent("PLAYER_LOGIN");
-	this:RegisterEvent("PLAYER_REGEN_DISABLED");
-	this:RegisterEvent("PLAYER_REGEN_ENABLED");
-	this:RegisterEvent("PLAYER_TARGET_CHANGED");
-	this:RegisterEvent("UNIT_AURA");
-	this:RegisterEvent("UNIT_DISPLAYPOWER");
-	this:RegisterEvent("UNIT_ENERGY");
-	this:RegisterEvent("UNIT_FOCUS");
-	this:RegisterEvent("UNIT_HEALTH");
-	this:RegisterEvent("UNIT_MANA");
-	this:RegisterEvent("UNIT_MAXENERGY");
-	this:RegisterEvent("UNIT_MAXFOCUS");
-	this:RegisterEvent("UNIT_MAXHEALTH");
-	this:RegisterEvent("UNIT_MAXMANA");
-	this:RegisterEvent("UNIT_MAXRAGE");
-	this:RegisterEvent("UNIT_PET");
-	this:RegisterEvent("UNIT_RAGE");
+	self:RegisterEvent("PLAYER_COMBO_POINTS");
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
+	self:RegisterEvent("PLAYER_LOGIN");
+	self:RegisterEvent("PLAYER_REGEN_DISABLED");
+	self:RegisterEvent("PLAYER_REGEN_ENABLED");
+	self:RegisterEvent("PLAYER_TARGET_CHANGED");
+	self:RegisterEvent("UNIT_AURA");
+	self:RegisterEvent("UNIT_DISPLAYPOWER");
+	self:RegisterEvent("UNIT_ENERGY");
+	self:RegisterEvent("UNIT_FOCUS");
+	self:RegisterEvent("UNIT_HEALTH");
+	self:RegisterEvent("UNIT_MANA");
+	self:RegisterEvent("UNIT_MAXENERGY");
+	self:RegisterEvent("UNIT_MAXFOCUS");
+	self:RegisterEvent("UNIT_MAXHEALTH");
+	self:RegisterEvent("UNIT_MAXMANA");
+	self:RegisterEvent("UNIT_MAXRAGE");
+	self:RegisterEvent("UNIT_MAXRUNIC_POWER");
+	self:RegisterEvent("UNIT_PET");
+	self:RegisterEvent("UNIT_RAGE");
+	self:RegisterEvent("UNIT_RUNIC_POWER");
 
 	-- Scripts
-	this:SetScript("OnEvent", Perl_CombatDisplay_OnEvent);
+	self:SetScript("OnEvent", Perl_CombatDisplay_OnEvent);
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetFrameLevel(Perl_CombatDisplay_ManaFrame:GetFrameLevel() + 2);
@@ -92,14 +93,14 @@ function Perl_CombatDisplay_OnLoad()
 	Perl_CombatDisplay_PetManaBarFadeBar:SetFrameLevel(Perl_CombatDisplay_PetManaBar:GetFrameLevel() - 1);
 end
 
-function Perl_CombatDisplay_Target_OnLoad()
+function Perl_CombatDisplay_Target_OnLoad(self)
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetFrameLevel(Perl_CombatDisplay_Target_ManaFrame:GetFrameLevel() + 2);
 	Perl_CombatDisplay_Target_HealthBarFadeBar:SetFrameLevel(Perl_CombatDisplay_Target_HealthBar:GetFrameLevel() - 1);
 	Perl_CombatDisplay_Target_ManaBarFadeBar:SetFrameLevel(Perl_CombatDisplay_Target_ManaBar:GetFrameLevel() - 1);
 
 	-- WoW 2.0 Secure API Stuff
-	this:SetAttribute("unit", "target");
+	self:SetAttribute("unit", "target");
 end
 
 
@@ -203,6 +204,8 @@ function Perl_CombatDisplay_Events:UNIT_RAGE()
 	end
 end
 Perl_CombatDisplay_Events.UNIT_MAXRAGE = Perl_CombatDisplay_Events.UNIT_RAGE;
+Perl_CombatDisplay_Events.UNIT_RUNIC_POWER = Perl_CombatDisplay_Events.UNIT_RAGE;
+Perl_CombatDisplay_Events.UNIT_MAXRUNIC_POWER = Perl_CombatDisplay_Events.UNIT_RAGE;
 
 function Perl_CombatDisplay_Events:UNIT_FOCUS()
 	if (arg1 == "pet") then
@@ -495,7 +498,7 @@ function Perl_CombatDisplay_Update_Mana()
 		Perl_CombatDisplay_ManaBar:SetValue(playermana);
 	end
 
-	if (playerpower == 1) then
+	if (playerpower == 1 or playerpower == 6) then
 		Perl_CombatDisplay_ManaBarText:SetText(playermana);
 	else
 		if (displaypercents == 0) then
@@ -605,6 +608,11 @@ function Perl_CombatDisplay_UpdateBars()
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 		Perl_CombatDisplay_Update_Combo_Points();	-- Setup CP Bar
+		return;
+	elseif (playerpower == 6) then		-- runic
+		Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
+		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
+		-- Hide CP Bar
 		return;
 	end
 end
@@ -829,85 +837,10 @@ function Perl_CombatDisplay_Target_Update_Health()
 		Perl_CombatDisplay_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
 	end
 
-	if (targethealthmax == 100) then
-		-- Begin Mobhealth support
-		if (mobhealthsupport == 1) then
-			if (MobHealth3) then
-				targethealth, targethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("target", UnitHealth("target"), UnitHealthMax("target"), UnitName("target"), UnitLevel("target"));
-				if (mobhealththreenumerics) then	-- Stored unit info from the DB
-					if (displaypercents == 0) then
-						Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-					else
-						Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..floor(targethealth/targethealthmax*100+0.5).."%");
-					end
-				else	-- Unit not in MobHealth DB
-					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");
-				end
-			elseif (MobHealthFrame) then
-				local partyid = "target";
-				local hp = targethealth;
-				local hpMax = targethealthmax;
-				local index, current, max, table;
-				if (UnitIsPlayer(partyid)) then
-					index = UnitName(partyid);
-					table = MobHealthPlayerDB or MobHealthDB;
-				else
-					index = UnitName(partyid)..":"..UnitLevel(partyid);
-					table = MobHealthDB or MobHealthPlayerDB;
-				end
-				if (table and type(table[index]) == "string") then
-					local pts, pct = strmatch(table[index], "^(%d+)/(%d+)$");
-
-					if (pts and pct) then
-						pts = pts + 0;
-						pct = pct + 0;
-						if( pct ~= 0 ) then
-							pointsPerPct = pts / pct;
-						else
-							pointsPerPct = 0;
-						end
-
-						local currentPct = hp;
-						if (pointsPerPct > 0) then
-							current = (currentPct * pointsPerPct) + 0.5;
-							max = (100 * pointsPerPct) + 0.5;
-						end
-					end
-				end
-				if (current) then	-- Stored unit info from the DB
-					hp, hpMax = current, max;
-					if (displaypercents == 0) then
-						Perl_CombatDisplay_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
-					else
-						Perl_CombatDisplay_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax).." | "..targethealth.."%");
-					end
-				else
-					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");	-- Unit not in MobHealth DB
-				end
-			elseif (LibStub("LibMobHealth-4.0", true)) then
-				targethealth, targethealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth("target")
-				if (mobhealththreenumerics) then	-- Stored unit info from the DB
-					if (displaypercents == 0) then
-						Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-					else
-						Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..floor(targethealth/targethealthmax*100+0.5).."%");
-					end
-				else	-- Unit not in MobHealth DB
-					Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");
-				end
-			-- End MobHealth Support
-			else
-				Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");	-- MobHealth isn't installed
-			end
-		else	-- mobhealthsupport == 0
-			Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."%");	-- MobHealth support is disabled
-		end
-	else	-- Self/Party/Raid member
-		if (displaypercents == 0) then
-			Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-		else
-			Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..floor(targethealth/targethealthmax*100+0.5).."%");
-		end
+	if (displaypercents == 0) then
+		Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+	else
+		Perl_CombatDisplay_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..floor(targethealth/targethealthmax*100+0.5).."%");
 	end
 end
 
@@ -943,7 +876,7 @@ function Perl_CombatDisplay_Target_Update_Mana()
 		Perl_CombatDisplay_Target_ManaBar:SetValue(targetmana);
 	end
 
-	if (targetpowertype == 1 or targetpowertype == 2) then
+	if (targetpowertype == 1 or targetpowertype == 2 or targetpowertype == 6) then
 		Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana);
 	else
 		if (displaypercents == 0) then
@@ -979,6 +912,10 @@ function Perl_CombatDisplay_Target_UpdateBars()
 		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 		return;
+	elseif (targetpowertype == 6) then	-- runic
+		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
+		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
+		return;
 	end
 end
 
@@ -1010,6 +947,8 @@ function Perl_CombatDisplay_ManaBar_Fade(arg1)
 		Perl_CombatDisplay_ManaBarFadeBar:SetStatusBarColor(Perl_CombatDisplay_ManaBar_Fade_Color, 0, 0, Perl_CombatDisplay_ManaBar_Fade_Color);
 	elseif (playerpower == 3) then
 		Perl_CombatDisplay_ManaBarFadeBar:SetStatusBarColor(Perl_CombatDisplay_ManaBar_Fade_Color, Perl_CombatDisplay_ManaBar_Fade_Color, 0, Perl_CombatDisplay_ManaBar_Fade_Color);
+	elseif (playerpower == 6) then
+		Perl_CombatDisplay_ManaBarFadeBar:SetStatusBarColor(0, Perl_CombatDisplay_ManaBar_Fade_Color, Perl_CombatDisplay_ManaBar_Fade_Color, Perl_CombatDisplay_ManaBar_Fade_Color);
 	end
 
 	if (Perl_CombatDisplay_ManaBar_Fade_Time_Elapsed > 1) then
@@ -1106,6 +1045,8 @@ function Perl_CombatDisplay_Target_ManaBar_Fade(arg1)
 		Perl_CombatDisplay_Target_ManaBarFadeBar:SetStatusBarColor(Perl_CombatDisplay_Target_ManaBar_Fade_Color, (Perl_CombatDisplay_Target_ManaBar_Fade_Color-0.5), 0, Perl_CombatDisplay_Target_ManaBar_Fade_Color);
 	elseif (targetpowertype == 3) then
 		Perl_CombatDisplay_Target_ManaBarFadeBar:SetStatusBarColor(Perl_CombatDisplay_Target_ManaBar_Fade_Color, Perl_CombatDisplay_Target_ManaBar_Fade_Color, 0, Perl_CombatDisplay_Target_ManaBar_Fade_Color);
+	elseif (targetpowertype == 6) then
+		Perl_CombatDisplay_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_CombatDisplay_Target_ManaBar_Fade_Color, Perl_CombatDisplay_Target_ManaBar_Fade_Color, Perl_CombatDisplay_Target_ManaBar_Fade_Color);
 	end
 
 	if (Perl_CombatDisplay_Target_ManaBar_Fade_Time_Elapsed > 1) then
@@ -1257,12 +1198,6 @@ function Perl_CombatDisplay_Set_Target(newvalue)
 	Perl_CombatDisplay_Frame_Style();
 end
 
-function Perl_CombatDisplay_Set_MobHealth(newvalue)
-	mobhealthsupport = newvalue;
-	Perl_CombatDisplay_UpdateVars();
-	Perl_CombatDisplay_Target_Update_Health();
-end
-
 function Perl_CombatDisplay_Set_DruidBar(newvalue)
 	showdruidbar = newvalue;
 	Perl_CombatDisplay_UpdateVars();
@@ -1349,7 +1284,6 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 	scale = Perl_CombatDisplay_Config[name]["Scale"];
 	transparency = Perl_CombatDisplay_Config[name]["Transparency"];
 	showtarget = Perl_CombatDisplay_Config[name]["ShowTarget"];
-	mobhealthsupport = Perl_CombatDisplay_Config[name]["MobHealthSupport"];
 	showdruidbar = Perl_CombatDisplay_Config[name]["ShowDruidBar"];
 	showpetbars = Perl_CombatDisplay_Config[name]["ShowPetBars"];
 	rightclickmenu = Perl_CombatDisplay_Config[name]["RightClickMenu"];
@@ -1378,9 +1312,6 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 	end
 	if (showtarget == nil) then
 		showtarget = 0;
-	end
-	if (mobhealthsupport == nil) then
-		mobhealthsupport = 1;
 	end
 	if (showdruidbar == nil) then
 		showdruidbar = 0;
@@ -1426,7 +1357,6 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 		["scale"] = scale,
 		["transparency"] = transparency,
 		["showtarget"] = showtarget,
-		["mobhealthsupport"] = mobhealthsupport,
 		["showdruidbar"] = showdruidbar,
 		["showpetbars"] = showpetbars,
 		["rightclickmenu"] = rightclickmenu,
@@ -1476,11 +1406,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 				showtarget = vartable["Global Settings"]["ShowTarget"];
 			else
 				showtarget = nil;
-			end
-			if (vartable["Global Settings"]["MobHealthSupport"] ~= nil) then
-				mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
-			else
-				mobhealthsupport = nil;
 			end
 			if (vartable["Global Settings"]["ShowDruidBar"] ~= nil) then
 				showdruidbar = vartable["Global Settings"]["ShowDruidBar"];
@@ -1541,9 +1466,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		if (showtarget == nil) then
 			showtarget = 0;
 		end
-		if (mobhealthsupport == nil) then
-			mobhealthsupport = 1;
-		end
 		if (showdruidbar == nil) then
 			showdruidbar = 0;
 		end
@@ -1583,7 +1505,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		["Scale"] = scale,
 		["Transparency"] = transparency,
 		["ShowTarget"] = showtarget,
-		["MobHealthSupport"] = mobhealthsupport,
 		["ShowDruidBar"] = showdruidbar,
 		["ShowPetBars"] = showpetbars,
 		["RightClickMenu"] = rightclickmenu,
@@ -1640,21 +1561,21 @@ end
 -------------------
 -- Click Handler --
 -------------------
-function Perl_CombatDisplay_CastClickOverlay_OnLoad()
+function Perl_CombatDisplay_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
 		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
 	end
-	SecureUnitButton_OnLoad(this, "player", showmenu);
+	SecureUnitButton_OnLoad(self, "player", showmenu);
 
-	this:SetAttribute("unit", "player");
+	self:SetAttribute("unit", "player");
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
+	ClickCastFrames[self] = true;
 end
 
-function Perl_CombatDisplayDropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_CombatDisplayDropDown_Initialize, "MENU");
+function Perl_CombatDisplayDropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_CombatDisplayDropDown_Initialize, "MENU");
 end
 
 function Perl_CombatDisplayDropDown_Initialize()
@@ -1674,8 +1595,8 @@ function Perl_CombatDisplay_DragStop(button)
 end
 
 
-function Perl_CombatDisplayTargetDropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_CombatDisplayTargetDropDown_Initialize, "MENU");
+function Perl_CombatDisplayTargetDropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_CombatDisplayTargetDropDown_Initialize, "MENU");
 end
 
 function Perl_CombatDisplayTargetDropDown_Initialize()
@@ -1706,17 +1627,17 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 	end
 end
 
-function Perl_CombatDisplay_Target_CastClickOverlay_OnLoad()
+function Perl_CombatDisplay_Target_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
 		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
 	end
-	SecureUnitButton_OnLoad(this, "target", showmenu);
+	SecureUnitButton_OnLoad(self, "target", showmenu);
 
-	this:SetAttribute("unit", "target");
+	self:SetAttribute("unit", "target");
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
+	ClickCastFrames[self] = true;
 end
 
 function Perl_CombatDisplay_Target_DragStart(button)

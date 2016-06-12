@@ -61,7 +61,7 @@
 		</Frames>
 		<Scripts>
 			<OnEnter>
-				Perl_Target_SetBuffTooltip();
+				Perl_Target_SetBuffTooltip(self);
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
@@ -88,7 +88,7 @@
 		<!-- Script Events -->
 		<Scripts>
 			<OnLoad>
-				Perl_Target_OnLoad();
+				Perl_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 
@@ -107,7 +107,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_TargetDropDown_OnLoad();
+						Perl_TargetDropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -254,13 +254,12 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
-								Perl_Target_Tip();
-								UnitFrame_OnEnter(self);
+								UnitFrame_OnEnter(Perl_Target_Frame);
 							</OnEnter>
 							<OnLeave>
 								UnitFrame_OnLeave();
@@ -393,9 +392,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Target_DragStart(arg1);
@@ -471,9 +470,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Target_DragStart(arg1);
@@ -496,7 +495,7 @@
 						</Anchors>
 						<Scripts>
 							<OnUpdate>
-								this:SetCamera(0)
+								self:SetCamera(0)
 							</OnUpdate>
 						</Scripts>
 					</PlayerModel>
@@ -610,9 +609,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Target_DragStart(arg1);
@@ -677,9 +676,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Target_DragStart(arg1);
@@ -744,9 +743,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Target_DragStart(arg1);
@@ -811,9 +810,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Target_DragStart(arg1);
@@ -890,9 +889,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Target_DragStart(arg1);

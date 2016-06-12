@@ -94,7 +94,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_ENABLE);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_ENABLE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Enabled_Update();
@@ -115,7 +115,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_FOCUSTARGET_ENABLE);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_FOCUSTARGET_ENABLE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Enabled_Focus_Update();
@@ -136,7 +136,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_PARTY_HIDDEN_IN_RAID);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_PARTY_HIDDEN_IN_RAID);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Party_Hidden_In_Raid_Update();
@@ -157,7 +157,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_FOCUS_HIDDEN_IN_RAID);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_FOCUS_HIDDEN_IN_RAID);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Focus_Hidden_In_Raid_Update();
@@ -178,7 +178,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_CLASS_COLORED_NAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Class_Colored_Names_Update();
@@ -199,7 +199,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDE_POWER_BARS);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_HIDE_POWER_BARS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Hide_Power_Bars_Update();
@@ -207,7 +207,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton3" inherits="UICheckButtonTemplate" id="3">
+			<CheckButton name="$parent_CheckButton1" inherits="UICheckButtonTemplate" id="1">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -220,28 +220,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_MOBHEALTH);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Party_Target_MobHealth_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton1" inherits="UICheckButtonTemplate" id="1">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton3">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_LOCK);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PARTYTARGET_LOCK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Lock_Update();
@@ -280,8 +259,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
-						Perl_Config_Party_Target_Set_Scale(getglobal(this:GetName()):GetValue());
+						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
+						Perl_Config_Party_Target_Set_Scale(getglobal(self:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -299,7 +278,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Set_Scale();
@@ -320,8 +299,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
-						Perl_Config_Party_Target_Set_Transparency(getglobal(this:GetName()):GetValue());
+						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
+						Perl_Config_Party_Target_Set_Transparency(getglobal(self:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -339,8 +318,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
-						Perl_Config_Party_Target_Focus_Set_Scale(getglobal(this:GetName()):GetValue());
+						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
+						Perl_Config_Party_Target_Focus_Set_Scale(getglobal(self:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -358,7 +337,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Target_Focus_Set_Scale();

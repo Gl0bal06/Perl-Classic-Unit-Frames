@@ -11,7 +11,6 @@ local showclassframe = 1;	-- show the class frame
 local showpvpicon = 1;		-- show the pvp icon
 local numbuffsshown = 16;	-- buff row is 16 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
-local mobhealthsupport = 1;	-- mobhealth support is on by default
 local scale = 0.9;		-- default scale
 local transparency = 1;		-- transparency for frames
 local buffdebuffscale = 1;	-- default scale for buffs and debuffs
@@ -44,50 +43,52 @@ local Perl_Focus_ManaBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Focus_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local focushealth, focushealthmax, focushealthpercent, focusmana, focusmanamax, focusmanapercent, focuspower, focuslevel, focuslevelcolor, focusclassification, focusclassificationframetext, englishclass, creatureType, r, g, b, mobhealththreenumerics;
+local focushealth, focushealthmax, focushealthpercent, focusmana, focusmanamax, focusmanapercent, focuspower, focuslevel, focuslevelcolor, focusclassification, focusclassificationframetext, englishclass, creatureType, r, g, b;
 
 
 ----------------------
 -- Loading Function --
 ----------------------
-function Perl_Focus_OnLoad()
+function Perl_Focus_OnLoad(self)
 	-- Combat Text
-	CombatFeedback_Initialize(Perl_Focus_HitIndicator, 30);
+	CombatFeedback_Initialize(self, Perl_Focus_HitIndicator, 30);
 
 	-- Events
-	this:RegisterEvent("PARTY_MEMBER_DISABLE");
-	this:RegisterEvent("PARTY_MEMBER_ENABLE");
-	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
-	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	this:RegisterEvent("PLAYER_LOGIN");
-	this:RegisterEvent("PLAYER_FOCUS_CHANGED");
-	this:RegisterEvent("RAID_TARGET_UPDATE");
-	this:RegisterEvent("UNIT_AURA");
-	this:RegisterEvent("UNIT_COMBAT");
-	this:RegisterEvent("UNIT_DISPLAYPOWER");
-	this:RegisterEvent("UNIT_DYNAMIC_FLAGS");
-	this:RegisterEvent("UNIT_ENERGY");
-	this:RegisterEvent("UNIT_FOCUS");
-	this:RegisterEvent("UNIT_HEALTH");
-	this:RegisterEvent("UNIT_LEVEL");
-	this:RegisterEvent("UNIT_MANA");
-	this:RegisterEvent("UNIT_MAXENERGY");
-	this:RegisterEvent("UNIT_MAXFOCUS");
-	this:RegisterEvent("UNIT_MAXHEALTH");
-	this:RegisterEvent("UNIT_MAXMANA");
-	this:RegisterEvent("UNIT_MAXRAGE");
-	this:RegisterEvent("UNIT_NAME_UPDATE");
-	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	this:RegisterEvent("UNIT_PVP_UPDATE");
-	this:RegisterEvent("UNIT_FACTION");
-	this:RegisterEvent("UNIT_RAGE");
-	this:RegisterEvent("UNIT_SPELLMISS");
-	this:RegisterEvent("VOICE_START");
-	this:RegisterEvent("VOICE_STOP");
+	self:RegisterEvent("PARTY_MEMBER_DISABLE");
+	self:RegisterEvent("PARTY_MEMBER_ENABLE");
+	self:RegisterEvent("PARTY_MEMBERS_CHANGED");
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
+	self:RegisterEvent("PLAYER_LOGIN");
+	self:RegisterEvent("PLAYER_FOCUS_CHANGED");
+	self:RegisterEvent("RAID_TARGET_UPDATE");
+	self:RegisterEvent("UNIT_AURA");
+	self:RegisterEvent("UNIT_COMBAT");
+	self:RegisterEvent("UNIT_DISPLAYPOWER");
+	self:RegisterEvent("UNIT_DYNAMIC_FLAGS");
+	self:RegisterEvent("UNIT_ENERGY");
+	self:RegisterEvent("UNIT_FOCUS");
+	self:RegisterEvent("UNIT_HEALTH");
+	self:RegisterEvent("UNIT_LEVEL");
+	self:RegisterEvent("UNIT_MANA");
+	self:RegisterEvent("UNIT_MAXENERGY");
+	self:RegisterEvent("UNIT_MAXFOCUS");
+	self:RegisterEvent("UNIT_MAXHEALTH");
+	self:RegisterEvent("UNIT_MAXMANA");
+	self:RegisterEvent("UNIT_MAXRAGE");
+	self:RegisterEvent("UNIT_MAXRUNIC_POWER");
+	self:RegisterEvent("UNIT_NAME_UPDATE");
+	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+	self:RegisterEvent("UNIT_PVP_UPDATE");
+	self:RegisterEvent("UNIT_FACTION");
+	self:RegisterEvent("UNIT_RAGE");
+	self:RegisterEvent("UNIT_RUNIC_POWER");
+	self:RegisterEvent("UNIT_SPELLMISS");
+	self:RegisterEvent("VOICE_START");
+	self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
-	this:SetScript("OnEvent", Perl_Focus_OnEvent);
-	this:SetScript("OnUpdate", CombatFeedback_OnUpdate);
+	self:SetScript("OnEvent", Perl_Focus_OnEvent);
+	self:SetScript("OnUpdate", CombatFeedback_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Focus_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Focus_NameFrame:GetFrameLevel() + 2);
@@ -104,7 +105,10 @@ function Perl_Focus_OnLoad()
 	Perl_Focus_ManaBarFadeBar:SetFrameLevel(Perl_Focus_ManaBar:GetFrameLevel() - 1);
 
 	-- WoW 2.0 Secure API Stuff
-	this:SetAttribute("unit", "focus");
+	self:SetAttribute("unit", "focus");
+
+	-- Misc
+	self.unit = "focus";
 end
 
 
@@ -123,7 +127,7 @@ function Perl_Focus_OnEvent()
 end
 
 function Perl_Focus_Events:PLAYER_FOCUS_CHANGED()
-	if (UnitExists(this:GetAttribute("unit"))) then
+	if (UnitExists(Perl_Focus_Frame:GetAttribute("unit"))) then
 		Perl_Focus_Update_Once();		-- Set the unchanging info for the Focus
 	end
 end
@@ -150,6 +154,8 @@ Perl_Focus_Events.UNIT_RAGE = Perl_Focus_Events.UNIT_ENERGY;
 Perl_Focus_Events.UNIT_MAXRAGE = Perl_Focus_Events.UNIT_ENERGY;
 Perl_Focus_Events.UNIT_FOCUS = Perl_Focus_Events.UNIT_ENERGY;
 Perl_Focus_Events.UNIT_MAXFOCUS = Perl_Focus_Events.UNIT_ENERGY;
+Perl_Focus_Events.UNIT_RUNIC_POWER = Perl_Focus_Events.UNIT_ENERGY;
+Perl_Focus_Events.UNIT_MAXRUNIC_POWER = Perl_Focus_Events.UNIT_ENERGY;
 
 function Perl_Focus_Events:UNIT_AURA()
 	if (arg1 == "focus") then
@@ -165,7 +171,7 @@ end
 
 function Perl_Focus_Events:UNIT_COMBAT()
 	if (arg1 == "focus") then
-		CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5);
+		CombatFeedback_OnCombatEvent(Perl_Focus_Frame, arg2, arg3, arg4, arg5);
 	end
 end
 
@@ -304,7 +310,7 @@ function Perl_Focus_Update_Once()
 	Perl_Focus_HealthBarFadeBar:Hide();	-- Hide the fade bars so we don't see fading bars when we shouldn't
 	Perl_Focus_ManaBarFadeBar:Hide();	-- Hide the fade bars so we don't see fading bars when we shouldn't
 	Perl_Focus_HealthBar:SetValue(0);	-- Do this so we don't fade the bar on a fresh Focus switch
-	Perl_Focus_ManaBar:SetValue(0);	-- Do this so we don't fade the bar on a fresh Focus switch
+	Perl_Focus_ManaBar:SetValue(0);		-- Do this so we don't fade the bar on a fresh Focus switch
 	Perl_Focus_Update_Portrait();		-- Set the Focus's portrait and adjust the combo point frame
 	Perl_Focus_Update_Health();		-- Set the Focus's health
 	Perl_Focus_Update_Mana_Bar();		-- What type of mana bar is it?
@@ -314,7 +320,7 @@ function Perl_Focus_Update_Once()
 	Perl_Focus_Buff_UpdateAll();		-- Update the buffs
 	Perl_Focus_UpdateRaidFocusIcon();	-- Display the raid Focus icon if needed
 	Perl_Focus_Update_Name();		-- Update the name
-	Perl_Focus_Update_Text_Color();	-- Has the Focus been tapped by someone else?
+	Perl_Focus_Update_Text_Color();		-- Has the Focus been tapped by someone else?
 
 	-- Begin: Draw the class icon?
 	if (showclassicon == 1) then
@@ -419,290 +425,40 @@ function Perl_Focus_Update_Health()
 		Perl_Focus_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
 	end
 
-	if (focushealthmax == 100) then
-		-- Begin Mobhealth support
-		if (mobhealthsupport == 1) then
-			if (MobHealth3) then
-				focushealth, focushealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("focus", UnitHealth("focus"), UnitHealthMax("focus"), UnitName("focus"), UnitLevel("focus"));
-				if (mobhealththreenumerics) then
-					-- MobHealth3 was successful in getting a numeric value
-					if (framestyle == 1) then
-						Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-						Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax.." | "..focushealthpercent.."%");
-					elseif (framestyle == 2) then
-						if (compactmode == 0) then
-							Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-							if (focushealthmax > 9999) then
-								Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
-								Perl_Focus_HealthBarTextRight:SetText(focushealthpercent.."%");
-							else
-								Perl_Focus_HealthBarText:SetText(focushealthpercent.."%");
-								Perl_Focus_HealthBarTextRight:SetText(focushealth.."/"..focushealthmax);
-							end
-							
-						else
-							if (compactpercent == 0) then
-								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-								Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
-							else
-								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
-								Perl_Focus_HealthBarTextCompactPercent:SetText(focushealthpercent.."%");
-							end
-						end
-					end
-				else
-					-- MobHealth3 was unable to give us a numeric value, fall back to percentage
-					if (framestyle == 1) then
-						Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-						Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Focus_HealthBarText:SetText(focushealth.."%");
-					elseif (framestyle == 2) then
-						if (compactmode == 0) then
-							Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-							Perl_Focus_HealthBarText:SetText(focushealth.."%");
-							Perl_Focus_HealthBarTextRight:SetText(focushealth.."%");
-						else
-							if (compactpercent == 0) then
-								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-								Perl_Focus_HealthBarText:SetText(focushealth.."%");
-							else
-								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Focus_HealthBarText:SetText(focushealth.."%");
-								Perl_Focus_HealthBarTextCompactPercent:SetText(focushealth.."%");
-							end
-						end
-					end
-				end
-			elseif (MobHealthFrame) then
-				local partyid = "focus";
-				local hp = focushealth;
-				local hpMax = focushealthmax;
-				local index, current, max, table;
-				if (UnitIsPlayer(partyid)) then
-					index = UnitName(partyid);
-					table = MobHealthPlayerDB or MobHealthDB;
-				else
-					index = UnitName(partyid)..":"..UnitLevel(partyid);
-					table = MobHealthDB or MobHealthPlayerDB;
-				end
-				if (table and type(table[index]) == "string") then
-					local pts, pct = strmatch(table[index], "^(%d+)/(%d+)$");
-
-					if (pts and pct) then
-						pts = pts + 0;
-						pct = pct + 0;
-						if( pct ~= 0 ) then
-							pointsPerPct = pts / pct;
-						else
-							pointsPerPct = 0;
-						end
-
-						local currentPct = hp;
-						if (pointsPerPct > 0) then
-							current = (currentPct * pointsPerPct) + 0.5;
-							max = (100 * pointsPerPct) + 0.5;
-						end
-					end
-				end
-				if (current) then
-					hp, hpMax = current, max;
-					-- Stored unit info from the DB
-					if (framestyle == 1) then
-						Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-						Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Focus_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax).." | "..focushealth.."%");
-					elseif (framestyle == 2) then
-						if (compactmode == 0) then
-							Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-							if (tonumber(string.format("%d", hpMax)) > 9999) then
-								Perl_Focus_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
-								Perl_Focus_HealthBarTextRight:SetText(focushealth.."%");
-							else
-								Perl_Focus_HealthBarText:SetText(focushealth.."%");
-								Perl_Focus_HealthBarTextRight:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
-							end
-							
-						else
-							if (compactpercent == 0) then
-								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-								Perl_Focus_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
-							else
-								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Focus_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
-								Perl_Focus_HealthBarTextCompactPercent:SetText(focushealth.."%");
-							end
-						end
-					end
-				else
-					-- Unit not in MobHealth DB
-					if (framestyle == 1) then	-- This chunk of code is the same as the next two blocks in case you customize this
-						Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-						Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Focus_HealthBarText:SetText(focushealth.."%");
-					elseif (framestyle == 2) then
-						if (compactmode == 0) then
-							Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-							Perl_Focus_HealthBarText:SetText(focushealth.."%");
-							Perl_Focus_HealthBarTextRight:SetText(focushealth.."%");
-						else
-							if (compactpercent == 0) then
-								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-								Perl_Focus_HealthBarText:SetText(focushealth.."%");
-							else
-								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Focus_HealthBarText:SetText(focushealth.."%");
-								Perl_Focus_HealthBarTextCompactPercent:SetText(focushealth.."%");
-							end
-						end
-					end
-				end
-			elseif (LibStub("LibMobHealth-4.0", true)) then
-				focushealth, focushealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth("focus")
-				if (mobhealththreenumerics) then
-					-- MobHealth4 was successful in getting a numeric value
-					if (framestyle == 1) then
-						Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-						Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax.." | "..focushealthpercent.."%");
-					elseif (framestyle == 2) then
-						if (compactmode == 0) then
-							Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-							if (focushealthmax > 9999) then
-								Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
-								Perl_Focus_HealthBarTextRight:SetText(focushealthpercent.."%");
-							else
-								Perl_Focus_HealthBarText:SetText(focushealthpercent.."%");
-								Perl_Focus_HealthBarTextRight:SetText(focushealth.."/"..focushealthmax);
-							end
-							
-						else
-							if (compactpercent == 0) then
-								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-								Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
-							else
-								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
-								Perl_Focus_HealthBarTextCompactPercent:SetText(focushealthpercent.."%");
-							end
-						end
-					end
-				else
-					-- MobHealth4 was unable to give us a numeric value, fall back to percentage
-					if (framestyle == 1) then
-						Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-						Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Focus_HealthBarText:SetText(focushealth.."%");
-					elseif (framestyle == 2) then
-						if (compactmode == 0) then
-							Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-							Perl_Focus_HealthBarText:SetText(focushealth.."%");
-							Perl_Focus_HealthBarTextRight:SetText(focushealth.."%");
-						else
-							if (compactpercent == 0) then
-								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-								Perl_Focus_HealthBarText:SetText(focushealth.."%");
-							else
-								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Focus_HealthBarText:SetText(focushealth.."%");
-								Perl_Focus_HealthBarTextCompactPercent:SetText(focushealth.."%");
-							end
-						end
-					end
-				end
-			-- End MobHealth Support
+	if (framestyle == 1) then
+		Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
+		Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
+		Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
+	elseif (framestyle == 2) then
+		if (compactmode == 0) then
+			if (healermode == 0) then
+				Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+				Perl_Focus_HealthBarText:SetText(focushealthpercent.."%");
+				Perl_Focus_HealthBarTextRight:SetText(focushealth.."/"..focushealthmax);
 			else
-				-- MobHealth isn't installed
-				if (framestyle == 1) then
-					Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-					Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-					Perl_Focus_HealthBarText:SetText(focushealth.."%");
-				elseif (framestyle == 2) then
-					if (compactmode == 0) then
-						Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-						Perl_Focus_HealthBarText:SetText(focushealth.."%");
-						Perl_Focus_HealthBarTextRight:SetText(focushealth.."%");
-					else
-						if (compactpercent == 0) then
-							Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-							Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-							Perl_Focus_HealthBarText:SetText(focushealth.."%");
-						else
-							Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-							Perl_Focus_HealthBarText:SetText(focushealth.."%");
-							Perl_Focus_HealthBarTextCompactPercent:SetText(focushealth.."%");
-						end
-					end
-				end
+				Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+				Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
+				Perl_Focus_HealthBarTextRight:SetText("-"..focushealthmax - focushealth);
 			end
-		else	-- mobhealthsupport == 0
-			-- MobHealth support is disabled
-			if (framestyle == 1) then
-				Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-				Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-				Perl_Focus_HealthBarText:SetText(focushealth.."%");
-			elseif (framestyle == 2) then
-				if (compactmode == 0) then
-					Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-					Perl_Focus_HealthBarText:SetText(focushealth.."%");
-					Perl_Focus_HealthBarTextRight:SetText(focushealth.."%");
-				else
-					if (compactpercent == 0) then
-						Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-						Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-						Perl_Focus_HealthBarText:SetText(focushealth.."%");
-					else
-						Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-						Perl_Focus_HealthBarText:SetText(focushealth.."%");
-						Perl_Focus_HealthBarTextCompactPercent:SetText(focushealth.."%");
-					end
-				end
-			end
-		end
-	else
-		-- Self/Party/Raid member
-		if (framestyle == 1) then
-			Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-			Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-			Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
-		elseif (framestyle == 2) then
-			if (compactmode == 0) then
+			
+		else
+			if (compactpercent == 0) then
 				if (healermode == 0) then
-					Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-					Perl_Focus_HealthBarText:SetText(focushealthpercent.."%");
-					Perl_Focus_HealthBarTextRight:SetText(focushealth.."/"..focushealthmax);
+					Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+					Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
 				else
-					Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-					Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
+					Perl_Focus_HealthBarTextRight:SetText("-"..focushealthmax - focushealth);
+					Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+				end
+				Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
+			else
+				if (healermode == 0) then
+					Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+				else
 					Perl_Focus_HealthBarTextRight:SetText("-"..focushealthmax - focushealth);
 				end
-				
-			else
-				if (compactpercent == 0) then
-					if (healermode == 0) then
-						Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-						Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-					else
-						Perl_Focus_HealthBarTextRight:SetText("-"..focushealthmax - focushealth);
-						Perl_Focus_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-					end
-					Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
-				else
-					if (healermode == 0) then
-						Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-					else
-						Perl_Focus_HealthBarTextRight:SetText("-"..focushealthmax - focushealth);
-					end
-					Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
-					Perl_Focus_HealthBarTextCompactPercent:SetText(focushealthpercent.."%");
-				end
+				Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
+				Perl_Focus_HealthBarTextCompactPercent:SetText(focushealthpercent.."%");
 			end
 		end
 	end
@@ -758,7 +514,7 @@ function Perl_Focus_Update_Mana()
 		Perl_Focus_ManaBarTextRight:SetText();			-- Hide this text in this frame style
 		Perl_Focus_ManaBarTextCompactPercent:SetText();	-- Hide this text in this frame style
 
-		if (focuspower == 1 or focuspower == 2) then
+		if (focuspower == 1 or focuspower == 2 or focuspower == 6) then
 			Perl_Focus_ManaBarText:SetText(focusmana);
 		else
 			Perl_Focus_ManaBarText:SetText(focusmana.."/"..focusmanamax);
@@ -771,7 +527,7 @@ function Perl_Focus_Update_Mana()
 
 			if (healermode == 0) then
 				Perl_Focus_ManaBarTextRight:SetTextColor(1, 1, 1, 1);
-				if (focuspower == 1 or focuspower == 2) then
+				if (focuspower == 1 or focuspower == 2 or focuspower == 6) then
 					Perl_Focus_ManaBarText:SetText(focusmana.."%");
 					Perl_Focus_ManaBarTextRight:SetText(focusmana);
 				else
@@ -785,7 +541,7 @@ function Perl_Focus_Update_Mana()
 				else
 					Perl_Focus_ManaBarTextRight:SetText();
 				end
-				if (focuspower == 1 or focuspower == 2) then
+				if (focuspower == 1 or focuspower == 2 or focuspower == 6) then
 					Perl_Focus_ManaBarText:SetText(focusmana);
 				else
 					Perl_Focus_ManaBarText:SetText(focusmana.."/"..focusmanamax);
@@ -804,7 +560,7 @@ function Perl_Focus_Update_Mana()
 				else
 					Perl_Focus_ManaBarTextRight:SetText();			-- Hide this text in this frame style
 				end
-				if (focuspower == 1 or focuspower == 2) then
+				if (focuspower == 1 or focuspower == 2 or focuspower == 6) then
 					Perl_Focus_ManaBarText:SetText(focusmana);
 				else
 					Perl_Focus_ManaBarText:SetText(focusmana.."/"..focusmanamax);
@@ -821,7 +577,7 @@ function Perl_Focus_Update_Mana()
 					Perl_Focus_ManaBarTextRight:SetText();			-- Hide this text in this frame style
 				end
 
-				if (focuspower == 1 or focuspower == 2) then
+				if (focuspower == 1 or focuspower == 2 or focuspower == 6) then
 					Perl_Focus_ManaBarText:SetText(focusmana);
 					Perl_Focus_ManaBarTextCompactPercent:SetText(focusmana.."%");
 				else
@@ -853,6 +609,11 @@ function Perl_Focus_Update_Mana_Bar()
 	elseif (focuspower == 3) then
 		Perl_Focus_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_Focus_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+		Perl_Focus_ManaBar:Show();
+		Perl_Focus_ManaBarBG:Show();
+	elseif (focuspower == 6) then
+		Perl_Focus_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
+		Perl_Focus_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
 		Perl_Focus_ManaBar:Show();
 		Perl_Focus_ManaBarBG:Show();
 	else
@@ -1102,7 +863,7 @@ function Perl_Focus_Main_Style()
 		Perl_Focus_ManaBar:SetPoint("TOP", "Perl_Focus_HealthBar", "BOTTOM", 0, -2);
 
 		Perl_Focus_CivilianFrame:SetWidth(95);
-		Perl_Focus_ClassNameFrame:SetWidth(90);
+		Perl_Focus_ClassNameFrame:SetWidth(95);
 		Perl_Focus_LevelFrame:SetWidth(46);
 		Perl_Focus_Frame:SetWidth(177);
 		Perl_Focus_Name:SetWidth(177);
@@ -1127,7 +888,7 @@ function Perl_Focus_Main_Style()
 
 		if (compactmode == 0) then
 			Perl_Focus_CivilianFrame:SetWidth(114);
-			Perl_Focus_ClassNameFrame:SetWidth(90);
+			Perl_Focus_ClassNameFrame:SetWidth(95);
 			Perl_Focus_LevelFrame:SetWidth(46);
 			Perl_Focus_Frame:SetWidth(211);
 			Perl_Focus_Name:SetWidth(211);
@@ -1144,7 +905,7 @@ function Perl_Focus_Main_Style()
 			if (shortbars == 0) then
 				if (compactpercent == 0) then
 					Perl_Focus_CivilianFrame:SetWidth(85);
-					Perl_Focus_ClassNameFrame:SetWidth(90);
+					Perl_Focus_ClassNameFrame:SetWidth(95);
 					Perl_Focus_LevelFrame:SetWidth(46);
 					Perl_Focus_Frame:SetWidth(126);
 					Perl_Focus_Name:SetWidth(126);
@@ -1159,7 +920,7 @@ function Perl_Focus_Main_Style()
 					Perl_Focus_StatsFrame_CastClickOverlay:SetWidth(170);
 				else
 					Perl_Focus_CivilianFrame:SetWidth(79);
-					Perl_Focus_ClassNameFrame:SetWidth(90);
+					Perl_Focus_ClassNameFrame:SetWidth(95);
 					Perl_Focus_LevelFrame:SetWidth(46);
 					Perl_Focus_Frame:SetWidth(161);
 					Perl_Focus_Name:SetWidth(161);
@@ -1183,7 +944,7 @@ function Perl_Focus_Main_Style()
 
 				if (compactpercent == 0) then				-- civilian probably needs resizing
 					Perl_Focus_CivilianFrame:SetWidth(79);
-					Perl_Focus_ClassNameFrame:SetWidth(90);
+					Perl_Focus_ClassNameFrame:SetWidth(91);
 					Perl_Focus_LevelFrame:SetWidth(46);
 					Perl_Focus_Frame:SetWidth(91);
 					Perl_Focus_Name:SetWidth(91);
@@ -1198,7 +959,7 @@ function Perl_Focus_Main_Style()
 					Perl_Focus_StatsFrame_CastClickOverlay:SetWidth(135);
 				else
 					Perl_Focus_CivilianFrame:SetWidth(79);
-					Perl_Focus_ClassNameFrame:SetWidth(90);
+					Perl_Focus_ClassNameFrame:SetWidth(95);
 					Perl_Focus_LevelFrame:SetWidth(46);
 					Perl_Focus_Frame:SetWidth(126);
 					Perl_Focus_Name:SetWidth(126);
@@ -1344,6 +1105,8 @@ function Perl_Focus_ManaBar_Fade(arg1)
 		Perl_Focus_ManaBarFadeBar:SetStatusBarColor(Perl_Focus_ManaBar_Fade_Color, (Perl_Focus_ManaBar_Fade_Color-0.5), 0, Perl_Focus_ManaBar_Fade_Color);
 	elseif (focuspower == 3) then
 		Perl_Focus_ManaBarFadeBar:SetStatusBarColor(Perl_Focus_ManaBar_Fade_Color, Perl_Focus_ManaBar_Fade_Color, 0, Perl_Focus_ManaBar_Fade_Color);
+	elseif (focuspower == 6) then
+		Perl_Focus_ManaBarFadeBar:SetStatusBarColor(0, Perl_Focus_ManaBar_Fade_Color, Perl_Focus_ManaBar_Fade_Color, Perl_Focus_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Focus_ManaBar_Fade_Time_Elapsed > 1) then
@@ -1434,15 +1197,6 @@ end
 
 function Perl_Focus_Set_Class_Frame(newvalue)
 	showclassframe = newvalue;
-	Perl_Focus_UpdateVars();		-- Save the new setting
-	Perl_Focus_Frame_Style();		-- Apply any showing/hiding of frames and enabling/disabling of events
-	if (UnitExists("focus")) then
-		Perl_Focus_Update_Once();	-- Update the Focus frame information if appropriate
-	end
-end
-
-function Perl_Focus_Set_MobHealth(newvalue)
-	mobhealthsupport = newvalue;
 	Perl_Focus_UpdateVars();		-- Save the new setting
 	Perl_Focus_Frame_Style();		-- Apply any showing/hiding of frames and enabling/disabling of events
 	if (UnitExists("focus")) then
@@ -1633,7 +1387,6 @@ function Perl_Focus_GetVars(name, updateflag)
 	showpvpicon = Perl_Focus_Config[name]["PvPIcon"]; 
 	numbuffsshown = Perl_Focus_Config[name]["Buffs"];
 	numdebuffsshown = Perl_Focus_Config[name]["Debuffs"];
-	mobhealthsupport = Perl_Focus_Config[name]["MobHealthSupport"];
 	scale = Perl_Focus_Config[name]["Scale"];
 	transparency = Perl_Focus_Config[name]["Transparency"];
 	buffdebuffscale = Perl_Focus_Config[name]["BuffDebuffScale"];
@@ -1673,9 +1426,6 @@ function Perl_Focus_GetVars(name, updateflag)
 	end
 	if (numdebuffsshown == nil) then
 		numdebuffsshown = 16;
-	end
-	if (mobhealthsupport == nil) then
-		mobhealthsupport = 1;
 	end
 	if (scale == nil) then
 		scale = 0.9;
@@ -1764,7 +1514,6 @@ function Perl_Focus_GetVars(name, updateflag)
 		["showpvpicon"] = showpvpicon,
 		["numbuffsshown"] = numbuffsshown,
 		["numdebuffsshown"] = numdebuffsshown,
-		["mobhealthsupport"] = mobhealthsupport,
 		["scale"] = scale,
 		["transparency"] = transparency,
 		["buffdebuffscale"] = buffdebuffscale,
@@ -1823,11 +1572,6 @@ function Perl_Focus_UpdateVars(vartable)
 				numdebuffsshown = vartable["Global Settings"]["Debuffs"];
 			else
 				numdebuffsshown = nil;
-			end
-			if (vartable["Global Settings"]["MobHealthSupport"] ~= nil) then
-				mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
-			else
-				mobhealthsupport = nil;
 			end
 			if (vartable["Global Settings"]["Scale"] ~= nil) then
 				scale = vartable["Global Settings"]["Scale"];
@@ -1955,9 +1699,6 @@ function Perl_Focus_UpdateVars(vartable)
 		if (numdebuffsshown == nil) then
 			numdebuffsshown = 16;
 		end
-		if (mobhealthsupport == nil) then
-			mobhealthsupport = 1;
-		end
 		if (scale == nil) then
 			scale = 0.9;
 		end
@@ -2040,7 +1781,6 @@ function Perl_Focus_UpdateVars(vartable)
 		["PvPIcon"] = showpvpicon,
 		["Buffs"] = numbuffsshown,
 		["Debuffs"] = numdebuffsshown,
-		["MobHealthSupport"] = mobhealthsupport,
 		["Scale"] = scale,
 		["Transparency"] = transparency,
 		["BuffDebuffScale"] = buffdebuffscale,
@@ -2076,11 +1816,11 @@ function Perl_Focus_Buff_UpdateAll()
 			Perl_Focus_Buff_UpdateCPMeter();
 		end
 
-		local button, buffCount, buffTexture, buffApplications, color, debuffType, duration, timeLeft, cooldown, startCooldownTime;		-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		local button, buffCount, buffTexture, buffApplications, color, debuffType, duration, timeLeft, cooldown;		-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 
 		local numBuffs = 0;											-- Buff counter for correct layout
 		for buffnum=1,numbuffsshown do										-- Start main buff loop
-			_, _, buffTexture, buffApplications, duration, timeLeft = UnitBuff("focus", buffnum, displaycastablebuffs);	-- Get the texture and buff stacking information if any
+			_, _, buffTexture, buffApplications, _, duration, timeLeft = UnitBuff("focus", buffnum, displaycastablebuffs);	-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Focus_Buff"..buffnum);						-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -2096,8 +1836,7 @@ function Perl_Focus_Buff_UpdateAll()
 					cooldown = getglobal(button:GetName().."Cooldown");				-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
-							startCooldownTime = GetTime() - (duration - timeLeft);
-							CooldownFrame_SetTimer(cooldown, startCooldownTime, duration, 1);
+							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
 							cooldown:Show();
 						else
 							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
@@ -2139,8 +1878,7 @@ function Perl_Focus_Buff_UpdateAll()
 					cooldown = getglobal(button:GetName().."Cooldown");				-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
-							startCooldownTime = GetTime() - (duration - timeLeft);
-							CooldownFrame_SetTimer(cooldown, startCooldownTime, duration, 1);
+							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
 							cooldown:Show();
 						else
 							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
@@ -2359,7 +2097,7 @@ function Perl_Focus_Buff_GetApplications(debuffname)
 	local i = 1;
 
 	while UnitDebuff("focus", i) do
-		Perl_Focus_Tooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
+		Perl_Focus_Tooltip:SetOwner(Perl_Focus_Frame, "ANCHOR_BOTTOMRIGHT");
 		Perl_Focus_Tooltip:SetUnitDebuff("focus", i);
 		if (Perl_Focus_TooltipTextLeft1:GetText() == debuffname) then
 			_, _, _, debuffApplications = UnitDebuff("focus", i);
@@ -2391,12 +2129,12 @@ function Perl_Focus_Reset_Buffs()
 	end
 end
 
-function Perl_Focus_SetBuffTooltip()
-	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
-	if (this:GetID() > 16) then
-		GameTooltip:SetUnitDebuff("focus", this:GetID()-16, displaycurabledebuff);
+function Perl_Focus_SetBuffTooltip(self)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT");
+	if (self:GetID() > 16) then
+		GameTooltip:SetUnitDebuff("focus", self:GetID()-16, displaycurabledebuff);
 	else
-		GameTooltip:SetUnitBuff("focus", this:GetID(), displaycastablebuffs);
+		GameTooltip:SetUnitBuff("focus", self:GetID(), displaycastablebuffs);
 	end
 end
 
@@ -2404,21 +2142,21 @@ end
 --------------------
 -- Click Handlers --
 --------------------
-function Perl_Focus_CastClickOverlay_OnLoad()
+function Perl_Focus_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
 		ToggleDropDownMenu(1, nil, Perl_Focus_DropDown, "Perl_Focus_NameFrame", 40, 0);
 	end
-	SecureUnitButton_OnLoad(this, "focus", showmenu);
+	SecureUnitButton_OnLoad(self, "focus", showmenu);
 
-	this:SetAttribute("unit", "focus");
+	self:SetAttribute("unit", "focus");
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
+	ClickCastFrames[self] = true;
 end
 
-function Perl_FocusDropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_FocusDropDown_Initialize, "MENU");
+function Perl_FocusDropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_FocusDropDown_Initialize, "MENU");
 end
 
 function Perl_FocusDropDown_Initialize()
@@ -2450,18 +2188,6 @@ end
 
 function Perl_Focus_DragStop(button)
 	Perl_Focus_Frame:StopMovingOrSizing();
-end
-
-
--------------
--- Tooltip --
--------------
-function Perl_Focus_Tip()
-	UnitFrame_Initialize("focus")
-end
-
-function UnitFrame_Initialize(unit)	-- Hopefully this doesn't break any mods
-	this.unit = unit;
 end
 
 

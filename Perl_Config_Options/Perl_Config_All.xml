@@ -124,7 +124,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_ONE);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_ONE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
@@ -151,7 +151,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_TWO);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_TWO);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -178,7 +178,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_THREE);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_THREE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -205,7 +205,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_FOUR);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_FOUR);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -232,7 +232,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_FIVE);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_FIVE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -259,7 +259,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_SIX);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_SIX);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -286,7 +286,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_NONE);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_NONE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
@@ -349,8 +349,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
-						Perl_Config_All_Set_Scale(getglobal(this:GetName()):GetValue());
+						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
+						Perl_Config_All_Set_Scale(getglobal(self:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -368,7 +368,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Scale();
@@ -389,8 +389,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
-						Perl_Config_All_Set_Transparency(getglobal(this:GetName()):GetValue());
+						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
+						Perl_Config_All_Set_Transparency(getglobal(self:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -408,8 +408,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
-						Perl_Config_All_Set_MiniMap_Position(getglobal(this:GetName()):GetValue());
+						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
+						Perl_Config_All_Set_MiniMap_Position(getglobal(self:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -427,8 +427,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
-						Perl_Config_All_Set_MiniMap_Radius(getglobal(this:GetName()):GetValue());
+						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
+						Perl_Config_All_Set_MiniMap_Radius(getglobal(self:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -446,7 +446,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_SHOW_MINIMAP);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_SHOW_MINIMAP);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_MiniMap_Button();
@@ -467,13 +467,13 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_POSITIONING_MODE);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_POSITIONING_MODE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Positioning_Mode();
 					</OnClick>
 					<OnEnter>
-						GameTooltip_SetDefaultAnchor(GameTooltip, this);
+						GameTooltip_SetDefaultAnchor(GameTooltip, self);
 						GameTooltip:SetText(PERL_LOCALIZED_CONFIG_ALL_POSITIONING_MODE_TOOLTIP);
 						GameTooltip:Show();
 					</OnEnter>
@@ -496,7 +496,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TRANSPARENT_BACKGROUND);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TRANSPARENT_BACKGROUND);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Transparent_Background();
@@ -575,7 +575,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_CLICKHEALING);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_CLICKHEALING);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_CastParty_Support();
@@ -596,7 +596,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_CLICKCASTABLE_NAME_FRAMES);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_CLICKCASTABLE_NAME_FRAMES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Name_Frame_Click_Cast();
@@ -681,7 +681,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_PROGRESSIVE);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_PROGRESSIVE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Color_Health();
@@ -702,7 +702,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURED_BACKGROUND);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURED_BACKGROUND);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Textured_Bar_Background();
@@ -723,7 +723,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_FADE_BARS);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALL_FADE_BARS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Fade_Bars();
@@ -744,7 +744,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_INVERT_BAR_VALUES);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_INVERT_BAR_VALUES);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Invert_Bar_Values();
@@ -765,7 +765,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COLOR_FRAME_DEBUFF);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COLOR_FRAME_DEBUFF);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_Color_Frame_Debuff();

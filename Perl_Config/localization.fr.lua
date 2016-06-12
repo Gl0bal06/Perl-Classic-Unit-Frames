@@ -1,5 +1,6 @@
 if (GetLocale() == "frFR") then
 	-- Class Names
+	PERL_LOCALIZED_DEATHKNIGHT = "Death Knight";
 	PERL_LOCALIZED_DRUID = "Druide";
 	PERL_LOCALIZED_HUNTER = "Chasseur";
 	PERL_LOCALIZED_MAGE = "Mage";
@@ -36,7 +37,7 @@ if (GetLocale() == "frFR") then
 
 	-- Perl Player Strings
 	PERL_LOCALIZED_PLAYER_GROUP = "Groupe ";
-	PERL_LOCALIZED_PLAYER_LEVEL_SEVENTY = "Niveau 70";
+	PERL_LOCALIZED_PLAYER_LEVEL_EIGHTY = "Niveau 80";
 	PERL_LOCALIZED_PLAYER_NOMORE_EXPERIENCE = "Vous ne pouvez plus gagner d\' experience!";
 	PERL_LOCALIZED_PLAYER_REACTIONNAME_ONE = "D\195\169test\195\169";
 	PERL_LOCALIZED_PLAYER_REACTIONNAME_TWO = "Hostile";

@@ -48,17 +48,17 @@ local partypethealth, partypethealthmax, partypetmana, partypetmanamax, partypet
 ----------------------
 -- Loading Function --
 ----------------------
-function Perl_Party_Pet_Script_OnLoad()
+function Perl_Party_Pet_Script_OnLoad(self)
 	-- Events
-	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
-	this:RegisterEvent("PLAYER_ALIVE");
-	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	this:RegisterEvent("PLAYER_LOGIN");
-	this:RegisterEvent("RAID_ROSTER_UPDATE");
-	this:RegisterEvent("UNIT_PET");
+	self:RegisterEvent("PARTY_MEMBERS_CHANGED");
+	self:RegisterEvent("PLAYER_ALIVE");
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
+	self:RegisterEvent("PLAYER_LOGIN");
+	self:RegisterEvent("RAID_ROSTER_UPDATE");
+	self:RegisterEvent("UNIT_PET");
 
 	-- Scripts
-	this:SetScript("OnEvent", Perl_Party_Pet_Script_OnEvent);
+	self:SetScript("OnEvent", Perl_Party_Pet_Script_OnEvent);
 end
 
 
@@ -1192,51 +1192,39 @@ function Perl_Party_Pet_Reset_Buffs()
 	end
 end
 
-function Perl_Party_Pet_SetBuffTooltip()
-	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT", 30, 0);
-	GameTooltip:SetUnitBuff("partypet"..this:GetParent():GetParent():GetID(), this:GetID());
+function Perl_Party_Pet_SetBuffTooltip(self)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 30, 0);
+	GameTooltip:SetUnitBuff("partypet"..self:GetParent():GetParent():GetID(), self:GetID());
 end
 
-function Perl_Party_Pet_SetDeBuffTooltip()
-	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT", 30, 0);
-	GameTooltip:SetUnitDebuff("partypet"..this:GetParent():GetParent():GetID(), this:GetID());
+function Perl_Party_Pet_SetDeBuffTooltip(self)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT", 30, 0);
+	GameTooltip:SetUnitDebuff("partypet"..self:GetParent():GetParent():GetID(), self:GetID());
 end
 
 
 --------------------
 -- Click Handlers --
 --------------------
-function Perl_Party_Pet_CastClickOverlay_OnLoad()
-	SecureUnitButton_OnLoad(this, "partypet"..this:GetParent():GetParent():GetID(), nil);
+function Perl_Party_Pet_CastClickOverlay_OnLoad(self)
+	SecureUnitButton_OnLoad(self, "partypet"..self:GetParent():GetParent():GetID(), nil);
 
-	this:SetAttribute("unit", "partypet"..this:GetParent():GetParent():GetID());
+	self:SetAttribute("unit", "partypet"..self:GetParent():GetParent():GetID());
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
+	ClickCastFrames[self] = true;
 end
 
-function Perl_Party_Pet_DragStart(button)
+function Perl_Party_Pet_DragStart(self, button)
 	if (button == "LeftButton" and locked == 0) then
-		getglobal("Perl_Party_Pet"..this:GetID()):StartMoving();
+		getglobal("Perl_Party_Pet"..self:GetID()):StartMoving();
 	end
 end
 
-function Perl_Party_Pet_DragStop(button)
-	getglobal("Perl_Party_Pet"..this:GetID()):SetUserPlaced(1);
-	getglobal("Perl_Party_Pet"..this:GetID()):StopMovingOrSizing();
-end
-
-
--------------
--- Tooltip --
--------------
-function Perl_Party_Pet_Tip()
-	UnitFrame_Initialize("partypet"..this:GetID())
-end
-
-function UnitFrame_Initialize(unit)	-- Hopefully this doesn't break any mods
-	this.unit = unit;
+function Perl_Party_Pet_DragStop(self, button)
+	getglobal("Perl_Party_Pet"..self:GetID()):SetUserPlaced(1);
+	getglobal("Perl_Party_Pet"..self:GetID()):StopMovingOrSizing();
 end
 
 

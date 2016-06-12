@@ -1,5 +1,6 @@
 if (GetLocale() == "koKR") then
 	-- Class Names
+	PERL_LOCALIZED_DEATHKNIGHT = "Death Knight";
 	PERL_LOCALIZED_DRUID = "드루이드";
 	PERL_LOCALIZED_HUNTER = "사냥꾼";
 	PERL_LOCALIZED_MAGE = "마법사";
@@ -37,7 +38,7 @@ if (GetLocale() == "koKR") then
 
 	-- Perl Player Strings
 	PERL_LOCALIZED_PLAYER_GROUP = "파티 ";
-	PERL_LOCALIZED_PLAYER_LEVEL_SEVENTY = "70 레벨";
+	PERL_LOCALIZED_PLAYER_LEVEL_EIGHTY = "80 레벨";
 	PERL_LOCALIZED_PLAYER_NOMORE_EXPERIENCE = "더 이상 경험치를 얻을 수 없습니다!";
 	PERL_LOCALIZED_PLAYER_REACTIONNAME_ONE = "매우 적대적";
 	PERL_LOCALIZED_PLAYER_REACTIONNAME_TWO = "적대적";

@@ -38,12 +38,6 @@ function Perl_Config_Focus_Set_Values()
 		Perl_Config_Focus_Frame_CheckButton4:SetChecked(nil);
 	end
 
-	if (vartable["mobhealthsupport"] == 1) then
-		Perl_Config_Focus_Frame_CheckButton6:SetChecked(1);
-	else
-		Perl_Config_Focus_Frame_CheckButton6:SetChecked(nil);
-	end
-
 	if (vartable["locked"] == 1) then
 		Perl_Config_Focus_Frame_CheckButton8:SetChecked(1);
 	else
@@ -204,14 +198,6 @@ function Perl_Config_Focus_Class_Frame_Update()
 		Perl_Focus_Set_Class_Frame(1);
 	else
 		Perl_Focus_Set_Class_Frame(0);
-	end
-end
-
-function Perl_Config_Focus_MobHealth_Update()
-	if (Perl_Config_Focus_Frame_CheckButton6:GetChecked() == 1) then
-		Perl_Focus_Set_MobHealth(1);
-	else
-		Perl_Focus_Set_MobHealth(0);
 	end
 end
 

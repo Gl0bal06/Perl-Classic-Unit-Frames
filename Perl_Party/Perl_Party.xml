@@ -50,7 +50,7 @@
 		</Layers>
 		<Scripts>
 			<OnEnter>
-				Perl_Party_SetBuffTooltip();
+				Perl_Party_SetBuffTooltip(self);
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
@@ -96,7 +96,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_PartyDropDown_OnLoad();
+						Perl_PartyDropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -238,9 +238,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Party_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Party_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
@@ -249,8 +249,7 @@
 								Perl_Party_DragStop(arg1);
 							</OnDragStop>
 							<OnEnter>
-								Perl_Party_Tip();
-								UnitFrame_OnEnter(self);
+								UnitFrame_OnEnter(self:GetParent():GetParent());
 							</OnEnter>
 							<OnLeave>
 								UnitFrame_OnLeave();
@@ -323,9 +322,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Party_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Party_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
@@ -415,7 +414,7 @@
 						</Anchors>
 						<Scripts>
 							<OnUpdate>
-								this:SetCamera(0);
+								self:SetCamera(0);
 							</OnUpdate>
 						</Scripts>
 					</PlayerModel>
@@ -432,9 +431,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Party_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Party_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
@@ -502,9 +501,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Party_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Party_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
@@ -606,15 +605,15 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Party_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Party_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
-								Perl_Party_HealthShow(this:GetParent():GetParent());
+								Perl_Party_HealthShow(self:GetParent():GetParent());
 							</OnEnter>
 							<OnLeave>
-								Perl_Party_HealthHide(this:GetParent():GetParent());
+								Perl_Party_HealthHide(self:GetParent():GetParent());
 							</OnLeave>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
@@ -716,15 +715,15 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Party_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Party_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
-								Perl_Party_ManaShow(this:GetParent():GetParent());
+								Perl_Party_ManaShow(self:GetParent():GetParent());
 							</OnEnter>
 							<OnLeave>
-								Perl_Party_ManaHide(this:GetParent():GetParent());
+								Perl_Party_ManaHide(self:GetParent():GetParent());
 							</OnLeave>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);
@@ -826,15 +825,15 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Party_Pet_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Party_Pet_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
-								Perl_Party_Pet_HealthShow(this:GetParent():GetParent());
+								Perl_Party_Pet_HealthShow(self:GetParent():GetParent());
 							</OnEnter>
 							<OnLeave>
-								Perl_Party_Pet_HealthHide(this:GetParent():GetParent());
+								Perl_Party_Pet_HealthHide(self:GetParent():GetParent());
 							</OnLeave>
 							<OnDragStart>
 								Perl_Party_DragStart(arg1);

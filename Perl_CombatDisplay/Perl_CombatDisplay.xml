@@ -19,7 +19,7 @@
 		<!-- Script Events -->
 		<Scripts>
 			<OnLoad>
-				Perl_CombatDisplay_OnLoad();
+				Perl_CombatDisplay_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 
@@ -38,7 +38,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_CombatDisplayDropDown_OnLoad();
+						Perl_CombatDisplayDropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -81,9 +81,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_CombatDisplay_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_CombatDisplay_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_CombatDisplay_DragStart(arg1);
@@ -497,7 +497,7 @@
 		<!-- Script Events -->
 		<Scripts>
 			<OnLoad>
-				Perl_CombatDisplay_Target_OnLoad();
+				Perl_CombatDisplay_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 
@@ -516,7 +516,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_CombatDisplayTargetDropDown_OnLoad();
+						Perl_CombatDisplayTargetDropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -558,9 +558,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_CombatDisplay_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_CombatDisplay_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_CombatDisplay_Target_DragStart(arg1);

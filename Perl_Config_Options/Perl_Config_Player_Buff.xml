@@ -84,7 +84,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERBUFF_ENABLE);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERBUFF_ENABLE);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Buff_ShowBuffs_Update();
@@ -105,7 +105,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERBUFF_WARNING);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERBUFF_WARNING);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Buff_Alerts_Update();
@@ -126,7 +126,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERBUFF_HIDESECONDS);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYERBUFF_HIDESECONDS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Buff_Hide_Seconds_Update();
@@ -147,8 +147,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
-						Perl_Config_Player_Buff_Set_Scale(getglobal(this:GetName()):GetValue());
+						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
+						Perl_Config_Player_Buff_Set_Scale(getglobal(self:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -166,7 +166,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Player_Buff_Set_Scale();
@@ -187,8 +187,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
-						Perl_Config_Player_Buff_Set_Horizontal_Spacing(getglobal(this:GetName()):GetValue());
+						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
+						Perl_Config_Player_Buff_Set_Horizontal_Spacing(getglobal(self:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>

@@ -50,7 +50,7 @@
 		</Layers>
 		<Scripts>
 			<OnEnter>
-				Perl_Target_Target_SetBuffTooltip();
+				Perl_Target_Target_SetBuffTooltip(self);
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
@@ -104,7 +104,7 @@
 		</Layers>
 		<Scripts>
 			<OnEnter>
-				Perl_Target_Target_Target_SetBuffTooltip();
+				Perl_Target_Target_Target_SetBuffTooltip(self);
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
@@ -127,7 +127,8 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				this:SetAttribute("unit", "targettarget");
+				self:SetAttribute("unit", "targettarget");
+				self.unit = "targettarget";
 			</OnLoad>
 		</Scripts>
 		<Frames>
@@ -145,7 +146,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_TargetTargetDropDown_OnLoad();
+						Perl_TargetTargetDropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -177,13 +178,12 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_TargetTarget_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_TargetTarget_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
-								Perl_Target_Target_Tip();
-								UnitFrame_OnEnter(self);
+								UnitFrame_OnEnter(Perl_Target_Target_Frame);
 							</OnEnter>
 							<OnLeave>
 								UnitFrame_OnLeave();
@@ -295,9 +295,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_TargetTarget_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_TargetTarget_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Target_Target_DragStart(arg1);
@@ -378,9 +378,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_TargetTarget_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_TargetTarget_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_HealthShow();
@@ -467,9 +467,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_TargetTarget_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_TargetTarget_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_ManaShow();
@@ -842,7 +842,8 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				this:SetAttribute("unit", "targettargettarget");
+				self:SetAttribute("unit", "targettargettarget");
+				self.unit = "targettargettarget";
 			</OnLoad>
 		</Scripts>
 		<Frames>
@@ -860,7 +861,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_TargetTargetTargetDropDown_OnLoad();
+						Perl_TargetTargetTargetDropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -891,13 +892,12 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_TargetTargetTarget_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_TargetTargetTarget_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
-								Perl_Target_Target_Target_Tip();
-								UnitFrame_OnEnter(self);
+								UnitFrame_OnEnter(Perl_Target_Target_Target_Frame);
 							</OnEnter>
 							<OnLeave>
 								UnitFrame_OnLeave();
@@ -1009,9 +1009,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_TargetTargetTarget_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_TargetTargetTarget_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Target_Target_Target_DragStart(arg1);
@@ -1092,9 +1092,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_TargetTargetTarget_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_TargetTargetTarget_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_Target_HealthShow();
@@ -1181,9 +1181,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_TargetTargetTarget_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_TargetTargetTarget_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
 								Perl_Target_Target_Target_ManaShow();
@@ -1573,7 +1573,7 @@
 		</Layers>
 		<Scripts>
 			<OnLoad>
-				Perl_Target_Target_BigWarning_OnLoad();
+				Perl_Target_Target_BigWarning_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 	</Frame>
@@ -1614,7 +1614,7 @@
 	<Frame name="Perl_Target_Target_Script_Frame" movable="true" parent="UIParent" hidden="false" enableMouse="true">
 		<Scripts>
 			<OnLoad>
-				Perl_Target_Target_OnLoad();
+				Perl_Target_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 	</Frame>

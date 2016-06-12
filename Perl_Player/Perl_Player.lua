@@ -28,6 +28,7 @@ local showraidgroupinname = 0;	-- raid number is not shown in the name by defaul
 local showenergyticker = 0;	-- energy ticker is off by default
 local fivesecondrule = 0;	-- five second rule is off by default
 local totemtimers = 1;		-- default for totem timers is on by default
+local runeframe = 1;		-- default for rune frame is on by default
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -56,45 +57,47 @@ local fivesecondruletime = nil;
 ----------------------
 -- Loading Function --
 ----------------------
-function Perl_Player_OnLoad()
+function Perl_Player_OnLoad(self)
 	-- Combat Text
-	CombatFeedback_Initialize(Perl_Player_HitIndicator, 30);
+	CombatFeedback_Initialize(self, Perl_Player_HitIndicator, 30);
 
 	-- Events
-	this:RegisterEvent("PARTY_LEADER_CHANGED");
-	this:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
-	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
-	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	this:RegisterEvent("PLAYER_LOGIN");
-	this:RegisterEvent("PLAYER_REGEN_DISABLED");
-	this:RegisterEvent("PLAYER_REGEN_ENABLED");
-	this:RegisterEvent("PLAYER_UPDATE_RESTING");
-	this:RegisterEvent("PLAYER_XP_UPDATE");
-	this:RegisterEvent("RAID_ROSTER_UPDATE");
-	this:RegisterEvent("UNIT_AURA");
-	this:RegisterEvent("UNIT_COMBAT");
-	this:RegisterEvent("UNIT_DISPLAYPOWER");
-	this:RegisterEvent("UNIT_ENERGY");
-	this:RegisterEvent("UNIT_FACTION");
-	this:RegisterEvent("UNIT_HEALTH");
-	this:RegisterEvent("UNIT_LEVEL");
-	this:RegisterEvent("UNIT_MANA");
-	this:RegisterEvent("UNIT_MAXENERGY");
-	this:RegisterEvent("UNIT_MAXHEALTH");
-	this:RegisterEvent("UNIT_MAXMANA");
-	this:RegisterEvent("UNIT_MAXRAGE");
-	this:RegisterEvent("UNIT_MODEL_CHANGED");
-	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	this:RegisterEvent("UNIT_PVP_UPDATE");
-	this:RegisterEvent("UNIT_RAGE");
-	this:RegisterEvent("UNIT_SPELLMISS");
-	this:RegisterEvent("UPDATE_FACTION");
-	this:RegisterEvent("VOICE_START");
-	this:RegisterEvent("VOICE_STOP");
+	self:RegisterEvent("PARTY_LEADER_CHANGED");
+	self:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
+	self:RegisterEvent("PARTY_MEMBERS_CHANGED");
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
+	self:RegisterEvent("PLAYER_LOGIN");
+	self:RegisterEvent("PLAYER_REGEN_DISABLED");
+	self:RegisterEvent("PLAYER_REGEN_ENABLED");
+	self:RegisterEvent("PLAYER_UPDATE_RESTING");
+	self:RegisterEvent("PLAYER_XP_UPDATE");
+	self:RegisterEvent("RAID_ROSTER_UPDATE");
+	self:RegisterEvent("UNIT_AURA");
+	self:RegisterEvent("UNIT_COMBAT");
+	self:RegisterEvent("UNIT_DISPLAYPOWER");
+	self:RegisterEvent("UNIT_ENERGY");
+	self:RegisterEvent("UNIT_FACTION");
+	self:RegisterEvent("UNIT_HEALTH");
+	self:RegisterEvent("UNIT_LEVEL");
+	self:RegisterEvent("UNIT_MANA");
+	self:RegisterEvent("UNIT_MAXENERGY");
+	self:RegisterEvent("UNIT_MAXHEALTH");
+	self:RegisterEvent("UNIT_MAXMANA");
+	self:RegisterEvent("UNIT_MAXRAGE");
+	self:RegisterEvent("UNIT_MAXRUNIC_POWER");
+	self:RegisterEvent("UNIT_MODEL_CHANGED");
+	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+	self:RegisterEvent("UNIT_PVP_UPDATE");
+	self:RegisterEvent("UNIT_RAGE");
+	self:RegisterEvent("UNIT_RUNIC_POWER");
+	self:RegisterEvent("UNIT_SPELLMISS");
+	self:RegisterEvent("UPDATE_FACTION");
+	self:RegisterEvent("VOICE_START");
+	self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
-	this:SetScript("OnEvent", Perl_Player_OnEvent);
-	this:SetScript("OnUpdate", CombatFeedback_OnUpdate);
+	self:SetScript("OnEvent", Perl_Player_OnEvent);
+	self:SetScript("OnUpdate", CombatFeedback_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Player_Name_CastClickOverlay:SetFrameLevel(Perl_Player_Name:GetFrameLevel() + 2);
@@ -112,6 +115,7 @@ function Perl_Player_OnLoad()
 	--Perl_Player_DruidBarFadeBar:SetFrameLevel(Perl_Player_DruidBar:GetFrameLevel() - 1);
 
 	TotemFrame:SetParent(Perl_Player_Frame);
+	RuneFrame:SetParent(Perl_Player_Frame);
 end
 
 
@@ -149,6 +153,8 @@ function Perl_Player_Events:UNIT_MAXMANA()
 end
 Perl_Player_Events.UNIT_RAGE = Perl_Player_Events.UNIT_MAXMANA;
 Perl_Player_Events.UNIT_MAXRAGE = Perl_Player_Events.UNIT_MAXMANA;
+Perl_Player_Events.UNIT_RUNIC_POWER = Perl_Player_Events.UNIT_MAXMANA;
+Perl_Player_Events.UNIT_MAXRUNIC_POWER = Perl_Player_Events.UNIT_MAXMANA;
 
 function Perl_Player_Events:UNIT_ENERGY()
 	if (arg1 == "player") then
@@ -179,7 +185,7 @@ end
 
 function Perl_Player_Events:UNIT_COMBAT()
 	if (arg1 == "player") then
-		CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5);
+		CombatFeedback_OnCombatEvent(Perl_Player_Frame, arg2, arg3, arg4, arg5);
 	end
 end
 
@@ -482,14 +488,14 @@ function Perl_Player_Update_Mana()
 				if (mouseovermanaflag == 0) then
 					Perl_Player_ManaBarTextPercent:SetText();
 				else
-					if (UnitPowerType("player") == 1) then
+					if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
 						Perl_Player_ManaBarTextPercent:SetText(playermana);
 					else
 						Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
 					end
 				end
 			else
-				if (UnitPowerType("player") == 1) then
+				if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
 					Perl_Player_ManaBarTextPercent:SetText(playermana);
 				else
 					Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
@@ -498,7 +504,7 @@ function Perl_Player_Update_Mana()
 		else
 			Perl_Player_ManaBarText:SetTextColor(1, 1, 1, 1);
 			Perl_Player_ManaBarText:SetText(playermana.."/"..playermanamax);
-			if (UnitPowerType("player") == 1) then
+			if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
 				Perl_Player_ManaBarTextPercent:SetText(playermana);
 			else
 				Perl_Player_ManaBarTextPercent:SetText(playermanapercent.."%");
@@ -517,14 +523,14 @@ function Perl_Player_Update_Mana()
 				if (mouseovermanaflag == 0) then
 					Perl_Player_ManaBarTextPercent:SetText();
 				else
-					if (UnitPowerType("player") == 1) then
+					if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
 						Perl_Player_ManaBarTextPercent:SetText(playermana);
 					else
 						Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
 					end
 				end
 			else
-				if (UnitPowerType("player") == 1) then
+				if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
 					Perl_Player_ManaBarTextPercent:SetText(playermana);
 				else
 					Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
@@ -533,7 +539,7 @@ function Perl_Player_Update_Mana()
 		else
 			Perl_Player_ManaBarText:SetTextColor(1, 1, 1, 1);
 			Perl_Player_ManaBarText:SetText();
-			if (UnitPowerType("player") == 1) then
+			if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
 				Perl_Player_ManaBarTextPercent:SetText(playermana);
 			else
 				Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
@@ -680,6 +686,9 @@ function Perl_Player_Update_Mana_Bar()
 	elseif (playerpower == 3) then		-- energy
 		Perl_Player_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+	elseif (playerpower == 6) then		-- runic
+		Perl_Player_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
+		Perl_Player_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
 	end
 
 	Perl_Player_FiveSecondRule:Hide();	-- reset the five second rule ticker
@@ -691,7 +700,7 @@ function Perl_Player_Update_Experience()
 	Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 	Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 
-	if (UnitLevel("player") ~= 70) then
+	if (UnitLevel("player") ~= 80) then
 		-- XP Bar stuff
 		local playerxp = UnitXP("player");
 		local playerxpmax = UnitXPMax("player");
@@ -719,7 +728,7 @@ function Perl_Player_Update_Experience()
 		Perl_Player_XPBar:SetValue(1);
 		Perl_Player_XPRestBar:SetValue(1);
 
-		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_LEVEL_SEVENTY);
+		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_LEVEL_EIGHTY);
 	end
 	
 end
@@ -931,7 +940,7 @@ function Perl_Player_ManaShow()
 				playermana = 0;
 			end
 
-			if (UnitPowerType("player") == 1) then
+			if (UnitPowerType("player") == 1 or UnitPowerType("player") == 6) then
 				Perl_Player_ManaBarTextPercent:SetText(playermana);
 			else
 				Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
@@ -1044,6 +1053,8 @@ function Perl_Player_ManaBar_Fade(arg1)
 		Perl_Player_ManaBarFadeBar:SetStatusBarColor(Perl_Player_ManaBar_Fade_Color, 0, 0, Perl_Player_ManaBar_Fade_Color);
 	elseif (playerpower == 3) then
 		Perl_Player_ManaBarFadeBar:SetStatusBarColor(Perl_Player_ManaBar_Fade_Color, Perl_Player_ManaBar_Fade_Color, 0, Perl_Player_ManaBar_Fade_Color);
+	elseif (playerpower == 6) then
+		Perl_Player_ManaBarFadeBar:SetStatusBarColor(0, Perl_Player_ManaBar_Fade_Color, Perl_Player_ManaBar_Fade_Color, Perl_Player_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Player_ManaBar_Fade_Time_Elapsed > 1) then
@@ -1348,6 +1359,13 @@ function Perl_Player_Frame_Style()
 			TotemFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
+		-- Hi-jack the Blizzard rune frame
+		if (runeframe == 1) then
+			RuneFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 20, -2);
+		else
+			RuneFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+		end
+
 		Perl_Player_EnergyTicker_Display();	-- Update the energy ticker
 
 		-- Update the five second rule
@@ -1527,6 +1545,12 @@ function Perl_Player_Set_Show_Totem_Timers(newvalue)
 	Perl_Player_Frame_Style();
 end
 
+function Perl_Player_Set_Show_Rune_Frame(newvalue)
+	runeframe = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Frame_Style();
+end
+
 function Perl_Player_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);							-- convert the user input to a wow acceptable value
@@ -1586,6 +1610,7 @@ function Perl_Player_GetVars(name, updateflag)
 	showenergyticker = Perl_Player_Config[name]["ShowEnergyTicker"];
 	fivesecondrule = Perl_Player_Config[name]["FiveSecondRule"];
 	totemtimers = Perl_Player_Config[name]["TotemTimers"];
+	runeframe = Perl_Player_Config[name]["RuneFrame"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1656,6 +1681,9 @@ function Perl_Player_GetVars(name, updateflag)
 	if (totemtimers == nil) then
 		totemtimers = 1;
 	end
+	if (runeframe == nil) then
+		runeframe = 1;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1692,6 +1720,7 @@ function Perl_Player_GetVars(name, updateflag)
 		["showenergyticker"] = showenergyticker,
 		["fivesecondrule"] = fivesecondrule,
 		["totemtimers"] = totemtimers,
+		["runeframe"] = runeframe,
 	}
 	return vars;
 end
@@ -1815,6 +1844,11 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				totemtimers = nil;
 			end
+			if (vartable["Global Settings"]["RuneFrame"] ~= nil) then
+				runeframe = vartable["Global Settings"]["RuneFrame"];
+			else
+				runeframe = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1887,6 +1921,9 @@ function Perl_Player_UpdateVars(vartable)
 		if (totemtimers == nil) then
 			totemtimers = 1;
 		end
+		if (runeframe == nil) then
+			runeframe = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Update_Once();
@@ -1918,6 +1955,7 @@ function Perl_Player_UpdateVars(vartable)
 		["ShowEnergyTicker"] = showenergyticker,
 		["FiveSecondRule"] = fivesecondrule,
 		["TotemTimers"] = totemtimers,
+		["RuneFrame"] = runeframe,
 	};
 end
 
@@ -1971,21 +2009,21 @@ end
 --------------------
 -- Click Handlers --
 --------------------
-function Perl_Player_CastClickOverlay_OnLoad()
+function Perl_Player_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
 		ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
 	end
-	SecureUnitButton_OnLoad(this, "player", showmenu);
+	SecureUnitButton_OnLoad(self, "player", showmenu);
 
-	this:SetAttribute("unit", "player");
+	self:SetAttribute("unit", "player");
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
+	ClickCastFrames[self] = true;
 end
 
-function Perl_PlayerDropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_PlayerDropDown_Initialize, "MENU");
+function Perl_PlayerDropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_PlayerDropDown_Initialize, "MENU");
 end
 
 function Perl_PlayerDropDown_Initialize()
@@ -2006,12 +2044,12 @@ end
 ------------------------
 -- Experience Tooltip --
 ------------------------
-function Perl_Player_XPTooltip()
+function Perl_Player_XPTooltip(self)
 	local playerxp, playerxpmax, xptext
-	GameTooltip_SetDefaultAnchor(GameTooltip, this);
+	GameTooltip_SetDefaultAnchor(GameTooltip, self);
 	if (xpbarstate == 1) then
 		local playerlevel = UnitLevel("player");			-- Player's next level
-		if (playerlevel < 70) then
+		if (playerlevel < 80) then
 			playerxp = UnitXP("player");				-- Player's current XP
 			playerxpmax = UnitXPMax("player");			-- Experience for the current level
 			local playerxprest = GetXPExhaustion();			-- Amount of bonus xp we have

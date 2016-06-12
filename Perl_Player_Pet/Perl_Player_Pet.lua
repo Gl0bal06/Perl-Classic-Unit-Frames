@@ -24,7 +24,6 @@ local hidename = 0;			-- name and level frame is enabled by default
 local displaypettarget = 0;		-- pet's target is off by default
 local classcolorednames = 0;		-- names are colored based on pvp status by default
 local showfriendlyhealth = 0;		-- show numerical friendly health is disbaled by default
-local mobhealthsupport = 1;		-- mobhealth support is on by default
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
@@ -44,41 +43,41 @@ local Perl_Player_Pet_Target_ManaBar_Fade_Color = 1;		-- the color fading interv
 local Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext, r, g, b, reaction, pettargethealth, pettargethealthmax, pettargethealthpercent, mobhealththreenumerics, pettargetmana, pettargetmanamax, pettargetpower, raidpettargetindex, englishclass;
+local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext, r, g, b, reaction, pettargethealth, pettargethealthmax, pettargethealthpercent, pettargetmana, pettargetmanamax, pettargetpower, raidpettargetindex, englishclass;
 
 
 ----------------------
 -- Loading Functions --
 ----------------------
-function Perl_Player_Pet_OnLoad()
+function Perl_Player_Pet_OnLoad(self)
 	-- Combat Text
-	CombatFeedback_Initialize(Perl_Player_Pet_HitIndicator, 30);
+	CombatFeedback_Initialize(self, Perl_Player_Pet_HitIndicator, 30);
 
 	-- Events
-	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	this:RegisterEvent("PLAYER_LOGIN");
-	this:RegisterEvent("PLAYER_PET_CHANGED");
-	this:RegisterEvent("UNIT_AURA");
-	this:RegisterEvent("UNIT_COMBAT");
-	this:RegisterEvent("UNIT_DISPLAYPOWER");
-	this:RegisterEvent("UNIT_FOCUS");
-	this:RegisterEvent("UNIT_HAPPINESS");
-	this:RegisterEvent("UNIT_HEALTH");
-	this:RegisterEvent("UNIT_LEVEL");
-	this:RegisterEvent("UNIT_MANA");
-	this:RegisterEvent("UNIT_MAXFOCUS");
-	this:RegisterEvent("UNIT_MAXHEALTH");
-	this:RegisterEvent("UNIT_MAXMANA");
-	this:RegisterEvent("UNIT_MODEL_CHANGED");
-	this:RegisterEvent("UNIT_NAME_UPDATE");
-	this:RegisterEvent("UNIT_PET");
-	this:RegisterEvent("UNIT_PET_EXPERIENCE");
-	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	this:RegisterEvent("UNIT_SPELLMISS");
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
+	self:RegisterEvent("PLAYER_LOGIN");
+	self:RegisterEvent("PLAYER_PET_CHANGED");
+	self:RegisterEvent("UNIT_AURA");
+	self:RegisterEvent("UNIT_COMBAT");
+	self:RegisterEvent("UNIT_DISPLAYPOWER");
+	self:RegisterEvent("UNIT_FOCUS");
+	self:RegisterEvent("UNIT_HAPPINESS");
+	self:RegisterEvent("UNIT_HEALTH");
+	self:RegisterEvent("UNIT_LEVEL");
+	self:RegisterEvent("UNIT_MANA");
+	self:RegisterEvent("UNIT_MAXFOCUS");
+	self:RegisterEvent("UNIT_MAXHEALTH");
+	self:RegisterEvent("UNIT_MAXMANA");
+	self:RegisterEvent("UNIT_MODEL_CHANGED");
+	self:RegisterEvent("UNIT_NAME_UPDATE");
+	self:RegisterEvent("UNIT_PET");
+	self:RegisterEvent("UNIT_PET_EXPERIENCE");
+	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+	self:RegisterEvent("UNIT_SPELLMISS");
 
 	-- Scripts
-	this:SetScript("OnEvent", Perl_Player_Pet_OnEvent);
-	this:SetScript("OnUpdate", CombatFeedback_OnUpdate);
+	self:SetScript("OnEvent", Perl_Player_Pet_OnEvent);
+	self:SetScript("OnUpdate", CombatFeedback_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Player_Pet_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_NameFrame:GetFrameLevel() + 1);
@@ -90,12 +89,15 @@ function Perl_Player_Pet_OnLoad()
 	Perl_Player_Pet_ManaBarFadeBar:SetFrameLevel(Perl_Player_Pet_ManaBar:GetFrameLevel() - 1);
 
 	-- WoW 2.0 Secure API Stuff
-	this:SetAttribute("unit", "pet");
+	self:SetAttribute("unit", "pet");
+
+	-- Misc
+	self.unit = "pet";
 end
 
-function Perl_Player_Pet_Target_OnLoad()
+function Perl_Player_Pet_Target_OnLoad(self)
 	-- Scripts
-	this:SetScript("OnUpdate", Perl_Player_Pet_Target_OnUpdate);
+	self:SetScript("OnUpdate", Perl_Player_Pet_Target_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Player_Pet_Target_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_Target_NameFrame:GetFrameLevel() + 1);
@@ -106,7 +108,10 @@ function Perl_Player_Pet_Target_OnLoad()
 	Perl_Player_Pet_Target_ManaBarFadeBar:SetFrameLevel(Perl_Player_Pet_Target_ManaBar:GetFrameLevel() - 1);
 
 	-- WoW 2.0 Secure API Stuff
-	this:SetAttribute("unit", "pettarget");
+	self:SetAttribute("unit", "pettarget");
+
+	-- Misc
+	self.unit = "pettarget";
 end
 
 
@@ -146,7 +151,7 @@ end
 
 function Perl_Player_Pet_Events:UNIT_COMBAT()
 	if (arg1 == "pet") then
-		CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5);
+		CombatFeedback_OnCombatEvent(Perl_Player_Pet_Frame, arg2, arg3, arg4, arg5);
 	end
 end
 
@@ -285,7 +290,7 @@ end
 -- The Update Function --
 -------------------------
 function Perl_Player_Pet_Update_Once()
-	if (UnitExists(this:GetAttribute("unit"))) then				-- Show the frame if applicable
+	if (UnitExists(Perl_Player_Pet_Frame:GetAttribute("unit"))) then				-- Show the frame if applicable
 		Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));		-- Set name
 		Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
 		Perl_Player_Pet_Update_Portrait();				-- Set the pet's portrait
@@ -800,7 +805,7 @@ function Perl_Player_Pet_Target_OnUpdate()
 			end
 
 			if (mouseoverpettargetmanaflag == 1) then
-				if (UnitPowerType("pettarget") == 1 or UnitPowerType("pettarget") == 2) then
+				if (UnitPowerType("pettarget") == 1 or UnitPowerType("pettarget") == 2 or UnitPowerType("pettarget") == 6) then
 					Perl_Player_Pet_Target_ManaBarText:SetText(pettargetmana);
 				else
 					Perl_Player_Pet_Target_ManaBarText:SetText(pettargetmana.."/"..pettargetmanamax);
@@ -824,6 +829,9 @@ function Perl_Player_Pet_Target_OnUpdate()
 			elseif (pettargetpower == 3) then
 				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+			elseif (pettargetpower == 6) then
+				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
+				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
 			else
 				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
@@ -891,6 +899,8 @@ function Perl_Player_Pet_Target_ManaBar_Fade_Check()
 				Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_Target_ManaBar_Fade_Color, (Perl_Player_Pet_Target_ManaBar_Fade_Color-0.5), 0, Perl_Player_Pet_Target_ManaBar_Fade_Color);
 			elseif (pettargetpower == 3) then
 				Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color, 0, Perl_Player_Pet_Target_ManaBar_Fade_Color);
+			elseif (pettargetpower == 6) then
+				Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color);
 			end
 			Perl_Player_Pet_Target_ManaBar_Fade_OnUpdate_Frame:Show();
 		end
@@ -906,70 +916,7 @@ function Perl_Player_Pet_Target_HealthShow()
 		pettargethealthpercent = 0;
 	end
 
-	if (pettargethealthmax == 100) then
-		-- Begin Mobhealth support
-		if (mobhealthsupport == 1) then
-			if (MobHealth3) then
-				pettargethealth, pettargethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("pettarget", UnitHealth("pettarget"), UnitHealthMax("pettarget"), UnitName("pettarget"), UnitLevel("pettarget"));
-				if (mobhealththreenumerics) then
-					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."/"..pettargethealthmax);	-- Stored unit info from the DB
-				else
-					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- Unit not in MobHealth DB
-				end
-			elseif (MobHealthFrame) then
-				local partyid = "pettarget";
-				local hp = pettargethealth;
-				local hpMax = pettargethealthmax;
-				local index, current, max, table;
-				if (UnitIsPlayer(partyid)) then
-					index = UnitName(partyid);
-					table = MobHealthPlayerDB or MobHealthDB;
-				else
-					index = UnitName(partyid)..":"..UnitLevel(partyid);
-					table = MobHealthDB or MobHealthPlayerDB;
-				end
-				if (table and type(table[index]) == "string") then
-					local pts, pct = strmatch(table[index], "^(%d+)/(%d+)$");
-
-					if (pts and pct) then
-						pts = pts + 0;
-						pct = pct + 0;
-						if( pct ~= 0 ) then
-							pointsPerPct = pts / pct;
-						else
-							pointsPerPct = 0;
-						end
-
-						local currentPct = hp;
-						if (pointsPerPct > 0) then
-							current = (currentPct * pointsPerPct) + 0.5;
-							max = (100 * pointsPerPct) + 0.5;
-						end
-					end
-				end
-				if (current) then	-- Stored unit info from the DB
-					hp, hpMax = current, max;
-					Perl_Player_Pet_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));	-- Stored unit info from the DB
-				else
-					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- Unit not in MobHealth DB
-				end
-			elseif (LibStub("LibMobHealth-4.0", true)) then
-				pettargethealth, pettargethealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth("pettarget")
-				if (mobhealththreenumerics) then
-					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."/"..pettargethealthmax);	-- Stored unit info from the DB
-				else
-					Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- Unit not in MobHealth DB
-				end
-			-- End MobHealth Support
-			else
-				Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- MobHealth isn't installed
-			end
-		else	-- mobhealthsupport == 0
-			Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."%");	-- MobHealth support is disabled
-		end
-	else
-		Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."/"..pettargethealthmax);	-- Self/Party/Raid member
-	end
+	Perl_Player_Pet_Target_HealthBarText:SetText(pettargethealth.."/"..pettargethealthmax);	-- Self/Party/Raid member
 
 	mouseoverpettargethealthflag = 1;
 end
@@ -993,7 +940,7 @@ function Perl_Player_Pet_Target_ManaShow()
 		pettargetmana = 0;
 	end
 
-	if (UnitPowerType("pettarget") == 1 or UnitPowerType("pettarget") == 2) then
+	if (UnitPowerType("pettarget") == 1 or UnitPowerType("pettarget") == 2 or UnitPowerType("pettarget") == 6) then
 		Perl_Player_Pet_Target_ManaBarText:SetText(pettargetmana);
 	else
 		Perl_Player_Pet_Target_ManaBarText:SetText(pettargetmana.."/"..pettargetmanamax);
@@ -1069,6 +1016,8 @@ function Perl_Player_Pet_Target_ManaBar_Fade(arg1)
 		Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_Target_ManaBar_Fade_Color, (Perl_Player_Pet_Target_ManaBar_Fade_Color-0.5), 0, Perl_Player_Pet_Target_ManaBar_Fade_Color);
 	elseif (pettargetpower == 3) then
 		Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color, 0, Perl_Player_Pet_Target_ManaBar_Fade_Color);
+	elseif (pettargetpower == 6) then
+		Perl_Player_Pet_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color, Perl_Player_Pet_Target_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Player_Pet_Target_ManaBar_Fade_Time_Elapsed > 1) then
@@ -1225,11 +1174,6 @@ function Perl_Player_Pet_Set_Friendly_Health(newvalue)
 	Perl_Player_Pet_UpdateVars();
 end
 
-function Perl_Player_Pet_Set_MobHealth_Support(newvalue)
-	mobhealthsupport = newvalue;
-	Perl_Player_Pet_UpdateVars();
-end
-
 function Perl_Player_Pet_Set_Scale(number)
 	if (number ~= nil) then
 		scale = (number / 100);						-- convert the user input to a wow acceptable value
@@ -1294,7 +1238,6 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 	displaypettarget = Perl_Player_Pet_Config[name]["DisplayPetTarget"];
 	classcolorednames = Perl_Player_Pet_Config[name]["ClassColoredNames"];
 	showfriendlyhealth = Perl_Player_Pet_Config[name]["ShowFriendlyHealth"];
-	mobhealthsupport = Perl_Player_Pet_Config[name]["MobHealthSupport"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1353,9 +1296,6 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 	if (showfriendlyhealth == nil) then
 		showfriendlyhealth = 0;
 	end
-	if (mobhealthsupport == nil) then
-		mobhealthsupport = 1;
-	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1393,7 +1333,6 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 		["displaypettarget"] = displaypettarget,
 		["classcolorednames"] = classcolorednames,
 		["showfriendlyhealth"] = showfriendlyhealth,
-		["mobhealthsupport"] = mobhealthsupport,
 	}
 	return vars;
 end
@@ -1497,11 +1436,6 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			else
 				showfriendlyhealth = nil;
 			end
-			if (vartable["Global Settings"]["MobHealthSupport"] ~= nil) then
-				mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
-			else
-				mobhealthsupport = nil;
-			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1562,9 +1496,6 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		if (showfriendlyhealth == nil) then
 			showfriendlyhealth = 0;
 		end
-		if (mobhealthsupport == nil) then
-			mobhealthsupport = 1;
-		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
@@ -1597,7 +1528,6 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		["DisplayPetTarget"] = displaypettarget,
 		["ClassColoredNames"] = classcolorednames,
 		["ShowFriendlyHealth"] = showfriendlyhealth,
-		["MobHealthSupport"] = mobhealthsupport,
 	};
 end
 
@@ -1794,12 +1724,12 @@ function Perl_Player_Pet_Reset_Buffs()
 	end
 end
 
-function Perl_Player_Pet_SetBuffTooltip()
-	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
-	if (this:GetID() > 16) then
-		GameTooltip:SetUnitDebuff("pet", this:GetID()-16);
+function Perl_Player_Pet_SetBuffTooltip(self)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT");
+	if (self:GetID() > 16) then
+		GameTooltip:SetUnitDebuff("pet", self:GetID()-16);
 	else
-		GameTooltip:SetUnitBuff("pet", this:GetID());
+		GameTooltip:SetUnitBuff("pet", self:GetID());
 	end
 end
 
@@ -1807,21 +1737,21 @@ end
 --------------------
 -- Click Handlers --
 --------------------
-function Perl_Player_Pet_CastClickOverlay_OnLoad()
+function Perl_Player_Pet_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
 		ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
 	end
-	SecureUnitButton_OnLoad(this, "pet", showmenu);
+	SecureUnitButton_OnLoad(self, "pet", showmenu);
 
-	this:SetAttribute("unit", "pet");
+	self:SetAttribute("unit", "pet");
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
+	ClickCastFrames[self] = true;
 end
 
-function Perl_Player_Pet_DropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_Player_Pet_DropDown_Initialize, "MENU");
+function Perl_Player_Pet_DropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_Player_Pet_DropDown_Initialize, "MENU");
 end
 
 function Perl_Player_Pet_DropDown_Initialize()
@@ -1838,21 +1768,21 @@ function Perl_Player_Pet_DragStop(button)
 	Perl_Player_Pet_Frame:StopMovingOrSizing();
 end
 
-function Perl_Player_Pet_Target_CastClickOverlay_OnLoad()
+function Perl_Player_Pet_Target_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
 		ToggleDropDownMenu(1, nil, Perl_Player_Pet_Target_DropDown, "Perl_Player_Pet_Target_NameFrame", 40, 0);
 	end
-	SecureUnitButton_OnLoad(this, "pettarget", showmenu);
+	SecureUnitButton_OnLoad(self, "pettarget", showmenu);
 
-	this:SetAttribute("unit", "pettarget");
+	self:SetAttribute("unit", "pettarget");
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
+	ClickCastFrames[self] = true;
 end
 
-function Perl_Player_Pet_Target_DropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_Player_Pet_Target_DropDown_Initialize, "MENU");
+function Perl_Player_Pet_Target_DropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_Player_Pet_Target_DropDown_Initialize, "MENU");
 end
 
 function Perl_Player_Pet_Target_DropDown_Initialize()

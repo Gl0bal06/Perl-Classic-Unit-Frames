@@ -73,12 +73,6 @@ function Perl_Config_CombatDisplay_Set_Values()
 		Perl_Config_CombatDisplay_Frame_CheckButton10:SetChecked(nil);
 	end
 
-	if (vartable["mobhealthsupport"] == 1) then
-		Perl_Config_CombatDisplay_Frame_CheckButton11:SetChecked(1);
-	else
-		Perl_Config_CombatDisplay_Frame_CheckButton11:SetChecked(nil);
-	end
-
 	if (vartable["showdruidbar"] == 1) then
 		Perl_Config_CombatDisplay_Frame_CheckButton12:SetChecked(1);
 	else
@@ -166,14 +160,6 @@ function Perl_Config_CombatDisplay_Target_Update()
 		Perl_CombatDisplay_Set_Target(1);
 	else
 		Perl_CombatDisplay_Set_Target(0);
-	end
-end
-
-function Perl_Config_CombatDisplay_MobHealth_Update()
-	if (Perl_Config_CombatDisplay_Frame_CheckButton11:GetChecked() == 1) then
-		Perl_CombatDisplay_Set_MobHealth(1);
-	else
-		Perl_CombatDisplay_Set_MobHealth(0);
 	end
 end
 

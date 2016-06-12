@@ -50,7 +50,7 @@
 		</Layers>
 		<Scripts>
 			<OnEnter>
-				Perl_Player_Pet_SetBuffTooltip();
+				Perl_Player_Pet_SetBuffTooltip(self);
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
@@ -76,7 +76,7 @@
 		<!-- Script Events -->
 		<Scripts>
 			<OnLoad>
-				Perl_Player_Pet_OnLoad();
+				Perl_Player_Pet_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 
@@ -95,7 +95,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_Player_Pet_DropDown_OnLoad();
+						Perl_Player_Pet_DropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -127,9 +127,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Player_Pet_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Player_Pet_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Player_Pet_DragStart(arg1);
@@ -213,9 +213,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Player_Pet_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Player_Pet_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Player_Pet_DragStart(arg1);
@@ -238,7 +238,7 @@
 						</Anchors>
 						<Scripts>
 							<OnUpdate>
-								this:SetCamera(0);
+								self:SetCamera(0);
 							</OnUpdate>
 						</Scripts>
 					</PlayerModel>
@@ -354,9 +354,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Player_Pet_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Player_Pet_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Player_Pet_DragStart(arg1);
@@ -407,9 +407,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Player_Pet_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Player_Pet_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Player_Pet_DragStart(arg1);
@@ -957,7 +957,7 @@
 		<!-- Script Events -->
 		<Scripts>
 			<OnLoad>
-				Perl_Player_Pet_Target_OnLoad();
+				Perl_Player_Pet_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 
@@ -976,7 +976,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_Player_Pet_Target_DropDown_OnLoad();
+						Perl_Player_Pet_Target_DropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1008,9 +1008,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Player_Pet_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Player_Pet_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Player_Pet_Target_DragStart(arg1);
@@ -1109,9 +1109,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Player_Pet_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Player_Pet_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
 								Perl_Player_Pet_Target_DragStart(arg1);
@@ -1192,9 +1192,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Player_Pet_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Player_Pet_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
 								Perl_Player_Pet_Target_HealthShow();
@@ -1281,9 +1281,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Player_Pet_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Player_Pet_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
 								Perl_Player_Pet_Target_ManaShow();

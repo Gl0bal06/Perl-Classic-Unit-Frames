@@ -66,12 +66,6 @@ function Perl_Config_Target_Target_Set_Values()
 		Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(1);
 	end
 
-	if (vartable["mobhealthsupport"] == 1) then
-		Perl_Config_Target_Target_Frame_CheckButton3:SetChecked(1);
-	else
-		Perl_Config_Target_Target_Frame_CheckButton3:SetChecked(nil);
-	end
-
 	if (vartable["locked"] == 1) then
 		Perl_Config_Target_Target_Frame_CheckButton5:SetChecked(1);
 	else
@@ -265,14 +259,6 @@ function Perl_Config_Target_Target_Alert_Size_Update()
 	else
 		Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(1);
 		Perl_Target_Target_Set_Alert_Size(2);
-	end
-end
-
-function Perl_Config_Target_Target_MobHealth_Update()
-	if (Perl_Config_Target_Target_Frame_CheckButton3:GetChecked() == 1) then
-		Perl_Target_Target_Set_MobHealth(1);
-	else
-		Perl_Target_Target_Set_MobHealth(0);
 	end
 end
 

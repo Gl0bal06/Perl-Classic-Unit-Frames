@@ -44,12 +44,6 @@ function Perl_Config_Target_Set_Values()
 		Perl_Config_Target_Frame_CheckButton5:SetChecked(nil);
 	end
 
-	if (vartable["mobhealthsupport"] == 1) then
-		Perl_Config_Target_Frame_CheckButton6:SetChecked(1);
-	else
-		Perl_Config_Target_Frame_CheckButton6:SetChecked(nil);
-	end
-
 	if (vartable["locked"] == 1) then
 		Perl_Config_Target_Frame_CheckButton8:SetChecked(1);
 	else
@@ -248,14 +242,6 @@ function Perl_Config_Target_Combo_Points_Update()
 		end
 	else
 		Perl_Target_Set_Combo_Points(0);
-	end
-end
-
-function Perl_Config_Target_MobHealth_Update()
-	if (Perl_Config_Target_Frame_CheckButton6:GetChecked() == 1) then
-		Perl_Target_Set_MobHealth(1);
-	else
-		Perl_Target_Set_MobHealth(0);
 	end
 end
 

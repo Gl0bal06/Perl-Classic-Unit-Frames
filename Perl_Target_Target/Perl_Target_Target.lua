@@ -6,7 +6,6 @@ local Perl_Target_Target_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Target_Target_GetVars)
 local locked = 0;		-- unlocked by default
-local mobhealthsupport = 1;	-- mobhealth support is on by default
 local scale = 0.9;		-- default scale
 local totsupport = 1;		-- target of target support enabled by default
 local tototsupport = 1;		-- target of target of target support enabled by default
@@ -54,21 +53,21 @@ local targettargethealth, targettargethealthmax, targettargethealthpercent, targ
 local targettargettargethealth, targettargettargethealthmax, targettargettargethealthpercent, targettargettargetmana, targettargettargetmanamax, targettargettargetpower, raidtargettargettargetindex;
 
 -- Shared
-local r, g, b, reaction, mobhealththreenumerics, englishclass;
+local r, g, b, reaction, englishclass;
 
 ----------------------
 -- Loading Function --
 ----------------------
-function Perl_Target_Target_OnLoad()
+function Perl_Target_Target_OnLoad(self)
 	-- Events
-	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	this:RegisterEvent("PLAYER_LOGIN");
-	this:RegisterEvent("PLAYER_REGEN_ENABLED");
-	this:RegisterEvent("PLAYER_TARGET_CHANGED");
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
+	self:RegisterEvent("PLAYER_LOGIN");
+	self:RegisterEvent("PLAYER_REGEN_ENABLED");
+	self:RegisterEvent("PLAYER_TARGET_CHANGED");
 
 	-- Scripts
-	this:SetScript("OnEvent", Perl_Target_Target_OnEvent);
-	this:SetScript("OnUpdate", Perl_Target_Target_OnUpdate);
+	self:SetScript("OnEvent", Perl_Target_Target_OnEvent);
+	self:SetScript("OnUpdate", Perl_Target_Target_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Target_Target_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Target_Target_NameFrame:GetFrameLevel() + 1);
@@ -346,7 +345,7 @@ function Perl_Target_Target_OnUpdate()
 				end
 
 				if (mouseovertargettargetmanaflag == 1) then
-					if (UnitPowerType("targettarget") == 1 or UnitPowerType("targettarget") == 2) then
+					if (UnitPowerType("targettarget") == 1 or UnitPowerType("targettarget") == 2 or UnitPowerType("targettarget") == 6) then
 						Perl_Target_Target_ManaBarText:SetText(targettargetmana);
 					else
 						Perl_Target_Target_ManaBarText:SetText(targettargetmana.."/"..targettargetmanamax);
@@ -372,6 +371,9 @@ function Perl_Target_Target_OnUpdate()
 				elseif (targettargetpower == 3) then
 					Perl_Target_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 					Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+				elseif (targettargetpower == 6) then
+					Perl_Target_Target_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
+					Perl_Target_Target_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
 				else
 					Perl_Target_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 					Perl_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
@@ -589,7 +591,7 @@ function Perl_Target_Target_OnUpdate()
 				end
 
 				if (mouseovertargettargettargetmanaflag == 1) then
-					if (UnitPowerType("targettargettarget") == 1 or UnitPowerType("targettargettarget") == 2) then
+					if (UnitPowerType("targettargettarget") == 1 or UnitPowerType("targettargettarget") == 2 or UnitPowerType("targettargettarget") == 6) then
 						Perl_Target_Target_Target_ManaBarText:SetText(targettargettargetmana);
 					else
 						Perl_Target_Target_Target_ManaBarText:SetText(targettargettargetmana.."/"..targettargettargetmanamax);
@@ -615,6 +617,9 @@ function Perl_Target_Target_OnUpdate()
 				elseif (targettargettargetpower == 3) then
 					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+				elseif (targettargettargetpower == 6) then
+					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
+					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
 				else
 					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
@@ -1088,70 +1093,7 @@ function Perl_Target_Target_HealthShow()
 		targettargethealthpercent = 0;
 	end
 
-	if (targettargethealthmax == 100) then
-		-- Begin Mobhealth support
-		if (mobhealthsupport == 1) then
-			if (MobHealth3) then
-				targettargethealth, targettargethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("targettarget", UnitHealth("targettarget"), UnitHealthMax("targettarget"), UnitName("targettarget"), UnitLevel("targettarget"));
-				if (mobhealththreenumerics) then
-					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."/"..targettargethealthmax);	-- Stored unit info from the DB
-				else
-					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- Unit not in MobHealth DB
-				end
-			elseif (MobHealthFrame) then
-				local partyid = "targettarget";
-				local hp = targettargethealth;
-				local hpMax = targettargethealthmax;
-				local index, current, max, table;
-				if (UnitIsPlayer(partyid)) then
-					index = UnitName(partyid);
-					table = MobHealthPlayerDB or MobHealthDB;
-				else
-					index = UnitName(partyid)..":"..UnitLevel(partyid);
-					table = MobHealthDB or MobHealthPlayerDB;
-				end
-				if (table and type(table[index]) == "string") then
-					local pts, pct = strmatch(table[index], "^(%d+)/(%d+)$");
-
-					if (pts and pct) then
-						pts = pts + 0;
-						pct = pct + 0;
-						if( pct ~= 0 ) then
-							pointsPerPct = pts / pct;
-						else
-							pointsPerPct = 0;
-						end
-
-						local currentPct = hp;
-						if (pointsPerPct > 0) then
-							current = (currentPct * pointsPerPct) + 0.5;
-							max = (100 * pointsPerPct) + 0.5;
-						end
-					end
-				end
-				if (current) then	-- Stored unit info from the DB
-					hp, hpMax = current, max;
-					Perl_Target_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));	-- Stored unit info from the DB
-				else
-					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- Unit not in MobHealth DB
-				end
-			elseif (LibStub("LibMobHealth-4.0", true)) then
-				targettargethealth, targettargethealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth("targettarget")
-				if (mobhealththreenumerics) then
-					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."/"..targettargethealthmax);	-- Stored unit info from the DB
-				else
-					Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- Unit not in MobHealth DB
-				end
-			-- End MobHealth Support
-			else
-				Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- MobHealth isn't installed
-			end
-		else	-- mobhealthsupport == 0
-			Perl_Target_Target_HealthBarText:SetText(targettargethealth.."%");	-- MobHealth support is disabled
-		end
-	else
-		Perl_Target_Target_HealthBarText:SetText(targettargethealth.."/"..targettargethealthmax);	-- Self/Party/Raid member
-	end
+	Perl_Target_Target_HealthBarText:SetText(targettargethealth.."/"..targettargethealthmax);	-- Self/Party/Raid member
 
 	mouseovertargettargethealthflag = 1;
 end
@@ -1175,7 +1117,7 @@ function Perl_Target_Target_ManaShow()
 		targettargetmana = 0;
 	end
 
-	if (UnitPowerType("targettarget") == 1 or UnitPowerType("targettarget") == 2) then
+	if (UnitPowerType("targettarget") == 1 or UnitPowerType("targettarget") == 2 or UnitPowerType("targettarget") == 6) then
 		Perl_Target_Target_ManaBarText:SetText(targettargetmana);
 	else
 		Perl_Target_Target_ManaBarText:SetText(targettargetmana.."/"..targettargetmanamax);
@@ -1200,70 +1142,7 @@ function Perl_Target_Target_Target_HealthShow()
 		targettargettargethealthpercent = 0;
 	end
 
-	if (targettargettargethealthmax == 100) then
-		-- Begin Mobhealth support
-		if (mobhealthsupport == 1) then
-			if (MobHealth3) then
-				targettargettargethealth, targettargettargethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("targettargettarget", UnitHealth("targettargettarget"), UnitHealthMax("targettargettarget"), UnitName("targettargettarget"), UnitLevel("targettargettarget"));
-				if (mobhealththreenumerics) then
-					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."/"..targettargettargethealthmax);	-- Stored unit info from the DB
-				else
-					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Unit not in MobHealth DB
-				end
-			elseif (MobHealthFrame) then
-				local partyid = "targettargettarget";
-				local hp = targettargettargethealth;
-				local hpMax = targettargettargethealthmax;
-				local index, current, max, table;
-				if (UnitIsPlayer(partyid)) then
-					index = UnitName(partyid);
-					table = MobHealthPlayerDB or MobHealthDB;
-				else
-					index = UnitName(partyid)..":"..UnitLevel(partyid);
-					table = MobHealthDB or MobHealthPlayerDB;
-				end
-				if (table and type(table[index]) == "string") then
-					local pts, pct = strmatch(table[index], "^(%d+)/(%d+)$");
-
-					if (pts and pct) then
-						pts = pts + 0;
-						pct = pct + 0;
-						if( pct ~= 0 ) then
-							pointsPerPct = pts / pct;
-						else
-							pointsPerPct = 0;
-						end
-
-						local currentPct = hp;
-						if (pointsPerPct > 0) then
-							current = (currentPct * pointsPerPct) + 0.5;
-							max = (100 * pointsPerPct) + 0.5;
-						end
-					end
-				end
-				if (current) then	-- Stored unit info from the DB
-					hp, hpMax = current, max;
-					Perl_Target_Target_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));	-- Stored unit info from the DB
-				else
-					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Unit not in MobHealth DB
-				end
-			elseif (LibStub("LibMobHealth-4.0", true)) then
-				targettargettargethealth, targettargettargethealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth("targettargettarget")
-				if (mobhealththreenumerics) then
-					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."/"..targettargettargethealthmax);	-- Stored unit info from the DB
-				else
-					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Unit not in MobHealth DB
-				end
-			-- End MobHealth Support
-			else
-				Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- MobHealth isn't installed
-			end
-		else	-- mobhealthsupport == 0
-			Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- MobHealth support is disabled
-		end
-	else
-		Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."/"..targettargettargethealthmax);	-- Self/Party/Raid member
-	end
+	Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."/"..targettargettargethealthmax);	-- Self/Party/Raid member
 
 	mouseovertargettargettargethealthflag = 1;
 end
@@ -1287,7 +1166,7 @@ function Perl_Target_Target_Target_ManaShow()
 		targettargettargetmana = 0;
 	end
 
-	if (UnitPowerType("targettargettarget") == 1 or UnitPowerType("targettargettarget") == 2) then
+	if (UnitPowerType("targettargettarget") == 1 or UnitPowerType("targettargettarget") == 2 or UnitPowerType("targettargettarget") == 6) then
 		Perl_Target_Target_Target_ManaBarText:SetText(targettargettargetmana);
 	else
 		Perl_Target_Target_Target_ManaBarText:SetText(targettargettargetmana.."/"..targettargettargetmanamax);
@@ -1336,6 +1215,8 @@ function Perl_Target_Target_ManaBar_Fade_Check()
 				Perl_Target_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_Target_ManaBar_Fade_Color, (Perl_Target_Target_ManaBar_Fade_Color-0.5), 0, Perl_Target_Target_ManaBar_Fade_Color);
 			elseif (targettargetpower == 3) then
 				Perl_Target_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_ManaBar_Fade_Color, 0, Perl_Target_Target_ManaBar_Fade_Color);
+			elseif (targettargetpower == 6) then
+				Perl_Target_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_ManaBar_Fade_Color);
 			end
 			Perl_Target_Target_ManaBar_Fade_OnUpdate_Frame:Show();
 		end
@@ -1372,6 +1253,8 @@ function Perl_Target_Target_Target_ManaBar_Fade_Check()
 				Perl_Target_Target_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_Target_Target_ManaBar_Fade_Color, (Perl_Target_Target_Target_ManaBar_Fade_Color-0.5), 0, Perl_Target_Target_Target_ManaBar_Fade_Color);
 			elseif (targettargettargetpower == 3) then
 				Perl_Target_Target_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_Target_ManaBar_Fade_Color, 0, Perl_Target_Target_Target_ManaBar_Fade_Color);
+			elseif (targettargettargetpower == 6) then
+				Perl_Target_Target_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_Target_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_Target_ManaBar_Fade_Color);
 			end
 			Perl_Target_Target_Target_ManaBar_Fade_OnUpdate_Frame:Show();
 		end
@@ -1404,6 +1287,8 @@ function Perl_Target_Target_ManaBar_Fade(arg1)
 		Perl_Target_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_Target_ManaBar_Fade_Color, (Perl_Target_Target_ManaBar_Fade_Color-0.5), 0, Perl_Target_Target_ManaBar_Fade_Color);
 	elseif (targettargetpower == 3) then
 		Perl_Target_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_ManaBar_Fade_Color, 0, Perl_Target_Target_ManaBar_Fade_Color);
+	elseif (targettargetpower == 6) then
+		Perl_Target_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Target_Target_ManaBar_Fade_Time_Elapsed > 1) then
@@ -1440,6 +1325,8 @@ function Perl_Target_Target_Target_ManaBar_Fade(arg1)
 		Perl_Target_Target_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_Target_Target_ManaBar_Fade_Color, (Perl_Target_Target_Target_ManaBar_Fade_Color-0.5), 0, Perl_Target_Target_Target_ManaBar_Fade_Color);
 	elseif (targettargettargetpower == 3) then
 		Perl_Target_Target_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_Target_ManaBar_Fade_Color, 0, Perl_Target_Target_Target_ManaBar_Fade_Color);
+	elseif (targettargettargetpower == 6) then
+		Perl_Target_Target_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_Target_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_Target_ManaBar_Fade_Color, Perl_Target_Target_Target_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Target_Target_Target_ManaBar_Fade_Time_Elapsed > 1) then
@@ -1534,11 +1421,6 @@ end
 
 function Perl_Target_Target_Set_Alert_Size(newvalue)
 	alertsize = newvalue;
-	Perl_Target_Target_UpdateVars();
-end
-
-function Perl_Target_Target_Set_MobHealth(newvalue)
-	mobhealthsupport = newvalue;
 	Perl_Target_Target_UpdateVars();
 end
 
@@ -1677,7 +1559,6 @@ function Perl_Target_Target_GetVars(name, updateflag)
 	end
 
 	locked = Perl_Target_Target_Config[name]["Locked"];
-	mobhealthsupport = Perl_Target_Target_Config[name]["MobHealthSupport"];
 	scale = Perl_Target_Target_Config[name]["Scale"];
 	totsupport = Perl_Target_Target_Config[name]["ToTSupport"];
 	tototsupport = Perl_Target_Target_Config[name]["ToToTSupport"];
@@ -1697,9 +1578,6 @@ function Perl_Target_Target_GetVars(name, updateflag)
 
 	if (locked == nil) then
 		locked = 0;
-	end
-	if (mobhealthsupport == nil) then
-		mobhealthsupport = 1;
 	end
 	if (scale == nil) then
 		scale = 0.9;
@@ -1763,7 +1641,6 @@ function Perl_Target_Target_GetVars(name, updateflag)
 
 	local vars = {
 		["locked"] = locked,
-		["mobhealthsupport"] = mobhealthsupport,
 		["scale"] = scale,
 		["totsupport"] = totsupport,
 		["tototsupport"] = tototsupport,
@@ -1792,11 +1669,6 @@ function Perl_Target_Target_UpdateVars(vartable)
 				locked = vartable["Global Settings"]["Locked"];
 			else
 				locked = nil;
-			end
-			if (vartable["Global Settings"]["MobHealthSupport"] ~= nil) then
-				mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
-			else
-				mobhealthsupport = nil;
 			end
 			if (vartable["Global Settings"]["Scale"] ~= nil) then
 				scale = vartable["Global Settings"]["Scale"];
@@ -1884,9 +1756,6 @@ function Perl_Target_Target_UpdateVars(vartable)
 		if (locked == nil) then
 			locked = 0;
 		end
-		if (mobhealthsupport == nil) then
-			mobhealthsupport = 1;
-		end
 		if (scale == nil) then
 			scale = 0.9;
 		end
@@ -1944,7 +1813,6 @@ function Perl_Target_Target_UpdateVars(vartable)
 
 	Perl_Target_Target_Config[UnitName("player")] = {
 		["Locked"] = locked,
-		["MobHealthSupport"] = mobhealthsupport,
 		["Scale"] = scale,
 		["ToTSupport"] = totsupport,
 		["ToToTSupport"] = tototsupport,
@@ -1969,21 +1837,21 @@ end
 -- Click Handlers --
 --------------------
 -- Target of Target Start
-function Perl_TargetTarget_CastClickOverlay_OnLoad()
+function Perl_TargetTarget_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
 		ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
 	end
-	SecureUnitButton_OnLoad(this, "targettarget", showmenu);
+	SecureUnitButton_OnLoad(self, "targettarget", showmenu);
 
-	this:SetAttribute("unit", "targettarget");
+	self:SetAttribute("unit", "targettarget");
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
+	ClickCastFrames[self] = true;
 end
 
-function Perl_TargetTargetDropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_TargetTargetDropDown_Initialize, "MENU");
+function Perl_TargetTargetDropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_TargetTargetDropDown_Initialize, "MENU");
 end
 
 function Perl_TargetTargetDropDown_Initialize()
@@ -2024,21 +1892,21 @@ end
 -- Target of Target End
 
 -- Target of Target of Target Start
-function Perl_TargetTargetTarget_CastClickOverlay_OnLoad()
+function Perl_TargetTargetTarget_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
 		ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
 	end
-	SecureUnitButton_OnLoad(this, "targettargettarget", showmenu);
+	SecureUnitButton_OnLoad(self, "targettargettarget", showmenu);
 
-	this:SetAttribute("unit", "targettargettarget");
+	self:SetAttribute("unit", "targettargettarget");
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
+	ClickCastFrames[self] = true;
 end
 
-function Perl_TargetTargetTargetDropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_TargetTargetTargetDropDown_Initialize, "MENU");
+function Perl_TargetTargetTargetDropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_TargetTargetTargetDropDown_Initialize, "MENU");
 end
 
 function Perl_TargetTargetTargetDropDown_Initialize()
@@ -2086,11 +1954,11 @@ end
 -- Ripped/modified from FadingFrame from Blizzard
 -- Ripped from AggroAlert 1.5
 
-function Perl_Target_Target_BigWarning_OnLoad()
+function Perl_Target_Target_BigWarning_OnLoad(self)
 	Perl_Target_Target_BigWarning:Hide();
 
 	-- Scripts
-	this:SetScript("OnUpdate", Perl_Target_Target_BigWarning_OnUpdate);
+	self:SetScript("OnUpdate", Perl_Target_Target_BigWarning_OnUpdate);
 end
 
 function Perl_Target_Target_BigWarning_Show(message)
@@ -2128,34 +1996,22 @@ end
 -------------
 -- Tooltip --
 -------------
-function Perl_Target_Target_SetBuffTooltip()
-	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
-	if (this:GetID() > 16) then
-		GameTooltip:SetUnitDebuff("targettarget", this:GetID()-16, displaycurabledebuff);		-- 16 being the number of buffs before debuffs in the xml
+function Perl_Target_Target_SetBuffTooltip(self)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT");
+	if (self:GetID() > 16) then
+		GameTooltip:SetUnitDebuff("targettarget", self:GetID()-16, displaycurabledebuff);		-- 16 being the number of buffs before debuffs in the xml
 	else
-		GameTooltip:SetUnitBuff("targettarget", this:GetID(), displaycastablebuffs);
+		GameTooltip:SetUnitBuff("targettarget", self:GetID(), displaycastablebuffs);
 	end
 end
 
-function Perl_Target_Target_Target_SetBuffTooltip()
-	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
-	if (this:GetID() > 16) then
-		GameTooltip:SetUnitDebuff("targettargettarget", this:GetID()-16, displaycurabledebuff);		-- 16 being the number of buffs before debuffs in the xml
+function Perl_Target_Target_Target_SetBuffTooltip(self)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT");
+	if (self:GetID() > 16) then
+		GameTooltip:SetUnitDebuff("targettargettarget", self:GetID()-16, displaycurabledebuff);		-- 16 being the number of buffs before debuffs in the xml
 	else
-		GameTooltip:SetUnitBuff("targettargettarget", this:GetID(), displaycastablebuffs);
+		GameTooltip:SetUnitBuff("targettargettarget", self:GetID(), displaycastablebuffs);
 	end
-end
-
-function Perl_Target_Target_Tip()
-	UnitFrame_Initialize("targettarget")
-end
-
-function Perl_Target_Target_Target_Tip()
-	UnitFrame_Initialize("targettargettarget")
-end
-
-function UnitFrame_Initialize(unit)	-- Hopefully this doesn't break any mods
-	this.unit = unit;
 end
 
 

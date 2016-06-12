@@ -35,19 +35,18 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Party_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Party_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Party_Target_DragStart(arg1);
+								Perl_Party_Target_DragStart(self, arg1);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_Target_DragStop(arg1);
+								Perl_Party_Target_DragStop(self, arg1);
 							</OnDragStop>
 							<OnEnter>
-								Perl_Party_Target_Tip();
-								UnitFrame_OnEnter(self);
+								UnitFrame_OnEnter(self:GetParent():GetParent());
 							</OnEnter>
 							<OnLeave>
 								UnitFrame_OnLeave();
@@ -151,15 +150,15 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Party_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Party_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Party_Target_DragStart(arg1);
+								Perl_Party_Target_DragStart(self, arg1);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_Target_DragStop(arg1);
+								Perl_Party_Target_DragStop(self, arg1);
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -237,21 +236,21 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Party_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Party_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
-								Perl_Party_Target_HealthShow(this:GetParent():GetParent());
+								Perl_Party_Target_HealthShow(self:GetParent():GetParent());
 							</OnEnter>
 							<OnLeave>
-								Perl_Party_Target_HealthHide(this:GetParent():GetParent());
+								Perl_Party_Target_HealthHide(self:GetParent():GetParent());
 							</OnLeave>
 							<OnDragStart>
-								Perl_Party_Target_DragStart(arg1);
+								Perl_Party_Target_DragStart(self, arg1);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_Target_DragStop(arg1);
+								Perl_Party_Target_DragStop(self, arg1);
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -329,21 +328,21 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks("AnyUp");
-								this:RegisterForDrag("LeftButton");
-								Perl_Party_Target_CastClickOverlay_OnLoad();
+								self:RegisterForClicks("AnyUp");
+								self:RegisterForDrag("LeftButton");
+								Perl_Party_Target_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnEnter>
-								Perl_Party_Target_ManaShow(this:GetParent():GetParent());
+								Perl_Party_Target_ManaShow(self:GetParent():GetParent());
 							</OnEnter>
 							<OnLeave>
-								Perl_Party_Target_ManaHide(this:GetParent():GetParent());
+								Perl_Party_Target_ManaHide(self:GetParent():GetParent());
 							</OnLeave>
 							<OnDragStart>
-								Perl_Party_Target_DragStart(arg1);
+								Perl_Party_Target_DragStart(self, arg1);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_Target_DragStop(arg1);
+								Perl_Party_Target_DragStop(self, arg1);
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -364,8 +363,8 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				this:SetAttribute("unit", "party1target");
-				Perl_Party_Target_OnLoad(this);
+				self:SetAttribute("unit", "party1target");
+				Perl_Party_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 		<Frames>
@@ -383,7 +382,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_Party_Target1DropDown_OnLoad();
+						Perl_Party_Target1DropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -400,8 +399,8 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				this:SetAttribute("unit", "party2target");
-				Perl_Party_Target_OnLoad(this);
+				self:SetAttribute("unit", "party2target");
+				Perl_Party_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 		<Frames>
@@ -419,7 +418,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_Party_Target2DropDown_OnLoad();
+						Perl_Party_Target2DropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -436,8 +435,8 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				this:SetAttribute("unit", "party3target");
-				Perl_Party_Target_OnLoad(this);
+				self:SetAttribute("unit", "party3target");
+				Perl_Party_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 		<Frames>
@@ -455,7 +454,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_Party_Target3DropDown_OnLoad();
+						Perl_Party_Target3DropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -472,8 +471,8 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				this:SetAttribute("unit", "party4target");
-				Perl_Party_Target_OnLoad(this);
+				self:SetAttribute("unit", "party4target");
+				Perl_Party_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 		<Frames>
@@ -491,7 +490,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_Party_Target4DropDown_OnLoad();
+						Perl_Party_Target4DropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -508,8 +507,8 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				this:SetAttribute("unit", "focustarget");
-				Perl_Party_Target_OnLoad(this);
+				self:SetAttribute("unit", "focustarget");
+				Perl_Party_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 		<Frames>
@@ -527,7 +526,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						Perl_Party_Target5DropDown_OnLoad();
+						Perl_Party_Target5DropDown_OnLoad(self);
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -538,7 +537,7 @@
 	<Frame name="Perl_Party_Target_Script_Frame" movable="true" parent="UIParent" hidden="false" enableMouse="true">
 		<Scripts>
 			<OnLoad>
-				Perl_Party_Target_Script_OnLoad();
+				Perl_Party_Target_Script_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 	</Frame>

@@ -140,12 +140,14 @@ function Perl_Party_OnLoad(self)
 	self:RegisterEvent("UNIT_MAXHEALTH");
 	self:RegisterEvent("UNIT_MAXMANA");
 	self:RegisterEvent("UNIT_MAXRAGE");
+	self:RegisterEvent("UNIT_MAXRUNIC_POWER");
 	self:RegisterEvent("UNIT_MODEL_CHANGED");
 	self:RegisterEvent("UNIT_NAME_UPDATE");
 	self:RegisterEvent("UNIT_PET");
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	self:RegisterEvent("UNIT_PVP_UPDATE");
 	self:RegisterEvent("UNIT_RAGE");
+	self:RegisterEvent("UNIT_RUNIC_POWER");
 	self:RegisterEvent("VOICE_START");
 	self:RegisterEvent("VOICE_STOP");
 
@@ -215,6 +217,8 @@ Perl_Party_Events.UNIT_MANA = Perl_Party_Events.UNIT_ENERGY;
 Perl_Party_Events.UNIT_MAXMANA = Perl_Party_Events.UNIT_ENERGY;
 Perl_Party_Events.UNIT_RAGE = Perl_Party_Events.UNIT_ENERGY;
 Perl_Party_Events.UNIT_MAXRAGE = Perl_Party_Events.UNIT_ENERGY;
+Perl_Party_Events.UNIT_RUNIC_POWER = Perl_Party_Events.UNIT_ENERGY;
+Perl_Party_Events.UNIT_MAXRUNIC_POWER = Perl_Party_Events.UNIT_ENERGY;
 
 function Perl_Party_Events:UNIT_AURA()
 	if (arg1 == this.unit) then
@@ -634,7 +638,7 @@ function Perl_Party_Update_Mana(self)
 			end
 			if (showbarvalues == 0) then
 				if (tonumber(mouseovermanaflag) == tonumber(self.id)) then
-					if (UnitPowerType(self.unit) == 1) then
+					if (UnitPowerType(self.unit) == 1 or UnitPowerType(self.unit) == 6) then
 						self.manaBarTextPercent:SetText(partymana);
 					else
 						self.manaBarTextPercent:SetText(partymana.."/"..partymanamax);
@@ -643,7 +647,7 @@ function Perl_Party_Update_Mana(self)
 					self.manaBarTextPercent:SetText();
 				end
 			else
-				if (UnitPowerType(self.unit) == 1) then
+				if (UnitPowerType(self.unit) == 1 or UnitPowerType(self.unit) == 6) then
 					self.manaBarTextPercent:SetText(partymana);
 				else
 					self.manaBarTextPercent:SetText(partymana.."/"..partymanamax);
@@ -652,7 +656,7 @@ function Perl_Party_Update_Mana(self)
 		else
 			self.manaBarText:SetTextColor(1, 1, 1, 1);
 			self.manaBarText:SetText(partymana.."/"..partymanamax);
-			if (UnitPowerType(self.unit) == 1) then
+			if (UnitPowerType(self.unit) == 1 or UnitPowerType(self.unit) == 6) then
 				self.manaBarTextPercent:SetText(partymana);
 			else
 				self.manaBarTextPercent:SetText(partymanapercent.."%");
@@ -669,7 +673,7 @@ function Perl_Party_Update_Mana(self)
 			end
 			if (showbarvalues == 0) then
 				if (tonumber(mouseovermanaflag) == tonumber(self.id)) then
-					if (UnitPowerType(self.unit) == 1) then
+					if (UnitPowerType(self.unit) == 1 or UnitPowerType(self.unit) == 6) then
 						self.manaBarTextPercent:SetText(partymana);
 					else
 						self.manaBarTextPercent:SetText(partymana.."/"..partymanamax);
@@ -678,7 +682,7 @@ function Perl_Party_Update_Mana(self)
 					self.manaBarTextPercent:SetText();
 				end
 			else
-				if (UnitPowerType(self.unit) == 1) then
+				if (UnitPowerType(self.unit) == 1 or UnitPowerType(self.unit) == 6) then
 					self.manaBarTextPercent:SetText(partymana);
 				else
 					self.manaBarTextPercent:SetText(partymana.."/"..partymanamax);
@@ -687,7 +691,7 @@ function Perl_Party_Update_Mana(self)
 		else
 			self.manaBarText:SetTextColor(1, 1, 1, 1);
 			self.manaBarText:SetText();
-			if (UnitPowerType(self.unit) == 1) then
+			if (UnitPowerType(self.unit) == 1 or UnitPowerType(self.unit) == 6) then
 				self.manaBarTextPercent:SetText(partymana);
 			else
 				self.manaBarTextPercent:SetText(partymana.."/"..partymanamax);
@@ -714,6 +718,9 @@ function Perl_Party_Update_Mana_Bar(self)
 	elseif (partypower == 3) then	-- Rage
 		self.manaBar:SetStatusBarColor(1, 1, 0, 1);
 		self.manaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+	elseif (partypower == 6) then	-- Runic
+		self.manaBar:SetStatusBarColor(0, 0.82, 1, 1);
+		self.manaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
 	end
 end
 
@@ -1046,7 +1053,7 @@ function Perl_Party_ManaShow(self)
 				partymana = 0;
 			end
 
-			if (UnitPowerType(self.unit) == 1) then
+			if (UnitPowerType(self.unit) == 1 or UnitPowerType(self.unit) == 6) then
 				self.manaBarTextPercent:SetText(partymana);
 			else
 				self.manaBarTextPercent:SetText(partymana.."/"..partymanamax);
@@ -1215,6 +1222,8 @@ function Perl_Party_One_ManaBar_Fade(arg1)
 		Perl_Party_MemberFrame1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_One_ManaBar_Fade_Color, 0, 0, Perl_Party_One_ManaBar_Fade_Color);
 	elseif (UnitPowerType("party1") == 3) then
 		Perl_Party_MemberFrame1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_One_ManaBar_Fade_Color, Perl_Party_One_ManaBar_Fade_Color, 0, Perl_Party_One_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party1") == 6) then
+		Perl_Party_MemberFrame1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_One_ManaBar_Fade_Color, Perl_Party_One_ManaBar_Fade_Color, Perl_Party_One_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Party_One_ManaBar_Fade_Time_Elapsed > 1) then
@@ -1235,6 +1244,8 @@ function Perl_Party_Two_ManaBar_Fade(arg1)
 		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Two_ManaBar_Fade_Color, 0, 0, Perl_Party_Two_ManaBar_Fade_Color);
 	elseif (UnitPowerType("party2") == 3) then
 		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Two_ManaBar_Fade_Color, Perl_Party_Two_ManaBar_Fade_Color, 0, Perl_Party_Two_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party2") == 6) then
+		Perl_Party_MemberFrame2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Two_ManaBar_Fade_Color, Perl_Party_Two_ManaBar_Fade_Color, Perl_Party_Two_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Party_One_ManaBar_Fade_Time_Elapsed > 1) then
@@ -1255,6 +1266,8 @@ function Perl_Party_Three_ManaBar_Fade(arg1)
 		Perl_Party_MemberFrame3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Three_ManaBar_Fade_Color, 0, 0, Perl_Party_Three_ManaBar_Fade_Color);
 	elseif (UnitPowerType("party3") == 3) then
 		Perl_Party_MemberFrame3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Three_ManaBar_Fade_Color, Perl_Party_Three_ManaBar_Fade_Color, 0, Perl_Party_Three_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party3") == 6) then
+		Perl_Party_MemberFrame3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Three_ManaBar_Fade_Color, Perl_Party_Three_ManaBar_Fade_Color, Perl_Party_Three_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Party_Three_ManaBar_Fade_Time_Elapsed > 1) then
@@ -1275,6 +1288,8 @@ function Perl_Party_Four_ManaBar_Fade(arg1)
 		Perl_Party_MemberFrame4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Four_ManaBar_Fade_Color, 0, 0, Perl_Party_Four_ManaBar_Fade_Color);
 	elseif (UnitPowerType("party4") == 3) then
 		Perl_Party_MemberFrame4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Four_ManaBar_Fade_Color, Perl_Party_Four_ManaBar_Fade_Color, 0, Perl_Party_Four_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party4") == 6) then
+		Perl_Party_MemberFrame4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Four_ManaBar_Fade_Color, Perl_Party_Four_ManaBar_Fade_Color, Perl_Party_Four_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Party_Four_ManaBar_Fade_Time_Elapsed > 1) then
@@ -2523,12 +2538,12 @@ function Perl_Party_Reset_Buffs()
 	end
 end
 
-function Perl_Party_SetBuffTooltip()
-	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
-	if (this:GetID() > 16) then
-		GameTooltip:SetUnitDebuff("party"..this:GetParent():GetParent():GetID(), this:GetID()-16, displaycurabledebuff);	-- 16 being the number of buffs before debuffs in the xml
+function Perl_Party_SetBuffTooltip(self)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT");
+	if (self:GetID() > 16) then
+		GameTooltip:SetUnitDebuff("party"..self:GetParent():GetParent():GetID(), self:GetID()-16, displaycurabledebuff);	-- 16 being the number of buffs before debuffs in the xml
 	else
-		GameTooltip:SetUnitBuff("party"..this:GetParent():GetParent():GetID(), this:GetID(), displaycastablebuffs);
+		GameTooltip:SetUnitBuff("party"..self:GetParent():GetParent():GetID(), self:GetID(), displaycastablebuffs);
 	end
 end
 
@@ -2536,21 +2551,21 @@ end
 --------------------
 -- Click Handlers --
 --------------------
-function Perl_Party_CastClickOverlay_OnLoad()
+function Perl_Party_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
-		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..this:GetParent():GetParent():GetID().."_DropDown"), "Perl_Party_MemberFrame"..this:GetParent():GetParent():GetID(), 0, 0);
+		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID().."_DropDown"), "Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID(), 0, 0);
 	end
-	SecureUnitButton_OnLoad(this, "party"..this:GetParent():GetParent():GetID(), showmenu);
+	SecureUnitButton_OnLoad(self, "party"..self:GetParent():GetParent():GetID(), showmenu);
 
-	this:SetAttribute("unit", "party"..this:GetParent():GetParent():GetID());
+	self:SetAttribute("unit", "party"..self:GetParent():GetParent():GetID());
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
+	ClickCastFrames[self] = true;
 end
 
-function Perl_PartyDropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_PartyDropDown_Initialize, "MENU");
+function Perl_PartyDropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_PartyDropDown_Initialize, "MENU");
 end
 
 function Perl_PartyDropDown_Initialize()
@@ -2573,29 +2588,17 @@ function Perl_Party_DragStop(button)
 	Perl_Party_Frame:StopMovingOrSizing();
 end
 
-function Perl_Party_Pet_CastClickOverlay_OnLoad()
+function Perl_Party_Pet_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
-		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..this:GetParent():GetParent():GetID().."_DropDown"), "Perl_Party_MemberFrame"..this:GetParent():GetParent():GetID(), 0, 0);
+		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID().."_DropDown"), "Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID(), 0, 0);
 	end
-	SecureUnitButton_OnLoad(this, "partypet"..this:GetParent():GetParent():GetID(), showmenu);
+	SecureUnitButton_OnLoad(self, "partypet"..self:GetParent():GetParent():GetID(), showmenu);
 
-	this:SetAttribute("unit", "partypet"..this:GetParent():GetParent():GetID());
+	self:SetAttribute("unit", "partypet"..self:GetParent():GetParent():GetID());
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
-end
-
-
--------------
--- Tooltip --
--------------
-function Perl_Party_Tip()
-	UnitFrame_Initialize("party"..this:GetID());
-end
-
-function UnitFrame_Initialize(unit)	-- Hopefully this doesn't break any mods
-	this.unit = unit;
+	ClickCastFrames[self] = true;
 end
 
 

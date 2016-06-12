@@ -124,7 +124,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALWAYS_SHOWN);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALWAYS_SHOWN);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Frame_CheckButton2:SetChecked(nil);	<!-- We need to uncheck Button 2 -->
@@ -148,7 +148,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_AUTOATTACK);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_AUTOATTACK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(nil);	<!-- We need to uncheck Button 1 -->
@@ -172,7 +172,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_ONAGRO);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_ONAGRO);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(nil);	<!-- We need to uncheck Button 1 -->
@@ -196,7 +196,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALWAYS_HIDDEN);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ALWAYS_HIDDEN);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(nil);	<!-- We need to uncheck Button 1 -->
@@ -220,7 +220,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_HEALTH_PERSIST);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_HEALTH_PERSIST);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Health_Persistance_Update();
@@ -241,7 +241,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_MANA_PERSIST);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_MANA_PERSIST);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Mana_Persistance_Update();
@@ -262,7 +262,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PET_SUPPORT);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PET_SUPPORT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_PetBars_Update();
@@ -283,7 +283,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_DRUIDBAR);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_DRUIDBAR);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_DruidBar_Update();
@@ -304,7 +304,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_MENU);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_MENU);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Right_Click_Update();
@@ -325,7 +325,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_LOCK);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_LOCK);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Lock_Update();
@@ -346,8 +346,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
-						Perl_Config_CombatDisplay_Set_Scale(getglobal(this:GetName()):GetValue());
+						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
+						Perl_Config_CombatDisplay_Set_Scale(getglobal(self:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -365,7 +365,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Set_Scale();
@@ -386,8 +386,8 @@
 				</Anchors>
 				<Scripts>
 					<OnValueChanged>
-						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
-						Perl_Config_CombatDisplay_Set_Transparency(getglobal(this:GetName()):GetValue());
+						getglobal(self:GetName().."Text"):SetText(getglobal(self:GetName()):GetValue());
+						Perl_Config_CombatDisplay_Set_Transparency(getglobal(self:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
@@ -405,31 +405,10 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_ENABLE_TARGET);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_ENABLE_TARGET);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Target_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton11" inherits="UICheckButtonTemplate" id="11">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_MOBHEALTH);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_CombatDisplay_MobHealth_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -447,7 +426,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_DISPLAY_PERCENTS);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_DISPLAY_PERCENTS);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Display_Percents_Update();
@@ -468,7 +447,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_DISPLAY_COMBOPOINT_BAR);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_DISPLAY_COMBOPOINT_BAR);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_ComboPoint_Bars_Update();
@@ -489,7 +468,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_CLICK_THROUGH);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_CLICK_THROUGH);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Click_Through_Update();
@@ -510,7 +489,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYER_ENERGY_TICKER);
+						getglobal(self:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYER_ENERGY_TICKER);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_Show_Energy_Ticker_Update();

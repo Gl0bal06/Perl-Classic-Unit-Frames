@@ -9,7 +9,6 @@ local locked = 0;		-- unlocked by default
 local scale = 0.9;		-- default scale for party target
 local focusscale = 0.9;		-- default scale for focus target
 local transparency = 1;		-- transparency for frames
-local mobhealthsupport = 1;	-- mobhealth support is on by default
 local hidepowerbars = 0;	-- Power bars are shown by default
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local enabled = 1;		-- mod is shown by default
@@ -46,21 +45,21 @@ local Perl_Party_Target_Five_ManaBar_Fade_Color = 1;		-- the color fading interv
 local Perl_Party_Target_Five_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local r, g, b, currentunit, partytargethealth, partytargethealthmax, partytargethealthpercent, partytargetmana, partytargetmanamax, partytargetpower, englishclass, raidpartytargetindex, mobhealththreenumerics;
+local r, g, b, currentunit, partytargethealth, partytargethealthmax, partytargethealthpercent, partytargetmana, partytargetmanamax, partytargetpower, englishclass, raidpartytargetindex;
 
 
 ----------------------
 -- Loading Function --
 ----------------------
-function Perl_Party_Target_Script_OnLoad()
+function Perl_Party_Target_Script_OnLoad(self)
 	-- Events
-	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	this:RegisterEvent("PLAYER_LOGIN");
-	this:RegisterEvent("RAID_ROSTER_UPDATE");
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
+	self:RegisterEvent("PLAYER_LOGIN");
+	self:RegisterEvent("RAID_ROSTER_UPDATE");
 
 	-- Scripts
-	this:SetScript("OnEvent", Perl_Party_Target_Script_OnEvent);
-	this:SetScript("OnUpdate", Perl_Party_Target_OnUpdate);
+	self:SetScript("OnEvent", Perl_Party_Target_Script_OnEvent);
+	self:SetScript("OnUpdate", Perl_Party_Target_OnUpdate);
 end
 
 function Perl_Party_Target_OnLoad(self)
@@ -365,6 +364,9 @@ function Perl_Party_Target_Work(self)
 		elseif (partytargetpower == 3) then
 			self.manaBar:SetStatusBarColor(1, 1, 0, 1);
 			self.manaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+		elseif (partytargetpower == 6) then
+			self.manaBar:SetStatusBarColor(0, 0.82, 1, 1);
+			self.manaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
 		else
 			self.manaBar:SetStatusBarColor(0, 0, 1, 1);
 			self.manaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
@@ -389,7 +391,7 @@ function Perl_Party_Target_Work(self)
 		end
 
 		if (tonumber(mouseovermanaflag) == tonumber(self.id)) then
-			if (UnitPowerType(self.unit) == 1 or UnitPowerType(self.unit) == 2) then
+			if (UnitPowerType(self.unit) == 1 or UnitPowerType(self.unit) == 2 or UnitPowerType(self.unit) == 6) then
 				self.manaBarText:SetText(partytargetmana);
 			else
 				self.manaBarText:SetText(partytargetmana.."/"..partytargetmanamax);
@@ -418,71 +420,7 @@ function Perl_Party_Target_HealthShow(self)
 		partytargethealthpercent = 0;
 	end
 
-	if (partytargethealthmax == 100) then
-		-- Begin Mobhealth support
-		if (mobhealthsupport == 1) then
-			if (MobHealth3) then
-				partytargethealth, partytargethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth(self.unit, UnitHealth(self.unit), UnitHealthMax(self.unit), UnitName(self.unit), UnitLevel(self.unit));
-				if (mobhealththreenumerics) then
-					self.healthBarText:SetText(partytargethealth.."/"..partytargethealthmax);	-- Stored unit info from the DB
-				else
-					self.healthBarText:SetText(partytargethealth.."%");	-- Unit not in MobHealth DB
-				end
-			elseif (MobHealthFrame) then
-				local partyid = self.unit;
-				local hp = partytargethealth;
-				local hpMax = partytargethealthmax;
-				local index, current, max, table;
-				if (UnitIsPlayer(partyid)) then
-					index = UnitName(partyid);
-					table = MobHealthPlayerDB or MobHealthDB;
-				else
-					index = UnitName(partyid)..":"..UnitLevel(partyid);
-					table = MobHealthDB or MobHealthPlayerDB;
-				end
-				if (table and type(table[index]) == "string") then
-					local pts, pct = strmatch(table[index], "^(%d+)/(%d+)$");
-
-					if (pts and pct) then
-						pts = pts + 0;
-						pct = pct + 0;
-						if( pct ~= 0 ) then
-							pointsPerPct = pts / pct;
-						else
-							pointsPerPct = 0;
-						end
-
-						local currentPct = hp;
-						if (pointsPerPct > 0) then
-							current = (currentPct * pointsPerPct) + 0.5;
-							max = (100 * pointsPerPct) + 0.5;
-						end
-					end
-				end
-				if (current) then	-- Stored unit info from the DB
-					hp, hpMax = current, max;
-					self.healthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));	-- Stored unit info from the DB
-				else
-					self.healthBarText:SetText(partytargethealth.."%");	-- Unit not in MobHealth DB
-				end
-			elseif (LibStub("LibMobHealth-4.0", true)) then
-				partytargethealth, partytargethealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth(self.unit)
-				if (mobhealththreenumerics) then
-					self.healthBarText:SetText(partytargethealth.."/"..partytargethealthmax);	-- Stored unit info from the DB
-				else
-					self.healthBarText:SetText(partytargethealth.."%");	-- Unit not in MobHealth DB
-				end
-			-- End MobHealth Support
-			else
-				self.healthBarText:SetText(partytargethealth.."%");	-- MobHealth isn't installed
-			end
-		else	-- mobhealthsupport == 0
-			self.healthBarText:SetText(partytargethealth.."%");	-- MobHealth support is disabled
-		end
-	else
-		self.healthBarText:SetText(partytargethealth.."/"..partytargethealthmax);	-- Self/Party/Raid member
-	end
-
+	self.healthBarText:SetText(partytargethealth.."/"..partytargethealthmax);
 	mouseoverhealthflag = self.id;
 end
 
@@ -499,7 +437,7 @@ function Perl_Party_Target_ManaShow(self)
 		partytargetmana = 0;
 	end
 
-	if (UnitPowerType(self.unit) == 1 or UnitPowerType(self.unit) == 2) then
+	if (UnitPowerType(self.unit) == 1 or UnitPowerType(self.unit) == 2 or UnitPowerType(self.unit) == 6) then
 		self.manaBarText:SetText(partytargetmana);
 	else
 		self.manaBarText:SetText(partytargetmana.."/"..partytargetmanamax);
@@ -654,6 +592,8 @@ function Perl_Party_Target_One_ManaBar_Fade(arg1)
 		Perl_Party_Target1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Target_One_ManaBar_Fade_Color, (Perl_Party_Target_One_ManaBar_Fade_Color-0.5), 0, Perl_Party_Target_One_ManaBar_Fade_Color);
 	elseif (UnitPowerType("party1target") == 3) then
 		Perl_Party_Target1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Target_One_ManaBar_Fade_Color, Perl_Party_Target_One_ManaBar_Fade_Color, 0, Perl_Party_Target_One_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party1target") == 6) then
+		Perl_Party_Target1_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_One_ManaBar_Fade_Color, Perl_Party_Target_One_ManaBar_Fade_Color, Perl_Party_Target_One_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Party_Target_One_ManaBar_Fade_Time_Elapsed > 1) then
@@ -676,6 +616,8 @@ function Perl_Party_Target_Two_ManaBar_Fade(arg1)
 		Perl_Party_Target2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Target_Two_ManaBar_Fade_Color, (Perl_Party_Target_Two_ManaBar_Fade_Color-0.5), 0, Perl_Party_Target_Two_ManaBar_Fade_Color);
 	elseif (UnitPowerType("party2target") == 3) then
 		Perl_Party_Target2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Target_Two_ManaBar_Fade_Color, Perl_Party_Target_Two_ManaBar_Fade_Color, 0, Perl_Party_Target_Two_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party2target") == 6) then
+		Perl_Party_Target2_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_Two_ManaBar_Fade_Color, Perl_Party_Target_Two_ManaBar_Fade_Color, Perl_Party_Target_Two_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Party_Target_Two_ManaBar_Fade_Time_Elapsed > 1) then
@@ -698,6 +640,8 @@ function Perl_Party_Target_Three_ManaBar_Fade(arg1)
 		Perl_Party_Target3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Target_Three_ManaBar_Fade_Color, (Perl_Party_Target_Three_ManaBar_Fade_Color-0.5), 0, Perl_Party_Target_Three_ManaBar_Fade_Color);
 	elseif (UnitPowerType("party3target") == 3) then
 		Perl_Party_Target3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Target_Three_ManaBar_Fade_Color, Perl_Party_Target_Three_ManaBar_Fade_Color, 0, Perl_Party_Target_Three_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party3target") == 6) then
+		Perl_Party_Target3_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_Three_ManaBar_Fade_Color, Perl_Party_Target_Three_ManaBar_Fade_Color, Perl_Party_Target_Three_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Party_Target_Three_ManaBar_Fade_Time_Elapsed > 1) then
@@ -720,6 +664,8 @@ function Perl_Party_Target_Four_ManaBar_Fade(arg1)
 		Perl_Party_Target4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Target_Four_ManaBar_Fade_Color, (Perl_Party_Target_Four_ManaBar_Fade_Color-0.5), 0, Perl_Party_Target_Four_ManaBar_Fade_Color);
 	elseif (UnitPowerType("party4target") == 3) then
 		Perl_Party_Target4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Target_Four_ManaBar_Fade_Color, Perl_Party_Target_Four_ManaBar_Fade_Color, 0, Perl_Party_Target_Four_ManaBar_Fade_Color);
+	elseif (UnitPowerType("party4target") == 6) then
+		Perl_Party_Target4_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_Four_ManaBar_Fade_Color, Perl_Party_Target_Four_ManaBar_Fade_Color, Perl_Party_Target_Four_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Party_Target_Four_ManaBar_Fade_Time_Elapsed > 1) then
@@ -742,6 +688,8 @@ function Perl_Party_Target_Five_ManaBar_Fade(arg1)
 		Perl_Party_Target5_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Target_Five_ManaBar_Fade_Color, (Perl_Party_Target_Five_ManaBar_Fade_Color-0.5), 0, Perl_Party_Target_Five_ManaBar_Fade_Color);
 	elseif (UnitPowerType("focustarget") == 3) then
 		Perl_Party_Target5_StatsFrame_ManaBarFadeBar:SetStatusBarColor(Perl_Party_Target_Five_ManaBar_Fade_Color, Perl_Party_Target_Five_ManaBar_Fade_Color, 0, Perl_Party_Target_Five_ManaBar_Fade_Color);
+	elseif (UnitPowerType("focustarget") == 6) then
+		Perl_Party_Target5_StatsFrame_ManaBarFadeBar:SetStatusBarColor(0, Perl_Party_Target_Five_ManaBar_Fade_Color, Perl_Party_Target_Five_ManaBar_Fade_Color, Perl_Party_Target_Five_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Party_Target_Five_ManaBar_Fade_Time_Elapsed > 1) then
@@ -910,11 +858,6 @@ function Perl_Party_Target_Set_Hide_Power_Bars(newvalue)
 	Perl_Party_Target_Frame_Style();
 end
 
-function Perl_Party_Target_Set_MobHealth(newvalue)
-	mobhealthsupport = newvalue;
-	Perl_Party_Target_UpdateVars();
-end
-
 function Perl_Party_Target_Set_Lock(newvalue)
 	locked = newvalue;
 	Perl_Party_Target_UpdateVars();
@@ -975,7 +918,6 @@ function Perl_Party_Target_GetVars(name, updateflag)
 	scale = Perl_Party_Target_Config[name]["Scale"];
 	focusscale = Perl_Party_Target_Config[name]["FocusScale"];
 	transparency = Perl_Party_Target_Config[name]["Transparency"];
-	mobhealthsupport = Perl_Party_Target_Config[name]["MobHealthSupport"];
 	hidepowerbars = Perl_Party_Target_Config[name]["HidePowerBars"];
 	classcolorednames = Perl_Party_Target_Config[name]["ClassColoredNames"];
 	enabled = Perl_Party_Target_Config[name]["Enabled"];
@@ -994,9 +936,6 @@ function Perl_Party_Target_GetVars(name, updateflag)
 	end
 	if (transparency == nil) then
 		transparency = 1;
-	end
-	if (mobhealthsupport == nil) then
-		mobhealthsupport = 1;
 	end
 	if (hidepowerbars == nil) then
 		hidepowerbars = 0;
@@ -1033,7 +972,6 @@ function Perl_Party_Target_GetVars(name, updateflag)
 		["scale"] = scale,
 		["focusscale"] = focusscale,
 		["transparency"] = transparency,
-		["mobhealthsupport"] = mobhealthsupport,
 		["hidepowerbars"] = hidepowerbars,
 		["classcolorednames"] = classcolorednames,
 		["enabled"] = enabled,
@@ -1067,11 +1005,6 @@ function Perl_Party_Target_UpdateVars(vartable)
 				transparency = vartable["Global Settings"]["Transparency"];
 			else
 				transparency = nil;
-			end
-			if (vartable["Global Settings"]["MobHealthSupport"] ~= nil) then
-				mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
-			else
-				mobhealthsupport = nil;
 			end
 			if (vartable["Global Settings"]["HidePowerBars"] ~= nil) then
 				hidepowerbars = vartable["Global Settings"]["HidePowerBars"];
@@ -1118,9 +1051,6 @@ function Perl_Party_Target_UpdateVars(vartable)
 		if (transparency == nil) then
 			transparency = 1;
 		end
-		if (mobhealthsupport == nil) then
-			mobhealthsupport = 1;
-		end
 		if (hidepowerbars == nil) then
 			hidepowerbars = 0;
 		end
@@ -1151,7 +1081,6 @@ function Perl_Party_Target_UpdateVars(vartable)
 		["Scale"] = scale,
 		["FocusScale"] = focusscale,
 		["Transparency"] = transparency,
-		["MobHealthSupport"] = mobhealthsupport,
 		["HidePowerBars"] = hidepowerbars,
 		["ClassColoredNames"] = classcolorednames,
 		["Enabled"] = enabled,
@@ -1165,43 +1094,43 @@ end
 --------------------
 -- Click Handlers --
 --------------------
-function Perl_Party_Target_CastClickOverlay_OnLoad()
+function Perl_Party_Target_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
-		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_Target"..this:GetParent():GetParent():GetID().."_DropDown"), "Perl_Party_Target"..this:GetParent():GetParent():GetID().."_NameFrame", 0, 0);
+		ToggleDropDownMenu(1, nil, getglobal("Perl_Party_Target"..self:GetParent():GetParent():GetID().."_DropDown"), "Perl_Party_Target"..self:GetParent():GetParent():GetID().."_NameFrame", 0, 0);
 	end
-	SecureUnitButton_OnLoad(this, "party"..this:GetParent():GetParent():GetID().."target", showmenu);
+	SecureUnitButton_OnLoad(self, "party"..self:GetParent():GetParent():GetID().."target", showmenu);
 
-	if (this:GetParent():GetParent():GetID() == 5) then
-		this:SetAttribute("unit", "focustarget");
+	if (self:GetParent():GetParent():GetID() == 5) then
+		self:SetAttribute("unit", "focustarget");
 	else
-		this:SetAttribute("unit", "party"..this:GetParent():GetParent():GetID().."target");
+		self:SetAttribute("unit", "party"..self:GetParent():GetParent():GetID().."target");
 	end
 	
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
+	ClickCastFrames[self] = true;
 end
 
 -- If there is a better way to do this please let me know
-function Perl_Party_Target1DropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_Party_Target1DropDown_Initialize, "MENU");
+function Perl_Party_Target1DropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_Party_Target1DropDown_Initialize, "MENU");
 end
 
-function Perl_Party_Target2DropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_Party_Target2DropDown_Initialize, "MENU");
+function Perl_Party_Target2DropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_Party_Target2DropDown_Initialize, "MENU");
 end
 
-function Perl_Party_Target3DropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_Party_Target3DropDown_Initialize, "MENU");
+function Perl_Party_Target3DropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_Party_Target3DropDown_Initialize, "MENU");
 end
 
-function Perl_Party_Target4DropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_Party_Target4DropDown_Initialize, "MENU");
+function Perl_Party_Target4DropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_Party_Target4DropDown_Initialize, "MENU");
 end
 
-function Perl_Party_Target5DropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_Party_Target5DropDown_Initialize, "MENU");
+function Perl_Party_Target5DropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_Party_Target5DropDown_Initialize, "MENU");
 end
 
 function Perl_Party_Target1DropDown_Initialize()
@@ -1348,31 +1277,15 @@ function Perl_Party_Target5DropDown_Initialize()
 	end
 end
 
-function Perl_Party_Target_DragStart(button)
+function Perl_Party_Target_DragStart(self, button)
 	if (button == "LeftButton" and locked == 0) then
-		getglobal("Perl_Party_Target"..this:GetID()):StartMoving();
+		getglobal("Perl_Party_Target"..self:GetID()):StartMoving();
 	end
 end
 
-function Perl_Party_Target_DragStop(button)
-	getglobal("Perl_Party_Target"..this:GetID()):SetUserPlaced(1);
-	getglobal("Perl_Party_Target"..this:GetID()):StopMovingOrSizing();
-end
-
-
--------------
--- Tooltip --
--------------
-function Perl_Party_Target_Tip()
-	if (this:GetID() == 5) then
-		UnitFrame_Initialize("focustarget");
-	else
-		UnitFrame_Initialize("party"..this:GetID().."target");
-	end
-end
-
-function UnitFrame_Initialize(unit)	-- Hopefully this doesn't break any mods
-	this.unit = unit;
+function Perl_Party_Target_DragStop(self, button)
+	getglobal("Perl_Party_Target"..self:GetID()):SetUserPlaced(1);
+	getglobal("Perl_Party_Target"..self:GetID()):StopMovingOrSizing();
 end
 
 

@@ -1,7 +1,7 @@
-## Interface: 20400
+## Interface: 30000
 ## Title: Perl Target Target Frames
 ## Notes: Displays movable target of target frames.
-## Dependencies: Perl_Config
-## OptionalDeps: Clique, MobHealth, myAddOns
+## Dependencies: 
+## OptionalDeps: Clique, myAddOns
 ## SavedVariables: Perl_Target_Target_Config
 Perl_Target_Target.xml

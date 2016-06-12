@@ -18,12 +18,6 @@ function Perl_Config_Party_Target_Set_Values()
 		Perl_Config_Party_Target_Frame_CheckButton1:SetChecked(nil);
 	end
 
-	if (vartable["mobhealthsupport"] == 1) then
-		Perl_Config_Party_Target_Frame_CheckButton3:SetChecked(1);
-	else
-		Perl_Config_Party_Target_Frame_CheckButton3:SetChecked(nil);
-	end
-
 	if (vartable["hidepowerbars"] == 1) then
 		Perl_Config_Party_Target_Frame_CheckButton4:SetChecked(1);
 	else
@@ -122,14 +116,6 @@ function Perl_Config_Party_Target_Class_Colored_Names_Update()
 		Perl_Party_Target_Set_Class_Colored_Names(1);
 	else
 		Perl_Party_Target_Set_Class_Colored_Names(0);
-	end
-end
-
-function Perl_Config_Party_Target_MobHealth_Update()
-	if (Perl_Config_Party_Target_Frame_CheckButton3:GetChecked() == 1) then
-		Perl_Party_Target_Set_MobHealth(1);
-	else
-		Perl_Party_Target_Set_MobHealth(0);
 	end
 end
 

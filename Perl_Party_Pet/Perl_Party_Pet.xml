@@ -37,7 +37,7 @@
 		</Layers>
 		<Scripts>
 			<OnEnter>
-				Perl_Party_Pet_SetBuffTooltip();
+				Perl_Party_Pet_SetBuffTooltip(self);
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
@@ -90,7 +90,7 @@
 		</Layers>
 		<Scripts>
 			<OnEnter>
-				Perl_Party_Pet_SetDeBuffTooltip();
+				Perl_Party_Pet_SetDeBuffTooltip(self);
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
@@ -132,19 +132,18 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
-								Perl_Party_Pet_CastClickOverlay_OnLoad();
+								self:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								self:RegisterForDrag('LeftButton');
+								Perl_Party_Pet_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Party_Pet_DragStart(arg1);
+								Perl_Party_Pet_DragStart(self, arg1);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_Pet_DragStop(arg1);
+								Perl_Party_Pet_DragStop(self, arg1);
 							</OnDragStop>
 							<OnEnter>
-								Perl_Party_Pet_Tip();
-								UnitFrame_OnEnter(self);
+								UnitFrame_OnEnter(self:GetParent():GetParent());
 							</OnEnter>
 							<OnLeave>
 								UnitFrame_OnLeave();
@@ -216,7 +215,7 @@
 						</Anchors>
 						<Scripts>
 							<OnUpdate>
-								this:SetCamera(0);
+								self:SetCamera(0);
 							</OnUpdate>
 						</Scripts>
 					</PlayerModel>
@@ -233,15 +232,15 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
-								Perl_Party_Pet_CastClickOverlay_OnLoad();
+								self:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								self:RegisterForDrag('LeftButton');
+								Perl_Party_Pet_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Party_Pet_DragStart(arg1);
+								Perl_Party_Pet_DragStart(self, arg1);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_Pet_DragStop(arg1);
+								Perl_Party_Pet_DragStop(self, arg1);
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -303,15 +302,15 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
-								Perl_Party_Pet_CastClickOverlay_OnLoad();
+								self:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+								self:RegisterForDrag('LeftButton');
+								Perl_Party_Pet_CastClickOverlay_OnLoad(self);
 							</OnLoad>
 							<OnDragStart>
-								Perl_Party_Pet_DragStart(arg1);
+								Perl_Party_Pet_DragStart(self, arg1);
 							</OnDragStart>
 							<OnDragStop>
-								Perl_Party_Pet_DragStop(arg1);
+								Perl_Party_Pet_DragStop(self, arg1);
 							</OnDragStop>
 						</Scripts>
 					</Button>
@@ -791,7 +790,8 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				this:SetAttribute("unit", "partypet1");
+				self:SetAttribute("unit", "partypet1");
+				self.unit = "partypet1";
 			</OnLoad>
 		</Scripts>
 	</Frame>
@@ -805,7 +805,8 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				this:SetAttribute("unit", "partypet2");
+				self:SetAttribute("unit", "partypet2");
+				self.unit = "partypet2";
 			</OnLoad>
 		</Scripts>
 	</Frame>
@@ -819,7 +820,8 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				this:SetAttribute("unit", "partypet3");
+				self:SetAttribute("unit", "partypet3");
+				self.unit = "partypet3";
 			</OnLoad>
 		</Scripts>
 	</Frame>
@@ -833,7 +835,8 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				this:SetAttribute("unit", "partypet4");
+				self:SetAttribute("unit", "partypet4");
+				self.unit = "partypet4";
 			</OnLoad>
 		</Scripts>
 	</Frame>
@@ -908,7 +911,7 @@
 	<Frame name="Perl_Party_Pet_Script_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
 		<Scripts>
 			<OnLoad>
-				Perl_Party_Pet_Script_OnLoad();
+				Perl_Party_Pet_Script_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 	</Frame>

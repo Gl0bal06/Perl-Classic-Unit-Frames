@@ -12,7 +12,6 @@ local showclassframe = 1;	-- show the class frame
 local showpvpicon = 1;		-- show the pvp icon
 local numbuffsshown = 20;	-- buff row is 2x10
 local numdebuffsshown = 20;	-- debuff row is 4x10
-local mobhealthsupport = 1;	-- mobhealth support is on by default
 local scale = 0.9;		-- default scale
 local transparency = 1;		-- transparency for frames
 local buffdebuffscale = 1;	-- default scale for buffs and debuffs
@@ -48,56 +47,58 @@ local Perl_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, englishclass, creatureType, r, g, b, mobhealththreenumerics, guildName;
+local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, englishclass, creatureType, r, g, b, guildName;
 
 
 ----------------------
 -- Loading Function --
 ----------------------
-function Perl_Target_OnLoad()
+function Perl_Target_OnLoad(self)
 	-- Combat Text
-	CombatFeedback_Initialize(Perl_Target_HitIndicator, 30);
+	CombatFeedback_Initialize(self, Perl_Target_HitIndicator, 30);
 
 	-- Events
-	this:RegisterEvent("PARTY_LEADER_CHANGED");
-	this:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
-	this:RegisterEvent("PARTY_MEMBER_DISABLE");
-	this:RegisterEvent("PARTY_MEMBER_ENABLE");
-	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
-	this:RegisterEvent("PLAYER_COMBO_POINTS");
-	this:RegisterEvent("PLAYER_ENTERING_WORLD");
-	this:RegisterEvent("PLAYER_LOGIN");
-	this:RegisterEvent("PLAYER_TARGET_CHANGED");
-	this:RegisterEvent("RAID_ROSTER_UPDATE");
-	this:RegisterEvent("RAID_TARGET_UPDATE");
-	this:RegisterEvent("UNIT_AURA");
-	this:RegisterEvent("UNIT_COMBAT");
-	this:RegisterEvent("UNIT_DISPLAYPOWER");
-	this:RegisterEvent("UNIT_DYNAMIC_FLAGS");
-	this:RegisterEvent("UNIT_ENERGY");
-	this:RegisterEvent("UNIT_FOCUS");
-	this:RegisterEvent("UNIT_HEALTH");
-	this:RegisterEvent("UNIT_LEVEL");
-	this:RegisterEvent("UNIT_MANA");
-	this:RegisterEvent("UNIT_MAXENERGY");
-	this:RegisterEvent("UNIT_MAXFOCUS");
-	this:RegisterEvent("UNIT_MAXHEALTH");
-	this:RegisterEvent("UNIT_MAXMANA");
-	this:RegisterEvent("UNIT_MAXRAGE");
-	this:RegisterEvent("UNIT_NAME_UPDATE");
-	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	this:RegisterEvent("UNIT_PVP_UPDATE");
-	this:RegisterEvent("UNIT_FACTION");
-	this:RegisterEvent("UNIT_RAGE");
-	this:RegisterEvent("UNIT_SPELLMISS");
-	this:RegisterEvent("VOICE_START");
-	this:RegisterEvent("VOICE_STOP");
+	self:RegisterEvent("PARTY_LEADER_CHANGED");
+	self:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
+	self:RegisterEvent("PARTY_MEMBER_DISABLE");
+	self:RegisterEvent("PARTY_MEMBER_ENABLE");
+	self:RegisterEvent("PARTY_MEMBERS_CHANGED");
+	self:RegisterEvent("PLAYER_COMBO_POINTS");
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
+	self:RegisterEvent("PLAYER_LOGIN");
+	self:RegisterEvent("PLAYER_TARGET_CHANGED");
+	self:RegisterEvent("RAID_ROSTER_UPDATE");
+	self:RegisterEvent("RAID_TARGET_UPDATE");
+	self:RegisterEvent("UNIT_AURA");
+	self:RegisterEvent("UNIT_COMBAT");
+	self:RegisterEvent("UNIT_DISPLAYPOWER");
+	self:RegisterEvent("UNIT_DYNAMIC_FLAGS");
+	self:RegisterEvent("UNIT_ENERGY");
+	self:RegisterEvent("UNIT_FOCUS");
+	self:RegisterEvent("UNIT_HEALTH");
+	self:RegisterEvent("UNIT_LEVEL");
+	self:RegisterEvent("UNIT_MANA");
+	self:RegisterEvent("UNIT_MAXENERGY");
+	self:RegisterEvent("UNIT_MAXFOCUS");
+	self:RegisterEvent("UNIT_MAXHEALTH");
+	self:RegisterEvent("UNIT_MAXMANA");
+	self:RegisterEvent("UNIT_MAXRAGE");
+	self:RegisterEvent("UNIT_MAXRUNIC_POWER");
+	self:RegisterEvent("UNIT_NAME_UPDATE");
+	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+	self:RegisterEvent("UNIT_PVP_UPDATE");
+	self:RegisterEvent("UNIT_FACTION");
+	self:RegisterEvent("UNIT_RAGE");
+	self:RegisterEvent("UNIT_RUNIC_POWER");
+	self:RegisterEvent("UNIT_SPELLMISS");
+	self:RegisterEvent("VOICE_START");
+	self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
-	this:SetScript("OnEvent", Perl_Target_OnEvent);
-	this:SetScript("OnHide", Perl_Target_OnHide);
-	this:SetScript("OnShow", Perl_Target_OnShow);
-	this:SetScript("OnUpdate", CombatFeedback_OnUpdate);
+	self:SetScript("OnEvent", Perl_Target_OnEvent);
+	self:SetScript("OnHide", Perl_Target_OnHide);
+	self:SetScript("OnShow", Perl_Target_OnShow);
+	self:SetScript("OnUpdate", CombatFeedback_OnUpdate);
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Target_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Target_NameFrame:GetFrameLevel() + 2);
@@ -115,7 +116,10 @@ function Perl_Target_OnLoad()
 	Perl_Target_ManaBarFadeBar:SetFrameLevel(Perl_Target_ManaBar:GetFrameLevel() - 1);
 
 	-- WoW 2.0 Secure API Stuff
-	this:SetAttribute("unit", "target");
+	self:SetAttribute("unit", "target");
+
+	-- Misc
+	self.unit = "target";
 end
 
 
@@ -134,7 +138,7 @@ function Perl_Target_OnEvent()
 end
 
 function Perl_Target_Events:PLAYER_TARGET_CHANGED()
-	if (UnitExists(this:GetAttribute("unit"))) then
+	if (UnitExists(Perl_Target_Frame:GetAttribute("unit"))) then
 		Perl_Target_Update_Once();		-- Set the unchanging info for the target
 	end
 end
@@ -167,6 +171,8 @@ Perl_Target_Events.UNIT_RAGE = Perl_Target_Events.UNIT_ENERGY;
 Perl_Target_Events.UNIT_MAXRAGE = Perl_Target_Events.UNIT_ENERGY;
 Perl_Target_Events.UNIT_FOCUS = Perl_Target_Events.UNIT_ENERGY;
 Perl_Target_Events.UNIT_MAXFOCUS = Perl_Target_Events.UNIT_ENERGY;
+Perl_Target_Events.UNIT_RUNIC_POWER = Perl_Target_Events.UNIT_ENERGY;
+Perl_Target_Events.UNIT_MAXRUNIC_POWER = Perl_Target_Events.UNIT_ENERGY;
 
 function Perl_Target_Events:UNIT_AURA()
 	if (arg1 == "target") then
@@ -182,7 +188,7 @@ end
 
 function Perl_Target_Events:UNIT_COMBAT()
 	if (arg1 == "target") then
-		CombatFeedback_OnCombatEvent(arg2, arg3, arg4, arg5);
+		CombatFeedback_OnCombatEvent(Perl_Target_Frame, arg2, arg3, arg4, arg5);
 	end
 end
 
@@ -473,296 +479,40 @@ function Perl_Target_Update_Health()
 		Perl_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
 	end
 
-	if (targethealthmax == 100) then
-		-- Begin Mobhealth support
-		if (mobhealthsupport == 1) then
-			if (MobHealth3) then
-				targethealth, targethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("target", UnitHealth("target"), UnitHealthMax("target"), UnitName("target"), UnitLevel("target"));
-				if (mobhealththreenumerics) then
-					-- MobHealth3 was successful in getting a numeric value
-					if (framestyle == 1) then
-						Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-						Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..targethealthpercent.."%");
-					elseif (framestyle == 2) then
-						if (compactmode == 0) then
-							Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-							if (targethealthmax > 9999) then
-								Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-								Perl_Target_HealthBarTextRight:SetText(targethealthpercent.."%");
-							else
-								Perl_Target_HealthBarText:SetText(targethealthpercent.."%");
-								Perl_Target_HealthBarTextRight:SetText(targethealth.."/"..targethealthmax);
-							end
-							
-						else
-							if (compactpercent == 0) then
-								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-								Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-							else
-								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-								Perl_Target_HealthBarTextCompactPercent:SetText(targethealthpercent.."%");
-							end
-						end
-					end
-				else
-					-- MobHealth3 was unable to give us a numeric value, fall back to percentage
-					if (framestyle == 1) then
-						Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-						Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Target_HealthBarText:SetText(targethealth.."%");
-					elseif (framestyle == 2) then
-						if (compactmode == 0) then
-							Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-							Perl_Target_HealthBarText:SetText(targethealth.."%");
-							Perl_Target_HealthBarTextRight:SetText(targethealth.."%");
-						else
-							if (compactpercent == 0) then
-								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-								Perl_Target_HealthBarText:SetText(targethealth.."%");
-							else
-								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Target_HealthBarText:SetText(targethealth.."%");
-								Perl_Target_HealthBarTextCompactPercent:SetText(targethealth.."%");
-							end
-						end
-					end
-				end
-			elseif (MobHealthFrame) then	-- mobhealth2, telo, and mobinfo
-				MobHealthFrame:Hide();
-
-				local partyid = "target";
-				local hp = targethealth;
-				local hpMax = targethealthmax;
-				local index, current, max, table;
-				if (UnitIsPlayer(partyid)) then
-					index = UnitName(partyid);
-					table = MobHealthPlayerDB or MobHealthDB;
-				else
-					index = UnitName(partyid)..":"..UnitLevel(partyid);
-					table = MobHealthDB or MobHealthPlayerDB;
-				end
-				if (table and type(table[index]) == "string") then
-					local pts, pct = strmatch(table[index], "^(%d+)/(%d+)$");
-
-					if (pts and pct) then
-						pts = pts + 0;
-						pct = pct + 0;
-						if( pct ~= 0 ) then
-							pointsPerPct = pts / pct;
-						else
-							pointsPerPct = 0;
-						end
-
-						local currentPct = hp;
-						if (pointsPerPct > 0) then
-							current = (currentPct * pointsPerPct) + 0.5;
-							max = (100 * pointsPerPct) + 0.5;
-						end
-					end
-				end
-				if (current) then
-					hp, hpMax = current, max;
-					-- Stored unit info from the DB
-					if (framestyle == 1) then
-						Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-						Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax).." | "..targethealth.."%");
-					elseif (framestyle == 2) then
-						if (compactmode == 0) then
-							Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-							if (tonumber(string.format("%d", hpMax)) > 9999) then
-								Perl_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
-								Perl_Target_HealthBarTextRight:SetText(targethealth.."%");
-							else
-								Perl_Target_HealthBarText:SetText(targethealth.."%");
-								Perl_Target_HealthBarTextRight:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
-							end
-							
-						else
-							if (compactpercent == 0) then
-								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-								Perl_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
-							else
-								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Target_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
-								Perl_Target_HealthBarTextCompactPercent:SetText(targethealth.."%");
-							end
-						end
-					end
-				else
-					-- Unit not in MobHealth DB
-					if (framestyle == 1) then	-- This chunk of code is the same as the next two blocks in case you customize this
-						Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-						Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Target_HealthBarText:SetText(targethealth.."%");
-					elseif (framestyle == 2) then
-						if (compactmode == 0) then
-							Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-							Perl_Target_HealthBarText:SetText(targethealth.."%");
-							Perl_Target_HealthBarTextRight:SetText(targethealth.."%");
-						else
-							if (compactpercent == 0) then
-								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-								Perl_Target_HealthBarText:SetText(targethealth.."%");
-							else
-								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Target_HealthBarText:SetText(targethealth.."%");
-								Perl_Target_HealthBarTextCompactPercent:SetText(targethealth.."%");
-							end
-						end
-					end
-				end
-			elseif (LibStub("LibMobHealth-4.0", true)) then
-				targethealth, targethealthmax, mobhealththreenumerics = LibStub("LibMobHealth-4.0"):GetUnitHealth("target")
-				if (mobhealththreenumerics) then
-					-- MobHealth4 was successful in getting a numeric value
-					if (framestyle == 1) then
-						Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-						Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax.." | "..targethealthpercent.."%");
-					elseif (framestyle == 2) then
-						if (compactmode == 0) then
-							Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-							if (targethealthmax > 9999) then
-								Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-								Perl_Target_HealthBarTextRight:SetText(targethealthpercent.."%");
-							else
-								Perl_Target_HealthBarText:SetText(targethealthpercent.."%");
-								Perl_Target_HealthBarTextRight:SetText(targethealth.."/"..targethealthmax);
-							end
-							
-						else
-							if (compactpercent == 0) then
-								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-								Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-							else
-								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-								Perl_Target_HealthBarTextCompactPercent:SetText(targethealthpercent.."%");
-							end
-						end
-					end
-				else
-					-- MobHealth4 was unable to give us a numeric value, fall back to percentage
-					if (framestyle == 1) then
-						Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-						Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Target_HealthBarText:SetText(targethealth.."%");
-					elseif (framestyle == 2) then
-						if (compactmode == 0) then
-							Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-							Perl_Target_HealthBarText:SetText(targethealth.."%");
-							Perl_Target_HealthBarTextRight:SetText(targethealth.."%");
-						else
-							if (compactpercent == 0) then
-								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-								Perl_Target_HealthBarText:SetText(targethealth.."%");
-							else
-								Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-								Perl_Target_HealthBarText:SetText(targethealth.."%");
-								Perl_Target_HealthBarTextCompactPercent:SetText(targethealth.."%");
-							end
-						end
-					end
-				end
-			-- End MobHealth Support
+	if (framestyle == 1) then
+		Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
+		Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
+		Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+	elseif (framestyle == 2) then
+		if (compactmode == 0) then
+			if (healermode == 0) then
+				Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+				Perl_Target_HealthBarText:SetText(targethealthpercent.."%");
+				Perl_Target_HealthBarTextRight:SetText(targethealth.."/"..targethealthmax);
 			else
-				-- MobHealth isn't installed
-				if (framestyle == 1) then
-					Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-					Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-					Perl_Target_HealthBarText:SetText(targethealth.."%");
-				elseif (framestyle == 2) then
-					if (compactmode == 0) then
-						Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-						Perl_Target_HealthBarText:SetText(targethealth.."%");
-						Perl_Target_HealthBarTextRight:SetText(targethealth.."%");
-					else
-						if (compactpercent == 0) then
-							Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-							Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-							Perl_Target_HealthBarText:SetText(targethealth.."%");
-						else
-							Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-							Perl_Target_HealthBarText:SetText(targethealth.."%");
-							Perl_Target_HealthBarTextCompactPercent:SetText(targethealth.."%");
-						end
-					end
-				end
+				Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
+				Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+				Perl_Target_HealthBarTextRight:SetText("-"..targethealthmax - targethealth);
 			end
-		else	-- mobhealthsupport == 0
-			if (MobHealthFrame) then
-				MobHealthFrame:Show();
-			end
-
-			-- MobHealth support is disabled
-			if (framestyle == 1) then
-				Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-				Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-				Perl_Target_HealthBarText:SetText(targethealth.."%");
-			elseif (framestyle == 2) then
-				if (compactmode == 0) then
-					Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-					Perl_Target_HealthBarText:SetText(targethealth.."%");
-					Perl_Target_HealthBarTextRight:SetText(targethealth.."%");
-				else
-					if (compactpercent == 0) then
-						Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-						Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-						Perl_Target_HealthBarText:SetText(targethealth.."%");
-					else
-						Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-						Perl_Target_HealthBarText:SetText(targethealth.."%");
-						Perl_Target_HealthBarTextCompactPercent:SetText(targethealth.."%");
-					end
-				end
-			end
-		end
-	else
-		-- Self/Party/Raid member
-		if (framestyle == 1) then
-			Perl_Target_HealthBarTextRight:SetText();							-- Hide this text in this frame style
-			Perl_Target_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-			Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-		elseif (framestyle == 2) then
-			if (compactmode == 0) then
+			
+		else
+			if (compactpercent == 0) then
 				if (healermode == 0) then
-					Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-					Perl_Target_HealthBarText:SetText(targethealthpercent.."%");
-					Perl_Target_HealthBarTextRight:SetText(targethealth.."/"..targethealthmax);
+					Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+					Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
 				else
-					Perl_Target_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
-					Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+					Perl_Target_HealthBarTextRight:SetText("-"..targethealthmax - targethealth);
+					Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
+				end
+				Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+			else
+				if (healermode == 0) then
+					Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
+				else
 					Perl_Target_HealthBarTextRight:SetText("-"..targethealthmax - targethealth);
 				end
-				
-			else
-				if (compactpercent == 0) then
-					if (healermode == 0) then
-						Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-						Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-					else
-						Perl_Target_HealthBarTextRight:SetText("-"..targethealthmax - targethealth);
-						Perl_Target_HealthBarTextCompactPercent:SetText();				-- Hide this text in this frame style
-					end
-					Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-				else
-					if (healermode == 0) then
-						Perl_Target_HealthBarTextRight:SetText();					-- Hide this text in this frame style
-					else
-						Perl_Target_HealthBarTextRight:SetText("-"..targethealthmax - targethealth);
-					end
-					Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
-					Perl_Target_HealthBarTextCompactPercent:SetText(targethealthpercent.."%");
-				end
+				Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
+				Perl_Target_HealthBarTextCompactPercent:SetText(targethealthpercent.."%");
 			end
 		end
 	end
@@ -818,7 +568,7 @@ function Perl_Target_Update_Mana()
 		Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
 		Perl_Target_ManaBarTextCompactPercent:SetText();	-- Hide this text in this frame style
 
-		if (targetpower == 1 or targetpower == 2) then
+		if (targetpower == 1 or targetpower == 2 or targetpower == 6) then
 			Perl_Target_ManaBarText:SetText(targetmana);
 		else
 			Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
@@ -831,7 +581,7 @@ function Perl_Target_Update_Mana()
 
 			if (healermode == 0) then
 				Perl_Target_ManaBarTextRight:SetTextColor(1, 1, 1, 1);
-				if (targetpower == 1 or targetpower == 2) then
+				if (targetpower == 1 or targetpower == 2 or targetpower == 6) then
 					Perl_Target_ManaBarText:SetText(targetmana.."%");
 					Perl_Target_ManaBarTextRight:SetText(targetmana);
 				else
@@ -845,7 +595,7 @@ function Perl_Target_Update_Mana()
 				else
 					Perl_Target_ManaBarTextRight:SetText();
 				end
-				if (targetpower == 1 or targetpower == 2) then
+				if (targetpower == 1 or targetpower == 2 or targetpower == 6) then
 					Perl_Target_ManaBarText:SetText(targetmana);
 				else
 					Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
@@ -864,7 +614,7 @@ function Perl_Target_Update_Mana()
 				else
 					Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
 				end
-				if (targetpower == 1 or targetpower == 2) then
+				if (targetpower == 1 or targetpower == 2 or targetpower == 6) then
 					Perl_Target_ManaBarText:SetText(targetmana);
 				else
 					Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
@@ -881,7 +631,7 @@ function Perl_Target_Update_Mana()
 					Perl_Target_ManaBarTextRight:SetText();			-- Hide this text in this frame style
 				end
 
-				if (targetpower == 1 or targetpower == 2) then
+				if (targetpower == 1 or targetpower == 2 or targetpower == 6) then
 					Perl_Target_ManaBarText:SetText(targetmana);
 					Perl_Target_ManaBarTextCompactPercent:SetText(targetmana.."%");
 				else
@@ -913,6 +663,11 @@ function Perl_Target_Update_Mana_Bar()
 	elseif (targetpower == 3) then
 		Perl_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+		Perl_Target_ManaBar:Show();
+		Perl_Target_ManaBarBG:Show();
+	elseif (targetpower == 6) then
+		Perl_Target_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
+		Perl_Target_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
 		Perl_Target_ManaBar:Show();
 		Perl_Target_ManaBarBG:Show();
 	else
@@ -1246,11 +1001,11 @@ function Perl_Target_Main_Style()
 			Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
 
 			if (showrareeliteframe == 1) then				-- wtf is going on here, why is this working?!?
-				Perl_Target_GuildFrame:SetWidth(130);
+				Perl_Target_GuildFrame:SetWidth(125);
 			else
-				Perl_Target_GuildFrame:SetWidth(133);
+				Perl_Target_GuildFrame:SetWidth(128);
 			end
-			Perl_Target_ClassNameFrame:SetWidth(90);
+			Perl_Target_ClassNameFrame:SetWidth(95);
 			Perl_Target_LevelFrame:SetWidth(46);
 			Perl_Target_Frame:SetWidth(177);
 			Perl_Target_Name:SetWidth(177);
@@ -1271,11 +1026,11 @@ function Perl_Target_Main_Style()
 
 			if (compactmode == 0) then
 				if (showrareeliteframe == 1) then			-- wtf is going on here, why is this working?!?
-					Perl_Target_GuildFrame:SetWidth(164);
+					Perl_Target_GuildFrame:SetWidth(159);
 				else
-					Perl_Target_GuildFrame:SetWidth(167);
+					Perl_Target_GuildFrame:SetWidth(162);
 				end
-				Perl_Target_ClassNameFrame:SetWidth(90);
+				Perl_Target_ClassNameFrame:SetWidth(95);
 				Perl_Target_LevelFrame:SetWidth(46);
 				Perl_Target_Frame:SetWidth(211);
 				Perl_Target_Name:SetWidth(211);
@@ -1288,12 +1043,12 @@ function Perl_Target_Main_Style()
 				if (shortbars == 0) then
 					if (compactpercent == 0) then
 						if (showrareeliteframe == 1) then
-							Perl_Target_GuildFrame:SetWidth(79);
+							Perl_Target_GuildFrame:SetWidth(74);
 						else
-							Perl_Target_GuildFrame:SetWidth(82);
+							Perl_Target_GuildFrame:SetWidth(77);
 						end
 						
-						Perl_Target_ClassNameFrame:SetWidth(90);
+						Perl_Target_ClassNameFrame:SetWidth(95);
 						Perl_Target_LevelFrame:SetWidth(46);
 						Perl_Target_Frame:SetWidth(126);
 						Perl_Target_Name:SetWidth(126);
@@ -1304,11 +1059,11 @@ function Perl_Target_Main_Style()
 						Perl_Target_NameFrame_CPMeter:SetWidth(119);
 					else
 						if (showrareeliteframe == 1) then
-							Perl_Target_GuildFrame:SetWidth(114);
+							Perl_Target_GuildFrame:SetWidth(109);
 						else
-							Perl_Target_GuildFrame:SetWidth(117);
+							Perl_Target_GuildFrame:SetWidth(112);
 						end
-						Perl_Target_ClassNameFrame:SetWidth(90);
+						Perl_Target_ClassNameFrame:SetWidth(95);
 						Perl_Target_LevelFrame:SetWidth(46);
 						Perl_Target_Frame:SetWidth(161);
 						Perl_Target_Name:SetWidth(161);
@@ -1349,11 +1104,11 @@ function Perl_Target_Main_Style()
 						end
 					else
 						if (showrareeliteframe == 1) then
-							Perl_Target_GuildFrame:SetWidth(79);
+							Perl_Target_GuildFrame:SetWidth(74);
 						else
-							Perl_Target_GuildFrame:SetWidth(82);
+							Perl_Target_GuildFrame:SetWidth(77);
 						end
-						Perl_Target_ClassNameFrame:SetWidth(90);
+						Perl_Target_ClassNameFrame:SetWidth(95);
 						Perl_Target_LevelFrame:SetWidth(46);
 						Perl_Target_Frame:SetWidth(126);
 						Perl_Target_Name:SetWidth(126);
@@ -1541,6 +1296,8 @@ function Perl_Target_ManaBar_Fade(arg1)
 		Perl_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_ManaBar_Fade_Color, (Perl_Target_ManaBar_Fade_Color-0.5), 0, Perl_Target_ManaBar_Fade_Color);
 	elseif (targetpower == 3) then
 		Perl_Target_ManaBarFadeBar:SetStatusBarColor(Perl_Target_ManaBar_Fade_Color, Perl_Target_ManaBar_Fade_Color, 0, Perl_Target_ManaBar_Fade_Color);
+	elseif (targetpower == 6) then
+		Perl_Target_ManaBarFadeBar:SetStatusBarColor(0, Perl_Target_ManaBar_Fade_Color, Perl_Target_ManaBar_Fade_Color, Perl_Target_ManaBar_Fade_Color);
 	end
 
 	if (Perl_Target_ManaBar_Fade_Time_Elapsed > 1) then
@@ -1640,15 +1397,6 @@ end
 
 function Perl_Target_Set_Combo_Points(newvalue)
 	showcp = newvalue;
-	Perl_Target_UpdateVars();		-- Save the new setting
-	Perl_Target_Frame_Style();		-- Apply any showing/hiding of frames and enabling/disabling of events
-	if (UnitExists("target")) then
-		Perl_Target_Update_Once();	-- Update the target frame information if appropriate
-	end
-end
-
-function Perl_Target_Set_MobHealth(newvalue)
-	mobhealthsupport = newvalue;
 	Perl_Target_UpdateVars();		-- Save the new setting
 	Perl_Target_Frame_Style();		-- Apply any showing/hiding of frames and enabling/disabling of events
 	if (UnitExists("target")) then
@@ -1862,7 +1610,6 @@ function Perl_Target_GetVars(name, updateflag)
 	showpvpicon = Perl_Target_Config[name]["PvPIcon"]; 
 	numbuffsshown = Perl_Target_Config[name]["Buffs"];
 	numdebuffsshown = Perl_Target_Config[name]["Debuffs"];
-	mobhealthsupport = Perl_Target_Config[name]["MobHealthSupport"];
 	scale = Perl_Target_Config[name]["Scale"];
 	transparency = Perl_Target_Config[name]["Transparency"];
 	buffdebuffscale = Perl_Target_Config[name]["BuffDebuffScale"];
@@ -1908,9 +1655,6 @@ function Perl_Target_GetVars(name, updateflag)
 	end
 	if (numdebuffsshown == nil) then
 		numdebuffsshown = 20;
-	end
-	if (mobhealthsupport == nil) then
-		mobhealthsupport = 1;
 	end
 	if (scale == nil) then
 		scale = 0.9;
@@ -2009,7 +1753,6 @@ function Perl_Target_GetVars(name, updateflag)
 		["showpvpicon"] = showpvpicon,
 		["numbuffsshown"] = numbuffsshown,
 		["numdebuffsshown"] = numdebuffsshown,
-		["mobhealthsupport"] = mobhealthsupport,
 		["scale"] = scale,
 		["transparency"] = transparency,
 		["buffdebuffscale"] = buffdebuffscale,
@@ -2076,11 +1819,6 @@ function Perl_Target_UpdateVars(vartable)
 				numdebuffsshown = vartable["Global Settings"]["Debuffs"];
 			else
 				numdebuffsshown = nil;
-			end
-			if (vartable["Global Settings"]["MobHealthSupport"] ~= nil) then
-				mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
-			else
-				mobhealthsupport = nil;
 			end
 			if (vartable["Global Settings"]["Scale"] ~= nil) then
 				scale = vartable["Global Settings"]["Scale"];
@@ -2226,9 +1964,6 @@ function Perl_Target_UpdateVars(vartable)
 		if (numdebuffsshown == nil) then
 			numdebuffsshown = 20;
 		end
-		if (mobhealthsupport == nil) then
-			mobhealthsupport = 1;
-		end
 		if (scale == nil) then
 			scale = 0.9;
 		end
@@ -2321,7 +2056,6 @@ function Perl_Target_UpdateVars(vartable)
 		["PvPIcon"] = showpvpicon,
 		["Buffs"] = numbuffsshown,
 		["Debuffs"] = numdebuffsshown,
-		["MobHealthSupport"] = mobhealthsupport,
 		["Scale"] = scale,
 		["Transparency"] = transparency,
 		["BuffDebuffScale"] = buffdebuffscale,
@@ -2360,11 +2094,11 @@ function Perl_Target_Buff_UpdateAll()
 			Perl_Target_Buff_UpdateCPMeter();
 		end
 
-		local button, buffCount, buffTexture, buffApplications, color, debuffType, duration, timeLeft, cooldown, startCooldownTime;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		local button, buffCount, buffTexture, buffApplications, color, debuffType, duration, timeLeft, cooldown;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 
 		local numBuffs = 0;											-- Buff counter for correct layout
 		for buffnum=1,numbuffsshown do										-- Start main buff loop
-			_, _, buffTexture, buffApplications, duration, timeLeft = UnitBuff("target", buffnum, displaycastablebuffs);	-- Get the texture and buff stacking information if any
+			_, _, buffTexture, buffApplications, _, duration, timeLeft, _ = UnitBuff("target", buffnum, displaycastablebuffs);	-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Target_Buff"..buffnum);						-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -2380,8 +2114,7 @@ function Perl_Target_Buff_UpdateAll()
 					cooldown = getglobal(button:GetName().."Cooldown");				-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
-							startCooldownTime = GetTime() - (duration - timeLeft);
-							CooldownFrame_SetTimer(cooldown, startCooldownTime, duration, 1);
+							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
 							cooldown:Show();
 						else
 							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
@@ -2423,8 +2156,7 @@ function Perl_Target_Buff_UpdateAll()
 					cooldown = getglobal(button:GetName().."Cooldown");					-- Handle cooldowns
 					if (duration) then
 						if (duration > 0) then
-							startCooldownTime = GetTime() - (duration - timeLeft);
-							CooldownFrame_SetTimer(cooldown, startCooldownTime, duration, 1);
+							CooldownFrame_SetTimer(cooldown, timeLeft - duration, duration, 1);
 							cooldown:Show();
 						else
 							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
@@ -2685,12 +2417,12 @@ function Perl_Target_Reset_Buffs()
 	end
 end
 
-function Perl_Target_SetBuffTooltip()
-	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
-	if (this:GetID() > 20) then
-		GameTooltip:SetUnitDebuff("target", this:GetID()-20, displaycastablebuffs);
+function Perl_Target_SetBuffTooltip(self)
+	GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT");
+	if (self:GetID() > 20) then
+		GameTooltip:SetUnitDebuff("target", self:GetID()-20, displaycastablebuffs);
 	else
-		GameTooltip:SetUnitBuff("target", this:GetID(), displaycastablebuffs);
+		GameTooltip:SetUnitBuff("target", self:GetID(), displaycastablebuffs);
 	end
 end
 
@@ -2698,21 +2430,21 @@ end
 --------------------
 -- Click Handlers --
 --------------------
-function Perl_Target_CastClickOverlay_OnLoad()
+function Perl_Target_CastClickOverlay_OnLoad(self)
 	local showmenu = function()
 		ToggleDropDownMenu(1, nil, Perl_Target_DropDown, "Perl_Target_NameFrame", 40, 0);
 	end
-	SecureUnitButton_OnLoad(this, "target", showmenu);
+	SecureUnitButton_OnLoad(self, "target", showmenu);
 
-	this:SetAttribute("unit", "target");
+	self:SetAttribute("unit", "target");
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
-	ClickCastFrames[this] = true;
+	ClickCastFrames[self] = true;
 end
 
-function Perl_TargetDropDown_OnLoad()
-	UIDropDownMenu_Initialize(this, Perl_TargetDropDown_Initialize, "MENU");
+function Perl_TargetDropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, Perl_TargetDropDown_Initialize, "MENU");
 end
 
 function Perl_TargetDropDown_Initialize()
@@ -2767,18 +2499,6 @@ function Perl_Target_OnHide()
 	if (soundtargetchange == 1) then
 		PlaySound("INTERFACESOUND_LOSTTARGETUNIT");
 	end
-end
-
-
--------------
--- Tooltip --
--------------
-function Perl_Target_Tip()
-	UnitFrame_Initialize("target")
-end
-
-function UnitFrame_Initialize(unit)	-- Hopefully this doesn't break any mods
-	this.unit = unit;
 end
 
 

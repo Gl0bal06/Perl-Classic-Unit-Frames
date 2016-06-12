@@ -13,7 +13,7 @@
 	<Frame name="Perl_Config_Script_Frame" movable="true" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Scripts>
 			<OnLoad>
-				Perl_Config_OnLoad();
+				Perl_Config_OnLoad(self);
 			</OnLoad>
 		</Scripts>
 	</Frame>
@@ -45,13 +45,13 @@
 				<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
 				<Scripts>
 					<OnLoad>
-						this:RegisterForClicks('LeftButtonUp', 'RightButtonUp');
+						self:RegisterForClicks('LeftButtonUp', 'RightButtonUp');
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Button_OnClick(arg1);
+						Perl_Config_Button_OnClick(arg1, self);
 					</OnClick>
 					<OnEnter>
-						Perl_Config_Button_Tooltip();
+						Perl_Config_Button_Tooltip(self);
 					</OnEnter>
 					<OnLeave>
 						GameTooltip:Hide();
