@@ -1,3 +1,6 @@
+5.01 Beta 8 - August 19, 2012
+ - Config: All unit frames now hide while taking part in a pet battle
+
 5.01 Beta 7 - July 14, 2012
  - All: Frame positions are now saved in saved variables
  - CombatDisplay/PartyPet/PartyTarget/Pet/Target/ToT: Changed the default frame position

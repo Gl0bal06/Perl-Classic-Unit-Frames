@@ -40,6 +40,7 @@ PCUF_THREATICON = 0;				-- threat icon is off by default
 local Initialized = nil;			-- waiting to be initialized
 local currentprofilenumber = 0;		-- easy way to make our profile system work
 local eventqueuetotal = 0;			-- variable to check how many queued events we have
+local inpetbattle = 0;				-- variable to keep track of pet battle status		MAY NOT NEED THIS
 
 -- Local variables to save memory
 local playerClass;
@@ -50,6 +51,8 @@ local playerClass;
 ----------------------
 function Perl_Config_OnLoad(self)
 	-- Events
+	self:RegisterEvent("PET_BATTLE_CLOSE");
+	self:RegisterEvent("PET_BATTLE_OPENING_START");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
@@ -76,6 +79,86 @@ end
 ------------
 -- Events --
 ------------
+function Perl_Config_Events:PET_BATTLE_CLOSE()
+	positioningmode = 0;								-- This may not work for PvP detection, will have to test on live servers
+	Perl_Config_PositioningMode_Disable();
+end
+
+function Perl_Config_Events:PET_BATTLE_OPENING_START()
+	positioningmode = 1;								-- This may not work for PvP detection, will have to test on live servers
+
+	if (Perl_CombatDisplay_Frame) then
+		SmartHide(Perl_CombatDisplay_Frame);
+		SmartHide(Perl_CombatDisplay_Target_Frame);
+		FRAMELOCK_STATES.PETBATTLES.Perl_CombatDisplay_Frame = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_CombatDisplay_Target_Frame = "hidden";
+	end
+
+	if (Perl_Focus_Frame) then
+		SmartHide(Perl_Focus_Frame);
+		FRAMELOCK_STATES.PETBATTLES.Perl_Focus_Frame = "hidden";
+	end
+
+	if (Perl_Party_Frame) then
+		SmartHide(Perl_Party_MemberFrame1);
+		SmartHide(Perl_Party_MemberFrame2);
+		SmartHide(Perl_Party_MemberFrame3);
+		SmartHide(Perl_Party_MemberFrame4);
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_MemberFrame1 = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_MemberFrame2 = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_MemberFrame3 = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_MemberFrame4 = "hidden";
+	end
+
+	if (Perl_Party_Pet_Script_Frame) then
+		SmartHide(Perl_Party_Pet1);
+		SmartHide(Perl_Party_Pet2);
+		SmartHide(Perl_Party_Pet3);
+		SmartHide(Perl_Party_Pet4);
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_Pet1 = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_Pet2 = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_Pet3 = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_Pet4 = "hidden";
+	end
+
+	if (Perl_Party_Target_Script_Frame) then
+		SmartHide(Perl_Party_Target1);
+		SmartHide(Perl_Party_Target2);
+		SmartHide(Perl_Party_Target3);
+		SmartHide(Perl_Party_Target4);
+		SmartHide(Perl_Party_Target5);
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_Target1 = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_Target2 = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_Target3 = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_Target4 = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_Party_Target5 = "hidden";
+	end
+
+	if (Perl_Player_Frame) then
+		SmartHide(Perl_Player_Frame);
+		FRAMELOCK_STATES.PETBATTLES.Perl_Player_Frame = "hidden";
+	end
+
+	if (Perl_Player_Pet_Frame) then
+		SmartHide(Perl_Player_Pet_Frame);
+		SmartHide(Perl_Player_Pet_Target_Frame);
+		FRAMELOCK_STATES.PETBATTLES.Perl_Player_Pet_Frame = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_Player_Pet_Target_Frame = "hidden";
+	end
+
+	if (Perl_Target_Frame) then
+		SmartHide(Perl_Target_Frame);
+		FRAMELOCK_STATES.PETBATTLES.Perl_Target_Frame = "hidden";
+	end
+
+	if (Perl_Target_Target_Script_Frame) then
+		SmartHide(Perl_Target_Target_Frame);
+		SmartHide(Perl_Target_Target_Target_Frame);
+		FRAMELOCK_STATES.PETBATTLES.Perl_Target_Target_Frame = "hidden";
+		FRAMELOCK_STATES.PETBATTLES.Perl_Target_Target_Target_Frame = "hidden";
+	end
+end
+
 function Perl_Config_Events:PLAYER_REGEN_DISABLED()
 	if (Perl_Config_Frame) then
 		if (Perl_Config_Frame:IsVisible()) then
