@@ -844,8 +844,12 @@ function Perl_Party_Set_Name(self)
 	-- Set Class Icon
 	if (UnitIsPlayer(self.unit)) then
 		_, englishclass = UnitClass(self.unit);
-		self.classTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));	-- Set the party member's class icon
-		self.classTexture:Show();
+		if (CLASS_ICON_TCOORDS[englishclass] ~= nil) then
+			self.classTexture:SetTexCoord(unpack(CLASS_ICON_TCOORDS[englishclass]));	-- Set the party member's class icon
+			self.classTexture:Show();
+		else
+			self.classTexture:Hide();
+		end
 	else
 		self.classTexture:Hide();
 	end

@@ -1,3 +1,7 @@
+5.02 - September 1, 2012
+ - ArcaneBar: Added a sanity check for UnitChannelInfo returning nil
+ - Party: Added a sanity check for CLASS_ICON_TCOORDS returning nil
+
 5.01 - August 28, 2012
  - All: Updated TOC Interface version to 50001
  - All: Updated to use GROUP_ROSTER_UPDATE event

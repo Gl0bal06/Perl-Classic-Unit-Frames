@@ -258,58 +258,60 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
 		local text, _, _, _, startTime, endTime, _ = UnitChannelInfo(arg1);
 
-		self:SetStatusBarColor(Perl_ArcaneBar_Colors.channel.r, Perl_ArcaneBar_Colors.channel.g, Perl_ArcaneBar_Colors.channel.b, transparency);
-		self.barSpark:Show();
+		if (startTime ~= nil) then
+			self:SetStatusBarColor(Perl_ArcaneBar_Colors.channel.r, Perl_ArcaneBar_Colors.channel.g, Perl_ArcaneBar_Colors.channel.b, transparency);
+			self.barSpark:Show();
 
-		self.startTime = startTime / 1000;
-		self.endTime = endTime / 1000;
-		self.duration = self.endTime - self.startTime;
-		self.maxValue = self.startTime;
-		self:SetMinMaxValues(self.startTime, self.endTime);
-		self:SetValue(self.endTime);
+			self.startTime = startTime / 1000;
+			self.endTime = endTime / 1000;
+			self.duration = self.endTime - self.startTime;
+			self.maxValue = self.startTime;
+			self:SetMinMaxValues(self.startTime, self.endTime);
+			self:SetValue(self.endTime);
 
-		self:SetAlpha(0.8);
-		self.holdTime = 0;
-		self.casting = nil;
-		self.channeling = 1;
-		self.fadeOut = nil;
-		self.delaySum = 0;
-		self:Show();
+			self:SetAlpha(0.8);
+			self.holdTime = 0;
+			self.casting = nil;
+			self.channeling = 1;
+			self.fadeOut = nil;
+			self.delaySum = 0;
+			self:Show();
 
-		if (self.namereplace == 1) then
-			if (self.nameframetext == nil) then
-				if (self.unit == "player") then
-					self.nameframetext = Perl_Player_NameBarText;
-					self.parentframe = Perl_Player_Frame;
-				elseif (self.unit == "target") then
-					self.nameframetext = Perl_Target_NameBarText;
-				elseif (self.unit == "focus") then
-					self.nameframetext = Perl_Focus_NameBarText;
-				elseif (self.unit == "party1") then
-					self.nameframetext = Perl_Party_MemberFrame1_Name_NameBarText;
-					self.parentframe = Perl_Party_MemberFrame1;
-				elseif (self.unit == "party2") then
-					self.nameframetext = Perl_Party_MemberFrame2_Name_NameBarText;
-					self.parentframe = Perl_Party_MemberFrame2;
-				elseif (self.unit == "party3") then
-					self.nameframetext = Perl_Party_MemberFrame3_Name_NameBarText;
-					self.parentframe = Perl_Party_MemberFrame3;
-				elseif (self.unit == "party4") then
-					self.nameframetext = Perl_Party_MemberFrame4_Name_NameBarText;
-					self.parentframe = Perl_Party_MemberFrame4;
+			if (self.namereplace == 1) then
+				if (self.nameframetext == nil) then
+					if (self.unit == "player") then
+						self.nameframetext = Perl_Player_NameBarText;
+						self.parentframe = Perl_Player_Frame;
+					elseif (self.unit == "target") then
+						self.nameframetext = Perl_Target_NameBarText;
+					elseif (self.unit == "focus") then
+						self.nameframetext = Perl_Focus_NameBarText;
+					elseif (self.unit == "party1") then
+						self.nameframetext = Perl_Party_MemberFrame1_Name_NameBarText;
+						self.parentframe = Perl_Party_MemberFrame1;
+					elseif (self.unit == "party2") then
+						self.nameframetext = Perl_Party_MemberFrame2_Name_NameBarText;
+						self.parentframe = Perl_Party_MemberFrame2;
+					elseif (self.unit == "party3") then
+						self.nameframetext = Perl_Party_MemberFrame3_Name_NameBarText;
+						self.parentframe = Perl_Party_MemberFrame3;
+					elseif (self.unit == "party4") then
+						self.nameframetext = Perl_Party_MemberFrame4_Name_NameBarText;
+						self.parentframe = Perl_Party_MemberFrame4;
+					end
+				end
+				if (text == nil) then
+					self.nameframetext:SetText(PERL_LOCALIZED_ARCANEBAR_CHANNELING);
+				else
+					self.nameframetext:SetText(text);
 				end
 			end
-			if (text == nil) then
-				self.nameframetext:SetText(PERL_LOCALIZED_ARCANEBAR_CHANNELING);
-			else
-				self.nameframetext:SetText(text);
-			end
-		end
 
-		if (self.showtimer == 1) then
-			self.castTimeText:Show();
-		else
-			self.castTimeText:Hide();
+			if (self.showtimer == 1) then
+				self.castTimeText:Show();
+			else
+				self.castTimeText:Hide();
+			end
 		end
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_UPDATE") then
 		if (self:IsShown()) then
