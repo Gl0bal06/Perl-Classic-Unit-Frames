@@ -32,7 +32,7 @@ function Perl_Target_Target_OnLoad()
 	this:RegisterEvent("VARIABLES_LOADED");
 
 	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target of Target Frame by Global loaded successfully.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Target_Target loaded successfully.");
 	end
 end
 
@@ -908,8 +908,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.38",
-			releaseDate = "January 26, 2006",
+			version = "v0.39",
+			releaseDate = "January 28, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

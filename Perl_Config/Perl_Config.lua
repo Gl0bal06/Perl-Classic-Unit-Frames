@@ -34,7 +34,7 @@ function Perl_Config_OnLoad()
 	SLASH_PERL_CONFIG1 = "/perl";
 
 	if (DEFAULT_CHAT_FRAME) then
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Config by Global loaded successfully.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Config loaded successfully.");
 	end
 end
 
@@ -147,6 +147,22 @@ function Perl_Config_Get_Localization()
 		perl_localized_civilian = "Civil";
 		perl_localized_creature = "Cr\195\169ature";
 		perl_localized_notspecified = "Non indiqu\195\169";
+	end
+
+	if (GetLocale() == "zhCN") then
+		perl_localized_druid = "德鲁伊";
+		perl_localized_hunter = "猎人";
+		perl_localized_mage = "法师";
+		perl_localized_paladin = "圣骑士";
+		perl_localized_priest = "牧师";
+		perl_localized_rogue = "盗贼";
+		perl_localized_shaman = "萨满祭司";
+		perl_localized_warlock = "术士";
+		perl_localized_warrior = "战士";
+
+		perl_localized_civilian = "平民";
+		perl_localized_creature = "生物";
+		perl_localized_notspecified = "非特定的";
 	end
 
 	if (GetLocale() == "zhTW") then
@@ -712,8 +728,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.38",
-			releaseDate = "January 26, 2006",
+			version = "v0.39",
+			releaseDate = "January 28, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

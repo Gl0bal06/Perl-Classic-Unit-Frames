@@ -308,11 +308,12 @@ end
 function Perl_Target_Update_Mana()
 	local targetmana = UnitMana("target");
 	local targetmanamax = UnitManaMax("target");
+	local targetpower = UnitPowerType("target");
 
 	Perl_Target_ManaBar:SetMinMaxValues(0, targetmanamax);
 	Perl_Target_ManaBar:SetValue(targetmana);
 
-	if (UnitPowerType("target") == 1 or UnitPowerType("target") == 2) then
+	if (targetpower == 1 or targetpower == 2) then
 		Perl_Target_ManaBarText:SetText(targetmana);
 	else
 		Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
@@ -1142,8 +1143,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.38",
-			releaseDate = "January 26, 2006",
+			version = "v0.39",
+			releaseDate = "January 28, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

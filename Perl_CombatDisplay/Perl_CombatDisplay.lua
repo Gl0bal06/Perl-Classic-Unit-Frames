@@ -342,8 +342,10 @@ function Perl_CombatDisplay_Update_Combo_Points()
 end
 
 function Perl_CombatDisplay_UpdateBars()
+	local playerpower = UnitPowerType("player");
+
 	-- Set power type specific events and colors.
-	if (UnitPowerType("player") == 0) then		-- mana
+	if (playerpower == 0) then		-- mana
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
 		-- Hide CP Bar
@@ -352,7 +354,7 @@ function Perl_CombatDisplay_UpdateBars()
 		Perl_CombatDisplay_CPBarText:Hide();
 		Perl_CombatDisplay_ManaFrame:SetHeight(42);
 		return;
-	elseif (UnitPowerType("player") == 1) then	-- rage
+	elseif (playerpower == 1) then		-- rage
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
 		-- Hide CP Bar
@@ -361,7 +363,7 @@ function Perl_CombatDisplay_UpdateBars()
 		Perl_CombatDisplay_CPBarText:Hide();
 		Perl_CombatDisplay_ManaFrame:SetHeight(42);
 		return;
-	elseif (UnitPowerType("player") == 3) then	-- energy
+	elseif (playerpower == 3) then		-- energy
 		this:RegisterEvent("PLAYER_COMBO_POINTS");
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
@@ -480,10 +482,11 @@ end
 function Perl_CombatDisplay_Target_Update_Mana()
 	local targetmana = UnitMana("target");
 	local targetmanamax = UnitManaMax("target");
+	local targetpowertype = UnitPowerType("target");
 
 	Perl_CombatDisplay_Target_ManaBar:SetMinMaxValues(0, targetmanamax);
 	Perl_CombatDisplay_Target_ManaBar:SetValue(targetmana);
-	if (UnitPowerType("target") == 1 or UnitPowerType("target") == 2) then
+	if (targetpowertype == 1 or targetpowertype == 2) then
 		Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana);
 	else
 		Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
@@ -868,8 +871,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.38",
-			releaseDate = "January 26, 2006",
+			version = "v0.39",
+			releaseDate = "January 28, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
