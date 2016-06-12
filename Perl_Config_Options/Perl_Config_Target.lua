@@ -253,7 +253,13 @@ end
 
 function Perl_Config_Target_Combo_Points_Update()
 	if (Perl_Config_Target_Frame_CheckButton5:GetChecked() == 1) then
-		Perl_Target_Set_Combo_Points(1);
+		local _, class = UnitClass("player");
+		if (class == "ROGUE" or class == "DRUID" or class == "WARRIOR" or class == "PRIEST" or class == "PALADIN" or class == "MAGE") then
+			Perl_Target_Set_Combo_Points(1);
+		else
+			Perl_Config_Target_Frame_CheckButton5:SetChecked(0);
+			Perl_Target_Set_Combo_Points(0);
+		end
 	else
 		Perl_Target_Set_Combo_Points(0);
 	end

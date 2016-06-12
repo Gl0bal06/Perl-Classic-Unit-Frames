@@ -1,3 +1,8 @@
+2.09 Beta 4 - September 7, 2007
+ - All: Frame strata are now all on the same level as the Blizzard unit frames
+ - ArcaneBar: Cast bars no longer appear when the UI is hidden
+ - Target: The combo point frame no longer appears if your class has no ability that utilizes it
+
 2.09 Beta 3 - August 20, 2007
  - Config: Updated German translations (Thanks Humpfldump)
 

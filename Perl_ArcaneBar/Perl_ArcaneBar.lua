@@ -374,19 +374,23 @@ function Perl_ArcaneBar_Initialize()
 
 	-- Make the unit name appear above the casting bar
 	if (Perl_Player_Frame) then
+		Perl_ArcaneBar_player:SetParent(Perl_Player_Frame);
 		Perl_ArcaneBar_player:SetFrameLevel(Perl_Player_NameFrame:GetFrameLevel() + 1);
 		Perl_Player_Name:SetFrameLevel(Perl_Player_NameFrame:GetFrameLevel() + 2);
 	end
 	if (Perl_Target_Frame) then
+		Perl_ArcaneBar_target:SetParent(Perl_Target_Frame);
 		Perl_ArcaneBar_target:SetFrameLevel(Perl_Target_NameFrame:GetFrameLevel() + 1);
 		Perl_Target_Name:SetFrameLevel(Perl_Target_NameFrame:GetFrameLevel() + 2);
 	end
 	if (Perl_Focus_Frame) then
+		Perl_ArcaneBar_focus:SetParent(Perl_Focus_Frame);
 		Perl_ArcaneBar_focus:SetFrameLevel(Perl_Focus_NameFrame:GetFrameLevel() + 1);
 		Perl_Focus_Name:SetFrameLevel(Perl_Focus_NameFrame:GetFrameLevel() + 2);
 	end
 	if (Perl_Party_Frame) then
 		for id=1,4 do
+			getglobal("Perl_ArcaneBar_party"..id):SetParent(getglobal("Perl_Party_MemberFrame"..id));
 			getglobal("Perl_ArcaneBar_party"..id):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_NameFrame"):GetFrameLevel() + 1);
 			getglobal("Perl_Party_MemberFrame"..id.."_Name"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..id.."_NameFrame"):GetFrameLevel() + 2);
 		end
@@ -422,16 +426,16 @@ end
 
 function Perl_ArcaneBar_Set_Scale_Actual(player, target, focus, party)
 	if (player ~= nil) then
-		Perl_ArcaneBar_player:SetScale(Perl_Player_Frame:GetEffectiveScale());
+		Perl_ArcaneBar_player:SetScale(1 - UIParent:GetEffectiveScale() + player);
 	elseif (target ~= nil) then
-		Perl_ArcaneBar_target:SetScale(Perl_Target_Frame:GetEffectiveScale());
+		Perl_ArcaneBar_target:SetScale(1 - UIParent:GetEffectiveScale() + target);
 	elseif (focus ~= nil) then
-		Perl_ArcaneBar_focus:SetScale(Perl_Focus_Frame:GetEffectiveScale());
+		Perl_ArcaneBar_focus:SetScale(1 - UIParent:GetEffectiveScale() + focus);
 	elseif (party ~= nil) then
-		Perl_ArcaneBar_party1:SetScale(Perl_Party_Frame:GetEffectiveScale());
-		Perl_ArcaneBar_party2:SetScale(Perl_Party_Frame:GetEffectiveScale());
-		Perl_ArcaneBar_party3:SetScale(Perl_Party_Frame:GetEffectiveScale());
-		Perl_ArcaneBar_party4:SetScale(Perl_Party_Frame:GetEffectiveScale());
+		Perl_ArcaneBar_party1:SetScale(1 - UIParent:GetEffectiveScale() + party);
+		Perl_ArcaneBar_party2:SetScale(1 - UIParent:GetEffectiveScale() + party);
+		Perl_ArcaneBar_party3:SetScale(1 - UIParent:GetEffectiveScale() + party);
+		Perl_ArcaneBar_party4:SetScale(1 - UIParent:GetEffectiveScale() + party);
 	end
 end
 

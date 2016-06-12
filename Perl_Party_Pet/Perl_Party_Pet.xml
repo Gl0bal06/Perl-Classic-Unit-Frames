@@ -100,7 +100,7 @@
 
 
 	<!-- Frame to display Party's health -->
-	<Frame name="Perl_Party_Pet_FrameTemplate" frameStrata="LOW" virtual="true">
+	<Frame name="Perl_Party_Pet_FrameTemplate" frameStrata="LOW" toplevel="true" virtual="true">
 		<Size>
 			<!-- The size of this frame determines what can be clicked for the menu and moving, hence it is the same size as the name frame. -->
 			<AbsDimension x="135" y="24"/>

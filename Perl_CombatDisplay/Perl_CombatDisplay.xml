@@ -3,7 +3,7 @@
 	<Script file="Perl_CombatDisplay.lua"/>
 
 
-	<Frame name="Perl_CombatDisplay_Frame" movable="true" parent="UIParent" enableMouse="true">
+	<Frame name="Perl_CombatDisplay_Frame" frameStrata="LOW" toplevel="true" movable="true" parent="UIParent" enableMouse="true">
 		<Size>
 			<AbsDimension x="220" y="42"/>
 		</Size>
@@ -481,7 +481,7 @@
 	</Frame>
 
 
-	<Frame name="Perl_CombatDisplay_Target_Frame" movable="true" parent="UIParent" enableMouse="true">
+	<Frame name="Perl_CombatDisplay_Target_Frame" frameStrata="LOW" toplevel="true" movable="true" parent="UIParent" enableMouse="true">
 		<Size>
 			<AbsDimension x="220" y="42"/>
 		</Size>

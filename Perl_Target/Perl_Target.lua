@@ -253,6 +253,12 @@ function Perl_Target_Initialize()
 	Perl_Target_Buff_Debuff_Background();		-- Do the buffs and debuffs have their transparent background frame?
 	Perl_Target_Reset_Buffs();			-- Hide any unnecessary buff/debuff buttons
 
+	local _, class = UnitClass("player");
+	if (not (class == "ROGUE" or class == "DRUID" or class == "WARRIOR" or class == "PRIEST" or class == "PALADIN" or class == "MAGE")) then
+		showcp = 0;
+		Perl_Target_UpdateVars();		-- I suck, I know, go away
+	end
+
 	Perl_Target_CPText:SetText(0);
 	Perl_Target_NameFrame_CPMeter:SetMinMaxValues(0, 5);
 	Perl_Target_NameFrame_CPMeter:SetValue(0);
