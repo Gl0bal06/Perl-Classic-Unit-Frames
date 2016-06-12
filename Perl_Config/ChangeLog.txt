@@ -1,3 +1,7 @@
+4.01 Beta 4 - October 8, 2010
+ - ToT: The top and right position presets now have the same spacing effect other positioning presets
+ - ToT: The top position preset now takes the numeric threat display and guild name frames into consideration
+
 4.01 Beta 3 - October 4, 2010
  - All: Updated right click menu code for target related frames
  - All: Default scale is now 100

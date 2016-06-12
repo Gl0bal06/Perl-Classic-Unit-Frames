@@ -1564,31 +1564,27 @@ function Perl_Target_Target_Allign(button)
 		Perl_Target_Target_Target_Frame:SetUserPlaced(1);
 
 		if (button == 1) then
-			if (vartable["showportrait"] == 1) then
-				if (vartable["showcp"] == 1 or vartable["comboframedebuffs"] == 1) then
-					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", 17, 0);
-					Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", -4, 0);
+			if (vartable["showcp"] == 1) then
+				if (vartable["showportrait"] == 1) then
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_CPFrame, "TOPRIGHT", -2, 34);
 				else
-					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -4, 0);
-					Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", -4, 0);
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_CPFrame, "TOPRIGHT", -2, 22);
 				end
 			else
-				if (vartable["showcp"] == 1 or vartable["comboframedebuffs"] == 1) then
-					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_LevelFrame, "TOPRIGHT", 17, 0);
-					Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", -4, 0);
+				if (vartable["showportrait"] == 1) then
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -2, 0);
 				else
-					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_LevelFrame, "TOPRIGHT", -4, 0);
-					Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", -4, 0);
+					Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_LevelFrame, "TOPRIGHT", -2, 0);
 				end
 			end
+			Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", -2, 0);
 		elseif (button == 2) then
-			if (vartable["showclassframe"] == 1 or vartable["showrareeliteframe"] == 1) then
-				Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_NameFrame, "TOPLEFT", 0, 77);
-				Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", 1, 0);
+			if (vartable["showclassframe"] == 1 or vartable["showrareeliteframe"] == 1 or vartable["thendisplaynumbericthreat"] == 1 or vartable["showguildname"] == 1) then
+				Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_NameFrame, "TOPLEFT", 0, 84);
 			else
-				Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_NameFrame, "TOPLEFT", 0, 57);
-				Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", 1, 0);
+				Perl_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_NameFrame, "TOPLEFT", 0, 62);
 			end
+			Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", Perl_Target_Target_Frame, "TOPRIGHT", 1, 0);
 		end
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("This feature is disabled due to Perl_Target not being installed/enabled.");
