@@ -93,6 +93,12 @@ function Perl_Config_Player_Set_Values()
 		Perl_Config_Player_Frame_CheckButton14:SetChecked(nil);
 	end
 
+	if (vartable["fivesecsupport"] == 1) then
+		Perl_Config_Player_Frame_CheckButton16:SetChecked(1);
+	else
+		Perl_Config_Player_Frame_CheckButton16:SetChecked(nil);
+	end
+
 	Perl_Config_Player_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Player_Frame_Slider1High:SetText("Big");
 	Perl_Config_Player_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -192,6 +198,14 @@ function Perl_Config_Player_DruidBar_Update()
 		Perl_Player_Set_DruidBar(1);
 	else
 		Perl_Player_Set_DruidBar(0);
+	end
+end
+
+function Perl_Config_Player_FiveSec_Update()
+	if (Perl_Config_Player_Frame_CheckButton16:GetChecked() == 1) then
+		Perl_Player_Set_FiveSec(1);
+	else
+		Perl_Player_Set_FiveSec(0);
 	end
 end
 

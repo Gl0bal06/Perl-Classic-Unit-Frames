@@ -173,8 +173,9 @@ end
 -- Loading Settings Function --
 -------------------------------
 function Perl_Target_Initialize()
-	if (Initialized) then
-		Perl_Target_Set_Scale();
+	if (Initialized) then	-- PLAYER_ENTERING_WORLD stuff goes here
+		Perl_Target_Set_Scale();		-- Set the scale
+		Perl_Target_Set_Transparency();		-- Set the transparency
 		return;
 	end
 
@@ -186,19 +187,17 @@ function Perl_Target_Initialize()
 	end
 
 	-- Major config options.
-	Perl_Target_Initialize_Frame_Color();
-	Perl_Target_Frame_Style();
-	Perl_Target_Buff_Debuff_Background();
-	Perl_Target_Frame:Hide();
+	Perl_Target_Initialize_Frame_Color();		-- Give the borders (and background if applicable) that "Perl" look
+	Perl_Target_Frame_Style();			-- Layout the frame according to our mode
+	Perl_Target_Buff_Debuff_Background();		-- Do the buffs and debuffs have their transparent background frame?
+	Perl_Target_Set_Localized_ClassIcons();		-- Assign class icons to the appropriate classes
+	Perl_Target_Frame:Hide();			-- Shouldn't have a target upon logging in so hide the frame
 
-	Perl_Target_Set_Localized_ClassIcons();
+	-- Unregister and Hide the Blizzard frames
+	Perl_clearBlizzardFrameDisable(TargetFrame);
+	Perl_clearBlizzardFrameDisable(ComboFrame);
 
-	-- Unregister the Blizzard frames via the 1.8 function
-	TargetFrame:UnregisterAllEvents();
-	TargetFrameHealthBar:UnregisterAllEvents();
-	TargetFrameManaBar:UnregisterAllEvents();
-	ComboFrame:UnregisterAllEvents();
-
+	-- Set the initialization flag
 	Initialized = 1;
 end
 
@@ -235,10 +234,6 @@ end
 --------------------------
 function Perl_Target_Update_Once()
 	if (UnitExists("target")) then
-		Perl_Target_Frame:Show();		-- Show frame
-		Perl_Target_Set_Scale();		-- Set the scale (easier ways exist, but this is the safest)
-		Perl_Target_Set_Transparency();		-- Set the transparency (fix this method along with scale)
-		ComboFrame:Hide();			-- Hide default Combo Points
 		Perl_Target_Update_Combo_Points();	-- Do we have any combo points (we shouldn't)
 		Perl_Target_Frame_Set_Name();		-- Set the target's name
 		Perl_Target_Update_Portrait();		-- Set the target's portrait and adjust the combo point frame
@@ -253,6 +248,7 @@ function Perl_Target_Update_Once()
 		Perl_Target_Set_Character_Class_Icon();	-- Draw the class icon?
 		Perl_Target_Set_Target_Class();		-- Set the target's class in the class frame
 		Perl_Target_Buff_UpdateAll();		-- Update the buffs
+		Perl_Target_Frame:Show();		-- Show frame
 	end
 end
 
@@ -543,11 +539,10 @@ function Perl_Target_Update_Mana()
 end
 
 function Perl_Target_Update_Mana_Bar()
-	local targetmanamax = UnitManaMax("target");
 	local targetpower = UnitPowerType("target");
 
 	-- Set mana bar color
-	if (targetmanamax == 0) then
+	if (UnitManaMax("target") == 0) then
 		Perl_Target_ManaBar:Hide();
 		Perl_Target_ManaBarBG:Hide();
 		Perl_Target_StatsFrame:SetHeight(30);
@@ -585,7 +580,6 @@ end
 
 function Perl_Target_Update_Combo_Points()
 	local combopoints = GetComboPoints();				-- How many Combo Points does the player have?
-	ComboFrame:Hide();						-- Hide default Combo Points
 
 	if (showcp == 1) then
 		Perl_Target_CPText:SetText(combopoints);
@@ -798,8 +792,8 @@ end
 function Perl_Target_Set_Character_Class_Icon()
 	if (showclassicon == 1) then
 		if (UnitIsPlayer("target")) then
-			local PlayerClass = UnitClass("target");
-			Perl_Target_ClassTexture:SetTexCoord(Perl_Target_ClassPosRight[PlayerClass], Perl_Target_ClassPosLeft[PlayerClass], Perl_Target_ClassPosTop[PlayerClass], Perl_Target_ClassPosBottom[PlayerClass]);
+			local localizedclass = UnitClass("target");
+			Perl_Target_ClassTexture:SetTexCoord(Perl_Target_ClassPosRight[localizedclass], Perl_Target_ClassPosLeft[localizedclass], Perl_Target_ClassPosTop[localizedclass], Perl_Target_ClassPosBottom[localizedclass]);
 			Perl_Target_ClassTexture:Show();
 		else
 			Perl_Target_ClassTexture:Hide();
@@ -812,16 +806,16 @@ end
 function Perl_Target_Set_Target_Class()
 	if (showclassframe == 1) then
 		if (UnitIsPlayer("target")) then
-			local targetClass = UnitClass("target");
-			Perl_Target_ClassNameBarText:SetText(targetClass);
+			local localizedclass = UnitClass("target");
+			Perl_Target_ClassNameBarText:SetText(localizedclass);
 			Perl_Target_ClassNameFrame:Show();
 			Perl_Target_CivilianFrame:Hide();
 		else
-			local targetCreatureType = UnitCreatureType("target");
-			if (targetCreatureType == PERL_LOCALIZED_NOTSPECIFIED) then
-				targetCreatureType = PERL_LOCALIZED_CREATURE;
+			local creatureType = UnitCreatureType("target");
+			if (creatureType == PERL_LOCALIZED_NOTSPECIFIED) then
+				creatureType = PERL_LOCALIZED_CREATURE;
 			end
-			Perl_Target_ClassNameBarText:SetText(targetCreatureType);
+			Perl_Target_ClassNameBarText:SetText(creatureType);
 			Perl_Target_ClassNameFrame:Show();
 
 			if (UnitIsCivilian("target")) then
@@ -1859,8 +1853,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.62",
-			releaseDate = "May 2, 2006",
+			version = "Version 0.63",
+			releaseDate = "May 5, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

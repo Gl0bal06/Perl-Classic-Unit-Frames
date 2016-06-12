@@ -16,6 +16,7 @@ local compactpercent = 0;	-- percents are not shown in compact mode by default
 local threedportrait = 0;	-- 3d portraits are off by default
 local portraitcombattext = 0;	-- Combat text is disabled by default on the portrait frame
 local showdruidbar = 1;		-- Druid Bar support is enabled by default
+local fivesecsupport = 0;	-- FiveSec support is disabled by default
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -151,8 +152,6 @@ function Perl_Player_OnEvent(event)
 		return;
 	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Player_Initialize();
-		InCombat = 0;					-- You can't be fighting if you're zoning, and no event is sent, force it to no combat.
-		Perl_Player_Update_Once();
 		return;
 	elseif (event == "ADDON_LOADED") then
 		if (arg1 == "Perl_Player") then
@@ -169,9 +168,11 @@ end
 -- Loading Settings Function --
 -------------------------------
 function Perl_Player_Initialize()
-	-- Check if we loaded the mod already.
-	if (Initialized) then
-		Perl_Player_Set_Scale();
+	if (Initialized) then	-- PLAYER_ENTERING_WORLD stuff goes here
+		InCombat = 0;				-- You can't be fighting if you're zoning, and no event is sent, force it to no combat.
+		Perl_Player_Update_Once();
+		Perl_Player_Set_Scale();		-- Set the scale
+		Perl_Player_Set_Transparency();		-- Set the transparency
 		return;
 	end
 
@@ -183,15 +184,12 @@ function Perl_Player_Initialize()
 	end
 
 	-- Major config options.
-	Perl_Player_Initialize_Frame_Color();
-	Perl_Player_Set_Localized_ClassIcons();
+	Perl_Player_Initialize_Frame_Color();		-- Give the borders (and background if applicable) that "Perl" look
+	Perl_Player_Set_Localized_ClassIcons();		-- Set the correct class icon
+	Perl_Player_Frame:Show();			-- Show the player frame
 
-	-- Unregister the Blizzard frames via the 1.8 function
-	PlayerFrame:UnregisterAllEvents();
-	PlayerFrameHealthBar:UnregisterAllEvents();
-	PlayerFrameManaBar:UnregisterAllEvents();
-
-	Perl_Player_Frame:Show();
+	-- Unregister and Hide the Blizzard frames
+	Perl_clearBlizzardFrameDisable(PlayerFrame);
 
 	Initialized = 1;
 end
@@ -218,15 +216,12 @@ end
 -- Update Functions --
 ----------------------
 function Perl_Player_Update_Once()
-	local PlayerClass = UnitClass("player");
+	local localizedclass = UnitClass("player");
 
-	PlayerFrame:Hide();					-- Hide default frame
-	Perl_Player_Set_Scale();				-- Set the scale
-	Perl_Player_Set_Transparency();				-- Set the transparency
 	Perl_Player_NameBarText:SetText(UnitName("player"));	-- Set the player's name
 	Perl_Player_Update_Portrait();				-- Set the player's portrait
 	Perl_Player_Update_PvP_Status();			-- Is the character PvP flagged?
-	Perl_Player_ClassTexture:SetTexCoord(Perl_Player_ClassPosRight[PlayerClass], Perl_Player_ClassPosLeft[PlayerClass], Perl_Player_ClassPosTop[PlayerClass], Perl_Player_ClassPosBottom[PlayerClass]);	-- Set the player's class icon
+	Perl_Player_ClassTexture:SetTexCoord(Perl_Player_ClassPosRight[localizedclass], Perl_Player_ClassPosLeft[localizedclass], Perl_Player_ClassPosTop[localizedclass], Perl_Player_ClassPosBottom[localizedclass]);	-- Set the player's class icon
 	Perl_Player_Set_Text_Positions();			-- Align the text according to compact and healer mode
 	Perl_Player_Update_Health();				-- Set the player's health on load or toggle
 	Perl_Player_Update_Mana();				-- Set the player's mana/energy on load or toggle
@@ -493,6 +488,22 @@ function Perl_Player_Update_Mana()
 		else
 			Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is shown
 			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
+		end
+	end
+
+	if (fivesecsupport == 1) then
+		if (REGENERATING_MANA ~= nil) then				-- Is FiveSec installed?
+			if (UnitPowerType("player") > 0) then			-- If we aren't in mana mode, bail out
+				-- Do nothing
+			else
+				if (REGENERATING_MANA == false) then		-- If we aren't in regen mode, color light blue
+					Perl_Player_ManaBar:SetStatusBarColor(0, 0.7, 1, 1);
+					Perl_Player_ManaBarBG:SetStatusBarColor(0, 0.7, 1, 0.25);
+				else						-- Then we must be in regen mode, color bar normally
+					Perl_Player_ManaBar:SetStatusBarColor(0, 0, 1, 1);
+					Perl_Player_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
+				end
+			end
 		end
 	end
 end
@@ -1006,6 +1017,13 @@ function Perl_Player_Set_DruidBar(newvalue)
 	Perl_Player_Set_CompactMode();		-- Perl_Player_Update_Mana() called here
 end
 
+function Perl_Player_Set_FiveSec(newvalue)
+	fivesecsupport = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Update_Mana_Bar();
+	Perl_Player_Update_Mana();
+end
+
 function Perl_Player_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1041,6 +1059,7 @@ function Perl_Player_GetVars()
 	threedportrait = Perl_Player_Config[UnitName("player")]["ThreeDPortrait"];
 	portraitcombattext = Perl_Player_Config[UnitName("player")]["PortraitCombatText"];
 	showdruidbar = Perl_Player_Config[UnitName("player")]["ShowDruidBar"];
+	fivesecsupport = Perl_Player_Config[UnitName("player")]["FiveSecSupport"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1078,6 +1097,9 @@ function Perl_Player_GetVars()
 	if (showdruidbar == nil) then
 		showdruidbar = 1;
 	end
+	if (fivesecsupport == nil) then
+		fivesecsupport = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1092,6 +1114,7 @@ function Perl_Player_GetVars()
 		["threedportrait"] = threedportrait,
 		["portraitcombattext"] = portraitcombattext,
 		["showdruidbar"] = showdruidbar,
+		["fivesecsupport"] = fivesecsupport,
 	}
 	return vars;
 end
@@ -1160,6 +1183,11 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				showdruidbar = nil;
 			end
+			if (vartable["Global Settings"]["FiveSecSupport"] ~= nil) then
+				fivesecsupport = vartable["Global Settings"]["FiveSecSupport"];
+			else
+				fivesecsupport = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1199,6 +1227,9 @@ function Perl_Player_UpdateVars(vartable)
 		if (showdruidbar == nil) then
 			showdruidbar = 1;
 		end
+		if (fivesecsupport == nil) then
+			fivesecsupport = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_XPBar_Display(xpbarstate);
@@ -1226,6 +1257,7 @@ function Perl_Player_UpdateVars(vartable)
 		["ThreeDPortrait"] = threedportrait,
 		["PortraitCombatText"] = portraitcombattext,
 		["ShowDruidBar"] = showdruidbar,
+		["FiveSecSupport"] = fivesecsupport,
 	};
 end
 
@@ -1411,8 +1443,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.62",
-			releaseDate = "May 2, 2006",
+			version = "Version 0.63",
+			releaseDate = "May 5, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

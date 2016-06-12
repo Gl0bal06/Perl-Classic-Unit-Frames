@@ -224,18 +224,7 @@ function Perl_CombatDisplay_OnEvent(event)
 			end
 		end
 
-		-- Check if we loaded the mod already.
-		if (Initialized) then
-			Perl_CombatDisplay_UpdateBars();	-- what class are we? display the right color bars
-			Perl_CombatDisplay_Update_Health();	-- make sure we dont display 0/0 on load
-			Perl_CombatDisplay_Update_Mana();	-- make sure we dont display 0/0 on load
-			Perl_CombatDisplay_UpdateDisplay();	-- what mode are we in?
-			Perl_CombatDisplay_Set_Scale();		-- set the correct scale
-			Perl_CombatDisplay_Set_Transparency();	-- set the transparency
-			Perl_CombatDisplay_CheckForPets();	-- do we have a pet out?
-		else
-			Perl_CombatDisplay_Initialize();
-		end
+		Perl_CombatDisplay_Initialize();
 		return;
 	elseif (event == "ADDON_LOADED") then
 		if (arg1 == "Perl_CombatDisplay") then
@@ -252,6 +241,18 @@ end
 -- Loading Settings Function --
 -------------------------------
 function Perl_CombatDisplay_Initialize()
+	-- Check if we loaded the mod already.
+	if (Initialized) then
+		Perl_CombatDisplay_UpdateBars();	-- what class are we? display the right color bars
+		Perl_CombatDisplay_Update_Health();	-- make sure we dont display 0/0 on load
+		Perl_CombatDisplay_Update_Mana();	-- make sure we dont display 0/0 on load
+		Perl_CombatDisplay_UpdateDisplay();	-- what mode are we in?
+		Perl_CombatDisplay_Set_Scale();		-- set the correct scale
+		Perl_CombatDisplay_Set_Transparency();	-- set the transparency
+		Perl_CombatDisplay_CheckForPets();	-- do we have a pet out?
+		return;
+	end
+
 	-- Check if a previous exists, if not, enable by default.
 	if (type(Perl_CombatDisplay_Config[UnitName("player")]) == "table") then
 		Perl_CombatDisplay_GetVars();
@@ -1233,8 +1234,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.62",
-			releaseDate = "May 2, 2006",
+			version = "Version 0.63",
+			releaseDate = "May 5, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -133,8 +133,6 @@ function Perl_Player_Pet_OnEvent(event)
 		return;
 	elseif (event == "VARIABLES_LOADED") or (event == "PLAYER_ENTERING_WORLD") then
 		Perl_Player_Pet_Initialize();
-		Perl_Player_Pet_Set_Window_Layout();		-- Warlocks don't need the happiness frame
-		Perl_Player_Pet_Update_Once();
 		return;
 	elseif (event == "ADDON_LOADED") then
 		if (arg1 == "Perl_Player_Pet") then
@@ -153,7 +151,9 @@ end
 function Perl_Player_Pet_Initialize()
 	-- Check if we loaded the mod already.
 	if (Initialized) then
-		Perl_Player_Pet_Set_Scale();
+		Perl_Player_Pet_Update_Once();
+		Perl_Player_Pet_Set_Scale();		-- Set the scale
+		Perl_Player_Pet_Set_Transparency();	-- Set transparency
 		return;
 	end
 
@@ -167,9 +167,11 @@ function Perl_Player_Pet_Initialize()
 	-- Major config options.
 	Perl_Player_Pet_Initialize_Frame_Color();
 	Perl_Player_Pet_Reset_Buffs();			-- Set correct buff sizes
+	Perl_Player_Pet_Set_Window_Layout();		-- Warlocks don't need the happiness frame
+	Perl_Player_Pet_Frame:Hide();
 
-	-- Unregister the Blizzard frames via the 1.8 function
-	PetFrame:UnregisterAllEvents();
+	-- Unregister and Hide the Blizzard frames
+	Perl_clearBlizzardFrameDisable(PetFrame);
 
 	Initialized = 1;
 end
@@ -201,16 +203,14 @@ function Perl_Player_Pet_Update_Once()
 		Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));		-- Set name
 		Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
 		Perl_Player_Pet_Update_Portrait();				-- Set the pet's portrait
-		Perl_Player_Pet_Set_Scale();					-- Set the scale
-		Perl_Player_Pet_Set_Transparency();				-- Set transparency
 		Perl_Player_Pet_Update_Health();				-- Set health
 		Perl_Player_Pet_Update_Mana();					-- Set mana values
 		Perl_Player_Pet_Update_Mana_Bar();				-- Set the type of mana
 		Perl_Player_PetFrame_SetHappiness();				-- Set Happiness
 		Perl_Player_Pet_Buff_UpdateAll();				-- Set buff frame
 		Perl_Player_Pet_Portrait_Combat_Text();				-- Set the combat text frame
-		Perl_Player_Pet_Frame:Show();					-- Display the pet frame
 		Perl_Player_Pet_ShowXP();					-- Are we showing the xp bar?
+		Perl_Player_Pet_Frame:Show();					-- Display the pet frame
 	else
 		Perl_Player_Pet_Frame:Hide();
 	end
@@ -977,8 +977,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "Version 0.62",
-			releaseDate = "May 2, 2006",
+			version = "Version 0.63",
+			releaseDate = "May 5, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

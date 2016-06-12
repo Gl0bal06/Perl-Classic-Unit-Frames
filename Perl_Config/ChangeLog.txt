@@ -1,8 +1,14 @@
+0.63 - May 5, 2006
+ - All: Optimized the start up and run once code
+ - Party/Pet/Player/Target: Adopted clearBlizzard's style for unregistering frames (Thanks Shag)
+ - Party: F Keys are now enabled by default
+ - Player: Added FiveSec support
+
 0.62 - May 2, 2006
  - All: Progressively colored bars will now do smooth transitions in color
  - Config: CastParty support is now disabled by default
  - Pet/Player/Target: Combat Text is now disabled by default
- - Player/Target: Combat Text no longer requires the portrait frame to be enabled
+ - Player/Target: Combat Text no longer requires the portrait frame to be enabled
 
 0.61 - April 30, 2006
  - CombatDisplay: Clicking on the target frame will no longer select yourself

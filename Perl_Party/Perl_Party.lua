@@ -17,7 +17,7 @@ local debufflocation = 1;	-- default debuff location
 local verticalalign = 1;	-- default alignment is vertically
 local compactpercent = 0;	-- percents are not shown in compact mode by default
 local showportrait = 0;		-- portrait is hidden by default
-local showfkeys = 0;		-- hide appropriate F key in the name frame by default
+local showfkeys = 1;		-- show appropriate F key in the name frame by default
 local displaycastablebuffs = 0;	-- display all buffs by default
 local threedportrait = 0;	-- 3d portraits are off by default
 local buffsize = 16;		-- default buff size is 16
@@ -179,12 +179,13 @@ end
 function Perl_Party_Initialize()
 	-- Check if we loaded the mod already.
 	if (Initialized) then
-		Perl_Party_Set_Scale();
-		Perl_Party_Force_Update()				-- Attempt to forcefully update information
-		Perl_Party_Set_Text_Positions();			-- Not called in the above
-		Perl_Party_Set_Pets();					-- Also not called
-		Perl_Party_Update_Health_Mana();			-- You know the drill
-		Perl_Party_Set_Hidden();				-- Are we running a hidden mode?
+		Perl_Party_Set_Scale();			-- Set the frame scale
+		Perl_Party_Set_Transparency();		-- Set the frame transparency
+		Perl_Party_Force_Update()		-- Attempt to forcefully update information
+		Perl_Party_Set_Text_Positions();	-- Not called in the above
+		Perl_Party_Set_Pets();			-- Also not called
+		Perl_Party_Update_Health_Mana();	-- You know the drill
+		Perl_Party_Set_Hidden();		-- Are we running a hidden mode?
 		return;
 	end
 
@@ -198,19 +199,17 @@ function Perl_Party_Initialize()
 	-- Major config options.
 	Perl_Party_Initialize_Frame_Color();		-- Color the frame borders
 	Perl_Party_Set_Localized_ClassIcons();		-- Do localization stuff
-	Perl_Party_Set_Transparency();			-- Set the frame transparency
 	Perl_Party_Reset_Buffs();			-- Set the buff sizing
 
-	-- Unregister the Blizzard frames via the 1.8 function
-	for num = 1, 4 do
-		frame = getglobal("PartyMemberFrame"..num);
-		HealthBar = getglobal("PartyMemberFrame"..num.."HealthBar");
-		ManaBar = getglobal("PartyMemberFrame"..num.."ManaBar");
-
-		frame:UnregisterAllEvents();
-		HealthBar:UnregisterAllEvents();
-		ManaBar:UnregisterAllEvents();
-	end
+	-- Unregister and Hide the Blizzard frames
+	Perl_clearBlizzardFrameDisable(PartyMemberFrame1);
+	Perl_clearBlizzardFrameDisable(PartyMemberFrame1PetFrame);
+	Perl_clearBlizzardFrameDisable(PartyMemberFrame2);
+	Perl_clearBlizzardFrameDisable(PartyMemberFrame2PetFrame);
+	Perl_clearBlizzardFrameDisable(PartyMemberFrame3);
+	Perl_clearBlizzardFrameDisable(PartyMemberFrame3PetFrame);
+	Perl_clearBlizzardFrameDisable(PartyMemberFrame4);
+	Perl_clearBlizzardFrameDisable(PartyMemberFrame4PetFrame);
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	for num = 1, 4 do
@@ -1672,7 +1671,7 @@ function Perl_Party_GetVars()
 		showportrait = 0;
 	end
 	if (showfkeys == nil) then
-		showfkeys = 0;
+		showfkeys = 1;
 	end
 	if (displaycastablebuffs == nil) then
 		displaycastablebuffs = 0;
@@ -1865,7 +1864,7 @@ function Perl_Party_UpdateVars(vartable)
 			showportrait = 0;
 		end
 		if (showfkeys == nil) then
-			showfkeys = 0;
+			showfkeys = 1;
 		end
 		if (displaycastablebuffs == nil) then
 			displaycastablebuffs = 0;
@@ -2238,8 +2237,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.62",
-			releaseDate = "May 2, 2006",
+			version = "Version 0.63",
+			releaseDate = "May 5, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
