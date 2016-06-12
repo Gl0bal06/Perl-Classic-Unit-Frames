@@ -254,42 +254,6 @@ function Perl_Target_Initialize()
 
 	Perl_Target_Set_Localized_ClassIcons();
 
---	-- The following UnregisterEvent calls were taken from Nymbia's Perl
---	-- Blizz Target Frame Events
---	TargetFrame:UnregisterEvent("UNIT_HEALTH");
---	TargetFrame:UnregisterEvent("UNIT_LEVEL");
---	TargetFrame:UnregisterEvent("UNIT_FACTION");
---	TargetFrame:UnregisterEvent("UNIT_DYNAMIC_FLAGS");
---	TargetFrame:UnregisterEvent("UNIT_CLASSIFICATION_CHANGED");
---	TargetFrame:UnregisterEvent("PLAYER_PVPLEVEL_CHANGED");
---	--TargetFrame:UnregisterEvent("PLAYER_TARGET_CHANGED");
---	TargetFrame:UnregisterEvent("PARTY_MEMBERS_CHANGED");
---	TargetFrame:UnregisterEvent("PARTY_LEADER_CHANGED");
---	TargetFrame:UnregisterEvent("PARTY_MEMBER_ENABLE");
---	TargetFrame:UnregisterEvent("PARTY_MEMBER_DISABLE");
---	TargetFrame:UnregisterEvent("UNIT_AURA");
---	TargetFrame:UnregisterEvent("PLAYER_FLAGS_CHANGED");
---	ComboFrame:UnregisterEvent("PLAYER_TARGET_CHANGED");
---	ComboFrame:UnregisterEvent("PLAYER_COMBO_POINTS");
---	TargetFrameHealthBar:UnregisterEvent("UNIT_HEALTH");
---	TargetFrameHealthBar:UnregisterEvent("UNIT_MAXHEALTH");
---	-- ManaBar Events
---	TargetFrameManaBar:UnregisterEvent("UNIT_MANA");
---	TargetFrameManaBar:UnregisterEvent("UNIT_RAGE");
---	TargetFrameManaBar:UnregisterEvent("UNIT_FOCUS");
---	TargetFrameManaBar:UnregisterEvent("UNIT_ENERGY");
---	TargetFrameManaBar:UnregisterEvent("UNIT_HAPPINESS");
---	TargetFrameManaBar:UnregisterEvent("UNIT_MAXMANA");
---	TargetFrameManaBar:UnregisterEvent("UNIT_MAXRAGE");
---	TargetFrameManaBar:UnregisterEvent("UNIT_MAXFOCUS");
---	TargetFrameManaBar:UnregisterEvent("UNIT_MAXENERGY");
---	TargetFrameManaBar:UnregisterEvent("UNIT_MAXHAPPINESS");
---	TargetFrameManaBar:UnregisterEvent("UNIT_DISPLAYPOWER");
---	-- UnitFrame Events
---	TargetFrame:UnregisterEvent("UNIT_NAME_UPDATE");
---	TargetFrame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
---	TargetFrame:UnregisterEvent("UNIT_DISPLAYPOWER");
-
 	-- Unregister the Blizzard frames via the 1.8 function
 	TargetFrame:UnregisterAllEvents();
 	TargetFrameHealthBar:UnregisterAllEvents();
@@ -498,30 +462,26 @@ end
 
 function Perl_Target_Update_Combo_Points()
 	-- Set combo points
-	ComboFrame:Hide();	-- Hide default Combo Points
+	ComboFrame:Hide();						-- Hide default Combo Points
 	if (showcp == 1) then
 		local combopoints = GetComboPoints();
 		Perl_Target_CPText:SetText(combopoints);
+		Perl_Target_CPText:SetTextHeight(20);
 		if (combopoints == 5) then
 			Perl_Target_CPFrame:Show();
-			Perl_Target_CPText:SetTextColor(1, 0, 0); -- red text
-			Perl_Target_CPText:SetTextHeight(20);
+			Perl_Target_CPText:SetTextColor(1, 0, 0);	-- red text
 		elseif (combopoints == 4) then
 			Perl_Target_CPFrame:Show();
-			Perl_Target_CPText:SetTextColor(1, 0.5, 0); -- orange text
-			Perl_Target_CPText:SetTextHeight(15);
+			Perl_Target_CPText:SetTextColor(1, 0.5, 0);	-- orange text
 		elseif (combopoints == 3) then
 			Perl_Target_CPFrame:Show();
-			Perl_Target_CPText:SetTextColor(1, 1, 0); -- yellow text
-			Perl_Target_CPText:SetTextHeight(12);
+			Perl_Target_CPText:SetTextColor(1, 1, 0);	-- yellow text
 		elseif (combopoints == 2) then
 			Perl_Target_CPFrame:Show();
-			Perl_Target_CPText:SetTextColor(0.5, 1, 0); -- yellow-green text
-			Perl_Target_CPText:SetTextHeight(11);
+			Perl_Target_CPText:SetTextColor(0.5, 1, 0);	-- yellow-green text
 		elseif (combopoints == 1) then
 			Perl_Target_CPFrame:Show();
-			Perl_Target_CPText:SetTextColor(0, 1, 0); -- green text
-			Perl_Target_CPText:SetTextHeight(8);
+			Perl_Target_CPText:SetTextColor(0, 1, 0);	-- green text
 		else
 			Perl_Target_CPFrame:Hide();
 		end
@@ -777,7 +737,6 @@ function Perl_Target_Set_Buffs(newbuffnumber)
 	Perl_Target_UpdateVars();
 	Perl_Target_Reset_Buffs();	-- Reset the buff icons
 	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
-	--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 buffs.");
 end
 
 function Perl_Target_Set_Debuffs(newdebuffnumber)
@@ -788,7 +747,6 @@ function Perl_Target_Set_Debuffs(newdebuffnumber)
 	Perl_Target_UpdateVars();
 	Perl_Target_Reset_Buffs();	-- Reset the buff icons
 	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
-	--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numdebuffsshown.."|cffffff00 debuffs.");
 end
 
 function Perl_Target_Set_Class_Icon(newvalue)
@@ -1464,7 +1422,7 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.36",
+			version = "v0.37",
 			releaseDate = "January 25, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",

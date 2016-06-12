@@ -1819,7 +1819,7 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.36",
+			version = "v0.37",
 			releaseDate = "January 25, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
