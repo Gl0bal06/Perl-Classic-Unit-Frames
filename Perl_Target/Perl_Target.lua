@@ -207,13 +207,13 @@ function Perl_Target_SlashHandler(msg)
 		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
 		if (arg1 ~= "") then
 			local number = tonumber(arg1);
-			if (number >= 0 and number <= 20) then
+			if (number >= 0 and number <= 16) then
 				Perl_Target_Set_Buffs(number)
 			else
-				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-20)");
+				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-16)");
 			end
 		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of buffs to display (0-20): /pt buffs #");
+			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of buffs to display (0-16): /pt buffs #");
 		end
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Target Frame ---");
@@ -568,9 +568,15 @@ end
 
 function Perl_Target_Set_Target_Class()
 	if (showclassframe == 1) then
-		local PlayerClass = UnitClass("target");
-		Perl_Target_ClassNameBarText:SetText(PlayerClass);
-		Perl_Target_ClassNameFrame:Show();
+		if (UnitIsPlayer("target")) then
+			local targetClass = UnitClass("target");
+			Perl_Target_ClassNameBarText:SetText(targetClass);
+			Perl_Target_ClassNameFrame:Show();
+		else
+			local targetCreatureType = UnitCreatureType("target");
+			Perl_Target_ClassNameBarText:SetText(targetCreatureType);
+			Perl_Target_ClassNameFrame:Show();
+		end
 	else
 		Perl_Target_ClassNameFrame:Hide();
 	end
@@ -671,7 +677,7 @@ end
 
 function Perl_Target_Set_Buffs(newbuffnumber)
 	if (newbuffnumber == nil) then
-		newbuffnumber = 0;
+		newbuffnumber = 16;
 	end
 	numbuffsshown = newbuffnumber;
 	Perl_Target_UpdateVars();
@@ -682,13 +688,13 @@ end
 
 function Perl_Target_Set_Debuffs(newdebuffnumber)
 	if (newdebuffnumber == nil) then
-		newdebuffnumber = 0;
+		newdebuffnumber = 16;
 	end
 	numdebuffsshown = newdebuffnumber;
 	Perl_Target_UpdateVars();
 	Perl_Target_Reset_Buffs();	-- Reset the buff icons
 	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
-	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 debuffs.");
+	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numdebuffsshown.."|cffffff00 debuffs.");
 end
 
 function Perl_Target_ToggleMobHealth()
@@ -767,7 +773,10 @@ function Perl_Target_GetVars()
 		showclassframe = 1;
 	end
 	if (numbuffsshown == nil) then
-		numbuffsshown = 20;
+		numbuffsshown = 16;
+	end
+	if (numbuffsshown < 16) then
+		numbuffsshown = 16;
 	end
 	if (numdebuffsshown == nil) then
 		numdebuffsshown = 16;
@@ -1007,8 +1016,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.16",
-			releaseDate = "November 7, 2005",
+			version = "v0.17",
+			releaseDate = "November 9, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

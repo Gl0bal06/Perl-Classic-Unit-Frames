@@ -248,12 +248,12 @@
 			<!-- Target Class Frame -->
 			<Frame name="Perl_Target_ClassNameFrame">
 				<Size>
-					<AbsDimension x="65" y="24"/>
+					<AbsDimension x="70" y="24"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_NameFrame">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Target_NameFrame">
 						<Offset>
-							<AbsDimension x="-180" y="20"/>
+							<AbsDimension x="0" y="20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
