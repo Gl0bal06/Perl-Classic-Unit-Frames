@@ -28,7 +28,7 @@ local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mo
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 
 -- Local variables to save memory
-local playerhealth, playerhealthmax, playerhealthpercent, playermana, playermanamax, playermanapercent, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent;
+local playerhealth, playerhealthmax, playerhealthpercent, playermana, playermanamax, playermanapercent, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent, playerpower;
 
 -- Variables for position of the class icon texture.
 local Perl_Player_ClassPosRight = {};
@@ -45,7 +45,6 @@ function Perl_Player_OnLoad()
 	CombatFeedback_Initialize(Perl_Player_HitIndicator, 30);
 
 	-- Events
-	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PARTY_LEADER_CHANGED");
 	this:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
@@ -160,11 +159,6 @@ function Perl_Player_OnEvent(event)
 	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Player_Initialize();
 		return;
-	elseif (event == "ADDON_LOADED") then
-		if (arg1 == "Perl_Player") then
-			Perl_Player_myAddOns_Support();
-		end
-		return;
 	else
 		return;
 	end
@@ -175,7 +169,8 @@ end
 -- Loading Settings Function --
 -------------------------------
 function Perl_Player_Initialize()
-	if (Initialized) then	-- PLAYER_ENTERING_WORLD stuff goes here
+	-- Code to be run after zoning or logging in goes here
+	if (Initialized) then
 		InCombat = 0;				-- You can't be fighting if you're zoning, and no event is sent, force it to no combat.
 		Perl_Player_Update_Once();
 		Perl_Player_Set_Scale();		-- Set the scale
@@ -198,15 +193,18 @@ function Perl_Player_Initialize()
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(PlayerFrame);
 
+	-- MyAddOns Support
+	Perl_Player_myAddOns_Support();
+
 	-- IFrameManager Support
 	if (IFrameManager) then
-		Perl_Player_IFrameManager(1);
+		Perl_Player_IFrameManager();
 	end
 
 	Initialized = 1;
 end
 
-function Perl_Player_IFrameManager(initflag)
+function Perl_Player_IFrameManager()
 	local iface = IFrameManager:Interface();
 	function iface:getName(frame)
 		return "Perl Player";
@@ -247,9 +245,7 @@ function Perl_Player_IFrameManager(initflag)
 		end
 		return top, right, bottom, left;
 	end
-	if (initflag) then
-		IFrameManager:Register(this, iface);
-	end
+	IFrameManager:Register(this, iface);
 end
 
 function Perl_Player_Initialize_Frame_Color()
@@ -565,16 +561,16 @@ function Perl_Player_Update_Mana()
 end
 
 function Perl_Player_Update_Mana_Bar()
-	local playerpower = UnitPowerType("player");
+	playerpower = UnitPowerType("player");
 
 	-- Set mana bar color
-	if (playerpower == 0) then
+	if (playerpower == 0) then		-- mana
 		Perl_Player_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-	elseif (playerpower == 1) then
+	elseif (playerpower == 1) then		-- rage
 		Perl_Player_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-	elseif (playerpower == 3) then
+	elseif (playerpower == 3) then		-- energy
 		Perl_Player_ManaBar:SetStatusBarColor(1, 1, 0, 1);
 		Perl_Player_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
 	end
@@ -1453,13 +1449,13 @@ function Perl_Player_UpdateVars(vartable)
 		Perl_Player_Update_Mana();
 		Perl_Player_Update_Portrait();
 		Perl_Player_Portrait_Combat_Text();
+		Perl_Player_Update_PvP_Status();
 		Perl_Player_Set_Scale();
 		Perl_Player_Set_Transparency();
 	end
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		Perl_Player_IFrameManager();
 		IFrameManager:Refresh();
 	end
 
@@ -1511,6 +1507,15 @@ function Perl_Player_MouseClick(button)
 					CH_UnitClicked("player", button);
 				end
 			end
+		elseif (SmartHeal) then
+			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					local KeyDownType = SmartHeal:GetClickHealButton();
+					if(KeyDownType and KeyDownType ~= "undetermined") then
+						SmartHeal:ClickHeal(KeyDownType..button, "player");
+					end
+				end
+			end
 		else
 			if (button == "LeftButton") then
 				if (SpellIsTargeting()) then
@@ -1555,7 +1560,7 @@ end
 
 function Perl_Player_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
 				ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
 			end
@@ -1673,8 +1678,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.69",
-			releaseDate = "June 1, 2006",
+			version = "Version 0.70",
+			releaseDate = "June 6, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -57,7 +57,6 @@ end
 
 function Perl_Party_OnLoad()
 	-- Events
-	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PARTY_LEADER_CHANGED");
 	this:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
@@ -110,7 +109,7 @@ function Perl_Party_OnEvent(event)
 			Perl_Party_Update_Pet_Health();
 		end
 		return;
-	elseif ((event == "UNIT_MANA") or (event == "UNIT_ENERGY") or (event == "UNIT_RAGE") or (event == "UNIT_MAXMANA") or (event == "UNIT_MAXENERGY") or (event == "UNIT_MAXRAGE")) then
+	elseif (event == "UNIT_MANA" or event == "UNIT_ENERGY" or event == "UNIT_RAGE" or event == "UNIT_MAXMANA" or event == "UNIT_MAXENERGY" or event == "UNIT_MAXRAGE") then
 		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
 			Perl_Party_Update_Mana();
 		end
@@ -169,11 +168,6 @@ function Perl_Party_OnEvent(event)
 	elseif (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
 		Perl_Party_Initialize();			-- We also force update info here in case of a /console reloadui
 		return;
-	elseif (event == "ADDON_LOADED") then
-		if (arg1 == "Perl_Party") then
-			Perl_Party_myAddOns_Support();
-		end
-		return;
 	else
 		return;
 	end
@@ -184,7 +178,7 @@ end
 -- Loading Settings Function --
 -------------------------------
 function Perl_Party_Initialize()
-	-- Check if we loaded the mod already.
+	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
 		Perl_Party_Set_Scale();			-- Set the frame scale
 		Perl_Party_Set_Transparency();		-- Set the frame transparency
@@ -229,16 +223,19 @@ function Perl_Party_Initialize()
 		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):GetFrameLevel() + 2);
 	end
 
+	-- MyAddOns Support
+	Perl_Party_myAddOns_Support();
+
 	-- IFrameManager Support
 		if (IFrameManager) then
-			Perl_Party_IFrameManager(1);
+			Perl_Party_IFrameManager();
 		end
 
 	Initialized = 1;
 	Perl_Party_MembersUpdate();
 end
 
-function Perl_Party_IFrameManager(initflag)
+function Perl_Party_IFrameManager()
 	local iface = IFrameManager:Interface();
 	function iface:getName(frame)
 		return "Perl Party";
@@ -380,9 +377,7 @@ function Perl_Party_IFrameManager(initflag)
 		end
 		return top, right, bottom, left;
 	end
-	if (initflag) then
-		IFrameManager:Register(Perl_Party_Frame, iface);
-	end
+	IFrameManager:Register(Perl_Party_Frame, iface);
 end
 
 function Perl_Party_Initialize_Frame_Color(flag)
@@ -1911,10 +1906,7 @@ function Perl_Party_Set_Scale(number)
 		scale = (number / 100);
 	end
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_Party_MemberFrame1:SetScale(unsavedscale);
-	Perl_Party_MemberFrame2:SetScale(unsavedscale);
-	Perl_Party_MemberFrame3:SetScale(unsavedscale);
-	Perl_Party_MemberFrame4:SetScale(unsavedscale);
+	Perl_Party_Frame:SetScale(unsavedscale);
 	Perl_Party_UpdateVars();
 end
 
@@ -2262,7 +2254,6 @@ function Perl_Party_UpdateVars(vartable)
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		Perl_Party_IFrameManager();
 		IFrameManager:Refresh();
 	end
 
@@ -2489,6 +2480,15 @@ function Perl_Party_MouseClick(button)
 					CH_UnitClicked("party"..id, button);
 				end
 			end
+		elseif (SmartHeal) then
+			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					local KeyDownType = SmartHeal:GetClickHealButton();
+					if(KeyDownType and KeyDownType ~= "undetermined") then
+						SmartHeal:ClickHeal(KeyDownType..button, "party"..id);
+					end
+				end
+			end
 		else
 			if (SpellIsTargeting() and button == "RightButton") then
 				SpellStopTargeting();
@@ -2537,7 +2537,7 @@ function Perl_Party_MouseUp(button)
 	end
 
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
 				ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..id.."_DropDown"), "Perl_Party_MemberFrame"..id, 0, 0);
 			end
@@ -2571,6 +2571,15 @@ function Perl_Party_Pet_MouseClick(button)
 			if (CH_Config.PCUFEnabled) then
 				if (not string.find(GetMouseFocus():GetName(), "Name")) then
 					CH_UnitClicked("partypet"..id, button);
+				end
+			end
+		elseif (SmartHeal) then
+			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					local KeyDownType = SmartHeal:GetClickHealButton();
+					if(KeyDownType and KeyDownType ~= "undetermined") then
+						SmartHeal:ClickHeal(KeyDownType..button, "partypet"..id);
+					end
 				end
 			end
 		else
@@ -2635,8 +2644,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.69",
-			releaseDate = "June 1, 2006",
+			version = "Version 0.70",
+			releaseDate = "June 6, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

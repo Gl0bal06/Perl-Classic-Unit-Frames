@@ -81,13 +81,10 @@
 			<OnEvent>
 				Perl_Target_OnEvent(event);
 			</OnEvent>
-			<!--
 			<OnShow>
 				Perl_Target_OnShow();
 			</OnShow>
-			-->
 			<OnUpdate>
-				<!-- Perl_Target_Portrait_Combat_Text(); -->
 				CombatFeedback_OnUpdate(arg1);
 			</OnUpdate>
 		</Scripts>
@@ -209,6 +206,22 @@
 								</Anchor>
 							</Anchors>
 						</Texture>
+
+						<!-- Raid Target Icon -->
+						<!--
+						<Texture name="Perl_Target_RaidTargetIcon" file="Interface\TargetingFrame\UI-RaidTargetingIcons" hidden="true">
+							<Size>
+								<AbsDimension x="26" y="26"/>
+							</Size>
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="TOPRIGHT">
+									<Offset>
+										<AbsDimension x="45" y="-10"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+						-->
 					</Layer>
 				</Layers>
 			</Frame>

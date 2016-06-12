@@ -33,7 +33,6 @@ local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, pla
 ----------------------
 function Perl_CombatDisplay_OnLoad()
 	-- Events
-	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTER_COMBAT");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("PLAYER_LEAVE_COMBAT");
@@ -204,7 +203,7 @@ function Perl_CombatDisplay_OnEvent(event)
 	elseif (event == "UNIT_PET") then
 		Perl_CombatDisplay_CheckForPets();
 		return;
-	elseif ((event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD")) then
+	elseif (event=="PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
 		local powertype = UnitPowerType("player");
 		InCombat = 0;
 		IsAggroed = 0;
@@ -230,11 +229,6 @@ function Perl_CombatDisplay_OnEvent(event)
 
 		Perl_CombatDisplay_Initialize();
 		return;
-	elseif (event == "ADDON_LOADED") then
-		if (arg1 == "Perl_CombatDisplay") then
-			Perl_CombatDisplay_myAddOns_Support();
-		end
-		return;
 	else
 		return;
 	end
@@ -245,7 +239,7 @@ end
 -- Loading Settings Function --
 -------------------------------
 function Perl_CombatDisplay_Initialize()
-	-- Check if we loaded the mod already.
+	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
 		Perl_CombatDisplay_UpdateBars();	-- what class are we? display the right color bars
 		Perl_CombatDisplay_Update_Health();	-- make sure we dont display 0/0 on load
@@ -268,63 +262,61 @@ function Perl_CombatDisplay_Initialize()
 	Perl_CombatDisplay_Initialize_Frame_Color();
 	Perl_CombatDisplay_Target_Frame:Hide();
 
-	Perl_CombatDisplay_UpdateBars();	-- Display the bars appropriate to your class
-	Perl_CombatDisplay_UpdateDisplay();	-- Show or hide the window based on whats happening
-	Perl_CombatDisplay_CheckForPets();	-- do we have a pet out?
+	Perl_CombatDisplay_UpdateBars();		-- Display the bars appropriate to your class
+	Perl_CombatDisplay_UpdateDisplay();		-- Show or hide the window based on whats happening
+	Perl_CombatDisplay_CheckForPets();		-- do we have a pet out?
 
+	-- MyAddOns Support
+	Perl_CombatDisplay_myAddOns_Support();
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		Perl_CombatDisplay_IFrameManager(1);
+		Perl_CombatDisplay_IFrameManager();
 	end
 
 	Initialized = 1;
 end
 
-function Perl_CombatDisplay_IFrameManager(initflag)
-	if (IFrameManager) then
-		local iface = IFrameManager:Interface();
-		function iface:getName(frame)
-			if (frame == Perl_CombatDisplay_Frame) then
-				return "Perl CombatDisplay (Player)"
-			else
-				return "Perl CombatDisplay (Target)"
-			end
+function Perl_CombatDisplay_IFrameManager()
+	local iface = IFrameManager:Interface();
+	function iface:getName(frame)
+		if (frame == Perl_CombatDisplay_Frame) then
+			return "Perl CombatDisplay (Player)"
+		else
+			return "Perl CombatDisplay (Target)"
 		end
-		function iface:getBorder(frame)
-			if (frame == Perl_CombatDisplay_Frame) then
-				local bottom;
-				if (UnitClass("player") == PERL_LOCALIZED_ROGUE) then
-					bottom = 12;
-				else
-					if (UnitClass("player") == PERL_LOCALIZED_DRUID) then
-						if (showdruidbar == 1) then
-							bottom = 24;
-						else
-							bottom = 12;
-						end
+	end
+	function iface:getBorder(frame)
+		if (frame == Perl_CombatDisplay_Frame) then
+			local bottom;
+			if (UnitClass("player") == PERL_LOCALIZED_ROGUE) then
+				bottom = 12;
+			else
+				if (UnitClass("player") == PERL_LOCALIZED_DRUID) then
+					if (showdruidbar == 1) then
+						bottom = 24;
 					else
-						if (UnitClass("player") == PERL_LOCALIZED_HUNTER or UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
-							if (showpetbars == 1) then
-								bottom = 12;
-							else
-								bottom = 0;
-							end
+						bottom = 12;
+					end
+				else
+					if (UnitClass("player") == PERL_LOCALIZED_HUNTER or UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
+						if (showpetbars == 1) then
+							bottom = 12;
 						else
 							bottom = 0;
 						end
+					else
+						bottom = 0;
 					end
 				end
-				return 0, 0, bottom, 0;
-			else
-				return 0, 0, 0, 0;
 			end
-		end
-		if (initflag) then
-			IFrameManager:Register(Perl_CombatDisplay_Frame, iface);
-			IFrameManager:Register(Perl_CombatDisplay_Target_Frame, iface);
+			return 0, 0, bottom, 0;
+		else
+			return 0, 0, 0, 0;
 		end
 	end
+	IFrameManager:Register(Perl_CombatDisplay_Frame, iface);
+	IFrameManager:Register(Perl_CombatDisplay_Target_Frame, iface);
 end
 
 function Perl_CombatDisplay_Initialize_Frame_Color()
@@ -1155,7 +1147,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		Perl_CombatDisplay_IFrameManager();
 		IFrameManager:Refresh();
 	end
 
@@ -1196,6 +1187,13 @@ function Perl_CombatDisplay_MouseClick(button)
 		elseif (CH_Config) then
 			if (CH_Config.PCUFEnabled) then
 				CH_UnitClicked("player", button);
+			end
+		elseif (SmartHeal) then
+			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+				local KeyDownType = SmartHeal:GetClickHealButton();
+				if(KeyDownType and KeyDownType ~= "undetermined") then
+					SmartHeal:ClickHeal(KeyDownType..button, "player");
+				end
 			end
 		else
 			if (button == "LeftButton") then
@@ -1241,7 +1239,7 @@ end
 
 function Perl_CombatDisplay_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
 			-- Do nothing
 		else
 			if (rightclickmenu == 1) then
@@ -1281,7 +1279,7 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 	end
 	if (menu) then
 		--UnitPopup_ShowMenu(Perl_CombatDisplay_Target_DropDown, menu, "target", name);
-		UnitPopup_ShowMenu(Perl_CombatDisplay_Target_DropDown, menu, "target");
+		UnitPopup_ShowMenu(Perl_CombatDisplay_Target_DropDown, menu, "target", name);
 	end
 end
 
@@ -1294,6 +1292,13 @@ function Perl_CombatDisplay_Target_MouseClick(button)
 		elseif (CH_Config) then
 			if (CH_Config.PCUFEnabled) then
 				CH_UnitClicked("target", button);
+			end
+		elseif (SmartHeal) then
+			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+				local KeyDownType = SmartHeal:GetClickHealButton();
+				if(KeyDownType and KeyDownType ~= "undetermined") then
+					SmartHeal:ClickHeal(KeyDownType..button, "target");
+				end
 			end
 		else
 			if (button == "LeftButton") then
@@ -1339,7 +1344,7 @@ end
 
 function Perl_CombatDisplay_Target_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
 			-- Do nothing
 		else
 			if (rightclickmenu == 1) then
@@ -1362,8 +1367,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.69",
-			releaseDate = "June 1, 2006",
+			version = "Version 0.70",
+			releaseDate = "June 6, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

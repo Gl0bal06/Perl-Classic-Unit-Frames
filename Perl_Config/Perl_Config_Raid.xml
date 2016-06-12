@@ -448,7 +448,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton9">
 						<Offset>
-							<AbsDimension  x="200" y="40"/>
+							<AbsDimension  x="150" y="20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -530,7 +530,28 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton16">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+						<Offset>
+							<AbsDimension  x="200" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Show Buffs");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_Buffs_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton19" inherits="UICheckButtonTemplate" id="19">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton17">
 						<Offset>
 							<AbsDimension  x="0" y="-20"/>
 						</Offset>
@@ -538,10 +559,10 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Buffs/Debuffs");
+						getglobal(this:GetName().."Text"):SetText("Show Debuffs");
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Raid_Buffs_Update();
+						Perl_Config_Raid_Debuffs_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -551,7 +572,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton17">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton19">
 						<Offset>
 							<AbsDimension  x="20" y="-20"/>
 						</Offset>
@@ -563,6 +584,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Raid_Class_Buffs_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton20" inherits="UICheckButtonTemplate" id="20">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton18">
+						<Offset>
+							<AbsDimension  x="-20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Color Debuff Names");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_Color_Debuff_Names_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

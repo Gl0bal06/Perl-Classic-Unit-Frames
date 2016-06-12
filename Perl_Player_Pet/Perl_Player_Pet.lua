@@ -33,7 +33,6 @@ function Perl_Player_Pet_OnLoad()
 	CombatFeedback_Initialize(Perl_Player_Pet_HitIndicator, 30);
 
 	-- Events
-	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("PLAYER_PET_CHANGED");
 	this:RegisterEvent("UNIT_AURA");
@@ -135,13 +134,8 @@ function Perl_Player_Pet_OnEvent(event)
 			Perl_Player_Pet_Update_Once();		-- As of 1.10 the stable is partially broken, this event however is always called after a pet is swapped, so we will just update the whole mod here too to ensure a clean switch.
 		end
 		return;
-	elseif (event == "VARIABLES_LOADED") or (event == "PLAYER_ENTERING_WORLD") then
+	elseif (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
 		Perl_Player_Pet_Initialize();
-		return;
-	elseif (event == "ADDON_LOADED") then
-		if (arg1 == "Perl_Player_Pet") then
-			Perl_Player_Pet_myAddOns_Support();
-		end
 		return;
 	else
 		return;
@@ -177,15 +171,18 @@ function Perl_Player_Pet_Initialize()
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(PetFrame);
 
+	-- MyAddOns Support
+	Perl_Player_Pet_myAddOns_Support();
+
 	-- IFrameManager Support
 	if (IFrameManager) then
-		Perl_Player_Pet_IFrameManager(1);
+		Perl_Player_Pet_IFrameManager();
 	end
 
 	Initialized = 1;
 end
 
-function Perl_Player_Pet_IFrameManager(initflag)
+function Perl_Player_Pet_IFrameManager()
 	local iface = IFrameManager:Interface();
 	function iface:getName(frame)
 		return "Perl Player Pet";
@@ -205,9 +202,7 @@ function Perl_Player_Pet_IFrameManager(initflag)
 		--return top, right, bottom, left;
 		return 0, 0, bottom, left;
 	end
-	if (initflag) then
-		IFrameManager:Register(this, iface);
-	end
+	IFrameManager:Register(this, iface);
 end
 
 function Perl_Player_Pet_Initialize_Frame_Color()
@@ -751,7 +746,6 @@ function Perl_Player_Pet_UpdateVars(vartable)
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		Perl_Player_Pet_IFrameManager();
 		IFrameManager:Refresh();
 	end
 
@@ -925,6 +919,15 @@ function Perl_Player_Pet_MouseClick(button)
 					CH_UnitClicked("pet", button);
 				end
 			end
+		elseif (SmartHeal) then
+			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					local KeyDownType = SmartHeal:GetClickHealButton();
+					if(KeyDownType and KeyDownType ~= "undetermined") then
+						SmartHeal:ClickHeal(KeyDownType..button, "pet");
+					end
+				end
+			end
 		else
 			if (button == "LeftButton") then
 				if (SpellIsTargeting()) then
@@ -969,7 +972,7 @@ end
 
 function Perl_Player_Pet_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
 				ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
 			end
@@ -992,8 +995,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "Version 0.69",
-			releaseDate = "June 1, 2006",
+			version = "Version 0.70",
+			releaseDate = "June 6, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

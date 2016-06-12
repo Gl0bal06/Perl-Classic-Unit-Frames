@@ -1,3 +1,18 @@
+0.70 - June 6, 2006
+ - All: Added SmartHeal Enhanced support
+ - All: Changed how MyAddOns support is handled
+ - All: Made tweaks to the event code
+ - All: Optimized the IFrameManager calls (Thanks Shag)
+ - Config: Updated options available for Perl_Raid
+ - Config: Added some sanity checks for the error on line 1173
+ - Party: Frame now scales in a more logical sense
+ - Party: IFrameManager scaling support now works correctly
+ - Player: Made a very minor memory improvement
+ - Player: Name color is now correctly set on a global load
+ - Target: Added the option to toggle the target sound on and off
+ - ToT: Added the option to toggle self castable and curable spells
+ - ToT: Fixed an issue regarding buffs not being updated correctly
+
 0.69 - June 1, 2006
  - Config: Using the scale slider on the All page will no longer scale target buffs
  - Config: Changed the text slightly for the minimap tooltip
@@ -10,7 +25,7 @@
  - Player: Can now color your name based on your class
  - Target: Tweaked the rare elite frame text output for ?? players and npcs
  - ToT: Added the option to toggle power bars off
- - Tot: Can now display buffs and debuffs independently of each other
+ - ToT: Can now display buffs and debuffs independently of each other
 
 0.68 - May 30, 2006
  - CombatDisplay/Player: Druid Bar support is now off by default

@@ -134,6 +134,12 @@ function Perl_Config_Target_Set_Values()
 		Perl_Config_Target_Frame_CheckButton21:SetChecked(nil);
 	end
 
+	if (vartable["soundtargetchange"] == 1) then
+		Perl_Config_Target_Frame_CheckButton22:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton22:SetChecked(nil);
+	end
+
 	Perl_Config_Target_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Target_Frame_Slider1High:SetText("Big");
 	Perl_Config_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -316,6 +322,14 @@ function Perl_Config_Target_Healer_Update()
 		Perl_Target_Set_Healer(0);
 	end
 end
+
+function Perl_Config_Target_Sound_Target_Change_Update()
+	if (Perl_Config_Target_Frame_CheckButton22:GetChecked() == 1) then
+		Perl_Target_Set_Sound_Target_Change(1);
+	else
+		Perl_Target_Set_Sound_Target_Change(0);
+	end
+end	
 
 function Perl_Config_Target_Set_Scale(value)
 	if (Perl_Target_Frame) then	-- this check is to prevent errors if you aren't using Target

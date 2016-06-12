@@ -102,7 +102,7 @@ function Perl_Config_Raid_Set_Values()
 		Perl_Config_Raid_Frame_CheckButton16:SetChecked(nil);
 	end
 
-	if (vartable["showraiddebuffs"] == 1) then
+	if (vartable["showraidbuffs"] == 1) then
 		Perl_Config_Raid_Frame_CheckButton17:SetChecked(1);
 	else
 		Perl_Config_Raid_Frame_CheckButton17:SetChecked(nil);
@@ -112,6 +112,18 @@ function Perl_Config_Raid_Set_Values()
 		Perl_Config_Raid_Frame_CheckButton18:SetChecked(1);
 	else
 		Perl_Config_Raid_Frame_CheckButton18:SetChecked(nil);
+	end
+
+	if (vartable["showraiddebuffs"] == 1) then
+		Perl_Config_Raid_Frame_CheckButton19:SetChecked(1);
+	else
+		Perl_Config_Raid_Frame_CheckButton19:SetChecked(nil);
+	end
+
+	if (vartable["colordebuffnames"] == 1) then
+		Perl_Config_Raid_Frame_CheckButton20:SetChecked(1);
+	else
+		Perl_Config_Raid_Frame_CheckButton20:SetChecked(nil);
 	end
 
 	Perl_Config_Raid_Frame_Slider1Low:SetText("Small");
@@ -257,11 +269,27 @@ function Perl_Config_Raid_Buffs_Update()
 	end
 end
 
+function Perl_Config_Raid_Debuffs_Update()
+	if (Perl_Config_Raid_Frame_CheckButton19:GetChecked() == 1) then
+		Perl_Raid_Set_Debuffs(1);
+	else
+		Perl_Raid_Set_Debuffs(0);
+	end
+end
+
 function Perl_Config_Raid_Class_Buffs_Update()
 	if (Perl_Config_Raid_Frame_CheckButton18:GetChecked() == 1) then
 		Perl_Raid_Set_Class_Buffs(1);
 	else
 		Perl_Raid_Set_Class_Buffs(0);
+	end
+end
+
+function Perl_Config_Raid_Color_Debuff_Names_Update()
+	if (Perl_Config_Raid_Frame_CheckButton20:GetChecked() == 1) then
+		Perl_Raid_Set_Color_Debuff_Names(1);
+	else
+		Perl_Raid_Set_Color_Debuff_Names(0);
 	end
 end
 

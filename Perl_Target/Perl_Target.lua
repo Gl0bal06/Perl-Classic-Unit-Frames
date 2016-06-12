@@ -28,6 +28,7 @@ local compactpercent = 0;	-- percents are not shown in compact mode by default
 local hidebuffbackground = 0;	-- buff and debuff backgrounds are shown by default
 local shortbars = 0;		-- Health/Power/Experience bars are all normal length
 local healermode = 0;		-- nurfed unit frame style
+local soundtargetchange = 0;	-- sound when changing targets is off by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -50,7 +51,6 @@ function Perl_Target_OnLoad()
 	CombatFeedback_Initialize(Perl_Target_HitIndicator, 30);
 
 	-- Events
-	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PARTY_LEADER_CHANGED");
 	this:RegisterEvent("PARTY_MEMBER_DISABLE");
 	this:RegisterEvent("PARTY_MEMBER_ENABLE");
@@ -58,6 +58,7 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("PLAYER_COMBO_POINTS");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("PLAYER_TARGET_CHANGED");
+	--this:RegisterEvent("RAID_TARGET_UPDATE");
 	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_COMBAT");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
@@ -101,7 +102,7 @@ end
 -- Event Handler --
 -------------------
 function Perl_Target_OnEvent(event)
-	if ((event == "PLAYER_TARGET_CHANGED") or (event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")) then
+	if (event == "PLAYER_TARGET_CHANGED" or event == "PARTY_MEMBERS_CHANGED" or event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBER_ENABLE" or event == "PARTY_MEMBER_DISABLE") then
 		if (UnitExists("target")) then
 			Perl_Target_Update_Once();		-- Set the unchanging info for the target
 		else
@@ -113,7 +114,7 @@ function Perl_Target_OnEvent(event)
 			Perl_Target_Update_Health();		-- Update health values
 		end
 		return;
-	elseif ((event == "UNIT_ENERGY") or (event == "UNIT_MANA") or (event == "UNIT_RAGE") or (event == "UNIT_FOCUS") or (event == "UNIT_MAXMANA") or (event == "UNIT_MAXENERGY") or (event == "UNIT_MAXRAGE") or (event == "UNIT_MAXFOCUS")) then
+	elseif (event == "UNIT_ENERGY" or event == "UNIT_MANA" or event == "UNIT_RAGE" or event == "UNIT_FOCUS" or event == "UNIT_MAXMANA" or event == "UNIT_MAXENERGY" or event == "UNIT_MAXRAGE" or event == "UNIT_MAXFOCUS") then
 		if (arg1 == "target") then
 			Perl_Target_Update_Mana();		-- Update energy/mana/rage values
 		end
@@ -147,13 +148,16 @@ function Perl_Target_OnEvent(event)
 			Perl_Target_Update_Portrait();
 		end
 		return;
+	elseif (event == "PLAYER_COMBO_POINTS") then
+		Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
+		return;
+--	elseif (event == "RAID_TARGET_UPDATE") then
+--		Perl_Target_UpdateRaidTargetIcon();
+--		return;
 	elseif (event == "UNIT_LEVEL") then
 		if (arg1 == "target") then
 			Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
 		end
-		return;
-	elseif (event == "PLAYER_COMBO_POINTS") then
-		Perl_Target_Update_Combo_Points();		-- How many combo points are we at?
 		return;
 	elseif (event == "UNIT_DISPLAYPOWER") then
 		if (arg1 == "target") then
@@ -161,13 +165,8 @@ function Perl_Target_OnEvent(event)
 			Perl_Target_Update_Mana();		-- Update the energy info immediately
 		end
 		return;
-	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
+	elseif (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
 		Perl_Target_Initialize();
-		return;
-	elseif (event == "ADDON_LOADED") then
-		if (arg1 == "Perl_Target") then
-			Perl_Target_myAddOns_Support();		-- Attempt to load MyAddOns support
-		end
 		return;
 	else
 		return;
@@ -179,6 +178,7 @@ end
 -- Loading Settings Function --
 -------------------------------
 function Perl_Target_Initialize()
+	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
 		Perl_Target_Set_Scale();		-- Set the scale
 		Perl_Target_Set_Transparency();		-- Set the transparency
@@ -204,16 +204,19 @@ function Perl_Target_Initialize()
 	Perl_clearBlizzardFrameDisable(TargetFrame);
 	Perl_clearBlizzardFrameDisable(ComboFrame);
 
+	-- MyAddOns Support
+	Perl_Target_myAddOns_Support();
+
 	-- IFrameManager Support
 	if (IFrameManager) then
-		Perl_Target_IFrameManager(1);
+		Perl_Target_IFrameManager();
 	end
 
 	-- Set the initialization flag
 	Initialized = 1;
 end
 
-function Perl_Target_IFrameManager(initflag)
+function Perl_Target_IFrameManager()
 	local iface = IFrameManager:Interface();
 	function iface:getName(frame)
 		return "Perl Target";
@@ -270,9 +273,7 @@ function Perl_Target_IFrameManager(initflag)
 		bottom = bottom + 38;	-- Offset for the stats frame
 		return top, right, bottom, 0;
 	end
-	if (initflag) then
-		IFrameManager:Register(this, iface);
-	end
+	IFrameManager:Register(this, iface);
 end
 
 function Perl_Target_Initialize_Frame_Color()
@@ -316,6 +317,7 @@ function Perl_Target_Update_Once()
 		Perl_Target_Update_PvP_Status_Icon();	-- Set pvp status icon
 		Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
 		Perl_Target_Buff_UpdateAll();		-- Update the buffs
+		--Perl_Target_UpdateRaidTargetIcon();	-- Display the raid target icon if needed
 
 		-- Begin: Set the target's name
 		targetname = UnitName("target");
@@ -927,6 +929,16 @@ function Perl_Target_Frame_Set_Level()
 	end
 end
 
+--function Perl_Target_UpdateRaidTargetIcon()
+--	local index = GetRaidTargetIndex("target");
+--	if (index) then
+--		SetRaidTargetIconTexture(Perl_Target_RaidTargetIcon, index);
+--		Perl_Target_RaidTargetIcon:Show();
+--	else
+--		Perl_Target_RaidTargetIcon:Hide();
+--	end
+--end
+
 function Perl_Target_Update_Portrait()
 	if (showportrait == 1) then
 		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -4, -31);	-- Reposition the combo point frame
@@ -1283,6 +1295,11 @@ function Perl_Target_Set_Buff_Debuff_Background(newvalue)
 	Perl_Target_Buff_Debuff_Background();
 end
 
+function Perl_Target_Set_Sound_Target_Change(newvalue)
+	soundtargetchange = newvalue;
+	Perl_Target_UpdateVars();
+end
+
 function Perl_Target_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1342,6 +1359,7 @@ function Perl_Target_GetVars()
 	hidebuffbackground = Perl_Target_Config[UnitName("player")]["HideBuffBackground"];
 	shortbars = Perl_Target_Config[UnitName("player")]["ShortBars"];
 	healermode = Perl_Target_Config[UnitName("player")]["HealerMode"];
+	soundtargetchange = Perl_Target_Config[UnitName("player")]["SoundTargetChange"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1415,6 +1433,9 @@ function Perl_Target_GetVars()
 	if (healermode == nil) then
 		healermode = 0;
 	end
+	if (soundtargetchange == nil) then
+		soundtargetchange = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1441,6 +1462,7 @@ function Perl_Target_GetVars()
 		["hidebuffbackground"] = hidebuffbackground,
 		["shortbars"] = shortbars,
 		["healermode"] = healermode,
+		["soundtargetchange"] = soundtargetchange,
 	}
 	return vars;
 end
@@ -1569,6 +1591,11 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				healermode = nil;
 			end
+			if (vartable["Global Settings"]["SoundTargetChange"] ~= nil) then
+				soundtargetchange = vartable["Global Settings"]["SoundTargetChange"];
+			else
+				soundtargetchange = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1644,6 +1671,9 @@ function Perl_Target_UpdateVars(vartable)
 		if (healermode == nil) then
 			healermode = 0;
 		end
+		if (soundtargetchange == nil) then
+			soundtargetchange = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();		-- Reset the buff icons
@@ -1656,7 +1686,6 @@ function Perl_Target_UpdateVars(vartable)
 
 	-- IFrameManager Support
 	if (IFrameManager) then
-		Perl_Target_IFrameManager();
 		IFrameManager:Refresh();
 	end
 
@@ -1685,6 +1714,7 @@ function Perl_Target_UpdateVars(vartable)
 		["HideBuffBackground"] = hidebuffbackground,
 		["ShortBars"] = shortbars,
 		["HealerMode"] = healermode,
+		["SoundTargetChange"] = soundtargetchange,
 	};
 end
 
@@ -1944,6 +1974,15 @@ function Perl_Target_MouseClick(button)
 					CH_UnitClicked("target", button);
 				end
 			end
+		elseif (SmartHeal) then
+			if (SmartHeal.Loaded and SmartHeal:getConfig("enable", "clickmode")) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					local KeyDownType = SmartHeal:GetClickHealButton();
+					if(KeyDownType and KeyDownType ~= "undetermined") then
+						SmartHeal:ClickHeal(KeyDownType..button, "target");
+					end
+				end
+			end
 		else
 			if (button == "LeftButton") then
 				if (SpellIsTargeting()) then
@@ -1984,7 +2023,7 @@ end
 
 function Perl_Target_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config) and PCUF_CASTPARTYSUPPORT == 1) then
+		if ((CastPartyConfig or Genesis_MouseHeal or AceHealDB or CH_Config or SmartHeal) and PCUF_CASTPARTYSUPPORT == 1) then
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
 				ToggleDropDownMenu(1, nil, Perl_Target_DropDown, "Perl_Target_NameFrame", 40, 0);
 			end
@@ -1998,15 +2037,17 @@ function Perl_Target_MouseUp(button)
 	Perl_Target_Frame:StopMovingOrSizing();
 end
 
---function Perl_Target_OnShow()
---	if (UnitIsEnemy("target", "player")) then
---		PlaySound("igCreatureAggroSelect");
---	elseif (UnitIsFriend("player", "target")) then
---		PlaySound("igCharacterNPCSelect");
---	else
---		PlaySound("igCreatureNeutralSelect");
---	end
---end
+function Perl_Target_OnShow()
+	if (soundtargetchange == 1) then
+		if (UnitIsEnemy("target", "player")) then
+			PlaySound("igCreatureAggroSelect");
+		elseif (UnitIsFriend("player", "target")) then
+			PlaySound("igCharacterNPCSelect");
+		else
+			PlaySound("igCreatureNeutralSelect");
+		end
+	end
+end
 
 
 -------------
@@ -2029,8 +2070,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.69",
-			releaseDate = "June 1, 2006",
+			version = "Version 0.70",
+			releaseDate = "June 6, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
