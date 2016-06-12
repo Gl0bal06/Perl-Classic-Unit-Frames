@@ -112,6 +112,7 @@
 						Perl_Config_All_Frame_CheckButton4:SetChecked(nil)	<!-- We need to uncheck Button 4 -->
 						Perl_Config_All_Frame_CheckButton5:SetChecked(nil)	<!-- We need to uncheck Button 5 -->
 						Perl_Config_All_Frame_CheckButton6:SetChecked(nil)	<!-- We need to uncheck Button 6 -->
+						Perl_Config_All_Frame_CheckButton7:SetChecked(nil)	<!-- We need to uncheck Button 7 -->
 						Perl_Config_All_Texture_Update(1);
 					</OnClick>
 				</Scripts>
@@ -138,6 +139,7 @@
 						Perl_Config_All_Frame_CheckButton4:SetChecked(nil)	<!-- We need to uncheck Button 4 -->
 						Perl_Config_All_Frame_CheckButton5:SetChecked(nil)	<!-- We need to uncheck Button 5 -->
 						Perl_Config_All_Frame_CheckButton6:SetChecked(nil)	<!-- We need to uncheck Button 6 -->
+						Perl_Config_All_Frame_CheckButton7:SetChecked(nil)	<!-- We need to uncheck Button 7 -->
 						Perl_Config_All_Texture_Update(2);
 					</OnClick>
 				</Scripts>
@@ -164,6 +166,7 @@
 						Perl_Config_All_Frame_CheckButton4:SetChecked(nil)	<!-- We need to uncheck Button 4 -->
 						Perl_Config_All_Frame_CheckButton5:SetChecked(nil)	<!-- We need to uncheck Button 5 -->
 						Perl_Config_All_Frame_CheckButton6:SetChecked(nil)	<!-- We need to uncheck Button 6 -->
+						Perl_Config_All_Frame_CheckButton7:SetChecked(nil)	<!-- We need to uncheck Button 7 -->
 						Perl_Config_All_Texture_Update(3);
 					</OnClick>
 				</Scripts>
@@ -190,6 +193,7 @@
 						Perl_Config_All_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
 						Perl_Config_All_Frame_CheckButton5:SetChecked(nil)	<!-- We need to uncheck Button 5 -->
 						Perl_Config_All_Frame_CheckButton6:SetChecked(nil)	<!-- We need to uncheck Button 6 -->
+						Perl_Config_All_Frame_CheckButton7:SetChecked(nil)	<!-- We need to uncheck Button 7 -->
 						Perl_Config_All_Texture_Update(4);
 					</OnClick>
 				</Scripts>
@@ -216,6 +220,7 @@
 						Perl_Config_All_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
 						Perl_Config_All_Frame_CheckButton4:SetChecked(nil)	<!-- We need to uncheck Button 4 -->
 						Perl_Config_All_Frame_CheckButton6:SetChecked(nil)	<!-- We need to uncheck Button 6 -->
+						Perl_Config_All_Frame_CheckButton7:SetChecked(nil)	<!-- We need to uncheck Button 7 -->
 						Perl_Config_All_Texture_Update(5);
 					</OnClick>
 				</Scripts>
@@ -234,6 +239,33 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Texture #6");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
+						Perl_Config_All_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
+						Perl_Config_All_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
+						Perl_Config_All_Frame_CheckButton4:SetChecked(nil)	<!-- We need to uncheck Button 4 -->
+						Perl_Config_All_Frame_CheckButton5:SetChecked(nil)	<!-- We need to uncheck Button 5 -->
+						Perl_Config_All_Frame_CheckButton7:SetChecked(nil)	<!-- We need to uncheck Button 7 -->
+						Perl_Config_All_Texture_Update(6);
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton7" inherits="UICheckButtonTemplate" id="7">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton6">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
 						getglobal(this:GetName().."Text"):SetText("No Texture");
 					</OnLoad>
 					<OnClick>
@@ -242,6 +274,7 @@
 						Perl_Config_All_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
 						Perl_Config_All_Frame_CheckButton4:SetChecked(nil)	<!-- We need to uncheck Button 4 -->
 						Perl_Config_All_Frame_CheckButton5:SetChecked(nil)	<!-- We need to uncheck Button 5 -->
+						Perl_Config_All_Frame_CheckButton6:SetChecked(nil)	<!-- We need to uncheck Button 6 -->
 						Perl_Config_All_Texture_Update(0);
 					</OnClick>
 				</Scripts>
@@ -302,7 +335,7 @@
 				</Scripts>
 			</Slider>
 
-			<CheckButton name="$parent_CheckButton7" inherits="UICheckButtonTemplate" id="7">
+			<CheckButton name="$parent_CheckButton12" inherits="UICheckButtonTemplate" id="12">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>

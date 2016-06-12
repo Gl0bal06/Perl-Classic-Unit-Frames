@@ -1,3 +1,12 @@
+0.71 - June 13, 2006
+ - All: Updated SmartHeal Enhanced support
+ - All: Minor change to Genesis support
+ - Config: Added a discord style bar texture
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - Party/Target/ToT: Now correctly colors friendly charmed players name text red
+ - Target: Added the option to toggle self castable and curable spells
+ - ToT: Can now display names by their appropriate class color
+
 0.70 - June 6, 2006
  - All: Added SmartHeal Enhanced support
  - All: Changed how MyAddOns support is handled

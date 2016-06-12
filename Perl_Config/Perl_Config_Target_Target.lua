@@ -72,6 +72,12 @@ function Perl_Config_Target_Target_Set_Values()
 		Perl_Config_Target_Target_Frame_CheckButton3:SetChecked(nil);
 	end
 
+	if (vartable["locked"] == 1) then
+		Perl_Config_Target_Target_Frame_CheckButton5:SetChecked(1);
+	else
+		Perl_Config_Target_Target_Frame_CheckButton5:SetChecked(nil);
+	end
+
 	if (vartable["showtotbuffs"] == 1) then
 		Perl_Config_Target_Target_Frame_CheckButton14:SetChecked(1);
 	else
@@ -108,10 +114,10 @@ function Perl_Config_Target_Target_Set_Values()
 		Perl_Config_Target_Target_Frame_CheckButton19:SetChecked(nil);
 	end
 
-	if (vartable["locked"] == 1) then
-		Perl_Config_Target_Target_Frame_CheckButton5:SetChecked(1);
+	if (vartable["classcolorednames"] == 1) then
+		Perl_Config_Target_Target_Frame_CheckButton20:SetChecked(1);
 	else
-		Perl_Config_Target_Target_Frame_CheckButton5:SetChecked(nil);
+		Perl_Config_Target_Target_Frame_CheckButton20:SetChecked(nil);
 	end
 
 	Perl_Config_Target_Target_Frame_Slider1Low:SetText("Small");
@@ -210,6 +216,14 @@ function Perl_Config_Target_Target_Class_Buffs_Update()
 		Perl_Target_Target_Set_Class_Buffs(1);
 	else
 		Perl_Target_Target_Set_Class_Buffs(0);
+	end
+end
+
+function Perl_Config_Target_Target_Class_Colored_Names_Update()
+	if (Perl_Config_Target_Target_Frame_CheckButton20:GetChecked() == 1) then
+		Perl_Target_Target_Set_Class_Colored_Names(1);
+	else
+		Perl_Target_Target_Set_Class_Colored_Names(0);
 	end
 end
 

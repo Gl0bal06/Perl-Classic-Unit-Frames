@@ -29,6 +29,7 @@ local hidebuffbackground = 0;	-- buff and debuff backgrounds are shown by defaul
 local shortbars = 0;		-- Health/Power/Experience bars are all normal length
 local healermode = 0;		-- nurfed unit frame style
 local soundtargetchange = 0;	-- sound when changing targets is off by default
+local displaycastablebuffs = 0;	-- display all buffs by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -838,7 +839,7 @@ function Perl_Target_Update_PvP_Status_Icon()
 end
 
 function Perl_Target_Update_Text_Color()
-	if (UnitIsPlayer("target") or UnitPlayerControlled("target")) then		-- is it a player
+	if (UnitPlayerControlled("target")) then					-- is it a player
 		if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
 			-- Hostile players are red
 			if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
@@ -1178,6 +1179,15 @@ function Perl_Target_Set_Debuffs(newdebuffnumber)
 	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
 end
 
+function Perl_Target_Set_Class_Buffs(newvalue)
+	if (newvalue ~= nil) then
+		displaycastablebuffs = newvalue;
+	end
+	Perl_Target_UpdateVars();
+	Perl_Target_Reset_Buffs();	-- Reset the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
+end
+
 function Perl_Target_Set_Class_Icon(newvalue)
 	showclassicon = newvalue;
 	Perl_Target_UpdateVars();
@@ -1360,6 +1370,7 @@ function Perl_Target_GetVars()
 	shortbars = Perl_Target_Config[UnitName("player")]["ShortBars"];
 	healermode = Perl_Target_Config[UnitName("player")]["HealerMode"];
 	soundtargetchange = Perl_Target_Config[UnitName("player")]["SoundTargetChange"];
+	displaycastablebuffs = Perl_Target_Config[UnitName("player")]["DisplayCastableBuffs"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1436,6 +1447,9 @@ function Perl_Target_GetVars()
 	if (soundtargetchange == nil) then
 		soundtargetchange = 0;
 	end
+	if (displaycastablebuffs == nil) then
+		displaycastablebuffs = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1463,6 +1477,7 @@ function Perl_Target_GetVars()
 		["shortbars"] = shortbars,
 		["healermode"] = healermode,
 		["soundtargetchange"] = soundtargetchange,
+		["displaycastablebuffs"] = displaycastablebuffs,
 	}
 	return vars;
 end
@@ -1596,6 +1611,11 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				soundtargetchange = nil;
 			end
+			if (vartable["Global Settings"]["DisplayCastableBuffs"] ~= nil) then
+				displaycastablebuffs = vartable["Global Settings"]["DisplayCastableBuffs"];
+			else
+				displaycastablebuffs = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1674,6 +1694,9 @@ function Perl_Target_UpdateVars(vartable)
 		if (soundtargetchange == nil) then
 			soundtargetchange = 0;
 		end
+		if (displaycastablebuffs == nil) then
+			displaycastablebuffs = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();		-- Reset the buff icons
@@ -1715,6 +1738,7 @@ function Perl_Target_UpdateVars(vartable)
 		["ShortBars"] = shortbars,
 		["HealerMode"] = healermode,
 		["SoundTargetChange"] = soundtargetchange,
+		["DisplayCastableBuffs"] = displaycastablebuffs,
 	};
 end
 
@@ -1729,48 +1753,48 @@ function Perl_Target_Buff_UpdateAll()
 			Perl_Target_Buff_UpdateCPMeter();
 		end
 
-		local numBuffs = 0;									-- Buff counter for correct layout
-		local button, buffCount, buffTexture, buffApplications;					-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
-		for buffnum=1,numbuffsshown do								-- Start main buff loop
-			buffTexture, buffApplications = UnitBuff("target", buffnum);			-- Get the texture and buff stacking information if any
-			button = getglobal("Perl_Target_Buff"..buffnum);				-- Create the main icon for the buff
-			if (buffTexture) then								-- If there is a valid texture, proceed with buff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Hide();			-- Hide the debuff border
-				buffCount = getglobal(button:GetName().."Count");			-- Declare the buff counting text variable
+		local numBuffs = 0;											-- Buff counter for correct layout
+		local button, buffCount, buffTexture, buffApplications;							-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		for buffnum=1,numbuffsshown do										-- Start main buff loop
+			buffTexture, buffApplications = UnitBuff("target", buffnum, displaycastablebuffs);		-- Get the texture and buff stacking information if any
+			button = getglobal("Perl_Target_Buff"..buffnum);						-- Create the main icon for the buff
+			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Hide();					-- Hide the debuff border
+				buffCount = getglobal(button:GetName().."Count");					-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
-					buffCount:Show();						-- Show the text
+					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
+					buffCount:Show();								-- Show the text
 				else
-					buffCount:Hide();						-- Hide the text if equal to 0
+					buffCount:Hide();								-- Hide the text if equal to 0
 				end
-				numBuffs = numBuffs + 1;						-- Increment the buff counter
-				button:Show();								-- Show the final buff icon
+				numBuffs = numBuffs + 1;								-- Increment the buff counter
+				button:Show();										-- Show the final buff icon
 			else
-				button:Hide();								-- Hide the icon since there isn't a buff in this position
+				button:Hide();										-- Hide the icon since there isn't a buff in this position
 			end
-		end											-- End main buff loop
+		end													-- End main buff loop
 
-		local numDebuffs = 0;									-- Debuff counter for correct layout
-		for debuffnum=1,numdebuffsshown do							-- Start main debuff loop
-			buffTexture, buffApplications = UnitDebuff("target", debuffnum);		-- Get the texture and debuff stacking information if any
-			button = getglobal("Perl_Target_Debuff"..debuffnum);				-- Create the main icon for the debuff
-			if (buffTexture) then								-- If there is a valid texture, proceed with debuff icon creation
-				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
-				getglobal(button:GetName().."DebuffBorder"):Show();			-- Show the debuff border
-				buffCount = getglobal(button:GetName().."Count");			-- Declare the debuff counting text variable
+		local numDebuffs = 0;											-- Debuff counter for correct layout
+		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
+			buffTexture, buffApplications = UnitDebuff("target", debuffnum, displaycastablebuffs);		-- Get the texture and debuff stacking information if any
+			button = getglobal("Perl_Target_Debuff"..debuffnum);						-- Create the main icon for the debuff
+			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Show();					-- Show the debuff border
+				buffCount = getglobal(button:GetName().."Count");					-- Declare the debuff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
-					buffCount:Show();						-- Show the text
+					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
+					buffCount:Show();								-- Show the text
 				else
-					buffCount:Hide();						-- Hide the text if equal to 0
+					buffCount:Hide();								-- Hide the text if equal to 0
 				end
-				numDebuffs = numDebuffs + 1;						-- Increment the debuff counter
-				button:Show();								-- Show the final debuff icon
+				numDebuffs = numDebuffs + 1;								-- Increment the debuff counter
+				button:Show();										-- Show the final debuff icon
 			else
-				button:Hide();								-- Hide the icon since there isn't a debuff in this position
+				button:Hide();										-- Hide the icon since there isn't a debuff in this position
 			end
-		end											-- End main debuff loop
+		end													-- End main debuff loop
 
 		if (numBuffs == 0) then
 			Perl_Target_BuffFrame:Hide();
@@ -1919,9 +1943,9 @@ end
 function Perl_Target_SetBuffTooltip()
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
 	if (this:GetID() > 16) then
-		GameTooltip:SetUnitDebuff("target", this:GetID()-16);
+		GameTooltip:SetUnitDebuff("target", this:GetID()-16, displaycastablebuffs);
 	else
-		GameTooltip:SetUnitBuff("target", this:GetID());
+		GameTooltip:SetUnitBuff("target", this:GetID(), displaycastablebuffs);
 	end
 end
 
@@ -1964,9 +1988,11 @@ function Perl_Target_MouseClick(button)
 			if (not string.find(GetMouseFocus():GetName(), "Name")) then
 				CastParty_OnClickByUnit(button, "target");
 			end
-		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-			if (not string.find(GetMouseFocus():GetName(), "Name")) then
-				Genesis_MouseHeal("target", button);
+		elseif (Genesis_MouseHeal) then
+			if (IsControlKeyDown() or IsShiftKeyDown()) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					Genesis_MouseHeal("target", button);
+				end
 			end
 		elseif (CH_Config) then
 			if (CH_Config.PCUFEnabled) then
@@ -1980,6 +2006,8 @@ function Perl_Target_MouseClick(button)
 					local KeyDownType = SmartHeal:GetClickHealButton();
 					if(KeyDownType and KeyDownType ~= "undetermined") then
 						SmartHeal:ClickHeal(KeyDownType..button, "target");
+					else
+						SmartHeal:DefaultClick(button, "target");
 					end
 				end
 			end
@@ -2070,8 +2098,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.70",
-			releaseDate = "June 6, 2006",
+			version = "Version 0.71",
+			releaseDate = "June 13, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

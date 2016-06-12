@@ -206,12 +206,33 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton3" inherits="UICheckButtonTemplate" id="3">
+			<CheckButton name="$parent_CheckButton20" inherits="UICheckButtonTemplate" id="20">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton16">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Class Colored Names");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Class_Colored_Names_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton3" inherits="UICheckButtonTemplate" id="3">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton20">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>

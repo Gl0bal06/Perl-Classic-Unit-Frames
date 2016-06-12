@@ -14,12 +14,13 @@ function Perl_Config_All_Set_Values()
 		Perl_Config_All_Frame_CheckButton4:SetChecked(nil);
 		Perl_Config_All_Frame_CheckButton5:SetChecked(nil);
 		Perl_Config_All_Frame_CheckButton6:SetChecked(nil);
+		Perl_Config_All_Frame_CheckButton7:SetChecked(nil);
 
 		local num = vartable["texture"];
 		if (num == 0) then
-			num = 6;
+			num = 7;
 		end
-		Perl_Config_All_Frame_CheckButton6:SetChecked(nil);
+		Perl_Config_All_Frame_CheckButton7:SetChecked(nil);
 		getglobal("Perl_Config_All_Frame_CheckButton"..num):SetChecked(1);
 	end
 
@@ -61,10 +62,10 @@ function Perl_Config_All_Set_Values()
 end
 
 function Perl_Config_All_Texture_Update(texturenum)
-	if (Perl_Config_All_Frame_CheckButton1:GetChecked() == 1 or Perl_Config_All_Frame_CheckButton2:GetChecked() == 1 or Perl_Config_All_Frame_CheckButton3:GetChecked() == 1 or Perl_Config_All_Frame_CheckButton4:GetChecked() == 1 or Perl_Config_All_Frame_CheckButton5:GetChecked() == 1) then
+	if (Perl_Config_All_Frame_CheckButton1:GetChecked() == 1 or Perl_Config_All_Frame_CheckButton2:GetChecked() == 1 or Perl_Config_All_Frame_CheckButton3:GetChecked() == 1 or Perl_Config_All_Frame_CheckButton4:GetChecked() == 1 or Perl_Config_All_Frame_CheckButton5:GetChecked() == 1 or Perl_Config_All_Frame_CheckButton6:GetChecked() == 1) then
 		-- do nothing
 	else
-		Perl_Config_All_Frame_CheckButton6:SetChecked(1);
+		Perl_Config_All_Frame_CheckButton7:SetChecked(1);
 		texturenum = 0;
 	end
 
@@ -113,9 +114,9 @@ function Perl_Config_All_Set_Scale(value)
 	end
 
 	if (floor(value+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-		Perl_Config_All_Frame_CheckButton7:SetChecked(1);
+		Perl_Config_All_Frame_CheckButton12:SetChecked(1);
 	else
-		Perl_Config_All_Frame_CheckButton7:SetChecked(nil);
+		Perl_Config_All_Frame_CheckButton12:SetChecked(nil);
 	end
 
 	if (Perl_CombatDisplay_Frame) then

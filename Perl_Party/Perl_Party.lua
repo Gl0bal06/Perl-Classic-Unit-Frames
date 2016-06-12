@@ -25,7 +25,7 @@ local debuffsize = 16;		-- default debuff size is 16
 local numbuffsshown = 16;	-- buff row is 16 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
 local classcolorednames = 0;	-- names are colored based on pvp status by default
-local shortbars = 1;		-- Health/Power/Experience bars are all normal length
+local shortbars = 0;		-- Health/Power/Experience bars are all normal length
 local hideclasslevelframe = 0;	-- Showing the class icon and level frame by default
 
 -- Default Local Variables
@@ -874,6 +874,16 @@ function Perl_Party_Update_PvP_Status()				-- Modeled after 1.9 code
 		getglobal(this:GetName().."_NameFrame_PVPStatus"):Hide();								-- Hide the icon
 	end
 
+	if (not UnitPlayerControlled(partyid)) then											-- is it a player (added this check for charmed party members)
+		local reaction = UnitReaction(partyid, "player");
+		if (reaction) then
+			r = UnitReactionColor[reaction].r;
+			g = UnitReactionColor[reaction].g;
+			b = UnitReactionColor[reaction].b;
+			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(r, g, b);
+		end
+	end
+
 	if (classcolorednames == 1) then
 		if (UnitClass(partyid) == PERL_LOCALIZED_WARRIOR) then
 			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.78, 0.61, 0.43);
@@ -1233,7 +1243,11 @@ function Perl_Party_Force_Update()
 		end
 
 		-- Color their name if PvP flagged
-		if (UnitIsPVP(partyid)) then
+		if (UnitIsPVPFreeForAll(partyid)) then
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0,1,0);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_PVPStatus"):SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
+			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_PVPStatus"):Show();
+		elseif (factionGroup and UnitIsPVP(partyid)) then
 			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0,1,0);
 			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_PVPStatus"):SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
 			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_PVPStatus"):Show();
@@ -1242,25 +1256,32 @@ function Perl_Party_Force_Update()
 			getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_PVPStatus"):Hide();
 		end
 
+		if (not UnitPlayerControlled(partyid)) then
+			local reaction = UnitReaction(partyid, "player");
+			if (reaction) then
+				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(UnitReactionColor[reaction].r, UnitReactionColor[reaction].g, UnitReactionColor[reaction].b);
+			end
+		end
+
 		-- Color their name if Class Colored Names is on
 		if (classcolorednames == 1) then
-			if UnitClass(partyid) == PERL_LOCALIZED_WARRIOR then
+			if (UnitClass(partyid) == PERL_LOCALIZED_WARRIOR) then
 				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.78, 0.61, 0.43);
-			elseif UnitClass(partyid) == PERL_LOCALIZED_MAGE then
+			elseif (UnitClass(partyid) == PERL_LOCALIZED_MAGE) then
 				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.41, 0.8, 0.94);
-			elseif UnitClass(partyid) == PERL_LOCALIZED_ROGUE then
+			elseif (UnitClass(partyid) == PERL_LOCALIZED_ROGUE) then
 				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(1, 0.96, 0.41);
-			elseif UnitClass(partyid) == PERL_LOCALIZED_DRUID then
+			elseif (UnitClass(partyid) == PERL_LOCALIZED_DRUID) then
 				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(1, 0.49, 0.04);
-			elseif UnitClass(partyid) == PERL_LOCALIZED_HUNTER then
+			elseif (UnitClass(partyid) == PERL_LOCALIZED_HUNTER) then
 				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.67, 0.83, 0.45);
-			elseif UnitClass(partyid) == PERL_LOCALIZED_SHAMAN then
+			elseif (UnitClass(partyid) == PERL_LOCALIZED_SHAMAN) then
 				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.96, 0.55, 0.73);
-			elseif UnitClass(partyid) == PERL_LOCALIZED_PRIEST then
+			elseif (UnitClass(partyid) == PERL_LOCALIZED_PRIEST) then
 				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(1, 1, 1);
-			elseif UnitClass(partyid) == PERL_LOCALIZED_WARLOCK then
+			elseif (UnitClass(partyid) == PERL_LOCALIZED_WARLOCK) then
 				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.58, 0.51, 0.79);
-			elseif UnitClass(partyid) == PERL_LOCALIZED_PALADIN then
+			elseif (UnitClass(partyid) == PERL_LOCALIZED_PALADIN) then
 				getglobal("Perl_Party_MemberFrame"..partynum.."_NameFrame_NameBarText"):SetTextColor(0.96, 0.55, 0.73);
 			end
 		end
@@ -2470,9 +2491,11 @@ function Perl_Party_MouseClick(button)
 			if (not string.find(GetMouseFocus():GetName(), "Name")) then
 				CastParty_OnClickByUnit(button, "party"..id);
 			end
-		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-			if (not string.find(GetMouseFocus():GetName(), "Name")) then
-				Genesis_MouseHeal("party"..id, button);
+		elseif (Genesis_MouseHeal) then
+			if (IsControlKeyDown() or IsShiftKeyDown()) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					Genesis_MouseHeal("party"..id, button);
+				end
 			end
 		elseif (CH_Config) then
 			if (CH_Config.PCUFEnabled) then
@@ -2486,6 +2509,8 @@ function Perl_Party_MouseClick(button)
 					local KeyDownType = SmartHeal:GetClickHealButton();
 					if(KeyDownType and KeyDownType ~= "undetermined") then
 						SmartHeal:ClickHeal(KeyDownType..button, "party"..id);
+					else
+						SmartHeal:DefaultClick(button, "party"..id);
 					end
 				end
 			end
@@ -2563,9 +2588,11 @@ function Perl_Party_Pet_MouseClick(button)
 			if (not string.find(GetMouseFocus():GetName(), "Name")) then
 				CastParty_OnClickByUnit(button, "partypet"..id);
 			end
-		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-			if (not string.find(GetMouseFocus():GetName(), "Name")) then
-				Genesis_MouseHeal("partypet"..id, button);
+		elseif (Genesis_MouseHeal) then
+			if (IsControlKeyDown() or IsShiftKeyDown()) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					Genesis_MouseHeal("partypet"..id, button);
+				end
 			end
 		elseif (CH_Config) then
 			if (CH_Config.PCUFEnabled) then
@@ -2579,6 +2606,8 @@ function Perl_Party_Pet_MouseClick(button)
 					local KeyDownType = SmartHeal:GetClickHealButton();
 					if(KeyDownType and KeyDownType ~= "undetermined") then
 						SmartHeal:ClickHeal(KeyDownType..button, "partypet"..id);
+					else
+						SmartHeal:DefaultClick(button, "partypet"..id);
 					end
 				end
 			end
@@ -2644,8 +2673,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.70",
-			releaseDate = "June 6, 2006",
+			version = "Version 0.71",
+			releaseDate = "June 13, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

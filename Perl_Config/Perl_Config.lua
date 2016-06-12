@@ -188,6 +188,12 @@ function Perl_Config_Set_Localization()
 		PERL_LOCALIZED_CIVILIAN = "민간인";
 		PERL_LOCALIZED_CREATURE = "동물";
 		PERL_LOCALIZED_NOTSPECIFIED = "무엇인가";
+
+		PERL_LOCALIZED_BUFF_CURSE = "저주";
+		PERL_LOCALIZED_BUFF_DISEASE = "질병";
+		PERL_LOCALIZED_BUFF_MAGIC = "마법";
+		PERL_LOCALIZED_BUFF_NONE = "무속성";
+		PERL_LOCALIZED_BUFF_POISON = "독";
 	end
 
 	if (GetLocale() == "zhCN") then
@@ -234,10 +240,10 @@ function Perl_Config_Set_Texture(newvalue)
 	end
 
 	local texturename;
-	if (texture ~= 0) then
-		texturename = "Interface\\AddOns\\Perl_Config\\Perl_StatusBar"..texture..".tga";
-	else
+	if (texture == 0) then
 		texturename = "Interface\\TargetingFrame\\UI-StatusBar";
+	else
+		texturename = "Interface\\AddOns\\Perl_Config\\Perl_StatusBar"..texture..".tga";
 	end
 
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
@@ -807,6 +813,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShortBars"] = vartable["shortbars"],
 			["HealerMode"] = vartable["healermode"],
 			["SoundTargetChange"] = vartable["soundtargetchange"],
+			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
 		};
 	end
 
@@ -832,6 +839,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShowToTDebuffs"] = vartable["showtotdebuffs"],
 			["ShowToToTDebuffs"] = vartable["showtototdebuffs"],
 			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
+			["ClassColoredNames"] = vartable["classcolorednames"],
 		};
 	end
 end
@@ -1351,8 +1359,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.70",
-			releaseDate = "June 6, 2006",
+			version = "Version 0.71",
+			releaseDate = "June 13, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

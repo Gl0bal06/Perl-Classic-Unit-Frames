@@ -1182,8 +1182,10 @@ function Perl_CombatDisplay_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (CastPartyConfig) then
 			CastParty_OnClickByUnit(button, "player");
-		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-			Genesis_MouseHeal("player", button);
+		elseif (Genesis_MouseHeal) then
+			if (IsControlKeyDown() or IsShiftKeyDown()) then
+				Genesis_MouseHeal("player", button);
+			end
 		elseif (CH_Config) then
 			if (CH_Config.PCUFEnabled) then
 				CH_UnitClicked("player", button);
@@ -1193,6 +1195,8 @@ function Perl_CombatDisplay_MouseClick(button)
 				local KeyDownType = SmartHeal:GetClickHealButton();
 				if(KeyDownType and KeyDownType ~= "undetermined") then
 					SmartHeal:ClickHeal(KeyDownType..button, "player");
+				else
+					SmartHeal:DefaultClick(button, "player");
 				end
 			end
 		else
@@ -1287,8 +1291,10 @@ function Perl_CombatDisplay_Target_MouseClick(button)
 	if (PCUF_CASTPARTYSUPPORT == 1) then
 		if (CastPartyConfig) then
 			CastParty_OnClickByUnit(button, "target");
-		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-			Genesis_MouseHeal("target", button);
+		elseif (Genesis_MouseHeal) then
+			if (IsControlKeyDown() or IsShiftKeyDown()) then
+				Genesis_MouseHeal("target", button);
+			end
 		elseif (CH_Config) then
 			if (CH_Config.PCUFEnabled) then
 				CH_UnitClicked("target", button);
@@ -1298,6 +1304,8 @@ function Perl_CombatDisplay_Target_MouseClick(button)
 				local KeyDownType = SmartHeal:GetClickHealButton();
 				if(KeyDownType and KeyDownType ~= "undetermined") then
 					SmartHeal:ClickHeal(KeyDownType..button, "target");
+				else
+					SmartHeal:DefaultClick(button, "target");
 				end
 			end
 		else
@@ -1367,8 +1375,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.70",
-			releaseDate = "June 6, 2006",
+			version = "Version 0.71",
+			releaseDate = "June 13, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -19,6 +19,7 @@ local hidepowerbars = 0;	-- Power bars are shown by default
 local showtotdebuffs = 0;	-- ToT debuffs are off by default
 local showtototdebuffs = 0;	-- ToToT debuffs are off by default
 local displaycastablebuffs = 0;	-- display all buffs by default
+local classcolorednames = 0;	-- names are colored based on pvp status by default
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
@@ -194,7 +195,7 @@ function Perl_Target_Target_OnUpdate(arg1)
 			-- End: Set the name
 
 			-- Begin: Set the name text color
-			if (UnitIsPlayer("targettarget") or UnitPlayerControlled("targettarget")) then		-- is it a player
+			if (UnitPlayerControlled("targettarget")) then		-- is it a player
 				if (UnitCanAttack("targettarget", "player")) then				-- are we in an enemy controlled zone
 					-- Hostile players are red
 					if (not UnitCanAttack("player", "targettarget")) then			-- enemy is not pvp enabled
@@ -234,6 +235,30 @@ function Perl_Target_Target_OnUpdate(arg1)
 					Perl_Target_Target_NameBarText:SetTextColor(r, g, b);
 				else
 					Perl_Target_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+				end
+			end
+
+			if (classcolorednames == 1) then
+				if (UnitIsPlayer("targettarget")) then
+					if (UnitClass("targettarget") == PERL_LOCALIZED_WARRIOR) then
+						Perl_Target_Target_NameBarText:SetTextColor(0.78, 0.61, 0.43);
+					elseif (UnitClass("targettarget") == PERL_LOCALIZED_MAGE) then
+						Perl_Target_Target_NameBarText:SetTextColor(0.41, 0.8, 0.94);
+					elseif (UnitClass("targettarget") == PERL_LOCALIZED_ROGUE) then
+						Perl_Target_Target_NameBarText:SetTextColor(1, 0.96, 0.41);
+					elseif (UnitClass("targettarget") == PERL_LOCALIZED_DRUID) then
+						Perl_Target_Target_NameBarText:SetTextColor(1, 0.49, 0.04);
+					elseif (UnitClass("targettarget") == PERL_LOCALIZED_HUNTER) then
+						Perl_Target_Target_NameBarText:SetTextColor(0.67, 0.83, 0.45);
+					elseif (UnitClass("targettarget") == PERL_LOCALIZED_SHAMAN) then
+						Perl_Target_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+					elseif (UnitClass("targettarget") == PERL_LOCALIZED_PRIEST) then
+						Perl_Target_Target_NameBarText:SetTextColor(1, 1, 1);
+					elseif (UnitClass("targettarget") == PERL_LOCALIZED_WARLOCK) then
+						Perl_Target_Target_NameBarText:SetTextColor(0.58, 0.51, 0.79);
+					elseif (UnitClass("targettarget") == PERL_LOCALIZED_PALADIN) then
+						Perl_Target_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+					end
 				end
 			end
 			-- End: Set the name text color
@@ -413,7 +438,7 @@ function Perl_Target_Target_OnUpdate(arg1)
 			-- End: Set the name
 
 			-- Begin: Set the name text color
-			if (UnitIsPlayer("targettargettarget") or UnitPlayerControlled("targettargettarget")) then	-- is it a player
+			if (UnitPlayerControlled("targettargettarget")) then	-- is it a player
 				if (UnitCanAttack("targettargettarget", "player")) then					-- are we in an enemy controlled zone
 					-- Hostile players are red
 					if (not UnitCanAttack("player", "targettargettarget")) then			-- enemy is not pvp enabled
@@ -454,6 +479,30 @@ function Perl_Target_Target_OnUpdate(arg1)
 					Perl_Target_Target_Target_NameBarText:SetTextColor(r, g, b);
 				else
 					Perl_Target_Target_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
+				end
+			end
+
+			if (classcolorednames == 1) then
+				if (UnitIsPlayer("targettargettarget")) then
+					if (UnitClass("targettargettarget") == PERL_LOCALIZED_WARRIOR) then
+						Perl_Target_Target_Target_NameBarText:SetTextColor(0.78, 0.61, 0.43);
+					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_MAGE) then
+						Perl_Target_Target_Target_NameBarText:SetTextColor(0.41, 0.8, 0.94);
+					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_ROGUE) then
+						Perl_Target_Target_Target_NameBarText:SetTextColor(1, 0.96, 0.41);
+					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_DRUID) then
+						Perl_Target_Target_Target_NameBarText:SetTextColor(1, 0.49, 0.04);
+					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_HUNTER) then
+						Perl_Target_Target_Target_NameBarText:SetTextColor(0.67, 0.83, 0.45);
+					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_SHAMAN) then
+						Perl_Target_Target_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_PRIEST) then
+						Perl_Target_Target_Target_NameBarText:SetTextColor(1, 1, 1);
+					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_WARLOCK) then
+						Perl_Target_Target_Target_NameBarText:SetTextColor(0.58, 0.51, 0.79);
+					elseif (UnitClass("targettargettarget") == PERL_LOCALIZED_PALADIN) then
+						Perl_Target_Target_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+					end
 				end
 			end
 			-- End: Set the name text color
@@ -1221,6 +1270,11 @@ function Perl_Target_Target_Set_Hide_Power_Bars(newvalue)
 	Perl_Target_Target_UpdateVars();
 end
 
+function Perl_Target_Target_Set_Class_Colored_Names(newvalue)
+	classcolorednames = newvalue;
+	Perl_Target_Target_UpdateVars();
+end
+
 function Perl_Target_Target_Set_Class_Buffs(newvalue)
 	displaycastablebuffs = newvalue;
 	Perl_Target_Target_UpdateVars();
@@ -1308,6 +1362,7 @@ function Perl_Target_Target_GetVars()
 	showtotdebuffs = Perl_Target_Target_Config[UnitName("player")]["ShowToTDebuffs"];
 	showtototdebuffs = Perl_Target_Target_Config[UnitName("player")]["ShowToToTDebuffs"];
 	displaycastablebuffs = Perl_Target_Target_Config[UnitName("player")]["DisplayCastableBuffs"];
+	classcolorednames = Perl_Target_Target_Config[UnitName("player")]["ClassColoredNames"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1354,6 +1409,9 @@ function Perl_Target_Target_GetVars()
 	if (displaycastablebuffs == nil) then
 		displaycastablebuffs = 0;
 	end
+	if (classcolorednames == nil) then
+		classcolorednames = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1371,6 +1429,7 @@ function Perl_Target_Target_GetVars()
 		["showtotdebuffs"] = showtotdebuffs,
 		["showtototdebuffs"] = showtototdebuffs,
 		["displaycastablebuffs"] = displaycastablebuffs,
+		["classcolorednames"] = classcolorednames,
 	}
 	return vars;
 end
@@ -1454,6 +1513,11 @@ function Perl_Target_Target_UpdateVars(vartable)
 			else
 				displaycastablebuffs = nil;
 			end
+			if (vartable["Global Settings"]["ClassColoredNames"] ~= nil) then
+				classcolorednames = vartable["Global Settings"]["ClassColoredNames"];
+			else
+				classcolorednames = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1502,6 +1566,9 @@ function Perl_Target_Target_UpdateVars(vartable)
 		if (displaycastablebuffs == nil) then
 			displaycastablebuffs = 0;
 		end
+		if (classcolorednames == nil) then
+			classcolorednames = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Target_Set_Scale();
@@ -1529,6 +1596,7 @@ function Perl_Target_Target_UpdateVars(vartable)
 		["ShowToTDebuffs"] = showtotdebuffs,
 		["ShowToToTDebuffs"] = showtototdebuffs,
 		["DisplayCastableBuffs"] = displaycastablebuffs,
+		["ClassColoredNames"] = classcolorednames,
 	};
 end
 
@@ -1572,9 +1640,11 @@ function Perl_Target_Target_MouseClick(button)
 			if (not string.find(GetMouseFocus():GetName(), "Name")) then
 				CastParty_OnClickByUnit(button, "targettarget");
 			end
-		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-			if (not string.find(GetMouseFocus():GetName(), "Name")) then
-				Genesis_MouseHeal("targettarget", button);
+		elseif (Genesis_MouseHeal) then
+			if (IsControlKeyDown() or IsShiftKeyDown()) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					Genesis_MouseHeal("targettarget", button);
+				end
 			end
 		elseif (CH_Config) then
 			if (CH_Config.PCUFEnabled) then
@@ -1588,6 +1658,8 @@ function Perl_Target_Target_MouseClick(button)
 					local KeyDownType = SmartHeal:GetClickHealButton();
 					if(KeyDownType and KeyDownType ~= "undetermined") then
 						SmartHeal:ClickHeal(KeyDownType..button, "targettarget");
+					else
+						SmartHeal:DefaultClick(button, "targettarget");
 					end
 				end
 			end
@@ -1684,9 +1756,11 @@ function Perl_Target_Target_Target_MouseClick(button)
 			if (not string.find(GetMouseFocus():GetName(), "Name")) then
 				CastParty_OnClickByUnit(button, "targettargettarget");
 			end
-		elseif (Genesis_MouseHeal and (IsControlKeyDown() or IsShiftKeyDown())) then
-			if (not string.find(GetMouseFocus():GetName(), "Name")) then
-				Genesis_MouseHeal("targettargettarget", button);
+		elseif (Genesis_MouseHeal) then
+			if (IsControlKeyDown() or IsShiftKeyDown()) then
+				if (not string.find(GetMouseFocus():GetName(), "Name")) then
+					Genesis_MouseHeal("targettargettarget", button);
+				end
 			end
 		elseif (CH_Config) then
 			if (CH_Config.PCUFEnabled) then
@@ -1700,6 +1774,8 @@ function Perl_Target_Target_Target_MouseClick(button)
 					local KeyDownType = SmartHeal:GetClickHealButton();
 					if(KeyDownType and KeyDownType ~= "undetermined") then
 						SmartHeal:ClickHeal(KeyDownType..button, "targettargettarget");
+					else
+						SmartHeal:DefaultClick(button, "targettargettarget");
 					end
 				end
 			end
@@ -1848,8 +1924,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "Version 0.70",
-			releaseDate = "June 6, 2006",
+			version = "Version 0.71",
+			releaseDate = "June 13, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
