@@ -180,7 +180,7 @@ function Perl_Player_Pet_Update_Health()
 	local pethealth = UnitHealth("pet");
 	local pethealthmax = UnitHealthMax("pet");
 
-	if (UnitIsDead("pet")) then				-- This prevents negative health
+	if (UnitIsDead("pet") or UnitIsGhost("pet")) then				-- This prevents negative health
 		pethealth = 0;
 	end
 
@@ -218,7 +218,7 @@ function Perl_Player_Pet_Update_Mana()
 	local petmana = UnitMana("pet");
 	local petmanamax = UnitManaMax("pet");
 
-	if (UnitIsDead("pet")) then				-- This prevents negative mana
+	if (UnitIsDead("pet") or UnitIsGhost("pet")) then				-- This prevents negative mana
 		petmana = 0;
 	end
 
@@ -693,8 +693,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.43",
-			releaseDate = "February 16, 2006",
+			version = "v0.44",
+			releaseDate = "February 17, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

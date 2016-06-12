@@ -80,7 +80,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-130"/>
+								<AbsDimension x="20" y="-120"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -189,6 +189,27 @@
 				</Scripts>
 			</CheckButton>
 
+			<CheckButton name="$parent_CheckButton11" inherits="UICheckButtonTemplate" id="11">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton4">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Display Percents");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Compact_Percent_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
 			<CheckButton name="$parent_CheckButton5" inherits="UICheckButtonTemplate" id="5">
 				<Size>
 					<AbsDimension x="20" y="20"/>
@@ -196,7 +217,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton4">
 						<Offset>
-							<AbsDimension x="0" y="-20"/>
+							<AbsDimension x="0" y="-40"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

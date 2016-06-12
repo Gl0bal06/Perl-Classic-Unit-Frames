@@ -100,7 +100,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="250" y="-140"/>
+								<AbsDimension x="250" y="-130"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -110,7 +110,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="250" y="-200"/>
+								<AbsDimension x="250" y="-190"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -219,6 +219,27 @@
 				</Scripts>
 			</CheckButton>
 
+			<CheckButton name="$parent_CheckButton11" inherits="UICheckButtonTemplate" id="11">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton4">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Display Percents");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Compact_Percent_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
 			<CheckButton name="$parent_CheckButton5" inherits="UICheckButtonTemplate" id="5">
 				<Size>
 					<AbsDimension x="20" y="20"/>
@@ -226,7 +247,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton4">
 						<Offset>
-							<AbsDimension x="0" y="-20"/>
+							<AbsDimension x="0" y="-40"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -240,33 +261,12 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton5">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Party Pets");
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Party_Pets_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
 			<CheckButton name="$parent_CheckButton7" inherits="UICheckButtonTemplate" id="7">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton6">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton5">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>
@@ -419,6 +419,27 @@
 				</Scripts>
 			</Slider>
 
+			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Misc_Text">
+						<Offset>
+							<AbsDimension x="215" y="-80"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Party Pets");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Pets_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
 			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
 				<Size>
 					<AbsDimension x="20" y="20"/>
@@ -426,7 +447,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Misc_Text">
 						<Offset>
-							<AbsDimension x="216" y="-100"/>
+							<AbsDimension x="215" y="-100"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

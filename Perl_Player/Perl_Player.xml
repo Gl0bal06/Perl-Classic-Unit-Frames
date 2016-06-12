@@ -148,7 +148,7 @@
 									</Offset>
 								</Anchor>
 							</Anchors>
-							<Color r="1" g="1" b="0" />
+							<Color r="1" g="1" b="0"/>
 						</Fontstring>
 					</Layer>
 				</Layers>
@@ -382,7 +382,7 @@
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<Color r="1" g="1" b="1" />
+									<Color r="1" g="1" b="1"/>
 								</Fontstring>
 								<Fontstring name="Perl_Player_HealthBarTextPercent" inherits="GameFontNormalSmall" text="Error!">
 									<Anchors>
@@ -392,7 +392,17 @@
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<Color r="1" g="1" b="1" />
+									<Color r="1" g="1" b="1"/>
+								</Fontstring>
+								<Fontstring name="Perl_Player_HealthBarTextCompactPercent" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="RIGHT">
+											<Offset>
+												<AbsDimension x="35" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1"/>
 								</Fontstring>
 							</Layer>
 						</Layers>
@@ -448,7 +458,7 @@
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<Color r="1" g="1" b="1" />
+									<Color r="1" g="1" b="1"/>
 								</Fontstring>
 								<Fontstring name="Perl_Player_ManaBarTextPercent" inherits="GameFontNormalSmall" text="Error!">
 									<Anchors>
@@ -458,7 +468,17 @@
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<Color r="1" g="1" b="1" />
+									<Color r="1" g="1" b="1"/>
+								</Fontstring>
+								<Fontstring name="Perl_Player_ManaBarTextCompactPercent" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="RIGHT">
+											<Offset>
+												<AbsDimension x="35" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1"/>
 								</Fontstring>
 							</Layer>
 						</Layers>
@@ -511,7 +531,7 @@
 											</Offset>
 										</Anchor>
 									</Anchors>
-									<Color r="1" g="1" b="1" />
+									<Color r="1" g="1" b="1"/>
 								</Fontstring>
 							</Layer>
 						</Layers>
@@ -553,13 +573,4 @@
 			</Frame>
 		</Frames>
 	</Frame>
-
-	<GameTooltip name="Perl_Player_Tooltip" hidden="true" parent="Perl_Player_Frame" inherits="GameTooltipTemplate">
-		<Scripts>
-			<OnLoad>
-				this:SetBackdropBorderColor(TOOLTIP_DEFAULT_COLOR.r, TOOLTIP_DEFAULT_COLOR.g, TOOLTIP_DEFAULT_COLOR.b);
-				this:SetBackdropColor(TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, TOOLTIP_DEFAULT_BACKGROUND_COLOR.b);
-			</OnLoad>
-		</Scripts>
-	</GameTooltip>
 </Ui>

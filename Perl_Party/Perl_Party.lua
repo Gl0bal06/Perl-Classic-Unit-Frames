@@ -16,6 +16,7 @@ local transparency = 1.0;	-- transparency for frames
 local bufflocation = 4;		-- default buff location
 local debufflocation = 1;	-- default debuff location
 local verticalalign = 1;	-- default alignment is vertically
+local compactpercent = 0;	-- percents are not shown in compact mode by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -79,7 +80,7 @@ end
 function Perl_Party_Script_OnEvent(event)				-- All this just to ensure party frames are hidden/shown on zoning
 	if (event == "PLAYER_ENTERING_WORLD") then
 		if (Initialized) then
-			Perl_Target_Set_Hidden();			-- Are we running a hidden mode?
+			Perl_Party_Set_Hidden();			-- Are we running a hidden mode?
 		end
 		return;
 	else
@@ -145,7 +146,7 @@ function Perl_Party_OnEvent(event)
 		return;
 	elseif (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
 		Perl_Party_Initialize();
-		Perl_Target_Set_Hidden();			-- Are we running a hidden mode?
+		Perl_Party_Set_Hidden();			-- Are we running a hidden mode?
 		return;
 	elseif (event == "ADDON_LOADED") then
 		if (arg1 == "Perl_Party") then
@@ -179,12 +180,6 @@ function Perl_Party_Initialize()
 	Perl_Party_Initialize_Frame_Color();
 	Perl_Party_Set_Localized_ClassIcons();
 	Perl_Party_Set_Transparency();
-
-	if (compactmode == 0) then	-- I'd usually put this in a method, but this is just easier for the party frames
-		getglobal(this:GetName().."_StatsFrame"):SetWidth(240);
-	else
-		getglobal(this:GetName().."_StatsFrame"):SetWidth(170);
-	end
 
 	-- Unregister the Blizzard frames via the 1.8 function
 	for num = 1, 4 do
@@ -252,14 +247,14 @@ function Perl_Party_MembersUpdate()
 	Perl_Party_Set_Scale();
 	Perl_Party_Update_PvP_Status();
 	Perl_Party_Update_Level();
-	Perl_Party_Set_Text_Positions();
+	Perl_Party_Set_Compact();		-- Perl_Party_Set_Text_Positions is also called from here
 	Perl_Party_Update_Health();
 	Perl_Party_Update_Mana();
 	Perl_Party_Update_Mana_Bar();
-	Perl_Party_Update_Leader();
-	Perl_Party_Update_Loot_Method();
 	Perl_Party_Update_Pet();		-- Call instead of Perl_Party_Set_Space to ensure spacing is correctly set for pets
 	Perl_Party_Update_Pet_Health();
+	Perl_Party_Update_Leader();
+	Perl_Party_Update_Loot_Method();
 	Perl_Party_Buff_UpdateAll();
 	HidePartyFrame();
 end
@@ -271,7 +266,7 @@ function Perl_Party_Update_Health()
 	local partyhealthmax = UnitHealthMax(partyid);
 	local partyhealthpercent = floor(partyhealth/partyhealthmax*100+0.5);
 
-	if (UnitIsDead(partyid)) then				-- This prevents negative health
+	if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then				-- This prevents negative health
 		partyhealth = 0;
 		partyhealthpercent = 0;
 	end
@@ -310,6 +305,7 @@ function Perl_Party_Update_Health()
 			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText(partyhealth.."/"..partyhealthmax);
 			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealthpercent.."%");
 		end
+		getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextCompactPercent"):SetText();						-- Hide the compact mode percent text in full mode
 	else
 		if (healermode == 1) then
 			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText("-"..partyhealthmax - partyhealth);
@@ -321,6 +317,12 @@ function Perl_Party_Update_Health()
 		else
 			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText();
 			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealth.."/"..partyhealthmax);
+		end
+
+		if (compactpercent == 1) then
+			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextCompactPercent"):SetText(partyhealthpercent.."%");
+		else
+			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextCompactPercent"):SetText();
 		end
 	end
 
@@ -346,7 +348,7 @@ function Perl_Party_Update_Mana()
 	local partymanamax = UnitManaMax(partyid);
 	local partymanapercent = floor(partymana/partymanamax*100+0.5);
 
-	if (UnitIsDead(partyid)) then				-- This prevents negative mana
+	if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then				-- This prevents negative mana
 		partymana = 0;
 		partymanapercent = 0;
 	end
@@ -370,6 +372,7 @@ function Perl_Party_Update_Mana()
 				getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymanapercent.."%");
 			end
 		end
+		getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextCompactPercent"):SetText();						-- Hide the compact mode percent text in full mode
 	else
 		if (healermode == 1) then
 			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarText"):SetText();
@@ -385,6 +388,12 @@ function Perl_Party_Update_Mana()
 			else
 				getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana.."/"..partymanamax);
 			end
+		end
+
+		if (compactpercent == 1) then
+			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextCompactPercent"):SetText(partymanapercent.."%");
+		else
+			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextCompactPercent"):SetText();
 		end
 	end
 end
@@ -437,6 +446,7 @@ function Perl_Party_Update_Pet()
 					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("0/0");
 					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0%");
 				end
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText();
 			else
 				if (healermode == 1) then
 					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-0");
@@ -448,6 +458,12 @@ function Perl_Party_Update_Pet()
 				else
 					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText();
 					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0/0");
+				end
+
+				if (compactpercent == 1) then
+					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText("0%");
+				else
+					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText();
 				end
 			end											-- End waste of code to keep it sane
 
@@ -530,7 +546,7 @@ function Perl_Party_Update_Pet_Health()
 		local partypethealthmax = UnitHealthMax("partypet"..id);
 		local partypethealthpercent = floor(partypethealth/partypethealthmax*100+0.5);
 
-		if (UnitIsDead("partypet"..id)) then				-- This prevents negative health
+		if (UnitIsDead("partypet"..id) or UnitIsGhost("partypet"..id)) then				-- This prevents negative health
 			partypethealth = 0;
 			partypethealthpercent = 0;
 		end
@@ -564,6 +580,7 @@ function Perl_Party_Update_Pet_Health()
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText(partypethealth.."/"..partypethealthmax);
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealthpercent.."%");
 			end
+			getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText();				-- Hide the compact mode percent text in full mode
 		else
 			if (healermode == 1) then
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-"..partypethealthmax - partypethealth);
@@ -575,6 +592,12 @@ function Perl_Party_Update_Pet_Health()
 			else
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText();
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealth.."/"..partypethealthmax);
+			end
+
+			if (compactpercent == 1) then
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText(partypethealthpercent.."%");
+			else
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText();
 			end
 		end
 
@@ -702,7 +725,7 @@ function Perl_Party_HealthShow()
 		local partyhealth = UnitHealth(partyid);
 		local partyhealthmax = UnitHealthMax(partyid);
 
-		if (UnitIsDead(partyid)) then				-- This prevents negative health
+		if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then				-- This prevents negative health
 			partyhealth = 0;
 		end
 
@@ -734,7 +757,7 @@ function Perl_Party_ManaShow()
 		local partymana = UnitMana(partyid);
 		local partymanamax = UnitManaMax(partyid);
 
-		if (UnitIsDead(partyid)) then				-- This prevents negative mana
+		if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then				-- This prevents negative mana
 			partymana = 0;
 		end
 
@@ -770,7 +793,7 @@ function Perl_Party_Pet_HealthShow()
 		local partypethealth = UnitHealth(partyid);
 		local partypethealthmax = UnitHealthMax(partyid);
 
-		if (UnitIsDead(partyid)) then				-- This prevents negative health
+		if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then				-- This prevents negative health
 			partypethealth = 0;
 		end
 
@@ -830,6 +853,9 @@ function Perl_Party_Update_Health_Mana()
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText(partypethealth.."/"..partypethealthmax);
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealthpercent.."%");
 				end
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextCompactPercent"):SetText();
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextCompactPercent"):SetText();
+				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText();
 			else
 				if (healermode == 1) then
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarText"):SetText("-"..partyhealthmax - partyhealth);
@@ -845,6 +871,16 @@ function Perl_Party_Update_Health_Mana()
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana.."/"..partymanamax);
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText();
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealth.."/"..partypethealthmax);
+				end
+
+				if (compactpercent == 1) then
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextCompactPercent"):SetText(partyhealthpercent.."%");
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextCompactPercent"):SetText(partymanapercent.."%");
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText(partypethealthpercent.."%");
+				else
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_HealthBar_HealthBarTextCompactPercent"):SetText();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_ManaBar_ManaBarTextCompactPercent"):SetText();
+					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_PetHealthBarTextCompactPercent"):SetText();
 				end
 			end
 		else
@@ -976,7 +1012,7 @@ function Perl_Party_Set_Space(number)
 	Perl_Party_UpdateVars();
 end
 
-function Perl_Target_Set_Hidden(newvalue)
+function Perl_Party_Set_Hidden(newvalue)
 	if (newvalue ~= nil) then
 		partyhidden = newvalue;
 		Perl_Party_UpdateVars();
@@ -1021,24 +1057,30 @@ function Perl_Target_Set_Hidden(newvalue)
 end
 
 function Perl_Party_Set_Compact(newvalue)
-	compactmode = newvalue;
-	Perl_Party_UpdateVars();
+	if (newvalue ~= nil) then
+		compactmode = newvalue;
+		Perl_Party_UpdateVars();
+	end
 
-	Perl_Party_Set_Text_Positions();	-- copied from below sort of, delete below when slash commands are removed
-	if (compactmode == 1) then
-		Perl_Party_MemberFrame1_StatsFrame:SetWidth(170);
-		Perl_Party_MemberFrame2_StatsFrame:SetWidth(170);
-		Perl_Party_MemberFrame3_StatsFrame:SetWidth(170);
-		Perl_Party_MemberFrame4_StatsFrame:SetWidth(170);
-		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying in |cffffffffCompact Mode|cffffff00.");
-	else
+	Perl_Party_Set_Text_Positions();
+	if (compactmode == 0) then
 		Perl_Party_MemberFrame1_StatsFrame:SetWidth(240);
 		Perl_Party_MemberFrame2_StatsFrame:SetWidth(240);
 		Perl_Party_MemberFrame3_StatsFrame:SetWidth(240);
 		Perl_Party_MemberFrame4_StatsFrame:SetWidth(240);
-		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now displaying in |cffffffffNormal Mode|cffffff00.");
+	else
+		if (compactpercent == 0) then
+			Perl_Party_MemberFrame1_StatsFrame:SetWidth(170);
+			Perl_Party_MemberFrame2_StatsFrame:SetWidth(170);
+			Perl_Party_MemberFrame3_StatsFrame:SetWidth(170);
+			Perl_Party_MemberFrame4_StatsFrame:SetWidth(170);
+		else
+			Perl_Party_MemberFrame1_StatsFrame:SetWidth(205);
+			Perl_Party_MemberFrame2_StatsFrame:SetWidth(205);
+			Perl_Party_MemberFrame3_StatsFrame:SetWidth(205);
+			Perl_Party_MemberFrame4_StatsFrame:SetWidth(205);
+		end
 	end
-	Perl_Party_Set_Text_Positions();
 	Perl_Party_Update_Health_Mana();
 	Perl_Party_Update_Buffs();
 end
@@ -1126,6 +1168,12 @@ function Perl_Party_Set_VerticalAlign(newvalue)
 	Perl_Party_Set_Space();
 end
 
+function Perl_Party_Set_Compact_Percent(newvalue)
+	compactpercent = newvalue;
+	Perl_Party_UpdateVars();
+	Perl_Party_Set_Compact();
+end
+
 function Perl_Party_Set_Buff_Location(newvalue)
 	if (newvalue ~= nil) then
 		bufflocation = newvalue;
@@ -1185,6 +1233,7 @@ function Perl_Party_GetVars()
 	bufflocation = Perl_Party_Config[UnitName("player")]["BuffLocation"];
 	debufflocation = Perl_Party_Config[UnitName("player")]["DebuffLocation"];
 	verticalalign = Perl_Party_Config[UnitName("player")]["VerticalAlign"];
+	compactpercent = Perl_Party_Config[UnitName("player")]["CompactPercent"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1222,6 +1271,9 @@ function Perl_Party_GetVars()
 	if (verticalalign == nil) then
 		verticalalign = 1;
 	end
+	if (compactpercent == nil) then
+		compactpercent = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1236,6 +1288,7 @@ function Perl_Party_GetVars()
 		["bufflocation"] = bufflocation,
 		["debufflocation"] = debufflocation,
 		["verticalalign"] = verticalalign,
+		["compactpercent"] = compactpercent,
 	}
 	return vars;
 end
@@ -1304,6 +1357,11 @@ function Perl_Party_UpdateVars(vartable)
 			else
 				verticalalign = nil;
 			end
+			if (vartable["Global Settings"]["CompactPercent"] ~= nil) then
+				compactpercent = vartable["Global Settings"]["CompactPercent"];
+			else
+				compactpercent = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1343,10 +1401,13 @@ function Perl_Party_UpdateVars(vartable)
 		if (verticalalign == nil) then
 			verticalalign = 1;
 		end
+		if (compactpercent == nil) then
+			compactpercent = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Party_Set_Space();				-- This probably isn't needed, but one extra call for this won't matter
-		Perl_Target_Set_Hidden(partyhidden);
+		Perl_Party_Set_Hidden(partyhidden);
 		Perl_Party_Set_Compact(compactmode);
 		Perl_Party_Set_Healer(healermode);
 		Perl_Party_Set_Pets(showpets);
@@ -1369,6 +1430,7 @@ function Perl_Party_UpdateVars(vartable)
 		["BuffLocation"] = bufflocation,
 		["DebuffLocation"] = debufflocation,
 		["VerticalAlign"] = verticalalign,
+		["CompactPercent"] = compactpercent,
 	};
 end
 
@@ -1578,8 +1640,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.43",
-			releaseDate = "February 16, 2006",
+			version = "v0.44",
+			releaseDate = "February 17, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

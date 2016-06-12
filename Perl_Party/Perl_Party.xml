@@ -376,6 +376,16 @@
 									</Anchors>
 									<Color r="1" g="1" b="1"/>
 								</Fontstring>
+								<Fontstring name="$parent_HealthBarTextCompactPercent" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="RIGHT">
+											<Offset>
+												<AbsDimension x="35" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1"/>
+								</Fontstring>
 							</Layer>
 						</Layers>
 					</StatusBar>
@@ -442,6 +452,16 @@
 									</Anchors>
 									<Color r="1" g="1" b="1"/>
 								</Fontstring>
+								<Fontstring name="$parent_ManaBarTextCompactPercent" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="RIGHT">
+											<Offset>
+												<AbsDimension x="35" y="0"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1"/>
+								</Fontstring>
 							</Layer>
 						</Layers>
 					</StatusBar>
@@ -503,6 +523,16 @@
 										<Anchor point="TOP" relativePoint="TOP">
 											<Offset>
 												<AbsDimension x="0" y="1"/>
+											</Offset>
+										</Anchor>
+									</Anchors>
+									<Color r="1" g="1" b="1"/>
+								</Fontstring>
+								<Fontstring name="$parent_PetHealthBarTextCompactPercent" inherits="GameFontNormalSmall" text="Error!">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="RIGHT">
+											<Offset>
+												<AbsDimension x="35" y="0"/>
 											</Offset>
 										</Anchor>
 									</Anchors>

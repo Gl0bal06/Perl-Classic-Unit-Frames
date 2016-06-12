@@ -13,6 +13,7 @@ local colorhealth = 0;		-- progressively colored health bars are off by default
 local healermode = 0;		-- nurfed unit frame style
 local transparency = 1;		-- transparency for frames
 local showportrait = 0;		-- portrait is hidden by default
+local compactpercent = 0;	-- percents are not shown in compact mode by default
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -219,7 +220,7 @@ function Perl_Player_Update_Health()
 	local playerhealthmax = UnitHealthMax("player");
 	local playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
 
-	if (UnitIsDead("player")) then				-- This prevents negative health
+	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative health
 		playerhealth = 0;
 		playerhealthpercent = 0;
 	end
@@ -258,6 +259,7 @@ function Perl_Player_Update_Health()
 			Perl_Player_HealthBarText:SetText(playerhealth.."/"..playerhealthmax);
 			Perl_Player_HealthBarTextPercent:SetText(playerhealthpercent .. "%");
 		end
+		Perl_Player_HealthBarTextCompactPercent:SetText();							-- Hide the compact mode percent text in full mode
 	else
 		if (healermode == 1) then
 			Perl_Player_HealthBarText:SetText("-"..playerhealthmax - playerhealth);
@@ -270,6 +272,12 @@ function Perl_Player_Update_Health()
 			Perl_Player_HealthBarText:SetText();
 			Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 		end
+
+		if (compactpercent == 1) then
+			Perl_Player_HealthBarTextCompactPercent:SetText(playerhealthpercent.."%");
+		else
+			Perl_Player_HealthBarTextCompactPercent:SetText();
+		end
 	end
 end
 
@@ -278,7 +286,7 @@ function Perl_Player_Update_Mana()
 	local playermanamax = UnitManaMax("player");
 	local playermanapercent = floor(playermana/playermanamax*100+0.5);
 
-	if (UnitIsDead("player")) then				-- This prevents negative mana
+	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
 		playermana = 0;
 		playermanapercent = 0;
 	end
@@ -306,6 +314,7 @@ function Perl_Player_Update_Mana()
 				Perl_Player_ManaBarTextPercent:SetText(playermanapercent.."%");
 			end
 		end
+		Perl_Player_ManaBarTextCompactPercent:SetText();							-- Hide the compact mode percent text in full mode
 	else
 		if (healermode == 1) then
 			if (mouseovermanaflag == 0) then
@@ -325,6 +334,12 @@ function Perl_Player_Update_Mana()
 			else
 				Perl_Player_ManaBarTextPercent:SetText(playermana.."/"..playermanamax);
 			end
+		end
+
+		if (compactpercent == 1) then
+			Perl_Player_ManaBarTextCompactPercent:SetText(playermanapercent.."%");
+		else
+			Perl_Player_ManaBarTextCompactPercent:SetText();
 		end
 	end
 end
@@ -482,12 +497,22 @@ function Perl_Player_Set_CompactMode()
 		Perl_Player_XPBarBG:SetWidth(220);
 		Perl_Player_StatsFrame:SetWidth(240);
 	else
-		Perl_Player_Update_Health();
-		Perl_Player_Update_Mana();
-		Perl_Player_XPBar:SetWidth(150);
-		Perl_Player_XPRestBar:SetWidth(150);
-		Perl_Player_XPBarBG:SetWidth(150);
-		Perl_Player_StatsFrame:SetWidth(170);
+		if (compactpercent == 0) then
+			Perl_Player_Update_Health();
+			Perl_Player_Update_Mana();
+			Perl_Player_XPBar:SetWidth(150);
+			Perl_Player_XPRestBar:SetWidth(150);
+			Perl_Player_XPBarBG:SetWidth(150);
+			Perl_Player_StatsFrame:SetWidth(170);
+		else
+			Perl_Player_Update_Health();
+			Perl_Player_Update_Mana();
+			Perl_Player_XPBar:SetWidth(185);
+			Perl_Player_XPRestBar:SetWidth(185);
+			Perl_Player_XPBarBG:SetWidth(185);
+			Perl_Player_StatsFrame:SetWidth(205);
+		end
+		
 	end
 end
 
@@ -517,7 +542,7 @@ function Perl_Player_HealthShow()
 		local playerhealth = UnitHealth("player");
 		local playerhealthmax = UnitHealthMax("player");
 
-		if (UnitIsDead("player")) then				-- This prevents negative health
+		if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative health
 			playerhealth = 0;
 		end
 
@@ -538,7 +563,7 @@ function Perl_Player_ManaShow()
 		local playermana = UnitMana("player");
 		local playermanamax = UnitManaMax("player");
 
-		if (UnitIsDead("player")) then				-- This prevents negative mana
+		if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
 			playermana = 0;
 		end
 
@@ -714,6 +739,15 @@ function Perl_Player_Set_Portrait(newvalue)
 	Perl_Player_Update_Portrait();
 end
 
+function Perl_Player_Set_Compact_Percent(newvalue)
+	compactpercent = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Set_Text_Positions();
+	Perl_Player_Set_CompactMode();
+	Perl_Player_Update_Health();
+	Perl_Player_Update_Mana();
+end
+
 function Perl_Player_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -747,6 +781,7 @@ function Perl_Player_GetVars()
 	healermode = Perl_Player_Config[UnitName("player")]["HealerMode"];
 	transparency = Perl_Player_Config[UnitName("player")]["Transparency"];
 	showportrait = Perl_Player_Config[UnitName("player")]["ShowPortrait"];
+	compactpercent = Perl_Player_Config[UnitName("player")]["CompactPercent"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -775,6 +810,9 @@ function Perl_Player_GetVars()
 	if (showportrait == nil) then
 		showportrait = 0;
 	end
+	if (compactpercent == nil) then
+		compactpercent = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -786,6 +824,7 @@ function Perl_Player_GetVars()
 		["healermode"] = healermode,
 		["transparency"] = transparency,
 		["showportrait"] = showportrait,
+		["compactpercent"] = compactpercent,
 	}
 	return vars;
 end
@@ -839,6 +878,11 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				showportrait = nil;
 			end
+			if (vartable["Global Settings"]["CompactPercent"] ~= nil) then
+				compactpercent = vartable["Global Settings"]["CompactPercent"];
+			else
+				compactpercent = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -869,6 +913,9 @@ function Perl_Player_UpdateVars(vartable)
 		if (showportrait == nil) then
 			showportrait = 0;
 		end
+		if (compactpercent == nil) then
+			compactpercent = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_XPBar_Display(xpbarstate);
@@ -876,6 +923,7 @@ function Perl_Player_UpdateVars(vartable)
 		Perl_Player_Set_Healer(healermode);
 		Perl_Player_Update_Raid_Group_Number();
 		Perl_Player_Update_Health();
+		Perl_Player_Update_Mana();
 		Perl_Player_Update_Portrait();
 		Perl_Player_Set_Scale();
 		Perl_Player_Set_Transparency();
@@ -891,6 +939,7 @@ function Perl_Player_UpdateVars(vartable)
 		["HealerMode"] = healermode,
 		["Transparency"] = transparency,
 		["ShowPortrait"] = showportrait,
+		["CompactPercent"] = compactpercent,
 	};
 end
 
@@ -1005,8 +1054,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.43",
-			releaseDate = "February 16, 2006",
+			version = "v0.44",
+			releaseDate = "February 17, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

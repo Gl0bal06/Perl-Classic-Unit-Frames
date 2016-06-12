@@ -294,7 +294,7 @@ function Perl_CombatDisplay_Update_Health()
 	local playerhealth = UnitHealth("player");
 	local playerhealthmax = UnitHealthMax("player");
 
-	if (UnitIsDead("player")) then				-- This prevents negative health
+	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative health
 		playerhealth = 0;
 	end
 
@@ -327,7 +327,7 @@ function Perl_CombatDisplay_Update_Mana()
 	local playermana = UnitMana("player");
 	local playermanamax = UnitManaMax("player");
 
-	if (UnitIsDead("player")) then				-- This prevents negative mana
+	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
 		playermana = 0;
 	end
 
@@ -400,7 +400,7 @@ function Perl_CombatDisplay_Target_Update_Health()
 	local targethealth = UnitHealth("target");
 	local targethealthmax = UnitHealthMax("target");
 
-	if (UnitIsDead("target")) then				-- This prevents negative health
+	if (UnitIsDead("target") or UnitIsGhost("target")) then				-- This prevents negative health
 		targethealth = 0;
 	end
 
@@ -489,7 +489,7 @@ function Perl_CombatDisplay_Target_Update_Mana()
 	local targetmanamax = UnitManaMax("target");
 	local targetpowertype = UnitPowerType("target");
 
-	if (UnitIsDead("target")) then				-- This prevents negative mana
+	if (UnitIsDead("target") or UnitIsGhost("target")) then				-- This prevents negative mana
 		targetmana = 0;
 	end
 
@@ -881,8 +881,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.43",
-			releaseDate = "February 16, 2006",
+			version = "v0.44",
+			releaseDate = "February 17, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

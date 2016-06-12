@@ -168,7 +168,7 @@ function Perl_Target_Target_OnUpdate(arg1)
 			local targettargethealthmax = UnitHealthMax("targettarget");
 			local targettargethealthpercent = floor(targettargethealth/targettargethealthmax*100+0.5);
 
-			if (UnitIsDead("targettarget")) then				-- This prevents negative health
+			if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative health
 				targettargethealth = 0;
 				targettargethealthpercent = 0;
 			end
@@ -206,7 +206,7 @@ function Perl_Target_Target_OnUpdate(arg1)
 			local targettargetmana = UnitMana("targettarget");
 			local targettargetmanamax = UnitManaMax("targettarget");
 
-			if (UnitIsDead("targettarget")) then				-- This prevents negative mana
+			if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative mana
 				targettargetmana = 0;
 			end
 
@@ -326,7 +326,7 @@ function Perl_Target_Target_OnUpdate(arg1)
 			local targettargettargethealthmax = UnitHealthMax("targettargettarget");
 			local targettargettargethealthpercent = floor(targettargettargethealth/targettargettargethealthmax*100+0.5);
 
-			if (UnitIsDead("targettargettarget")) then				-- This prevents negative health
+			if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative health
 				targettargettargethealth = 0;
 				targettargettargethealthpercent = 0;
 			end
@@ -364,7 +364,7 @@ function Perl_Target_Target_OnUpdate(arg1)
 			local targettargettargetmana = UnitMana("targettargettarget");
 			local targettargettargetmanamax = UnitManaMax("targettargettarget");
 
-			if (UnitIsDead("targettargettarget")) then				-- This prevents negative mana
+			if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative mana
 				targettargettargetmana = 0;
 			end
 
@@ -433,7 +433,7 @@ function Perl_Target_Target_HealthShow()
 	local targettargethealth = UnitHealth("targettarget");
 	local targettargethealthmax = UnitHealthMax("targettarget");
 
-	if (UnitIsDead("targettarget")) then				-- This prevents negative health
+	if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative health
 		targettargethealth = 0;
 		targettargethealthpercent = 0;
 	end
@@ -501,7 +501,7 @@ end
 function Perl_Target_Target_HealthHide()
 	local targettargethealthpercent = floor(UnitHealth("targettarget")/UnitHealthMax("targettarget")*100+0.5);
 
-	if (UnitIsDead("targettarget")) then				-- This prevents negative health
+	if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative health
 		targettargethealthpercent = 0;
 	end
 
@@ -513,7 +513,7 @@ function Perl_Target_Target_ManaShow()
 	local targettargetmana = UnitMana("targettarget");
 	local targettargetmanamax = UnitManaMax("targettarget");
 
-	if (UnitIsDead("targettarget")) then				-- This prevents negative mana
+	if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative mana
 		targettargetmana = 0;
 	end
 
@@ -537,7 +537,7 @@ function Perl_Target_Target_Target_HealthShow()
 	local targettargettargethealth = UnitHealth("targettargettarget");
 	local targettargettargethealthmax = UnitHealthMax("targettargettarget");
 
-	if (UnitIsDead("targettargettarget")) then				-- This prevents negative health
+	if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative health
 		targettargettargethealth = 0;
 		targettargettargethealthpercent = 0;
 	end
@@ -605,7 +605,7 @@ end
 function Perl_Target_Target_Target_HealthHide()
 	local targettargettargethealthpercent = floor(UnitHealth("targettargettarget")/UnitHealthMax("targettargettarget")*100+0.5);
 
-	if (UnitIsDead("targettargettarget")) then				-- This prevents negative health
+	if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative health
 		targettargettargethealthpercent = 0;
 	end
 
@@ -617,7 +617,7 @@ function Perl_Target_Target_Target_ManaShow()
 	local targettargettargetmana = UnitMana("targettargettarget");
 	local targettargettargetmanamax = UnitManaMax("targettargettarget");
 
-	if (UnitIsDead("targettargettarget")) then				-- This prevents negative mana
+	if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative mana
 		targettargettargetmana = 0;
 	end
 
@@ -948,8 +948,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.43",
-			releaseDate = "February 16, 2006",
+			version = "v0.44",
+			releaseDate = "February 17, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

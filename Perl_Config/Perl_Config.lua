@@ -500,9 +500,9 @@ function Perl_Config_Global_Save_Settings()
 			["ShowTarget"] = vartable["showtarget"],
 			["MobHealthSupport"] = vartable["mobhealthsupport"],
 			["XPositionCD"] = floor(Perl_CombatDisplay_Frame:GetLeft() + 0.5),
-			["YPositionCD"] = floor(Perl_CombatDisplay_Frame:GetTop() - UIParent:GetTop() + 0.5),
+			["YPositionCD"] = floor(Perl_CombatDisplay_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Frame:GetScale()) + 0.5),
 			["XPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetLeft() + 0.5),
-			["YPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetTop() - UIParent:GetTop() + 0.5),
+			["YPositionCDT"] = floor(Perl_CombatDisplay_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_CombatDisplay_Target_Frame:GetScale()) + 0.5),
 		};
 	end
 
@@ -532,7 +532,8 @@ function Perl_Config_Global_Save_Settings()
 			["DebuffLocation"] = vartable["debufflocation"],
 			["VerticalAlign"] = vartable["verticalalign"],
 			["XPosition"] = floor(Perl_Party_Frame:GetLeft() + 0.5),
-			["YPosition"] = floor(Perl_Party_Frame:GetTop() - UIParent:GetTop() + 0.5),
+			["YPosition"] = floor(Perl_Party_Frame:GetTop() - (UIParent:GetTop() / Perl_Party_Frame:GetScale()) + 0.5),
+			["CompactPercent"] = vartable["compactpercent"],
 		};
 	end
 
@@ -548,8 +549,9 @@ function Perl_Config_Global_Save_Settings()
 			["HealerMode"] = vartable["healermode"],
 			["Transparency"] = vartable["transparency"],
 			["XPosition"] = floor(Perl_Player_Frame:GetLeft() + 0.5),
-			["YPosition"] = floor(Perl_Player_Frame:GetTop() - UIParent:GetTop() + 0.5),
+			["YPosition"] = floor(Perl_Player_Frame:GetTop() - (UIParent:GetTop() / Perl_Player_Frame:GetScale()) + 0.5),
 			["ShowPortrait"] = vartable["showportrait"],
+			["CompactPercent"] = vartable["compactpercent"],
 		};
 	end
 
@@ -575,7 +577,7 @@ function Perl_Config_Global_Save_Settings()
 			["BuffLocation"] = vartable["bufflocation"],
 			["DebuffLocation"] = vartable["debufflocation"],
 			["XPosition"] = floor(Perl_Player_Pet_Frame:GetLeft() + 0.5),
-			["YPosition"] = floor(Perl_Player_Pet_Frame:GetTop() - UIParent:GetTop() + 0.5),
+			["YPosition"] = floor(Perl_Player_Pet_Frame:GetTop() - (UIParent:GetTop() / Perl_Player_Pet_Frame:GetScale()) + 0.5),
 		};
 	end
 
@@ -596,7 +598,7 @@ function Perl_Config_Global_Save_Settings()
 			["Transparency"] = vartable["transparency"],
 			["BuffDebuffScale"] = vartable["buffdebuffscale"],
 			["XPosition"] = floor(Perl_Target_Frame:GetLeft() + 0.5),
-			["YPosition"] = floor(Perl_Target_Frame:GetTop() - UIParent:GetTop() + 0.5),
+			["YPosition"] = floor(Perl_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Frame:GetScale()) + 0.5),
 			["ShowPortrait"] = vartable["showportrait"],
 		};
 	end
@@ -612,9 +614,9 @@ function Perl_Config_Global_Save_Settings()
 			["ToToTSupport"] = vartable["tototsupport"],
 			["Transparency"] = vartable["transparency"],
 			["XPositionToT"] = floor(Perl_Target_Target_Frame:GetLeft() + 0.5),
-			["YPositionToT"] = floor(Perl_Target_Target_Frame:GetTop() - UIParent:GetTop() + 0.5),
+			["YPositionToT"] = floor(Perl_Target_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Target_Frame:GetScale()) + 0.5),
 			["XPositionToToT"] = floor(Perl_Target_Target_Target_Frame:GetLeft() + 0.5),
-			["YPositionToToT"] = floor(Perl_Target_Target_Target_Frame:GetTop() - UIParent:GetTop() + 0.5),
+			["YPositionToToT"] = floor(Perl_Target_Target_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Target_Target_Frame:GetScale()) + 0.5),
 		};
 	end
 end
@@ -840,8 +842,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.43",
-			releaseDate = "February 16, 2006",
+			version = "v0.44",
+			releaseDate = "February 17, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

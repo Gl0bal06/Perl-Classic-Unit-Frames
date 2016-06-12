@@ -1,3 +1,11 @@
+0.44 - February 17, 2006
+ - All: Added another condition do the negative health check
+ - Config: Fixed a window position bug when scales were not equal (Thanks Vudoo)
+ - Party: Fixed a compact mode bug
+ - Party: Changed a function name that was clearly wrong
+ - Party/Player: Added the option to display health and mana percent in compact mode
+ - Player: Removed some unused code
+
 0.43 - February 16, 2006
  - All: Changed negative health detection to something more effective
  - Party: Added code to prevent pet health from looking weird

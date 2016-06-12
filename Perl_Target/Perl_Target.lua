@@ -245,7 +245,7 @@ function Perl_Target_Update_Health()
 	local targethealthmax = UnitHealthMax("target");
 	local targethealthpercent = floor(targethealth/targethealthmax*100+0.5);
 
-	if (UnitIsDead("target")) then				-- This prevents negative health
+	if (UnitIsDead("target") or UnitIsGhost("target")) then				-- This prevents negative health
 		targethealth = 0;
 		targethealthpercent = 0;
 	end
@@ -334,7 +334,7 @@ function Perl_Target_Update_Health()
 	end
 
 	-- Set Dead Icon (for pve)
-	if (UnitIsDead("target")) then
+	if (UnitIsDead("target") or UnitIsGhost("target")) then
 		Perl_Target_DeadStatus:Show();
 	else
 		Perl_Target_DeadStatus:Hide();
@@ -346,7 +346,7 @@ function Perl_Target_Update_Mana()
 	local targetmanamax = UnitManaMax("target");
 	local targetpower = UnitPowerType("target");
 
-	if (UnitIsDead("target")) then				-- This prevents negative mana
+	if (UnitIsDead("target") or UnitIsGhost("target")) then				-- This prevents negative mana
 		targetmana = 0;
 	end
 
@@ -1214,8 +1214,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.43",
-			releaseDate = "February 16, 2006",
+			version = "v0.44",
+			releaseDate = "February 17, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
