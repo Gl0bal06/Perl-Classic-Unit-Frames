@@ -176,7 +176,7 @@
 							<Anchors>
 								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
 									<Offset>
-										<AbsDimension x="9" y="-2"/>
+										<AbsDimension x="9" y="-3"/>
 									</Offset>
 								</Anchor>
 							</Anchors>
@@ -285,6 +285,21 @@
 								</Anchor>
 							</Anchors>
 						</Fontstring>
+
+						<!-- Threat Icon -->
+						<Texture name="Perl_Target_ThreatIndicator" file="Interface\Minimap\ObjectIcons" hidden="true">
+							<Size>
+								<AbsDimension x="16" y="16"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPRIGHT" relativePoint="TOPLEFT" relativeTo="Perl_Target_PVPStatus">
+									<Offset>
+										<AbsDimension x="0" y="-1"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0.75" right="0.875" top="0.5" bottom="1.0"/>
+						</Texture>
 					</Layer>
 				</Layers>
 			</Frame>

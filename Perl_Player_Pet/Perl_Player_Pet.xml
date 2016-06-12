@@ -171,6 +171,21 @@
 								</Anchor>
 							</Anchors>
 						</Fontstring>
+
+						<!-- Threat Icon -->
+						<Texture name="Perl_Player_Pet_ThreatIndicator" file="Interface\Minimap\ObjectIcons" hidden="true">
+							<Size>
+								<AbsDimension x="16" y="16"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
+									<Offset>
+										<AbsDimension x="-5" y="-4"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+							<TexCoords left="0.75" right="0.875" top="0.5" bottom="1.0"/>
+						</Texture>
 					</Layer>
 				</Layers>
 			</Frame>

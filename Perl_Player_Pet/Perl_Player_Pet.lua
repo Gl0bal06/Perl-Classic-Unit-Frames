@@ -74,6 +74,7 @@ function Perl_Player_Pet_OnLoad(self)
 	self:RegisterEvent("UNIT_PET_EXPERIENCE");
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	self:RegisterEvent("UNIT_SPELLMISS");
+	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 
 	-- Scripts
 	self:SetScript("OnEvent", Perl_Player_Pet_OnEvent);
@@ -212,6 +213,12 @@ function Perl_Player_Pet_Events:UNIT_PORTRAIT_UPDATE()
 end
 Perl_Player_Pet_Events.UNIT_MODEL_CHANGED = Perl_Player_Pet_Events.UNIT_PORTRAIT_UPDATE;
 
+function Perl_Player_Pet_Events:UNIT_THREAT_SITUATION_UPDATE()
+	if (arg1 == "pet") then
+		Perl_Player_Pet_Update_Threat();
+	end
+end
+
 function Perl_Player_Pet_Events:PLAYER_LOGIN()
 	Perl_Player_Pet_Initialize();
 end
@@ -302,6 +309,7 @@ function Perl_Player_Pet_Update_Once()
 		Perl_Player_Pet_Buff_UpdateAll();				-- Set buff frame
 		Perl_Player_Pet_Portrait_Combat_Text();				-- Set the combat text frame
 		Perl_Player_Pet_ShowXP();					-- Are we showing the xp bar?
+		Perl_Player_Pet_Update_Threat();				-- Update the threat icon if needed
 	end
 end
 
@@ -505,6 +513,17 @@ function Perl_Player_Pet_Portrait_Combat_Text()
 		Perl_Player_Pet_PortraitTextFrame:Show();
 	else
 		Perl_Player_Pet_PortraitTextFrame:Hide();
+	end
+end
+
+function Perl_Player_Pet_Update_Threat()
+	local status = UnitThreatSituation("pet");
+
+	if (status > 0 and PCUF_THREATICON == 1) then
+		Perl_Player_Pet_ThreatIndicator:SetVertexColor(GetThreatStatusColor(status));
+		Perl_Player_Pet_ThreatIndicator:Show();
+	else
+		Perl_Player_Pet_ThreatIndicator:Hide();
 	end
 end
 

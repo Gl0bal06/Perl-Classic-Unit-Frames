@@ -101,6 +101,12 @@ function Perl_Config_All_Set_Values()
 	else
 		Perl_Config_All_Frame_CheckButton18:SetChecked(nil);
 	end
+
+	if (vartable["PCUF_ThreatIcon"] == 1) then
+		Perl_Config_All_Frame_CheckButton19:SetChecked(1);
+	else
+		Perl_Config_All_Frame_CheckButton19:SetChecked(nil);
+	end
 end
 
 function Perl_Config_All_Texture_Update(texturenum)
@@ -263,5 +269,13 @@ function Perl_Config_All_Set_Positioning_Mode()
 		Perl_Config_Set_Positioning_Mode(1);
 	else
 		Perl_Config_Set_Positioning_Mode(0);
+	end
+end
+
+function Perl_Config_All_Set_Threat_Icon()
+	if (Perl_Config_All_Frame_CheckButton19:GetChecked() == 1) then
+		Perl_Config_Set_Threat_Icon(1);
+	else
+		Perl_Config_Set_Threat_Icon(0);
 	end
 end

@@ -33,7 +33,8 @@ PCUF_FADEBARS = 0;			-- fading status bars is off by default
 PCUF_NAMEFRAMECLICKCAST = 0;		-- name frames will be the one safe spot for menus by default
 PCUF_INVERTBARVALUES = 0;		-- bars deplete when low
 PCUF_COLORFRAMEDEBUFF = 1;		-- frame debuff coloring is on by default
-local positioningmode = 0;
+local positioningmode = 0;		-- positioning mode is off by default
+PCUF_THREATICON = 1;			-- threat icon is on by default
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -627,11 +628,13 @@ function Perl_Config_Set_Texture(newvalue)
 			Perl_Player_ManaBarBGTex:SetTexture(texturename);
 			Perl_Player_DruidBarBGTex:SetTexture(texturename);
 			Perl_Player_XPBarBGTex:SetTexture(texturename);
+			Perl_Player_XPRestBarTex:SetTexture(texturename);
 		else
 			Perl_Player_HealthBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
 			Perl_Player_ManaBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
 			Perl_Player_DruidBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
 			Perl_Player_XPBarBGTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
+			Perl_Player_XPRestBarTex:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-BarFill");
 		end
 	end
 
@@ -1058,6 +1061,35 @@ function Perl_Config_Set_Color_Frame_Debuff(newvalue)
 	end
 end
 
+function Perl_Config_Set_Threat_Icon(newvalue)
+	PCUF_THREATICON = newvalue;
+	Perl_Config_UpdateVars();
+
+	if (Perl_Focus_Frame) then
+		if (UnitExists("focus")) then
+			Perl_Focus_Update_Threat();
+		end
+	end
+
+	if (Perl_Party_Frame) then
+		for id=1,4 do
+			if (UnitExists(getglobal("Perl_Party_MemberFrame"..id))) then
+				Perl_Party_Update_Threat(getglobal("Perl_Party_MemberFrame"..id));
+			end
+		end
+	end
+
+	if (Perl_Player_Frame) then
+		Perl_Player_Update_Threat();
+	end
+
+	if (Perl_Target_Frame) then
+		if (UnitExists("target")) then
+			Perl_Target_Update_Threat();
+		end
+	end
+end
+
 function Perl_Config_Lock_Unlock(value)
 	if (Perl_CombatDisplay_Frame) then
 		Perl_CombatDisplay_Set_Lock(value);
@@ -1267,6 +1299,7 @@ function Perl_Config_Global_Save_Settings()
 			["MiniMapButtonRad"] = vartable["minimapbuttonrad"],
 			["PCUF_ColorFrameDebuff"] = vartable["PCUF_ColorFrameDebuff"],
 			["PositioningMode"] = vartable["positioningmode"],
+			["PCUF_ThreatIcon"] = vartable["PCUF_ThreatIcon"],
 		};
 	end
 
@@ -1686,6 +1719,7 @@ function Perl_Config_GetVars(name, updateflag)
 	minimapbuttonrad = Perl_Config_Config[name]["MiniMapButtonRad"];
 	PCUF_COLORFRAMEDEBUFF = Perl_Config_Config[name]["PCUF_ColorFrameDebuff"];
 	positioningmode = Perl_Config_Config[name]["PositioningMode"];
+	PCUF_THREATICON = Perl_Config_Config[name]["PCUF_ThreatIcon"];
 
 	if (texture == nil) then
 		texture = 0;
@@ -1726,6 +1760,9 @@ function Perl_Config_GetVars(name, updateflag)
 	if (positioningmode == nil) then
 		positioningmode = 0;
 	end
+	if (PCUF_THREATICON == nil) then
+		PCUF_THREATICON = 1;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1753,6 +1790,7 @@ function Perl_Config_GetVars(name, updateflag)
 		["minimapbuttonrad"] = minimapbuttonrad,
 		["PCUF_ColorFrameDebuff"] = PCUF_COLORFRAMEDEBUFF,
 		["positioningmode"] = positioningmode,
+		["PCUF_ThreatIcon"] = PCUF_THREATICON,
 	}
 	return vars;
 end
@@ -1826,6 +1864,11 @@ function Perl_Config_UpdateVars(vartable)
 			else
 				positioningmode = nil;
 			end
+			if (vartable["Global Settings"]["PCUF_ThreatIcon"] ~= nil) then
+				PCUF_THREATICON = vartable["Global Settings"]["PCUF_ThreatIcon"];
+			else
+				PCUF_THREATICON = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1868,6 +1911,9 @@ function Perl_Config_UpdateVars(vartable)
 		if (positioningmode == nil) then
 			positioningmode = 0;
 		end
+		if (PCUF_THREATICON == nil) then
+			PCUF_THREATICON = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Config_Set_Texture(texture);
@@ -1890,6 +1936,7 @@ function Perl_Config_UpdateVars(vartable)
 		["MiniMapButtonRad"] = minimapbuttonrad,
 		["PCUF_ColorFrameDebuff"] = PCUF_COLORFRAMEDEBUFF,
 		["PositioningMode"] = positioningmode,
+		["PCUF_ThreatIcon"] = PCUF_THREATICON,
 	};
 end
 

@@ -143,6 +143,12 @@ function Perl_Party_Pet_Events:UNIT_NAME_UPDATE()
 	end
 end
 
+function Perl_Party_Pet_Events:UNIT_THREAT_SITUATION_UPDATE()
+	if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
+		Perl_Party_Pet_Update_Threat(arg1);
+	end
+end
+
 function Perl_Party_Pet_Events:PLAYER_LOGIN()
 	Perl_Party_Pet_Initialize();
 end
@@ -375,6 +381,18 @@ function Perl_Party_Pet_Update_Portrait(unit)
 	end
 end
 
+function Perl_Party_Pet_Update_Threat(unit)
+	local id = string.sub(unit, 9, 9);
+	local status = UnitThreatSituation(unit);
+
+	if (status > 0 and PCUF_THREATICON == 1) then
+		getglobal("Perl_Party_Pet"..id.."_NameFrame_ThreatIndicator"):SetVertexColor(GetThreatStatusColor(status));
+		getglobal("Perl_Party_Pet"..id.."_NameFrame_ThreatIndicator"):Show();
+	else
+		getglobal("Perl_Party_Pet"..id.."_NameFrame_ThreatIndicator"):Hide();
+	end
+end
+
 
 ------------------------
 -- Fade Bar Functions --
@@ -582,6 +600,7 @@ function Perl_Party_Pet_Disable_All()
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_MODEL_CHANGED");
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_NAME_UPDATE");
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
+	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 
 	UnregisterUnitWatch(Perl_Party_Pet1);
 	UnregisterUnitWatch(Perl_Party_Pet2);
@@ -606,6 +625,7 @@ function Perl_Party_Pet_Enable_All()
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_MODEL_CHANGED");
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_NAME_UPDATE");
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 
 	RegisterUnitWatch(Perl_Party_Pet1);
 	RegisterUnitWatch(Perl_Party_Pet2);

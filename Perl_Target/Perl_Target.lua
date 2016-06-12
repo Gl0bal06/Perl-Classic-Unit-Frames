@@ -91,6 +91,7 @@ function Perl_Target_OnLoad(self)
 	self:RegisterEvent("UNIT_RAGE");
 	self:RegisterEvent("UNIT_RUNIC_POWER");
 	self:RegisterEvent("UNIT_SPELLMISS");
+	self:RegisterEvent("UNIT_THREAT_LIST_UPDATE");
 	self:RegisterEvent("VOICE_START");
 	self:RegisterEvent("VOICE_STOP");
 
@@ -249,6 +250,12 @@ function Perl_Target_Events:VOICE_STOP()
 	end
 end
 
+function Perl_Target_Events:UNIT_THREAT_LIST_UPDATE()
+	if (arg1 == "target") then
+		Perl_Target_Update_Threat();
+	end
+end
+
 function Perl_Target_Events:PLAYER_LOGIN()
 	Perl_Target_Initialize();
 end
@@ -361,6 +368,7 @@ function Perl_Target_Update_Once()
 	Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
 	Perl_Target_Update_Leader();		-- Is the target the party/raid leader?
 	Perl_Target_Update_Loot_Method();	-- Is the target the loot master?
+	Perl_Target_Update_Threat();		-- Update the threat icon if needed
 
 	-- Begin: Draw the class icon?
 	if (showclassicon == 1) then
@@ -957,6 +965,17 @@ function Perl_Target_Update_Portrait()
 				Perl_Target_Portrait:Show();					-- Show the 2d graphic
 			end
 		end
+	end
+end
+
+function Perl_Target_Update_Threat()
+	local status = UnitThreatSituation("player", "target");
+
+	if (status > 0 and PCUF_THREATICON == 1) then
+		Perl_Target_ThreatIndicator:SetVertexColor(GetThreatStatusColor(status));
+		Perl_Target_ThreatIndicator:Show();
+	else
+		Perl_Target_ThreatIndicator:Hide();
 	end
 end
 

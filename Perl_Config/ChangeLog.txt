@@ -1,3 +1,8 @@
+3.01 Beta 4 - August 17, 2008
+ - All: Added a threat icon
+ - Config: The player rest experience bar is now correctly textured
+ - Focus/Party/Player/Target: Moved the PvP status icon down 1 pixel
+
 3.01 Beta 3 - August 10, 2008
  - Focus: Readded the health percent to the default frame layout
 

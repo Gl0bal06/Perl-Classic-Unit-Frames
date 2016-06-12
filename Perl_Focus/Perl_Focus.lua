@@ -83,6 +83,7 @@ function Perl_Focus_OnLoad(self)
 	self:RegisterEvent("UNIT_RAGE");
 	self:RegisterEvent("UNIT_RUNIC_POWER");
 	self:RegisterEvent("UNIT_SPELLMISS");
+	self:RegisterEvent("UNIT_THREAT_LIST_UPDATE");
 	self:RegisterEvent("VOICE_START");
 	self:RegisterEvent("VOICE_STOP");
 
@@ -228,6 +229,12 @@ function Perl_Focus_Events:VOICE_STOP()
 	end
 end
 
+function Perl_Focus_Events:UNIT_THREAT_LIST_UPDATE()
+	if (arg1 == "focus") then
+		Perl_Focus_Update_Threat();
+	end
+end
+
 function Perl_Focus_Events:PLAYER_LOGIN()
 	Perl_Focus_Initialize();
 end
@@ -321,6 +328,7 @@ function Perl_Focus_Update_Once()
 	Perl_Focus_UpdateRaidFocusIcon();	-- Display the raid Focus icon if needed
 	Perl_Focus_Update_Name();		-- Update the name
 	Perl_Focus_Update_Text_Color();		-- Has the Focus been tapped by someone else?
+	Perl_Focus_Update_Threat();		-- Update the threat icon if needed
 
 	-- Begin: Draw the class icon?
 	if (showclassicon == 1) then
@@ -822,6 +830,17 @@ function Perl_Focus_Update_Portrait()
 				Perl_Focus_Portrait:Show();					-- Show the 2d graphic
 			end
 		end
+	end
+end
+
+function Perl_Focus_Update_Threat()
+	local status = UnitThreatSituation("player", "focus");
+
+	if (status > 0 and PCUF_THREATICON == 1) then
+		Perl_Focus_ThreatIndicator:SetVertexColor(GetThreatStatusColor(status));
+		Perl_Focus_ThreatIndicator:Show();
+	else
+		Perl_Focus_ThreatIndicator:Hide();
 	end
 end
 

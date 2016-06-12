@@ -91,6 +91,7 @@ function Perl_Player_OnLoad(self)
 	self:RegisterEvent("UNIT_RAGE");
 	self:RegisterEvent("UNIT_RUNIC_POWER");
 	self:RegisterEvent("UNIT_SPELLMISS");
+	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 	self:RegisterEvent("UPDATE_FACTION");
 	self:RegisterEvent("VOICE_START");
 	self:RegisterEvent("VOICE_STOP");
@@ -258,6 +259,12 @@ function Perl_Player_Events:VOICE_STOP()
 	end
 end
 
+function Perl_Player_Events:UNIT_THREAT_SITUATION_UPDATE()
+	if (arg1 == "player") then
+		Perl_Player_Update_Threat();
+	end
+end
+
 function Perl_Player_Events:PLAYER_LOGIN()
 	Perl_Player_Initialize();
 end
@@ -338,6 +345,7 @@ function Perl_Player_Update_Once()
 	Perl_Player_Update_Leader();						-- Are we the party leader?
 	Perl_Player_Update_Loot_Method();					-- Are we the master looter?
 	Perl_Player_Update_Combat_Status();					-- Are we already fighting or resting?
+	Perl_Player_Update_Threat();						-- Are we agro on something?
 	Perl_Player_BuffUpdateAll();						-- Do we have any curable debuffs on us?
 
 	-- Out of Combat ONLY functions
@@ -902,6 +910,17 @@ function Perl_Player_Update_PvP_Status()
 	if (classcolorednames == 1) then				-- Color by class
 		_, englishclass = UnitClass("player");
 		Perl_Player_NameBarText:SetTextColor(RAID_CLASS_COLORS[englishclass].r,RAID_CLASS_COLORS[englishclass].g,RAID_CLASS_COLORS[englishclass].b);
+	end
+end
+
+function Perl_Player_Update_Threat()
+	local status = UnitThreatSituation("player");
+
+	if (status > 0 and PCUF_THREATICON == 1) then
+		Perl_Player_ThreatIndicator:SetVertexColor(GetThreatStatusColor(status));
+		Perl_Player_ThreatIndicator:Show();
+	else
+		Perl_Player_ThreatIndicator:Hide();
 	end
 end
 

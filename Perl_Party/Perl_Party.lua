@@ -100,6 +100,7 @@ function Perl_Party_OnLoad(self)
 	self.portrait2D = getglobal("Perl_Party_MemberFrame"..self.id.."_PortraitFrame_Portrait");
 	self.portrait3D = getglobal("Perl_Party_MemberFrame"..self.id.."_PortraitFrame_PartyModel");
 	self.pvpStatus = getglobal("Perl_Party_MemberFrame"..self.id.."_NameFrame_PVPStatus");
+	self.threatIcon = getglobal("Perl_Party_MemberFrame"..self.id.."_Name_ThreatIndicator");
 	self.voiceChat = getglobal("Perl_Party_MemberFrame"..self.id.."_VoiceChatIconFrame");
 	self.voiceChat:ClearAllPoints();	-- Didn't feel like moving this line and the one below it to the style function
 	self.voiceChat:SetPoint("CENTER", "Perl_Party_MemberFrame"..self.id, "TOPRIGHT", -35, -12);
@@ -148,6 +149,7 @@ function Perl_Party_OnLoad(self)
 	self:RegisterEvent("UNIT_PVP_UPDATE");
 	self:RegisterEvent("UNIT_RAGE");
 	self:RegisterEvent("UNIT_RUNIC_POWER");
+	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 	self:RegisterEvent("VOICE_START");
 	self:RegisterEvent("VOICE_STOP");
 
@@ -293,6 +295,12 @@ function Perl_Party_Events:VOICE_STOP()
 	end
 end
 
+function Perl_Party_Events:UNIT_THREAT_SITUATION_UPDATE()
+	if (arg1 == this.unit) then
+		Perl_Party_Update_Threat(this);
+	end
+end
+
 function Perl_Party_Events:PLAYER_ENTERING_WORLD()
 	Perl_Party_Initialize();			-- We also force update info here in case of a /console reloadui
 end
@@ -416,6 +424,7 @@ function Perl_Party_MembersUpdate(self)
 	Perl_Party_Update_Portrait(self);
 	Perl_Party_Buff_UpdateAll(self);
 	Perl_Party_VoiceChat(self);
+	Perl_Party_Update_Threat(self);
 end
 
 function Perl_Party_Update_Health(self)
@@ -933,6 +942,17 @@ function Perl_Party_Update_Loot_Method(self)
 		self.masterLootIcon:Show();
 	else
 		self.masterLootIcon:Hide();
+	end
+end
+
+function Perl_Party_Update_Threat(self)
+	local status = UnitThreatSituation(self.unit);
+
+	if (status > 0 and PCUF_THREATICON == 1) then
+		self.threatIcon:SetVertexColor(GetThreatStatusColor(status));
+		self.threatIcon:Show();
+	else
+		self.threatIcon:Hide();
 	end
 end
 
