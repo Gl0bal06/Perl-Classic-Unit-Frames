@@ -1,3 +1,8 @@
+0.81c - November 2, 2006
+ - Config: Removed some unused translation strings
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - ToT: Fixed an issue with MobHealth3 support on the ToToT frame
+
 0.81b - October 29, 2006
  - Party: Removed some unused scripts from the XML
  - Target: Combat text is moved to the right if the combo point frame is enabled

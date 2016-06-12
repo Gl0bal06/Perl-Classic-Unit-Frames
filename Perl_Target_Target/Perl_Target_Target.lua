@@ -1345,9 +1345,9 @@ function Perl_Target_Target_Target_HealthShow()
 			if (MobHealth3) then
 				targettargettargethealth, targettargettargethealthmax, mobhealththreenumerics = MobHealth3:GetUnitHealth("targettargettarget", UnitHealth("targettargettarget"), UnitHealthMax("targettargettarget"), UnitName("targettargettarget"), UnitLevel("targettargettarget"));
 				if (mobhealththreenumerics) then
-					Perl_Target_Target_HealthBarText:SetText(targettargettargethealth.."/"..targettargettargethealthmax);	-- Stored unit info from the DB
+					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."/"..targettargettargethealthmax);	-- Stored unit info from the DB
 				else
-					Perl_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Unit not in MobHealth DB
+					Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealth.."%");	-- Unit not in MobHealth DB
 				end
 			elseif (MobHealthFrame) then
 
