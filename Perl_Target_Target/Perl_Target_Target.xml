@@ -4,16 +4,15 @@
 
 
 	<!-- Virtual buffs template -->
-	<!--
 	<Button name="Perl_Target_Target_BuffTemplate" virtual="true">
 		<Size>
-			<AbsDimension x="9" y="9"/>
+			<AbsDimension x="12.5" y="12.5"/>
 		</Size>
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="$parentIcon">
 					<Size>
-						<AbsDimension x="9.5" y="9.5"/>
+						<AbsDimension x="12.5" y="12.5"/>
 					</Size>
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -25,11 +24,23 @@
 				</Texture>
 			</Layer>
 			<Layer level="OVERLAY">
+				<Texture name="$parentDebuffBorder" file="Interface\Buttons\UI-Debuff-Border" hidden="true">
+					<Size>
+						<AbsDimension x="12.5" y="12.5"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="0" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
 				<FontString name="$parentCount" inherits="NumberFontNormalSmall">
 					<Anchors>
 						<Anchor point="BOTTOMRIGHT">
 							<Offset>
-								<AbsDimension x="-.5" y="0"/>
+								<AbsDimension x="2.5" y="1"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -38,14 +49,66 @@
 		</Layers>
 		<Scripts>
 			<OnEnter>
-				
+				Perl_Target_Target_SetBuffTooltip();
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide();
 			</OnLeave>
 		</Scripts>
 	</Button>
-	-->
+
+	<Button name="Perl_Target_Target_Target_BuffTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="12.5" y="12.5"/>
+		</Size>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture name="$parentIcon">
+					<Size>
+						<AbsDimension x="12.5" y="12.5"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="0" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture name="$parentDebuffBorder" file="Interface\Buttons\UI-Debuff-Border" hidden="true">
+					<Size>
+						<AbsDimension x="12.5" y="12.5"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="0" y="0"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+				<FontString name="$parentCount" inherits="NumberFontNormalSmall">
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="2.5" y="1"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter>
+				Perl_Target_Target_Target_SetBuffTooltip();
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+	</Button>
 
 
 	<Frame name="Perl_Target_Target_Frame" movable="true" parent="UIParent" hidden="true" enableMouse="true">
@@ -364,13 +427,12 @@
 
 
 			<!-- Buffs Frame -->
-			<!--
-			<Frame name="$parent_BuffFrame">
+			<Frame name="Perl_Target_Target_BuffFrame">
 				<Size>
 					<AbsDimension x="80" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parent_StatsFrame">
+					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Target_Target_StatsFrame">
 						<Offset>
 							<AbsDimension x="0" y="-2"/>
 						</Offset>
@@ -391,7 +453,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Buff1" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -401,7 +463,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Buff2" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -411,7 +473,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Buff3" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -421,7 +483,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Buff4" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -431,7 +493,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Buff5" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -441,7 +503,7 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Buff6" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -451,13 +513,13 @@
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Buff7" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff1" inherits="Perl_Target_Target_BuffTemplate" id="9">
+					<Button name="$parent_Buff9" inherits="Perl_Target_Target_BuffTemplate" id="9">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Buff1" relativePoint="BOTTOMLEFT">
 								<Offset>
@@ -467,78 +529,237 @@
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff2" inherits="Perl_Target_Target_BuffTemplate" id="10">
+					<Button name="$parent_Buff10" inherits="Perl_Target_Target_BuffTemplate" id="10">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff9" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff11" inherits="Perl_Target_Target_BuffTemplate" id="11">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff10" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff12" inherits="Perl_Target_Target_BuffTemplate" id="12">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff11" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff13" inherits="Perl_Target_Target_BuffTemplate" id="13">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff12" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff14" inherits="Perl_Target_Target_BuffTemplate" id="14">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff13" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff15" inherits="Perl_Target_Target_BuffTemplate" id="15">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff14" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff16" inherits="Perl_Target_Target_BuffTemplate" id="16">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff7" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff1" inherits="Perl_Target_Target_BuffTemplate" id="17">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff1" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff2" inherits="Perl_Target_Target_BuffTemplate" id="18">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff1" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff3" inherits="Perl_Target_Target_BuffTemplate" id="11">
+					<Button name="$parent_Debuff3" inherits="Perl_Target_Target_BuffTemplate" id="19">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff2" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff4" inherits="Perl_Target_Target_BuffTemplate" id="12">
+					<Button name="$parent_Debuff4" inherits="Perl_Target_Target_BuffTemplate" id="20">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff3" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff5" inherits="Perl_Target_Target_BuffTemplate" id="13">
+					<Button name="$parent_Debuff5" inherits="Perl_Target_Target_BuffTemplate" id="21">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff4" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff6" inherits="Perl_Target_Target_BuffTemplate" id="14">
+					<Button name="$parent_Debuff6" inherits="Perl_Target_Target_BuffTemplate" id="22">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff5" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff7" inherits="Perl_Target_Target_BuffTemplate" id="15">
+					<Button name="$parent_Debuff7" inherits="Perl_Target_Target_BuffTemplate" id="23">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff6" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 
-					<Button name="$parent_Debuff8" inherits="Perl_Target_Target_BuffTemplate" id="16">
+					<Button name="$parent_Debuff8" inherits="Perl_Target_Target_BuffTemplate" id="24">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff7" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="1" y="0"/>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff9" inherits="Perl_Target_Target_BuffTemplate" id="25">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff1" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff10" inherits="Perl_Target_Target_BuffTemplate" id="26">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff9" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff11" inherits="Perl_Target_Target_BuffTemplate" id="27">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff10" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff12" inherits="Perl_Target_Target_BuffTemplate" id="28">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff11" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff13" inherits="Perl_Target_Target_BuffTemplate" id="29">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff12" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff14" inherits="Perl_Target_Target_BuffTemplate" id="30">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff13" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff15" inherits="Perl_Target_Target_BuffTemplate" id="31">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff14" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff16" inherits="Perl_Target_Target_BuffTemplate" id="32">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff15" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
 					</Button>
 				</Frames>
 			</Frame>
-			-->
 
 		</Frames>
 	</Frame>
@@ -856,6 +1077,343 @@
 					</Button>
 				</Frames>
 			</Frame>
+
+
+			<!-- Buffs Frame -->
+			<Frame name="Perl_Target_Target_Target_BuffFrame">
+				<Size>
+					<AbsDimension x="80" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="Perl_Target_Target_Target_StatsFrame">
+						<Offset>
+							<AbsDimension x="0" y="-2"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Frames>
+					<Button name="$parent_Buff1" inherits="Perl_Target_Target_Target_BuffTemplate" id="1">
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="3" y="3"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff2" inherits="Perl_Target_Target_Target_BuffTemplate" id="2">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff1" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff3" inherits="Perl_Target_Target_Target_BuffTemplate" id="3">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff2" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff4" inherits="Perl_Target_Target_Target_BuffTemplate" id="4">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff3" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff5" inherits="Perl_Target_Target_Target_BuffTemplate" id="5">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff4" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff6" inherits="Perl_Target_Target_Target_BuffTemplate" id="6">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff5" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff7" inherits="Perl_Target_Target_Target_BuffTemplate" id="7">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff6" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff8" inherits="Perl_Target_Target_Target_BuffTemplate" id="8">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff7" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff9" inherits="Perl_Target_Target_Target_BuffTemplate" id="9">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff1" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff10" inherits="Perl_Target_Target_Target_BuffTemplate" id="10">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff9" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff11" inherits="Perl_Target_Target_Target_BuffTemplate" id="11">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff10" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff12" inherits="Perl_Target_Target_Target_BuffTemplate" id="12">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff11" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff13" inherits="Perl_Target_Target_Target_BuffTemplate" id="13">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff12" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff14" inherits="Perl_Target_Target_Target_BuffTemplate" id="14">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff13" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff15" inherits="Perl_Target_Target_Target_BuffTemplate" id="15">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff14" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Buff16" inherits="Perl_Target_Target_Target_BuffTemplate" id="16">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff7" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff1" inherits="Perl_Target_Target_Target_BuffTemplate" id="17">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff1" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff2" inherits="Perl_Target_Target_Target_BuffTemplate" id="18">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff1" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff3" inherits="Perl_Target_Target_Target_BuffTemplate" id="19">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff2" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff4" inherits="Perl_Target_Target_Target_BuffTemplate" id="20">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff3" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff5" inherits="Perl_Target_Target_Target_BuffTemplate" id="21">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff4" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff6" inherits="Perl_Target_Target_Target_BuffTemplate" id="22">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff5" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff7" inherits="Perl_Target_Target_Target_BuffTemplate" id="23">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff6" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff8" inherits="Perl_Target_Target_Target_BuffTemplate" id="24">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff7" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff9" inherits="Perl_Target_Target_Target_BuffTemplate" id="25">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff1" relativePoint="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="0" y="-1"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff10" inherits="Perl_Target_Target_Target_BuffTemplate" id="26">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff9" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff11" inherits="Perl_Target_Target_Target_BuffTemplate" id="27">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff10" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff12" inherits="Perl_Target_Target_Target_BuffTemplate" id="28">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff11" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff13" inherits="Perl_Target_Target_Target_BuffTemplate" id="29">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff12" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff14" inherits="Perl_Target_Target_Target_BuffTemplate" id="30">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff13" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff15" inherits="Perl_Target_Target_Target_BuffTemplate" id="31">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff14" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+
+					<Button name="$parent_Debuff16" inherits="Perl_Target_Target_Target_BuffTemplate" id="32">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parent_Debuff15" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0.5" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</Button>
+				</Frames>
+			</Frame>
+
 		</Frames>
 	</Frame>
 

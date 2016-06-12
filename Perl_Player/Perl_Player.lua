@@ -24,6 +24,9 @@ local Initialized = nil;	-- waiting to be initialized
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 
+-- Local variables to save memory
+local playerhealth, playerhealthmax, playerhealthpercent, playermana, playermanamax, playermanapercent, playerdruidbarmana, playerdruidbarmanamax, playerdruidbarmanapercent;
+
 -- Variables for position of the class icon texture.
 local Perl_Player_ClassPosRight = {};
 local Perl_Player_ClassPosLeft = {};
@@ -52,6 +55,7 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("UNIT_COMBAT");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_ENERGY");
+	this:RegisterEvent("UNIT_FACTION");
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_LEVEL");
 	this:RegisterEvent("UNIT_MANA");
@@ -61,7 +65,6 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("UNIT_MAXRAGE");
 	this:RegisterEvent("UNIT_MODEL_CHANGED");
 	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("UNIT_SPELLMISS");
 	this:RegisterEvent("UPDATE_FACTION");
@@ -128,7 +131,7 @@ function Perl_Player_OnEvent(event)
 			Perl_Player_Update_Reputation();	-- Set faction info
 		end
 		return;
-	elseif (event == "UNIT_PVP_UPDATE") then
+	elseif (event == "UNIT_FACTION") then
 		Perl_Player_Update_PvP_Status();		-- Is the character PvP flagged?
 		return;
 	elseif (event == "UNIT_LEVEL") then
@@ -191,7 +194,50 @@ function Perl_Player_Initialize()
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(PlayerFrame);
 
+	-- IFrameManager Support
+	if (IFrameManager) then
+		Perl_Player_IFrameManager(1);
+	end
+
 	Initialized = 1;
+end
+
+function Perl_Player_IFrameManager(initflag)
+	local iface = IFrameManager:Interface();
+	function iface:getName(frame)
+		return "Perl Player";
+	end
+	function iface:getBorder(frame)
+		local bottom, left, right, top;
+		if (xpbarstate == 3) then
+			bottom = 38;
+		else
+			bottom = 50;
+		end
+		if (showraidgroup == 1) then
+			top = 20;
+		else
+			top = 0;
+		end
+		if (compactmode == 0) then
+			right = 70;
+		else
+			if (compactpercent == 0) then
+				right = 0;
+			else
+				right = 35;
+			end
+		end
+		if (showportrait == 0) then
+			left = 0;
+		else
+			left = 55;
+		end
+		return top, right, bottom, left;
+	end
+	if (initflag) then
+		IFrameManager:Register(this, iface);
+	end
 end
 
 function Perl_Player_Initialize_Frame_Color()
@@ -237,9 +283,9 @@ function Perl_Player_Update_Once()
 end
 
 function Perl_Player_Update_Health()
-	local playerhealth = UnitHealth("player");
-	local playerhealthmax = UnitHealthMax("player");
-	local playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
+	playerhealth = UnitHealth("player");
+	playerhealthmax = UnitHealthMax("player");
+	playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
 
 	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative health
 		playerhealth = 0;
@@ -317,9 +363,9 @@ function Perl_Player_Update_Health()
 end
 
 function Perl_Player_Update_Mana()
-	local playermana = UnitMana("player");
-	local playermanamax = UnitManaMax("player");
-	local playermanapercent = floor(playermana/playermanamax*100+0.5);
+	playermana = UnitMana("player");
+	playermanamax = UnitManaMax("player");
+	playermanapercent = floor(playermana/playermanamax*100+0.5);
 
 	if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
 		playermana = 0;
@@ -382,9 +428,9 @@ function Perl_Player_Update_Mana()
 		if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID)) then
 			if (UnitPowerType("player") > 0) then
 				-- Show the bars and set the text and reposition the original mana bar below the druid bar
-				local playerdruidbarmana = floor(DruidBarKey.keepthemana);
-				local playerdruidbarmanamax = DruidBarKey.maxmana;
-				local playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
+				playerdruidbarmana = floor(DruidBarKey.keepthemana);
+				playerdruidbarmanamax = DruidBarKey.maxmana;
+				playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
 
 				if (playerdruidbarmanapercent == 100) then		-- This is to ensure the value isn't 1 or 2 mana under max when 100%
 					playerdruidbarmana = playerdruidbarmanamax;
@@ -493,9 +539,7 @@ function Perl_Player_Update_Mana()
 
 	if (fivesecsupport == 1) then
 		if (REGENERATING_MANA ~= nil) then				-- Is FiveSec installed?
-			if (UnitPowerType("player") > 0) then			-- If we aren't in mana mode, bail out
-				-- Do nothing
-			else
+			if (UnitPowerType("player") == 0) then			-- If we aren't in mana mode, bail out
 				if (REGENERATING_MANA == false) then		-- If we aren't in regen mode, color light blue
 					Perl_Player_ManaBar:SetStatusBarColor(0, 0.7, 1, 1);
 					Perl_Player_ManaBarBG:SetStatusBarColor(0, 0.7, 1, 0.25);
@@ -660,8 +704,8 @@ function Perl_Player_Update_Leader()
 end
 
 function Perl_Player_Update_Loot_Method()
-	local lootMethod, lootMaster;
-	lootMethod, lootMaster = GetLootMethod();
+	local lootMaster;
+	_, lootMaster = GetLootMethod();
 	if (lootMaster == 0) then
 		Perl_Player_MasterIcon:Show();
 	else
@@ -671,9 +715,8 @@ end
 
 function Perl_Player_Update_PvP_Status()
 	if (UnitIsPVP("player")) then
-		local factionGroup = UnitFactionGroup("player");
 		Perl_Player_NameBarText:SetTextColor(0,1,0);
-		Perl_Player_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
+		Perl_Player_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..UnitFactionGroup("player"));
 		Perl_Player_PVPStatus:Show();
 	else
 		Perl_Player_NameBarText:SetTextColor(0.5,0.5,1);
@@ -744,8 +787,8 @@ end
 
 function Perl_Player_HealthShow()
 	if (healermode == 1) then
-		local playerhealth = UnitHealth("player");
-		local playerhealthmax = UnitHealthMax("player");
+		playerhealth = UnitHealth("player");
+		playerhealthmax = UnitHealthMax("player");
 
 		if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative health
 			playerhealth = 0;
@@ -765,8 +808,8 @@ end
 
 function Perl_Player_ManaShow()
 	if (healermode == 1) then
-		local playermana = UnitMana("player");
-		local playermanamax = UnitManaMax("player");
+		playermana = UnitMana("player");
+		playermanamax = UnitManaMax("player");
 
 		if (UnitIsDead("player") or UnitIsGhost("player")) then				-- This prevents negative mana
 			playermana = 0;
@@ -791,9 +834,9 @@ end
 function Perl_Player_DruidBarManaShow()
 	if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID)) then
 		if (healermode == 1) then
-			local playerdruidbarmana = floor(DruidBarKey.keepthemana);
-			local playerdruidbarmanamax = DruidBarKey.maxmana;
-			local playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
+			playerdruidbarmana = floor(DruidBarKey.keepthemana);
+			playerdruidbarmanamax = DruidBarKey.maxmana;
+			playerdruidbarmanapercent = floor(playerdruidbarmana/playerdruidbarmanamax*100+0.5);
 
 			if (playerdruidbarmanapercent == 100) then			-- This is to ensure the value isn't 1 or 2 mana under max when 100%
 				playerdruidbarmana = playerdruidbarmanamax;
@@ -919,11 +962,10 @@ function Perl_Player_XPBar_Display(state)
 		else
 			rankName = GetPVPRankInfo(rankNumber, "player");
 		end
-		rankProgress = GetPVPRankProgress();
 		Perl_Player_XPBar:SetMinMaxValues(0, 1);
 		Perl_Player_XPRestBar:SetMinMaxValues(0, 1);
-		Perl_Player_XPBar:SetValue(rankProgress);
-		Perl_Player_XPRestBar:SetValue(rankProgress);
+		Perl_Player_XPBar:SetValue(GetPVPRankProgress());
+		Perl_Player_XPRestBar:SetValue(GetPVPRankProgress());
 		Perl_Player_XPBarText:SetText(rankName);
 		Perl_Player_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
 		Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
@@ -1244,6 +1286,12 @@ function Perl_Player_UpdateVars(vartable)
 		Perl_Player_Set_Transparency();
 	end
 
+	-- IFrameManager Support
+	if (IFrameManager) then
+		Perl_Player_IFrameManager();
+		IFrameManager:Refresh();
+	end
+
 	Perl_Player_Config[UnitName("player")] = {
 		["Locked"] = locked,
 		["XPBarState"] = xpbarstate,
@@ -1290,11 +1338,6 @@ function Perl_Player_MouseClick(button)
 				end
 			end
 		else
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
-
 			if (button == "LeftButton") then
 				if (SpellIsTargeting()) then
 					SpellTargetUnit("player");
@@ -1303,14 +1346,15 @@ function Perl_Player_MouseClick(button)
 				else
 					TargetUnit("player");
 				end
+				return;
+			end
+
+			if (SpellIsTargeting() and button == "RightButton") then
+				SpellStopTargeting();
+				return;
 			end
 		end
 	else
-		if (SpellIsTargeting() and button == "RightButton") then
-			SpellStopTargeting();
-			return;
-		end
-
 		if (button == "LeftButton") then
 			if (SpellIsTargeting()) then
 				SpellTargetUnit("player");
@@ -1319,6 +1363,12 @@ function Perl_Player_MouseClick(button)
 			else
 				TargetUnit("player");
 			end
+			return;
+		end
+
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
 		end
 	end
 end
@@ -1449,8 +1499,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.66",
-			releaseDate = "May 19, 2006",
+			version = "Version 0.67",
+			releaseDate = "May 26, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

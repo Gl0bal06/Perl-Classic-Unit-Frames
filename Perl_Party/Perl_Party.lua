@@ -76,7 +76,7 @@ function Perl_Party_OnLoad()
 	this:RegisterEvent("UNIT_NAME_UPDATE");
 	this:RegisterEvent("UNIT_PET");
 	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	this:RegisterEvent("UNIT_PVP_UPDATE");
+	this:RegisterEvent("UNIT_FACTION");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
@@ -123,7 +123,7 @@ function Perl_Party_OnEvent(event)
 			Perl_Party_Update_Mana();		-- Update the power info immediately
 		end
 		return;
-	elseif (event == "UNIT_PVP_UPDATE") then
+	elseif (event == "UNIT_FACTION") then
 		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
 			Perl_Party_Update_PvP_Status();		-- Is the character PvP flagged?
 		end
@@ -226,8 +226,126 @@ function Perl_Party_Initialize()
 		getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetFrameLevel(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):GetFrameLevel() + 2);
 	end
 
+	-- IFrameManager Support
+		if (IFrameManager) then
+			Perl_Party_IFrameManager(1);
+		end
+
 	Initialized = 1;
 	Perl_Party_MembersUpdate();
+end
+
+function Perl_Party_IFrameManager(initflag)
+	local iface = IFrameManager:Interface();
+	function iface:getName(frame)
+		return "Perl Party";
+	end
+	function iface:getBorder(frame)
+		local bottom, left, right, top;
+		if (verticalalign == 1) then
+			if (partyspacing < 0) then
+				if (showpets == 0) then
+					bottom = -3 * partyspacing + 25;
+					top = -5;
+				else
+					bottom = (-3 * partyspacing) + 25 + (4 * 12);
+					top = -5;
+				end
+			else
+				if (showpets == 0) then
+					top = 3 * partyspacing - 5;
+					bottom = 25;
+				else
+					top = (3 * partyspacing) - 5 + (3 * 12);
+					bottom = 37;
+				end
+			end
+			if (showportrait == 1) then
+				left = 55;
+			else
+				left = 0;
+			end
+			if (compactmode == 0) then
+				right = 70;
+			else
+				if (compactpercent == 0) then
+					right = 0;
+				else
+					right = 35;
+				end
+			end
+			local buffflag;
+			if (bufflocation == 4 or debufflocation == 4) then
+				bottom = bottom + 16;
+				buffflag = 1;
+			end
+			if (bufflocation == 5 or debufflocation == 5) then
+				if (buffflag == 1) then
+					bottom = bottom + 16;
+				else
+					bottom = bottom + 36;
+				end
+			end
+			-- Offsets since the party frame is weird
+			left = left - 5;
+			right = right - 20;
+			--top = -5;
+			--bottom = 25;
+		else
+			if (partyspacing < 0) then
+				left = 3 * (-(partyspacing) + 195);
+				if (compactmode == 0) then
+					right = 70;
+				else
+					if (compactpercent == 0) then
+						right = 0;
+					else
+						right = 35;
+					end
+				end
+			else
+				left = 0;
+				right = 3 * (partyspacing + 195);
+				if (compactmode == 0) then
+					right = right + 70;
+				else
+					if (compactpercent == 0) then
+						right = right + 0;
+					else
+						right = right + 35;
+					end
+				end
+			end
+			if (showportrait == 1) then
+				left = left + 55;
+			end
+			if (showpets == 0) then
+				bottom = 25;
+			else
+				bottom = 37;
+			end
+			local buffflag;
+			if (bufflocation == 4 or debufflocation == 4) then
+				bottom = bottom + 16;
+				buffflag = 1;
+			end
+			if (bufflocation == 5 or debufflocation == 5) then
+				if (buffflag == 1) then
+					bottom = bottom + 16;
+				else
+					bottom = bottom + 36;
+				end
+			end
+			-- Offsets since the party frame is weird
+			left = left - 5;
+			right = right - 20;
+			top = -5;
+		end
+		return top, right, bottom, left;
+	end
+	if (initflag) then
+		IFrameManager:Register(Perl_Party_Frame, iface);
+	end
 end
 
 function Perl_Party_Initialize_Frame_Color(flag)
@@ -259,26 +377,24 @@ end
 -- Update Functions --
 ----------------------
 function Perl_Party_MembersUpdate()
-	for partynum=1,4 do
-		local partyid = "party"..partynum;
-		local frame = getglobal("Perl_Party_MemberFrame"..partynum);
-		if (UnitName(partyid) ~= nil) then
+	for num=1,4 do
+		if (UnitName("party"..num) ~= nil) then
 			if (partyhidden == 0) then
-				frame:Show();
+				getglobal("Perl_Party_MemberFrame"..num):Show();
 			else
 				if (partyhidden == 1) then
-					frame:Hide();
+					getglobal("Perl_Party_MemberFrame"..num):Hide();
 				end
 				if (partyhidden == 2) then
 					if (UnitInRaid("player")) then
-						frame:Hide();
+						getglobal("Perl_Party_MemberFrame"..num):Hide();
 					else
-						frame:Show();
+						getglobal("Perl_Party_MemberFrame"..num):Show();
 					end
 				end
 			end
 		else
-			frame:Hide();
+			getglobal("Perl_Party_MemberFrame"..num):Hide();
 		end
 	end
 	Perl_Party_Set_Name();
@@ -295,15 +411,12 @@ function Perl_Party_MembersUpdate()
 	Perl_Party_Update_Loot_Method();
 	Perl_Party_Update_Portrait();
 	Perl_Party_Buff_UpdateAll();
+	Perl_Party_Buff_Position_Update();
 end
 
 function Perl_Party_Update_Health()
-	local id = this:GetID();
-	local partyid = "party"..id;
+	local partyid = "party"..this:GetID();
 
-	partyhealth = nil;
-	partyhealthmax = nil;
-	partyhealthpercent = nil;
 	partyhealth = UnitHealth(partyid);
 	partyhealthmax = UnitHealthMax(partyid);
 	partyhealthpercent = floor(partyhealth/partyhealthmax*100+0.5);
@@ -352,7 +465,7 @@ function Perl_Party_Update_Health()
 	if (compactmode == 0) then
 		if (healermode == 1) then
 			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText("-"..partyhealthmax - partyhealth);
-			if (tonumber(mouseoverhealthflag) == tonumber(id)) then
+			if (tonumber(mouseoverhealthflag) == tonumber(this:GetID())) then
 				getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealth.."/"..partyhealthmax);
 			else
 				getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText();
@@ -365,7 +478,7 @@ function Perl_Party_Update_Health()
 	else
 		if (healermode == 1) then
 			getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarText"):SetText("-"..partyhealthmax - partyhealth);
-			if (tonumber(mouseoverhealthflag) == tonumber(id)) then
+			if (tonumber(mouseoverhealthflag) == tonumber(this:GetID())) then
 				getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealth.."/"..partyhealthmax);
 			else
 				getglobal(this:GetName().."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText();
@@ -398,12 +511,8 @@ function Perl_Party_Update_Health()
 end
 
 function Perl_Party_Update_Mana()
-	local id = this:GetID();
-	local partyid = "party"..id;
+	local partyid = "party"..this:GetID();
 
-	partymana = nil;
-	partymanamax = nil;
-	partymanapercent = nil;
 	partymana = UnitMana(partyid);
 	partymanamax = UnitManaMax(partyid);
 	partymanapercent = floor(partymana/partymanamax*100+0.5);
@@ -419,7 +528,7 @@ function Perl_Party_Update_Mana()
 	if (compactmode == 0) then
 		if (healermode == 1) then
 			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarText"):SetText();
-			if (tonumber(mouseovermanaflag) == tonumber(id)) then
+			if (tonumber(mouseovermanaflag) == tonumber(this:GetID())) then
 				getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana.."/"..partymanamax);
 			else
 				getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText();
@@ -436,7 +545,7 @@ function Perl_Party_Update_Mana()
 	else
 		if (healermode == 1) then
 			getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarText"):SetText();
-			if (tonumber(mouseovermanaflag) == tonumber(id)) then
+			if (tonumber(mouseovermanaflag) == tonumber(this:GetID())) then
 				getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana.."/"..partymanamax);
 			else
 				getglobal(this:GetName().."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText();
@@ -459,8 +568,7 @@ function Perl_Party_Update_Mana()
 end
 
 function Perl_Party_Update_Mana_Bar()
-	local partyid = "party"..this:GetID();
-	local partypower = UnitPowerType(partyid);
+	local partypower = UnitPowerType("party"..this:GetID());
 
 	-- Set mana bar color
 	if (partypower == 0) then
@@ -610,17 +718,14 @@ function Perl_Party_Update_Pet()
 end
 
 function Perl_Party_Update_Pet_Health()
-	local id = this:GetID();
+	local partypetid = "partypet"..this:GetID();
 
-	if (UnitIsConnected("party"..id) and UnitExists("partypet"..id)) then
-		partypethealth = nil;
-		partypethealthmax = nil;
-		partypethealthpercent = nil;
-		partypethealth = UnitHealth("partypet"..id);
-		partypethealthmax = UnitHealthMax("partypet"..id);
+	if (UnitIsConnected(partypetid) and UnitExists(partypetid)) then
+		partypethealth = UnitHealth(partypetid);
+		partypethealthmax = UnitHealthMax(partypetid);
 		partypethealthpercent = floor(partypethealth/partypethealthmax*100+0.5);
 
-		if (UnitIsDead("partypet"..id) or UnitIsGhost("partypet"..id)) then				-- This prevents negative health
+		if (UnitIsDead(partypetid) or UnitIsGhost(partypetid)) then				-- This prevents negative health
 			partypethealth = 0;
 			partypethealthpercent = 0;
 		end
@@ -650,7 +755,7 @@ function Perl_Party_Update_Pet_Health()
 		if (compactmode == 0) then
 			if (healermode == 1) then
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-"..partypethealthmax - partypethealth);
-				if (tonumber(mouseoverpethealthflag) == tonumber(id)) then
+				if (tonumber(mouseoverpethealthflag) == tonumber(this:GetID())) then
 					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealth.."/"..partypethealthmax);
 				else
 					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
@@ -663,7 +768,7 @@ function Perl_Party_Update_Pet_Health()
 		else
 			if (healermode == 1) then
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-"..partypethealthmax - partypethealth);
-				if (tonumber(mouseoverpethealthflag) == tonumber(id)) then
+				if (tonumber(mouseoverpethealthflag) == tonumber(this:GetID())) then
 					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealth.."/"..partypethealthmax);
 				else
 					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
@@ -686,27 +791,29 @@ function Perl_Party_Update_Pet_Health()
 end
 
 function Perl_Party_Set_Name()
-	local id = this:GetID();
-	local partyid = "party"..id;
-	local partyname = UnitName(partyid);
+	local partyid = "party"..this:GetID();
 
 	-- Set name
 	if (UnitName(partyid) ~= nil) then
+		local partyname = UnitName(partyid);
+
 		if (strlen(partyname) > 20) then
 			partyname = strsub(partyname, 1, 19).."...";
 		end
+
 		if (showfkeys == 1) then
-			getglobal(this:GetName().."_NameFrame_FKeyText"):SetText("F"..(id + 1));
+			getglobal(this:GetName().."_NameFrame_FKeyText"):SetText("F"..(this:GetID() + 1));
 		else
 			getglobal(this:GetName().."_NameFrame_FKeyText"):SetText();
 		end
+
 		getglobal(this:GetName().."_NameFrame_NameBarText"):SetText(partyname);
 	end
 
 	-- Set Class Icon
 	if (UnitIsPlayer(partyid)) then
-		local PlayerClass = UnitClass(partyid);
-		getglobal(this:GetName().."_LevelFrame_ClassTexture"):SetTexCoord(Perl_Party_ClassPosRight[PlayerClass], Perl_Party_ClassPosLeft[PlayerClass], Perl_Party_ClassPosTop[PlayerClass], Perl_Party_ClassPosBottom[PlayerClass]); -- Set the player's class icon
+		local localizedclass = UnitClass(partyid);
+		getglobal(this:GetName().."_LevelFrame_ClassTexture"):SetTexCoord(Perl_Party_ClassPosRight[localizedclass], Perl_Party_ClassPosLeft[localizedclass], Perl_Party_ClassPosTop[localizedclass], Perl_Party_ClassPosBottom[localizedclass]);	-- Set the party member's class icon
 		getglobal(this:GetName().."_LevelFrame_ClassTexture"):Show();
 	else
 		getglobal(this:GetName().."_LevelFrame_ClassTexture"):Hide();
@@ -716,11 +823,11 @@ end
 function Perl_Party_Update_PvP_Status()				-- Modeled after 1.9 code
 	local partyid = "party"..this:GetID();
 
-	
 	local factionGroup = UnitFactionGroup(partyid);
-	if (factionGroup == nil) then				-- This check probably isn't needed since the changes in the code below in 0.48
+	if (factionGroup == nil) then
 		factionGroup = UnitFactionGroup("player");
 	end
+
 	-- Color their name if PvP flagged
 	if (UnitIsPVPFreeForAll(partyid)) then
 		getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0,1,0);						-- FFA PvP will still use normal PvP coloring since you're grouped
@@ -759,25 +866,22 @@ function Perl_Party_Update_PvP_Status()				-- Modeled after 1.9 code
 end
 
 function Perl_Party_Update_Level()
-	local id = this:GetID();
-	if (id ~= 0) then		-- Do this check to prevent showing a player level of zero when the player is zoning or dead or cant have info received (linkdead)
-		getglobal(this:GetName().."_LevelFrame_LevelBarText"):SetText(UnitLevel("party"..id));
+	if (this:GetID() ~= 0) then		-- Do this check to prevent showing a player level of zero when the player is zoning or dead or cant have info received (linkdead)
+		getglobal(this:GetName().."_LevelFrame_LevelBarText"):SetText(UnitLevel("party"..this:GetID()));
 	end
 end
 
 function Perl_Party_Update_Leader()
-	local id = this:GetID();
-	local icon = getglobal(this:GetName().."_NameFrame_LeaderIcon");
-	if (GetPartyLeaderIndex() == id) then
-		icon:Show();
+	if (GetPartyLeaderIndex() == this:GetID()) then
+		getglobal(this:GetName().."_NameFrame_LeaderIcon"):Show();
 	else
-		icon:Hide();
+		getglobal(this:GetName().."_NameFrame_LeaderIcon"):Hide();
 	end
 end
 
 function Perl_Party_Update_Loot_Method()
-	local lootMethod, lootMaster;
-	lootMethod, lootMaster = GetLootMethod();
+	local lootMaster;
+	_, lootMaster = GetLootMethod();
 	if (this:GetID() == lootMaster) then
 		getglobal(this:GetName().."_NameFrame_MasterIcon"):Show();
 	else
@@ -835,8 +939,8 @@ function Perl_Party_HealthShow()
 			id = string.sub(name, 23, 23);
 		end
 		local partyid = "party"..id;
-		local partyhealth = UnitHealth(partyid);
-		local partyhealthmax = UnitHealthMax(partyid);
+		partyhealth = UnitHealth(partyid);
+		partyhealthmax = UnitHealthMax(partyid);
 
 		if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then				-- This prevents negative health
 			partyhealth = 0;
@@ -867,8 +971,8 @@ function Perl_Party_ManaShow()
 			id = string.sub(name, 23, 23);
 		end
 		local partyid = "party"..id;
-		local partymana = UnitMana(partyid);
-		local partymanamax = UnitManaMax(partyid);
+		partymana = UnitMana(partyid);
+		partymanamax = UnitManaMax(partyid);
 
 		if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then				-- This prevents negative mana
 			partymana = 0;
@@ -903,8 +1007,8 @@ function Perl_Party_Pet_HealthShow()
 			id = string.sub(name, 23, 23);
 		end
 		local partyid = "partypet"..id;
-		local partypethealth = UnitHealth(partyid);
-		local partypethealthmax = UnitHealthMax(partyid);
+		partypethealth = UnitHealth(partyid);
+		partypethealthmax = UnitHealthMax(partyid);
 
 		if (UnitIsDead(partyid) or UnitIsGhost(partyid)) then				-- This prevents negative health
 			partypethealth = 0;
@@ -963,8 +1067,6 @@ function Perl_Party_Update_Portrait(partymember)
 end
 
 function Perl_Party_Update_Health_Mana()
-	local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, partymanapercent, partypethealth, partypethealthmax, partypethealthpercent;
-
 	for partynum=1,4 do
 		local partyid = "party"..partynum;
 		if (UnitName(partyid) ~= nil) then
@@ -1057,8 +1159,8 @@ function Perl_Party_Force_Update()
 
 		-- Set Class Icon
 		if (UnitIsPlayer(partyid)) then
-			local PlayerClass = UnitClass(partyid);
-			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):SetTexCoord(Perl_Party_ClassPosRight[PlayerClass], Perl_Party_ClassPosLeft[PlayerClass], Perl_Party_ClassPosTop[PlayerClass], Perl_Party_ClassPosBottom[PlayerClass]); -- Set the player's class icon
+			local localizedclass = UnitClass(partyid);
+			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):SetTexCoord(Perl_Party_ClassPosRight[localizedclass], Perl_Party_ClassPosLeft[localizedclass], Perl_Party_ClassPosTop[localizedclass], Perl_Party_ClassPosBottom[localizedclass]);	-- Set the party member's class icon
 			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):Show();
 		else
 			getglobal("Perl_Party_MemberFrame"..partynum.."_LevelFrame_ClassTexture"):Hide();
@@ -1162,9 +1264,8 @@ function Perl_Party_Force_Update()
 		end
 
 		-- Set pet bars
-		local id = partynum;	-- Easier than changing all variables below, I'll do it later
 		if (showpets == 1) then
-			if (UnitIsConnected("party"..id) and UnitExists("partypet"..id)) then
+			if (UnitIsConnected("party"..partynum) and UnitExists("partypet"..partynum)) then
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):Show();
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBarBG"):Show();
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar_CastClickOverlay"):Show();
@@ -1172,15 +1273,15 @@ function Perl_Party_Force_Update()
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_CastClickOverlay"):SetHeight(54);
 
 				if (verticalalign == 1) then
-					if (id == 1 or id == 2 or id == 3) then
-						local idspace = id + 1;
+					if (partynum == 1 or partynum == 2 or partynum == 3) then
+						local idspace = partynum + 1;
 						local partypetspacing;
 						if (partyspacing < 0) then			-- Frames are normal
 							partypetspacing = partyspacing - 12;
 						else						-- Frames are inverted
 							partypetspacing = partyspacing + 12;
 						end
-						getglobal("Perl_Party_MemberFrame"..idspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id, "TOPLEFT", 0, partypetspacing);
+						getglobal("Perl_Party_MemberFrame"..idspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..partynum, "TOPLEFT", 0, partypetspacing);
 					end
 				else
 					local horizontalspacing;
@@ -1201,11 +1302,11 @@ function Perl_Party_Force_Update()
 				getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_CastClickOverlay"):SetHeight(42);
 
 				if (verticalalign == 1) then
-					if (id == 1) then
+					if (partynum == 1) then
 						Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partyspacing);
-					elseif (id == 2) then
+					elseif (partynum == 2) then
 						Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partyspacing);
-					elseif (id == 3) then
+					elseif (partynum == 3) then
 						Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
 					end
 				else
@@ -1228,11 +1329,11 @@ function Perl_Party_Force_Update()
 			getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_CastClickOverlay"):SetHeight(42);
 			
 			if (verticalalign == 1) then
-				if (id == 1) then
+				if (partynum == 1) then
 					Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partyspacing);
-				elseif (id == 2) then
+				elseif (partynum == 2) then
 					Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partyspacing);
-				elseif (id == 3) then
+				elseif (partynum == 3) then
 					Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
 				end
 			else
@@ -1594,8 +1695,10 @@ function Perl_Party_Set_Buff_Location(newvalue)
 		bufflocation = newvalue;
 	end
 	Perl_Party_UpdateVars();
-	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
-	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+	Perl_Party_Buff_Position_Update(1);
+	Perl_Party_Buff_Position_Update(2);
+	Perl_Party_Buff_Position_Update(3);
+	Perl_Party_Buff_Position_Update(4);
 end
 
 function Perl_Party_Set_Debuff_Location(newvalue)
@@ -1603,8 +1706,10 @@ function Perl_Party_Set_Debuff_Location(newvalue)
 		debufflocation = newvalue;
 	end
 	Perl_Party_UpdateVars();
-	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
-	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+	Perl_Party_Buff_Position_Update(1);
+	Perl_Party_Buff_Position_Update(2);
+	Perl_Party_Buff_Position_Update(3);
+	Perl_Party_Buff_Position_Update(4);
 end
 
 function Perl_Party_Set_Buff_Size(newvalue)
@@ -1659,6 +1764,7 @@ function Perl_Party_Set_Scale(number)
 	Perl_Party_MemberFrame2:SetScale(unsavedscale);
 	Perl_Party_MemberFrame3:SetScale(unsavedscale);
 	Perl_Party_MemberFrame4:SetScale(unsavedscale);
+	Perl_Party_Frame:SetScale(unsavedscale);	--IFrameManager tweak, shouldn't affect anything else
 	Perl_Party_UpdateVars();
 end
 
@@ -1978,6 +2084,12 @@ function Perl_Party_UpdateVars(vartable)
 		Perl_Party_Set_Transparency();
 	end
 
+	-- IFrameManager Support
+	if (IFrameManager) then
+		Perl_Party_IFrameManager();
+		IFrameManager:Refresh();
+	end
+
 	Perl_Party_Config[UnitName("player")] = {
 		["Locked"] = locked,
 		["CompactMode"] = compactmode,
@@ -2018,53 +2130,44 @@ function Perl_Party_Buff_UpdateAll(partymember)
 	end
 	
 	if (UnitName(partyid)) then
-		local buffCount, buffTexture, buffApplications;
-		for buffnum=1,numbuffsshown do
-			buffTexture, buffApplications = UnitBuff(partyid, buffnum, displaycastablebuffs);
-			local button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..buffnum);
-			local icon = getglobal(button:GetName().."Icon");
-			local debuff = getglobal(button:GetName().."DebuffBorder");
-
-			if (UnitBuff(partyid, buffnum, displaycastablebuffs)) then
-				icon:SetTexture(UnitBuff(partyid, buffnum, displaycastablebuffs));
-				debuff:Hide();
-				button:Show();
-				buffCount = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..(buffnum).."Count");
+		local button, buffCount, buffTexture, buffApplications;							-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		for buffnum=1,numbuffsshown do										-- Start main buff loop
+			buffTexture, buffApplications = UnitBuff(partyid, buffnum, displaycastablebuffs);		-- Get the texture, buff stacking, and class specific information if any
+			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..buffnum);			-- Create the main icon for the buff
+			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Hide();					-- Hide the debuff border
+				buffCount = getglobal(button:GetName().."Count");					-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);
-					buffCount:Show();
+					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
+					buffCount:Show();								-- Show the text
 				else
-					buffCount:Hide();
+					buffCount:Hide();								-- Hide the text if equal to 0
 				end
+				button:Show();										-- Show the final buff icon
 			else
-				button:Hide();
+				button:Hide();										-- Hide the icon since there isn't a buff in this position
 			end
-		end
+		end													-- End main buff loop
 
-		local debuffCount, debuffTexture, debuffApplications;
-		for buffnum=1,numdebuffsshown do
-			debuffTexture, debuffApplications = UnitDebuff(partyid, buffnum, displaycastablebuffs);
-			local button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..buffnum);
-			local icon = getglobal(button:GetName().."Icon");
-			local debuff = getglobal(button:GetName().."DebuffBorder");
-
-			if (UnitDebuff(partyid, buffnum, displaycastablebuffs)) then
-				icon:SetTexture(UnitDebuff(partyid, buffnum, displaycastablebuffs));
-				debuff:Show();
-				button:Show();
-				debuffCount = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..(buffnum).."Count");
-				if (debuffApplications > 1) then
-					debuffCount:SetText(debuffApplications);
-					debuffCount:Show();
+		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
+			buffTexture, buffApplications = UnitDebuff(partyid, debuffnum, displaycastablebuffs);		-- Get the texture, debuff stacking, and class specific information if any
+			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..debuffnum);		-- Create the main icon for the debuff
+			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Hide();					-- Hide the debuff border
+				buffCount = getglobal(button:GetName().."Count");					-- Declare the debuff counting text variable
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);						-- Set the text to the number of applications if greater than 0
+					buffCount:Show();								-- Show the text
 				else
-					debuffCount:Hide();
+					buffCount:Hide();								-- Hide the text if equal to 0
 				end
+				button:Show();										-- Show the final debuff icon
 			else
-				button:Hide();
+				button:Hide();										-- Hide the icon since there isn't a debuff in this position
 			end
-		end
-
-		Perl_Party_Buff_Position_Update(id, partyid);
+		end													-- End main debuff loop
 	end
 end
 
@@ -2075,7 +2178,11 @@ function Perl_Party_Update_Buffs()
 	Perl_Party_Buff_UpdateAll(4);
 end
 
-function Perl_Party_Buff_Position_Update(id, partyid)
+function Perl_Party_Buff_Position_Update(id)
+	if (id == nil) then
+		id = this:GetID();
+	end
+
 	if (bufflocation == 1) then
 		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_NameFrame", "TOPRIGHT", 0, -3);
 	elseif (bufflocation == 2) then
@@ -2132,12 +2239,11 @@ function Perl_Party_Reset_Buffs()
 end
 
 function Perl_Party_SetBuffTooltip()
-	local partyid = "party"..this:GetParent():GetParent():GetID();
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
 	if (this:GetID() > 16) then
-		GameTooltip:SetUnitDebuff(partyid, this:GetID()-16);	-- 16 being the number of buffs before debuffs in the xml
+		GameTooltip:SetUnitDebuff("party"..this:GetParent():GetParent():GetID(), this:GetID()-16, displaycastablebuffs);	-- 16 being the number of buffs before debuffs in the xml
 	else
-		GameTooltip:SetUnitBuff(partyid, this:GetID());
+		GameTooltip:SetUnitBuff("party"..this:GetParent():GetParent():GetID(), this:GetID(), displaycastablebuffs);
 	end
 end
 
@@ -2272,11 +2378,6 @@ function Perl_Party_Pet_MouseClick(button)
 				end
 			end
 		else
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
-
 			if (button == "LeftButton") then
 				if (SpellIsTargeting()) then
 					SpellTargetUnit("partypet"..id);
@@ -2285,14 +2386,15 @@ function Perl_Party_Pet_MouseClick(button)
 				else
 					TargetUnit("partypet"..id);
 				end
+				return;
+			end
+
+			if (SpellIsTargeting() and button == "RightButton") then
+				SpellStopTargeting();
+				return;
 			end
 		end
 	else
-		if (SpellIsTargeting() and button == "RightButton") then
-			SpellStopTargeting();
-			return;
-		end
-
 		if (button == "LeftButton") then
 			if (SpellIsTargeting()) then
 				SpellTargetUnit("partypet"..id);
@@ -2301,6 +2403,12 @@ function Perl_Party_Pet_MouseClick(button)
 			else
 				TargetUnit("partypet"..id);
 			end
+			return;
+		end
+
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
 		end
 	end
 end
@@ -2331,8 +2439,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.66",
-			releaseDate = "May 19, 2006",
+			version = "Version 0.67",
+			releaseDate = "May 26, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

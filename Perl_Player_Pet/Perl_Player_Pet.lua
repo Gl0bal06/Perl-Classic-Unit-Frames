@@ -21,6 +21,9 @@ local portraitcombattext = 0;		-- Combat text is disabled by default on the port
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
 
+-- Local variables to save memory
+local pethealth, pethealthmax, petmana, petmanamax, happiness, playerpetxp, playerpetxpmax, xptext;
+
 
 ----------------------
 -- Loading Function --
@@ -128,7 +131,8 @@ function Perl_Player_Pet_OnEvent(event)
 		return;
 	elseif (event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED") then
 		if (arg1 == "pet") then
-			Perl_Player_Pet_Update_Portrait();
+			--Perl_Player_Pet_Update_Portrait();	-- Uncomment this line if the line below is ever removed
+			Perl_Player_Pet_Update_Once();		-- As of 1.10 the stable is partially broken, this event however is always called after a pet is swapped, so we will just update the whole mod here too to ensure a clean switch.
 		end
 		return;
 	elseif (event == "VARIABLES_LOADED") or (event == "PLAYER_ENTERING_WORLD") then
@@ -173,7 +177,37 @@ function Perl_Player_Pet_Initialize()
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(PetFrame);
 
+	-- IFrameManager Support
+	if (IFrameManager) then
+		Perl_Player_Pet_IFrameManager(1);
+	end
+
 	Initialized = 1;
+end
+
+function Perl_Player_Pet_IFrameManager(initflag)
+	local iface = IFrameManager:Interface();
+	function iface:getName(frame)
+		return "Perl Player Pet";
+	end
+	function iface:getBorder(frame)
+		local bottom, left;
+		if (showxp == 0) then
+			bottom = 30;
+		else
+			bottom = 43;
+		end
+		if (showportrait == 0) then
+			left = 0;
+		else
+			left = 48;
+		end
+		--return top, right, bottom, left;
+		return 0, 0, bottom, left;
+	end
+	if (initflag) then
+		IFrameManager:Register(this, iface);
+	end
 end
 
 function Perl_Player_Pet_Initialize_Frame_Color()
@@ -207,6 +241,7 @@ function Perl_Player_Pet_Update_Once()
 		Perl_Player_Pet_Update_Mana();					-- Set mana values
 		Perl_Player_Pet_Update_Mana_Bar();				-- Set the type of mana
 		Perl_Player_PetFrame_SetHappiness();				-- Set Happiness
+		Perl_Player_Pet_Buff_Position_Update();				-- Set the buff positions
 		Perl_Player_Pet_Buff_UpdateAll();				-- Set buff frame
 		Perl_Player_Pet_Portrait_Combat_Text();				-- Set the combat text frame
 		Perl_Player_Pet_ShowXP();					-- Are we showing the xp bar?
@@ -217,8 +252,8 @@ function Perl_Player_Pet_Update_Once()
 end
 
 function Perl_Player_Pet_Update_Health()
-	local pethealth = UnitHealth("pet");
-	local pethealthmax = UnitHealthMax("pet");
+	pethealth = UnitHealth("pet");
+	pethealthmax = UnitHealthMax("pet");
 
 	if (UnitIsDead("pet") or UnitIsGhost("pet")) then				-- This prevents negative health
 		pethealth = 0;
@@ -269,8 +304,8 @@ function Perl_Player_Pet_Update_Health()
 end
 
 function Perl_Player_Pet_Update_Mana()
-	local petmana = UnitMana("pet");
-	local petmanamax = UnitManaMax("pet");
+	petmana = UnitMana("pet");
+	petmanamax = UnitManaMax("pet");
 
 	if (UnitIsDead("pet") or UnitIsGhost("pet")) then				-- This prevents negative mana
 		petmana = 0;
@@ -287,19 +322,18 @@ function Perl_Player_Pet_Update_Mana()
 end
 
 function Perl_Player_Pet_Update_Mana_Bar()
-	local petpower = UnitPowerType("pet");
 	-- Set mana bar color
-	if (petpower == 0) then
+	if (UnitPowerType("pet") == 0) then
 		Perl_Player_Pet_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-	elseif (petpower == 2) then
+	elseif (UnitPowerType("pet") == 2) then
 		Perl_Player_Pet_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
 	end
 end
 
 function Perl_Player_PetFrame_SetHappiness()
-	local happiness, damagePercentage, loyaltyRate = GetPetHappiness();
+	happiness = GetPetHappiness();
 
 	if (happiness == 1) then
 		Perl_Player_PetHappinessTexture:SetTexCoord(0.375, 0.5625, 0, 0.359375);
@@ -307,18 +341,6 @@ function Perl_Player_PetFrame_SetHappiness()
 		Perl_Player_PetHappinessTexture:SetTexCoord(0.1875, 0.375, 0, 0.359375);
 	elseif (happiness == 3) then
 		Perl_Player_PetHappinessTexture:SetTexCoord(0, 0.1875, 0, 0.359375);
-	end
-
-	if (happiness ~= nil) then
-		Perl_Player_PetHappiness.tooltip = getglobal("PET_HAPPINESS"..happiness);
-		Perl_Player_PetHappiness.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage);
-		if (loyaltyRate < 0) then
-			Perl_Player_PetHappiness.tooltipLoyalty = getglobal("LOSING_LOYALTY");
-		elseif (loyaltyRate > 0) then
-			Perl_Player_PetHappiness.tooltipLoyalty = getglobal("GAINING_LOYALTY");
-		else
-			Perl_Player_PetHappiness.tooltipLoyalty = nil;
-		end
 	end
 end
 
@@ -348,14 +370,13 @@ end
 
 function Perl_Player_Pet_Update_Experience()
 	-- XP Bar stuff
-	local playerpetxp, playerpetxpmax;
 	playerpetxp, playerpetxpmax = GetPetExperience();
 
 	Perl_Player_Pet_XPBar:SetMinMaxValues(0, playerpetxpmax);
 	Perl_Player_Pet_XPBar:SetValue(playerpetxp);
 
 	-- Set xp text
-	local xptext = playerpetxp.."/"..playerpetxpmax;
+	xptext = playerpetxp.."/"..playerpetxpmax;
 
 	Perl_Player_Pet_XPBar:SetStatusBarColor(0, 0.6, 0.6, 1);
 	Perl_Player_Pet_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
@@ -449,6 +470,7 @@ function Perl_Player_Pet_Set_Buff_Location(newvalue)
 		bufflocation = newvalue;
 	end
 	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Buff_Position_Update();	-- Set the buff positions
 	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 end
@@ -458,6 +480,7 @@ function Perl_Player_Pet_Set_Debuff_Location(newvalue)
 		debufflocation = newvalue;
 	end
 	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Buff_Position_Update();	-- Set the buff positions
 	Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons and set the size
 	Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 end
@@ -726,6 +749,12 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		Perl_Player_Pet_Set_Transparency();	-- Set the transparency
 	end
 
+	-- IFrameManager Support
+	if (IFrameManager) then
+		Perl_Player_Pet_IFrameManager();
+		IFrameManager:Refresh();
+	end
+
 	Perl_Player_Pet_Config[UnitName("player")] = {
 		["Locked"] = locked,
 		["ShowXP"] = showxp,
@@ -749,106 +778,81 @@ end
 --------------------
 function Perl_Player_Pet_Buff_UpdateAll()
 	if (UnitName("pet")) then
-		local buffmax = 0;
-		local buffCount, buffTexture, buffApplications;
-		for buffnum=1,numpetbuffsshown do
-			buffTexture, buffApplications = UnitBuff("pet", buffnum);
-			local button = getglobal("Perl_Player_Pet_Buff"..buffnum);
-			local icon = getglobal(button:GetName().."Icon");
-			local debuff = getglobal(button:GetName().."DebuffBorder");
-
-			if (UnitBuff("pet", buffnum)) then
-				icon:SetTexture(buffTexture);
-				button.isdebuff = 0;
-				debuff:Hide();
-				button:Show();
-				buffCount = getglobal("Perl_Player_Pet_Buff"..buffnum.."Count");
+		local button, buffCount, buffTexture, buffApplications;					-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		for buffnum=1,numpetbuffsshown do							-- Start main buff loop
+			buffTexture, buffApplications = UnitBuff("pet", buffnum);			-- Get the texture and buff stacking information if any
+			button = getglobal("Perl_Player_Pet_Buff"..buffnum);				-- Create the main icon for the buff
+			if (buffTexture) then								-- If there is a valid texture, proceed with buff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Hide();			-- Hide the debuff border
+				buffCount = getglobal(button:GetName().."Count");			-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);
-					buffCount:Show();
+					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
+					buffCount:Show();						-- Show the text
 				else
-					buffCount:Hide();
+					buffCount:Hide();						-- Hide the text if equal to 0
 				end
-				buffmax = buffnum;
+				button:Show();								-- Show the final buff icon
 			else
-				button:Hide();
+				button:Hide();								-- Hide the icon since there isn't a buff in this position
 			end
-		end
+		end											-- End main buff loop
 
-		local debuffmax = 0;
-		local debuffCount, debuffTexture, debuffApplications;
 		for debuffnum=1,numpetdebuffsshown do
-			debuffTexture, debuffApplications = UnitDebuff("pet", debuffnum);
-			local button = getglobal("Perl_Player_Pet_Debuff"..debuffnum);
-			local icon = getglobal(button:GetName().."Icon");
-			local debuff = getglobal(button:GetName().."DebuffBorder");
-			
-			if (UnitDebuff("pet", debuffnum)) then
-				icon:SetTexture(debuffTexture);
-				button.isdebuff = 1;
-				debuff:Show();
-				button:Show();
-				debuffCount = getglobal("Perl_Player_Pet_Debuff"..debuffnum.."Count");
-				if (debuffApplications > 1) then
-					debuffCount:SetText(debuffApplications);
-					debuffCount:Show();
+			buffTexture, buffApplications = UnitDebuff("pet", debuffnum);			-- Get the texture and debuff stacking information if any
+			button = getglobal("Perl_Player_Pet_Debuff"..debuffnum);			-- Create the main icon for the debuff
+			if (buffTexture) then								-- If there is a valid texture, proceed with debuff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Show();			-- Show the debuff border
+				buffCount = getglobal(button:GetName().."Count");			-- Declare the debuff counting text variable
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
+					buffCount:Show();						-- Show the text
 				else
-					debuffCount:Hide();
+					buffCount:Hide();						-- Hide the text if equal to 0
 				end
-				debuffmax = debuffnum;
+				button:Show();								-- Show the final debuff icon
 			else
-				button:Hide();
+				button:Hide();								-- Hide the icon since there isn't a debuff in this position
 			end
-		end
+		end											-- End main debuff loop
+	end
+end
 
-		if (buffmax == 0) then
-			Perl_Player_Pet_BuffFrame:Hide();
+function Perl_Player_Pet_Buff_Position_Update()
+	if (bufflocation == 1) then
+		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
+	elseif (bufflocation == 2) then
+		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
+	elseif (bufflocation == 3) then
+		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 0);
 		else
-			Perl_Player_Pet_BuffFrame:Show();
-			Perl_Player_Pet_BuffFrame:SetWidth(5 + buffmax * 17);
+			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, 0);
 		end
-
-		if (debuffmax == 0) then
-			Perl_Player_Pet_DebuffFrame:Hide();
+	else
+		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, -15);
 		else
-			Perl_Player_Pet_DebuffFrame:Show();
-			Perl_Player_Pet_DebuffFrame:SetWidth(5 + debuffmax * 17);
+			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, -15);
 		end
+	end
 
-		if (bufflocation == 1) then
-			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
-		elseif (bufflocation == 2) then
-			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
-		elseif (bufflocation == 3) then
-			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
-				Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 0);
-			else
-				Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, 0);
-			end
+	if (debufflocation == 1) then
+		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
+	elseif (debufflocation == 2) then
+		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
+	elseif (debufflocation == 3) then
+		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 0);
 		else
-			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
-				Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, -15);
-			else
-				Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, -15);
-			end
+			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, 0);
 		end
-
-		if (debufflocation == 1) then
-			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
-		elseif (debufflocation == 2) then
-			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
-		elseif (debufflocation == 3) then
-			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
-				Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 0);
-			else
-				Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, 0);
-			end
+	else
+		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 15);
 		else
-			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
-				Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 15);
-			else
-				Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, -15);
-			end
+			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, -15);
 		end
 	end
 end
@@ -881,10 +885,9 @@ function Perl_Player_Pet_Reset_Buffs()
 end
 
 function Perl_Player_Pet_SetBuffTooltip()
-	local buffmapping = 0;
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
-	if (this.isdebuff == 1) then
-		GameTooltip:SetUnitDebuff("pet", this:GetID()-buffmapping);
+	if (this:GetID() > 16) then
+		GameTooltip:SetUnitDebuff("pet", this:GetID()-16);
 	else
 		GameTooltip:SetUnitBuff("pet", this:GetID());
 	end
@@ -919,11 +922,6 @@ function Perl_Player_Pet_MouseClick(button)
 				end
 			end
 		else
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
-
 			if (button == "LeftButton") then
 				if (SpellIsTargeting()) then
 					SpellTargetUnit("pet");
@@ -932,14 +930,15 @@ function Perl_Player_Pet_MouseClick(button)
 				else
 					TargetUnit("pet");
 				end
+				return;
+			end
+
+			if (SpellIsTargeting() and button == "RightButton") then
+				SpellStopTargeting();
+				return;
 			end
 		end
 	else
-		if (SpellIsTargeting() and button == "RightButton") then
-			SpellStopTargeting();
-			return;
-		end
-
 		if (button == "LeftButton") then
 			if (SpellIsTargeting()) then
 				SpellTargetUnit("pet");
@@ -948,6 +947,12 @@ function Perl_Player_Pet_MouseClick(button)
 			else
 				TargetUnit("pet");
 			end
+			return;
+		end
+
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
 		end
 	end
 end
@@ -983,8 +988,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "Version 0.66",
-			releaseDate = "May 19, 2006",
+			version = "Version 0.67",
+			releaseDate = "May 26, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

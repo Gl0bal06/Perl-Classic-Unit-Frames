@@ -5,7 +5,7 @@
 
 	<Frame name="Perl_CombatDisplay_Frame" movable="true" parent="UIParent" enableMouse="true">
 		<Size>
-			<AbsDimension x="211" y="40"/>
+			<AbsDimension x="220" y="42"/>
 		</Size>
 
 		<Anchors>
@@ -370,7 +370,7 @@
 
 	<Frame name="Perl_CombatDisplay_Target_Frame" movable="true" parent="UIParent" enableMouse="true">
 		<Size>
-			<AbsDimension x="211" y="40"/>
+			<AbsDimension x="220" y="42"/>
 		</Size>
 
 		<Anchors>

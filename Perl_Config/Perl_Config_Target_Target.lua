@@ -72,6 +72,18 @@ function Perl_Config_Target_Target_Set_Values()
 		Perl_Config_Target_Target_Frame_CheckButton3:SetChecked(nil);
 	end
 
+	if (vartable["showtotbuffs"] == 1) then
+		Perl_Config_Target_Target_Frame_CheckButton14:SetChecked(1);
+	else
+		Perl_Config_Target_Target_Frame_CheckButton14:SetChecked(nil);
+	end
+
+	if (vartable["showtototbuffs"] == 1) then
+		Perl_Config_Target_Target_Frame_CheckButton15:SetChecked(1);
+	else
+		Perl_Config_Target_Target_Frame_CheckButton15:SetChecked(nil);
+	end
+
 	if (vartable["locked"] == 1) then
 		Perl_Config_Target_Target_Frame_CheckButton5:SetChecked(1);
 	else
@@ -126,6 +138,22 @@ function Perl_Config_Target_Target_Sound_Update()
 		Perl_Target_Target_Set_Sound_Alert(1);
 	else
 		Perl_Target_Target_Set_Sound_Alert(0);
+	end
+end
+
+function Perl_Config_Target_Target_Buff_Update()
+	if (Perl_Config_Target_Target_Frame_CheckButton14:GetChecked() == 1) then
+		Perl_Target_Target_Set_Buffs(1);
+	else
+		Perl_Target_Target_Set_Buffs(0);
+	end
+end
+
+function Perl_Config_Target_Target_Target_Buff_Update()
+	if (Perl_Config_Target_Target_Frame_CheckButton15:GetChecked() == 1) then
+		Perl_Target_Target_Target_Set_Buffs(1);
+	else
+		Perl_Target_Target_Target_Set_Buffs(0);
 	end
 end
 

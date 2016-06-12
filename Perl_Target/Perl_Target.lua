@@ -30,6 +30,9 @@ local hidebuffbackground = 0;	-- buff and debuff backgrounds are shown by defaul
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 
+-- Local variables to save memory
+local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, localizedclass, creatureType;
+
 -- Variables for position of the class icon texture.
 local Perl_Target_ClassPosRight = {};
 local Perl_Target_ClassPosLeft = {};
@@ -68,7 +71,7 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("UNIT_MAXMANA");
 	this:RegisterEvent("UNIT_MAXRAGE");
 	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	this:RegisterEvent("UNIT_PVP_UPDATE");
+	this:RegisterEvent("UNIT_FACTION");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("UNIT_SPELLMISS");
 	this:RegisterEvent("VARIABLES_LOADED");
@@ -132,7 +135,7 @@ function Perl_Target_OnEvent(event)
 			CombatFeedback_OnSpellMissEvent(arg2);
 		end
 		return;
-	elseif (event == "UNIT_PVP_UPDATE") then
+	elseif (event == "UNIT_FACTION") then
 		Perl_Target_Update_Text_Color();		-- Is the character PvP flagged?
 		Perl_Target_Update_PvP_Status_Icon();		-- Set pvp status icon
 		return;
@@ -189,6 +192,7 @@ function Perl_Target_Initialize()
 	-- Major config options.
 	Perl_Target_Initialize_Frame_Color();		-- Give the borders (and background if applicable) that "Perl" look
 	Perl_Target_Frame_Style();			-- Layout the frame according to our mode
+	Perl_Target_Portrait_Combat_Text();		-- Are we showing combat text?
 	Perl_Target_Buff_Debuff_Background();		-- Do the buffs and debuffs have their transparent background frame?
 	Perl_Target_Set_Localized_ClassIcons();		-- Assign class icons to the appropriate classes
 	Perl_Target_Frame:Hide();			-- Shouldn't have a target upon logging in so hide the frame
@@ -197,8 +201,67 @@ function Perl_Target_Initialize()
 	Perl_clearBlizzardFrameDisable(TargetFrame);
 	Perl_clearBlizzardFrameDisable(ComboFrame);
 
+	-- IFrameManager Support
+	if (IFrameManager) then
+		Perl_Target_IFrameManager(1);
+	end
+
 	-- Set the initialization flag
 	Initialized = 1;
+end
+
+function Perl_Target_IFrameManager(initflag)
+	local iface = IFrameManager:Interface();
+	function iface:getName(frame)
+		return "Perl Target";
+	end
+	function iface:getBorder(frame)
+		local bottom, right, top;
+		if (showclassframe == 1 or showrareeliteframe == 1) then
+			top = 20;
+		else
+			top = 0;
+		end
+		if (framestyle == 1) then
+			right = 41;
+		else
+			if (compactmode == 0) then
+				right = 60;
+			else
+				if (compactpercent == 0) then
+					right = -10;
+				else
+					right = 25;
+				end
+			end
+		end
+		if (showportrait == 1) then
+			right = right + 55;
+		end
+		if (showcp == 1) then
+			right = right + 21;
+		end
+		bottom = 0;
+		if (numbuffsshown == 0) then
+			-- bottom is already 0
+		elseif (numbuffsshown < 9) then
+			bottom = 24;
+		else
+			bottom = 48;
+		end
+		if (numdebuffsshown == 0) then
+			-- add nothing to bottom
+		elseif (numdebuffsshown < 9) then
+			bottom = bottom + 24;
+		else
+			bottom = bottom + 48;
+		end
+		bottom = bottom + 38;	-- Offset for the stats frame
+		return top, right, bottom, 0;
+	end
+	if (initflag) then
+		IFrameManager:Register(this, iface);
+	end
 end
 
 function Perl_Target_Initialize_Frame_Color()
@@ -235,27 +298,115 @@ end
 function Perl_Target_Update_Once()
 	if (UnitExists("target")) then
 		Perl_Target_Update_Combo_Points();	-- Do we have any combo points (we shouldn't)
-		Perl_Target_Frame_Set_Name();		-- Set the target's name
 		Perl_Target_Update_Portrait();		-- Set the target's portrait and adjust the combo point frame
-		Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
 		Perl_Target_Update_Health();		-- Set the target's health
 		Perl_Target_Update_Mana_Bar();		-- What type of mana bar is it?
 		Perl_Target_Update_Mana();		-- Set the target's mana
 		Perl_Target_Update_PvP_Status_Icon();	-- Set pvp status icon
-		Perl_Target_Portrait_Combat_Text();	-- Are we showing combat text?
-		Perl_Target_Frame_Set_PvPRank();	-- Set the pvp rank icon
 		Perl_Target_Frame_Set_Level();		-- What level is it and is it rare/elite/boss
-		Perl_Target_Set_Character_Class_Icon();	-- Draw the class icon?
-		Perl_Target_Set_Target_Class();		-- Set the target's class in the class frame
 		Perl_Target_Buff_UpdateAll();		-- Update the buffs
+
+		-- Begin: Set the target's name
+		targetname = UnitName("target");
+		if (framestyle == 1) then
+			if (strlen(targetname) > 19) then
+				targetname = strsub(targetname, 1, 18).."...";
+			end
+		elseif (framestyle == 2) then
+			if (compactmode == 0) then
+				if (strlen(targetname) > 19) then
+					targetname = strsub(targetname, 1, 18).."...";
+				end
+			else
+				if (compactpercent == 1) then
+					if (strlen(targetname) > 15) then
+						targetname = strsub(targetname, 1, 14).."...";
+					end
+				else
+					if (strlen(targetname) > 11) then
+						targetname = strsub(targetname, 1, 10).."...";
+					end
+				end
+			end
+		end
+		Perl_Target_NameBarText:SetText(targetname);
+		-- End: Set the target's name
+
+		Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
+
+		-- Begin: Draw the class icon?
+		if (showclassicon == 1) then
+			if (UnitIsPlayer("target")) then
+				localizedclass = UnitClass("target");
+				Perl_Target_ClassTexture:SetTexCoord(Perl_Target_ClassPosRight[localizedclass], Perl_Target_ClassPosLeft[localizedclass], Perl_Target_ClassPosTop[localizedclass], Perl_Target_ClassPosBottom[localizedclass]);
+				Perl_Target_ClassTexture:Show();
+			else
+				Perl_Target_ClassTexture:Hide();
+			end
+		else
+			Perl_Target_ClassTexture:Hide();
+		end
+		-- End: Draw the class icon?
+
+		-- Begin: Set the target's class in the class frame
+		if (showclassframe == 1) then
+			if (UnitIsPlayer("target")) then
+				Perl_Target_ClassNameBarText:SetText(UnitClass("target"));
+				Perl_Target_ClassNameFrame:Show();
+				Perl_Target_CivilianFrame:Hide();
+			else
+				creatureType = UnitCreatureType("target");
+				if (creatureType == PERL_LOCALIZED_NOTSPECIFIED) then
+					creatureType = PERL_LOCALIZED_CREATURE;
+				end
+				Perl_Target_ClassNameBarText:SetText(creatureType);
+				Perl_Target_ClassNameFrame:Show();
+
+				if (UnitIsCivilian("target")) then
+					Perl_Target_CivilianBarText:SetText(PERL_LOCALIZED_CIVILIAN);
+					Perl_Target_CivilianBarText:SetTextColor(1, 0, 0);
+					Perl_Target_CivilianFrame:Show();
+				else
+					Perl_Target_CivilianFrame:Hide();
+				end
+			end
+		else
+			Perl_Target_ClassNameFrame:Hide();
+			Perl_Target_CivilianFrame:Hide();
+		end
+		-- End: Set the target's class in the class frame
+
+		-- Begin: Set the pvp rank icon
+		if (showpvprank == 1) then
+			if (UnitIsPlayer("target")) then
+				local rankNumber = UnitPVPRank("target");
+				if (rankNumber == 0) then
+					Perl_Target_PVPRank:Hide();
+				elseif (rankNumber < 14) then
+					rankNumber = rankNumber - 4;
+					Perl_Target_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber);
+					Perl_Target_PVPRank:Show();
+				else
+					rankNumber = rankNumber - 4;
+					Perl_Target_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
+					Perl_Target_PVPRank:Show();
+				end
+			else
+				Perl_Target_PVPRank:Hide();
+			end
+		else
+			Perl_Target_PVPRank:Hide();
+		end
+		-- End: Set the pvp rank icon
+
 		Perl_Target_Frame:Show();		-- Show frame
 	end
 end
 
 function Perl_Target_Update_Health()
-	local targethealth = UnitHealth("target");
-	local targethealthmax = UnitHealthMax("target");
-	local targethealthpercent = floor(targethealth/targethealthmax*100+0.5);
+	targethealth = UnitHealth("target");
+	targethealthmax = UnitHealthMax("target");
+	targethealthpercent = floor(targethealth/targethealthmax*100+0.5);
 
 	if (UnitIsDead("target") or UnitIsGhost("target")) then				-- This prevents negative health
 		targethealth = 0;
@@ -480,9 +631,9 @@ function Perl_Target_Update_Health()
 end
 
 function Perl_Target_Update_Mana()
-	local targetmana = UnitMana("target");
-	local targetmanamax = UnitManaMax("target");
-	local targetpower = UnitPowerType("target");
+	targetmana = UnitMana("target");
+	targetmanamax = UnitManaMax("target");
+	targetpower = UnitPowerType("target");
 
 	if (UnitIsDead("target") or UnitIsGhost("target")) then				-- This prevents negative mana
 		targetmana = 0;
@@ -501,7 +652,7 @@ function Perl_Target_Update_Mana()
 			Perl_Target_ManaBarText:SetText(targetmana.."/"..targetmanamax);
 		end
 	elseif (framestyle == 2) then
-		local targetmanapercent = floor(targetmana/targetmanamax*100+0.5);
+		targetmanapercent = floor(targetmana/targetmanamax*100+0.5);
 
 		if (compactmode == 0) then
 			Perl_Target_ManaBarTextCompactPercent:SetText();	-- Hide this text in this frame style
@@ -630,12 +781,11 @@ end
 
 function Perl_Target_Update_PvP_Status_Icon()
 	if (showpvpicon == 1) then
-		local factionGroup = UnitFactionGroup("target");
 		if (UnitIsPVPFreeForAll("target")) then
 			Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-FFA");
 			Perl_Target_PVPStatus:Show();
-		elseif (factionGroup and UnitIsPVP("target")) then
-			Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..factionGroup);
+		elseif (UnitFactionGroup("target") and UnitIsPVP("target")) then
+			Perl_Target_PVPStatus:SetTexture("Interface\\TargetingFrame\\UI-PVP-"..UnitFactionGroup("target"));
 			Perl_Target_PVPStatus:Show();
 		else
 			Perl_Target_PVPStatus:Hide();
@@ -692,63 +842,11 @@ function Perl_Target_Update_Text_Color()
 	end
 end
 
-function Perl_Target_Frame_Set_Name()
-	local targetname = UnitName("target");
-
-	-- Set name
-	if (framestyle == 1) then
-		if (strlen(targetname) > 19) then
-			targetname = strsub(targetname, 1, 18).."...";
-		end
-	elseif (framestyle == 2) then
-		if (compactmode == 0) then
-			if (strlen(targetname) > 19) then
-				targetname = strsub(targetname, 1, 18).."...";
-			end
-		else
-			if (compactpercent == 1) then
-				if (strlen(targetname) > 15) then
-					targetname = strsub(targetname, 1, 14).."...";
-				end
-			else
-				if (strlen(targetname) > 11) then
-					targetname = strsub(targetname, 1, 10).."...";
-				end
-			end
-		end
-	end
-	
-	Perl_Target_NameBarText:SetText(targetname);
-end
-
-function Perl_Target_Frame_Set_PvPRank()
-	if (showpvprank == 1) then
-		if (UnitIsPlayer("target")) then
-			local rankNumber = UnitPVPRank("target");
-			if (rankNumber == 0) then
-				Perl_Target_PVPRank:Hide();
-			elseif (rankNumber < 14) then
-				rankNumber = rankNumber - 4;
-				Perl_Target_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank0"..rankNumber);
-				Perl_Target_PVPRank:Show();
-			else
-				rankNumber = rankNumber - 4;
-				Perl_Target_PVPRank:SetTexture("Interface\\PvPRankBadges\\PvPRank"..rankNumber);
-				Perl_Target_PVPRank:Show();
-			end
-		else
-			Perl_Target_PVPRank:Hide();
-		end
-	else
-		Perl_Target_PVPRank:Hide();
-	end
-end
-
 function Perl_Target_Frame_Set_Level()
-	local targetlevel = UnitLevel("target");			-- Get and store the level of the target
-	local targetlevelcolor = GetDifficultyColor(targetlevel);	-- Get the "con color" of the target
-	local targetclassification = UnitClassification("target");	-- Get the type of character the target is (rare, elite, worldboss)
-	local targetclassificationframetext = nil;			-- Variable set to nil so we can easily track if target is a player or not elite
+	targetlevel = UnitLevel("target");			-- Get and store the level of the target
+	targetlevelcolor = GetDifficultyColor(targetlevel);	-- Get the "con color" of the target
+	targetclassification = UnitClassification("target");	-- Get the type of character the target is (rare, elite, worldboss)
+	targetclassificationframetext = nil;			-- Variable set to nil so we can easily track if target is a player or not elite
 
 	Perl_Target_LevelBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
 	Perl_Target_RareEliteBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
@@ -786,49 +884,6 @@ function Perl_Target_Frame_Set_Level()
 		end
 	else
 		Perl_Target_RareEliteFrame:Hide();							-- RareElite is hidden if disabled
-	end
-end
-
-function Perl_Target_Set_Character_Class_Icon()
-	if (showclassicon == 1) then
-		if (UnitIsPlayer("target")) then
-			local localizedclass = UnitClass("target");
-			Perl_Target_ClassTexture:SetTexCoord(Perl_Target_ClassPosRight[localizedclass], Perl_Target_ClassPosLeft[localizedclass], Perl_Target_ClassPosTop[localizedclass], Perl_Target_ClassPosBottom[localizedclass]);
-			Perl_Target_ClassTexture:Show();
-		else
-			Perl_Target_ClassTexture:Hide();
-		end
-	else
-		Perl_Target_ClassTexture:Hide();
-	end
-end
-
-function Perl_Target_Set_Target_Class()
-	if (showclassframe == 1) then
-		if (UnitIsPlayer("target")) then
-			local localizedclass = UnitClass("target");
-			Perl_Target_ClassNameBarText:SetText(localizedclass);
-			Perl_Target_ClassNameFrame:Show();
-			Perl_Target_CivilianFrame:Hide();
-		else
-			local creatureType = UnitCreatureType("target");
-			if (creatureType == PERL_LOCALIZED_NOTSPECIFIED) then
-				creatureType = PERL_LOCALIZED_CREATURE;
-			end
-			Perl_Target_ClassNameBarText:SetText(creatureType);
-			Perl_Target_ClassNameFrame:Show();
-
-			if (UnitIsCivilian("target")) then
-				Perl_Target_CivilianBarText:SetText(PERL_LOCALIZED_CIVILIAN);
-				Perl_Target_CivilianBarText:SetTextColor(1, 0, 0);
-				Perl_Target_CivilianFrame:Show();
-			else
-				Perl_Target_CivilianFrame:Hide();
-			end
-		end
-	else
-		Perl_Target_ClassNameFrame:Hide();
-		Perl_Target_CivilianFrame:Hide();
 	end
 end
 
@@ -1483,6 +1538,12 @@ function Perl_Target_UpdateVars(vartable)
 		Perl_Target_Update_Once();
 	end
 
+	-- IFrameManager Support
+	if (IFrameManager) then
+		Perl_Target_IFrameManager();
+		IFrameManager:Refresh();
+	end
+
 	Perl_Target_Config[UnitName("player")] = {
 		["Locked"] = locked,
 		["ComboPoints"] = showcp,
@@ -1515,97 +1576,81 @@ end
 --------------------
 function Perl_Target_Buff_UpdateAll()
 	if (UnitName("target")) then
-		local friendly;
 
 		if (nameframecombopoints == 1 or comboframedebuffs == 1) then
 			Perl_Target_Buff_UpdateCPMeter();
 		end
 
-		local buffmax = 0;
-		local buffCount, buffTexture, buffApplications;
-		for buffnum=1,numbuffsshown do
-			buffTexture, buffApplications = UnitBuff("target", buffnum);
-			local button = getglobal("Perl_Target_Buff"..buffnum);
-			local icon = getglobal(button:GetName().."Icon");
-			local debuff = getglobal(button:GetName().."DebuffBorder");
-
-			if (UnitBuff("target", buffnum)) then
-				icon:SetTexture(buffTexture);
-				button.isdebuff = 0;
-				debuff:Hide();
-				button:Show();
-				buffCount = getglobal("Perl_Target_Buff"..buffnum.."Count");
+		local numBuffs = 0;									-- Buff counter for correct layout
+		local button, buffCount, buffTexture, buffApplications;					-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		for buffnum=1,numbuffsshown do								-- Start main buff loop
+			buffTexture, buffApplications = UnitBuff("target", buffnum);			-- Get the texture and buff stacking information if any
+			button = getglobal("Perl_Target_Buff"..buffnum);				-- Create the main icon for the buff
+			if (buffTexture) then								-- If there is a valid texture, proceed with buff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Hide();			-- Hide the debuff border
+				buffCount = getglobal(button:GetName().."Count");			-- Declare the buff counting text variable
 				if (buffApplications > 1) then
-					buffCount:SetText(buffApplications);
-					buffCount:Show();
+					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
+					buffCount:Show();						-- Show the text
 				else
-					buffCount:Hide();
+					buffCount:Hide();						-- Hide the text if equal to 0
 				end
-				buffmax = buffnum;
+				numBuffs = numBuffs + 1;						-- Increment the buff counter
+				button:Show();								-- Show the final buff icon
 			else
-				button:Hide();
+				button:Hide();								-- Hide the icon since there isn't a buff in this position
 			end
-		end
+		end											-- End main buff loop
 
-		local debuffmax = 0;
-		local debuffCount, debuffTexture, debuffApplications;
-		for debuffnum=1,numdebuffsshown do
-			debuffTexture, debuffApplications = UnitDebuff("target", debuffnum);
-			local button = getglobal("Perl_Target_Debuff"..debuffnum);
-			local icon = getglobal(button:GetName().."Icon");
-			local debuff = getglobal(button:GetName().."DebuffBorder");
-
-			if (UnitDebuff("target", debuffnum)) then
-				icon:SetTexture(debuffTexture);
-				button.isdebuff = 1;
-				debuff:Show();
-				button:Show();
-				debuffCount = getglobal("Perl_Target_Debuff"..debuffnum.."Count");
-				if (debuffApplications > 1) then
-					debuffCount:SetText(debuffApplications);
-					debuffCount:Show();
+		local numDebuffs = 0;									-- Debuff counter for correct layout
+		for debuffnum=1,numdebuffsshown do							-- Start main debuff loop
+			buffTexture, buffApplications = UnitDebuff("target", debuffnum);		-- Get the texture and debuff stacking information if any
+			button = getglobal("Perl_Target_Debuff"..debuffnum);				-- Create the main icon for the debuff
+			if (buffTexture) then								-- If there is a valid texture, proceed with debuff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Show();			-- Show the debuff border
+				buffCount = getglobal(button:GetName().."Count");			-- Declare the debuff counting text variable
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
+					buffCount:Show();						-- Show the text
 				else
-					debuffCount:Hide();
+					buffCount:Hide();						-- Hide the text if equal to 0
 				end
-				debuffmax = debuffnum;
+				numDebuffs = numDebuffs + 1;						-- Increment the debuff counter
+				button:Show();								-- Show the final debuff icon
 			else
-				button:Hide();
+				button:Hide();								-- Hide the icon since there isn't a debuff in this position
 			end
-		end
+		end											-- End main debuff loop
 
-		if (UnitIsFriend("player", "target")) then
-			friendly = 1;
-		else
-			friendly = 0;
-		end
-
-		if (buffmax == 0) then
+		if (numBuffs == 0) then
 			Perl_Target_BuffFrame:Hide();
 		else
-			if (friendly == 1) then
+			if (UnitIsFriend("player", "target")) then
 				Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
 			else
-				if (debuffmax > 8) then
+				if (numDebuffs > 8) then
 					Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -51);
 				else
 					Perl_Target_BuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
 				end
 			end
 			Perl_Target_BuffFrame:Show();
-			if (buffmax > 8) then
-				Perl_Target_BuffFrame:SetWidth(221);	-- 5 + 8 * (24 + 3)	5 = border gap, 8 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
-				Perl_Target_BuffFrame:SetHeight(61);
+			if (numBuffs > 8) then
+				Perl_Target_BuffFrame:SetWidth(221);			-- 5 + 8 * (24 + 3)	5 = border gap, 8 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
+				Perl_Target_BuffFrame:SetHeight(61);			-- 2 rows tall
 			else
-				Perl_Target_BuffFrame:SetWidth(5 + buffmax * 27);
-				Perl_Target_BuffFrame:SetHeight(34);
+				Perl_Target_BuffFrame:SetWidth(5 + numBuffs * 27);	-- Dynamically extend the background frame
+				Perl_Target_BuffFrame:SetHeight(34);			-- 1 row tall
 			end
 		end
 
-		if (debuffmax == 0) then
+		if (numDebuffs == 0) then
 			Perl_Target_DebuffFrame:Hide();
 		else
-			if (friendly == 1) then
-				if (buffmax > 8) then
+			if (UnitIsFriend("player", "target")) then
+				if (numBuffs > 8) then
 					Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -51);
 				else
 					Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, -25);
@@ -1614,12 +1659,12 @@ function Perl_Target_Buff_UpdateAll()
 				Perl_Target_DebuffFrame:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "BOTTOMLEFT", 0, 5);
 			end
 			Perl_Target_DebuffFrame:Show();
-			if (debuffmax > 8) then
-				Perl_Target_DebuffFrame:SetWidth(221);	-- 5 + 8 * 27
-				Perl_Target_DebuffFrame:SetHeight(61);
+			if (numDebuffs > 8) then
+				Perl_Target_DebuffFrame:SetWidth(221);			-- 5 + 8 * (24 + 3)	5 = border gap, 8 buffs across, 24 = icon size + 3 for pixel alignment, only holds true for default size
+				Perl_Target_DebuffFrame:SetHeight(61);			-- 2 rows tall
 			else
-				Perl_Target_DebuffFrame:SetWidth(5 + debuffmax * 27);
-				Perl_Target_DebuffFrame:SetHeight(34);
+				Perl_Target_DebuffFrame:SetWidth(5 + numDebuffs * 27);	-- Dynamically extend the background frame
+				Perl_Target_DebuffFrame:SetHeight(34);			-- 1 row tall
 			end
 		end
 	end
@@ -1724,10 +1769,9 @@ function Perl_Target_Reset_Buffs()
 end
 
 function Perl_Target_SetBuffTooltip()
-	local buffmapping = 0;
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMRIGHT");
-	if (this.isdebuff == 1) then
-		GameTooltip:SetUnitDebuff("target", this:GetID()-buffmapping);
+	if (this:GetID() > 16) then
+		GameTooltip:SetUnitDebuff("target", this:GetID()-16);
 	else
 		GameTooltip:SetUnitBuff("target", this:GetID());
 	end
@@ -1742,9 +1786,10 @@ function Perl_TargetDropDown_OnLoad()
 end
 
 function Perl_TargetDropDown_Initialize()
-	local menu = nil;
+	local menu, name;
 	if (UnitIsEnemy("target", "player")) then
-		return;
+		menu = "RAID_TARGET_ICON";
+		name = RAID_TARGET_ICON;
 	end
 	if (UnitIsUnit("target", "player")) then
 		menu = "SELF";
@@ -1758,7 +1803,7 @@ function Perl_TargetDropDown_Initialize()
 		end
 	end
 	if (menu) then
-		UnitPopup_ShowMenu(Perl_Target_DropDown, menu, "target");
+		UnitPopup_ShowMenu(Perl_Target_DropDown, menu, "target", name);
 	end
 end
 
@@ -1779,31 +1824,33 @@ function Perl_Target_MouseClick(button)
 				end
 			end
 		else
-			if (SpellIsTargeting() and button == "RightButton") then
-				SpellStopTargeting();
-				return;
-			end
-
 			if (button == "LeftButton") then
 				if (SpellIsTargeting()) then
 					SpellTargetUnit("target");
 				elseif (CursorHasItem()) then
 					DropItemOnUnit("target");
 				end
+				return;
+			end
+
+			if (SpellIsTargeting() and button == "RightButton") then
+				SpellStopTargeting();
+				return;
 			end
 		end
 	else
-		if (SpellIsTargeting() and button == "RightButton") then
-			SpellStopTargeting();
-			return;
-		end
-
 		if (button == "LeftButton") then
 			if (SpellIsTargeting()) then
 				SpellTargetUnit("target");
 			elseif (CursorHasItem()) then
 				DropItemOnUnit("target");
 			end
+			return;
+		end
+
+		if (SpellIsTargeting() and button == "RightButton") then
+			SpellStopTargeting();
+			return;
 		end
 	end
 end
@@ -1830,15 +1877,15 @@ function Perl_Target_MouseUp(button)
 	Perl_Target_Frame:StopMovingOrSizing();
 end
 
-function Perl_Target_OnShow()
-	if (UnitIsEnemy("target", "player")) then
-		PlaySound("igCreatureAggroSelect");
-	elseif (UnitIsFriend("player", "target")) then
-		PlaySound("igCharacterNPCSelect");
-	else
-		PlaySound("igCreatureNeutralSelect");
-	end
-end
+--function Perl_Target_OnShow()
+--	if (UnitIsEnemy("target", "player")) then
+--		PlaySound("igCreatureAggroSelect");
+--	elseif (UnitIsFriend("player", "target")) then
+--		PlaySound("igCharacterNPCSelect");
+--	else
+--		PlaySound("igCreatureNeutralSelect");
+--	end
+--end
 
 
 -------------
@@ -1861,8 +1908,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.66",
-			releaseDate = "May 19, 2006",
+			version = "Version 0.67",
+			releaseDate = "May 26, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

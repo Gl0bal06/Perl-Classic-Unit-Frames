@@ -2,6 +2,6 @@
 ## Title: Perl Target Frame
 ## Notes: Displays a movable target frame to replace the default.
 ## Dependencies: Perl_Config
-## OptionalDeps: AceHeal, CastPartyCore, Genesis, MobHealth, myAddOns
+## OptionalDeps: AceHeal, CastPartyCore, Genesis, IFrameManager, MobHealth, myAddOns
 ## SavedVariables: Perl_Target_Config
 Perl_Target.xml

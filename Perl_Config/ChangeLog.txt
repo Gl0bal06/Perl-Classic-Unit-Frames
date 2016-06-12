@@ -1,3 +1,18 @@
+0.67 - May 26, 2006
+ - All: Added IFrameManager support
+ - All: Made a number of memory improvements
+ - All: Changed the order click checks for a minor speed increase
+ - CombatDisplay: Progressive color for the pet health bar now uses the correct coloring scheme
+ - CombatDisplay: Fixed a minor error regarding parent frame size in the XML
+ - CombatDisplay/Target/ToT: Added 1.11 raid target icon menu support
+ - Party: Tooltips for buffs and debuffs are now correct when using class buffs and debuffs mode
+ - Party/Player/Target: Added 1.11 PvP status support
+ - Party/Pet/Target: Made some changes to the buff code
+ - Pet: Stats will once again update as they should when using the stable
+ - Target: Removed some function calls for a minor speed increase
+ - Target: Removed the sound when obtaining a target
+ - ToT: Added buffs and debuffs to the ToT and ToToT frames
+
 0.66 - May 19, 2006
  - Config: Can now lock and unlock all frames by right clicking on the minimap icon
  - Config: Updated options available for Perl_Raid

@@ -367,22 +367,6 @@
 							<OnLoad>
 								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
 							</OnLoad>
-							<OnEnter>
-								if ( this.tooltip ) then
-									GameTooltip:SetOwner(this, "ANCHOR_RIGHT");
-									GameTooltip:SetText(this.tooltip);
-									if ( this.tooltipDamage ) then
-										GameTooltip:AddLine(this.tooltipDamage, "", 1, 1, 1);
-									end
-									if ( this.tooltipLoyalty ) then
-										GameTooltip:AddLine(this.tooltipLoyalty, "", 1, 1, 1);
-									end
-									GameTooltip:Show();
-								end
-							</OnEnter>
-							<OnLeave>
-								GameTooltip:Hide();
-							</OnLeave>
 							<OnClick>
 								Perl_Player_Pet_MouseClick(arg1);
 							</OnClick>
@@ -801,7 +785,7 @@
 				-->
 				<Frames>
 					<!-- Start buttons -->
-					<Button name="Perl_Player_Pet_Debuff1" inherits="Perl_Player_Pet_BuffTemplate" id="1">
+					<Button name="Perl_Player_Pet_Debuff1" inherits="Perl_Player_Pet_BuffTemplate" id="17">
 						<Anchors>
 							<Anchor point="TOPLEFT">
 								<Offset>
@@ -811,7 +795,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff2" inherits="Perl_Player_Pet_BuffTemplate" id="2">
+					<Button name="Perl_Player_Pet_Debuff2" inherits="Perl_Player_Pet_BuffTemplate" id="18">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff1" relativePoint="TOPRIGHT">
 								<Offset>
@@ -821,7 +805,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff3" inherits="Perl_Player_Pet_BuffTemplate" id="3">
+					<Button name="Perl_Player_Pet_Debuff3" inherits="Perl_Player_Pet_BuffTemplate" id="19">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff2" relativePoint="TOPRIGHT">
 								<Offset>
@@ -831,7 +815,7 @@
 						</Anchors>
 					</Button>
 					
-					<Button name="Perl_Player_Pet_Debuff4" inherits="Perl_Player_Pet_BuffTemplate" id="4">
+					<Button name="Perl_Player_Pet_Debuff4" inherits="Perl_Player_Pet_BuffTemplate" id="20">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff3" relativePoint="TOPRIGHT">
 								<Offset>
@@ -841,7 +825,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff5" inherits="Perl_Player_Pet_BuffTemplate" id="5">
+					<Button name="Perl_Player_Pet_Debuff5" inherits="Perl_Player_Pet_BuffTemplate" id="21">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff4" relativePoint="TOPRIGHT">
 								<Offset>
@@ -851,7 +835,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff6" inherits="Perl_Player_Pet_BuffTemplate" id="6">
+					<Button name="Perl_Player_Pet_Debuff6" inherits="Perl_Player_Pet_BuffTemplate" id="22">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff5" relativePoint="TOPRIGHT">
 								<Offset>
@@ -861,7 +845,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff7" inherits="Perl_Player_Pet_BuffTemplate" id="7">
+					<Button name="Perl_Player_Pet_Debuff7" inherits="Perl_Player_Pet_BuffTemplate" id="23">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff6" relativePoint="TOPRIGHT">
 								<Offset>
@@ -871,7 +855,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff8" inherits="Perl_Player_Pet_BuffTemplate" id="8">
+					<Button name="Perl_Player_Pet_Debuff8" inherits="Perl_Player_Pet_BuffTemplate" id="24">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff7" relativePoint="TOPRIGHT">
 								<Offset>
@@ -881,7 +865,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff9" inherits="Perl_Player_Pet_BuffTemplate" id="9">
+					<Button name="Perl_Player_Pet_Debuff9" inherits="Perl_Player_Pet_BuffTemplate" id="25">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff8" relativePoint="TOPRIGHT">
 								<Offset>
@@ -891,7 +875,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff10" inherits="Perl_Player_Pet_BuffTemplate" id="10">
+					<Button name="Perl_Player_Pet_Debuff10" inherits="Perl_Player_Pet_BuffTemplate" id="26">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff9" relativePoint="TOPRIGHT">
 								<Offset>
@@ -901,7 +885,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff11" inherits="Perl_Player_Pet_BuffTemplate" id="11">
+					<Button name="Perl_Player_Pet_Debuff11" inherits="Perl_Player_Pet_BuffTemplate" id="27">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff10" relativePoint="TOPRIGHT">
 								<Offset>
@@ -911,7 +895,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff12" inherits="Perl_Player_Pet_BuffTemplate" id="12">
+					<Button name="Perl_Player_Pet_Debuff12" inherits="Perl_Player_Pet_BuffTemplate" id="28">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff11" relativePoint="TOPRIGHT">
 								<Offset>
@@ -921,7 +905,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff13" inherits="Perl_Player_Pet_BuffTemplate" id="13">
+					<Button name="Perl_Player_Pet_Debuff13" inherits="Perl_Player_Pet_BuffTemplate" id="29">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff12" relativePoint="TOPRIGHT">
 								<Offset>
@@ -931,7 +915,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff14" inherits="Perl_Player_Pet_BuffTemplate" id="14">
+					<Button name="Perl_Player_Pet_Debuff14" inherits="Perl_Player_Pet_BuffTemplate" id="30">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff13" relativePoint="TOPRIGHT">
 								<Offset>
@@ -941,7 +925,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff15" inherits="Perl_Player_Pet_BuffTemplate" id="15">
+					<Button name="Perl_Player_Pet_Debuff15" inherits="Perl_Player_Pet_BuffTemplate" id="31">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff14" relativePoint="TOPRIGHT">
 								<Offset>
@@ -951,7 +935,7 @@
 						</Anchors>
 					</Button>
 
-					<Button name="Perl_Player_Pet_Debuff16" inherits="Perl_Player_Pet_BuffTemplate" id="16">
+					<Button name="Perl_Player_Pet_Debuff16" inherits="Perl_Player_Pet_BuffTemplate" id="32">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="Perl_Player_Pet_Debuff15" relativePoint="TOPRIGHT">
 								<Offset>
