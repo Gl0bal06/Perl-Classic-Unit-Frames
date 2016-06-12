@@ -593,6 +593,7 @@ function Perl_CombatDisplay_Set_Scale(number)
 	end
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 	Perl_CombatDisplay_Frame:SetScale(unsavedscale);
+	Perl_CombatDisplay_Target_Frame:SetScale(unsavedscale);
 	Perl_CombatDisplay_UpdateVars();
 end
 
@@ -601,6 +602,7 @@ function Perl_CombatDisplay_Set_Transparency(number)
 		transparency = (number / 100);				-- convert the user input to a wow acceptable value
 	end
 	Perl_CombatDisplay_Frame:SetAlpha(transparency);
+	Perl_CombatDisplay_Target_Frame:SetAlpha(transparency);
 	Perl_CombatDisplay_UpdateVars();
 end
 
@@ -776,7 +778,7 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.32",
+			version = "v0.33",
 			releaseDate = "January 21, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",

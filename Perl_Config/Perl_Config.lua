@@ -194,6 +194,8 @@ function Perl_Config_Set_Texture(newvalue)
 		Perl_CombatDisplay_HealthBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_ManaBarTex:SetTexture(texturename);
 		Perl_CombatDisplay_CPBarTex:SetTexture(texturename);
+		Perl_CombatDisplay_Target_HealthBarTex:SetTexture(texturename);
+		Perl_CombatDisplay_Target_ManaBarTex:SetTexture(texturename);
 	end
 
 	if (Perl_Party_Frame) then
@@ -375,7 +377,7 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.32",
+			version = "v0.33",
 			releaseDate = "January 21, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
