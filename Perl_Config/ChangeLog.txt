@@ -1,3 +1,13 @@
+0.55 - April 9, 2006
+ - All: Localization has been converted to global variables
+ - CombatDisplay/Party/Pet/Player/Target: Removed menu initializing code from OnLoad
+ - Config: Added two menu buttons for future mod releases
+ - Config: Added Perl_Raid support
+ - Party: Corrected an issue with inverted party frames and pets
+ - Pet: Can now drop food on the pet frame to feed the pet
+ - Target: Moved the RareElite frame to the left in compact mode
+ - Target: Name frame combo point bar is now red and no longer changes color and is no longer transparent
+
 0.54 - April 4, 2006
  - CombatDisplay: The pet bars now correctly hide for non pet classes
  - Target: Fixed a bug with the length of the name frame combo point bar

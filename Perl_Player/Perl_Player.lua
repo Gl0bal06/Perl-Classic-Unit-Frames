@@ -24,9 +24,6 @@ local Initialized = nil;	-- waiting to be initialized
 local mouseoverhealthflag = 0;	-- is the mouse over the health bar for healer mode?
 local mouseovermanaflag = 0;	-- is the mouse over the mana bar for healer mode?
 
--- Empty variables used for localization
-local pp_translate_druid;
-
 -- Variables for position of the class icon texture.
 local Perl_Player_ClassPosRight = {};
 local Perl_Player_ClassPosLeft = {};
@@ -40,9 +37,6 @@ local Perl_Player_ClassPosBottom = {};
 function Perl_Player_OnLoad()
 	-- Combat Text
 	CombatFeedback_Initialize(Perl_Player_HitIndicator, 30);
-
-	-- Menus
-	table.insert(UnitPopupFrames,"Perl_Player_DropDown");
 
 	-- Events
 	this:RegisterEvent("ADDON_LOADED");
@@ -73,7 +67,7 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("UPDATE_FACTION");
 	this:RegisterEvent("VARIABLES_LOADED");
 
-	-- New click style implemented for 1.10 (in order of occurrence in XML)
+	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Player_Name_CastClickOverlay:SetFrameLevel(Perl_Player_Name:GetFrameLevel() + 2);
 	Perl_Player_RaidGroupNumberFrame_CastClickOverlay:SetFrameLevel(Perl_Player_RaidGroupNumberFrame:GetFrameLevel() + 1);
 	Perl_Player_LevelFrame_CastClickOverlay:SetFrameLevel(Perl_Player_LevelFrame:GetFrameLevel() + 1);
@@ -375,7 +369,7 @@ function Perl_Player_Update_Mana()
 	end
 
 	if (showdruidbar == 1) then
-		if (DruidBarKey and (UnitClass("player") == pp_translate_druid)) then
+		if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID)) then
 			if (UnitPowerType("player") > 0) then
 				-- Show the bars and set the text and reposition the original mana bar below the druid bar
 				local playerdruidbarmana = floor(DruidBarKey.keepthemana);
@@ -772,7 +766,7 @@ function Perl_Player_ManaHide()
 end
 
 function Perl_Player_DruidBarManaShow()
-	if (DruidBarKey and (UnitClass("player") == pp_translate_druid)) then
+	if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID)) then
 		if (healermode == 1) then
 			local playerdruidbarmana = floor(DruidBarKey.keepthemana);
 			local playerdruidbarmanamax = DruidBarKey.maxmana;
@@ -830,72 +824,50 @@ function Perl_Player_Portrait_Combat_Text()
 end
 
 function Perl_Player_Set_Localized_ClassIcons()
-	--local pp_translate_druid;	-- Declared above for Druid Bar support, left this in strictly for this comment
-	local pp_translate_hunter;
-	local pp_translate_mage;
-	local pp_translate_paladin;
-	local pp_translate_priest;
-	local pp_translate_rogue;
-	local pp_translate_shaman;
-	local pp_translate_warlock;
-	local pp_translate_warrior;
-
-	local localization = Perl_Config_Get_Localization();
-
-	pp_translate_druid = localization["druid"];
-	pp_translate_hunter = localization["hunter"];
-	pp_translate_mage = localization["mage"];
-	pp_translate_paladin = localization["paladin"];
-	pp_translate_priest = localization["priest"];
-	pp_translate_rogue = localization["rogue"];
-	pp_translate_shaman = localization["shaman"];
-	pp_translate_warlock = localization["warlock"];
-	pp_translate_warrior = localization["warrior"];
-
 	Perl_Player_ClassPosRight = {
-		[pp_translate_druid] = 0.75,
-		[pp_translate_hunter] = 0,
-		[pp_translate_mage] = 0.25,
-		[pp_translate_paladin] = 0,
-		[pp_translate_priest] = 0.5,
-		[pp_translate_rogue] = 0.5,
-		[pp_translate_shaman] = 0.25,
-		[pp_translate_warlock] = 0.75,
-		[pp_translate_warrior] = 0,
+		[PERL_LOCALIZED_DRUID] = 0.75,
+		[PERL_LOCALIZED_HUNTER] = 0,
+		[PERL_LOCALIZED_MAGE] = 0.25,
+		[PERL_LOCALIZED_PALADIN] = 0,
+		[PERL_LOCALIZED_PRIEST] = 0.5,
+		[PERL_LOCALIZED_ROGUE] = 0.5,
+		[PERL_LOCALIZED_SHAMAN] = 0.25,
+		[PERL_LOCALIZED_WARLOCK] = 0.75,
+		[PERL_LOCALIZED_WARRIOR] = 0,
 	};
 	Perl_Player_ClassPosLeft = {
-		[pp_translate_druid] = 1,
-		[pp_translate_hunter] = 0.25,
-		[pp_translate_mage] = 0.5,
-		[pp_translate_paladin] = 0.25,
-		[pp_translate_priest] = 0.75,
-		[pp_translate_rogue] = 0.75,
-		[pp_translate_shaman] = 0.5,
-		[pp_translate_warlock] = 1,
-		[pp_translate_warrior] = 0.25,
+		[PERL_LOCALIZED_DRUID] = 1,
+		[PERL_LOCALIZED_HUNTER] = 0.25,
+		[PERL_LOCALIZED_MAGE] = 0.5,
+		[PERL_LOCALIZED_PALADIN] = 0.25,
+		[PERL_LOCALIZED_PRIEST] = 0.75,
+		[PERL_LOCALIZED_ROGUE] = 0.75,
+		[PERL_LOCALIZED_SHAMAN] = 0.5,
+		[PERL_LOCALIZED_WARLOCK] = 1,
+		[PERL_LOCALIZED_WARRIOR] = 0.25,
 	};
 	Perl_Player_ClassPosTop = {
-		[pp_translate_druid] = 0,
-		[pp_translate_hunter] = 0.25,
-		[pp_translate_mage] = 0,
-		[pp_translate_paladin] = 0.5,
-		[pp_translate_priest] = 0.25,
-		[pp_translate_rogue] = 0,
-		[pp_translate_shaman] = 0.25,
-		[pp_translate_warlock] = 0.25,
-		[pp_translate_warrior] = 0,
+		[PERL_LOCALIZED_DRUID] = 0,
+		[PERL_LOCALIZED_HUNTER] = 0.25,
+		[PERL_LOCALIZED_MAGE] = 0,
+		[PERL_LOCALIZED_PALADIN] = 0.5,
+		[PERL_LOCALIZED_PRIEST] = 0.25,
+		[PERL_LOCALIZED_ROGUE] = 0,
+		[PERL_LOCALIZED_SHAMAN] = 0.25,
+		[PERL_LOCALIZED_WARLOCK] = 0.25,
+		[PERL_LOCALIZED_WARRIOR] = 0,
 		
 	};
 	Perl_Player_ClassPosBottom = {
-		[pp_translate_druid] = 0.25,
-		[pp_translate_hunter] = 0.5,
-		[pp_translate_mage] = 0.25,
-		[pp_translate_paladin] = 0.75,
-		[pp_translate_priest] = 0.5,
-		[pp_translate_rogue] = 0.25,
-		[pp_translate_shaman] = 0.5,
-		[pp_translate_warlock] = 0.5,
-		[pp_translate_warrior] = 0.25,
+		[PERL_LOCALIZED_DRUID] = 0.25,
+		[PERL_LOCALIZED_HUNTER] = 0.5,
+		[PERL_LOCALIZED_MAGE] = 0.25,
+		[PERL_LOCALIZED_PALADIN] = 0.75,
+		[PERL_LOCALIZED_PRIEST] = 0.5,
+		[PERL_LOCALIZED_ROGUE] = 0.25,
+		[PERL_LOCALIZED_SHAMAN] = 0.5,
+		[PERL_LOCALIZED_WARLOCK] = 0.5,
+		[PERL_LOCALIZED_WARRIOR] = 0.25,
 	};
 end
 
@@ -948,7 +920,7 @@ function Perl_Player_XPBar_Display(state)
 		Perl_Player_XPBar_CastClickOverlay:Show();
 		Perl_Player_Update_Reputation();
 	end
-	if (DruidBarKey and (UnitClass("player") == pp_translate_druid) and (UnitPowerType("player") > 0)) then		-- Only change the size if the player has Druid Bar, is a Druid, and is morphed currently
+	if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID) and (UnitPowerType("player") > 0)) then		-- Only change the size if the player has Druid Bar, is a Druid, and is morphed currently
 		if (state == 3) then
 			Perl_Player_StatsFrame:SetHeight(54);			-- Experience Bar is hidden
 			Perl_Player_StatsFrame_CastClickOverlay:SetHeight(54);
@@ -1427,8 +1399,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.54",
-			releaseDate = "April 4, 2006",
+			version = "Version 0.55",
+			releaseDate = "April 9, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

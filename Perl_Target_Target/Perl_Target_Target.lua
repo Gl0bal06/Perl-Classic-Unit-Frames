@@ -39,7 +39,7 @@ function Perl_Target_Target_OnLoad()
 	this:RegisterEvent("PLAYER_TARGET_CHANGED");
 	this:RegisterEvent("VARIABLES_LOADED");
 
-	-- New click style implemented for 1.10 (in order of occurrence in XML)
+	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Target_Target_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Target_Target_NameFrame:GetFrameLevel() + 1);
 	Perl_Target_Target_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Target_Target_StatsFrame:GetFrameLevel() + 1);
 	Perl_Target_Target_HealthBar_CastClickOverlay:SetFrameLevel(Perl_Target_Target_StatsFrame:GetFrameLevel() + 2);
@@ -1312,8 +1312,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.54",
-			releaseDate = "April 4, 2006",
+			version = "Version 0.55",
+			releaseDate = "April 9, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -10,6 +10,7 @@ Perl_Config_Global_Party_Config = {};
 Perl_Config_Global_Player_Config = {};
 Perl_Config_Global_Player_Buff_Config = {};
 Perl_Config_Global_Player_Pet_Config = {};
+Perl_Config_Global_Raid_Config = {};
 Perl_Config_Global_Target_Config = {};
 Perl_Config_Global_Target_Target_Config = {};
 
@@ -20,6 +21,20 @@ local minimapbuttonpos = 270;		-- default minimap button position
 local transparentbackground = 0;	-- use solid black background as default
 PCUF_CASTPARTYSUPPORT = 1;		-- CastParty support is enabled by default (global variable so i don't go insane)
 
+-- Empty variables used for localization
+PERL_LOCALIZED_DRUID = nil;
+PERL_LOCALIZED_HUNTER = nil;
+PERL_LOCALIZED_MAGE = nil;
+PERL_LOCALIZED_PALADIN = nil;
+PERL_LOCALIZED_PRIEST = nil;
+PERL_LOCALIZED_ROGUE = nil;
+PERL_LOCALIZED_SHAMAN = nil;
+PERL_LOCALIZED_WARLOCK = nil;
+PERL_LOCALIZED_WARRIOR = nil;
+PERL_LOCALIZED_CIVILIAN = nil;
+PERL_LOCALIZED_CREATURE = nil;
+PERL_LOCALIZED_NOTSPECIFIED = nil;
+
 
 ----------------------
 -- Loading Function --
@@ -29,6 +44,8 @@ function Perl_Config_OnLoad()
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
 	this:RegisterEvent("VARIABLES_LOADED");
+
+	Perl_Config_Set_Localization();
 
 	-- Slash Commands
 	SlashCmdList["PERL_CONFIG"] = Perl_Config_SlashHandler;
@@ -87,133 +104,105 @@ end
 ---------------------------
 -- Localization Function --
 ---------------------------
-function Perl_Config_Get_Localization()
-	local perl_localized_druid;
-	local perl_localized_hunter;
-	local perl_localized_mage;
-	local perl_localized_paladin;
-	local perl_localized_priest;
-	local perl_localized_rogue;
-	local perl_localized_shaman;
-	local perl_localized_warlock;
-	local perl_localized_warrior;
-	local perl_localized_civilian;
-	local perl_localized_creature;
-	local perl_localized_notspecified;
-
+function Perl_Config_Set_Localization()
 	-- English is set no matter what in order to not break the mod for untranslated clients like in version 0.25
 	--if (GetLocale() == "enUS") then
-		perl_localized_druid = "Druid";
-		perl_localized_hunter = "Hunter";
-		perl_localized_mage = "Mage";
-		perl_localized_paladin = "Paladin";
-		perl_localized_priest = "Priest";
-		perl_localized_rogue = "Rogue";
-		perl_localized_shaman = "Shaman";
-		perl_localized_warlock = "Warlock";
-		perl_localized_warrior = "Warrior";
+		PERL_LOCALIZED_DRUID = "Druid";
+		PERL_LOCALIZED_HUNTER = "Hunter";
+		PERL_LOCALIZED_MAGE = "Mage";
+		PERL_LOCALIZED_PALADIN = "Paladin";
+		PERL_LOCALIZED_PRIEST = "Priest";
+		PERL_LOCALIZED_ROGUE = "Rogue";
+		PERL_LOCALIZED_SHAMAN = "Shaman";
+		PERL_LOCALIZED_WARLOCK = "Warlock";
+		PERL_LOCALIZED_WARRIOR = "Warrior";
 
-		perl_localized_civilian = "Civilian";
-		perl_localized_creature = "Creature";
-		perl_localized_notspecified = "Not specified";
+		PERL_LOCALIZED_CIVILIAN = "Civilian";
+		PERL_LOCALIZED_CREATURE = "Creature";
+		PERL_LOCALIZED_NOTSPECIFIED = "Not specified";
 	--end
 
 	if (GetLocale() == "deDE") then
-		perl_localized_druid = "Druide";
-		perl_localized_hunter = "J\195\164ger";
-		perl_localized_mage = "Magier";
-		perl_localized_paladin = "Paladin";
-		perl_localized_priest = "Priester";
-		perl_localized_rogue = "Schurke";
-		perl_localized_shaman = "Schamane";
-		perl_localized_warlock = "Hexenmeister";
-		perl_localized_warrior = "Krieger";
+		PERL_LOCALIZED_DRUID = "Druide";
+		PERL_LOCALIZED_HUNTER = "J\195\164ger";
+		PERL_LOCALIZED_MAGE = "Magier";
+		PERL_LOCALIZED_PALADIN = "Paladin";
+		PERL_LOCALIZED_PRIEST = "Priester";
+		PERL_LOCALIZED_ROGUE = "Schurke";
+		PERL_LOCALIZED_SHAMAN = "Schamane";
+		PERL_LOCALIZED_WARLOCK = "Hexenmeister";
+		PERL_LOCALIZED_WARRIOR = "Krieger";
 
-		perl_localized_civilian = "Zivilist";
-		perl_localized_creature = "Kreatur";
-		perl_localized_notspecified = "Nicht spezifiziert";
+		PERL_LOCALIZED_CIVILIAN = "Zivilist";
+		PERL_LOCALIZED_CREATURE = "Kreatur";
+		PERL_LOCALIZED_NOTSPECIFIED = "Nicht spezifiziert";
 	end
 
 	if (GetLocale() == "frFR") then
-		perl_localized_druid = "Druide";
-		perl_localized_hunter = "Chasseur";
-		perl_localized_mage = "Mage";
-		perl_localized_paladin = "Paladin";
-		perl_localized_priest = "Pr\195\170tre";
-		perl_localized_rogue = "Voleur";
-		perl_localized_shaman = "Chaman";
-		perl_localized_warlock = "D\195\169moniste";
-		perl_localized_warrior = "Guerrier";
+		PERL_LOCALIZED_DRUID = "Druide";
+		PERL_LOCALIZED_HUNTER = "Chasseur";
+		PERL_LOCALIZED_MAGE = "Mage";
+		PERL_LOCALIZED_PALADIN = "Paladin";
+		PERL_LOCALIZED_PRIEST = "Pr\195\170tre";
+		PERL_LOCALIZED_ROGUE = "Voleur";
+		PERL_LOCALIZED_SHAMAN = "Chaman";
+		PERL_LOCALIZED_WARLOCK = "D\195\169moniste";
+		PERL_LOCALIZED_WARRIOR = "Guerrier";
 
-		perl_localized_civilian = "Civil";
-		perl_localized_creature = "Cr\195\169ature";
-		perl_localized_notspecified = "Non indiqu\195\169";
+		PERL_LOCALIZED_CIVILIAN = "Civil";
+		PERL_LOCALIZED_CREATURE = "Cr\195\169ature";
+		PERL_LOCALIZED_NOTSPECIFIED = "Non indiqu\195\169";
 	end
 
 	if (GetLocale() == "koKR") then
-		perl_localized_druid = "드루이드";
-		perl_localized_hunter = "사냥꾼";
-		perl_localized_mage = "마법사";
-		perl_localized_paladin = "성기사";
-		perl_localized_priest = "사제";
-		perl_localized_rogue = "도적";
-		perl_localized_shaman = "주술사";
-		perl_localized_warlock = "흑마법사";
-		perl_localized_warrior = "전사";
+		PERL_LOCALIZED_DRUID = "드루이드";
+		PERL_LOCALIZED_HUNTER = "사냥꾼";
+		PERL_LOCALIZED_MAGE = "마법사";
+		PERL_LOCALIZED_PALADIN = "성기사";
+		PERL_LOCALIZED_PRIEST = "사제";
+		PERL_LOCALIZED_ROGUE = "도적";
+		PERL_LOCALIZED_SHAMAN = "주술사";
+		PERL_LOCALIZED_WARLOCK = "흑마법사";
+		PERL_LOCALIZED_WARRIOR = "전사";
 
-		perl_localized_civilian = "민간인";
-		perl_localized_creature = "동물";
-		perl_localized_notspecified = "무엇인가";
+		PERL_LOCALIZED_CIVILIAN = "민간인";
+		PERL_LOCALIZED_CREATURE = "동물";
+		PERL_LOCALIZED_NOTSPECIFIED = "무엇인가";
 	end
 
 	if (GetLocale() == "zhCN") then
-		perl_localized_druid = "德鲁伊";
-		perl_localized_hunter = "猎人";
-		perl_localized_mage = "法师";
-		perl_localized_paladin = "圣骑士";
-		perl_localized_priest = "牧师";
-		perl_localized_rogue = "盗贼";
-		perl_localized_shaman = "萨满祭司";
-		perl_localized_warlock = "术士";
-		perl_localized_warrior = "战士";
+		PERL_LOCALIZED_DRUID = "德鲁伊";
+		PERL_LOCALIZED_HUNTER = "猎人";
+		PERL_LOCALIZED_MAGE = "法师";
+		PERL_LOCALIZED_PALADIN = "圣骑士";
+		PERL_LOCALIZED_PRIEST = "牧师";
+		PERL_LOCALIZED_ROGUE = "盗贼";
+		PERL_LOCALIZED_SHAMAN = "萨满祭司";
+		PERL_LOCALIZED_WARLOCK = "术士";
+		PERL_LOCALIZED_WARRIOR = "战士";
 
-		perl_localized_civilian = "平民";
-		perl_localized_creature = "生物";
-		perl_localized_notspecified = "非特定的";
+		PERL_LOCALIZED_CIVILIAN = "平民";
+		PERL_LOCALIZED_CREATURE = "生物";
+		PERL_LOCALIZED_NOTSPECIFIED = "非特定的";
 	end
 
 	if (GetLocale() == "zhTW") then
-		perl_localized_druid = "德魯伊";
-		perl_localized_hunter = "獵人";
-		perl_localized_mage = "法師";
-		perl_localized_paladin = "聖騎士";
-		perl_localized_priest = "牧師";
-		perl_localized_rogue = "盜賊";
-		perl_localized_shaman = "薩滿";
-		perl_localized_warlock = "術士";
-		perl_localized_warrior = "戰士";
+		PERL_LOCALIZED_DRUID = "德魯伊";
+		PERL_LOCALIZED_HUNTER = "獵人";
+		PERL_LOCALIZED_MAGE = "法師";
+		PERL_LOCALIZED_PALADIN = "聖騎士";
+		PERL_LOCALIZED_PRIEST = "牧師";
+		PERL_LOCALIZED_ROGUE = "盜賊";
+		PERL_LOCALIZED_SHAMAN = "薩滿";
+		PERL_LOCALIZED_WARLOCK = "術士";
+		PERL_LOCALIZED_WARRIOR = "戰士";
 
-		perl_localized_civilian = "平民";
-		perl_localized_creature = "生物";
-		perl_localized_notspecified = "非特定的";
+		PERL_LOCALIZED_CIVILIAN = "平民";
+		PERL_LOCALIZED_CREATURE = "生物";
+		PERL_LOCALIZED_NOTSPECIFIED = "非特定的";
 	end
-
-	local localization = {
-		["druid"] = perl_localized_druid,
-		["hunter"] = perl_localized_hunter,
-		["mage"] = perl_localized_mage,
-		["paladin"] = perl_localized_paladin,
-		["priest"] = perl_localized_priest,
-		["rogue"] = perl_localized_rogue,
-		["shaman"] = perl_localized_shaman,
-		["warlock"] = perl_localized_warlock,
-		["warrior"] = perl_localized_warrior,
-		["civilian"] = perl_localized_civilian,
-		["creature"] = perl_localized_creature,
-		["notspecified"] = perl_localized_notspecified,
-	}
-	return localization;
 end
+
 
 --------------------------
 -- Update/GUI Functions --
@@ -274,6 +263,13 @@ function Perl_Config_Set_Texture(newvalue)
 		Perl_Player_Pet_XPBarTex:SetTexture(texturename);
 	end
 
+	if (Perl_Raid_Frame) then
+		for num=1,40 do
+			getglobal("Perl_Raid"..num.."_StatsFrame_HealthBar_HealthBarTex"):SetTexture(texturename);
+			getglobal("Perl_Raid"..num.."_StatsFrame_ManaBar_ManaBarTex"):SetTexture(texturename);
+		end
+	end
+
 	if (Perl_Target_Frame) then
 		Perl_Target_HealthBarTex:SetTexture(texturename);
 		Perl_Target_ManaBarTex:SetTexture(texturename);
@@ -325,6 +321,14 @@ function Perl_Config_Set_Background(newvalue)
 			Perl_Player_Pet_NameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_Pet_StatsFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_Pet_Initialize_Frame_Color();
+		end
+
+		if (Perl_Raid_Frame) then
+			for num=1,40 do
+				getglobal("Perl_Raid"..num.."_NameFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+				getglobal("Perl_Raid"..num.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			end
+			Perl_Raid_Initialize_Frame_Color();
 		end
 
 		if (Perl_Target_Frame) then
@@ -379,6 +383,14 @@ function Perl_Config_Set_Background(newvalue)
 			Perl_Player_Pet_Initialize_Frame_Color();
 		end
 
+		if (Perl_Raid_Frame) then
+			for num=1,40 do
+				getglobal("Perl_Raid"..num.."_NameFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+				getglobal("Perl_Raid"..num.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			end
+			Perl_Raid_Initialize_Frame_Color();
+		end
+
 		if (Perl_Target_Frame) then
 			Perl_Target_CivilianFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_White", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_ClassNameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
@@ -420,6 +432,10 @@ function Perl_Config_Set_Transparency(newvalue)
 
 	if (Perl_Player_Pet_Frame) then
 		Perl_Player_Pet_Set_Transparency(newvalue);
+	end
+
+	if (Perl_Raid_Frame) then
+		Perl_Raid_Set_Transparency(newvalue);
 	end
 
 	if (Perl_Target_Frame) then
@@ -472,6 +488,13 @@ function Perl_Config_Frame_Reset_Positions()
 	if (Perl_Player_Pet_Frame) then
 		Perl_Player_Pet_Frame:SetUserPlaced(1);
 		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 27, -112);
+	end
+
+	if (Perl_Raid_Frame) then
+		for num=1,8 do
+			getglobal("Perl_Raid_Grp"..num):SetUserPlaced(1);
+			getglobal("Perl_Raid_Grp"..num):SetPoint("TOPLEFT", UIParent, "TOPLEFT", 500, -200);
+		end
 	end
 
 	if (Perl_Target_Frame) then
@@ -610,6 +633,41 @@ function Perl_Config_Global_Save_Settings()
 		};
 	end
 
+	if (Perl_Raid_Frame) then
+		local vartable = Perl_Raid_GetVars();
+		Perl_Config_Global_Raid_Config["Global Settings"] = {
+			["Locked"] = locked,
+			["ShowGroup1"] = vartable["showgroup1"],
+			["ShowGroup2"] = vartable["showgroup2"],
+			["ShowGroup3"] = vartable["showgroup3"],
+			["ShowGroup4"] = vartable["showgroup4"],
+			["ShowGroup5"] = vartable["showgroup5"],
+			["ShowGroup6"] = vartable["showgroup6"],
+			["ShowGroup7"] = vartable["showgroup7"],
+			["ShowGroup8"] = vartable["showgroup8"],
+			["ShowPercents"] = vartable["showpercents"],
+			["SortRaidByClass"] = vartable["sortraidbyclass"],
+			["Transparency"] = vartable["transparency"],
+			["Scale"] = vartable["scale"],
+			["XPosition1"] = floor(Perl_Raid_Grp1:GetLeft() + 0.5),
+			["YPosition1"] = floor(Perl_Raid_Grp1:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp1:GetScale()) + 0.5),
+			["XPosition2"] = floor(Perl_Raid_Grp2:GetLeft() + 0.5),
+			["YPosition2"] = floor(Perl_Raid_Grp2:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp2:GetScale()) + 0.5),
+			["XPosition3"] = floor(Perl_Raid_Grp3:GetLeft() + 0.5),
+			["YPosition3"] = floor(Perl_Raid_Grp3:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp3:GetScale()) + 0.5),
+			["XPosition4"] = floor(Perl_Raid_Grp4:GetLeft() + 0.5),
+			["YPosition4"] = floor(Perl_Raid_Grp4:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp4:GetScale()) + 0.5),
+			["XPosition5"] = floor(Perl_Raid_Grp5:GetLeft() + 0.5),
+			["YPosition5"] = floor(Perl_Raid_Grp5:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp5:GetScale()) + 0.5),
+			["XPosition6"] = floor(Perl_Raid_Grp6:GetLeft() + 0.5),
+			["YPosition6"] = floor(Perl_Raid_Grp6:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp6:GetScale()) + 0.5),
+			["XPosition7"] = floor(Perl_Raid_Grp7:GetLeft() + 0.5),
+			["YPosition7"] = floor(Perl_Raid_Grp7:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp7:GetScale()) + 0.5),
+			["XPosition8"] = floor(Perl_Raid_Grp8:GetLeft() + 0.5),
+			["YPosition8"] = floor(Perl_Raid_Grp8:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp8:GetScale()) + 0.5),
+		};
+	end
+
 	if (Perl_Target_Frame) then
 		local vartable = Perl_Target_GetVars();
 		Perl_Config_Global_Target_Config["Global Settings"] = {
@@ -711,6 +769,29 @@ function Perl_Config_Global_Load_Settings()
 		if ((Perl_Config_Global_Player_Pet_Config["Global Settings"]["XPosition"] ~= nil) and (Perl_Config_Global_Player_Pet_Config["Global Settings"]["YPosition"] ~= nil)) then
 			Perl_Player_Pet_Frame:SetUserPlaced(1);
 			Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Player_Pet_Config["Global Settings"]["XPosition"], Perl_Config_Global_Player_Pet_Config["Global Settings"]["YPosition"]);
+		end
+	end
+
+	if (Perl_Raid_Frame) then
+		Perl_Raid_UpdateVars(Perl_Config_Global_Raid_Config);
+
+		if ((Perl_Config_Global_Raid_Config["Global Settings"]["XPosition1"] ~= nil) and (Perl_Config_Global_Raid_Config["Global Settings"]["YPosition1"] ~= nil)) then
+			Perl_Raid_Grp1:SetUserPlaced(1);
+			Perl_Raid_Grp2:SetUserPlaced(1);
+			Perl_Raid_Grp3:SetUserPlaced(1);
+			Perl_Raid_Grp4:SetUserPlaced(1);
+			Perl_Raid_Grp5:SetUserPlaced(1);
+			Perl_Raid_Grp6:SetUserPlaced(1);
+			Perl_Raid_Grp7:SetUserPlaced(1);
+			Perl_Raid_Grp8:SetUserPlaced(1);
+			Perl_Raid_Grp1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition1"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition1"]);
+			Perl_Raid_Grp2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition2"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition2"]);
+			Perl_Raid_Grp3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition3"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition3"]);
+			Perl_Raid_Grp4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition4"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition4"]);
+			Perl_Raid_Grp5:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition5"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition5"]);
+			Perl_Raid_Grp6:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition6"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition6"]);
+			Perl_Raid_Grp7:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition7"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition7"]);
+			Perl_Raid_Grp8:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Raid_Config["Global Settings"]["XPosition8"], Perl_Config_Global_Raid_Config["Global Settings"]["YPosition8"]);
 		end
 	end
 
@@ -855,9 +936,11 @@ function Perl_Config_Hide_All()
 	Perl_Config_CombatDisplay_Frame:Hide();
 	Perl_Config_NotInstalled_Frame:Hide();
 	Perl_Config_Party_Frame:Hide();
+	Perl_Config_Party_Pet_Frame:Hide();
 	Perl_Config_Player_Frame:Hide();
 	Perl_Config_Player_Buff_Frame:Hide();
 	Perl_Config_Player_Pet_Frame:Hide();
+	Perl_Config_Raid_Frame:Hide();
 	Perl_Config_Target_Frame:Hide();
 	Perl_Config_Target_Target_Frame:Hide();
 end
@@ -897,8 +980,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.54",
-			releaseDate = "April 4, 2006",
+			version = "Version 0.55",
+			releaseDate = "April 9, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

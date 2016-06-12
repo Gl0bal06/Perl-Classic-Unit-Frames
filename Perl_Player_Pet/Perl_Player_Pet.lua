@@ -19,17 +19,11 @@ local debuffsize = 12;			-- default debuff size is 12
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
 
--- Empty variables used for localization
-local ppp_translate_warlock;
-
 
 ----------------------
 -- Loading Function --
 ----------------------
 function Perl_Player_Pet_OnLoad()
-	-- Menus
-	table.insert(UnitPopupFrames,"Perl_Player_Pet_DropDown");
-
 	-- Events
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -49,7 +43,7 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("UNIT_PET_EXPERIENCE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
-	-- New click style implemented for 1.10 (in order of occurrence in XML)
+	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Player_Pet_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_NameFrame:GetFrameLevel() + 1);
 	Perl_Player_Pet_LevelFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_LevelFrame:GetFrameLevel() + 2);
 	Perl_Player_Pet_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_StatsFrame:GetFrameLevel() + 2);
@@ -146,7 +140,6 @@ function Perl_Player_Pet_Initialize()
 
 	-- Major config options.
 	Perl_Player_Pet_Initialize_Frame_Color();
-	Perl_Player_Pet_Set_Localization();
 	Perl_Player_Pet_Reset_Buffs();			-- Set correct buff sizes
 
 	-- Unregister the Blizzard frames via the 1.8 function
@@ -242,7 +235,7 @@ function Perl_Player_Pet_Update_Mana()
 	Perl_Player_Pet_ManaBar:SetMinMaxValues(0, petmanamax);
 	Perl_Player_Pet_ManaBar:SetValue(petmana);
 
-	if (UnitClass("player") == ppp_translate_warlock) then
+	if (UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
 		Perl_Player_Pet_ManaBarText:SetText(petmana.."/"..petmanamax);
 	else
 		Perl_Player_Pet_ManaBarText:SetText(petmana);
@@ -332,7 +325,7 @@ function Perl_Player_Pet_Update_Experience()
 end
 
 function Perl_Player_Pet_Set_Window_Layout()
-	if (UnitClass("player") == ppp_translate_warlock) then
+	if (UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
 		Perl_Player_Pet_LevelFrame:Hide();
 		Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 5);
 		Perl_Player_Pet_StatsFrame:SetWidth(165);
@@ -353,12 +346,6 @@ function Perl_Player_Pet_Set_Window_Layout()
 		Perl_Player_Pet_XPBar:SetWidth(128);
 		Perl_Player_Pet_XPBarBG:SetWidth(128);
 	end
-end
-
-function Perl_Player_Pet_Set_Localization()
-	local localization = Perl_Config_Get_Localization();
-
-	ppp_translate_warlock = localization["warlock"];
 end
 
 
@@ -794,6 +781,8 @@ function Perl_Player_Pet_MouseClick(button)
 		if (button == "LeftButton") then
 			if (SpellIsTargeting()) then
 				SpellTargetUnit("pet");
+			elseif (CursorHasItem()) then
+				DropItemOnUnit("pet");
 			else
 				TargetUnit("pet");
 			end
@@ -832,8 +821,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.54",
-			releaseDate = "April 4, 2006",
+			version = "Version 0.55",
+			releaseDate = "April 9, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

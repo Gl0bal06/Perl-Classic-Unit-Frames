@@ -31,9 +31,6 @@ local hidebuffbackground = 0;	-- buff and debuff backgrounds are shown by defaul
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
 
--- Empty variables used for localization
-local pt_localized_civilian, pt_localized_creature, pt_localized_notspecified, pt_translate_druid, pt_translate_mage, pt_translate_priest, pt_translate_rogue, pt_translate_warrior;
-
 -- Variables for position of the class icon texture.
 local Perl_Target_ClassPosRight = {};
 local Perl_Target_ClassPosLeft = {};
@@ -47,9 +44,6 @@ local Perl_Target_ClassPosBottom = {};
 function Perl_Target_OnLoad()
 	-- Combat Text
 	CombatFeedback_Initialize(Perl_Target_HitIndicator, 30);
-
-	-- Menus
-	table.insert(UnitPopupFrames,"Perl_Target_DropDown");
 
 	-- Events
 	this:RegisterEvent("ADDON_LOADED");
@@ -80,7 +74,7 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("UNIT_SPELLMISS");
 	this:RegisterEvent("VARIABLES_LOADED");
 
-	-- New click style implemented for 1.10 (in order of occurrence in XML)
+	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Target_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Target_NameFrame:GetFrameLevel() + 2);
 	Perl_Target_Name:SetFrameLevel(Perl_Target_NameFrame:GetFrameLevel() + 1);
 	Perl_Target_LevelFrame_CastClickOverlay:SetFrameLevel(Perl_Target_LevelFrame:GetFrameLevel() + 1);
@@ -608,19 +602,15 @@ function Perl_Target_Update_Combo_Points()
 		Perl_Target_NameFrame_CPMeter:SetValue(combopoints);
 		if (combopoints == 5) then
 			Perl_Target_NameFrame_CPMeter:Show();
-			Perl_Target_NameFrame_CPMeter:SetStatusBarColor(1, 0, 0, 0.4);
+			
 		elseif (combopoints == 4) then
 			Perl_Target_NameFrame_CPMeter:Show();
-			Perl_Target_NameFrame_CPMeter:SetStatusBarColor(1, 0.5, 0, 0.4);
 		elseif (combopoints == 3) then
 			Perl_Target_NameFrame_CPMeter:Show();
-			Perl_Target_NameFrame_CPMeter:SetStatusBarColor(1, 1, 0, 0.4);
 		elseif (combopoints == 2) then
 			Perl_Target_NameFrame_CPMeter:Show();
-			Perl_Target_NameFrame_CPMeter:SetStatusBarColor(0.5, 1, 0, 0.4);
 		elseif (combopoints == 1) then
 			Perl_Target_NameFrame_CPMeter:Show();
-			Perl_Target_NameFrame_CPMeter:SetStatusBarColor(0, 1, 0, 0.4);
 		else
 			Perl_Target_NameFrame_CPMeter:Hide();
 		end
@@ -813,14 +803,14 @@ function Perl_Target_Set_Target_Class()
 			Perl_Target_CivilianFrame:Hide();
 		else
 			local targetCreatureType = UnitCreatureType("target");
-			if (targetCreatureType == pt_localized_notspecified) then
-				targetCreatureType = pt_localized_creature;
+			if (targetCreatureType == PERL_LOCALIZED_NOTSPECIFIED) then
+				targetCreatureType = PERL_LOCALIZED_CREATURE;
 			end
 			Perl_Target_ClassNameBarText:SetText(targetCreatureType);
 			Perl_Target_ClassNameFrame:Show();
 
 			if (UnitIsCivilian("target")) then
-				Perl_Target_CivilianBarText:SetText(pt_localized_civilian);
+				Perl_Target_CivilianBarText:SetText(PERL_LOCALIZED_CIVILIAN);
 				Perl_Target_CivilianBarText:SetTextColor(1, 0, 0);
 				Perl_Target_CivilianFrame:Show();
 			else
@@ -887,6 +877,8 @@ function Perl_Target_Buff_Debuff_Background()
 end
 
 function Perl_Target_Frame_Style()
+	Perl_Target_RareEliteFrame:SetPoint("TOPLEFT", "Perl_Target_CivilianFrame", "TOPRIGHT", -5, 0);
+
 	if (framestyle == 1) then
 		Perl_Target_HealthBar:SetWidth(200);
 		Perl_Target_HealthBarBG:SetWidth(200);
@@ -939,6 +931,7 @@ function Perl_Target_Frame_Style()
 				Perl_Target_NameFrame:SetWidth(129);
 				Perl_Target_RareEliteFrame:SetWidth(46);
 				Perl_Target_StatsFrame:SetWidth(170);
+				Perl_Target_RareEliteFrame:SetPoint("TOPLEFT", "Perl_Target_CivilianFrame", "TOPRIGHT", -46, 0);
 
 				Perl_Target_NameFrame_CPMeter:SetWidth(119);
 
@@ -965,76 +958,50 @@ function Perl_Target_Frame_Style()
 end
 
 function Perl_Target_Set_Localized_ClassIcons()
-	--local pt_translate_druid;	-- Commented out since we need these for debuff stacking in the name frame
-	local pt_translate_hunter;
-	--local pt_translate_mage;
-	local pt_translate_paladin;
-	--local pt_translate_priest;
-	--local pt_translate_rogue;
-	local pt_translate_shaman;
-	local pt_translate_warlock;
-	--local pt_translate_warrior;
-
-	local localization = Perl_Config_Get_Localization();
-
-	pt_translate_druid = localization["druid"];
-	pt_translate_hunter = localization["hunter"];
-	pt_translate_mage = localization["mage"];
-	pt_translate_paladin = localization["paladin"];
-	pt_translate_priest = localization["priest"];
-	pt_translate_rogue = localization["rogue"];
-	pt_translate_shaman = localization["shaman"];
-	pt_translate_warlock = localization["warlock"];
-	pt_translate_warrior = localization["warrior"];
-
-	pt_localized_civilian = localization["civilian"];
-	pt_localized_creature = localization["creature"];
-	pt_localized_notspecified = localization["notspecified"];
-
 	Perl_Target_ClassPosRight = {
-		[pt_translate_druid] = 0.75,
-		[pt_translate_hunter] = 0,
-		[pt_translate_mage] = 0.25,
-		[pt_translate_paladin] = 0,
-		[pt_translate_priest] = 0.5,
-		[pt_translate_rogue] = 0.5,
-		[pt_translate_shaman] = 0.25,
-		[pt_translate_warlock] = 0.75,
-		[pt_translate_warrior] = 0,
+		[PERL_LOCALIZED_DRUID] = 0.75,
+		[PERL_LOCALIZED_HUNTER] = 0,
+		[PERL_LOCALIZED_MAGE] = 0.25,
+		[PERL_LOCALIZED_PALADIN] = 0,
+		[PERL_LOCALIZED_PRIEST] = 0.5,
+		[PERL_LOCALIZED_ROGUE] = 0.5,
+		[PERL_LOCALIZED_SHAMAN] = 0.25,
+		[PERL_LOCALIZED_WARLOCK] = 0.75,
+		[PERL_LOCALIZED_WARRIOR] = 0,
 	};
 	Perl_Target_ClassPosLeft = {
-		[pt_translate_druid] = 1,
-		[pt_translate_hunter] = 0.25,
-		[pt_translate_mage] = 0.5,
-		[pt_translate_paladin] = 0.25,
-		[pt_translate_priest] = 0.75,
-		[pt_translate_rogue] = 0.75,
-		[pt_translate_shaman] = 0.5,
-		[pt_translate_warlock] = 1,
-		[pt_translate_warrior] = 0.25,
+		[PERL_LOCALIZED_DRUID] = 1,
+		[PERL_LOCALIZED_HUNTER] = 0.25,
+		[PERL_LOCALIZED_MAGE] = 0.5,
+		[PERL_LOCALIZED_PALADIN] = 0.25,
+		[PERL_LOCALIZED_PRIEST] = 0.75,
+		[PERL_LOCALIZED_ROGUE] = 0.75,
+		[PERL_LOCALIZED_SHAMAN] = 0.5,
+		[PERL_LOCALIZED_WARLOCK] = 1,
+		[PERL_LOCALIZED_WARRIOR] = 0.25,
 	};
 	Perl_Target_ClassPosTop = {
-		[pt_translate_druid] = 0,
-		[pt_translate_hunter] = 0.25,
-		[pt_translate_mage] = 0,
-		[pt_translate_paladin] = 0.5,
-		[pt_translate_priest] = 0.25,
-		[pt_translate_rogue] = 0,
-		[pt_translate_shaman] = 0.25,
-		[pt_translate_warlock] = 0.25,
-		[pt_translate_warrior] = 0,
+		[PERL_LOCALIZED_DRUID] = 0,
+		[PERL_LOCALIZED_HUNTER] = 0.25,
+		[PERL_LOCALIZED_MAGE] = 0,
+		[PERL_LOCALIZED_PALADIN] = 0.5,
+		[PERL_LOCALIZED_PRIEST] = 0.25,
+		[PERL_LOCALIZED_ROGUE] = 0,
+		[PERL_LOCALIZED_SHAMAN] = 0.25,
+		[PERL_LOCALIZED_WARLOCK] = 0.25,
+		[PERL_LOCALIZED_WARRIOR] = 0,
 		
 	};
 	Perl_Target_ClassPosBottom = {
-		[pt_translate_druid] = 0.25,
-		[pt_translate_hunter] = 0.5,
-		[pt_translate_mage] = 0.25,
-		[pt_translate_paladin] = 0.75,
-		[pt_translate_priest] = 0.5,
-		[pt_translate_rogue] = 0.25,
-		[pt_translate_shaman] = 0.5,
-		[pt_translate_warlock] = 0.5,
-		[pt_translate_warrior] = 0.25,
+		[PERL_LOCALIZED_DRUID] = 0.25,
+		[PERL_LOCALIZED_HUNTER] = 0.5,
+		[PERL_LOCALIZED_MAGE] = 0.25,
+		[PERL_LOCALIZED_PALADIN] = 0.75,
+		[PERL_LOCALIZED_PRIEST] = 0.5,
+		[PERL_LOCALIZED_ROGUE] = 0.25,
+		[PERL_LOCALIZED_SHAMAN] = 0.5,
+		[PERL_LOCALIZED_WARLOCK] = 0.5,
+		[PERL_LOCALIZED_WARRIOR] = 0.25,
 	};
 end
 
@@ -1664,13 +1631,13 @@ function Perl_Target_Buff_UpdateCPMeter()
 	local debuffapplications;
 	local playerclass = UnitClass("player");
 
-	if (playerclass == pt_translate_mage) then
+	if (playerclass == PERL_LOCALIZED_MAGE) then
 		debuffapplications = Perl_Target_Buff_GetApplications("Fire Vulnerability");
-	elseif (playerclass == pt_translate_priest) then
+	elseif (playerclass == PERL_LOCALIZED_PRIEST) then
 		debuffapplications = Perl_Target_Buff_GetApplications("Shadow Vulnerability");
-	elseif (playerclass == pt_translate_warrior) then
+	elseif (playerclass == PERL_LOCALIZED_WARRIOR) then
 		debuffapplications = Perl_Target_Buff_GetApplications("Sunder Armor");
-	elseif ((playerclass == pt_translate_rogue) or (playerclass == pt_translate_druid)) then
+	elseif ((playerclass == PERL_LOCALIZED_ROGUE) or (playerclass == PERL_LOCALIZED_DRUID)) then
 		return;
 	else
 		Perl_Target_NameFrame_CPMeter:Hide();
@@ -1711,19 +1678,14 @@ function Perl_Target_Buff_UpdateCPMeter()
 			Perl_Target_NameFrame_CPMeter:SetValue(debuffapplications);
 			if (debuffapplications == 5) then
 				Perl_Target_NameFrame_CPMeter:Show();
-				Perl_Target_NameFrame_CPMeter:SetStatusBarColor(1, 0, 0, 0.4);
 			elseif (debuffapplications == 4) then
 				Perl_Target_NameFrame_CPMeter:Show();
-				Perl_Target_NameFrame_CPMeter:SetStatusBarColor(1, 0.5, 0, 0.4);
 			elseif (debuffapplications == 3) then
 				Perl_Target_NameFrame_CPMeter:Show();
-				Perl_Target_NameFrame_CPMeter:SetStatusBarColor(1, 1, 0, 0.4);
 			elseif (debuffapplications == 2) then
 				Perl_Target_NameFrame_CPMeter:Show();
-				Perl_Target_NameFrame_CPMeter:SetStatusBarColor(0.5, 1, 0, 0.4);
 			elseif (debuffapplications == 1) then
 				Perl_Target_NameFrame_CPMeter:Show();
-				Perl_Target_NameFrame_CPMeter:SetStatusBarColor(0, 1, 0, 0.4);
 			else
 				Perl_Target_NameFrame_CPMeter:Hide();
 			end
@@ -1880,8 +1842,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.54",
-			releaseDate = "April 4, 2006",
+			version = "Version 0.55",
+			releaseDate = "April 9, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

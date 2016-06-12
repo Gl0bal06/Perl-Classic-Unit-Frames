@@ -23,18 +23,11 @@ local Initialized = nil;
 local healthfull = 0;
 local manafull = 0;
 
--- Empty variables used for localization
-local pcd_translate_druid;
-
 
 ----------------------
 -- Loading Function --
 ----------------------
 function Perl_CombatDisplay_OnLoad()
-	-- Menus
-	table.insert(UnitPopupFrames,"Perl_CombatDisplay_DropDown");
-	table.insert(UnitPopupFrames,"Perl_CombatDisplay_Target_DropDown");
-
 	-- Events
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PLAYER_ENTER_COMBAT");
@@ -57,7 +50,7 @@ function Perl_CombatDisplay_OnLoad()
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
-	-- New click style implemented for 1.10 (in order of occurrence in XML)
+	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetFrameLevel(Perl_CombatDisplay_ManaFrame:GetFrameLevel() + 2);
 
 	if (DEFAULT_CHAT_FRAME) then
@@ -66,7 +59,7 @@ function Perl_CombatDisplay_OnLoad()
 end
 
 function Perl_CombatDisplay_Target_OnLoad()
-	-- New click style implemented for 1.10 (in order of occurrence in XML)
+	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_CombatDisplay_Target_ManaFrame_CastClickOverlay:SetFrameLevel(Perl_CombatDisplay_Target_ManaFrame:GetFrameLevel() + 2);
 end
 
@@ -268,7 +261,6 @@ function Perl_CombatDisplay_Initialize()
 
 	-- Major config options.
 	Perl_CombatDisplay_Initialize_Frame_Color();
-	Perl_CombatDisplay_Set_Localization();
 	Perl_CombatDisplay_Target_Frame:Hide();
 
 	Perl_CombatDisplay_UpdateBars();	-- Display the bars appropriate to your class
@@ -393,7 +385,7 @@ function Perl_CombatDisplay_Update_Mana()
 	end
 
 	if (showdruidbar == 1) then
-		if (DruidBarKey and (UnitClass("player") == pcd_translate_druid)) then
+		if (DruidBarKey and (UnitClass("player") == PERL_LOCALIZED_DRUID)) then
 			if (playerpower > 0) then
 				-- Show the bars and set the text and reposition the original mana bar below the druid bar
 				local playerdruidbarmana = floor(DruidBarKey.keepthemana);
@@ -781,12 +773,6 @@ function Perl_CombatDisplay_Target_Show()
 			Perl_CombatDisplay_Target_Frame:Hide();
 		end
 	end
-end
-
-function Perl_CombatDisplay_Set_Localization()
-	local localization = Perl_Config_Get_Localization();
-
-	pcd_translate_druid = localization["druid"];
 end
 
 
@@ -1188,8 +1174,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.54",
-			releaseDate = "April 4, 2006",
+			version = "Version 0.55",
+			releaseDate = "April 9, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

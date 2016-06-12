@@ -82,6 +82,10 @@ function Perl_Config_All_Lock_Unlock(value)
 		Perl_Player_Pet_Set_Lock(value);
 	end
 
+	if (Perl_Raid_Frame) then
+		Perl_Raid_Set_Lock(value);
+	end
+
 	if (Perl_Target_Frame) then
 		Perl_Target_Set_Lock(value);
 	end
@@ -122,6 +126,10 @@ function Perl_Config_All_Set_Scale(value)
 
 	if (Perl_Player_Pet_Frame) then
 		Perl_Player_Pet_Set_Scale(value);
+	end
+
+	if (Perl_Raid_Frame) then
+		Perl_Raid_Set_Scale(value);
 	end
 
 	if (Perl_Target_Frame) then

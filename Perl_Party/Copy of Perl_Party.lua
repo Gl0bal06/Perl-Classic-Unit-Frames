@@ -506,21 +506,34 @@ function Perl_Party_Update_Pet()
 			end											-- End waste of code to keep it sane
 
 			if (verticalalign == 1) then
+				--local idspace = id + 1;
+				--local partypetspacing = partyspacing - 12;
+
+--				if (id == 1 or id == 2 or id == 3) then
+--					local idspace = id + 1;
+--					local partypetspacing;
+--					if (partyspacing < 0) then			-- Frames are normal
+--						partypetspacing = partyspacing - 12;
+--					else						-- Frames are inverted
+--						partypetspacing = partyspacing + 12;
+--					end
+--					getglobal("Perl_Party_MemberFrame"..idspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id, "TOPLEFT", 0, partypetspacing);
+--				end
+
+
+
+				local idspace = id + 1;
+				local partypetspacing;
 				if (partyspacing < 0) then			-- Frames are normal
 					if (id == 1 or id == 2 or id == 3) then
-						local idspace = id + 1;
-						local partypetspacing;
 						partypetspacing = partyspacing - 12;
-						getglobal("Perl_Party_MemberFrame"..idspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id, "TOPLEFT", 0, partypetspacing);
 					end
+					getglobal("Perl_Party_MemberFrame"..idspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id, "TOPLEFT", 0, partypetspacing);
 				else						-- Frames are inverted
-					if (partynum == 2 or partynum == 3 or partynum == 4) then
-						local idspace = id - 1;
-						local partypetspacing;
-						partypetspacing = partyspacing + 12;
-						getglobal("Perl_Party_MemberFrame"..id):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..idspace, "TOPLEFT", 0, partypetspacing);
-					end
+					partypetspacing = partyspacing + 12;
+					getglobal("Perl_Party_MemberFrame"..id):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..(id-1), "TOPLEFT", 0, partypetspacing);
 				end
+				
 			else
 				local horizontalspacing;
 				if (partyspacing < 0) then
@@ -1249,20 +1262,12 @@ function Perl_Party_Set_Space(number)
 				local frame = getglobal("Perl_Party_MemberFrame"..partynum);
 				if (UnitName(partyid) ~= nil) then
 					if (UnitIsConnected(partyid) and UnitExists("partypet"..partynum)) then
-						if (partyspacing < 0) then			-- Frames are normal
-							if (partynum == 1 or partynum == 2 or partynum == 3) then
-								local idspace = partynum + 1;
-								local partypetspacing;
-								partypetspacing = partyspacing - 12;
-								getglobal("Perl_Party_MemberFrame"..idspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..partynum, "TOPLEFT", 0, partypetspacing);
-							end
-						else						-- Frames are inverted
-							if (partynum == 2 or partynum == 3 or partynum == 4) then
-								local idspace = partynum - 1;
-								local partypetspacing;
-								partypetspacing = partyspacing + 12;
-								getglobal("Perl_Party_MemberFrame"..partynum):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..idspace, "TOPLEFT", 0, partypetspacing);
-							end
+						if (partynum == 1) then
+							Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partypetspacing);
+						elseif (partynum == 2) then
+							Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partypetspacing);
+						elseif (partynum == 3) then
+							Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partypetspacing);
 						end
 					end
 				else
@@ -1425,21 +1430,11 @@ function Perl_Party_Set_Pets(newvalue)
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame"):SetHeight(54);
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_CastClickOverlay"):SetHeight(54);
 
-						if (partyspacing < 0) then			-- Frames are normal
-							if (partynum == 1 or partynum == 2 or partynum == 3) then
-								local idspace = partynum + 1;
-								local partypetspacing;
-								partypetspacing = partyspacing - 12;
-								getglobal("Perl_Party_MemberFrame"..idspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..partynum, "TOPLEFT", 0, partypetspacing);
-							end
-						else						-- Frames are inverted
-							if (partynum == 2 or partynum == 3 or partynum == 4) then
-								local idspace = partynum - 1;
-								local partypetspacing;
-								partypetspacing = partyspacing + 12;
-								getglobal("Perl_Party_MemberFrame"..partynum):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..idspace, "TOPLEFT", 0, partypetspacing);
-							end
-						end
+					if (partynum == 1 or partynum == 2 or partynum == 3) then
+						local partynumspace = partynum + 1;
+						local partypetspacing = partyspacing - 12;
+						getglobal("Perl_Party_MemberFrame"..partynumspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..partynum, "TOPLEFT", 0, partypetspacing);
+					end
 
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):SetMinMaxValues(0, partypethealthmax);
 					getglobal("Perl_Party_MemberFrame"..partynum.."_StatsFrame_PetHealthBar"):SetValue(partypethealth);
@@ -2153,7 +2148,7 @@ function Perl_Party_myAddOns_Support()
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
 			version = "Version 0.55",
-			releaseDate = "April 9, 2006",
+			releaseDate = "April ??, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
