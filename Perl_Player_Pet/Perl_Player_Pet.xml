@@ -173,7 +173,7 @@
 						</Fontstring>
 
 						<!-- Threat Icon -->
-						<Texture name="Perl_Player_Pet_ThreatIndicator" file="Interface\Minimap\ObjectIcons" hidden="true">
+						<Texture name="Perl_Player_Pet_ThreatIndicator" file="Interface\AddOns\Perl_Config\Perl_StatusBar6" hidden="true">
 							<Size>
 								<AbsDimension x="16" y="16"/>
 							</Size>

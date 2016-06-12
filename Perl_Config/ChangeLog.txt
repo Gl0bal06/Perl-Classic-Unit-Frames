@@ -1,3 +1,7 @@
+4.09 - December 24, 2011
+ - All: Updated TOC Interface version to 40300
+ - All: Changed the icon for the threat icon so it displays properly
+
 4.08 - June 29, 2011
  - All: Updated TOC Interface version to 40200
 
