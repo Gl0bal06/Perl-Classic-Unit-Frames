@@ -60,6 +60,7 @@ function Perl_CombatDisplay_OnLoad()
 	this:RegisterEvent("PLAYER_REGEN_DISABLED");
 	this:RegisterEvent("PLAYER_REGEN_ENABLED");
 	this:RegisterEvent("PLAYER_TARGET_CHANGED");
+	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_ENERGY");
 	this:RegisterEvent("UNIT_FOCUS");
@@ -235,25 +236,11 @@ function Perl_CombatDisplay_Events:UNIT_DISPLAYPOWER()
 	end
 end
 
-function Perl_CombatDisplay_Events:UNIT_DISPLAYPOWER()
+function Perl_CombatDisplay_Events:UNIT_AURA()
 	if (arg1 == "player") then
-		Perl_CombatDisplay_UpdateBars();
-		Perl_CombatDisplay_Update_Mana();
-		if (InCombat == 0 and IsAggroed == 0) then
-			if (state == 1) then
-				Perl_CombatDisplay_Frame:Show();
-			else
-				Perl_CombatDisplay_Frame:Hide();
-			end
-		end
+		Perl_CombatDisplay_Buff_UpdateAll(arg1, Perl_CombatDisplay_ManaFrame);
 	elseif (arg1 == "target") then
-		Perl_CombatDisplay_Target_UpdateBars();
-		Perl_CombatDisplay_Target_Update_Mana();
-	elseif (arg1 == "pet") then
-		if (showpetbars == 1) then
-			Perl_CombatDisplay_Update_PetManaBarColor();	-- What type of energy are we using now?
-			Perl_CombatDisplay_Update_PetMana();		-- Update the energy info immediately
-		end
+		Perl_CombatDisplay_Buff_UpdateAll(arg1, Perl_CombatDisplay_Target_ManaFrame);
 	end
 end
 
@@ -774,6 +761,7 @@ function Perl_CombatDisplay_Target_UpdateAll()
 			Perl_CombatDisplay_Target_Update_Health();
 			Perl_CombatDisplay_Target_Update_Mana();
 			Perl_CombatDisplay_Target_UpdateBars();
+			Perl_CombatDisplay_Buff_UpdateAll("target", Perl_CombatDisplay_Target_ManaFrame);
 		end
 	end
 end
@@ -1560,6 +1548,30 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 end
 
 
+--------------------
+-- Buff Functions --
+--------------------
+function Perl_CombatDisplay_Buff_UpdateAll(unit, frame)
+	local curableDebuffFound = 0;
+
+	if (PCUF_COLORFRAMEDEBUFF == 1) then
+		if (UnitIsFriend("player", unit)) then
+			local debuffType;
+			_, _, _, _, debuffType = UnitDebuff(unit, 1, 1);
+			if (debuffType) then
+				local color = DebuffTypeColor[debuffType];
+				frame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+				curableDebuffFound = 1;
+			end
+		end
+	end
+
+	if (curableDebuffFound == 0) then
+		frame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	end
+end
+
+
 -------------------
 -- Click Handler --
 -------------------
@@ -1581,7 +1593,9 @@ function Perl_CombatDisplayDropDown_OnLoad()
 end
 
 function Perl_CombatDisplayDropDown_Initialize()
-	UnitPopup_ShowMenu(Perl_CombatDisplay_DropDown, "SELF", "player");
+	if (rightclickmenu == 1) then
+		UnitPopup_ShowMenu(Perl_CombatDisplay_DropDown, "SELF", "player");
+	end
 end
 
 function Perl_CombatDisplay_DragStart(button)
@@ -1600,27 +1614,30 @@ function Perl_CombatDisplayTargetDropDown_OnLoad()
 end
 
 function Perl_CombatDisplayTargetDropDown_Initialize()
-	local menu, name;
-	local id = nil;
-	if (UnitIsUnit("target", "player")) then
-		menu = "SELF";
-	elseif (UnitIsUnit("target", "pet")) then
-		menu = "PET";
-	elseif (UnitIsPlayer("target")) then
-		id = UnitInRaid("target");
-		if (id) then
-			menu = "RAID_PLAYER";
-		elseif (UnitInParty("target")) then
-			menu = "PARTY";
+	if (rightclickmenu == 1) then
+		local menu, name;
+		local id = nil;
+		if (UnitIsUnit("target", "player")) then
+			menu = "SELF";
+		elseif (UnitIsUnit("target", "pet")) then
+			menu = "PET";
+		elseif (UnitIsPlayer("target")) then
+			id = UnitInRaid("target");
+			if (id) then
+				menu = "RAID_PLAYER";
+				name = GetRaidRosterInfo(id + 1);
+			elseif (UnitInParty("target")) then
+				menu = "PARTY";
+			else
+				menu = "PLAYER";
+			end
 		else
-			menu = "PLAYER";
+			menu = "RAID_TARGET_ICON";
+			name = RAID_TARGET_ICON;
 		end
-	else
-		menu = "RAID_TARGET_ICON";
-		name = RAID_TARGET_ICON;
-	end
-	if (menu) then
-		UnitPopup_ShowMenu(Perl_CombatDisplay_Target_DropDown, menu, "target", name, id);
+		if (menu) then
+			UnitPopup_ShowMenu(Perl_CombatDisplay_Target_DropDown, menu, "target", name, id);
+		end
 	end
 end
 

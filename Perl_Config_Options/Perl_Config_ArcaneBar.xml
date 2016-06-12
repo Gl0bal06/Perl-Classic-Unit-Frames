@@ -68,11 +68,21 @@
 					</Anchors>
 				</FontString>
 
+				<FontString name="$parent_Party_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_PARTY">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="325" y="-140"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
 				<FontString name="$parent_Misc_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_MISC">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="350" y="-140"/>
+								<AbsDimension x="325" y="-250"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -339,6 +349,90 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_ArcaneBar_Focus_Name_Replace_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton14" inherits="UICheckButtonTemplate" id="14">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Party_Text">
+						<Offset>
+							<AbsDimension  x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_ENABLE);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_ArcaneBar_Party_Enabled_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton15" inherits="UICheckButtonTemplate" id="15">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton14">
+						<Offset>
+							<AbsDimension  x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_DISPLAY_TIMER);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_ArcaneBar_Party_Show_Timer_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton16" inherits="UICheckButtonTemplate" id="16">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton15">
+						<Offset>
+							<AbsDimension  x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_LEFT_TIMER);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_ArcaneBar_Party_Left_Timer_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton17" inherits="UICheckButtonTemplate" id="17">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton16">
+						<Offset>
+							<AbsDimension  x="-20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_ARCANEBAR_REPLACE_NAME);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_ArcaneBar_Party_Name_Replace_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

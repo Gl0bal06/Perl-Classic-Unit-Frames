@@ -65,6 +65,7 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("PLAYER_UPDATE_RESTING");
 	this:RegisterEvent("PLAYER_XP_UPDATE");
 	this:RegisterEvent("RAID_ROSTER_UPDATE");
+	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_COMBAT");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_ENERGY");
@@ -141,6 +142,12 @@ function Perl_Player_Events:UNIT_DISPLAYPOWER()
 	if (arg1 == "player") then
 		Perl_Player_Update_Mana_Bar();		-- What type of energy are we using now?
 		Perl_Player_Update_Mana();		-- Update the energy info immediately
+	end
+end
+
+function Perl_Player_Events:UNIT_AURA()
+	if (arg1 == "player") then
+		Perl_Player_BuffUpdateAll();
 	end
 end
 
@@ -335,6 +342,7 @@ function Perl_Player_Update_Once()
 	Perl_Player_Update_Leader();						-- Are we the party leader?
 	Perl_Player_Update_Loot_Method();					-- Are we the master looter?
 	Perl_Player_Update_Combat_Status();					-- Are we already fighting or resting?
+	Perl_Player_BuffUpdateAll();						-- Do we have any curable debuffs on us?
 
 	-- Out of Combat ONLY functions
 	Perl_Player_Update_Raid_Group_Number();					-- Are we in a raid?
@@ -814,6 +822,10 @@ function Perl_Player_Update_Raid_Group_Number()
 	end
 
 	if (numRaidMembers == 0) then
+		Perl_Player_NameBarText:SetText(UnitName("player"));
+		if (Perl_ArcaneBar_Frame_Loaded_Frame) then	-- ArcaneBar Support
+			Perl_ArcaneBar_player.unitname = Perl_Player_NameBarText:GetText();
+		end
 		return;
 	end
 
@@ -1110,12 +1122,12 @@ function Perl_Player_Frame_Style()
 
 		-- Begin: Are we using compact mode?
 		if (compactmode == 0) then
-			Perl_Player_XPBar:SetWidth(220);
-			Perl_Player_XPRestBar:SetWidth(220);
-			Perl_Player_XPBarBG:SetWidth(220);
-			Perl_Player_XPBar_CastClickOverlay:SetWidth(220);
-			Perl_Player_StatsFrame:SetWidth(240);
-			Perl_Player_StatsFrame_CastClickOverlay:SetWidth(240);
+			Perl_Player_XPBar:SetWidth(235);
+			Perl_Player_XPRestBar:SetWidth(235);
+			Perl_Player_XPBarBG:SetWidth(235);
+			Perl_Player_XPBar_CastClickOverlay:SetWidth(235);
+			Perl_Player_StatsFrame:SetWidth(255);
+			Perl_Player_StatsFrame_CastClickOverlay:SetWidth(255);
 		else
 			if (compactpercent == 0) then
 				if (shortbars == 0) then
@@ -1224,19 +1236,19 @@ function Perl_Player_Frame_Style()
 		Perl_Player_ManaBarTextPercent:ClearAllPoints();
 		Perl_Player_DruidBarTextPercent:ClearAllPoints();
 		if (compactmode == 0) then
-			Perl_Player_HealthBarText:SetPoint("RIGHT", 70, 0);
+			Perl_Player_HealthBarText:SetPoint("RIGHT", 85, 0);
 			Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
-			Perl_Player_ManaBarText:SetPoint("RIGHT", 70, 0);
+			Perl_Player_ManaBarText:SetPoint("RIGHT", 85, 0);
 			Perl_Player_ManaBarTextPercent:SetPoint("TOP", 0, 1);
-			Perl_Player_DruidBarText:SetPoint("RIGHT", 70, 0);
+			Perl_Player_DruidBarText:SetPoint("RIGHT", 85, 0);
 			Perl_Player_DruidBarTextPercent:SetPoint("TOP", 0, 1);
 		else
 			if (healermode == 0) then
-				Perl_Player_HealthBarText:SetPoint("RIGHT", 70, 0);
+				Perl_Player_HealthBarText:SetPoint("RIGHT", 85, 0);
 				Perl_Player_HealthBarTextPercent:SetPoint("TOP", 0, 1);
-				Perl_Player_ManaBarText:SetPoint("RIGHT", 70, 0);
+				Perl_Player_ManaBarText:SetPoint("RIGHT", 85, 0);
 				Perl_Player_ManaBarTextPercent:SetPoint("TOP", 0, 1);
-				Perl_Player_DruidBarText:SetPoint("RIGHT", 70, 0);
+				Perl_Player_DruidBarText:SetPoint("RIGHT", 85, 0);
 				Perl_Player_DruidBarTextPercent:SetPoint("TOP", 0, 1);
 			else
 				Perl_Player_HealthBarText:SetPoint("RIGHT", -10, 0);
@@ -1329,7 +1341,7 @@ function Perl_Player_Frame_Style()
 
 				Perl_ArcaneBar_player:SetWidth(Perl_Player_NameFrame:GetWidth() - 10);
 				Perl_ArcaneBar_player_Flash:SetWidth(Perl_Player_NameFrame:GetWidth() + 5);
-				Perl_ArcaneBar_Set_Spark_Width(Perl_Player_NameFrame:GetWidth(), nil, nil);
+				Perl_ArcaneBar_Set_Spark_Width(Perl_Player_NameFrame:GetWidth(), nil, nil, nil);
 			end
 		end
 	end
@@ -1492,7 +1504,7 @@ function Perl_Player_Set_Scale_Actual()
 	else
 		Perl_Player_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
 		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
-			Perl_ArcaneBar_Set_Scale_Actual(scale, nil, nil);
+			Perl_ArcaneBar_Set_Scale_Actual(scale, nil, nil, nil);
 		end
 	end
 end
@@ -1861,6 +1873,36 @@ function Perl_Player_UpdateVars(vartable)
 		["ShowBarValues"] = showbarvalues,
 		["ShowRaidGroupInName"] = showraidgroupinname,
 	};
+end
+
+
+--------------------
+-- Buff Functions --
+--------------------
+function Perl_Player_BuffUpdateAll()
+	local curableDebuffFound = 0;
+
+	if (PCUF_COLORFRAMEDEBUFF == 1) then
+		local debuffType;
+		_, _, _, _, debuffType = UnitDebuff("player", 1, 1);
+		if (debuffType) then
+			local color = DebuffTypeColor[debuffType];
+			Perl_Player_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+			Perl_Player_RaidGroupNumberFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+			Perl_Player_LevelFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+			Perl_Player_PortraitFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+			Perl_Player_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+			curableDebuffFound = 1;
+		end
+	end
+
+	if (curableDebuffFound == 0) then
+		Perl_Player_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		Perl_Player_RaidGroupNumberFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		Perl_Player_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		Perl_Player_PortraitFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		Perl_Player_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	end
 end
 
 

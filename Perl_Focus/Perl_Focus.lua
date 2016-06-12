@@ -28,7 +28,6 @@ local compactpercent = 0;	-- percents are not shown in compact mode by default
 local hidebuffbackground = 0;	-- buff and debuff backgrounds are shown by default
 local shortbars = 0;		-- Health/Power/Experience bars are all normal length
 local healermode = 0;		-- nurfed unit frame style
-local soundFocuschange = 0;	-- sound when changing Focuss is off by default
 local displaycastablebuffs = 0;	-- display all buffs by default
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
@@ -1228,16 +1227,16 @@ function Perl_Focus_Main_Style()
 			Perl_Focus_CivilianFrame:SetWidth(114);
 			Perl_Focus_ClassNameFrame:SetWidth(90);
 			Perl_Focus_LevelFrame:SetWidth(46);
-			Perl_Focus_Name:SetWidth(199);
-			Perl_Focus_NameFrame:SetWidth(199);
+			Perl_Focus_Name:SetWidth(214);
+			Perl_Focus_NameFrame:SetWidth(214);
 			Perl_Focus_RareEliteFrame:SetWidth(46);
-			Perl_Focus_StatsFrame:SetWidth(240);
+			Perl_Focus_StatsFrame:SetWidth(255);
 
 			Perl_Focus_NameFrame_CPMeter:SetWidth(189);
 
 			Perl_Focus_CivilianFrame_CastClickOverlay:SetWidth(114);
-			Perl_Focus_NameFrame_CastClickOverlay:SetWidth(199);
-			Perl_Focus_StatsFrame_CastClickOverlay:SetWidth(240);
+			Perl_Focus_NameFrame_CastClickOverlay:SetWidth(214);
+			Perl_Focus_StatsFrame_CastClickOverlay:SetWidth(255);
 		else
 			if (shortbars == 0) then
 				if (compactpercent == 0) then
@@ -1372,7 +1371,7 @@ function Perl_Focus_ArcaneBar_Support()
 
 		Perl_ArcaneBar_focus:SetWidth(Perl_Target_NameFrame:GetWidth() - 10);
 		Perl_ArcaneBar_focus_Flash:SetWidth(Perl_Target_NameFrame:GetWidth() + 5);
-		Perl_ArcaneBar_Set_Spark_Width(nil, nil, Perl_Focus_NameFrame:GetWidth());
+		Perl_ArcaneBar_Set_Spark_Width(nil, nil, Perl_Focus_NameFrame:GetWidth(), nil);
 	end
 end
 
@@ -1387,8 +1386,8 @@ function Perl_Focus_Text_Positions()
 		if (compactmode == 0) then
 			Perl_Focus_HealthBarText:SetPoint("TOP", 0, 1);
 			Perl_Focus_ManaBarText:SetPoint("TOP", 0, 1);
-			Perl_Focus_HealthBarTextRight:SetPoint("RIGHT", 70, 0);
-			Perl_Focus_ManaBarTextRight:SetPoint("RIGHT", 70, 0);
+			Perl_Focus_HealthBarTextRight:SetPoint("RIGHT", 85, 0);
+			Perl_Focus_ManaBarTextRight:SetPoint("RIGHT", 85, 0);
 		else
 			if (healermode == 0) then
 				Perl_Focus_HealthBarText:SetPoint("TOP", 0, 1);
@@ -1650,11 +1649,6 @@ function Perl_Focus_Set_Buff_Debuff_Background(newvalue)
 	Perl_Focus_Buff_Debuff_Background();
 end
 
-function Perl_Focus_Set_Sound_Focus_Change(newvalue)
-	soundFocuschange = newvalue;
-	Perl_Focus_UpdateVars();		-- Save the new setting
-end
-
 function Perl_Focus_Set_Mana_Deficit(newvalue)
 	showmanadeficit = newvalue;
 	Perl_Focus_UpdateVars();		-- Save the new setting
@@ -1680,7 +1674,7 @@ function Perl_Focus_Set_Scale_Actual()
 		Perl_Focus_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
 		Perl_Focus_Set_BuffDebuff_Scale(buffdebuffscale*100);			-- maintain the buff/debuff scale
 		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
-			Perl_ArcaneBar_Set_Scale_Actual(nil, nil, scale);
+			Perl_ArcaneBar_Set_Scale_Actual(nil, nil, scale, nil);
 		end
 	end
 end
@@ -1736,7 +1730,6 @@ function Perl_Focus_GetVars(name, updateflag)
 	hidebuffbackground = Perl_Focus_Config[name]["HideBuffBackground"];
 	shortbars = Perl_Focus_Config[name]["ShortBars"];
 	healermode = Perl_Focus_Config[name]["HealerMode"];
-	soundFocuschange = Perl_Focus_Config[name]["SoundFocusChange"];
 	displaycastablebuffs = Perl_Focus_Config[name]["DisplayCastableBuffs"];
 	classcolorednames = Perl_Focus_Config[name]["ClassColoredNames"];
 	showmanadeficit = Perl_Focus_Config[name]["ShowManaDeficit"];
@@ -1811,9 +1804,6 @@ function Perl_Focus_GetVars(name, updateflag)
 	if (healermode == nil) then
 		healermode = 0;
 	end
-	if (soundFocuschange == nil) then
-		soundFocuschange = 0;
-	end
 	if (displaycastablebuffs == nil) then
 		displaycastablebuffs = 0;
 	end
@@ -1867,7 +1857,6 @@ function Perl_Focus_GetVars(name, updateflag)
 		["hidebuffbackground"] = hidebuffbackground,
 		["shortbars"] = shortbars,
 		["healermode"] = healermode,
-		["soundFocuschange"] = soundFocuschange,
 		["displaycastablebuffs"] = displaycastablebuffs,
 		["classcolorednames"] = classcolorednames,
 		["showmanadeficit"] = showmanadeficit,
@@ -1995,11 +1984,6 @@ function Perl_Focus_UpdateVars(vartable)
 			else
 				healermode = nil;
 			end
-			if (vartable["Global Settings"]["SoundFocusChange"] ~= nil) then
-				soundFocuschange = vartable["Global Settings"]["SoundFocusChange"];
-			else
-				soundFocuschange = nil;
-			end
 			if (vartable["Global Settings"]["DisplayCastableBuffs"] ~= nil) then
 				displaycastablebuffs = vartable["Global Settings"]["DisplayCastableBuffs"];
 			else
@@ -2092,9 +2076,6 @@ function Perl_Focus_UpdateVars(vartable)
 		if (healermode == nil) then
 			healermode = 0;
 		end
-		if (soundFocuschange == nil) then
-			soundFocuschange = 0;
-		end
 		if (displaycastablebuffs == nil) then
 			displaycastablebuffs = 0;
 		end
@@ -2148,7 +2129,6 @@ function Perl_Focus_UpdateVars(vartable)
 		["HideBuffBackground"] = hidebuffbackground,
 		["ShortBars"] = shortbars,
 		["HealerMode"] = healermode,
-		["SoundFocusChange"] = soundFocuschange,
 		["DisplayCastableBuffs"] = displaycastablebuffs,
 		["ClassColoredNames"] = classcolorednames,
 		["ShowManaDeficit"] = showmanadeficit,
@@ -2266,6 +2246,7 @@ function Perl_Focus_Buff_UpdateAll()
 			end
 		end
 
+		local curableDebuffFound = 0;
 		if (numDebuffs == 0) then
 			Perl_Focus_DebuffFrame:Hide();
 		else
@@ -2313,6 +2294,33 @@ function Perl_Focus_Buff_UpdateAll()
 				Perl_Focus_DebuffFrame:SetWidth(5 + numDebuffs * 27);	-- Dynamically extend the background frame
 				Perl_Focus_DebuffFrame:SetHeight(34);			-- 1 row tall
 			end
+
+			if (PCUF_COLORFRAMEDEBUFF == 1) then
+				if (UnitIsFriend("player", "focus")) then
+					_, _, _, _, debuffType = UnitDebuff("focus", 1, 1);
+					if (debuffType) then
+						color = DebuffTypeColor[debuffType];
+						Perl_Focus_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Focus_LevelFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Focus_PortraitFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Focus_ClassNameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Focus_CivilianFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Focus_RareEliteFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Focus_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						curableDebuffFound = 1;
+					end
+				end
+			end
+		end
+
+		if (curableDebuffFound == 0) then
+			Perl_Focus_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Focus_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Focus_PortraitFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Focus_ClassNameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Focus_CivilianFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Focus_RareEliteFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Focus_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 		end
 	end
 end

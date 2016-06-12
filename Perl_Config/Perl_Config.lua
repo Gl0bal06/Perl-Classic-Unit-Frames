@@ -33,6 +33,7 @@ PCUF_COLORHEALTH = 0;			-- progressively colored health bars are off by default
 PCUF_FADEBARS = 0;			-- fading status bars is off by default
 PCUF_NAMEFRAMECLICKCAST = 0;		-- name frames will be the one safe spot for menus by default
 PCUF_INVERTBARVALUES = 0;		-- bars deplete when low
+PCUF_COLORFRAMEDEBUFF = 1;		-- frame debuff coloring is on by default
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -875,6 +876,44 @@ function Perl_Config_Set_Invert_Bar_Values(newvalue)
 	end
 end
 
+function Perl_Config_Set_Color_Frame_Debuff(newvalue)
+	PCUF_COLORFRAMEDEBUFF = newvalue;
+	Perl_Config_UpdateVars();
+
+	-- Update the frame color on toggle if needed
+	if (Perl_CombatDisplay_Frame) then
+		Perl_CombatDisplay_Buff_UpdateAll("player", Perl_CombatDisplay_ManaFrame);
+		Perl_CombatDisplay_Buff_UpdateAll("target", Perl_CombatDisplay_Target_ManaFrame);
+	end
+
+	if (Perl_Focus_Frame) then
+		Perl_Focus_Buff_UpdateAll();
+	end
+
+	if (Perl_Party_Frame) then
+		Perl_Party_Update_Buffs();
+	end
+
+	if (Perl_Party_Pet_Script_Frame) then
+		Perl_Party_Pet_Buff_UpdateAll("partypet1");
+		Perl_Party_Pet_Buff_UpdateAll("partypet2");
+		Perl_Party_Pet_Buff_UpdateAll("partypet3");
+		Perl_Party_Pet_Buff_UpdateAll("partypet4");
+	end
+
+	if (Perl_Player_Frame) then
+		Perl_Player_BuffUpdateAll();
+	end
+
+	if (Perl_Player_Pet_Frame) then
+		Perl_Player_Pet_Buff_UpdateAll();
+	end
+
+	if (Perl_Target_Frame) then
+		Perl_Target_Buff_UpdateAll();
+	end
+end
+
 function Perl_Config_Lock_Unlock(value)
 	if (Perl_CombatDisplay_Frame) then
 		Perl_CombatDisplay_Set_Lock(value);
@@ -976,14 +1015,14 @@ function Perl_Config_Frame_Reset_Positions()
 
 	if (Perl_Target_Frame) then
 		Perl_Target_Frame:SetUserPlaced(1);
-		Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 263, -43);
+		Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 278, -43);
 	end
 
 	if (Perl_Target_Target_Script_Frame) then
 		Perl_Target_Target_Frame:SetUserPlaced(1);
 		Perl_Target_Target_Target_Frame:SetUserPlaced(1);
-		Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 501, -43);
-		Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 607, -43);
+		Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 516, -43);
+		Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 622, -43);
 	end
 end
 
@@ -998,15 +1037,19 @@ function Perl_Config_Global_Save_Settings()
 			["PlayerEnabled"] = vartable["playerenabled"],
 			["TargetEnabled"] = vartable["targetenabled"],
 			["FocusEnabled"] = vartable["focusenabled"],
+			["PartyEnabled"] = vartable["partyenabled"],
 			["PlayerShowTimer"] = vartable["playershowtimer"],
 			["TargetShowTimer"] = vartable["targetshowtimer"],
 			["FocusShowTimer"] = vartable["focusshowtimer"],
+			["PartyShowTimer"] = vartable["partyshowtimer"],
 			["PlayerLeftTimer"] = vartable["playerlefttimer"],
 			["TargetLeftTimer"] = vartable["targetlefttimer"],
 			["FocusLeftTimer"] = vartable["focuslefttimer"],
+			["PartyLeftTimer"] = vartable["partylefttimer"],
 			["PlayerNameReplace"] = vartable["playernamereplace"],
 			["TargetNameReplace"] = vartable["targetnamereplace"],
 			["FocusNameReplace"] = vartable["focusnamereplace"],
+			["PartyNameReplace"] = vartable["partynamereplace"],
 			["HideOriginal"] = vartable["hideoriginal"],
 			["Transparency"] = vartable["transparency"],
 		};
@@ -1049,6 +1092,7 @@ function Perl_Config_Global_Save_Settings()
 			["PCUF_FadeBars"] = vartable["PCUF_FadeBars"],
 			["PCUF_InvertBarValues"] = vartable["PCUF_InvertBarValues"],
 			["MiniMapButtonRad"] = vartable["minimapbuttonrad"],
+			["PCUF_ColorFrameDebuff"] = vartable["PCUF_ColorFrameDebuff"],
 		};
 	end
 
@@ -1080,7 +1124,6 @@ function Perl_Config_Global_Save_Settings()
 			["HideBuffBackground"] = vartable["hidebuffbackground"],
 			["ShortBars"] = vartable["shortbars"],
 			["HealerMode"] = vartable["healermode"],
-			["SoundTargetChange"] = vartable["soundtargetchange"],
 			["DisplayCastableBuffs"] = vartable["displaycastablebuffs"],
 			["ClassColoredNames"] = vartable["classcolorednames"],
 			["ShowManaDeficit"] = vartable["showmanadeficit"],
@@ -1530,6 +1573,7 @@ function Perl_Config_GetVars(name, updateflag)
 	PCUF_NAMEFRAMECLICKCAST = Perl_Config_Config[name]["PCUF_NameFrameClickCast"];
 	PCUF_INVERTBARVALUES = Perl_Config_Config[name]["PCUF_InvertBarValues"];
 	minimapbuttonrad = Perl_Config_Config[name]["MiniMapButtonRad"];
+	PCUF_COLORFRAMEDEBUFF = Perl_Config_Config[name]["PCUF_ColorFrameDebuff"];
 
 	if (texture == nil) then
 		texture = 0;
@@ -1564,6 +1608,9 @@ function Perl_Config_GetVars(name, updateflag)
 	if (minimapbuttonrad == nil) then
 		minimapbuttonrad = 80;
 	end
+	if (PCUF_COLORFRAMEDEBUFF == nil) then
+		PCUF_COLORFRAMEDEBUFF = 1;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1589,6 +1636,7 @@ function Perl_Config_GetVars(name, updateflag)
 		["PCUF_NameFrameClickCast"] = PCUF_NAMEFRAMECLICKCAST,
 		["PCUF_InvertBarValues"] = PCUF_INVERTBARVALUES,
 		["minimapbuttonrad"] = minimapbuttonrad,
+		["PCUF_ColorFrameDebuff"] = PCUF_COLORFRAMEDEBUFF,
 	}
 	return vars;
 end
@@ -1652,6 +1700,11 @@ function Perl_Config_UpdateVars(vartable)
 			else
 				minimapbuttonrad = nil;
 			end
+			if (vartable["Global Settings"]["PCUF_ColorFrameDebuff"] ~= nil) then
+				PCUF_COLORFRAMEDEBUFF = vartable["Global Settings"]["PCUF_ColorFrameDebuff"];
+			else
+				PCUF_COLORFRAMEDEBUFF = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1688,6 +1741,9 @@ function Perl_Config_UpdateVars(vartable)
 		if (minimapbuttonrad == nil) then
 			minimapbuttonrad = 0;
 		end
+		if (PCUF_COLORFRAMEDEBUFF == nil) then
+			PCUF_COLORFRAMEDEBUFF = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Config_Set_Texture(texture);
@@ -1708,6 +1764,7 @@ function Perl_Config_UpdateVars(vartable)
 		["PCUF_NameFrameClickCast"] = PCUF_NAMEFRAMECLICKCAST,
 		["PCUF_InvertBarValues"] = PCUF_INVERTBARVALUES,
 		["MiniMapButtonRad"] = minimapbuttonrad,
+		["PCUF_ColorFrameDebuff"] = PCUF_COLORFRAMEDEBUFF,
 	};
 end
 

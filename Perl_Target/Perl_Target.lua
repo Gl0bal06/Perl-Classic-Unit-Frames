@@ -1311,13 +1311,13 @@ function Perl_Target_Main_Style()
 			Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
 
 			if (compactmode == 0) then
-				Perl_Target_GuildFrame:SetWidth(155);
+				Perl_Target_GuildFrame:SetWidth(170);
 				Perl_Target_ClassNameFrame:SetWidth(90);
 				Perl_Target_LevelFrame:SetWidth(46);
-				Perl_Target_Name:SetWidth(199);
-				Perl_Target_NameFrame:SetWidth(199);
+				Perl_Target_Name:SetWidth(214);
+				Perl_Target_NameFrame:SetWidth(214);
 				Perl_Target_RareEliteFrame:SetWidth(46);
-				Perl_Target_StatsFrame:SetWidth(240);
+				Perl_Target_StatsFrame:SetWidth(255);
 
 				Perl_Target_NameFrame_CPMeter:SetWidth(189);
 			else
@@ -1483,22 +1483,22 @@ end
 
 function Perl_Target_ArcaneBar_Support()
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
-			Perl_ArcaneBar_target:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 5, -5);
-			Perl_ArcaneBar_target_CastTime:ClearAllPoints();
-			if (Perl_ArcaneBar_Config[UnitName("player")]["TargetLeftTimer"] == 0) then
-				if (showportrait == 1) then
-					Perl_ArcaneBar_target_CastTime:SetPoint("LEFT", "Perl_Target_PortraitFrame", "RIGHT", 0, 0);
-				else
-					Perl_ArcaneBar_target_CastTime:SetPoint("LEFT", "Perl_Target_LevelFrame", "RIGHT", 0, 0);
-				end
+		Perl_ArcaneBar_target:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 5, -5);
+		Perl_ArcaneBar_target_CastTime:ClearAllPoints();
+		if (Perl_ArcaneBar_Config[UnitName("player")]["TargetLeftTimer"] == 0) then
+			if (showportrait == 1) then
+				Perl_ArcaneBar_target_CastTime:SetPoint("LEFT", "Perl_Target_PortraitFrame", "RIGHT", 0, 0);
 			else
-				Perl_ArcaneBar_target_CastTime:SetPoint("RIGHT", "Perl_Target_NameFrame", "LEFT", 0, 0);
+				Perl_ArcaneBar_target_CastTime:SetPoint("LEFT", "Perl_Target_LevelFrame", "RIGHT", 0, 0);
 			end
-
-			Perl_ArcaneBar_target:SetWidth(Perl_Target_NameFrame:GetWidth() - 10);
-			Perl_ArcaneBar_target_Flash:SetWidth(Perl_Target_NameFrame:GetWidth() + 5);
-			Perl_ArcaneBar_Set_Spark_Width(nil, Perl_Target_NameFrame:GetWidth(), nil);
+		else
+			Perl_ArcaneBar_target_CastTime:SetPoint("RIGHT", "Perl_Target_NameFrame", "LEFT", 0, 0);
 		end
+
+		Perl_ArcaneBar_target:SetWidth(Perl_Target_NameFrame:GetWidth() - 10);
+		Perl_ArcaneBar_target_Flash:SetWidth(Perl_Target_NameFrame:GetWidth() + 5);
+		Perl_ArcaneBar_Set_Spark_Width(nil, Perl_Target_NameFrame:GetWidth(), nil, nil);
+	end
 end
 
 function Perl_Target_Text_Positions()
@@ -1512,8 +1512,8 @@ function Perl_Target_Text_Positions()
 		if (compactmode == 0) then
 			Perl_Target_HealthBarText:SetPoint("TOP", 0, 1);
 			Perl_Target_ManaBarText:SetPoint("TOP", 0, 1);
-			Perl_Target_HealthBarTextRight:SetPoint("RIGHT", 70, 0);
-			Perl_Target_ManaBarTextRight:SetPoint("RIGHT", 70, 0);
+			Perl_Target_HealthBarTextRight:SetPoint("RIGHT", 85, 0);
+			Perl_Target_ManaBarTextRight:SetPoint("RIGHT", 85, 0);
 		else
 			if (healermode == 0) then
 				Perl_Target_HealthBarText:SetPoint("TOP", 0, 1);
@@ -1822,7 +1822,7 @@ function Perl_Target_Set_Scale_Actual()
 		Perl_Target_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
 		Perl_Target_Set_BuffDebuff_Scale(buffdebuffscale*100);		-- maintain the buff/debuff scale
 		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
-			Perl_ArcaneBar_Set_Scale_Actual(nil, scale, nil);
+			Perl_ArcaneBar_Set_Scale_Actual(nil, scale, nil, nil);
 		end
 	end
 end
@@ -2448,6 +2448,7 @@ function Perl_Target_Buff_UpdateAll()
 			end
 		end
 
+		local curableDebuffFound = 0;
 		if (numDebuffs == 0) then
 			Perl_Target_DebuffFrame:Hide();
 		else
@@ -2501,6 +2502,35 @@ function Perl_Target_Buff_UpdateAll()
 				Perl_Target_DebuffFrame:SetWidth(5 + numDebuffs * 27);	-- Dynamically extend the background frame
 				Perl_Target_DebuffFrame:SetHeight(34);			-- 1 row tall
 			end
+
+			if (PCUF_COLORFRAMEDEBUFF == 1) then
+				if (UnitIsFriend("player", "target")) then
+					_, _, _, _, debuffType = UnitDebuff("target", 1, 1);
+					if (debuffType) then
+						color = DebuffTypeColor[debuffType];
+						Perl_Target_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Target_LevelFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Target_PortraitFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Target_ClassNameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Target_GuildFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Target_RareEliteFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Target_CPFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						Perl_Target_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+						curableDebuffFound = 1;
+					end
+				end
+			end
+		end
+
+		if (curableDebuffFound == 0) then
+			Perl_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Target_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Target_PortraitFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Target_ClassNameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Target_GuildFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Target_RareEliteFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Target_CPFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 		end
 	end
 end
@@ -2641,6 +2671,7 @@ function Perl_TargetDropDown_Initialize()
 		id = UnitInRaid("target");
 		if (id) then
 			menu = "RAID_PLAYER";
+			name = GetRaidRosterInfo(id + 1);
 		elseif (UnitInParty("target")) then
 			menu = "PARTY";
 		else

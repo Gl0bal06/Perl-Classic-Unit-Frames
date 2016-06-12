@@ -89,6 +89,12 @@ function Perl_Config_All_Set_Values()
 	else
 		Perl_Config_All_Frame_CheckButton16:SetChecked(nil);
 	end
+
+	if (vartable["PCUF_ColorFrameDebuff"] == 1) then
+		Perl_Config_All_Frame_CheckButton17:SetChecked(1);
+	else
+		Perl_Config_All_Frame_CheckButton17:SetChecked(nil);
+	end
 end
 
 function Perl_Config_All_Texture_Update(texturenum)
@@ -233,5 +239,13 @@ function Perl_Config_All_Set_Invert_Bar_Values()
 		Perl_Config_Set_Invert_Bar_Values(1);
 	else
 		Perl_Config_Set_Invert_Bar_Values(0);
+	end
+end
+
+function Perl_Config_All_Set_Color_Frame_Debuff()
+	if (Perl_Config_All_Frame_CheckButton17:GetChecked() == 1) then
+		Perl_Config_Set_Color_Frame_Debuff(1);
+	else
+		Perl_Config_Set_Color_Frame_Debuff(0);
 	end
 end

@@ -12,7 +12,7 @@
 	<Frame name="Perl_Config_Frame" movable="true" frameStrata="DIALOG" hidden="true" enableMouse="true">
 		<Scripts>
 			<OnLoad>
-				this:RegisterForDrag('LeftButton');
+				this:RegisterForDrag("LeftButton");
 			</OnLoad>
 			<OnDragStart>
 				Perl_Config_Frame:StartMoving();

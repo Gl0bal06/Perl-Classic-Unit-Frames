@@ -127,8 +127,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
+								this:RegisterForClicks("AnyUp");
+								this:RegisterForDrag("LeftButton");
 								Perl_Player_Pet_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnDragStart>
@@ -205,8 +205,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
+								this:RegisterForClicks("AnyUp");
+								this:RegisterForDrag("LeftButton");
 								Perl_Player_Pet_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnDragStart>
@@ -346,8 +346,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
+								this:RegisterForClicks("AnyUp");
+								this:RegisterForDrag("LeftButton");
 								Perl_Player_Pet_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnDragStart>
@@ -399,8 +399,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
+								this:RegisterForClicks("AnyUp");
+								this:RegisterForDrag("LeftButton");
 								Perl_Player_Pet_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnDragStart>

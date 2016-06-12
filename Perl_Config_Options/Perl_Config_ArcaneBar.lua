@@ -84,6 +84,30 @@ function Perl_Config_ArcaneBar_Set_Values()
 		Perl_Config_ArcaneBar_Frame_CheckButton13:SetChecked(nil);
 	end
 
+	if (vartable["partyenabled"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton14:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton14:SetChecked(nil);
+	end
+
+	if (vartable["partyshowtimer"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton15:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton15:SetChecked(nil);
+	end
+
+	if (vartable["partylefttimer"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton16:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton16:SetChecked(nil);
+	end
+
+	if (vartable["partynamereplace"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton17:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton17:SetChecked(nil);
+	end
+
 	if (vartable["hideoriginal"] == 1) then
 		Perl_Config_ArcaneBar_Frame_CheckButton3:SetChecked(1);
 	else
@@ -188,6 +212,38 @@ function Perl_Config_ArcaneBar_Focus_Name_Replace_Update()
 		Perl_ArcaneBar_Set_Focus_Name_Replace(1);
 	else
 		Perl_ArcaneBar_Set_Focus_Name_Replace(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Party_Enabled_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton14:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Party_Enabled(1);
+	else
+		Perl_ArcaneBar_Set_Party_Enabled(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Party_Show_Timer_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton15:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Party_Show_Timer(1);
+	else
+		Perl_ArcaneBar_Set_Party_Show_Timer(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Party_Left_Timer_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton16:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Party_Left_Timer(1);
+	else
+		Perl_ArcaneBar_Set_Party_Left_Timer(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Party_Name_Replace_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton17:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Party_Name_Replace(1);
+	else
+		Perl_ArcaneBar_Set_Party_Name_Replace(0);
 	end
 end
 

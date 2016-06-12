@@ -44,12 +44,6 @@ function Perl_Config_Focus_Set_Values()
 		Perl_Config_Focus_Frame_CheckButton4:SetChecked(nil);
 	end
 
---	if (vartable["showcp"] == 1) then
---		Perl_Config_Focus_Frame_CheckButton5:SetChecked(1);
---	else
---		Perl_Config_Focus_Frame_CheckButton5:SetChecked(nil);
---	end
-
 	if (vartable["mobhealthsupport"] == 1) then
 		Perl_Config_Focus_Frame_CheckButton6:SetChecked(1);
 	else
@@ -92,12 +86,6 @@ function Perl_Config_Focus_Set_Values()
 		Perl_Config_Focus_Frame_CheckButton14:SetChecked(nil);
 	end
 
---	if (vartable["comboframedebuffs"] == 1) then
---		Perl_Config_Focus_Frame_CheckButton15:SetChecked(1);
---	else
---		Perl_Config_Focus_Frame_CheckButton15:SetChecked(nil);
---	end
-
 	if (vartable["framestyle"] == 2) then
 		Perl_Config_Focus_Frame_CheckButton16:SetChecked(1);
 	else
@@ -132,12 +120,6 @@ function Perl_Config_Focus_Set_Values()
 		Perl_Config_Focus_Frame_CheckButton21:SetChecked(1);
 	else
 		Perl_Config_Focus_Frame_CheckButton21:SetChecked(nil);
-	end
-
-	if (vartable["soundtargetchange"] == 1) then
-		Perl_Config_Focus_Frame_CheckButton22:SetChecked(1);
-	else
-		Perl_Config_Focus_Frame_CheckButton22:SetChecked(nil);
 	end
 
 	if (vartable["displaycastablebuffs"] == 1) then
@@ -227,14 +209,6 @@ function Perl_Config_Focus_Class_Frame_Update()
 	end
 end
 
-function Perl_Config_Focus_Combo_Points_Update()
-	if (Perl_Config_Focus_Frame_CheckButton5:GetChecked() == 1) then
-		Perl_Focus_Set_Combo_Points(1);
-	else
-		Perl_Focus_Set_Combo_Points(0);
-	end
-end
-
 function Perl_Config_Focus_MobHealth_Update()
 	if (Perl_Config_Focus_Frame_CheckButton6:GetChecked() == 1) then
 		Perl_Focus_Set_MobHealth(1);
@@ -291,14 +265,6 @@ function Perl_Config_Focus_Combo_Name_Frame_Update()
 	end
 end
 
-function Perl_Config_Focus_Combo_Frame_Debuffs_Update()
-	if (Perl_Config_Focus_Frame_CheckButton15:GetChecked() == 1) then
-		Perl_Focus_Set_Combo_Frame_Debuffs(1);
-	else
-		Perl_Focus_Set_Combo_Frame_Debuffs(0);
-	end
-end
-
 function Perl_Config_Focus_Alternate_Frame_Style_Update()
 	if (Perl_Config_Focus_Frame_CheckButton16:GetChecked() == 1) then
 		Perl_Focus_Set_Frame_Style(2);
@@ -344,14 +310,6 @@ function Perl_Config_Focus_Healer_Update()
 		Perl_Focus_Set_Healer(1);
 	else
 		Perl_Focus_Set_Healer(0);
-	end
-end
-
-function Perl_Config_Focus_Sound_Focus_Change_Update()
-	if (Perl_Config_Focus_Frame_CheckButton22:GetChecked() == 1) then
-		Perl_Focus_Set_Sound_Focus_Change(1);
-	else
-		Perl_Focus_Set_Sound_Focus_Change(0);
 	end
 end
 

@@ -121,7 +121,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="501" y="-43"/>
+					<AbsDimension x="516" y="-43"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -177,8 +177,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
+								this:RegisterForClicks("AnyUp");
+								this:RegisterForDrag("LeftButton");
 								Perl_TargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
@@ -295,8 +295,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
+								this:RegisterForClicks("AnyUp");
+								this:RegisterForDrag("LeftButton");
 								Perl_TargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnDragStart>
@@ -378,8 +378,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
+								this:RegisterForClicks("AnyUp");
+								this:RegisterForDrag("LeftButton");
 								Perl_TargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
@@ -467,8 +467,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
+								this:RegisterForClicks("AnyUp");
+								this:RegisterForDrag("LeftButton");
 								Perl_TargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
@@ -836,7 +836,7 @@
 		<Anchors>
 			<Anchor point="TOPLEFT">
 				<Offset>
-					<AbsDimension x="607" y="-43"/>
+					<AbsDimension x="622" y="-43"/>
 				</Offset>
 			</Anchor>
 		</Anchors>
@@ -891,8 +891,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
+								this:RegisterForClicks("AnyUp");
+								this:RegisterForDrag("LeftButton");
 								Perl_TargetTargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
@@ -1009,8 +1009,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
+								this:RegisterForClicks("AnyUp");
+								this:RegisterForDrag("LeftButton");
 								Perl_TargetTargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnDragStart>
@@ -1092,8 +1092,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
+								this:RegisterForClicks("AnyUp");
+								this:RegisterForDrag("LeftButton");
 								Perl_TargetTargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>
@@ -1181,8 +1181,8 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
-								this:RegisterForDrag('LeftButton');
+								this:RegisterForClicks("AnyUp");
+								this:RegisterForDrag("LeftButton");
 								Perl_TargetTargetTarget_CastClickOverlay_OnLoad();
 							</OnLoad>
 							<OnEnter>

@@ -1065,6 +1065,25 @@ function Perl_Player_Pet_Buff_UpdateAll()
 				button:Hide();										-- Hide the icon since there isn't a debuff in this position
 			end
 		end													-- End main debuff loop
+
+		local curableDebuffFound = 0;
+		if (PCUF_COLORFRAMEDEBUFF == 1) then
+			_, _, _, _, debuffType = UnitDebuff("pet", 1, 1);
+			if (debuffType) then
+				color = DebuffTypeColor[debuffType];
+				Perl_Player_Pet_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+				Perl_Player_Pet_PortraitFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+				Perl_Player_Pet_LevelFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+				Perl_Player_Pet_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+				curableDebuffFound = 1;
+			end
+		end
+		if (curableDebuffFound == 0) then
+			Perl_Player_Pet_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Player_Pet_PortraitFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Player_Pet_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+			Perl_Player_Pet_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		end
 	end
 end
 

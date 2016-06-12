@@ -786,7 +786,17 @@ function Perl_Target_Target_Update_Buffs()
 		numDebuffs = 0;														-- ToT Debuffs are disabled
 	end
 
+	local curableDebuffFound = 0;
 	if (UnitIsFriend("player", "targettarget")) then										-- Position the buffs according to friendly or enemy status
+		if (PCUF_COLORFRAMEDEBUFF == 1) then
+			_, _, _, _, debuffType = UnitDebuff("targettarget", 1, 1);
+			if (debuffType) then
+				color = DebuffTypeColor[debuffType];
+				Perl_Target_Target_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+				Perl_Target_Target_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+				curableDebuffFound = 1;
+			end
+		end
 		if (numBuffs < 9) then
 			if (showtotbuffs == 0) then
 				Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
@@ -810,6 +820,11 @@ function Perl_Target_Target_Update_Buffs()
 			Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
 			Perl_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_BuffFrame_Debuff9", "BOTTOMLEFT", 0, -1);
 		end
+	end
+
+	if (curableDebuffFound == 0) then
+		Perl_Target_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		Perl_Target_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	end
 
 	if (showtotbuffs == 1 or showtotdebuffs == 1) then
@@ -878,7 +893,17 @@ function Perl_Target_Target_Target_Update_Buffs()
 		numBuffs = 0;														-- ToToT Debuffs are disabled
 	end
 
+	local curableDebuffFound = 0;
 	if (UnitIsFriend("player", "targettargettarget")) then										-- Position the buffs according to friendly or enemy status
+		if (PCUF_COLORFRAMEDEBUFF == 1) then
+			_, _, _, _, debuffType = UnitDebuff("targettargettarget", 1, 1);
+			if (debuffType) then
+				color = DebuffTypeColor[debuffType];
+				Perl_Target_Target_Target_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+				Perl_Target_Target_Target_StatsFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
+				curableDebuffFound = 1;
+			end
+		end
 		if (numBuffs < 9) then
 			if (showtototbuffs == 0) then
 				Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
@@ -902,6 +927,11 @@ function Perl_Target_Target_Target_Update_Buffs()
 			Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
 			Perl_Target_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_BuffFrame_Debuff9", "BOTTOMLEFT", 0, -1);
 		end
+	end
+
+	if (curableDebuffFound == 0) then
+		Perl_Target_Target_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+		Perl_Target_Target_Target_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	end
 
 	if (showtototbuffs == 1 or showtototdebuffs == 1) then
@@ -2012,6 +2042,7 @@ function Perl_TargetTargetDropDown_Initialize()
 		id = UnitInRaid("targettarget");
 		if (id) then
 			menu = "RAID_PLAYER";
+			name = GetRaidRosterInfo(id + 1);
 		elseif (UnitInParty("targettarget")) then
 			menu = "PARTY";
 		else
@@ -2066,6 +2097,7 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 		id = UnitInRaid("targettargettarget");
 		if (id) then
 			menu = "RAID_PLAYER";
+			name = GetRaidRosterInfo(id + 1);
 		elseif (UnitInParty("targettargettarget")) then
 			menu = "PARTY";
 		else

@@ -197,7 +197,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_CLASS_CIVILIAN_FRAMES);
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_CLASS_FRAME);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Focus_Class_Frame_Update();
@@ -468,33 +468,12 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton22" inherits="UICheckButtonTemplate" id="22">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton24">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_SOUND_ON_TARGET_CHANGE);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Focus_Sound_Focus_Change_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
 			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton22">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton24">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>
@@ -531,29 +510,6 @@
 				</Scripts>
 			</CheckButton>
 
-			<!--
-			<CheckButton name="$parent_CheckButton5" inherits="UICheckButtonTemplate" id="5">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Combo_Location_Text">
-						<Offset>
-							<AbsDimension x="20" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_COMBO_POINT_FRAME);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Focus_Combo_Points_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-			-->
-
 			<CheckButton name="$parent_CheckButton14" inherits="UICheckButtonTemplate" id="14">
 				<Size>
 					<AbsDimension x="20" y="20"/>
@@ -574,29 +530,6 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
-
-			<!--
-			<CheckButton name="$parent_CheckButton15" inherits="UICheckButtonTemplate" id="15">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton14">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_DEBUFF_STACKS_IN_COMBO_FRAME);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Focus_Combo_Frame_Debuffs_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-			-->
 
 			<CheckButton name="$parent_CheckButton16" inherits="UICheckButtonTemplate" id="16">
 				<Size>

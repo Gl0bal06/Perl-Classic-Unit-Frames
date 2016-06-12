@@ -1,3 +1,23 @@
+2.04 - February 28, 2007
+ - All: Added frame debuff coloring support
+ - All: Changed RegisterForClicks to AnyUp
+ - All: Changed RegisterForDrag to use " syntax instead of '
+ - CombatDisplay: Right click menus work again
+ - CombatDisplay: Removed a duplicate event function
+ - CombatDisplay/PartyTarget/Target/ToT: Updated menu conditions to the latest Blizzard version
+ - Config: Updated Perl_Party_Pet support
+ - Config: Updated the reset position button
+ - Config: Fixed a text typo in the focus options
+ - Config: Removed code and options that were never available for Perl_Focus
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - Focus/Party/Player/Target: Extended the frame to support 5 digit health numbers
+ - Focus/Player/Target: Updated ArcaneBar support
+ - Party: Added Perl_ArcaneBar support
+ - Party: F key display now correctly displays the current key binding for a given party member
+ - Player: Player name correctly clears raid group number when leaving a raid
+ - Target: Minor changes in the XML
+ - Target/ToT: Adjusted default frame positions for the 5 digit change
+
 2.03c - January 30, 2007
  - Focus/Target: Cast time text locations are now correct
  - Player: Name text will no longer disappear when using Perl_ArcaneBar
