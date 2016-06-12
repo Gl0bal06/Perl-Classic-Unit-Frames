@@ -7,7 +7,8 @@ local Perl_Player_Pet_Events = {};	-- event manager
 -- Default Saved Variables (also set in Perl_Player_Pet_GetVars)
 local locked = 0;			-- unlocked by default
 local showxp = 0;			-- xp bar is hidden by default
-local scale = 1;			-- default scale
+local scale = 1;			-- default scale for pet frame
+local targetscale = 1;			-- default scale for pet target frame
 local numpetbuffsshown = 16;		-- buff row is 16 long
 local numpetdebuffsshown = 16;		-- debuff row is 16 long
 local transparency = 1;			-- transparency for frames
@@ -1262,13 +1263,22 @@ function Perl_Player_Pet_Set_Scale(number)
 	Perl_Player_Pet_Set_Scale_Actual();
 end
 
+function Perl_Player_Pet_Target_Set_Scale(number)
+	if (number ~= nil) then
+		targetscale = (number / 100);					-- convert the user input to a wow acceptable value
+	end
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Set_Scale_Actual();
+end
+
 function Perl_Player_Pet_Set_Scale_Actual()
 	if (InCombatLockdown()) then
 		Perl_Config_Queue_Add(Perl_Player_Pet_Set_Scale_Actual);
 	else
 		local unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+		local unsavedscaletwo = 1 - UIParent:GetEffectiveScale() + targetscale;	-- run it through the scaling formula introduced in 1.9
 		Perl_Player_Pet_Frame:SetScale(unsavedscale);
-		Perl_Player_Pet_Target_Frame:SetScale(unsavedscale);
+		Perl_Player_Pet_Target_Frame:SetScale(unsavedscaletwo);
 	end
 end
 
@@ -1293,6 +1303,7 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 	locked = Perl_Player_Pet_Config[name]["Locked"];
 	showxp = Perl_Player_Pet_Config[name]["ShowXP"];
 	scale = Perl_Player_Pet_Config[name]["Scale"];
+	targetscale = Perl_Player_Pet_Config[name]["TargetScale"];
 	numpetbuffsshown = Perl_Player_Pet_Config[name]["Buffs"];
 	numpetdebuffsshown = Perl_Player_Pet_Config[name]["Debuffs"];
 	transparency = Perl_Player_Pet_Config[name]["Transparency"];
@@ -1318,6 +1329,9 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 	end
 	if (scale == nil) then
 		scale = 1;
+	end
+	if (targetscale == nil) then
+		targetscale = 1;
 	end
 	if (numpetbuffsshown == nil) then
 		numpetbuffsshown = 16;
@@ -1388,6 +1402,7 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 		["locked"] = locked,
 		["showxp"] = showxp,
 		["scale"] = scale,
+		["targetscale"] = targetscale,
 		["numpetbuffsshown"] = numpetbuffsshown,
 		["numpetdebuffsshown"] = numpetdebuffsshown,
 		["transparency"] = transparency,
@@ -1426,6 +1441,11 @@ function Perl_Player_Pet_UpdateVars(vartable)
 				scale = vartable["Global Settings"]["Scale"];
 			else
 				scale = nil;
+			end
+			if (vartable["Global Settings"]["TargetScale"] ~= nil) then
+				targetscale = vartable["Global Settings"]["TargetScale"];
+			else
+				targetscale = nil;
 			end
 			if (vartable["Global Settings"]["Buffs"] ~= nil) then
 				numpetbuffsshown = vartable["Global Settings"]["Buffs"];
@@ -1519,6 +1539,9 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		if (scale == nil) then
 			scale = 1;
 		end
+		if (targetscale == nil) then
+			targetscale = 1;
+		end
 		if (numpetbuffsshown == nil) then
 			numpetbuffsshown = 16;
 		end
@@ -1582,8 +1605,10 @@ function Perl_Player_Pet_UpdateVars(vartable)
 	-- IFrameManager Support
 	if (IFrameManager) then
 		if (IFrameManagerLayout) then
-			IFrameManager:Update(Perl_Player_Pet_Frame);
-			IFrameManager:Update(Perl_Player_Pet_Target_Frame);
+			if (IFrameManager.isEnabled) then
+				IFrameManager:Disable();
+				IFrameManager:Enable();
+			end
 		else
 			IFrameManager:Refresh();
 		end
@@ -1593,6 +1618,7 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		["Locked"] = locked,
 		["ShowXP"] = showxp,
 		["Scale"] = scale,
+		["TargetScale"] = targetscale,
 		["Buffs"] = numpetbuffsshown,
 		["Debuffs"] = numpetdebuffsshown,
 		["Transparency"] = transparency,

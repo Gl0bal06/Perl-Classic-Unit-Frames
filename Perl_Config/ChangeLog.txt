@@ -1,3 +1,11 @@
+2.15 - February 20, 2008
+ - All: Updated support for IFrameManager
+ - PartyTarget: Can now scale the party and focus target frames independently
+ - PartyTarget: The focus target frame now aligns better when using the reset position button
+ - Pet: Can now scale the pet and pet target frames independently
+ - Target: Added party leader icon support
+ - Target: Added master looter icon support
+
 2.14 - January 9, 2008
  - All: Added support for the new IFrameManager
 

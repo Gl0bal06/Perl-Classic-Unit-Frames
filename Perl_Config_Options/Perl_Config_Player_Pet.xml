@@ -82,7 +82,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="200" y="-210"/>
+								<AbsDimension x="250" y="-210"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -92,7 +92,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="200" y="-270"/>
+								<AbsDimension x="250" y="-270"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -128,11 +128,21 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Scaling_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_SCALING">
+				<FontString name="$parent_Pet_Scaling_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_PLAYERPET_SCALE">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
 								<AbsDimension x="20" y="-325"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Pet_Target_Scaling_Text" inherits="GameFontNormal" text="PERL_LOCALIZED_CONFIG_PLAYERPET_TARGET_SCALE">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="20" y="-275"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -293,7 +303,7 @@
 					<AbsDimension x="200" y="15"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Scaling_Text">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Pet_Scaling_Text">
 						<Offset>
 							<AbsDimension x="20" y="-20"/>
 						</Offset>
@@ -432,7 +442,7 @@
 
 			<Slider name="$parent_Slider2" inherits="OptionsSliderTemplate" minValue="0" maxValue="16" valueStep="1">
 				<Size>
-					<AbsDimension x="150" y="15"/>
+					<AbsDimension x="120" y="15"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Buff_Text">
@@ -451,7 +461,7 @@
 
 			<Slider name="$parent_Slider3" inherits="OptionsSliderTemplate" minValue="0" maxValue="16" valueStep="1">
 				<Size>
-					<AbsDimension x="150" y="15"/>
+					<AbsDimension x="120" y="15"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Debuff_Text">
@@ -562,6 +572,46 @@
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
+
+			<Slider name="$parent_Slider9" inherits="OptionsSliderTemplate" minValue="1" maxValue="149" valueStep="1">
+				<Size>se
+					<AbsDimension x="200" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Pet_Target_Scaling_Text">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Config_Player_Pet_Target_Set_Scale(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+
+			<CheckButton name="$parent_CheckButton14" inherits="UICheckButtonTemplate" id="14">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Slider1">
+						<Offset>
+							<AbsDimension x="20" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_SCALING_SET_CURRENT);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Pet_Target_Set_Scale();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
 		</Frames>
 
 	</Frame>

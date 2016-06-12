@@ -6,7 +6,8 @@ local Perl_Party_Target_Events = {};	-- event manager
 
 -- Default Saved Variables (also set in Perl_Party_Target_GetVars)
 local locked = 0;		-- unlocked by default
-local scale = 1;		-- default scale
+local scale = 1;		-- default scale for party target
+local focusscale = 1;		-- default scale for focus target
 local transparency = 1;		-- transparency for frames
 local mobhealthsupport = 1;	-- mobhealth support is on by default
 local hidepowerbars = 0;	-- Power bars are shown by default
@@ -116,7 +117,7 @@ Perl_Party_Target_Events.PLAYER_ENTERING_WORLD = Perl_Party_Target_Events.PLAYER
 function Perl_Party_Target_Initialize()
 	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
-		Perl_Party_Target_Set_Scale_Actual();			-- Set the frame scale
+		Perl_Party_Target_Set_Scale_Actual();		-- Set the frame scale
 		Perl_Party_Target_Set_Transparency();		-- Set the frame transparency
 		Perl_Party_Target_Check_Hidden();		-- Hide the frames if in a raid
 		return;
@@ -906,9 +907,9 @@ function Perl_Party_Target_Allign()
 	Perl_Party_Target3:SetPoint("TOPLEFT", Perl_Party_MemberFrame3_StatsFrame, "TOPRIGHT", -4, 20);
 	Perl_Party_Target4:SetPoint("TOPLEFT", Perl_Party_MemberFrame4_StatsFrame, "TOPRIGHT", -4, 20);
 	if (Perl_Focus_PortraitFrame:IsShown()) then
-		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_StatsFrame, "TOPRIGHT", 51, 20);
+		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_StatsFrame, "TOPRIGHT", 51, 19);
 	else
-		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_StatsFrame, "TOPRIGHT", -4, 20);
+		Perl_Party_Target5:SetPoint("TOPLEFT", Perl_Focus_StatsFrame, "TOPRIGHT", -4, 19);
 	end
 
 	Perl_Party_Target_UpdateVars();			-- Calling this to update the positions for IFrameManger
@@ -967,16 +968,25 @@ function Perl_Party_Target_Set_Scale(number)
 	Perl_Party_Target_Set_Scale_Actual();
 end
 
+function Perl_Party_Target_Focus_Set_Scale(number)
+	if (number ~= nil) then
+		focusscale = (number / 100);
+	end
+	Perl_Party_Target_UpdateVars();
+	Perl_Party_Target_Set_Scale_Actual();
+end
+
 function Perl_Party_Target_Set_Scale_Actual()
 	if (InCombatLockdown()) then
 		Perl_Config_Queue_Add(Perl_Party_Target_Set_Scale_Actual);
 	else
 		local unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+		local unsavedscaletwo = 1 - UIParent:GetEffectiveScale() + focusscale;	-- run it through the scaling formula introduced in 1.9
 		Perl_Party_Target1:SetScale(unsavedscale);
 		Perl_Party_Target2:SetScale(unsavedscale);
 		Perl_Party_Target3:SetScale(unsavedscale);
 		Perl_Party_Target4:SetScale(unsavedscale);
-		Perl_Party_Target5:SetScale(unsavedscale);
+		Perl_Party_Target5:SetScale(unsavedscaletwo);
 	end
 end
 
@@ -1003,6 +1013,7 @@ function Perl_Party_Target_GetVars(name, updateflag)
 
 	locked = Perl_Party_Target_Config[name]["Locked"];
 	scale = Perl_Party_Target_Config[name]["Scale"];
+	focusscale = Perl_Party_Target_Config[name]["FocusScale"];
 	transparency = Perl_Party_Target_Config[name]["Transparency"];
 	mobhealthsupport = Perl_Party_Target_Config[name]["MobHealthSupport"];
 	hidepowerbars = Perl_Party_Target_Config[name]["HidePowerBars"];
@@ -1017,6 +1028,9 @@ function Perl_Party_Target_GetVars(name, updateflag)
 	end
 	if (scale == nil) then
 		scale = 1;
+	end
+	if (focusscale == nil) then
+		focusscale = 1;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -1057,6 +1071,7 @@ function Perl_Party_Target_GetVars(name, updateflag)
 	local vars = {
 		["locked"] = locked,
 		["scale"] = scale,
+		["focusscale"] = focusscale,
 		["transparency"] = transparency,
 		["mobhealthsupport"] = mobhealthsupport,
 		["hidepowerbars"] = hidepowerbars,
@@ -1082,6 +1097,11 @@ function Perl_Party_Target_UpdateVars(vartable)
 				scale = vartable["Global Settings"]["Scale"];
 			else
 				scale = nil;
+			end
+			if (vartable["Global Settings"]["FocusScale"] ~= nil) then
+				focusscale = vartable["Global Settings"]["FocusScale"];
+			else
+				focusscale = nil;
 			end
 			if (vartable["Global Settings"]["Transparency"] ~= nil) then
 				transparency = vartable["Global Settings"]["Transparency"];
@@ -1132,6 +1152,9 @@ function Perl_Party_Target_UpdateVars(vartable)
 		if (scale == nil) then
 			scale = 1;
 		end
+		if (focusscale == nil) then
+			focusscale = 1;
+		end
 		if (transparency == nil) then
 			transparency = 1;
 		end
@@ -1166,11 +1189,10 @@ function Perl_Party_Target_UpdateVars(vartable)
 	-- IFrameManager Support
 	if (IFrameManager) then
 		if (IFrameManagerLayout) then
-			IFrameManager:Update(Perl_Party_Target1);
-			IFrameManager:Update(Perl_Party_Target2);
-			IFrameManager:Update(Perl_Party_Target3);
-			IFrameManager:Update(Perl_Party_Target4);
-			IFrameManager:Update(Perl_Party_Target5);
+			if (IFrameManager.isEnabled) then
+				IFrameManager:Disable();
+				IFrameManager:Enable();
+			end
 		else
 			IFrameManager:Refresh();
 		end
@@ -1179,6 +1201,7 @@ function Perl_Party_Target_UpdateVars(vartable)
 	Perl_Party_Target_Config[UnitName("player")] = {
 		["Locked"] = locked,
 		["Scale"] = scale,
+		["FocusScale"] = focusscale,
 		["Transparency"] = transparency,
 		["MobHealthSupport"] = mobhealthsupport,
 		["HidePowerBars"] = hidepowerbars,

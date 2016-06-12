@@ -2009,8 +2009,10 @@ function Perl_Target_Target_UpdateVars(vartable)
 	-- IFrameManager Support
 	if (IFrameManager) then
 		if (IFrameManagerLayout) then
-			IFrameManager:Update(Perl_Target_Target_Frame);
-			IFrameManager:Update(Perl_Target_Target_Target_Frame);
+			if (IFrameManager.isEnabled) then
+				IFrameManager:Disable();
+				IFrameManager:Enable();
+			end
 		else
 			IFrameManager:Refresh();
 		end

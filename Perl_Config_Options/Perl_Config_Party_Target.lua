@@ -73,6 +73,16 @@ function Perl_Config_Party_Target_Set_Values()
 	Perl_Config_Party_Target_Frame_Slider2Low:SetText("0");
 	Perl_Config_Party_Target_Frame_Slider2High:SetText("100");
 	Perl_Config_Party_Target_Frame_Slider2:SetValue(vartable["transparency"]*100);
+
+	Perl_Config_Party_Target_Frame_Slider3Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
+	Perl_Config_Party_Target_Frame_Slider3High:SetText(PERL_LOCALIZED_CONFIG_BIG);
+	Perl_Config_Party_Target_Frame_Slider3:SetValue(floor(vartable["focusscale"]*100+0.5));
+
+	if (floor(vartable["focusscale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
+		Perl_Config_Party_Target_Frame_CheckButton10:SetChecked(1);
+	else
+		Perl_Config_Party_Target_Frame_CheckButton10:SetChecked(nil);
+	end
 end
 
 function Perl_Config_Party_Target_Party_Hidden_In_Raid_Update()
@@ -153,6 +163,24 @@ function Perl_Config_Party_Target_Set_Scale(value)
 			Perl_Config_Party_Target_Frame_CheckButton2:SetChecked(1);
 		else
 			Perl_Config_Party_Target_Frame_CheckButton2:SetChecked(nil);
+		end
+	end
+end
+
+function Perl_Config_Party_Target_Focus_Set_Scale(value)
+	if (Perl_Party_Target_Script_Frame) then	-- this check is to prevent errors if you aren't using Party_Target
+		if (value == nil) then
+			value = floor(UIParent:GetScale()*100+0.5);
+			Perl_Config_Party_Target_Frame_Slider3Text:SetText(value);
+			Perl_Config_Party_Target_Frame_Slider3:SetValue(value);
+		end
+		Perl_Party_Target_Focus_Set_Scale(value);
+
+		vartable = Perl_Party_Target_GetVars();
+		if (floor(vartable["focusscale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
+			Perl_Config_Party_Target_Frame_CheckButton10:SetChecked(1);
+		else
+			Perl_Config_Party_Target_Frame_CheckButton10:SetChecked(nil);
 		end
 	end
 end

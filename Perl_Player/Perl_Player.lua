@@ -1851,7 +1851,10 @@ function Perl_Player_UpdateVars(vartable)
 	-- IFrameManager Support
 	if (IFrameManager) then
 		if (IFrameManagerLayout) then
-			IFrameManager:Update(Perl_Player_Frame);
+			if (IFrameManager.isEnabled) then
+				IFrameManager:Disable();
+				IFrameManager:Enable();
+			end
 		else
 			IFrameManager:Refresh();
 		end

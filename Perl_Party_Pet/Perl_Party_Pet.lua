@@ -1024,10 +1024,10 @@ function Perl_Party_Pet_UpdateVars(vartable)
 	-- IFrameManager Support
 	if (IFrameManager) then
 		if (IFrameManagerLayout) then
-			IFrameManager:Update(Perl_Party_Pet1);
-			IFrameManager:Update(Perl_Party_Pet2);
-			IFrameManager:Update(Perl_Party_Pet3);
-			IFrameManager:Update(Perl_Party_Pet4);
+			if (IFrameManager.isEnabled) then
+				IFrameManager:Disable();
+				IFrameManager:Enable();
+			end
 		else
 			IFrameManager:Refresh();
 		end

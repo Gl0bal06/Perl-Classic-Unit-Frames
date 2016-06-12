@@ -1593,8 +1593,10 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 	-- IFrameManager Support
 	if (IFrameManager) then
 		if (IFrameManagerLayout) then
-			IFrameManager:Update(Perl_CombatDisplay_Frame);
-			IFrameManager:Update(Perl_CombatDisplay_Target_Frame);
+			if (IFrameManager.isEnabled) then
+				IFrameManager:Disable();
+				IFrameManager:Enable();
+			end
 		else
 			IFrameManager:Refresh();
 		end

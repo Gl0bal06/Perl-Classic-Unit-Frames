@@ -1155,6 +1155,7 @@ function Perl_Config_Global_Save_Settings()
 		Perl_Config_Global_Party_Target_Config["Global Settings"] = {
 			["Locked"] = vartable["locked"],
 			["Scale"] = vartable["scale"],
+			["FocusScale"] = vartable["focusscale"],
 			["Transparency"] = vartable["transparency"],
 			["MobHealthSupport"] = vartable["mobhealthsupport"],
 			["HidePowerBars"] = vartable["hidepowerbars"],
@@ -1222,6 +1223,7 @@ function Perl_Config_Global_Save_Settings()
 			["Locked"] = vartable["locked"],
 			["ShowXP"] = vartable["showxp"],
 			["Scale"] = vartable["scale"],
+			["TargetScale"] = vartable["targetscale"],
 			["Buffs"] = vartable["numpetbuffsshown"],
 			["Debuffs"] = vartable["numpetdebuffsshown"],
 			["Transparency"] = vartable["transparency"],

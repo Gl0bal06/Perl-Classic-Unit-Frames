@@ -60,13 +60,15 @@ function Perl_Target_OnLoad()
 
 	-- Events
 	this:RegisterEvent("PARTY_LEADER_CHANGED");
-	this:RegisterEvent("PLAYER_LOGIN");
+	this:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
 	this:RegisterEvent("PARTY_MEMBER_DISABLE");
 	this:RegisterEvent("PARTY_MEMBER_ENABLE");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	this:RegisterEvent("PLAYER_COMBO_POINTS");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_LOGIN");
 	this:RegisterEvent("PLAYER_TARGET_CHANGED");
+	this:RegisterEvent("RAID_ROSTER_UPDATE");
 	this:RegisterEvent("RAID_TARGET_UPDATE");
 	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_COMBAT");
@@ -140,6 +142,11 @@ Perl_Target_Events.PARTY_MEMBERS_CHANGED = Perl_Target_Events.PLAYER_TARGET_CHAN
 Perl_Target_Events.PARTY_LEADER_CHANGED = Perl_Target_Events.PLAYER_TARGET_CHANGED;
 Perl_Target_Events.PARTY_MEMBER_ENABLE = Perl_Target_Events.PLAYER_TARGET_CHANGED;
 Perl_Target_Events.PARTY_MEMBER_DISABLE = Perl_Target_Events.PLAYER_TARGET_CHANGED;
+
+function Perl_Target_Events:PARTY_LOOT_METHOD_CHANGED()
+	Perl_Target_Update_Loot_Method();
+end
+Perl_Target_Events.RAID_ROSTER_UPDATE = Perl_Target_Events.PARTY_LOOT_METHOD_CHANGED;
 
 function Perl_Target_Events:UNIT_HEALTH()
 	if (arg1 == "target") then
@@ -431,6 +438,8 @@ function Perl_Target_Update_Once()
 	Perl_Target_UpdateRaidTargetIcon();	-- Display the raid target icon if needed
 	Perl_Target_Update_Name();		-- Update the name
 	Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
+	Perl_Target_Update_Leader();		-- Is the target the party/raid leader?
+	Perl_Target_Update_Loot_Method();	-- Is the target the loot master?
 
 	-- Begin: Draw the class icon?
 	if (showclassicon == 1) then
@@ -1253,6 +1262,30 @@ function Perl_Target_UpdateRaidTargetIcon()
 	else
 		Perl_Target_RaidTargetIcon:Hide();
 	end
+end
+
+function Perl_Target_Update_Leader()
+	if (UnitIsPartyLeader("target")) then
+		Perl_Target_LeaderIcon:Show();
+	else
+		Perl_Target_LeaderIcon:Hide();
+	end
+end
+
+function Perl_Target_Update_Loot_Method()
+	local lootmethod, masterlooterPartyID, masterlooterRaidID = GetLootMethod();
+	if (masterlooterPartyID ~= nil) then
+		if (UnitName("masterlooterPartyID") == UnitName("target")) then
+			Perl_Target_MasterIcon:Show();
+			return;
+		end
+	elseif (masterlooterRaidID ~= nil) then
+		if (UnitName("masterlooterRaidID") == UnitName("target")) then
+			Perl_Target_MasterIcon:Show();
+			return;
+		end
+	end
+	Perl_Target_MasterIcon:Hide();
 end
 
 function Perl_Target_Update_Portrait()
@@ -2365,7 +2398,10 @@ function Perl_Target_UpdateVars(vartable)
 	-- IFrameManager Support
 	if (IFrameManager) then
 		if (IFrameManagerLayout) then
-			IFrameManager:Update(Perl_Target_Frame);
+			if (IFrameManager.isEnabled) then
+				IFrameManager:Disable();
+				IFrameManager:Enable();
+			end
 		else
 			IFrameManager:Refresh();
 		end

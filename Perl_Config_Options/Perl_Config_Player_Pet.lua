@@ -115,6 +115,16 @@ function Perl_Config_Player_Pet_Set_Values()
 	else
 		Perl_Config_Player_Pet_Frame_CheckButton13:SetChecked(nil);
 	end
+
+	Perl_Config_Player_Pet_Frame_Slider9Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
+	Perl_Config_Player_Pet_Frame_Slider9High:SetText(PERL_LOCALIZED_CONFIG_BIG);
+	Perl_Config_Player_Pet_Frame_Slider9:SetValue(floor(vartable["scale"]*100+0.5));
+
+	if (floor(vartable["targetscale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
+		Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(1);
+	else
+		Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(nil);
+	end
 end
 
 function Perl_Config_Player_Pet_Set_Buffs(value)
@@ -255,6 +265,24 @@ function Perl_Config_Player_Pet_Set_Scale(value)
 			Perl_Config_Player_Pet_Frame_CheckButton4:SetChecked(1);
 		else
 			Perl_Config_Player_Pet_Frame_CheckButton4:SetChecked(nil);
+		end
+	end
+end
+
+function Perl_Config_Player_Pet_Target_Set_Scale(value)
+	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+		if (value == nil) then
+			value = floor(UIParent:GetScale()*100+0.5);
+			Perl_Config_Player_Pet_Frame_Slider9Text:SetText(value);
+			Perl_Config_Player_Pet_Frame_Slider9:SetValue(value);
+		end
+		Perl_Player_Pet_Target_Set_Scale(value);
+
+		vartable = Perl_Player_Pet_GetVars();
+		if (floor(vartable["targetscale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
+			Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(1);
+		else
+			Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(nil);
 		end
 	end
 end
