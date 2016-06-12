@@ -1,28 +1,13 @@
 Combat Display
-	by Perl
-		v. 0.32  7.3.5
+	by Perl; maintained by Global
 
 ---   Description   ---
 This addon creates a small window that displays your health and mana/rage/energy, 
 plus combo points if you have them.  It has both text and graphical status bars.
 
 ---   Usage   ---
-Options are accessed in game by typing "/cd" or "/CombatDisplay".  The display can be dragged by dragging the border of the window when it is showing.
+Options are accessed in game by typing "/pcd" or "/PerlCombatDisplay".  The display can be dragged by dragging the border of the window when it is showing.
 
 ---   Installation   ---
 Simply unzip and place the resulting folder in your Interface\AddOns\ diretory 
 inside the main World of Warcraft directory.
-
----   Version History   ---
-0.32 (7.3.5)	Ok, I really got it fixed this time.
-0.31 (6.3.5)	Fixed the bug with the variables loading improperly.
-0.3 (3.3.5)	Added health-persistance, finally.
-		Reworked the saved variables format.
-		Moved the bar-coloring function locally.
-		Added a graphical config.
-
-0.2 (22.2.5)	Added Perl_Common functionality.
-		Reworked the layout a bit.
-		Major code cleanup.
-
-0.1 (18.2.5)	First version of this readme.

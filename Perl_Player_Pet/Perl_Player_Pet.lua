@@ -3,11 +3,11 @@
 ---------------
 Perl_Player_Pet_Config = {};
 
--- Defaults
-local Perl_Player_Pet_State = 1;
-local locked = 0;		-- unlocked by default
-local transparency = 1;		-- 0.8 default from perl
-local Initialized = nil;
+-- Defaults (also set in Perl_Player_Pet_GetVars)
+local Perl_Player_Pet_State = 1;	-- enabled by default
+local locked = 0;			-- unlocked by default
+local transparency = 1;			-- 0.8 default from perl
+local Initialized = nil;		-- waiting to be initialized
 local BlizzardPetFrame_Update = PetFrame_Update;	-- backup the original target function in case we toggle the mod off
 
 
@@ -140,9 +140,7 @@ function Perl_Player_Pet_Initialize()
 	if (type(Perl_Player_Pet_Config[UnitName("player")]) == "table") then
 		Perl_Player_Pet_GetVars();
 	else
-		Perl_Player_Pet_Config[UnitName("player")] = {
-							["Locked"] = locked
-							};
+		Perl_Player_Pet_UpdateVars();
 	end
 
 	-- Major config options.
@@ -234,6 +232,30 @@ function Perl_Player_Pet_Update_Mana_Bar()
 	end
 end
 
+function Perl_Player_PetFrame_SetHappiness()
+	local happiness, damagePercentage, loyaltyRate = GetPetHappiness();
+
+	if (happiness == 1) then
+		Perl_Player_PetHappinessTexture:SetTexCoord(0.375, 0.5625, 0, 0.359375);
+	elseif (happiness == 2) then
+		Perl_Player_PetHappinessTexture:SetTexCoord(0.1875, 0.375, 0, 0.359375);
+	elseif (happiness == 3) then
+		Perl_Player_PetHappinessTexture:SetTexCoord(0, 0.1875, 0, 0.359375);
+	end
+
+	if (happiness ~= nil) then
+		Perl_Player_PetHappiness.tooltip = getglobal("PET_HAPPINESS"..happiness);
+		Perl_Player_PetHappiness.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage);
+		if (loyaltyRate < 0) then
+			Perl_Player_PetHappiness.tooltipLoyalty = getglobal("LOSING_LOYALTY");
+		elseif (loyaltyRate > 0) then
+			Perl_Player_PetHappiness.tooltipLoyalty = getglobal("GAINING_LOYALTY");
+		else
+			Perl_Player_PetHappiness.tooltipLoyalty = nil;
+		end
+	end
+end
+
 
 ----------------------
 -- Config functions --
@@ -266,6 +288,10 @@ function Perl_Player_Pet_UpdateVars()
 	Perl_Player_Pet_Config[UnitName("player")] = {
 		["Locked"] = locked
 	};
+
+	if (locked == nil) then
+		locked = 0;
+	end
 end
 
 
@@ -329,34 +355,6 @@ function Perl_Player_Pet_SetBuffTooltip()
 end
 
 
----------------
--- Happiness --
----------------
-function Perl_Player_PetFrame_SetHappiness()
-	local happiness, damagePercentage, loyaltyRate = GetPetHappiness();
-
-	if (happiness == 1) then
-		Perl_Player_PetHappinessTexture:SetTexCoord(0.375, 0.5625, 0, 0.359375);
-	elseif (happiness == 2) then
-		Perl_Player_PetHappinessTexture:SetTexCoord(0.1875, 0.375, 0, 0.359375);
-	elseif (happiness == 3) then
-		Perl_Player_PetHappinessTexture:SetTexCoord(0, 0.1875, 0, 0.359375);
-	end
-
-	if (happiness ~= nil) then
-		Perl_Player_PetHappiness.tooltip = getglobal("PET_HAPPINESS"..happiness);
-		Perl_Player_PetHappiness.tooltipDamage = format(PET_DAMAGE_PERCENTAGE, damagePercentage);
-		if (loyaltyRate < 0) then
-			Perl_Player_PetHappiness.tooltipLoyalty = getglobal("LOSING_LOYALTY");
-		elseif (loyaltyRate > 0) then
-			Perl_Player_PetHappiness.tooltipLoyalty = getglobal("GAINING_LOYALTY");
-		else
-			Perl_Player_PetHappiness.tooltipLoyalty = nil;
-		end
-	end
-end
-
-
 --------------------
 -- Click Handlers --
 --------------------
@@ -406,8 +404,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.08",
-			releaseDate = "October 20, 2005",
+			version = "v0.09",
+			releaseDate = "October 22, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -356,7 +356,6 @@ end
 
 function Perl_CombatDisplay_UpdateBars()
 	-- Set power type specific events and colors.
-	
 	if (UnitPowerType("player") == 0) then
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
@@ -365,9 +364,8 @@ function Perl_CombatDisplay_UpdateBars()
 		Perl_CombatDisplay_CPBarBG:Hide();
 		Perl_CombatDisplay_CPBarText:Hide();
 		Perl_CombatDisplay_ManaFrame:SetHeight(42);
-		
 		return "Power = |cffffffffMana|cffffff00.  ";
-	
+
 	elseif (UnitPowerType("player") == 3) then
 		this:RegisterEvent("PLAYER_COMBO_POINTS");
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 1, 0, 1);
@@ -380,9 +378,8 @@ function Perl_CombatDisplay_UpdateBars()
 		Perl_CombatDisplay_ManaFrame:SetHeight(54);
 		Perl_CombatDisplay_CPBar:SetMinMaxValues(0,5);
 		Perl_CombatDisplay_CPBar:SetValue(GetComboPoints());
-	
 		return "Power = |cffffffffEnergy|cffffff00.  ";
-	
+
 	elseif (UnitPowerType("player") == 1) then
 		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 0, 0, 1);
 		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
@@ -391,7 +388,6 @@ function Perl_CombatDisplay_UpdateBars()
 		Perl_CombatDisplay_CPBarBG:Hide();
 		Perl_CombatDisplay_CPBarText:Hide();
 		Perl_CombatDisplay_ManaFrame:SetHeight(42);
-		
 		return "Power = |cffffffffRage|cffffff00.  ";
 	end
 end
@@ -411,7 +407,6 @@ function Perl_CombatDisplay_VarInit ()
 	local strlocked;
 	
 	-- Major config options.
-
 	Perl_CombatDisplay_ManaFrame:SetBackdropColor(0, 0, 0, 0.5);
 	Perl_CombatDisplay_ManaFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 0.5);
 	
@@ -420,8 +415,6 @@ function Perl_CombatDisplay_VarInit ()
 	Perl_CombatDisplay_CPBarText:SetTextColor(1,1,1,1);
 
 	-- Load Variables
-	
-	
 	if (Perl_CombatDisplay_Config[UnitName("player")] == nil) then
 		Perl_CombatDisplay_Config = {
 			[UnitName("player")] = {
@@ -430,9 +423,9 @@ function Perl_CombatDisplay_VarInit ()
 		}
 		State = 1;
 	else
-		State = Perl_CombatDisplay_Config[UnitName("player")]["state"];  -- Move value to internal variable.
+		State = Perl_CombatDisplay_Config[UnitName("player")]["state"];		-- Move value to internal variable.
 	end
-	
+
 	if (Perl_CombatDisplay_Config[UnitName("player")]["healthpersist"] == nil) then
 		Perl_CombatDisplay_Config[UnitName("player")]["healthpersist"] = 0;
 		HealthPersist = 0;
@@ -453,9 +446,9 @@ function Perl_CombatDisplay_VarInit ()
 	else
 		Locked = Perl_CombatDisplay_Config[UnitName("player")]["locked"];
 	end
-	
+
 	-- Setup strings for startup message.
-	
+
 	if (State == 1) then
 		strstate = "State = |cffffffffShown|cffffff00.  ";
 	elseif (State == 2) then
@@ -465,13 +458,13 @@ function Perl_CombatDisplay_VarInit ()
 	else
 		strstate = "State = |cffffffffHidden|cffffff00.  ";
 	end
-	
+
 	if (Locked == 1) then
 		strlocked = "Lock =|cffffffff On|cffffff00.  ";
 	else
 		strlocked = "Lock =|cffffffff Off|cffffff00.  ";
 	end
-	
+
 	if (ManaPersist == 1 and HealthPersist == 1) then
 		strpersist = "Persist = |cffffffffHealth, Mana|cffffff00.  ";
 	elseif (ManaPersist == 1) then
@@ -481,25 +474,25 @@ function Perl_CombatDisplay_VarInit ()
 	else
 		strpersist = "Persist = |cffffffffOff|cffffff00.  ";
 	end
-	
-	
+
+
 	-- Set power type specific events and colors.
-	
+
 	strpower = Perl_CombatDisplay_UpdateBars();
-	
+
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Combat Display: "..strpower..strstate..strpersist..strlocked);
-	
+
 	-- Settings for Perl_Common
-	
+
 	--if (getglobal('PERL_COMMON')) then
 		--Perl_CombatDisplay_HealthBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
 		--Perl_CombatDisplay_ManaBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
 		--Perl_CombatDisplay_CPBarTex:SetTexture("Interface\\AddOns\\Perl_Common\\Perl_StatusBar.tga");
 	--end
-	
+
 	--Perl_CombatDisplay_UpdateBars();
 	Perl_CombatDisplay_UpdateDisplay();
-	
+
 	Initialized = 1;
 end
 
@@ -514,7 +507,7 @@ function Perl_CombatDisplay_GetVars ()
 		["healthpersist"] = HealthPersist,
 		["locked"] = Locked,
 	}
-	
+
 	return vars;
 end
 
@@ -536,27 +529,26 @@ function Perl_CombatDisplay_SetVars (vartable)
 end
 
 function Perl_CombatDisplay_SetSmoothBarColor (bar, refbar, alpha)
-	
 	if (not refbar) then
 		refbar = bar;
 	end
-	
+
 	if (not alpha) then
 		alpha = 1;
 	end
-	
+
 	if (bar) then
 		local barmin, barmax = refbar:GetMinMaxValues();
-		
+
 		if (barmin == barmax) then
 			return false;
 		end
-		
+
 		local percentage = refbar:GetValue()/(barmax-barmin);
-		
+
 		local red;
 		local green;
-		
+
 		if (percentage < 0.5) then
 			red = 1;
 			green = 2*percentage;
@@ -564,14 +556,11 @@ function Perl_CombatDisplay_SetSmoothBarColor (bar, refbar, alpha)
 			green = 1;
 			red = 2*(1 - percentage);
 		end
-		
+
 		bar:SetStatusBarColor(red, green, 0, alpha);
-			
 	else
 		return false;
 	end
-	
-	
 end
 
 
@@ -583,8 +572,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.08",
-			releaseDate = "October 20, 2005",
+			version = "v0.09",
+			releaseDate = "October 22, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

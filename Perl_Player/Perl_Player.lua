@@ -3,16 +3,18 @@
 ---------------
 Perl_Player_Config = {};
 
--- Defaults
-local Perl_Player_State = 1;
-local locked = 0;
-local InCombat = 0;
-local BlizzardPlayerFrame_Update = PlayerFrame_UpdateStatus;
-local transparency = 1;  -- general transparency for frames relative to bars/text  default is 0.8
-local Initialized = nil;
+-- Defaults (also set in Perl_Player_GetVars)
+local Perl_Player_State = 1;	-- enabled by default
+local locked = 0;		-- unlocked by default
+local xpbarstate = 1;		-- show default xp bar by default
+local scale = 1;		-- default scale
+local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
+local transparency = 1;		-- general transparency for frames relative to bars/text  default is 0.8
+local Initialized = nil;	-- waiting to be initialized
+local BlizzardPlayerFrame_Update = PlayerFrame_UpdateStatus;	-- backup the original player function in case we toggle the mod off
 
 -- Variables for position of the class icon texture.
-local Perl_Target_ClassPosRight = {
+local Perl_Player_ClassPosRight = {
 	["Warrior"] = 0,
 	["Mage"] = 0.25,
 	["Rogue"] = 0.5,
@@ -23,7 +25,7 @@ local Perl_Target_ClassPosRight = {
 	["Warlock"] = 0.75,
 	["Paladin"] = 0,
 };
-local Perl_Target_ClassPosLeft = {
+local Perl_Player_ClassPosLeft = {
 	["Warrior"] = 0.25,
 	["Mage"] = 0.5,
 	["Rogue"] = 0.75,
@@ -34,7 +36,7 @@ local Perl_Target_ClassPosLeft = {
 	["Warlock"] = 1,
 	["Paladin"] = 0.25,
 };
-local Perl_Target_ClassPosTop = {
+local Perl_Player_ClassPosTop = {
 	["Warrior"] = 0,
 	["Mage"] = 0,
 	["Rogue"] = 0,
@@ -45,7 +47,7 @@ local Perl_Target_ClassPosTop = {
 	["Warlock"] = 0.25,
 	["Paladin"] = 0.5,
 };
-local Perl_Target_ClassPosBottom = {
+local Perl_Player_ClassPosBottom = {
 	["Warrior"] = 0.25,
 	["Mage"] = 0.25,
 	["Rogue"] = 0.25,
@@ -121,10 +123,12 @@ function Perl_Player_OnEvent(event)
 		Perl_Player_Update_Combat_Status(event);	-- Are we fighting, resting, or none?
 		return;
 	elseif (event == "PLAYER_XP_UPDATE") then
-		Perl_Player_Update_Experience();		-- Set the experience bar info
+		if (xpbarstate == 1) then
+			Perl_Player_Update_Experience();	-- Set the experience bar info
+		end
 		return;
 	elseif (event == "UNIT_PVP_UPDATE") then
-		Perl_Player_Update_PvP_Status();		-- Is the character PvP flagged?
+		Perl_Player_Update_PvP_Status();	-- Is the character PvP flagged?
 		return;
 	elseif (event == "UNIT_LEVEL") then
 		if (arg1 == "player") then
@@ -132,10 +136,12 @@ function Perl_Player_OnEvent(event)
 		end
 		return;
 	elseif ((event == "PARTY_MEMBERS_CHANGED") or (event == "PARTY_LEADER_CHANGED") or (event == "PARTY_MEMBER_ENABLE") or (event == "PARTY_MEMBER_DISABLE")) then
-		Perl_Player_Update_Leader();			-- Are we the party leader?
+		Perl_Player_Update_Leader();		-- Are we the party leader?
 		return;
 	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Player_Initialize();
+		InCombat = 0;				-- You can't be fighting if you're zoning, and no event is sent, force it to no combat.
+		Perl_Player_Update_Combat_Status();	-- Are we already fighting or resting? (to fix zoning while in combat display bug)
 		return;
 	elseif (event == "ADDON_LOADED") then
 		if (arg1 == "Perl_Player") then
@@ -160,10 +166,23 @@ function Perl_Player_SlashHandler(msg)
 		Perl_Player_TogglePlayer();
 	elseif (string.find(msg, "status")) then
 		Perl_Player_Status();
+	elseif (string.find(msg, "xp")) then
+		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
+		if (arg1 ~= "") then
+			local number = tonumber(arg1);
+			if (number > 0 and number < 4) then
+				Perl_Player_XPBar_Display(number);
+			else
+				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number: 1, 2, or 3");
+			end
+		else
+			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number: 1, 2, or 3");
+		end
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Player Frame ---");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff lock |cffffff00- Lock the frame in place.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff xp # |cffffff00- Set the display mode of the experience bar: 1) default, 2) pvp rank, 3) off");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the player frame on and off.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 	end
@@ -183,9 +202,7 @@ function Perl_Player_Initialize()
 	if (type(Perl_Player_Config[UnitName("player")]) == "table") then
 		Perl_Player_GetVars();
 	else
-		Perl_Player_Config[UnitName("player")] = {
-							["Locked"] = locked
-							};
+		Perl_Player_UpdateVars();
 	end
 
 	-- Major config options.
@@ -223,12 +240,12 @@ function Perl_Player_Update_Once()
 	PlayerFrame:Hide();					-- Hide default frame
 	Perl_Player_NameBarText:SetText(UnitName("player"));	-- Set the player's name
 	Perl_Player_Update_PvP_Status();			-- Is the character PvP flagged?
-	Perl_Player_ClassTexture:SetTexCoord(Perl_Target_ClassPosRight[PlayerClass], Perl_Target_ClassPosLeft[PlayerClass], Perl_Target_ClassPosTop[PlayerClass], Perl_Target_ClassPosBottom[PlayerClass]); -- Set the player's class icon
+	Perl_Player_ClassTexture:SetTexCoord(Perl_Player_ClassPosRight[PlayerClass], Perl_Player_ClassPosLeft[PlayerClass], Perl_Player_ClassPosTop[PlayerClass], Perl_Player_ClassPosBottom[PlayerClass]); -- Set the player's class icon
 	Perl_Player_Update_Health();				-- Set the player's health on load or toggle
 	Perl_Player_Update_Mana();				-- Set the player's mana/energy on load or toggle
 	Perl_Player_Update_Mana_Bar();				-- Set the type of mana used
 	Perl_Player_LevelFrame_LevelBarText:SetText(UnitLevel("player"));	-- Set the player's level
-	Perl_Player_Update_Experience();			-- Set the experience bar info
+	Perl_Player_XPBar_Display(xpbarstate);			-- Set the xp bar mode and update the experience if needed
 	Perl_Player_PVPStatus:Hide();				-- Set pvp status icon (need to remove the xml code eventually)
 	Perl_Player_Update_Leader();				-- Are we the party leader?
 	Perl_Player_Update_Combat_Status();			-- Are we already fighting or resting?
@@ -302,7 +319,7 @@ function Perl_Player_Update_Experience()
 		Perl_Player_XPRestBar:SetValue(playerxp);
 	end
 
-	Perl_Player_XPBarText:SetText(xptextpercent.."%");	
+	Perl_Player_XPBarText:SetText(xptextpercent.."%");
 end
 
 function Perl_Player_Update_Combat_Status(event)
@@ -366,7 +383,7 @@ function Perl_Player_TogglePlayer()
 		PlayerFrame:Show();	-- Show default frame
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Player Display is now |cffffffffDisabled|cffffff00.");
 	end
-	Perl_Target_UpdateVars();
+	Perl_Player_UpdateVars();
 end
 
 function Perl_Player_Lock()
@@ -381,6 +398,37 @@ function Perl_Player_Unlock()
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffUnlocked|cffffff00.");
 end
 
+function Perl_Player_XPBar_Display(state)
+	if (state == 1) then
+		Perl_Player_StatsFrame:SetHeight(54);
+		Perl_Player_XPBar:Show();
+		Perl_Player_XPBarBG:Show();
+		Perl_Player_XPRestBar:Show();
+		Perl_Player_Update_Experience();
+	elseif (state == 2) then
+		local rankNumber, rankName, rankProgress;
+		rankNumber = UnitPVPRank("player")
+		if (rankNumber < 1) then
+			rankName = "Unranked"
+		else
+			rankName = GetPVPRankInfo(rankNumber, "player");
+		end
+		rankProgress = GetPVPRankProgress();
+		Perl_Player_XPBar:SetMinMaxValues(0, 1);
+		Perl_Player_XPRestBar:SetMinMaxValues(0, 1);
+		Perl_Player_XPBar:SetValue(rankProgress);
+		Perl_Player_XPRestBar:SetValue(rankProgress);
+		Perl_Player_XPBarText:SetText(rankName);
+	elseif (state == 3) then
+		Perl_Player_XPBar:Hide();
+		Perl_Player_XPBarBG:Hide();
+		Perl_Player_XPRestBar:Hide();
+		Perl_Player_StatsFrame:SetHeight(42);
+	end
+	xpbarstate = state;
+	Perl_Player_UpdateVars();
+end
+
 function Perl_Player_Status()
 	if (Perl_Player_State == 0) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisabled|cffffff00.");
@@ -393,16 +441,33 @@ function Perl_Player_Status()
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffLocked|cffffff00.");
 	end
-end
 
-function Perl_Player_UpdateVars()
-	Perl_Player_Config[UnitName("player")] = {
-		["Locked"] = locked
-	};
+	if (xpbarstate == 1) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisplaying Experience|cffffff00.");
+	elseif (xpbarstate == 2) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffDisplaying PvP Rank|cffffff00.");
+	elseif (xpbarstate == 3) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is |cffffffffHiding Experience Bar|cffffff00.");
+	end
 end
 
 function Perl_Player_GetVars()
 	locked = Perl_Player_Config[UnitName("player")]["Locked"];
+	xpbarstate = Perl_Player_Config[UnitName("player")]["XPBarState"];
+
+	if (locked == nil) then
+		locked = 0;
+	end
+	if (xpbarstate == nil) then
+		xpbarstate = 1;
+	end
+end
+
+function Perl_Player_UpdateVars()
+	Perl_Player_Config[UnitName("player")] = {
+						["Locked"] = locked,
+						["XPBarState"] = xpbarstate,
+	};
 end
 
 
@@ -474,8 +539,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.08",
-			releaseDate = "October 20, 2005",
+			version = "v0.09",
+			releaseDate = "October 22, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

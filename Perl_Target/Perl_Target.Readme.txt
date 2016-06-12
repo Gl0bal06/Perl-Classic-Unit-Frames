@@ -1,9 +1,8 @@
 Target Replacement
-     by Perl
-          v. 0.5  22.2.5
+	by Perl; maintained by Global
 
 
-Description
+---   Description   ---
      This addon is designed to replace the default targetting frame with a movable, 
 more interesting one.
 
@@ -19,20 +18,18 @@ more interesting one.
 - PVP Icon.
 - Mana bar colored to skill type or hidden if a mob with none.
 
-Usage
-    There are three commands to be aware of:  '/perltarget lock' and '/perltarget 
-unlock' lock and unlock the frame so it cannot be dragged; '/perltarget combopoints'
-toggles the display of combo points.  The window may be dragged by dragging the name 
-area.
+---   Usage   ---
+The addon can be dragged by moving the name portion of the frame.
+There are the following commands:
+	lock - Lock the frame in place.
+	unlock - Unlock the frame so it can be moved.
+	combopoints - Toggle the displaying of combo points.
+	class - Toggle the displaying of class icon.
+	buffs # - Show the number of buffs to display.
+	debuffs # - Show the number of debuffs to display.
+	toggle - Toggle the target frame on and off.
+	status - Show the current settings.
 
-
-Version History
-- 0.5 (24.3.5)	-Added combo points display.
-		-Fixed unknown mob level display.
-- 0.4 (3.3.5)	-Added a "tapping" indicator.  The target's name will now turn grey 
-		if someone else will get the xp.
-		-The "mana" bar now changes colors to reflect the power type of the
-		target.
-- 0.31 (25.2.5)	-Fixed the UI_DropDown menu bug that gets annoying.
-- 0.3 (22.2.5) 	-Added tons of features.  It is now fully functional!
-- 0.2 (14.2.5) 	-First version of this readme.
+---   Installation   ---
+Simply unzip and place the resulting folder in your Interface\AddOns\ diretory 
+inside the main World of Warcraft directory.

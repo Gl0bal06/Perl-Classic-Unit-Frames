@@ -3,7 +3,7 @@
 ---------------
 Perl_Target_Config = {};
 
--- Defaults
+-- Defaults(also set in Perl_Target_GetVars)
 local Initialized = nil;	-- waiting to be initialized
 local transparency = 1;		-- 0.8 default from perl
 local Perl_Target_State = 1;	-- enabled by default
@@ -183,16 +183,26 @@ function Perl_Target_SlashHandler(msg)
 	elseif (string.find(msg, "debuffs")) then
 		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
 		if (arg1 ~= "") then
-			Perl_Target_Set_Debuffs(arg1)
+			local number = tonumber(arg1);
+			if (number > 0 and number < 17) then
+				Perl_Target_Set_Debuffs(arg1)
+			else
+				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-16)");
+			end
 		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of debuffs to display: /pt debuffs #");
+			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of debuffs to display (0-16): /pt debuffs #");
 		end
 	elseif (string.find(msg, "buffs")) then
 		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
 		if (arg1 ~= "") then
-			Perl_Target_Set_Buffs(arg1)
+			local number = tonumber(arg1);
+			if (number > 0 and number < 21) then
+				Perl_Target_Set_Buffs(arg1)
+			else
+				DEFAULT_CHAT_FRAME:AddMessage("You need to specify a valid number (0-20)");
+			end
 		else
-			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of buffs to display: /pt buffs #");
+			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of buffs to display (0-20): /pt buffs #");
 		end
 	else
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00   --- Perl Target Frame ---");
@@ -201,7 +211,7 @@ function Perl_Target_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff combopoints |cffffff00- Toggle the displaying of combo points.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff class |cffffff00- Toggle the displaying of class icon.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs # |cffffff00- Show the number of buffs to display.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuffs # |cffffff00- Toggle the displaying of combo points.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuffs # |cffffff00- Show the number of debuffs to display.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the target frame on and off.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 	end
@@ -619,6 +629,25 @@ function Perl_Target_GetVars()
 	showclassicon = Perl_Target_Config[UnitName("player")]["ClassIcon"];
 	numbuffsshown = Perl_Target_Config[UnitName("player")]["Buffs"];
 	numdebuffsshown = Perl_Target_Config[UnitName("player")]["Debuffs"];
+
+	if (Perl_Target_State == nil) then
+		Perl_Target_State = 1;
+	end
+	if (locked == nil) then
+		locked = 0;
+	end
+	if (showcp == nil) then
+		showcp = 1;
+	end
+	if (showclassicon == nil) then
+		showclassicon = 1;
+	end
+	if (numbuffsshown == nil) then
+		numbuffsshown = 20;
+	end
+	if (numdebuffsshown == nil) then
+		numdebuffsshown = 16;
+	end
 end
 
 function Perl_Target_UpdateVars()
@@ -628,7 +657,7 @@ function Perl_Target_UpdateVars()
 						["ComboPoints"] = showcp,
 						["ClassIcon"] = showclassicon,
 						["Buffs"] = numbuffsshown,
-						["Debuffs"] = numdebuffsshown
+						["Debuffs"] = numdebuffsshown,
 						};
 end
 
@@ -803,8 +832,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.08",
-			releaseDate = "October 20, 2005",
+			version = "v0.09",
+			releaseDate = "October 22, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
