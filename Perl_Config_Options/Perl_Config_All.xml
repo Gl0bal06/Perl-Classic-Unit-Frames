@@ -127,12 +127,12 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_ONE);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_All_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
-						Perl_Config_All_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
-						Perl_Config_All_Frame_CheckButton4:SetChecked(nil)	<!-- We need to uncheck Button 4 -->
-						Perl_Config_All_Frame_CheckButton5:SetChecked(nil)	<!-- We need to uncheck Button 5 -->
-						Perl_Config_All_Frame_CheckButton6:SetChecked(nil)	<!-- We need to uncheck Button 6 -->
-						Perl_Config_All_Frame_CheckButton7:SetChecked(nil)	<!-- We need to uncheck Button 7 -->
+						Perl_Config_All_Frame_CheckButton2:SetChecked(false)	<!-- We need to uncheck Button 2 -->
+						Perl_Config_All_Frame_CheckButton3:SetChecked(false)	<!-- We need to uncheck Button 3 -->
+						Perl_Config_All_Frame_CheckButton4:SetChecked(false)	<!-- We need to uncheck Button 4 -->
+						Perl_Config_All_Frame_CheckButton5:SetChecked(false)	<!-- We need to uncheck Button 5 -->
+						Perl_Config_All_Frame_CheckButton6:SetChecked(false)	<!-- We need to uncheck Button 6 -->
+						Perl_Config_All_Frame_CheckButton7:SetChecked(false)	<!-- We need to uncheck Button 7 -->
 						Perl_Config_All_Texture_Update(1);
 					</OnClick>
 				</Scripts>
@@ -154,12 +154,12 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_TWO);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
-						Perl_Config_All_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
-						Perl_Config_All_Frame_CheckButton4:SetChecked(nil)	<!-- We need to uncheck Button 4 -->
-						Perl_Config_All_Frame_CheckButton5:SetChecked(nil)	<!-- We need to uncheck Button 5 -->
-						Perl_Config_All_Frame_CheckButton6:SetChecked(nil)	<!-- We need to uncheck Button 6 -->
-						Perl_Config_All_Frame_CheckButton7:SetChecked(nil)	<!-- We need to uncheck Button 7 -->
+						Perl_Config_All_Frame_CheckButton1:SetChecked(false)	<!-- We need to uncheck Button 1 -->
+						Perl_Config_All_Frame_CheckButton3:SetChecked(false)	<!-- We need to uncheck Button 3 -->
+						Perl_Config_All_Frame_CheckButton4:SetChecked(false)	<!-- We need to uncheck Button 4 -->
+						Perl_Config_All_Frame_CheckButton5:SetChecked(false)	<!-- We need to uncheck Button 5 -->
+						Perl_Config_All_Frame_CheckButton6:SetChecked(false)	<!-- We need to uncheck Button 6 -->
+						Perl_Config_All_Frame_CheckButton7:SetChecked(false)	<!-- We need to uncheck Button 7 -->
 						Perl_Config_All_Texture_Update(2);
 					</OnClick>
 				</Scripts>
@@ -181,12 +181,12 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_THREE);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
-						Perl_Config_All_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
-						Perl_Config_All_Frame_CheckButton4:SetChecked(nil)	<!-- We need to uncheck Button 4 -->
-						Perl_Config_All_Frame_CheckButton5:SetChecked(nil)	<!-- We need to uncheck Button 5 -->
-						Perl_Config_All_Frame_CheckButton6:SetChecked(nil)	<!-- We need to uncheck Button 6 -->
-						Perl_Config_All_Frame_CheckButton7:SetChecked(nil)	<!-- We need to uncheck Button 7 -->
+						Perl_Config_All_Frame_CheckButton1:SetChecked(false)	<!-- We need to uncheck Button 1 -->
+						Perl_Config_All_Frame_CheckButton2:SetChecked(false)	<!-- We need to uncheck Button 2 -->
+						Perl_Config_All_Frame_CheckButton4:SetChecked(false)	<!-- We need to uncheck Button 4 -->
+						Perl_Config_All_Frame_CheckButton5:SetChecked(false)	<!-- We need to uncheck Button 5 -->
+						Perl_Config_All_Frame_CheckButton6:SetChecked(false)	<!-- We need to uncheck Button 6 -->
+						Perl_Config_All_Frame_CheckButton7:SetChecked(false)	<!-- We need to uncheck Button 7 -->
 						Perl_Config_All_Texture_Update(3);
 					</OnClick>
 				</Scripts>
@@ -208,12 +208,12 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_FOUR);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
-						Perl_Config_All_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
-						Perl_Config_All_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
-						Perl_Config_All_Frame_CheckButton5:SetChecked(nil)	<!-- We need to uncheck Button 5 -->
-						Perl_Config_All_Frame_CheckButton6:SetChecked(nil)	<!-- We need to uncheck Button 6 -->
-						Perl_Config_All_Frame_CheckButton7:SetChecked(nil)	<!-- We need to uncheck Button 7 -->
+						Perl_Config_All_Frame_CheckButton1:SetChecked(false)	<!-- We need to uncheck Button 1 -->
+						Perl_Config_All_Frame_CheckButton2:SetChecked(false)	<!-- We need to uncheck Button 2 -->
+						Perl_Config_All_Frame_CheckButton3:SetChecked(false)	<!-- We need to uncheck Button 3 -->
+						Perl_Config_All_Frame_CheckButton5:SetChecked(false)	<!-- We need to uncheck Button 5 -->
+						Perl_Config_All_Frame_CheckButton6:SetChecked(false)	<!-- We need to uncheck Button 6 -->
+						Perl_Config_All_Frame_CheckButton7:SetChecked(false)	<!-- We need to uncheck Button 7 -->
 						Perl_Config_All_Texture_Update(4);
 					</OnClick>
 				</Scripts>
@@ -235,12 +235,12 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_FIVE);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
-						Perl_Config_All_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
-						Perl_Config_All_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
-						Perl_Config_All_Frame_CheckButton4:SetChecked(nil)	<!-- We need to uncheck Button 4 -->
-						Perl_Config_All_Frame_CheckButton6:SetChecked(nil)	<!-- We need to uncheck Button 6 -->
-						Perl_Config_All_Frame_CheckButton7:SetChecked(nil)	<!-- We need to uncheck Button 7 -->
+						Perl_Config_All_Frame_CheckButton1:SetChecked(false)	<!-- We need to uncheck Button 1 -->
+						Perl_Config_All_Frame_CheckButton2:SetChecked(false)	<!-- We need to uncheck Button 2 -->
+						Perl_Config_All_Frame_CheckButton3:SetChecked(false)	<!-- We need to uncheck Button 3 -->
+						Perl_Config_All_Frame_CheckButton4:SetChecked(false)	<!-- We need to uncheck Button 4 -->
+						Perl_Config_All_Frame_CheckButton6:SetChecked(false)	<!-- We need to uncheck Button 6 -->
+						Perl_Config_All_Frame_CheckButton7:SetChecked(false)	<!-- We need to uncheck Button 7 -->
 						Perl_Config_All_Texture_Update(5);
 					</OnClick>
 				</Scripts>
@@ -262,12 +262,12 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_SIX);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
-						Perl_Config_All_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
-						Perl_Config_All_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
-						Perl_Config_All_Frame_CheckButton4:SetChecked(nil)	<!-- We need to uncheck Button 4 -->
-						Perl_Config_All_Frame_CheckButton5:SetChecked(nil)	<!-- We need to uncheck Button 5 -->
-						Perl_Config_All_Frame_CheckButton7:SetChecked(nil)	<!-- We need to uncheck Button 7 -->
+						Perl_Config_All_Frame_CheckButton1:SetChecked(false)	<!-- We need to uncheck Button 1 -->
+						Perl_Config_All_Frame_CheckButton2:SetChecked(false)	<!-- We need to uncheck Button 2 -->
+						Perl_Config_All_Frame_CheckButton3:SetChecked(false)	<!-- We need to uncheck Button 3 -->
+						Perl_Config_All_Frame_CheckButton4:SetChecked(false)	<!-- We need to uncheck Button 4 -->
+						Perl_Config_All_Frame_CheckButton5:SetChecked(false)	<!-- We need to uncheck Button 5 -->
+						Perl_Config_All_Frame_CheckButton7:SetChecked(false)	<!-- We need to uncheck Button 7 -->
 						Perl_Config_All_Texture_Update(6);
 					</OnClick>
 				</Scripts>
@@ -289,12 +289,12 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALL_TEXTURE_NONE);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_All_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
-						Perl_Config_All_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
-						Perl_Config_All_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
-						Perl_Config_All_Frame_CheckButton4:SetChecked(nil)	<!-- We need to uncheck Button 4 -->
-						Perl_Config_All_Frame_CheckButton5:SetChecked(nil)	<!-- We need to uncheck Button 5 -->
-						Perl_Config_All_Frame_CheckButton6:SetChecked(nil)	<!-- We need to uncheck Button 6 -->
+						Perl_Config_All_Frame_CheckButton1:SetChecked(false)	<!-- We need to uncheck Button 1 -->
+						Perl_Config_All_Frame_CheckButton2:SetChecked(false)	<!-- We need to uncheck Button 2 -->
+						Perl_Config_All_Frame_CheckButton3:SetChecked(false)	<!-- We need to uncheck Button 3 -->
+						Perl_Config_All_Frame_CheckButton4:SetChecked(false)	<!-- We need to uncheck Button 4 -->
+						Perl_Config_All_Frame_CheckButton5:SetChecked(false)	<!-- We need to uncheck Button 5 -->
+						Perl_Config_All_Frame_CheckButton6:SetChecked(false)	<!-- We need to uncheck Button 6 -->
 						Perl_Config_All_Texture_Update(0);
 					</OnClick>
 				</Scripts>

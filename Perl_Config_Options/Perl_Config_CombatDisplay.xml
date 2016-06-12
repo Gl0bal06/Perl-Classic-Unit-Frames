@@ -127,9 +127,9 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALWAYS_SHOWN);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_CombatDisplay_Frame_CheckButton2:SetChecked(nil);	<!-- We need to uncheck Button 2 -->
-						Perl_Config_CombatDisplay_Frame_CheckButton3:SetChecked(nil);	<!-- We need to uncheck Button 3 -->
-						Perl_Config_CombatDisplay_Frame_CheckButton4:SetChecked(nil);	<!-- We need to uncheck Button 4 -->
+						Perl_Config_CombatDisplay_Frame_CheckButton2:SetChecked(false);	<!-- We need to uncheck Button 2 -->
+						Perl_Config_CombatDisplay_Frame_CheckButton3:SetChecked(false);	<!-- We need to uncheck Button 3 -->
+						Perl_Config_CombatDisplay_Frame_CheckButton4:SetChecked(false);	<!-- We need to uncheck Button 4 -->
 						Perl_Config_CombatDisplay_Mode_Update();
 					</OnClick>
 				</Scripts>
@@ -151,9 +151,9 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_AUTOATTACK);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(nil);	<!-- We need to uncheck Button 1 -->
-						Perl_Config_CombatDisplay_Frame_CheckButton3:SetChecked(nil);	<!-- We need to uncheck Button 3 -->
-						Perl_Config_CombatDisplay_Frame_CheckButton4:SetChecked(nil);	<!-- We need to uncheck Button 4 -->
+						Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(false);	<!-- We need to uncheck Button 1 -->
+						Perl_Config_CombatDisplay_Frame_CheckButton3:SetChecked(false);	<!-- We need to uncheck Button 3 -->
+						Perl_Config_CombatDisplay_Frame_CheckButton4:SetChecked(false);	<!-- We need to uncheck Button 4 -->
 						Perl_Config_CombatDisplay_Mode_Update();
 					</OnClick>
 				</Scripts>
@@ -175,9 +175,9 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_COMBATDISPLAY_ONAGRO);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(nil);	<!-- We need to uncheck Button 1 -->
-						Perl_Config_CombatDisplay_Frame_CheckButton2:SetChecked(nil);	<!-- We need to uncheck Button 2 -->
-						Perl_Config_CombatDisplay_Frame_CheckButton4:SetChecked(nil);	<!-- We need to uncheck Button 4 -->
+						Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(false);	<!-- We need to uncheck Button 1 -->
+						Perl_Config_CombatDisplay_Frame_CheckButton2:SetChecked(false);	<!-- We need to uncheck Button 2 -->
+						Perl_Config_CombatDisplay_Frame_CheckButton4:SetChecked(false);	<!-- We need to uncheck Button 4 -->
 						Perl_Config_CombatDisplay_Mode_Update();
 					</OnClick>
 				</Scripts>
@@ -199,9 +199,9 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALWAYS_HIDDEN);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(nil);	<!-- We need to uncheck Button 1 -->
-						Perl_Config_CombatDisplay_Frame_CheckButton2:SetChecked(nil);	<!-- We need to uncheck Button 2 -->
-						Perl_Config_CombatDisplay_Frame_CheckButton3:SetChecked(nil);	<!-- We need to uncheck Button 3 -->
+						Perl_Config_CombatDisplay_Frame_CheckButton1:SetChecked(false);	<!-- We need to uncheck Button 1 -->
+						Perl_Config_CombatDisplay_Frame_CheckButton2:SetChecked(false);	<!-- We need to uncheck Button 2 -->
+						Perl_Config_CombatDisplay_Frame_CheckButton3:SetChecked(false);	<!-- We need to uncheck Button 3 -->
 						Perl_Config_CombatDisplay_Mode_Update();
 					</OnClick>
 				</Scripts>

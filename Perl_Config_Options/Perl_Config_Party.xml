@@ -177,8 +177,8 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALWAYS_SHOWN);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Party_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
-						Perl_Config_Party_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
+						Perl_Config_Party_Frame_CheckButton2:SetChecked(false)	<!-- We need to uncheck Button 2 -->
+						Perl_Config_Party_Frame_CheckButton3:SetChecked(false)	<!-- We need to uncheck Button 3 -->
 						Perl_Config_Party_Hidden_Update();
 					</OnClick>
 				</Scripts>
@@ -200,8 +200,8 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_HIDDEN_IN_RAID);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Party_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
-						Perl_Config_Party_Frame_CheckButton3:SetChecked(nil)	<!-- We need to uncheck Button 3 -->
+						Perl_Config_Party_Frame_CheckButton1:SetChecked(false)	<!-- We need to uncheck Button 1 -->
+						Perl_Config_Party_Frame_CheckButton3:SetChecked(false)	<!-- We need to uncheck Button 3 -->
 						Perl_Config_Party_Hidden_Update();
 					</OnClick>
 				</Scripts>
@@ -223,8 +223,8 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_ALWAYS_HIDDEN);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Party_Frame_CheckButton1:SetChecked(nil)	<!-- We need to uncheck Button 1 -->
-						Perl_Config_Party_Frame_CheckButton2:SetChecked(nil)	<!-- We need to uncheck Button 2 -->
+						Perl_Config_Party_Frame_CheckButton1:SetChecked(false)	<!-- We need to uncheck Button 1 -->
+						Perl_Config_Party_Frame_CheckButton2:SetChecked(false)	<!-- We need to uncheck Button 2 -->
 						Perl_Config_Party_Hidden_Update();
 					</OnClick>
 				</Scripts>

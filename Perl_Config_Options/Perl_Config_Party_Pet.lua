@@ -17,9 +17,9 @@ function Perl_Config_Party_Pet_Set_Values()
 	Perl_Config_Party_Pet_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
 
 	if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-		Perl_Config_Party_Pet_Frame_CheckButton1:SetChecked(1);
+		Perl_Config_Party_Pet_Frame_CheckButton1:SetChecked(true);
 	else
-		Perl_Config_Party_Pet_Frame_CheckButton1:SetChecked(nil);
+		Perl_Config_Party_Pet_Frame_CheckButton1:SetChecked(false);
 	end
 
 	Perl_Config_Party_Pet_Frame_Slider2Low:SetText("0");
@@ -51,50 +51,50 @@ function Perl_Config_Party_Pet_Set_Values()
 	Perl_Config_Party_Pet_Frame_Slider8:SetValue(vartable["debufflocation"]);
 
 	if (vartable["showportrait"] == 1) then
-		Perl_Config_Party_Pet_Frame_CheckButton2:SetChecked(1);
+		Perl_Config_Party_Pet_Frame_CheckButton2:SetChecked(true);
 	else
-		Perl_Config_Party_Pet_Frame_CheckButton2:SetChecked(nil);
+		Perl_Config_Party_Pet_Frame_CheckButton2:SetChecked(false);
 	end
 
 	if (vartable["threedportrait"] == 1) then
-		Perl_Config_Party_Pet_Frame_CheckButton3:SetChecked(1);
+		Perl_Config_Party_Pet_Frame_CheckButton3:SetChecked(true);
 	else
-		Perl_Config_Party_Pet_Frame_CheckButton3:SetChecked(nil);
+		Perl_Config_Party_Pet_Frame_CheckButton3:SetChecked(false);
 	end
 
 	if (vartable["locked"] == 1) then
-		Perl_Config_Party_Pet_Frame_CheckButton4:SetChecked(1);
+		Perl_Config_Party_Pet_Frame_CheckButton4:SetChecked(true);
 	else
-		Perl_Config_Party_Pet_Frame_CheckButton4:SetChecked(nil);
+		Perl_Config_Party_Pet_Frame_CheckButton4:SetChecked(false);
 	end
 
 	if (vartable["hiddeninraids"] == 1) then
-		Perl_Config_Party_Pet_Frame_CheckButton5:SetChecked(1);
+		Perl_Config_Party_Pet_Frame_CheckButton5:SetChecked(true);
 	else
-		Perl_Config_Party_Pet_Frame_CheckButton5:SetChecked(nil);
+		Perl_Config_Party_Pet_Frame_CheckButton5:SetChecked(false);
 	end
 
 	if (vartable["enabled"] == 1) then
-		Perl_Config_Party_Pet_Frame_CheckButton6:SetChecked(1);
+		Perl_Config_Party_Pet_Frame_CheckButton6:SetChecked(true);
 	else
-		Perl_Config_Party_Pet_Frame_CheckButton6:SetChecked(nil);
+		Perl_Config_Party_Pet_Frame_CheckButton6:SetChecked(false);
 	end
 
 	if (vartable["displaycastablebuffs"] == 1) then
-		Perl_Config_Party_Pet_Frame_CheckButton7:SetChecked(1);
+		Perl_Config_Party_Pet_Frame_CheckButton7:SetChecked(true);
 	else
-		Perl_Config_Party_Pet_Frame_CheckButton7:SetChecked(nil);
+		Perl_Config_Party_Pet_Frame_CheckButton7:SetChecked(false);
 	end
 
 	if (vartable["displaycurabledebuff"] == 1) then
-		Perl_Config_Party_Pet_Frame_CheckButton8:SetChecked(1);
+		Perl_Config_Party_Pet_Frame_CheckButton8:SetChecked(true);
 	else
-		Perl_Config_Party_Pet_Frame_CheckButton8:SetChecked(nil);
+		Perl_Config_Party_Pet_Frame_CheckButton8:SetChecked(false);
 	end
 end
 
 function Perl_Config_Party_Pet_Portrait_Update()
-	if (Perl_Config_Party_Pet_Frame_CheckButton2:GetChecked() == 1) then
+	if (Perl_Config_Party_Pet_Frame_CheckButton2:GetChecked() == true) then
 		Perl_Party_Pet_Set_Portrait(1);
 	else
 		Perl_Party_Pet_Set_Portrait(0);
@@ -102,7 +102,7 @@ function Perl_Config_Party_Pet_Portrait_Update()
 end
 
 function Perl_Config_Party_Pet_3D_Portrait_Update()
-	if (Perl_Config_Party_Pet_Frame_CheckButton3:GetChecked() == 1) then
+	if (Perl_Config_Party_Pet_Frame_CheckButton3:GetChecked() == true) then
 		Perl_Party_Pet_Set_3D_Portrait(1);
 	else
 		Perl_Party_Pet_Set_3D_Portrait(0);
@@ -110,7 +110,7 @@ function Perl_Config_Party_Pet_3D_Portrait_Update()
 end
 
 function Perl_Config_Party_Pet_Lock_Update()
-	if (Perl_Config_Party_Pet_Frame_CheckButton4:GetChecked() == 1) then
+	if (Perl_Config_Party_Pet_Frame_CheckButton4:GetChecked() == true) then
 		Perl_Party_Pet_Set_Lock(1);
 	else
 		Perl_Party_Pet_Set_Lock(0);
@@ -118,7 +118,7 @@ function Perl_Config_Party_Pet_Lock_Update()
 end
 
 function Perl_Config_Party_Pet_Hidden_Update()
-	if (Perl_Config_Party_Pet_Frame_CheckButton5:GetChecked() == 1) then
+	if (Perl_Config_Party_Pet_Frame_CheckButton5:GetChecked() == true) then
 		Perl_Party_Pet_Set_Hidden(1);
 	else
 		Perl_Party_Pet_Set_Hidden(0);
@@ -126,7 +126,7 @@ function Perl_Config_Party_Pet_Hidden_Update()
 end
 
 function Perl_Config_Party_Pet_Enabled_Update()
-	if (Perl_Config_Party_Pet_Frame_CheckButton6:GetChecked() == 1) then
+	if (Perl_Config_Party_Pet_Frame_CheckButton6:GetChecked() == true) then
 		Perl_Party_Set_Enabled(1);
 	else
 		Perl_Party_Set_Enabled(0);
@@ -134,7 +134,7 @@ function Perl_Config_Party_Pet_Enabled_Update()
 end
 
 function Perl_Config_Party_Pet_Class_Buffs_Update()
-	if (Perl_Config_Party_Pet_Frame_CheckButton7:GetChecked() == 1) then
+	if (Perl_Config_Party_Pet_Frame_CheckButton7:GetChecked() == true) then
 		Perl_Party_Pet_Set_Class_Buffs(1);
 	else
 		Perl_Party_Pet_Set_Class_Buffs(0);
@@ -142,7 +142,7 @@ function Perl_Config_Party_Pet_Class_Buffs_Update()
 end
 
 function Perl_Config_Party_Pet_Curable_Debuffs_Update()
-	if (Perl_Config_Party_Pet_Frame_CheckButton8:GetChecked() == 1) then
+	if (Perl_Config_Party_Pet_Frame_CheckButton8:GetChecked() == true) then
 		Perl_Party_Pet_Set_Curable_Debuffs(1);
 	else
 		Perl_Party_Pet_Set_Curable_Debuffs(0);
@@ -196,9 +196,9 @@ function Perl_Config_Party_Pet_Set_Scale(value)
 
 		vartable = Perl_Party_Pet_GetVars();
 		if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-			Perl_Config_Party_Pet_Frame_CheckButton1:SetChecked(1);
+			Perl_Config_Party_Pet_Frame_CheckButton1:SetChecked(true);
 		else
-			Perl_Config_Party_Pet_Frame_CheckButton1:SetChecked(nil);
+			Perl_Config_Party_Pet_Frame_CheckButton1:SetChecked(false);
 		end
 	end
 end

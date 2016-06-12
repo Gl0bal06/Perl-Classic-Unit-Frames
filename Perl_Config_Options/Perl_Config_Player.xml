@@ -107,9 +107,9 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_XPBAR_EXPERIENCE);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Player_Frame_CheckButton2:SetChecked(nil);	<!-- We need to uncheck Button 2 -->
-						Perl_Config_Player_Frame_CheckButton15:SetChecked(nil);	<!-- We need to uncheck Button 15 -->
-						Perl_Config_Player_Frame_CheckButton3:SetChecked(nil);	<!-- We need to uncheck Button 3 -->
+						Perl_Config_Player_Frame_CheckButton2:SetChecked(false);	<!-- We need to uncheck Button 2 -->
+						Perl_Config_Player_Frame_CheckButton15:SetChecked(false);	<!-- We need to uncheck Button 15 -->
+						Perl_Config_Player_Frame_CheckButton3:SetChecked(false);	<!-- We need to uncheck Button 3 -->
 						Perl_Config_Player_XPMode_Update();
 					</OnClick>
 				</Scripts>
@@ -131,9 +131,9 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_XPBAR_PVPRANK);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Player_Frame_CheckButton1:SetChecked(nil);	<!-- We need to uncheck Button 1 -->
-						Perl_Config_Player_Frame_CheckButton15:SetChecked(nil);	<!-- We need to uncheck Button 15 -->
-						Perl_Config_Player_Frame_CheckButton3:SetChecked(nil);	<!-- We need to uncheck Button 3 -->
+						Perl_Config_Player_Frame_CheckButton1:SetChecked(false);	<!-- We need to uncheck Button 1 -->
+						Perl_Config_Player_Frame_CheckButton15:SetChecked(false);	<!-- We need to uncheck Button 15 -->
+						Perl_Config_Player_Frame_CheckButton3:SetChecked(false);	<!-- We need to uncheck Button 3 -->
 						Perl_Config_Player_XPMode_Update();
 					</OnClick>
 				</Scripts>
@@ -155,9 +155,9 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_XPBAR_REPUTATION);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Player_Frame_CheckButton1:SetChecked(nil);	<!-- We need to uncheck Button 1 -->
-						Perl_Config_Player_Frame_CheckButton2:SetChecked(nil);	<!-- We need to uncheck Button 2 -->
-						Perl_Config_Player_Frame_CheckButton3:SetChecked(nil);	<!-- We need to uncheck Button 15 -->
+						Perl_Config_Player_Frame_CheckButton1:SetChecked(false);	<!-- We need to uncheck Button 1 -->
+						Perl_Config_Player_Frame_CheckButton2:SetChecked(false);	<!-- We need to uncheck Button 2 -->
+						Perl_Config_Player_Frame_CheckButton3:SetChecked(false);	<!-- We need to uncheck Button 15 -->
 						Perl_Config_Player_XPMode_Update();
 					</OnClick>
 				</Scripts>
@@ -179,9 +179,9 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_XPBAR_HIDDEN);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Player_Frame_CheckButton1:SetChecked(nil);	<!-- We need to uncheck Button 1 -->
-						Perl_Config_Player_Frame_CheckButton2:SetChecked(nil);	<!-- We need to uncheck Button 2 -->
-						Perl_Config_Player_Frame_CheckButton15:SetChecked(nil);	<!-- We need to uncheck Button 15 -->
+						Perl_Config_Player_Frame_CheckButton1:SetChecked(false);	<!-- We need to uncheck Button 1 -->
+						Perl_Config_Player_Frame_CheckButton2:SetChecked(false);	<!-- We need to uncheck Button 2 -->
+						Perl_Config_Player_Frame_CheckButton15:SetChecked(false);	<!-- We need to uncheck Button 15 -->
 						Perl_Config_Player_XPMode_Update();
 					</OnClick>
 				</Scripts>

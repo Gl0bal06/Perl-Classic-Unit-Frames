@@ -358,9 +358,9 @@ function Perl_Target_Update_Once()
 
 		-- Begin: Draw the class icon?
 		if (showclassicon == 1) then
-			if (UnitIsPlayer("target")) then
-				local _;
-				_, englishclass = UnitClass("target");
+			local _;
+			_, englishclass = UnitClass("target");
+			if (UnitIsPlayer("target") and PERL_CLASS_ICON_TCOORDS[englishclass] ~= nil) then
 				Perl_Target_ClassTexture:SetTexCoord(unpack(PERL_CLASS_ICON_TCOORDS[englishclass]));
 				Perl_Target_ClassTexture:Show();
 			else

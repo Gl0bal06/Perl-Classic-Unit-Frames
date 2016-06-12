@@ -21,171 +21,171 @@ function Perl_Config_Target_Set_Values()
 	Perl_Config_Target_Frame_Slider3:SetValue(vartable["numdebuffsshown"]);
 
 	if (vartable["showclassicon"] == 1) then
-		Perl_Config_Target_Frame_CheckButton1:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton1:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton1:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton1:SetChecked(false);
 	end
 
 	if (vartable["showpvpicon"] == 1) then
-		Perl_Config_Target_Frame_CheckButton3:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton3:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton3:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton3:SetChecked(false);
 	end
 
 	if (vartable["showclassframe"] == 1) then
-		Perl_Config_Target_Frame_CheckButton4:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton4:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton4:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton4:SetChecked(false);
 	end
 
 	if (vartable["showcp"] == 1) then
-		Perl_Config_Target_Frame_CheckButton5:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton5:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton5:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton5:SetChecked(false);
 	end
 
 	if (vartable["locked"] == 1) then
-		Perl_Config_Target_Frame_CheckButton8:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton8:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton8:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton8:SetChecked(false);
 	end
 
 	if (vartable["showportrait"] == 1) then
-		Perl_Config_Target_Frame_CheckButton10:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton10:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton10:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton10:SetChecked(false);
 	end
 
 	if (vartable["threedportrait"] == 1) then
-		Perl_Config_Target_Frame_CheckButton11:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton11:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton11:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton11:SetChecked(false);
 	end
 
 	if (vartable["portraitcombattext"] == 1) then
-		Perl_Config_Target_Frame_CheckButton12:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton12:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton12:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton12:SetChecked(false);
 	end
 
 	if (vartable["showrareeliteframe"] == 1) then
-		Perl_Config_Target_Frame_CheckButton13:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton13:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton13:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton13:SetChecked(false);
 	end
 
 	if (vartable["nameframecombopoints"] == 1) then
-		Perl_Config_Target_Frame_CheckButton14:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton14:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton14:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton14:SetChecked(false);
 	end
 
 	if (vartable["comboframedebuffs"] == 1) then
-		Perl_Config_Target_Frame_CheckButton15:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton15:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton15:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton15:SetChecked(false);
 	end
 
 	if (vartable["framestyle"] == 2) then
-		Perl_Config_Target_Frame_CheckButton16:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton16:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton16:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton16:SetChecked(false);
 	end
 
 	if (vartable["compactmode"] == 1) then
-		Perl_Config_Target_Frame_CheckButton17:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton17:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton17:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton17:SetChecked(false);
 	end
 
 	if (vartable["compactpercent"] == 1) then
-		Perl_Config_Target_Frame_CheckButton18:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton18:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton18:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton18:SetChecked(false);
 	end
 
 	if (vartable["hidebuffbackground"] == 1) then
-		Perl_Config_Target_Frame_CheckButton19:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton19:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton19:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton19:SetChecked(false);
 	end
 
 	if (vartable["shortbars"] == 1) then
-		Perl_Config_Target_Frame_CheckButton20:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton20:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton20:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton20:SetChecked(false);
 	end
 
 	if (vartable["healermode"] == 1) then
-		Perl_Config_Target_Frame_CheckButton21:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton21:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton21:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton21:SetChecked(false);
 	end
 
 	if (vartable["soundtargetchange"] == 1) then
-		Perl_Config_Target_Frame_CheckButton22:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton22:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton22:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton22:SetChecked(false);
 	end
 
 	if (vartable["displaycastablebuffs"] == 1) then
-		Perl_Config_Target_Frame_CheckButton23:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton23:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton23:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton23:SetChecked(false);
 	end
 
 	if (vartable["classcolorednames"] == 1) then
-		Perl_Config_Target_Frame_CheckButton24:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton24:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton24:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton24:SetChecked(false);
 	end
 
 	if (vartable["showmanadeficit"] == 1) then
-		Perl_Config_Target_Frame_CheckButton25:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton25:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton25:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton25:SetChecked(false);
 	end
 
 	if (vartable["invertbuffs"] == 1) then
-		Perl_Config_Target_Frame_CheckButton26:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton26:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton26:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton26:SetChecked(false);
 	end
 
 	if (vartable["showguildname"] == 1) then
-		Perl_Config_Target_Frame_CheckButton27:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton27:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton27:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton27:SetChecked(false);
 	end
 
 	if (vartable["eliteraregraphic"] == 1) then
-		Perl_Config_Target_Frame_CheckButton28:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton28:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton28:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton28:SetChecked(false);
 	end
 
 	if (vartable["displaycurabledebuff"] == 1) then
-		Perl_Config_Target_Frame_CheckButton29:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton29:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton29:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton29:SetChecked(false);
 	end
 
 	if (vartable["displaybufftimers"] == 1) then
-		Perl_Config_Target_Frame_CheckButton30:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton30:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton30:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton30:SetChecked(false);
 	end
 
 	if (vartable["displaynumbericthreat"] == 1) then
-		Perl_Config_Target_Frame_CheckButton31:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton31:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton31:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton31:SetChecked(false);
 	end
 
 	if (vartable["displayonlymydebuffs"] == 1) then
-		Perl_Config_Target_Frame_CheckButton32:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton32:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton32:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton32:SetChecked(false);
 	end
 
 	Perl_Config_Target_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
@@ -193,9 +193,9 @@ function Perl_Config_Target_Set_Values()
 	Perl_Config_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
 
 	if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-		Perl_Config_Target_Frame_CheckButton9:SetChecked(1);
+		Perl_Config_Target_Frame_CheckButton9:SetChecked(true);
 	else
-		Perl_Config_Target_Frame_CheckButton9:SetChecked(nil);
+		Perl_Config_Target_Frame_CheckButton9:SetChecked(false);
 	end
 
 	Perl_Config_Target_Frame_Slider4Low:SetText("0");
@@ -220,7 +220,7 @@ function Perl_Config_Target_Set_Debuffs(value)
 end
 
 function Perl_Config_Target_Class_Icon_Update()
-	if (Perl_Config_Target_Frame_CheckButton1:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton1:GetChecked() == true) then
 		Perl_Target_Set_Class_Icon(1);
 	else
 		Perl_Target_Set_Class_Icon(0);
@@ -228,7 +228,7 @@ function Perl_Config_Target_Class_Icon_Update()
 end
 
 function Perl_Config_Target_PvP_Status_Icon_Update()
-	if (Perl_Config_Target_Frame_CheckButton3:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton3:GetChecked() == true) then
 		Perl_Target_Set_PvP_Status_Icon(1);
 	else
 		Perl_Target_Set_PvP_Status_Icon(0);
@@ -236,7 +236,7 @@ function Perl_Config_Target_PvP_Status_Icon_Update()
 end
 
 function Perl_Config_Target_Class_Frame_Update()
-	if (Perl_Config_Target_Frame_CheckButton4:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton4:GetChecked() == true) then
 		Perl_Target_Set_Class_Frame(1);
 	else
 		Perl_Target_Set_Class_Frame(0);
@@ -244,7 +244,7 @@ function Perl_Config_Target_Class_Frame_Update()
 end
 
 function Perl_Config_Target_Combo_Points_Update()
-	if (Perl_Config_Target_Frame_CheckButton5:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton5:GetChecked() == true) then
 		local _, class = UnitClass("player");
 		if (class == "ROGUE" or class == "DRUID" or class == "WARRIOR" or class == "PRIEST" or class == "PALADIN" or class == "MAGE") then
 			Perl_Target_Set_Combo_Points(1);
@@ -258,7 +258,7 @@ function Perl_Config_Target_Combo_Points_Update()
 end
 
 function Perl_Config_Target_Lock_Update()
-	if (Perl_Config_Target_Frame_CheckButton8:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton8:GetChecked() == true) then
 		Perl_Target_Set_Lock(1);
 	else
 		Perl_Target_Set_Lock(0);
@@ -266,7 +266,7 @@ function Perl_Config_Target_Lock_Update()
 end
 
 function Perl_Config_Target_Portrait_Update()
-	if (Perl_Config_Target_Frame_CheckButton10:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton10:GetChecked() == true) then
 		Perl_Target_Set_Portrait(1);
 	else
 		Perl_Target_Set_Portrait(0);
@@ -274,7 +274,7 @@ function Perl_Config_Target_Portrait_Update()
 end
 
 function Perl_Config_Target_3D_Portrait_Update()
-	if (Perl_Config_Target_Frame_CheckButton11:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton11:GetChecked() == true) then
 		Perl_Target_Set_3D_Portrait(1);
 	else
 		Perl_Target_Set_3D_Portrait(0);
@@ -282,7 +282,7 @@ function Perl_Config_Target_3D_Portrait_Update()
 end
 
 function Perl_Config_Target_Portrait_Combat_Text_Update()
-	if (Perl_Config_Target_Frame_CheckButton12:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton12:GetChecked() == true) then
 		Perl_Target_Set_Portrait_Combat_Text(1);
 	else
 		Perl_Target_Set_Portrait_Combat_Text(0);
@@ -290,7 +290,7 @@ function Perl_Config_Target_Portrait_Combat_Text_Update()
 end
 
 function Perl_Config_Target_Rare_Elite_Update()
-	if (Perl_Config_Target_Frame_CheckButton13:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton13:GetChecked() == true) then
 		Perl_Target_Set_Rare_Elite(1);
 	else
 		Perl_Target_Set_Rare_Elite(0);
@@ -298,7 +298,7 @@ function Perl_Config_Target_Rare_Elite_Update()
 end
 
 function Perl_Config_Target_Combo_Name_Frame_Update()
-	if (Perl_Config_Target_Frame_CheckButton14:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton14:GetChecked() == true) then
 		Perl_Target_Set_Combo_Name_Frame(1);
 	else
 		Perl_Target_Set_Combo_Name_Frame(0);
@@ -306,7 +306,7 @@ function Perl_Config_Target_Combo_Name_Frame_Update()
 end
 
 function Perl_Config_Target_Combo_Frame_Debuffs_Update()
-	if (Perl_Config_Target_Frame_CheckButton15:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton15:GetChecked() == true) then
 		Perl_Target_Set_Combo_Frame_Debuffs(1);
 	else
 		Perl_Target_Set_Combo_Frame_Debuffs(0);
@@ -314,7 +314,7 @@ function Perl_Config_Target_Combo_Frame_Debuffs_Update()
 end
 
 function Perl_Config_Target_Alternate_Frame_Style_Update()
-	if (Perl_Config_Target_Frame_CheckButton16:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton16:GetChecked() == true) then
 		Perl_Target_Set_Frame_Style(2);
 	else
 		Perl_Target_Set_Frame_Style(1);
@@ -322,7 +322,7 @@ function Perl_Config_Target_Alternate_Frame_Style_Update()
 end
 
 function Perl_Config_Target_Compact_Mode_Update()
-	if (Perl_Config_Target_Frame_CheckButton17:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton17:GetChecked() == true) then
 		Perl_Target_Set_Compact_Mode(1);
 	else
 		Perl_Target_Set_Compact_Mode(0);
@@ -330,7 +330,7 @@ function Perl_Config_Target_Compact_Mode_Update()
 end
 
 function Perl_Config_Target_Compact_Percents_Update()
-	if (Perl_Config_Target_Frame_CheckButton18:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton18:GetChecked() == true) then
 		Perl_Target_Set_Compact_Percents(1);
 	else
 		Perl_Target_Set_Compact_Percents(0);
@@ -338,7 +338,7 @@ function Perl_Config_Target_Compact_Percents_Update()
 end
 
 function Perl_Config_Target_Short_Bars_Update()
-	if (Perl_Config_Target_Frame_CheckButton20:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton20:GetChecked() == true) then
 		Perl_Target_Set_Short_Bars(1);
 	else
 		Perl_Target_Set_Short_Bars(0);
@@ -346,7 +346,7 @@ function Perl_Config_Target_Short_Bars_Update()
 end
 
 function Perl_Config_Target_Buff_Background_Update()
-	if (Perl_Config_Target_Frame_CheckButton19:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton19:GetChecked() == true) then
 		Perl_Target_Set_Buff_Debuff_Background(1);
 	else
 		Perl_Target_Set_Buff_Debuff_Background(0);
@@ -354,7 +354,7 @@ function Perl_Config_Target_Buff_Background_Update()
 end
 
 function Perl_Config_Target_Healer_Update()
-	if (Perl_Config_Target_Frame_CheckButton21:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton21:GetChecked() == true) then
 		Perl_Target_Set_Healer(1);
 	else
 		Perl_Target_Set_Healer(0);
@@ -362,7 +362,7 @@ function Perl_Config_Target_Healer_Update()
 end
 
 function Perl_Config_Target_Sound_Target_Change_Update()
-	if (Perl_Config_Target_Frame_CheckButton22:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton22:GetChecked() == true) then
 		Perl_Target_Set_Sound_Target_Change(1);
 	else
 		Perl_Target_Set_Sound_Target_Change(0);
@@ -370,7 +370,7 @@ function Perl_Config_Target_Sound_Target_Change_Update()
 end
 
 function Perl_Config_Target_Class_Buffs_Update()
-	if (Perl_Config_Target_Frame_CheckButton23:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton23:GetChecked() == true) then
 		Perl_Target_Set_Class_Buffs(1);
 	else
 		Perl_Target_Set_Class_Buffs(0);
@@ -378,7 +378,7 @@ function Perl_Config_Target_Class_Buffs_Update()
 end
 
 function Perl_Config_Target_Class_Colored_Names_Update()
-	if (Perl_Config_Target_Frame_CheckButton24:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton24:GetChecked() == true) then
 		Perl_Target_Set_Class_Colored_Names(1);
 	else
 		Perl_Target_Set_Class_Colored_Names(0);
@@ -386,7 +386,7 @@ function Perl_Config_Target_Class_Colored_Names_Update()
 end
 
 function Perl_Config_Target_Mana_Deficit_Update()
-	if (Perl_Config_Target_Frame_CheckButton25:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton25:GetChecked() == true) then
 		Perl_Target_Set_Mana_Deficit(1);
 	else
 		Perl_Target_Set_Mana_Deficit(0);
@@ -394,7 +394,7 @@ function Perl_Config_Target_Mana_Deficit_Update()
 end
 
 function Perl_Config_Target_Invert_Buffs_Update()
-	if (Perl_Config_Target_Frame_CheckButton26:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton26:GetChecked() == true) then
 		Perl_Target_Set_Invert_Buffs(1);
 	else
 		Perl_Target_Set_Invert_Buffs(0);
@@ -402,7 +402,7 @@ function Perl_Config_Target_Invert_Buffs_Update()
 end
 
 function Perl_Config_Target_Show_Guild_Name_Update()
-	if (Perl_Config_Target_Frame_CheckButton27:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton27:GetChecked() == true) then
 		Perl_Target_Set_Show_Guild_Name(1);
 	else
 		Perl_Target_Set_Show_Guild_Name(0);
@@ -410,7 +410,7 @@ function Perl_Config_Target_Show_Guild_Name_Update()
 end
 
 function Perl_Config_Target_Elite_Rare_Graphic_Update()
-	if (Perl_Config_Target_Frame_CheckButton28:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton28:GetChecked() == true) then
 		Perl_Target_Set_Elite_Rare_Graphic(1);
 	else
 		Perl_Target_Set_Elite_Rare_Graphic(0);
@@ -418,7 +418,7 @@ function Perl_Config_Target_Elite_Rare_Graphic_Update()
 end
 
 function Perl_Config_Target_Curable_Debuffs_Update()
-	if (Perl_Config_Target_Frame_CheckButton29:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton29:GetChecked() == true) then
 		Perl_Target_Set_Curable_Debuffs(1);
 	else
 		Perl_Target_Set_Curable_Debuffs(0);
@@ -426,7 +426,7 @@ function Perl_Config_Target_Curable_Debuffs_Update()
 end
 
 function Perl_Config_Target_Buff_Timers_Update()
-	if (Perl_Config_Target_Frame_CheckButton30:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton30:GetChecked() == true) then
 		Perl_Target_Set_Buff_Timers(1);
 	else
 		Perl_Target_Set_Buff_Timers(0);
@@ -434,7 +434,7 @@ function Perl_Config_Target_Buff_Timers_Update()
 end
 
 function Perl_Config_Target_Display_Numeric_Threat_Update()
-	if (Perl_Config_Target_Frame_CheckButton31:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton31:GetChecked() == true) then
 		Perl_Target_Set_Display_Numeric_Threat(1);
 	else
 		Perl_Target_Set_Display_Numeric_Threat(0);
@@ -442,7 +442,7 @@ function Perl_Config_Target_Display_Numeric_Threat_Update()
 end
 
 function Perl_Config_Target_Only_Self_Debuffs_Update()
-	if (Perl_Config_Target_Frame_CheckButton32:GetChecked() == 1) then
+	if (Perl_Config_Target_Frame_CheckButton32:GetChecked() == true) then
 		Perl_Target_Set_Only_Self_Debuffs(1);
 	else
 		Perl_Target_Set_Only_Self_Debuffs(0);
@@ -460,9 +460,9 @@ function Perl_Config_Target_Set_Scale(value)
 
 		vartable = Perl_Target_GetVars();
 		if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-			Perl_Config_Target_Frame_CheckButton9:SetChecked(1);
+			Perl_Config_Target_Frame_CheckButton9:SetChecked(true);
 		else
-			Perl_Config_Target_Frame_CheckButton9:SetChecked(nil);
+			Perl_Config_Target_Frame_CheckButton9:SetChecked(false);
 		end
 	end
 end

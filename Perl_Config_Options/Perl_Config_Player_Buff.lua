@@ -13,21 +13,21 @@ function Perl_Config_Player_Buff_Set_Values()
 	local vartable = Perl_Player_Buff_GetVars();
 
 	if (vartable["showbuffs"] == 1) then
-		Perl_Config_Player_Buff_Frame_CheckButton1:SetChecked(1);
+		Perl_Config_Player_Buff_Frame_CheckButton1:SetChecked(true);
 	else
-		Perl_Config_Player_Buff_Frame_CheckButton1:SetChecked(nil);
+		Perl_Config_Player_Buff_Frame_CheckButton1:SetChecked(false);
 	end
 
 	if (vartable["buffalerts"] == 1) then
-		Perl_Config_Player_Buff_Frame_CheckButton2:SetChecked(1);
+		Perl_Config_Player_Buff_Frame_CheckButton2:SetChecked(true);
 	else
-		Perl_Config_Player_Buff_Frame_CheckButton2:SetChecked(nil);
+		Perl_Config_Player_Buff_Frame_CheckButton2:SetChecked(false);
 	end
 
 	if (vartable["hideseconds"] == 1) then
-		Perl_Config_Player_Buff_Frame_CheckButton4:SetChecked(1);
+		Perl_Config_Player_Buff_Frame_CheckButton4:SetChecked(true);
 	else
-		Perl_Config_Player_Buff_Frame_CheckButton4:SetChecked(nil);
+		Perl_Config_Player_Buff_Frame_CheckButton4:SetChecked(false);
 	end
 
 	Perl_Config_Player_Buff_Frame_Slider2Low:SetText("0");
@@ -39,14 +39,14 @@ function Perl_Config_Player_Buff_Set_Values()
 	Perl_Config_Player_Buff_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
 
 	if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-		Perl_Config_Player_Buff_Frame_CheckButton3:SetChecked(1);
+		Perl_Config_Player_Buff_Frame_CheckButton3:SetChecked(true);
 	else
-		Perl_Config_Player_Buff_Frame_CheckButton3:SetChecked(nil);
+		Perl_Config_Player_Buff_Frame_CheckButton3:SetChecked(false);
 	end
 end
 
 function Perl_Config_Player_Buff_ShowBuffs_Update()
-	if (Perl_Config_Player_Buff_Frame_CheckButton1:GetChecked() == 1) then
+	if (Perl_Config_Player_Buff_Frame_CheckButton1:GetChecked() == true) then
 		Perl_Player_Buff_Set_ShowBuffs(1);
 	else
 		Perl_Player_Buff_Set_ShowBuffs(0);
@@ -54,7 +54,7 @@ function Perl_Config_Player_Buff_ShowBuffs_Update()
 end
 
 function Perl_Config_Player_Buff_Alerts_Update()
-	if (Perl_Config_Player_Buff_Frame_CheckButton2:GetChecked() == 1) then
+	if (Perl_Config_Player_Buff_Frame_CheckButton2:GetChecked() == true) then
 		Perl_Player_Buff_Set_Alerts(1);
 	else
 		Perl_Player_Buff_Set_Alerts(0);
@@ -62,7 +62,7 @@ function Perl_Config_Player_Buff_Alerts_Update()
 end
 
 function Perl_Config_Player_Buff_Hide_Seconds_Update()
-	if (Perl_Config_Player_Buff_Frame_CheckButton4:GetChecked() == 1) then
+	if (Perl_Config_Player_Buff_Frame_CheckButton4:GetChecked() == true) then
 		Perl_Player_Buff_Set_Hide_Seconds(1);
 	else
 		Perl_Player_Buff_Set_Hide_Seconds(0);
@@ -86,9 +86,9 @@ function Perl_Config_Player_Buff_Set_Scale(value)
 
 		vartable = Perl_Player_Buff_GetVars();
 		if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-			Perl_Config_Player_Buff_Frame_CheckButton3:SetChecked(1);
+			Perl_Config_Player_Buff_Frame_CheckButton3:SetChecked(true);
 		else
-			Perl_Config_Player_Buff_Frame_CheckButton3:SetChecked(nil);
+			Perl_Config_Player_Buff_Frame_CheckButton3:SetChecked(false);
 		end
 	end
 end

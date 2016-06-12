@@ -470,8 +470,8 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_DPS_MODE);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Target_Target_Frame_CheckButton9:SetChecked(nil);	<!-- We need to uncheck Button 9 -->
-						Perl_Config_Target_Target_Frame_CheckButton10:SetChecked(nil);	<!-- We need to uncheck Button 10 -->
+						Perl_Config_Target_Target_Frame_CheckButton9:SetChecked(false);	<!-- We need to uncheck Button 9 -->
+						Perl_Config_Target_Target_Frame_CheckButton10:SetChecked(false);	<!-- We need to uncheck Button 10 -->
 						Perl_Config_Target_Target_Mode_Update();
 					</OnClick>
 				</Scripts>
@@ -493,8 +493,8 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_TANK_MODE);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(nil);	<!-- We need to uncheck Button 8 -->
-						Perl_Config_Target_Target_Frame_CheckButton10:SetChecked(nil);	<!-- We need to uncheck Button 10 -->
+						Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(false);	<!-- We need to uncheck Button 8 -->
+						Perl_Config_Target_Target_Frame_CheckButton10:SetChecked(false);	<!-- We need to uncheck Button 10 -->
 						Perl_Config_Target_Target_Mode_Update();
 					</OnClick>
 				</Scripts>
@@ -516,8 +516,8 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_HEALER_MODE);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(nil);	<!-- We need to uncheck Button 8 -->
-						Perl_Config_Target_Target_Frame_CheckButton9:SetChecked(nil);	<!-- We need to uncheck Button 9 -->
+						Perl_Config_Target_Target_Frame_CheckButton8:SetChecked(false);	<!-- We need to uncheck Button 8 -->
+						Perl_Config_Target_Target_Frame_CheckButton9:SetChecked(false);	<!-- We need to uncheck Button 9 -->
 						Perl_Config_Target_Target_Mode_Update();
 					</OnClick>
 				</Scripts>
@@ -539,8 +539,8 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_SMALL_TEXT);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Target_Target_Frame_CheckButton12:SetChecked(nil);	<!-- We need to uncheck Button 12 -->
-						Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(nil);	<!-- We need to uncheck Button 13 -->
+						Perl_Config_Target_Target_Frame_CheckButton12:SetChecked(false);	<!-- We need to uncheck Button 12 -->
+						Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(false);	<!-- We need to uncheck Button 13 -->
 						Perl_Config_Target_Target_Alert_Size_Update();
 					</OnClick>
 				</Scripts>
@@ -562,8 +562,8 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_LARGE_TEXT);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(nil);	<!-- We need to uncheck Button 11 -->
-						Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(nil);	<!-- We need to uncheck Button 13 -->
+						Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(false);	<!-- We need to uncheck Button 11 -->
+						Perl_Config_Target_Target_Frame_CheckButton13:SetChecked(false);	<!-- We need to uncheck Button 13 -->
 						Perl_Config_Target_Target_Alert_Size_Update();
 					</OnClick>
 				</Scripts>
@@ -585,8 +585,8 @@
 						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_TARGETTARGET_NO_TEXT);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(nil);	<!-- We need to uncheck Button 11 -->
-						Perl_Config_Target_Target_Frame_CheckButton12:SetChecked(nil);	<!-- We need to uncheck Button 12 -->
+						Perl_Config_Target_Target_Frame_CheckButton11:SetChecked(false);	<!-- We need to uncheck Button 11 -->
+						Perl_Config_Target_Target_Frame_CheckButton12:SetChecked(false);	<!-- We need to uncheck Button 12 -->
 						Perl_Config_Target_Target_Alert_Size_Update();
 					</OnClick>
 				</Scripts>

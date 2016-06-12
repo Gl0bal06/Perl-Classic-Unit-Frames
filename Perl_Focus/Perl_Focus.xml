@@ -246,7 +246,7 @@
 								UnitFrame_OnEnter(Perl_Focus_Frame);
 							</OnEnter>
 							<OnLeave>
-								UnitFrame_OnLeave();
+								UnitFrame_OnLeave(Perl_Focus_Frame);
 							</OnLeave>
 							<OnDragStart>
 								Perl_Focus_DragStart(button);

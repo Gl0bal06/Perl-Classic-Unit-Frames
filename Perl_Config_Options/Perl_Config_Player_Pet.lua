@@ -21,15 +21,15 @@ function Perl_Config_Player_Pet_Set_Values()
 	Perl_Config_Player_Pet_Frame_Slider3:SetValue(vartable["numpetdebuffsshown"]);
 
 	if (vartable["showxp"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton1:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton1:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton1:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton1:SetChecked(false);
 	end
 
 	if (vartable["locked"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton3:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton3:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton3:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton3:SetChecked(false);
 	end
 
 	Perl_Config_Player_Pet_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
@@ -37,9 +37,9 @@ function Perl_Config_Player_Pet_Set_Values()
 	Perl_Config_Player_Pet_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
 
 	if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-		Perl_Config_Player_Pet_Frame_CheckButton4:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton4:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton4:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton4:SetChecked(false);
 	end
 
 	Perl_Config_Player_Pet_Frame_Slider4Low:SetText("0");
@@ -63,63 +63,63 @@ function Perl_Config_Player_Pet_Set_Values()
 	Perl_Config_Player_Pet_Frame_Slider8:SetValue(vartable["debuffsize"]);
 
 	if (vartable["showportrait"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton5:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton5:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton5:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton5:SetChecked(false);
 	end
 
 	if (vartable["threedportrait"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton6:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton6:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton6:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton6:SetChecked(false);
 	end
 
 	if (vartable["portraitcombattext"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton7:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton7:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton7:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton7:SetChecked(false);
 	end
 
 	if (vartable["compactmode"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton8:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton8:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton8:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton8:SetChecked(false);
 	end
 
 	if (vartable["hidename"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton9:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton9:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton9:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton9:SetChecked(false);
 	end
 
 	if (vartable["displaypettarget"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton10:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton10:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton10:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton10:SetChecked(false);
 	end
 
 	if (vartable["classcolorednames"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton11:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton11:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton11:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton11:SetChecked(false);
 	end
 
 	if (vartable["showfriendlyhealth"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton12:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton12:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton12:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton12:SetChecked(false);
 	end
 
 	if (vartable["displaycastablebuffs"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton13:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton13:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton13:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton13:SetChecked(false);
 	end
 
 	if (vartable["displaycurabledebuff"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton15:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton15:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton15:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton15:SetChecked(false);
 	end
 
 	Perl_Config_Player_Pet_Frame_Slider9Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
@@ -127,9 +127,9 @@ function Perl_Config_Player_Pet_Set_Values()
 	Perl_Config_Player_Pet_Frame_Slider9:SetValue(floor(vartable["targetscale"]*100+0.5));
 
 	if (floor(vartable["targetscale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-		Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(1);
+		Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(true);
 	else
-		Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(nil);
+		Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(false);
 	end
 end
 
@@ -170,7 +170,7 @@ function Perl_Config_Player_Pet_Set_Debuff_Size(value)
 end
 
 function Perl_Config_Player_Pet_ShowXP_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton1:GetChecked() == 1) then
+	if (Perl_Config_Player_Pet_Frame_CheckButton1:GetChecked() == true) then
 		Perl_Player_Pet_Set_ShowXP(1);
 	else
 		Perl_Player_Pet_Set_ShowXP(0);
@@ -178,7 +178,7 @@ function Perl_Config_Player_Pet_ShowXP_Update()
 end
 
 function Perl_Config_Player_Pet_Lock_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton3:GetChecked() == 1) then
+	if (Perl_Config_Player_Pet_Frame_CheckButton3:GetChecked() == true) then
 		Perl_Player_Pet_Set_Lock(1);
 	else
 		Perl_Player_Pet_Set_Lock(0);
@@ -186,7 +186,7 @@ function Perl_Config_Player_Pet_Lock_Update()
 end
 
 function Perl_Config_Player_Pet_Portrait_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton5:GetChecked() == 1) then
+	if (Perl_Config_Player_Pet_Frame_CheckButton5:GetChecked() == true) then
 		Perl_Player_Pet_Set_Portrait(1);
 	else
 		Perl_Player_Pet_Set_Portrait(0);
@@ -194,7 +194,7 @@ function Perl_Config_Player_Pet_Portrait_Update()
 end
 
 function Perl_Config_Player_Pet_3D_Portrait_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton6:GetChecked() == 1) then
+	if (Perl_Config_Player_Pet_Frame_CheckButton6:GetChecked() == true) then
 		Perl_Player_Pet_Set_3D_Portrait(1);
 	else
 		Perl_Player_Pet_Set_3D_Portrait(0);
@@ -202,7 +202,7 @@ function Perl_Config_Player_Pet_3D_Portrait_Update()
 end
 
 function Perl_Config_Player_Pet_Portrait_Combat_Text_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton7:GetChecked() == 1) then
+	if (Perl_Config_Player_Pet_Frame_CheckButton7:GetChecked() == true) then
 		Perl_Player_Pet_Set_Portrait_Combat_Text(1);
 	else
 		Perl_Player_Pet_Set_Portrait_Combat_Text(0);
@@ -210,7 +210,7 @@ function Perl_Config_Player_Pet_Portrait_Combat_Text_Update()
 end
 
 function Perl_Config_Player_Pet_Compact_Mode_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton8:GetChecked() == 1) then
+	if (Perl_Config_Player_Pet_Frame_CheckButton8:GetChecked() == true) then
 		Perl_Player_Pet_Set_Compact_Mode(1);
 	else
 		Perl_Player_Pet_Set_Compact_Mode(0);
@@ -218,7 +218,7 @@ function Perl_Config_Player_Pet_Compact_Mode_Update()
 end
 
 function Perl_Config_Player_Pet_Hide_Name_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton9:GetChecked() == 1) then
+	if (Perl_Config_Player_Pet_Frame_CheckButton9:GetChecked() == true) then
 		Perl_Player_Pet_Set_Hide_Name(1);
 	else
 		Perl_Player_Pet_Set_Hide_Name(0);
@@ -226,7 +226,7 @@ function Perl_Config_Player_Pet_Hide_Name_Update()
 end
 
 function Perl_Config_Player_Pet_Pet_Target_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton10:GetChecked() == 1) then
+	if (Perl_Config_Player_Pet_Frame_CheckButton10:GetChecked() == true) then
 		Perl_Player_Pet_Set_Pet_Target(1);
 	else
 		Perl_Player_Pet_Set_Pet_Target(0);
@@ -234,7 +234,7 @@ function Perl_Config_Player_Pet_Pet_Target_Update()
 end
 
 function Perl_Config_Player_Pet_Class_Colored_Names_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton11:GetChecked() == 1) then
+	if (Perl_Config_Player_Pet_Frame_CheckButton11:GetChecked() == true) then
 		Perl_Player_Pet_Set_Class_Colored_Names(1);
 	else
 		Perl_Player_Pet_Set_Class_Colored_Names(0);
@@ -242,7 +242,7 @@ function Perl_Config_Player_Pet_Class_Colored_Names_Update()
 end
 
 function Perl_Config_Player_Pet_Friendly_Health_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton12:GetChecked() == 1) then
+	if (Perl_Config_Player_Pet_Frame_CheckButton12:GetChecked() == true) then
 		Perl_Player_Pet_Set_Friendly_Health(1);
 	else
 		Perl_Player_Pet_Set_Friendly_Health(0);
@@ -250,7 +250,7 @@ function Perl_Config_Player_Pet_Friendly_Health_Update()
 end
 
 function Perl_Config_Player_Pet_Class_Buffs_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton13:GetChecked() == 1) then
+	if (Perl_Config_Player_Pet_Frame_CheckButton13:GetChecked() == true) then
 		Perl_Player_Pet_Set_Class_Buffs(1);
 	else
 		Perl_Player_Pet_Set_Class_Buffs(0);
@@ -258,7 +258,7 @@ function Perl_Config_Player_Pet_Class_Buffs_Update()
 end
 
 function Perl_Config_Player_Pet_Curable_Debuffs_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton15:GetChecked() == 1) then
+	if (Perl_Config_Player_Pet_Frame_CheckButton15:GetChecked() == true) then
 		Perl_Player_Pet_Set_Curable_Debuffs(1);
 	else
 		Perl_Player_Pet_Set_Curable_Debuffs(0);
@@ -276,9 +276,9 @@ function Perl_Config_Player_Pet_Set_Scale(value)
 
 		vartable = Perl_Player_Pet_GetVars();
 		if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-			Perl_Config_Player_Pet_Frame_CheckButton4:SetChecked(1);
+			Perl_Config_Player_Pet_Frame_CheckButton4:SetChecked(true);
 		else
-			Perl_Config_Player_Pet_Frame_CheckButton4:SetChecked(nil);
+			Perl_Config_Player_Pet_Frame_CheckButton4:SetChecked(false);
 		end
 	end
 end
@@ -294,9 +294,9 @@ function Perl_Config_Player_Pet_Target_Set_Scale(value)
 
 		vartable = Perl_Player_Pet_GetVars();
 		if (floor(vartable["targetscale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-			Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(1);
+			Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(true);
 		else
-			Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(nil);
+			Perl_Config_Player_Pet_Frame_CheckButton14:SetChecked(false);
 		end
 	end
 end

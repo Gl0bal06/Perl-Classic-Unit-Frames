@@ -1,3 +1,9 @@
+6.01 - October 15, 2014
+ - All: Updated TOC Interface version to 60000
+ - Config: Converted many instances of 1/nil to true/false
+ - Focus/Party/PartyPet/PartyTarget/Target/ToT: Fixed an error related to UnitFrame_OnLeave requiring an argument
+ - Player: The experience bar now maxes out at Level 100
+
 5.08 - February 23, 2014
  - All: Updated TOC Interface version to 50400
  - All: Fixed taint issues relating to right click menus

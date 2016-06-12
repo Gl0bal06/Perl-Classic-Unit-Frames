@@ -754,7 +754,7 @@ function Perl_Player_Update_Experience()
 	Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 	Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 
-	if (UnitLevel("player") ~= 90) then
+	if (UnitLevel("player") ~= 100) then
 		-- XP Bar stuff
 		local playerxp = UnitXP("player");
 		local playerxpmax = UnitXPMax("player");
@@ -782,7 +782,7 @@ function Perl_Player_Update_Experience()
 		Perl_Player_XPBar:SetValue(1);
 		Perl_Player_XPRestBar:SetValue(1);
 
-		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_LEVEL_NINETY);
+		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_LEVEL_ONEHUNDRED);
 	end
 	
 end
@@ -2316,7 +2316,7 @@ function Perl_Player_XPTooltip(self)
 	GameTooltip_SetDefaultAnchor(GameTooltip, self);
 	if (xpbarstate == 1) then
 		local playerlevel = UnitLevel("player");		-- Player's next level
-		if (playerlevel < 90) then
+		if (playerlevel < 100) then
 			playerxp = UnitXP("player");				-- Player's current XP
 			playerxpmax = UnitXPMax("player");			-- Experience for the current level
 			local playerxprest = GetXPExhaustion();		-- Amount of bonus xp we have

@@ -146,7 +146,7 @@
 								UnitFrame_OnEnter(self:GetParent():GetParent());
 							</OnEnter>
 							<OnLeave>
-								UnitFrame_OnLeave();
+								UnitFrame_OnLeave(self:GetParent():GetParent());
 							</OnLeave>
 						</Scripts>
 					</Button>

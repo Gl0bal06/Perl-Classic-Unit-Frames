@@ -13,45 +13,45 @@ function Perl_Config_Party_Target_Set_Values()
 	local vartable = Perl_Party_Target_GetVars();
 
 	if (vartable["locked"] == 1) then
-		Perl_Config_Party_Target_Frame_CheckButton1:SetChecked(1);
+		Perl_Config_Party_Target_Frame_CheckButton1:SetChecked(true);
 	else
-		Perl_Config_Party_Target_Frame_CheckButton1:SetChecked(nil);
+		Perl_Config_Party_Target_Frame_CheckButton1:SetChecked(false);
 	end
 
 	if (vartable["hidepowerbars"] == 1) then
-		Perl_Config_Party_Target_Frame_CheckButton4:SetChecked(1);
+		Perl_Config_Party_Target_Frame_CheckButton4:SetChecked(true);
 	else
-		Perl_Config_Party_Target_Frame_CheckButton4:SetChecked(nil);
+		Perl_Config_Party_Target_Frame_CheckButton4:SetChecked(false);
 	end
 
 	if (vartable["classcolorednames"] == 1) then
-		Perl_Config_Party_Target_Frame_CheckButton5:SetChecked(1);
+		Perl_Config_Party_Target_Frame_CheckButton5:SetChecked(true);
 	else
-		Perl_Config_Party_Target_Frame_CheckButton5:SetChecked(nil);
+		Perl_Config_Party_Target_Frame_CheckButton5:SetChecked(false);
 	end
 
 	if (vartable["enabled"] == 1) then
-		Perl_Config_Party_Target_Frame_CheckButton6:SetChecked(1);
+		Perl_Config_Party_Target_Frame_CheckButton6:SetChecked(true);
 	else
-		Perl_Config_Party_Target_Frame_CheckButton6:SetChecked(nil);
+		Perl_Config_Party_Target_Frame_CheckButton6:SetChecked(false);
 	end
 
 	if (vartable["partyhiddeninraid"] == 1) then
-		Perl_Config_Party_Target_Frame_CheckButton7:SetChecked(1);
+		Perl_Config_Party_Target_Frame_CheckButton7:SetChecked(true);
 	else
-		Perl_Config_Party_Target_Frame_CheckButton7:SetChecked(nil);
+		Perl_Config_Party_Target_Frame_CheckButton7:SetChecked(false);
 	end
 
 	if (vartable["enabledfocus"] == 1) then
-		Perl_Config_Party_Target_Frame_CheckButton8:SetChecked(1);
+		Perl_Config_Party_Target_Frame_CheckButton8:SetChecked(true);
 	else
-		Perl_Config_Party_Target_Frame_CheckButton8:SetChecked(nil);
+		Perl_Config_Party_Target_Frame_CheckButton8:SetChecked(false);
 	end
 
 	if (vartable["focushiddeninraid"] == 1) then
-		Perl_Config_Party_Target_Frame_CheckButton9:SetChecked(1);
+		Perl_Config_Party_Target_Frame_CheckButton9:SetChecked(true);
 	else
-		Perl_Config_Party_Target_Frame_CheckButton9:SetChecked(nil);
+		Perl_Config_Party_Target_Frame_CheckButton9:SetChecked(false);
 	end
 
 	Perl_Config_Party_Target_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
@@ -59,9 +59,9 @@ function Perl_Config_Party_Target_Set_Values()
 	Perl_Config_Party_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
 
 	if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-		Perl_Config_Party_Target_Frame_CheckButton2:SetChecked(1);
+		Perl_Config_Party_Target_Frame_CheckButton2:SetChecked(true);
 	else
-		Perl_Config_Party_Target_Frame_CheckButton2:SetChecked(nil);
+		Perl_Config_Party_Target_Frame_CheckButton2:SetChecked(false);
 	end
 
 	Perl_Config_Party_Target_Frame_Slider2Low:SetText("0");
@@ -73,14 +73,14 @@ function Perl_Config_Party_Target_Set_Values()
 	Perl_Config_Party_Target_Frame_Slider3:SetValue(floor(vartable["focusscale"]*100+0.5));
 
 	if (floor(vartable["focusscale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-		Perl_Config_Party_Target_Frame_CheckButton10:SetChecked(1);
+		Perl_Config_Party_Target_Frame_CheckButton10:SetChecked(true);
 	else
-		Perl_Config_Party_Target_Frame_CheckButton10:SetChecked(nil);
+		Perl_Config_Party_Target_Frame_CheckButton10:SetChecked(false);
 	end
 end
 
 function Perl_Config_Party_Target_Party_Hidden_In_Raid_Update()
-	if (Perl_Config_Party_Target_Frame_CheckButton7:GetChecked() == 1) then
+	if (Perl_Config_Party_Target_Frame_CheckButton7:GetChecked() == true) then
 		Perl_Party_Target_Set_Party_Hidden_In_Raid(1);
 	else
 		Perl_Party_Target_Set_Party_Hidden_In_Raid(0);
@@ -88,7 +88,7 @@ function Perl_Config_Party_Target_Party_Hidden_In_Raid_Update()
 end
 
 function Perl_Config_Party_Target_Focus_Hidden_In_Raid_Update()
-	if (Perl_Config_Party_Target_Frame_CheckButton9:GetChecked() == 1) then
+	if (Perl_Config_Party_Target_Frame_CheckButton9:GetChecked() == true) then
 		Perl_Party_Target_Set_Focus_Hidden_In_Raid(1);
 	else
 		Perl_Party_Target_Set_Focus_Hidden_In_Raid(0);
@@ -96,7 +96,7 @@ function Perl_Config_Party_Target_Focus_Hidden_In_Raid_Update()
 end
 
 function Perl_Config_Party_Target_Enabled_Update()
-	if (Perl_Config_Party_Target_Frame_CheckButton6:GetChecked() == 1) then
+	if (Perl_Config_Party_Target_Frame_CheckButton6:GetChecked() == true) then
 		Perl_Party_Target_Set_Enabled(1);
 	else
 		Perl_Party_Target_Set_Enabled(0);
@@ -104,7 +104,7 @@ function Perl_Config_Party_Target_Enabled_Update()
 end
 
 function Perl_Config_Party_Target_Hide_Power_Bars_Update()
-	if (Perl_Config_Party_Target_Frame_CheckButton4:GetChecked() == 1) then
+	if (Perl_Config_Party_Target_Frame_CheckButton4:GetChecked() == true) then
 		Perl_Party_Target_Set_Hide_Power_Bars(1);
 	else
 		Perl_Party_Target_Set_Hide_Power_Bars(0);
@@ -112,7 +112,7 @@ function Perl_Config_Party_Target_Hide_Power_Bars_Update()
 end
 
 function Perl_Config_Party_Target_Class_Colored_Names_Update()
-	if (Perl_Config_Party_Target_Frame_CheckButton5:GetChecked() == 1) then
+	if (Perl_Config_Party_Target_Frame_CheckButton5:GetChecked() == true) then
 		Perl_Party_Target_Set_Class_Colored_Names(1);
 	else
 		Perl_Party_Target_Set_Class_Colored_Names(0);
@@ -120,7 +120,7 @@ function Perl_Config_Party_Target_Class_Colored_Names_Update()
 end
 
 function Perl_Config_Party_Target_Lock_Update()
-	if (Perl_Config_Party_Target_Frame_CheckButton1:GetChecked() == 1) then
+	if (Perl_Config_Party_Target_Frame_CheckButton1:GetChecked() == true) then
 		Perl_Party_Target_Set_Lock(1);
 	else
 		Perl_Party_Target_Set_Lock(0);
@@ -128,7 +128,7 @@ function Perl_Config_Party_Target_Lock_Update()
 end
 
 function Perl_Config_Party_Target_Enabled_Focus_Update()
-	if (Perl_Config_Party_Target_Frame_CheckButton8:GetChecked() == 1) then
+	if (Perl_Config_Party_Target_Frame_CheckButton8:GetChecked() == true) then
 		Perl_Party_Target_Set_Enabled_Focus(1);
 	else
 		Perl_Party_Target_Set_Enabled_Focus(0);
@@ -146,9 +146,9 @@ function Perl_Config_Party_Target_Set_Scale(value)
 
 		vartable = Perl_Party_Target_GetVars();
 		if (floor(vartable["scale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-			Perl_Config_Party_Target_Frame_CheckButton2:SetChecked(1);
+			Perl_Config_Party_Target_Frame_CheckButton2:SetChecked(true);
 		else
-			Perl_Config_Party_Target_Frame_CheckButton2:SetChecked(nil);
+			Perl_Config_Party_Target_Frame_CheckButton2:SetChecked(false);
 		end
 	end
 end
@@ -164,9 +164,9 @@ function Perl_Config_Party_Target_Focus_Set_Scale(value)
 
 		vartable = Perl_Party_Target_GetVars();
 		if (floor(vartable["focusscale"]*100+0.5) == floor(UIParent:GetScale()*100+0.5)) then
-			Perl_Config_Party_Target_Frame_CheckButton10:SetChecked(1);
+			Perl_Config_Party_Target_Frame_CheckButton10:SetChecked(true);
 		else
-			Perl_Config_Party_Target_Frame_CheckButton10:SetChecked(nil);
+			Perl_Config_Party_Target_Frame_CheckButton10:SetChecked(false);
 		end
 	end
 end
