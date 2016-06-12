@@ -77,7 +77,8 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_DYNAMIC_FLAGS");
-	this:RegisterEvent("UNIT_ENERGY"); 
+	this:RegisterEvent("UNIT_ENERGY");
+	this:RegisterEvent("UNIT_FOCUS");
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_LEVEL");
 	this:RegisterEvent("UNIT_MANA");
@@ -113,7 +114,7 @@ function Perl_Target_OnEvent(event)
 			Perl_Target_Update_Health();		-- Update health values
 			Perl_Target_Update_Dead_Status();	-- Is the target dead?
 			return;
-		elseif ((event == "UNIT_ENERGY" and arg1 == "target") or (event == "UNIT_MANA" and arg1 == "target") or (event == "UNIT_RAGE" and arg1 == "target")) then
+		elseif ((event == "UNIT_ENERGY" and arg1 == "target") or (event == "UNIT_MANA" and arg1 == "target") or (event == "UNIT_RAGE" and arg1 == "target") or (event == "UNIT_FOCUS" and arg1 == "target")) then
 			Perl_Target_Update_Mana();		-- Update energy/mana/rage values
 			return;
 		elseif (event == "UNIT_AURA" and arg1 == "target") then
@@ -153,7 +154,7 @@ end
 -- Slash Handler --
 -------------------
 function Perl_Target_SlashHandler(msg)
-  if (string.find(msg, "unlock")) then
+	if (string.find(msg, "unlock")) then
 		Perl_Target_Unlock();
 	elseif (string.find(msg, "lock")) then
 		Perl_Target_Lock();
@@ -166,14 +167,14 @@ function Perl_Target_SlashHandler(msg)
 	elseif (string.find(msg, "toggle")) then
 		Perl_Target_ToggleTarget();
 	elseif (string.find(msg, "debuffs")) then
-	  local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
+		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
 		if (arg1 ~= "") then
 			Perl_Target_Set_Debuffs(arg1)
 		else
 			DEFAULT_CHAT_FRAME:AddMessage("You need to specify a number of debuffs to display: /pt debuffs #");
 		end
 	elseif (string.find(msg, "buffs")) then
-	  local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
+		local _, _, cmd, arg1 = string.find(msg, "(%w+)[ ]?([-%w]*)");
 		if (arg1 ~= "") then
 			Perl_Target_Set_Buffs(arg1)
 		else
@@ -185,8 +186,8 @@ function Perl_Target_SlashHandler(msg)
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff unlock |cffffff00- Unlock the frame so it can be moved.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff combopoints |cffffff00- Toggle the displaying of combo points.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff class |cffffff00- Toggle the displaying of class icon.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buff # |cffffff00- Show the number of buffs to display.");
-		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuff # |cffffff00- Toggle the displaying of combo points.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff buffs # |cffffff00- Show the number of buffs to display.");
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff debuffs # |cffffff00- Toggle the displaying of combo points.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff toggle |cffffff00- Toggle the target frame on and off.");
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffffff status |cffffff00- Show the current settings.");
 	end
@@ -556,12 +557,16 @@ end
 function Perl_Target_Set_Buffs(newbuffnumber)
 	numbuffsshown = newbuffnumber;
 	Perl_Target_UpdateVars();
+	Perl_Target_Reset_Buffs();	-- Reset the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 buffs.");
 end
 
 function Perl_Target_Set_Debuffs(newdebuffnumber)
 	numdebuffsshown = newdebuffnumber;
 	Perl_Target_UpdateVars();
+	Perl_Target_Reset_Buffs();	-- Reset the buff icons
+	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 debuffs.");
 end
 
@@ -688,6 +693,24 @@ function Perl_Target_Buff_UpdateAll()
 	end
 end
 
+function Perl_Target_Reset_Buffs()
+	for buffnum=1,20 do
+		local button = getglobal("Perl_Target_Buff"..buffnum);
+		--local icon = getglobal(button:GetName().."Icon");
+		--local debuff = getglobal(button:GetName().."DebuffBorder");
+
+--		if (UnitBuff("target", buffnum)) then
+--			icon:SetTexture(UnitBuff("target", buffnum));
+--			button.isdebuff = 0;
+--			debuff:Hide();
+--			button:Show();
+--			buffmax = buffnum;
+--		else
+			button:Hide();
+		--end
+	end
+end
+
 function Perl_Target_SetBuffTooltip()
 	local buffmapping = 0;
 	GameTooltip:SetOwner(this, "ANCHOR_BOTTOMLEFT");
@@ -769,8 +792,8 @@ function Perl_Target_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.06",
-			releaseDate = "October 16, 2005",
+			version = "v0.07",
+			releaseDate = "October 20, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

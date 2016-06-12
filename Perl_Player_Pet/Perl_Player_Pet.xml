@@ -1,6 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-	<Script file="Perl_Pet.lua"/>
+	<Script file="Perl_Player_Pet.lua"/>
 	
 	<!-- Virtual buffs template -->
 	
@@ -74,10 +74,10 @@
 				<!-- Perl_Player_Pet_Buff_UpdateAll(); -->
 			</OnUpdate>
 			<OnLoad>
-				Perl_Pet_OnLoad();
+				Perl_Player_Pet_OnLoad();
 			</OnLoad>
 			<OnEvent>
-				Perl_Pet_OnEvent(event);
+				Perl_Player_Pet_OnEvent(event);
 			</OnEvent>
 			<OnMouseDown>
 				Perl_Player_Pet_MouseDown(arg1);
@@ -115,7 +115,7 @@
 			
 			<Frame name="Perl_Player_Pet_NameFrame">				
 				<Size>
-					<AbsDimension x="100" y="24"/>
+					<AbsDimension x="150" y="24"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT">

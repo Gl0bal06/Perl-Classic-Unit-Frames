@@ -6,7 +6,7 @@ Perl_Player_Config = {};
 -- Defaults
 local Perl_Player_State = 1;
 local locked = 0;
-local InCombat = nil;
+local InCombat = 0;
 local framefade = 0;
 --local showbuffs = 0;
 --local buffalerts = 0;
@@ -137,21 +137,6 @@ end
 -- Event Handler --
 -------------------
 function Perl_Player_OnEvent(event)
---	if (event == "UNIT_NAME_UPDATE" and arg1 == "pet") then
---		if ( UnitExists("pet") ) then
---		if (UnitName("pet") and not (UnitName("pet") == "Unknown Entity")) then
---			Perl_Player_Pet_VarInit();
---			Perl_Player_Pet_Frame:Show();
---		end
---		else
---		Perl_Player_Pet_Frame:Hide();
---		end
-----		if (UnitName("player") == "Unknown Entity") then
-----			return;
-----		else 
-----			Perl_Player_Initialize();
-----		end
---		return;
 	if (event == "UNIT_HEALTH" and arg1 == "player") then
 		Perl_Player_Update_Health();		-- Update health values
 		return;
@@ -179,9 +164,6 @@ function Perl_Player_OnEvent(event)
 		return;
 	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Player_Initialize();
---		if (UnitName("pet") and not (UnitName("pet") == "Unknown Entity")) then
---			Perl_Player_Pet_VarInit();
---		end
 		return;
 	elseif (event == "ADDON_LOADED" and arg1 == "Perl_Player") then
 		Perl_Player_myAddOns_Support();
@@ -369,15 +351,27 @@ end
 function Perl_Player_Update_Combat_Status(event)
 	-- Rest/Combat Status Icon
 	if (event == "PLAYER_REGEN_DISABLED") then
+		InCombat = 1;
 		Perl_Player_ActivityStatus:SetTexCoord(0.5, 1.0, 0.0, 0.5);
 		Perl_Player_ActivityStatus:Show();
 	elseif (event == "PLAYER_REGEN_ENABLED") then
+		InCombat = 0;
 		Perl_Player_ActivityStatus:Hide();
 	elseif (IsResting()) then
-		Perl_Player_ActivityStatus:SetTexCoord(0, 0.5, 0.0, 0.5);
-		Perl_Player_ActivityStatus:Show();
+		if (InCombat == 1) then
+			return;
+		else
+			Perl_Player_ActivityStatus:SetTexCoord(0, 0.5, 0.0, 0.5);
+			Perl_Player_ActivityStatus:Show();
+		end
+
+		
 	else
-		Perl_Player_ActivityStatus:Hide();
+		if (InCombat == 1) then
+			return;
+		else
+			Perl_Player_ActivityStatus:Hide();
+		end
 	end
 end
 
@@ -420,13 +414,13 @@ function Perl_Player_TogglePlayer()
 	Perl_Target_UpdateVars();
 end
 
-function Perl_Player_Lock ()
+function Perl_Player_Lock()
 	locked = 1;
 	Perl_Player_UpdateVars();
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffLocked|cffffff00.");
 end
 
-function Perl_Player_Unlock ()
+function Perl_Player_Unlock()
 	locked = 0;
 	Perl_Player_UpdateVars();
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Player Frame is now |cffffffffUnlocked|cffffff00.");
@@ -533,8 +527,8 @@ function Perl_Player_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.06",
-			releaseDate = "October 16, 2005",
+			version = "v0.07",
+			releaseDate = "October 20, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
