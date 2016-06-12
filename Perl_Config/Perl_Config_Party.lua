@@ -64,6 +64,12 @@ function Perl_Config_Party_Set_Values()
 		Perl_Config_Party_Frame_CheckButton8:SetChecked(nil);
 	end
 
+	if (vartable["verticalalign"] == 1) then
+		Perl_Config_Party_Frame_CheckButton10:SetChecked(1);
+	else
+		Perl_Config_Party_Frame_CheckButton10:SetChecked(nil);
+	end
+
 	Perl_Config_Party_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Party_Frame_Slider1High:SetText("Big");
 	Perl_Config_Party_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -155,6 +161,14 @@ function Perl_Config_Party_Lock_Update()
 		Perl_Party_Set_Lock(1);
 	else
 		Perl_Party_Set_Lock(0);
+	end
+end
+
+function Perl_Config_Party_VerticalAlign_Update()
+	if (Perl_Config_Party_Frame_CheckButton10:GetChecked() == 1) then
+		Perl_Party_Set_VerticalAlign(1);
+	else
+		Perl_Party_Set_VerticalAlign(0);
 	end
 end
 

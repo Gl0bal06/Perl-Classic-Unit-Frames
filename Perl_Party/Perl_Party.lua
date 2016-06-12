@@ -13,8 +13,9 @@ local showpets = 1;		-- show pets by default
 local colorhealth = 0;		-- progressively colored health bars are off by default
 local healermode = 0;		-- nurfed unit frame style
 local transparency = 1.0;	-- transparency for frames
-local bufflocation = 4;			-- default buff location
-local debufflocation = 1;		-- default debuff location
+local bufflocation = 4;		-- default buff location
+local debufflocation = 1;	-- default debuff location
+local verticalalign = 1;	-- default alignment is vertically
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -468,18 +469,56 @@ function Perl_Party_Update_Pet()
 			getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):Show();
 			getglobal(this:GetName().."_StatsFrame"):SetHeight(54);
 
-			local idspace = id + 1;
-			local partypetspacing = partyspacing - 12;
-			if (id == 1 or id == 2 or id == 3) then
+			if (verticalalign == 1) then
 				local idspace = id + 1;
 				local partypetspacing = partyspacing - 12;
-				getglobal("Perl_Party_MemberFrame"..idspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id, "TOPLEFT", 0, partypetspacing);
+				if (id == 1 or id == 2 or id == 3) then
+					local idspace = id + 1;
+					local partypetspacing = partyspacing - 12;
+					getglobal("Perl_Party_MemberFrame"..idspace):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id, "TOPLEFT", 0, partypetspacing);
+				end
+			else
+				local horizontalspacing;
+				if (partyspacing < 0) then
+					horizontalspacing = partyspacing - 195;
+				else
+					horizontalspacing = partyspacing + 195;
+				end
+				Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", horizontalspacing, 0);
+				Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", horizontalspacing, 0);
+				Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", horizontalspacing, 0);
 			end
 		else
 			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):Hide();
 			getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):Hide();
 			getglobal(this:GetName().."_StatsFrame"):SetHeight(42);
 
+			if (verticalalign == 1) then
+				if (id == 1) then
+					Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partyspacing);
+				elseif (id == 2) then
+					Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partyspacing);
+				elseif (id == 3) then
+					Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
+				end
+			else
+				local horizontalspacing;
+				if (partyspacing < 0) then
+					horizontalspacing = partyspacing - 195;
+				else
+					horizontalspacing = partyspacing + 195;
+				end
+				Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", horizontalspacing, 0);
+				Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", horizontalspacing, 0);
+				Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", horizontalspacing, 0);
+			end
+		end
+	else
+		getglobal(this:GetName().."_StatsFrame_PetHealthBar"):Hide();
+		getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):Hide();
+		getglobal(this:GetName().."_StatsFrame"):SetHeight(42);
+		
+		if (verticalalign == 1) then
 			if (id == 1) then
 				Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partyspacing);
 			elseif (id == 2) then
@@ -487,19 +526,17 @@ function Perl_Party_Update_Pet()
 			elseif (id == 3) then
 				Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
 			end
-		end
-	else
-		getglobal(this:GetName().."_StatsFrame_PetHealthBar"):Hide();
-		getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):Hide();
-		getglobal(this:GetName().."_StatsFrame"):SetHeight(42);
-
-		if (id == 1) then
-			Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partyspacing);
-		elseif (id == 2) then
-			Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partyspacing);
-		elseif (id == 3) then
-			Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
-		end
+		else
+			local horizontalspacing;
+			if (partyspacing < 0) then
+				horizontalspacing = partyspacing - 195;
+			else
+				horizontalspacing = partyspacing + 195;
+			end
+			Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", horizontalspacing, 0);
+			Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", horizontalspacing, 0);
+			Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", horizontalspacing, 0);
+			end
 	end
 end
 
@@ -763,41 +800,17 @@ function Perl_Party_Set_Localized_ClassIcons()
 	local ppty_translate_warlock;
 	local ppty_translate_warrior;
 
-	if (GetLocale() == "deDE") then
-		ppty_translate_druid = "Druide";
-		ppty_translate_hunter = "J\195\164ger";
-		ppty_translate_mage = "Magier";
-		ppty_translate_paladin = "Paladin";
-		ppty_translate_priest = "Priester";
-		ppty_translate_rogue = "Schurke";
-		ppty_translate_shaman = "Schamane";
-		ppty_translate_warlock = "Hexenmeister";
-		ppty_translate_warrior = "Krieger";
-	end
+	local localization = Perl_Config_Get_Localization();
 
-	if (GetLocale() == "enUS") then
-		ppty_translate_druid = "Druid";
-		ppty_translate_hunter = "Hunter";
-		ppty_translate_mage = "Mage";
-		ppty_translate_paladin = "Paladin";
-		ppty_translate_priest = "Priest";
-		ppty_translate_rogue = "Rogue";
-		ppty_translate_shaman = "Shaman";
-		ppty_translate_warlock = "Warlock";
-		ppty_translate_warrior = "Warrior";
-	end
-
-	if (GetLocale() == "frFR") then
-		ppty_translate_druid = "Druide";
-		ppty_translate_hunter = "Chasseur";
-		ppty_translate_mage = "Mage";
-		ppty_translate_paladin = "Paladin";
-		ppty_translate_priest = "Pr\195\170tre";
-		ppty_translate_rogue = "Voleur";
-		ppty_translate_shaman = "Chaman";
-		ppty_translate_warlock = "D\195\169moniste";
-		ppty_translate_warrior = "Guerrier";
-	end
+	ppty_translate_druid = localization["druid"];
+	ppty_translate_hunter = localization["hunter"];
+	ppty_translate_mage = localization["mage"];
+	ppty_translate_paladin = localization["paladin"];
+	ppty_translate_priest = localization["priest"];
+	ppty_translate_rogue = localization["rogue"];
+	ppty_translate_shaman = localization["shaman"];
+	ppty_translate_warlock = localization["warlock"];
+	ppty_translate_warrior = localization["warrior"];
 
 	Perl_Party_ClassPosRight = {
 		[ppty_translate_druid] = 0.75,
@@ -855,31 +868,45 @@ function Perl_Party_Set_Space(number)
 		partyspacing = -number;
 	end
 
-	Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partyspacing);
-	Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partyspacing);
-	Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
+	if (verticalalign == 1) then
 
-	if (showpets == 1) then
-		local partypetspacing = partyspacing - 12;
-		for partynum=1,4 do
-			local partyid = "party"..partynum;
-			local frame = getglobal("Perl_Party_MemberFrame"..partynum);
-			if (UnitName(partyid) ~= nil) then
-				if (UnitIsConnected(partyid) and UnitExists("partypet"..partynum)) then
-					if (partynum == 1) then
-						Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partypetspacing);
-					elseif (partynum == 2) then
-						Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partypetspacing);
-					elseif (partynum == 3) then
-						Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partypetspacing);
+		Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partyspacing);
+		Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partyspacing);
+		Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partyspacing);
+
+		if (showpets == 1) then
+			local partypetspacing = partyspacing - 12;
+			for partynum=1,4 do
+				local partyid = "party"..partynum;
+				local frame = getglobal("Perl_Party_MemberFrame"..partynum);
+				if (UnitName(partyid) ~= nil) then
+					if (UnitIsConnected(partyid) and UnitExists("partypet"..partynum)) then
+						if (partynum == 1) then
+							Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", 0, partypetspacing);
+						elseif (partynum == 2) then
+							Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", 0, partypetspacing);
+						elseif (partynum == 3) then
+							Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", 0, partypetspacing);
+						end
 					end
+				else
+					-- should be hidden, and will correctly adjust later when needed
 				end
-			else
-				-- should be hidden, and will correctly adjust later when needed
 			end
+		else
+			-- do nothing, no spacing required
 		end
+
 	else
-		-- do nothing, no spacing required
+		local horizontalspacing;
+		if (partyspacing < 0) then
+			horizontalspacing = partyspacing - 195;
+		else
+			horizontalspacing = partyspacing + 195;
+		end
+		Perl_Party_MemberFrame2:SetPoint("TOPLEFT", "Perl_Party_MemberFrame1", "TOPLEFT", horizontalspacing, 0);
+		Perl_Party_MemberFrame3:SetPoint("TOPLEFT", "Perl_Party_MemberFrame2", "TOPLEFT", horizontalspacing, 0);
+		Perl_Party_MemberFrame4:SetPoint("TOPLEFT", "Perl_Party_MemberFrame3", "TOPLEFT", horizontalspacing, 0);
 	end
 
 	Perl_Party_UpdateVars();
@@ -1025,6 +1052,12 @@ end
 function Perl_Party_Set_Lock(newvalue)
 	locked = newvalue;
 	Perl_Party_UpdateVars();
+end
+
+function Perl_Party_Set_VerticalAlign(newvalue)
+	verticalalign = newvalue;
+	Perl_Party_UpdateVars();
+	Perl_Party_Set_Space();
 end
 
 function Perl_Party_Set_Buff_Location(newvalue)
@@ -1373,6 +1406,7 @@ function Perl_Party_GetVars()
 	transparency = Perl_Party_Config[UnitName("player")]["Transparency"];
 	bufflocation = Perl_Party_Config[UnitName("player")]["BuffLocation"];
 	debufflocation = Perl_Party_Config[UnitName("player")]["DebuffLocation"];
+	verticalalign = Perl_Party_Config[UnitName("player")]["VerticalAlign"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1407,6 +1441,9 @@ function Perl_Party_GetVars()
 	if (debufflocation == nil) then
 		debufflocation = 1;
 	end
+	if (verticalalign == nil) then
+		verticalalign = 1;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1420,6 +1457,7 @@ function Perl_Party_GetVars()
 		["transparency"] = transparency,
 		["bufflocation"] = bufflocation,
 		["debufflocation"] = debufflocation,
+		["verticalalign"] = verticalalign,
 	}
 	return vars;
 end
@@ -1437,6 +1475,7 @@ function Perl_Party_UpdateVars()
 					["Transparency"] = transparency,
 					["BuffLocation"] = bufflocation,
 					["DebuffLocation"] = debufflocation,
+					["VerticalAlign"] = verticalalign,
 	};
 end
 
@@ -1639,8 +1678,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.31",
-			releaseDate = "January 11, 2006",
+			version = "v0.32",
+			releaseDate = "January 21, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

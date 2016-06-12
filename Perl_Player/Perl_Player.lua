@@ -104,7 +104,6 @@ function Perl_Player_OnEvent(event)
 		return;
 	elseif (event == "PARTY_LEADER_CHANGED" or event == "PARTY_MEMBERS_CHANGED") then
 		Perl_Player_Update_Leader();			-- Are we the party leader?
-		Perl_Player_Update_Loot_Method();		-- This was added to correctly hide the master loot icon after leaving a party/raid
 		return;
 	elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
 		Perl_Player_Update_Loot_Method();
@@ -492,6 +491,7 @@ function Perl_Player_Update_Raid_Group_Number()		-- taken from 1.8
 		local name, rank, subgroup;
 		if (GetNumRaidMembers() == 0) then
 			Perl_Player_RaidGroupNumberFrame:Hide();
+			Perl_Player_MasterIcon:Hide();				-- This was added to correctly hide the master loot icon after leaving a party/raid
 			return;
 		end
 		local numRaidMembers = GetNumRaidMembers();
@@ -627,41 +627,17 @@ function Perl_Player_Set_Localized_ClassIcons()
 	local pp_translate_warlock;
 	local pp_translate_warrior;
 
-	if (GetLocale() == "deDE") then
-		pp_translate_druid = "Druide";
-		pp_translate_hunter = "J\195\164ger";
-		pp_translate_mage = "Magier";
-		pp_translate_paladin = "Paladin";
-		pp_translate_priest = "Priester";
-		pp_translate_rogue = "Schurke";
-		pp_translate_shaman = "Schamane";
-		pp_translate_warlock = "Hexenmeister";
-		pp_translate_warrior = "Krieger";
-	end
+	local localization = Perl_Config_Get_Localization();
 
-	if (GetLocale() == "enUS") then
-		pp_translate_druid = "Druid";
-		pp_translate_hunter = "Hunter";
-		pp_translate_mage = "Mage";
-		pp_translate_paladin = "Paladin";
-		pp_translate_priest = "Priest";
-		pp_translate_rogue = "Rogue";
-		pp_translate_shaman = "Shaman";
-		pp_translate_warlock = "Warlock";
-		pp_translate_warrior = "Warrior";
-	end
-
-	if (GetLocale() == "frFR") then
-		pp_translate_druid = "Druide";
-		pp_translate_hunter = "Chasseur";
-		pp_translate_mage = "Mage";
-		pp_translate_paladin = "Paladin";
-		pp_translate_priest = "Pr\195\170tre";
-		pp_translate_rogue = "Voleur";
-		pp_translate_shaman = "Chaman";
-		pp_translate_warlock = "D\195\169moniste";
-		pp_translate_warrior = "Guerrier";
-	end
+	pp_translate_druid = localization["druid"];
+	pp_translate_hunter = localization["hunter"];
+	pp_translate_mage = localization["mage"];
+	pp_translate_paladin = localization["paladin"];
+	pp_translate_priest = localization["priest"];
+	pp_translate_rogue = localization["rogue"];
+	pp_translate_shaman = localization["shaman"];
+	pp_translate_warlock = localization["warlock"];
+	pp_translate_warrior = localization["warrior"];
 
 	Perl_Player_ClassPosRight = {
 		[pp_translate_druid] = 0.75,
@@ -995,6 +971,10 @@ function Perl_PlayerDropDown_Initialize()
 	UnitPopup_ShowMenu(Perl_Player_DropDown, "SELF", "player");
 end
 
+function test()
+	getglobal(Perl_Config_Frame):Show();
+end
+
 function Perl_Player_MouseUp(button)
 	if (SpellIsTargeting() and button == "RightButton") then
 		SpellStopTargeting();
@@ -1094,8 +1074,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.31",
-			releaseDate = "January 11, 2006",
+			version = "v0.32",
+			releaseDate = "January 21, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

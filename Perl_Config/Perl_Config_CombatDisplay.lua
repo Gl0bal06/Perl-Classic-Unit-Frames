@@ -71,6 +71,18 @@ function Perl_Config_CombatDisplay_Set_Values()
 	Perl_Config_CombatDisplay_Frame_Slider2Low:SetText("0");
 	Perl_Config_CombatDisplay_Frame_Slider2High:SetText("100");
 	Perl_Config_CombatDisplay_Frame_Slider2:SetValue(vartable["transparency"]*100);
+
+	if (vartable["showtarget"] == 1) then
+		Perl_Config_CombatDisplay_Frame_CheckButton10:SetChecked(1);
+	else
+		Perl_Config_CombatDisplay_Frame_CheckButton10:SetChecked(nil);
+	end
+
+	if (vartable["mobhealthsupport"] == 1) then
+		Perl_Config_CombatDisplay_Frame_CheckButton11:SetChecked(1);
+	else
+		Perl_Config_CombatDisplay_Frame_CheckButton11:SetChecked(nil);
+	end
 end
 
 function Perl_Config_CombatDisplay_Mode_Update()
@@ -117,6 +129,22 @@ function Perl_Config_CombatDisplay_Lock_Update()
 		Perl_CombatDisplay_Set_Lock(1);
 	else
 		Perl_CombatDisplay_Set_Lock(0);
+	end
+end
+
+function Perl_Config_CombatDisplay_Target_Update()
+	if (Perl_Config_CombatDisplay_Frame_CheckButton10:GetChecked() == 1) then
+		Perl_CombatDisplay_Set_Target(1);
+	else
+		Perl_CombatDisplay_Set_Target(0);
+	end
+end
+
+function Perl_Config_CombatDisplay_MobHealth_Update()
+	if (Perl_Config_CombatDisplay_Frame_CheckButton11:GetChecked() == 1) then
+		Perl_CombatDisplay_Set_MobHealth(1);
+	else
+		Perl_CombatDisplay_Set_MobHealth(0);
 	end
 end
 

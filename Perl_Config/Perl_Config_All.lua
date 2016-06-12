@@ -23,6 +23,16 @@ function Perl_Config_All_Set_Values()
 
 	Perl_Config_All_Frame_Slider2Low:SetText("0");
 	Perl_Config_All_Frame_Slider2High:SetText("100");
+
+	Perl_Config_All_Frame_Slider3Low:SetText("0");
+	Perl_Config_All_Frame_Slider3High:SetText("360");
+	Perl_Config_All_Frame_Slider3:SetValue(vartable["minimapbuttonpos"]);
+
+	if (vartable["showminimapbutton"] == 1) then
+		Perl_Config_All_Frame_CheckButton8:SetChecked(1);
+	else
+		Perl_Config_All_Frame_CheckButton8:SetChecked(nil);
+	end
 end
 
 function Perl_Config_All_Texture_Update(texturenum)
@@ -106,4 +116,16 @@ end
 
 function Perl_Config_All_Set_Transparency(value)
 	Perl_Config_Set_Transparency(value);
+end
+
+function Perl_Config_All_Set_MiniMap_Button()
+	if (Perl_Config_All_Frame_CheckButton8:GetChecked() == 1) then
+		Perl_Config_Set_MiniMap_Button(1);
+	else
+		Perl_Config_Set_MiniMap_Button(0);
+	end
+end
+
+function Perl_Config_All_Set_MiniMap_Position(value)
+	Perl_Config_Set_MiniMap_Position(value);
 end

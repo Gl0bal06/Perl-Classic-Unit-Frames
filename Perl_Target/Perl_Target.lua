@@ -691,53 +691,21 @@ function Perl_Target_Set_Localized_ClassIcons()
 	local pt_translate_warlock;
 	local pt_translate_warrior;
 
-	if (GetLocale() == "deDE") then
-		pt_translate_druid = "Druide";
-		pt_translate_hunter = "J\195\164ger";
-		pt_translate_mage = "Magier";
-		pt_translate_paladin = "Paladin";
-		pt_translate_priest = "Priester";
-		pt_translate_rogue = "Schurke";
-		pt_translate_shaman = "Schamane";
-		pt_translate_warlock = "Hexenmeister";
-		pt_translate_warrior = "Krieger";
+	local localization = Perl_Config_Get_Localization();
 
-		pt_localized_civilian = "Zivilist";
-		pt_localized_creature = "Kreatur";
-		pt_localized_notspecified = "Nicht spezifiziert";
-	end
+	pt_translate_druid = localization["druid"];
+	pt_translate_hunter = localization["hunter"];
+	pt_translate_mage = localization["mage"];
+	pt_translate_paladin = localization["paladin"];
+	pt_translate_priest = localization["priest"];
+	pt_translate_rogue = localization["rogue"];
+	pt_translate_shaman = localization["shaman"];
+	pt_translate_warlock = localization["warlock"];
+	pt_translate_warrior = localization["warrior"];
 
-	if (GetLocale() == "enUS") then
-		pt_translate_druid = "Druid";
-		pt_translate_hunter = "Hunter";
-		pt_translate_mage = "Mage";
-		pt_translate_paladin = "Paladin";
-		pt_translate_priest = "Priest";
-		pt_translate_rogue = "Rogue";
-		pt_translate_shaman = "Shaman";
-		pt_translate_warlock = "Warlock";
-		pt_translate_warrior = "Warrior";
-
-		pt_localized_civilian = "Civilian";
-		pt_localized_creature = "Creature";
-		pt_localized_notspecified = "Not specified";
-	end
-
-	if (GetLocale() == "frFR") then
-		pt_translate_druid = "Druide";
-		pt_translate_hunter = "Chasseur";
-		pt_translate_mage = "Mage";
-		pt_translate_paladin = "Paladin";
-		pt_translate_priest = "Pr\195\170tre";
-		pt_translate_rogue = "Voleur";
-		pt_translate_shaman = "Chaman";
-		pt_translate_warlock = "D\195\169moniste";
-		pt_translate_warrior = "Guerrier";
-
-		pt_localized_civilian = "Civil";
-		pt_localized_creature = "Cr\195\169ature";
-		pt_localized_notspecified = "Non indiqu\195\169";
-	end
+	pt_localized_civilian = localization["civilian"];
+	pt_localized_creature = localization["creature"];
+	pt_localized_notspecified = localization["notspecified"];
 
 	Perl_Target_ClassPosRight = {
 		[pt_translate_druid] = 0.75,
@@ -1352,8 +1320,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.31",
-			releaseDate = "January 11, 2006",
+			version = "v0.32",
+			releaseDate = "January 21, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
