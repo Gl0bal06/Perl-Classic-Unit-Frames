@@ -265,11 +265,6 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Scripts>
-					<OnDragStop>
-						Perl_Party_DragStop(arg1);
-					</OnDragStop>
-				</Scripts>
 				<Frames>
 					<Button name="$parent_CastClickOverlay">
 						<Size>
@@ -353,11 +348,6 @@
 						</Offset>
 					</Anchor>
 				</Anchors>
-				<Scripts>
-					<OnDragStop>
-						Perl_Party_DragStop(arg1);
-					</OnDragStop>
-				</Scripts>
 				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>

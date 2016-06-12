@@ -1,3 +1,8 @@
+0.81b - October 29, 2006
+ - Party: Removed some unused scripts from the XML
+ - Target: Combat text is moved to the right if the combo point frame is enabled
+ - ToT: The 16th buff on both ToT and ToToT will now display correctly
+
 0.81a - October 23, 2006
  - Config: Fixed the line 1546 error
 

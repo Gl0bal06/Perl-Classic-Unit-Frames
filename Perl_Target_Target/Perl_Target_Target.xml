@@ -657,7 +657,7 @@
 
 					<Button name="$parent_Buff16" inherits="Perl_Target_Target_BuffTemplate" id="16">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Buff7" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff15" relativePoint="TOPRIGHT">
 								<Offset>
 									<AbsDimension x="0.5" y="0"/>
 								</Offset>
@@ -1374,7 +1374,7 @@
 
 					<Button name="$parent_Buff16" inherits="Perl_Target_Target_Target_BuffTemplate" id="16">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parent_Buff7" relativePoint="TOPRIGHT">
+							<Anchor point="TOPLEFT" relativeTo="$parent_Buff15" relativePoint="TOPRIGHT">
 								<Offset>
 									<AbsDimension x="0.5" y="0"/>
 								</Offset>

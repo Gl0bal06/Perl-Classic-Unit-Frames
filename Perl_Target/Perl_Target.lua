@@ -1342,28 +1342,34 @@ end
 
 function Perl_Target_Update_Portrait()
 	if (showportrait == 1) then
-		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -4, -31);	-- Reposition the combo point frame
-		Perl_Target_PortraitFrame:Show();								-- Show the main portrait frame
+		Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 0, 0);		-- Position the Combat Text correctly on the portrait
+		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -4, -31);		-- Reposition the combo point frame
+		Perl_Target_PortraitFrame:Show();									-- Show the main portrait frame
 
 		if (threedportrait == 0) then
-			SetPortraitTexture(Perl_Target_Portrait, "target");					-- Load the correct 2d graphic
-			Perl_Target_PortraitFrame_TargetModel:Hide();						-- Hide the 3d graphic
-			Perl_Target_Portrait:Show();								-- Show the 2d graphic
+			SetPortraitTexture(Perl_Target_Portrait, "target");						-- Load the correct 2d graphic
+			Perl_Target_PortraitFrame_TargetModel:Hide();							-- Hide the 3d graphic
+			Perl_Target_Portrait:Show();									-- Show the 2d graphic
 		else
 			if UnitIsVisible("target") then
-				Perl_Target_PortraitFrame_TargetModel:SetUnit("target");			-- Load the correct 3d graphic
-				Perl_Target_Portrait:Hide();							-- Hide the 2d graphic
-				Perl_Target_PortraitFrame_TargetModel:Show();					-- Show the 3d graphic
+				Perl_Target_PortraitFrame_TargetModel:SetUnit("target");				-- Load the correct 3d graphic
+				Perl_Target_Portrait:Hide();								-- Hide the 2d graphic
+				Perl_Target_PortraitFrame_TargetModel:Show();						-- Show the 3d graphic
 				Perl_Target_PortraitFrame_TargetModel:SetCamera(0);
 			else
-				SetPortraitTexture(Perl_Target_Portrait, "target");				-- Load the correct 2d graphic
-				Perl_Target_PortraitFrame_TargetModel:Hide();					-- Hide the 3d graphic
-				Perl_Target_Portrait:Show();							-- Show the 2d graphic
+				SetPortraitTexture(Perl_Target_Portrait, "target");					-- Load the correct 2d graphic
+				Perl_Target_PortraitFrame_TargetModel:Hide();						-- Hide the 3d graphic
+				Perl_Target_Portrait:Show();								-- Show the 2d graphic
 			end
 		end
 	else
-		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -4, 0);		-- Reposition the combo point frame
-		Perl_Target_PortraitFrame:Hide();								-- Hide the frame and 2d/3d portion
+		if (showcp == 1) then
+			Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 25, 0);	-- Position the Combat Text to the right of the combo point frame
+		else
+			Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 0, 0);		-- Position the Combat Text correctly on the portrait
+		end
+		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -4, 0);			-- Reposition the combo point frame
+		Perl_Target_PortraitFrame:Hide();									-- Hide the frame and 2d/3d portion
 	end
 end
 
@@ -1671,6 +1677,7 @@ function Perl_Target_Set_Combo_Points(newvalue)
 	showcp = newvalue;
 	Perl_Target_UpdateVars();
 	Perl_Target_Update_Once();
+	Perl_Target_Portrait_Combat_Text();
 end
 
 function Perl_Target_Set_MobHealth(newvalue)
