@@ -425,7 +425,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						
+						Perl_Player_Pet_Allign();
 					</OnClick>
 				</Scripts>
 			</Button>

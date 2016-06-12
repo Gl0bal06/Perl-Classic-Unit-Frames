@@ -1100,7 +1100,7 @@ function Perl_Player_Pet_Allign()
 	Perl_Player_Pet_Target_Frame:ClearAllPoints();
 
 	if (Perl_Player_Frame) then
-		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMRIGHT", 0, 4);
+		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 4);
 	end
 	Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", Perl_Player_Pet_Frame, "TOPRIGHT", -4, 0);
 

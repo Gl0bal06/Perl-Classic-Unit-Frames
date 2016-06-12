@@ -1,3 +1,6 @@
+2.08a - June 14, 2007
+ - Pet: Fixed an issue with the reset position button
+
 2.08 - June 13, 2007
  - CombatDisplay: Added an energy ticker
  - Config: Removed the remaining Perl_Raid code
