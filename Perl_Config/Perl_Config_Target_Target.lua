@@ -72,12 +72,6 @@ function Perl_Config_Target_Target_Set_Values()
 		Perl_Config_Target_Target_Frame_CheckButton3:SetChecked(nil);
 	end
 
-	if (vartable["colorhealth"] == 1) then
-		Perl_Config_Target_Target_Frame_CheckButton4:SetChecked(1);
-	else
-		Perl_Config_Target_Target_Frame_CheckButton4:SetChecked(nil);
-	end
-
 	if (vartable["locked"] == 1) then
 		Perl_Config_Target_Target_Frame_CheckButton5:SetChecked(1);
 	else
@@ -153,14 +147,6 @@ function Perl_Config_Target_Target_MobHealth_Update()
 		Perl_Target_Target_Set_MobHealth(1);
 	else
 		Perl_Target_Target_Set_MobHealth(0);
-	end
-end
-
-function Perl_Config_Target_Target_Progressive_Color_Update()
-	if (Perl_Config_Target_Target_Frame_CheckButton4:GetChecked() == 1) then
-		Perl_Target_Target_Set_Progressive_Color(1);
-	else
-		Perl_Target_Target_Set_Progressive_Color(0);
 	end
 end
 

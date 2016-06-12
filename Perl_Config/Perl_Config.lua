@@ -7,6 +7,7 @@ Perl_Config_Global_ArcaneBar_Config = {};
 Perl_Config_Global_CombatDisplay_Config = {};
 Perl_Config_Global_Config_Config = {};
 Perl_Config_Global_Party_Config = {};
+Perl_Config_Global_Party_Pet_Config = {};
 Perl_Config_Global_Player_Config = {};
 Perl_Config_Global_Player_Buff_Config = {};
 Perl_Config_Global_Player_Pet_Config = {};
@@ -20,6 +21,7 @@ local showminimapbutton = 1;		-- minimap button is on by default
 local minimapbuttonpos = 270;		-- default minimap button position
 local transparentbackground = 0;	-- use solid black background as default
 PCUF_CASTPARTYSUPPORT = 1;		-- CastParty support is enabled by default (global variable so i don't go insane)
+PCUF_COLORHEALTH = 0;			-- progressively colored health bars are off by default
 
 -- Empty variables used for localization
 PERL_LOCALIZED_DRUID = nil;
@@ -250,6 +252,17 @@ function Perl_Config_Set_Texture(newvalue)
 		Perl_Party_MemberFrame4_StatsFrame_PetHealthBar_PetHealthBarTex:SetTexture(texturename);
 	end
 
+	if (Perl_Party_Pet_Script_Frame) then
+		Perl_Party_Pet1_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
+		Perl_Party_Pet1_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
+		Perl_Party_Pet2_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
+		Perl_Party_Pet2_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
+		Perl_Party_Pet3_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
+		Perl_Party_Pet3_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
+		Perl_Party_Pet4_StatsFrame_HealthBar_HealthBarTex:SetTexture(texturename);
+		Perl_Party_Pet4_StatsFrame_ManaBar_ManaBarTex:SetTexture(texturename);
+	end
+
 	if (Perl_Player_Frame) then
 		Perl_Player_HealthBarTex:SetTexture(texturename);
 		Perl_Player_ManaBarTex:SetTexture(texturename);
@@ -307,6 +320,15 @@ function Perl_Config_Set_Background(newvalue)
 			Perl_Party_Initialize_Frame_Color(1);
 		end
 
+		if (Perl_Party_Pet_Script_Frame) then
+			for partynum=1,4 do
+				getglobal("Perl_Party_Pet"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+				getglobal("Perl_Party_Pet"..partynum.."_PortraitFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+				getglobal("Perl_Party_Pet"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			end
+			Perl_Party_Pet_Initialize_Frame_Color(1);
+		end
+
 		if (Perl_Player_Frame) then
 			Perl_Player_NameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_LevelFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
@@ -319,6 +341,7 @@ function Perl_Config_Set_Background(newvalue)
 		if (Perl_Player_Pet_Frame) then
 			Perl_Player_Pet_LevelFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_Pet_NameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_Pet_PortraitFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_Pet_StatsFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_Pet_Initialize_Frame_Color();
 		end
@@ -367,6 +390,15 @@ function Perl_Config_Set_Background(newvalue)
 			Perl_Party_Initialize_Frame_Color(1);
 		end
 
+		if (Perl_Party_Pet_Script_Frame) then
+			for partynum=1,4 do
+				getglobal("Perl_Party_Pet"..partynum.."_NameFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+				getglobal("Perl_Party_Pet"..partynum.."_PortraitFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+				getglobal("Perl_Party_Pet"..partynum.."_StatsFrame"):SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			end
+			Perl_Party_Pet_Initialize_Frame_Color(1);
+		end
+
 		if (Perl_Player_Frame) then
 			Perl_Player_NameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_LevelFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
@@ -379,6 +411,7 @@ function Perl_Config_Set_Background(newvalue)
 		if (Perl_Player_Pet_Frame) then
 			Perl_Player_Pet_LevelFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_Pet_NameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Player_Pet_PortraitFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_Pet_StatsFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Player_Pet_Initialize_Frame_Color();
 		end
@@ -426,6 +459,10 @@ function Perl_Config_Set_Transparency(newvalue)
 		Perl_Party_Set_Transparency(newvalue);
 	end
 
+	if (Perl_Party_Pet_Script_Frame) then
+		Perl_Party_Pet_Set_Transparency(newvalue);
+	end
+
 	if (Perl_Player_Frame) then
 		Perl_Player_Set_Transparency(newvalue);
 	end
@@ -464,6 +501,11 @@ function Perl_Config_Set_CastParty_Support(newvalue)
 	Perl_Config_UpdateVars();
 end
 
+function Perl_Config_Set_Color_Health(newvalue)
+	PCUF_COLORHEALTH = newvalue;
+	Perl_Config_UpdateVars();
+end
+
 
 -----------------------------------
 -- Reset Frame Position Function --
@@ -478,6 +520,10 @@ function Perl_Config_Frame_Reset_Positions()
 	if (Perl_Party_Frame) then
 		Perl_Party_Frame:SetUserPlaced(1);		-- All the SetUserPlaced allows us to save the new location set by these functions even if the user has not moved the frames on their own yet.
 		Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -8, -187);
+	end
+
+	if (Perl_Party_Pet_Script_Frame) then
+		Perl_Party_Pet_Allign();
 	end
 
 	if (Perl_Player_Frame) then
@@ -533,7 +579,6 @@ function Perl_Config_Global_Save_Settings()
 			["HealthPersist"] = vartable["healthpersist"],
 			["ManaPersist"] = vartable["manapersist"],
 			["Scale"] = vartable["scale"],
-			["ColorHealth"] = vartable["colorhealth"],
 			["Transparency"] = vartable["transparency"],
 			["ShowTarget"] = vartable["showtarget"],
 			["MobHealthSupport"] = vartable["mobhealthsupport"],
@@ -554,6 +599,7 @@ function Perl_Config_Global_Save_Settings()
 			["MiniMapButtonPos"] = vartable["minimapbuttonpos"],
 			["TransparentBackground"] = vartable["transparentbackground"],
 			["PCUF_CastPartySupport"] = vartable["PCUF_CastPartySupport"],
+			["PCUF_ColorHealth"] = vartable["PCUF_ColorHealth"],
 		};
 	end
 
@@ -566,7 +612,6 @@ function Perl_Config_Global_Save_Settings()
 			["PartySpacing"] = vartable["partyspacing"],
 			["Scale"] = vartable["scale"],
 			["ShowPets"] = vartable["showpets"],
-			["ColorHealth"] = vartable["colorhealth"],
 			["HealerMode"] = vartable["healermode"],
 			["Transparency"] = vartable["transparency"],
 			["BuffLocation"] = vartable["bufflocation"],
@@ -584,6 +629,32 @@ function Perl_Config_Global_Save_Settings()
 		};
 	end
 
+	if (Perl_Party_Pet_Script_Frame) then
+		local vartable = Perl_Party_Pet_GetVars();
+		Perl_Config_Global_Party_Pet_Config["Global Settings"] = {
+			["Locked"] = vartable["locked"],
+			["ShowPortrait"] = vartable["showportrait"],
+			["ThreeDPortrait"] = vartable["threedportrait"],
+			["Scale"] = vartable["scale"],
+			["Transparency"] = vartable["transparency"],
+			["Buffs"] = vartable["numpetbuffsshown"],
+			["Debuffs"] = vartable["numpetdebuffsshown"],
+			["BuffSize"] = vartable["buffsize"],
+			["DebuffSize"] = vartable["debuffsize"],
+			["BuffLocation"] = vartable["bufflocation"],
+			["DebuffLocation"] = vartable["debufflocation"],
+			["HiddenInRaids"] = vartable["hiddeninraids"],
+			["XPosition1"] = floor(Perl_Party_Pet1:GetLeft() + 0.5),
+			["YPosition1"] = floor(Perl_Party_Pet1:GetTop() - (UIParent:GetTop() / Perl_Party_Pet1:GetScale()) + 0.5),
+			["XPosition2"] = floor(Perl_Party_Pet2:GetLeft() + 0.5),
+			["YPosition2"] = floor(Perl_Party_Pet2:GetTop() - (UIParent:GetTop() / Perl_Party_Pet2:GetScale()) + 0.5),
+			["XPosition3"] = floor(Perl_Party_Pet3:GetLeft() + 0.5),
+			["YPosition3"] = floor(Perl_Party_Pet3:GetTop() - (UIParent:GetTop() / Perl_Party_Pet3:GetScale()) + 0.5),
+			["XPosition4"] = floor(Perl_Party_Pet4:GetLeft() + 0.5),
+			["YPosition4"] = floor(Perl_Party_Pet4:GetTop() - (UIParent:GetTop() / Perl_Party_Pet4:GetScale()) + 0.5),
+		};
+	end
+
 	if (Perl_Player_Frame) then
 		local vartable = Perl_Player_GetVars();
 		Perl_Config_Global_Player_Config["Global Settings"] = {
@@ -592,7 +663,6 @@ function Perl_Config_Global_Save_Settings()
 			["CompactMode"] = vartable["compactmode"],
 			["ShowRaidGroup"] = vartable["showraidgroup"],
 			["Scale"] = vartable["scale"],
-			["ColorHealth"] = vartable["colorhealth"],
 			["HealerMode"] = vartable["healermode"],
 			["Transparency"] = vartable["transparency"],
 			["XPosition"] = floor(Perl_Player_Frame:GetLeft() + 0.5),
@@ -622,7 +692,6 @@ function Perl_Config_Global_Save_Settings()
 			["Scale"] = vartable["scale"],
 			["Buffs"] = vartable["numpetbuffsshown"],
 			["Debuffs"] = vartable["numpetdebuffsshown"],
-			["ColorHealth"] = vartable["colorhealth"],
 			["Transparency"] = vartable["transparency"],
 			["BuffLocation"] = vartable["bufflocation"],
 			["DebuffLocation"] = vartable["debufflocation"],
@@ -630,6 +699,8 @@ function Perl_Config_Global_Save_Settings()
 			["YPosition"] = floor(Perl_Player_Pet_Frame:GetTop() - (UIParent:GetTop() / Perl_Player_Pet_Frame:GetScale()) + 0.5),
 			["BuffSize"] = vartable["buffsize"],
 			["DebuffSize"] = vartable["debuffsize"],
+			["ShowPortrait"] = vartable["showportrait"],
+			["ThreeDPortrait"] = vartable["threedportrait"],
 		};
 	end
 
@@ -665,6 +736,8 @@ function Perl_Config_Global_Save_Settings()
 			["YPosition7"] = floor(Perl_Raid_Grp7:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp7:GetScale()) + 0.5),
 			["XPosition8"] = floor(Perl_Raid_Grp8:GetLeft() + 0.5),
 			["YPosition8"] = floor(Perl_Raid_Grp8:GetTop() - (UIParent:GetTop() / Perl_Raid_Grp8:GetScale()) + 0.5),
+			["ShowHeaders"] = vartable["showheaders"],
+			["ShowMissingHealth"] = vartable["showmissinghealth"],
 		};
 	end
 
@@ -680,7 +753,6 @@ function Perl_Config_Global_Save_Settings()
 			["Debuffs"] = vartable["numdebuffsshown"],
 			["MobHealthSupport"] = vartable["mobhealthsupport"],
 			["Scale"] = vartable["scale"],
-			["ColorHealth"] = vartable["colorhealth"],
 			["ShowPvPRank"] = vartable["showpvprank"],
 			["Transparency"] = vartable["transparency"],
 			["BuffDebuffScale"] = vartable["buffdebuffscale"],
@@ -702,7 +774,6 @@ function Perl_Config_Global_Save_Settings()
 	if (Perl_Target_Target_Script_Frame) then
 		local vartable = Perl_Target_Target_GetVars();
 		Perl_Config_Global_Target_Target_Config["Global Settings"] = {
-			["ColorHealth"] = vartable["colorhealth"],
 			["Locked"] = vartable["locked"],
 			["MobHealthSupport"] = vartable["mobhealthsupport"],
 			["Scale"] = vartable["scale"],
@@ -747,6 +818,21 @@ function Perl_Config_Global_Load_Settings()
 		if ((Perl_Config_Global_Party_Config["Global Settings"]["XPosition"] ~= nil) and (Perl_Config_Global_Party_Config["Global Settings"]["YPosition"] ~= nil)) then
 			Perl_Party_Frame:SetUserPlaced(1);
 			Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Config["Global Settings"]["XPosition"], Perl_Config_Global_Party_Config["Global Settings"]["YPosition"]);
+		end
+	end
+
+	if (Perl_Party_Pet_Script_Frame) then
+		Perl_Party_Pet_UpdateVars(Perl_Config_Global_Party_Pet_Config);
+
+		if ((Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition1"] ~= nil) and (Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition1"] ~= nil)) then
+			Perl_Party_Pet1:SetUserPlaced(1);
+			Perl_Party_Pet2:SetUserPlaced(1);
+			Perl_Party_Pet3:SetUserPlaced(1);
+			Perl_Party_Pet4:SetUserPlaced(1);
+			Perl_Party_Pet1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition1"], Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition1"]);
+			Perl_Party_Pet2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition2"], Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition2"]);
+			Perl_Party_Pet3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition3"], Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition3"]);
+			Perl_Party_Pet4:SetPoint("TOPLEFT", UIParent, "TOPLEFT", Perl_Config_Global_Party_Pet_Config["Global Settings"]["XPosition4"], Perl_Config_Global_Party_Pet_Config["Global Settings"]["YPosition4"]);
 		end
 	end
 
@@ -825,6 +911,7 @@ function Perl_Config_GetVars()
 	minimapbuttonpos = Perl_Config_Config[UnitName("player")]["MiniMapButtonPos"];
 	transparentbackground = Perl_Config_Config[UnitName("player")]["TransparentBackground"];
 	PCUF_CASTPARTYSUPPORT = Perl_Config_Config[UnitName("player")]["PCUF_CastPartySupport"];
+	PCUF_COLORHEALTH = Perl_Config_Config[UnitName("player")]["PCUF_ColorHealth"];
 
 	if (texture == nil) then
 		texture = 0;
@@ -841,6 +928,9 @@ function Perl_Config_GetVars()
 	if (PCUF_CASTPARTYSUPPORT == nil) then
 		PCUF_CASTPARTYSUPPORT = 1;
 	end
+	if (PCUF_COLORHEALTH == nil) then
+		PCUF_COLORHEALTH = 0;
+	end
 
 	local vars = {
 		["texture"] = texture,
@@ -848,6 +938,7 @@ function Perl_Config_GetVars()
 		["minimapbuttonpos"] = minimapbuttonpos,
 		["transparentbackground"] = transparentbackground,
 		["PCUF_CastPartySupport"] = PCUF_CASTPARTYSUPPORT,
+		["PCUF_ColorHealth"] = PCUF_COLORHEALTH,
 	}
 	return vars;
 end
@@ -881,6 +972,11 @@ function Perl_Config_UpdateVars(vartable)
 			else
 				PCUF_CASTPARTYSUPPORT = nil;
 			end
+			if (vartable["Global Settings"]["PCUF_ColorHealth"] ~= nil) then
+				PCUF_COLORHEALTH = vartable["Global Settings"]["PCUF_ColorHealth"];
+			else
+				PCUF_COLORHEALTH = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -899,6 +995,9 @@ function Perl_Config_UpdateVars(vartable)
 		if (PCUF_CASTPARTYSUPPORT == nil) then
 			PCUF_CASTPARTYSUPPORT = 1;
 		end
+		if (PCUF_COLORHEALTH == nil) then
+			PCUF_COLORHEALTH = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Config_Set_Texture(texture);
@@ -913,6 +1012,7 @@ function Perl_Config_UpdateVars(vartable)
 		["MiniMapButtonPos"] = minimapbuttonpos,
 		["TransparentBackground"] = transparentbackground,
 		["PCUF_CastPartySupport"] = PCUF_CASTPARTYSUPPORT,
+		["PCUF_ColorHealth"] = PCUF_COLORHEALTH,
 	};
 end
 
@@ -980,8 +1080,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.55",
-			releaseDate = "April 9, 2006",
+			version = "Version 0.56",
+			releaseDate = "April 12, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

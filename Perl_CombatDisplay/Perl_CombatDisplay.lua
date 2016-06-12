@@ -9,7 +9,6 @@ local manapersist = 0;		-- mana persist is off by default
 local healthpersist = 0;	-- health persist is off by default
 local locked = 0;		-- unlocked by default
 local scale = 1;		-- default scale
-local colorhealth = 0;		-- progressively colored health bars are off by default
 local transparency = 1;		-- transparency for the frame
 local showtarget = 0;		-- target frame is disabled by default
 local mobhealthsupport = 1;	-- mobhealth is enabled by default
@@ -341,7 +340,7 @@ function Perl_CombatDisplay_Update_Health()
 		playerhealth = 0;
 	end
 
-	if (colorhealth == 1) then
+	if (PCUF_COLORHEALTH == 1) then
 		local playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
 		if ((playerhealthpercent <= 100) and (playerhealthpercent > 75)) then
 			Perl_CombatDisplay_HealthBar:SetStatusBarColor(0, 0.8, 0);
@@ -556,7 +555,7 @@ function Perl_CombatDisplay_Update_PetHealth()
 		pethealth = 0;
 	end
 
-	if (colorhealth == 1) then
+	if (PCUF_COLORHEALTH == 1) then
 		local pethealthpercent = floor(pethealth/pethealthmax*100+0.5);
 		if ((pethealthpercent <= 100) and (pethealthpercent > 75)) then
 			Perl_CombatDisplay_PetHealthBar:SetStatusBarColor(0, 0.8, 0);
@@ -620,7 +619,7 @@ function Perl_CombatDisplay_Target_Update_Health()
 		targethealth = 0;
 	end
 
-	if (colorhealth == 1) then
+	if (PCUF_COLORHEALTH == 1) then
 		local targethealthpercent = floor(targethealth/targethealthmax*100+0.5);
 		if ((targethealthpercent <= 100) and (targethealthpercent > 75)) then
 			Perl_CombatDisplay_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
@@ -797,12 +796,6 @@ function Perl_CombatDisplay_Set_Mana_Persistance(newvalue)
 	Perl_CombatDisplay_UpdateDisplay();
 end
 
-function Perl_CombatDisplay_Set_Progressive_Color(newvalue)
-	colorhealth = newvalue;
-	Perl_CombatDisplay_UpdateVars();
-	Perl_CombatDisplay_UpdateDisplay();
-end
-
 function Perl_CombatDisplay_Set_Lock(newvalue)
 	locked = newvalue;
 	Perl_CombatDisplay_UpdateVars();
@@ -865,7 +858,6 @@ function Perl_CombatDisplay_GetVars()
 	healthpersist = Perl_CombatDisplay_Config[UnitName("player")]["HealthPersist"];
 	manapersist = Perl_CombatDisplay_Config[UnitName("player")]["ManaPersist"];
 	scale = Perl_CombatDisplay_Config[UnitName("player")]["Scale"];
-	colorhealth = Perl_CombatDisplay_Config[UnitName("player")]["ColorHealth"];
 	transparency = Perl_CombatDisplay_Config[UnitName("player")]["Transparency"];
 	showtarget = Perl_CombatDisplay_Config[UnitName("player")]["ShowTarget"];
 	mobhealthsupport = Perl_CombatDisplay_Config[UnitName("player")]["MobHealthSupport"];
@@ -886,9 +878,6 @@ function Perl_CombatDisplay_GetVars()
 	end
 	if (scale == nil) then
 		scale = 1;
-	end
-	if (colorhealth == nil) then
-		colorhealth = 0;
 	end
 	if (transparency == nil) then
 		transparency = 1;
@@ -912,7 +901,6 @@ function Perl_CombatDisplay_GetVars()
 		["healthpersist"] = healthpersist,
 		["locked"] = locked,
 		["scale"] = scale,
-		["colorhealth"] = colorhealth,
 		["transparency"] = transparency,
 		["showtarget"] = showtarget,
 		["mobhealthsupport"] = mobhealthsupport,
@@ -950,11 +938,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 				scale = vartable["Global Settings"]["Scale"];
 			else
 				scale = nil;
-			end
-			if (vartable["Global Settings"]["ColorHealth"] ~= nil) then
-				colorhealth = vartable["Global Settings"]["ColorHealth"];
-			else
-				colorhealth = nil;
 			end
 			if (vartable["Global Settings"]["Transparency"] ~= nil) then
 				transparency = vartable["Global Settings"]["Transparency"];
@@ -999,9 +982,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		if (scale == nil) then
 			scale = 1;
 		end
-		if (colorhealth == nil) then
-			colorhealth = 0;
-		end
 		if (transparency == nil) then
 			transparency = 1;
 		end
@@ -1032,7 +1012,6 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		["HealthPersist"] = healthpersist,
 		["ManaPersist"] = manapersist,
 		["Scale"] = scale,
-		["ColorHealth"] = colorhealth,
 		["Transparency"] = transparency,
 		["ShowTarget"] = showtarget,
 		["MobHealthSupport"] = mobhealthsupport,
@@ -1174,15 +1153,15 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.55",
-			releaseDate = "April 9, 2006",
+			version = "Version 0.56",
+			releaseDate = "April 12, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
 			category = MYADDONS_CATEGORY_OTHERS
 		};
 		Perl_CombatDisplay_myAddOns_Help = {};
-		Perl_CombatDisplay_myAddOns_Help[1] = "/perlcombatdisplay\n/pcd\n";
+		Perl_CombatDisplay_myAddOns_Help[1] = "/perl";
 		myAddOnsFrame_Register(Perl_CombatDisplay_myAddOns_Details, Perl_CombatDisplay_myAddOns_Help);
 	end
 end

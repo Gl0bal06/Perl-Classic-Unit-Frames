@@ -9,7 +9,6 @@ local xpbarstate = 1;		-- show default xp bar by default
 local compactmode = 0;		-- compact mode is disabled by default
 local showraidgroup = 1;	-- show the raid group number by default when in raids
 local scale = 1;		-- default scale
-local colorhealth = 0;		-- progressively colored health bars are off by default
 local healermode = 0;		-- nurfed unit frame style
 local transparency = 1;		-- transparency for frames
 local showportrait = 0;		-- portrait is hidden by default
@@ -253,7 +252,7 @@ function Perl_Player_Update_Health()
 	Perl_Player_HealthBar:SetMinMaxValues(0, playerhealthmax);
 	Perl_Player_HealthBar:SetValue(playerhealth);
 
-	if (colorhealth == 1) then
+	if (PCUF_COLORHEALTH == 1) then
 		if ((playerhealthpercent <= 100) and (playerhealthpercent > 75)) then
 			Perl_Player_HealthBar:SetStatusBarColor(0, 0.8, 0);
 			Perl_Player_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -954,12 +953,6 @@ function Perl_Player_Set_RaidGroupNumber(newvalue)
 	Perl_Player_Update_Raid_Group_Number();
 end
 
-function Perl_Player_Set_Progressive_Color(newvalue)
-	colorhealth = newvalue;
-	Perl_Player_UpdateVars();
-	Perl_Player_Update_Health();
-end
-
 function Perl_Player_Set_Lock(newvalue)
 	locked = newvalue;
 	Perl_Player_UpdateVars();
@@ -1026,7 +1019,6 @@ function Perl_Player_GetVars()
 	compactmode = Perl_Player_Config[UnitName("player")]["CompactMode"];
 	showraidgroup = Perl_Player_Config[UnitName("player")]["ShowRaidGroup"];
 	scale = Perl_Player_Config[UnitName("player")]["Scale"];
-	colorhealth = Perl_Player_Config[UnitName("player")]["ColorHealth"];
 	healermode = Perl_Player_Config[UnitName("player")]["HealerMode"];
 	transparency = Perl_Player_Config[UnitName("player")]["Transparency"];
 	showportrait = Perl_Player_Config[UnitName("player")]["ShowPortrait"];
@@ -1049,9 +1041,6 @@ function Perl_Player_GetVars()
 	end
 	if (scale == nil) then
 		scale = 1;
-	end
-	if (colorhealth == nil) then
-		colorhealth = 0;
 	end
 	if (healermode == nil) then
 		healermode = 0;
@@ -1081,7 +1070,6 @@ function Perl_Player_GetVars()
 		["compactmode"] = compactmode,
 		["showraidgroup"] = showraidgroup,
 		["scale"] = scale,
-		["colorhealth"] = colorhealth,
 		["healermode"] = healermode,
 		["transparency"] = transparency,
 		["showportrait"] = showportrait,
@@ -1121,11 +1109,6 @@ function Perl_Player_UpdateVars(vartable)
 				scale = vartable["Global Settings"]["Scale"];
 			else
 				scale = nil;
-			end
-			if (vartable["Global Settings"]["ColorHealth"] ~= nil) then
-				colorhealth = vartable["Global Settings"]["ColorHealth"];
-			else
-				colorhealth = nil;
 			end
 			if (vartable["Global Settings"]["HealerMode"] ~= nil) then
 				healermode = vartable["Global Settings"]["HealerMode"];
@@ -1180,9 +1163,6 @@ function Perl_Player_UpdateVars(vartable)
 		if (scale == nil) then
 			scale = 1;
 		end
-		if (colorhealth == nil) then
-			colorhealth = 0;
-		end
 		if (healermode == nil) then
 			healermode = 0;
 		end
@@ -1223,7 +1203,6 @@ function Perl_Player_UpdateVars(vartable)
 		["CompactMode"] = compactmode,
 		["ShowRaidGroup"] = showraidgroup,
 		["Scale"] = scale,
-		["ColorHealth"] = colorhealth,
 		["HealerMode"] = healermode,
 		["Transparency"] = transparency,
 		["ShowPortrait"] = showportrait,
@@ -1399,15 +1378,15 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.55",
-			releaseDate = "April 9, 2006",
+			version = "Version 0.56",
+			releaseDate = "April 12, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
 			category = MYADDONS_CATEGORY_OTHERS
 		};
 		Perl_Player_myAddOns_Help = {};
-		Perl_Player_myAddOns_Help[1] = "/perlplayer\n/pp\n";
+		Perl_Player_myAddOns_Help[1] = "/perl";
 		myAddOnsFrame_Register(Perl_Player_myAddOns_Details, Perl_Player_myAddOns_Help);
 	end
 end

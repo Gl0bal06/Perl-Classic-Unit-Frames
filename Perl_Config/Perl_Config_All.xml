@@ -461,7 +461,7 @@
 				</Scripts>
 			</Button>
 
-			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="9">
+			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -478,6 +478,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_All_Set_CastParty_Support();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton11" inherits="UICheckButtonTemplate" id="11">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Progressively Colored Health Bars");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_All_Set_Color_Health();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

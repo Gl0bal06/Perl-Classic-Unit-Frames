@@ -52,6 +52,12 @@ function Perl_Config_All_Set_Values()
 	else
 		Perl_Config_All_Frame_CheckButton10:SetChecked(nil);
 	end
+
+	if (vartable["PCUF_ColorHealth"] == 1) then
+		Perl_Config_All_Frame_CheckButton11:SetChecked(1);
+	else
+		Perl_Config_All_Frame_CheckButton11:SetChecked(nil);
+	end
 end
 
 function Perl_Config_All_Texture_Update(texturenum)
@@ -72,6 +78,10 @@ function Perl_Config_All_Lock_Unlock(value)
 
 	if (Perl_Party_Frame) then
 		Perl_Party_Set_Lock(value);
+	end
+
+	if (Perl_Party_Pet_Script_Frame) then
+		Perl_Party_Pet_Set_Lock(value);
 	end
 
 	if (Perl_Player_Frame) then
@@ -114,6 +124,10 @@ function Perl_Config_All_Set_Scale(value)
 
 	if (Perl_Party_Frame) then
 		Perl_Party_Set_Scale(value);
+	end
+
+	if (Perl_Party_Pet_Script_Frame) then
+		Perl_Party_Pet_Set_Scale(value);
 	end
 
 	if (Perl_Player_Frame) then
@@ -171,5 +185,13 @@ function Perl_Config_All_Set_CastParty_Support()
 		Perl_Config_Set_CastParty_Support(1);
 	else
 		Perl_Config_Set_CastParty_Support(0);
+	end
+end
+
+function Perl_Config_All_Set_Color_Health()
+	if (Perl_Config_All_Frame_CheckButton11:GetChecked() == 1) then
+		Perl_Config_Set_Color_Health(1);
+	else
+		Perl_Config_Set_Color_Health(0);
 	end
 end

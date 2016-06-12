@@ -152,7 +152,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton2" inherits="UICheckButtonTemplate" id="2">
+			<CheckButton name="$parent_CheckButton5" inherits="UICheckButtonTemplate" id="5">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -165,10 +165,31 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Progressively Colored Health Bar");
+						getglobal(this:GetName().."Text"):SetText("Display Portrait Frame");
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Player_Pet_Progressive_Color_Update();
+						Perl_Config_Player_Pet_Portrait_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton5">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("3D Portrait Frame");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Pet_3D_Portrait_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -178,9 +199,9 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton2">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton6">
 						<Offset>
-							<AbsDimension x="0" y="-20"/>
+							<AbsDimension x="-20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

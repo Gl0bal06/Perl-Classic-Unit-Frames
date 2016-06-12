@@ -26,12 +26,6 @@ function Perl_Config_Player_Pet_Set_Values()
 		Perl_Config_Player_Pet_Frame_CheckButton1:SetChecked(nil);
 	end
 
-	if (vartable["colorhealth"] == 1) then
-		Perl_Config_Player_Pet_Frame_CheckButton2:SetChecked(1);
-	else
-		Perl_Config_Player_Pet_Frame_CheckButton2:SetChecked(nil);
-	end
-
 	if (vartable["locked"] == 1) then
 		Perl_Config_Player_Pet_Frame_CheckButton3:SetChecked(1);
 	else
@@ -67,6 +61,18 @@ function Perl_Config_Player_Pet_Set_Values()
 	Perl_Config_Player_Pet_Frame_Slider8Low:SetText("1");
 	Perl_Config_Player_Pet_Frame_Slider8High:SetText("50");
 	Perl_Config_Player_Pet_Frame_Slider8:SetValue(vartable["debuffsize"]);
+
+	if (vartable["showportrait"] == 1) then
+		Perl_Config_Player_Pet_Frame_CheckButton5:SetChecked(1);
+	else
+		Perl_Config_Player_Pet_Frame_CheckButton5:SetChecked(nil);
+	end
+
+	if (vartable["threedportrait"] == 1) then
+		Perl_Config_Player_Pet_Frame_CheckButton6:SetChecked(1);
+	else
+		Perl_Config_Player_Pet_Frame_CheckButton6:SetChecked(nil);
+	end
 end
 
 function Perl_Config_Player_Pet_Set_Buffs(value)
@@ -113,19 +119,27 @@ function Perl_Config_Player_Pet_ShowXP_Update()
 	end
 end
 
-function Perl_Config_Player_Pet_Progressive_Color_Update()
-	if (Perl_Config_Player_Pet_Frame_CheckButton2:GetChecked() == 1) then
-		Perl_Player_Pet_Set_Progressive_Color(1);
-	else
-		Perl_Player_Pet_Set_Progressive_Color(0);
-	end
-end
-
 function Perl_Config_Player_Pet_Lock_Update()
 	if (Perl_Config_Player_Pet_Frame_CheckButton3:GetChecked() == 1) then
 		Perl_Player_Pet_Set_Lock(1);
 	else
 		Perl_Player_Pet_Set_Lock(0);
+	end
+end
+
+function Perl_Config_Player_Pet_Portrait_Update()
+	if (Perl_Config_Player_Pet_Frame_CheckButton5:GetChecked() == 1) then
+		Perl_Player_Pet_Set_Portrait(1);
+	else
+		Perl_Player_Pet_Set_Portrait(0);
+	end
+end
+
+function Perl_Config_Player_Pet_3D_Portrait_Update()
+	if (Perl_Config_Player_Pet_Frame_CheckButton6:GetChecked() == 1) then
+		Perl_Player_Pet_Set_3D_Portrait(1);
+	else
+		Perl_Player_Pet_Set_3D_Portrait(0);
 	end
 end
 

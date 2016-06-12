@@ -10,14 +10,13 @@ local partyhidden = 0;		-- party frame is set to always show by default
 local partyspacing = -80;	-- default spacing between party member frames
 local scale = 1;		-- default scale
 local showpets = 1;		-- show pets by default
-local colorhealth = 0;		-- progressively colored health bars are off by default
 local healermode = 0;		-- nurfed unit frame style
 local transparency = 1.0;	-- transparency for frames
 local bufflocation = 4;		-- default buff location
 local debufflocation = 1;	-- default debuff location
 local verticalalign = 1;	-- default alignment is vertically
 local compactpercent = 0;	-- percents are not shown in compact mode by default
-local showportrait = 1;		-- portrait is hidden by default
+local showportrait = 0;		-- portrait is hidden by default
 local showfkeys = 0;		-- hide appropriate F key in the name frame by default
 local displaycastablebuffs = 0;	-- display all buffs by default
 local threedportrait = 0;	-- 3d portraits are off by default
@@ -53,8 +52,6 @@ function Perl_Party_OnLoad()
 	this:RegisterEvent("ADDON_LOADED");
 	this:RegisterEvent("PARTY_LEADER_CHANGED");
 	this:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
-	this:RegisterEvent("PARTY_MEMBER_DISABLE");
-	this:RegisterEvent("PARTY_MEMBER_ENABLE");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	this:RegisterEvent("PLAYER_ALIVE");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
@@ -310,7 +307,7 @@ function Perl_Party_Update_Health()
 	getglobal(this:GetName().."_StatsFrame_HealthBar"):SetMinMaxValues(0, partyhealthmax);
 	getglobal(this:GetName().."_StatsFrame_HealthBar"):SetValue(partyhealth);
 
-	if (colorhealth == 1) then
+	if (PCUF_COLORHEALTH == 1) then
 		if ((partyhealthpercent <= 100) and (partyhealthpercent > 75)) then
 			getglobal(this:GetName().."_StatsFrame_HealthBar"):SetStatusBarColor(0, 0.8, 0);
 			getglobal(this:GetName().."_StatsFrame_HealthBarBG"):SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -467,7 +464,7 @@ function Perl_Party_Update_Pet()
 
 			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetMinMaxValues(0, 1);		-- Set health to zero in order to keep the bars sane
 			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetValue(0);			-- Info should be updated automatically anyway
-			if (colorhealth == 1) then
+			if (PCUF_COLORHEALTH == 1) then
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(1, 0, 0);
 			else
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(0, 0.8, 0);
@@ -604,18 +601,23 @@ function Perl_Party_Update_Pet_Health()
 		getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetMinMaxValues(0, partypethealthmax);
 		getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetValue(partypethealth);
 
-		if (colorhealth == 1) then
+		if (PCUF_COLORHEALTH == 1) then
 			if ((partypethealthpercent <= 100) and (partypethealthpercent > 75)) then
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(0, 0.8, 0);
+				getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):SetStatusBarColor(0, 0.8, 0, 0.25);
 			elseif ((partypethealthpercent <= 75) and (partypethealthpercent > 50)) then
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(1, 1, 0);
+				getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):SetStatusBarColor(1, 1, 0, 0.25);
 			elseif ((partypethealthpercent <= 50) and (partypethealthpercent > 25)) then
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(1, 0.5, 0);
+				getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):SetStatusBarColor(1, 0.5, 0, 0.25);
 			else
 				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(1, 0, 0);
+				getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):SetStatusBarColor(1, 0, 0, 0.25);
 			end
 		else
 			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(0, 0.8, 0);
+			getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):SetStatusBarColor(0, 0.8, 0, 0.25);
 		end
 
 		if (compactmode == 0) then
@@ -1459,12 +1461,8 @@ function Perl_Party_Set_Pets(newvalue)
 		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Party Frame is now |cffffffffShowing Pets|cffffff00.");
 	end
 	Perl_Party_Set_Space();
+	Perl_Party_Update_Health_Mana();
 	Perl_Party_Update_Buffs();
-end
-
-function Perl_Party_Set_Progressive_Color(newvalue)
-	colorhealth = newvalue;
-	Perl_Party_UpdateVars();
 end
 
 function Perl_Party_Set_Lock(newvalue)
@@ -1588,7 +1586,6 @@ function Perl_Party_GetVars()
 	partyspacing = Perl_Party_Config[UnitName("player")]["PartySpacing"];
 	scale = Perl_Party_Config[UnitName("player")]["Scale"];
 	showpets = Perl_Party_Config[UnitName("player")]["ShowPets"];
-	colorhealth = Perl_Party_Config[UnitName("player")]["ColorHealth"];
 	healermode = Perl_Party_Config[UnitName("player")]["HealerMode"];
 	transparency = Perl_Party_Config[UnitName("player")]["Transparency"];
 	bufflocation = Perl_Party_Config[UnitName("player")]["BuffLocation"];
@@ -1619,9 +1616,6 @@ function Perl_Party_GetVars()
 	end
 	if (showpets == nil) then
 		showpets = 1;
-	end
-	if (colorhealth == nil) then
-		colorhealth = 0;
 	end
 	if (healermode == nil) then
 		healermode = 0;
@@ -1667,7 +1661,6 @@ function Perl_Party_GetVars()
 		["partyspacing"] = partyspacing,
 		["scale"] = scale,
 		["showpets"] = showpets,
-		["colorhealth"] = colorhealth,
 		["healermode"] = healermode,
 		["transparency"] = transparency,
 		["bufflocation"] = bufflocation,
@@ -1717,11 +1710,6 @@ function Perl_Party_UpdateVars(vartable)
 				showpets = vartable["Global Settings"]["ShowPets"];
 			else
 				showpets = nil;
-			end
-			if (vartable["Global Settings"]["ColorHealth"] ~= nil) then
-				colorhealth = vartable["Global Settings"]["ColorHealth"];
-			else
-				colorhealth = nil;
 			end
 			if (vartable["Global Settings"]["HealerMode"] ~= nil) then
 				healermode = vartable["Global Settings"]["HealerMode"];
@@ -1804,9 +1792,6 @@ function Perl_Party_UpdateVars(vartable)
 		if (showpets == nil) then
 			showpets = 1;
 		end
-		if (colorhealth == nil) then
-			colorhealth = 0;
-		end
 		if (healermode == nil) then
 			healermode = 0;
 		end
@@ -1863,7 +1848,6 @@ function Perl_Party_UpdateVars(vartable)
 		["PartySpacing"] = partyspacing,
 		["Scale"] = scale,
 		["ShowPets"] = showpets,
-		["ColorHealth"] = colorhealth,
 		["HealerMode"] = healermode,
 		["Transparency"] = transparency,
 		["BuffLocation"] = bufflocation,
@@ -2152,15 +2136,15 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.55",
-			releaseDate = "April 9, 2006",
+			version = "Version 0.56",
+			releaseDate = "April 12, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
 			category = MYADDONS_CATEGORY_OTHERS
 		};
 		Perl_Party_myAddOns_Help = {};
-		Perl_Party_myAddOns_Help[1] = "/perl\n";
+		Perl_Party_myAddOns_Help[1] = "/perl";
 		myAddOnsFrame_Register(Perl_Party_myAddOns_Details, Perl_Party_myAddOns_Help);
 	end
 end

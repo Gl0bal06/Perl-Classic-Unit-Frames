@@ -170,7 +170,95 @@
 			</Frame>
 
 
-			<!-- Target Level Frame -->
+			<!-- Portrait Frame -->
+			<Frame name="Perl_Player_Pet_PortraitFrame">
+				<Size>
+					<AbsDimension x="53" y="54"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="TOPLEFT" relativeTo="Perl_Player_Pet_NameFrame">
+						<Offset>
+							<AbsDimension x="5" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+					<EdgeSize>
+						<AbsValue val="16"/>
+					</EdgeSize>
+					<TileSize>
+						<AbsValue val="16"/>
+					</TileSize>
+					<BackgroundInsets>
+						<AbsInset left="5" right="5" top="5" bottom="5"/>
+					</BackgroundInsets>
+				</Backdrop>
+				<Frames>
+					<Button name="Perl_Player_Pet_PortraitFrame_CastClickOverlay">
+						<Size>
+							<AbsDimension x="60" y="61"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="0" y="0"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								this:RegisterForClicks('LeftButtonUp', 'RightButtonUp', 'MiddleButtonUp', 'Button4Up', 'Button5Up');
+							</OnLoad>
+							<OnClick>
+								Perl_Player_Pet_MouseClick(arg1);
+							</OnClick>
+							<OnMouseDown>
+								Perl_Player_Pet_MouseDown(arg1);
+							</OnMouseDown>
+							<OnMouseUp>
+								Perl_Player_Pet_MouseUp(arg1);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+					<PlayerModel name="$parent_PetModel" hidden="true">
+						<Size>
+							<AbsDimension x="43" y="43"/>
+						</Size>
+						<Anchors>
+							<Anchor point="CENTER">
+								<Offset>
+									<AbsDimension x="1" y="-1"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnUpdate>
+								this:SetCamera(0);
+							</OnUpdate>
+						</Scripts>
+					</PlayerModel>
+				</Frames>
+				<Layers>
+					<!-- Portrait -->
+					<Layer level="ARTWORK">
+						<Texture name="Perl_Player_Pet_Portrait">
+							<Size>
+								<AbsDimension x="41" y="41"/>
+							</Size>
+							<Anchors>
+								<Anchor point="TOP" relativePoint="TOP" relativeTo="Perl_Player_Pet_PortraitFrame">
+									<Offset>
+										<AbsDimension x="0" y="-6"/>
+									</Offset>
+								</Anchor>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+
+
+			<!-- Level Frame -->
 			<Frame name="Perl_Player_Pet_LevelFrame">
 				<Size>
 					<AbsDimension x="30" y="34"/>

@@ -52,12 +52,6 @@ function Perl_Config_Party_Set_Values()
 		Perl_Config_Party_Frame_CheckButton6:SetChecked(nil);
 	end
 
-	if (vartable["colorhealth"] == 1) then
-		Perl_Config_Party_Frame_CheckButton7:SetChecked(1);
-	else
-		Perl_Config_Party_Frame_CheckButton7:SetChecked(nil);
-	end
-
 	if (vartable["locked"] == 1) then
 		Perl_Config_Party_Frame_CheckButton8:SetChecked(1);
 	else
@@ -195,14 +189,6 @@ function Perl_Config_Party_Pets_Update()
 		Perl_Party_Set_Pets(1);
 	else
 		Perl_Party_Set_Pets(0);
-	end
-end
-
-function Perl_Config_Party_Progressive_Color_Update()
-	if (Perl_Config_Party_Frame_CheckButton7:GetChecked() == 1) then
-		Perl_Party_Set_Progressive_Color(1);
-	else
-		Perl_Party_Set_Progressive_Color(0);
 	end
 end
 

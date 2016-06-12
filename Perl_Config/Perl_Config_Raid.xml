@@ -270,7 +270,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
+			<CheckButton name="$parent_CheckButton13" inherits="UICheckButtonTemplate" id="13">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -283,10 +283,10 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Show Health/Mana Percentages");
+						getglobal(this:GetName().."Text"):SetText("Show Group Headers");
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Raid_Show_Percents_Update();
+						Perl_Config_Raid_Group_Headers_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -296,7 +296,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton13">
 						<Offset>
 							<AbsDimension  x="0" y="-20"/>
 						</Offset>
@@ -422,6 +422,48 @@
 					</OnValueChanged>
 				</Scripts>
 			</Slider>
+
+			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton9">
+						<Offset>
+							<AbsDimension  x="200" y="0"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Show Health/Mana Percentages");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_Show_Percents_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton14" inherits="UICheckButtonTemplate" id="14">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+						<Offset>
+							<AbsDimension  x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Show Missing Health");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Raid_Missing_Health_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
 		</Frames>
 
 	</Frame>

@@ -13,7 +13,6 @@ local numbuffsshown = 16;	-- buff row is 16 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
 local mobhealthsupport = 1;	-- mobhealth support is on by default
 local scale = 1;		-- default scale
-local colorhealth = 0;		-- progressively colored health bars are off by default
 local showpvprank = 0;		-- hide the pvp rank by default
 local transparency = 1;		-- transparency for frames
 local buffdebuffscale = 1;	-- default scale for buffs and debuffs
@@ -275,7 +274,7 @@ function Perl_Target_Update_Health()
 	Perl_Target_HealthBar:SetMinMaxValues(0, targethealthmax);
 	Perl_Target_HealthBar:SetValue(targethealth);
 
-	if (colorhealth == 1) then
+	if (PCUF_COLORHEALTH == 1) then
 		if ((targethealthpercent <= 100) and (targethealthpercent > 75)) then
 			Perl_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
 			Perl_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -1065,12 +1064,6 @@ function Perl_Target_Set_MobHealth(newvalue)
 	Perl_Target_Update_Once();
 end
 
-function Perl_Target_Set_Progressive_Color(newvalue)
-	colorhealth = newvalue;
-	Perl_Target_UpdateVars();
-	Perl_Target_Update_Once();
-end
-
 function Perl_Target_Set_Lock(newvalue)
 	locked = newvalue;
 	Perl_Target_UpdateVars();
@@ -1182,7 +1175,6 @@ function Perl_Target_GetVars()
 	numdebuffsshown = Perl_Target_Config[UnitName("player")]["Debuffs"];
 	mobhealthsupport = Perl_Target_Config[UnitName("player")]["MobHealthSupport"];
 	scale = Perl_Target_Config[UnitName("player")]["Scale"];
-	colorhealth = Perl_Target_Config[UnitName("player")]["ColorHealth"];
 	showpvprank = Perl_Target_Config[UnitName("player")]["ShowPvPRank"];
 	transparency = Perl_Target_Config[UnitName("player")]["Transparency"];
 	buffdebuffscale = Perl_Target_Config[UnitName("player")]["BuffDebuffScale"];
@@ -1223,9 +1215,6 @@ function Perl_Target_GetVars()
 	end
 	if (scale == nil) then
 		scale = 1;
-	end
-	if (colorhealth == nil) then
-		colorhealth = 0;
 	end
 	if (showpvprank == nil) then
 		showpvprank = 0;
@@ -1277,7 +1266,6 @@ function Perl_Target_GetVars()
 		["numdebuffsshown"] = numdebuffsshown,
 		["mobhealthsupport"] = mobhealthsupport,
 		["scale"] = scale,
-		["colorhealth"] = colorhealth,
 		["showpvprank"] = showpvprank,
 		["transparency"] = transparency,
 		["buffdebuffscale"] = buffdebuffscale,
@@ -1343,11 +1331,6 @@ function Perl_Target_UpdateVars(vartable)
 				scale = vartable["Global Settings"]["Scale"];
 			else
 				scale = nil;
-			end
-			if (vartable["Global Settings"]["ColorHealth"] ~= nil) then
-				colorhealth = vartable["Global Settings"]["ColorHealth"];
-			else
-				colorhealth = nil;
 			end
 			if (vartable["Global Settings"]["ShowPvPRank"] ~= nil) then
 				showpvprank = vartable["Global Settings"]["ShowPvPRank"];
@@ -1444,9 +1427,6 @@ function Perl_Target_UpdateVars(vartable)
 		if (scale == nil) then
 			scale = 1;
 		end
-		if (colorhealth == nil) then
-			colorhealth = 0;
-		end
 		if (showpvprank == nil) then
 			showpvprank = 0;
 		end
@@ -1504,7 +1484,6 @@ function Perl_Target_UpdateVars(vartable)
 		["Debuffs"] = numdebuffsshown,
 		["MobHealthSupport"] = mobhealthsupport,
 		["Scale"] = scale,
-		["ColorHealth"] = colorhealth,
 		["ShowPvPRank"] = showpvprank,
 		["Transparency"] = transparency,
 		["BuffDebuffScale"] = buffdebuffscale,
@@ -1842,15 +1821,15 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.55",
-			releaseDate = "April 9, 2006",
+			version = "Version 0.56",
+			releaseDate = "April 12, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
 			category = MYADDONS_CATEGORY_OTHERS
 		};
 		Perl_Target_myAddOns_Help = {};
-		Perl_Target_myAddOns_Help[1] = "/perltarget\n/pt\n";
+		Perl_Target_myAddOns_Help[1] = "/perl";
 		myAddOnsFrame_Register(Perl_Target_myAddOns_Details, Perl_Target_myAddOns_Help);
 	end
 end

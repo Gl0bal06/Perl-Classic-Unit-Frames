@@ -9,12 +9,13 @@ local showxp = 0;			-- xp bar is hidden by default
 local scale = 1;			-- default scale
 local numpetbuffsshown = 16;		-- buff row is 16 long
 local numpetdebuffsshown = 16;		-- debuff row is 16 long
-local colorhealth = 0;			-- progressively colored health bars are off by default
 local transparency = 1;			-- transparency for frames
 local bufflocation = 1;			-- default buff location
 local debufflocation = 2;		-- default debuff location
 local buffsize = 12;			-- default buff size is 12
 local debuffsize = 12;			-- default debuff size is 12
+local showportrait = 0;			-- portrait is hidden by default
+local threedportrait = 0;		-- 3d portraits are off by default
 
 -- Default Local Variables
 local Initialized = nil;		-- waiting to be initialized
@@ -38,15 +39,18 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("UNIT_MAXFOCUS");
 	this:RegisterEvent("UNIT_MAXHEALTH");
 	this:RegisterEvent("UNIT_MAXMANA");
+	this:RegisterEvent("UNIT_MODEL_CHANGED");
 	this:RegisterEvent("UNIT_NAME_UPDATE");
 	this:RegisterEvent("UNIT_PET");
 	this:RegisterEvent("UNIT_PET_EXPERIENCE");
+	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Button Click Overlays (in order of occurrence in XML)
 	Perl_Player_Pet_NameFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_NameFrame:GetFrameLevel() + 1);
 	Perl_Player_Pet_LevelFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_LevelFrame:GetFrameLevel() + 2);
 	Perl_Player_Pet_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_StatsFrame:GetFrameLevel() + 2);
+	Perl_Player_Pet_PortraitFrame_CastClickOverlay:SetFrameLevel(Perl_Player_Pet_PortraitFrame:GetFrameLevel() + 2);
 
 	if (DEFAULT_CHAT_FRAME) then
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Player_Pet loaded successfully.");
@@ -105,6 +109,11 @@ function Perl_Player_Pet_OnEvent(event)
 			Perl_Player_Pet_Update_Once();
 		end
 		return;
+	elseif (event == "UNIT_PORTRAIT_UPDATE" or event == "UNIT_MODEL_CHANGED") then
+		if (arg1 == "pet") then
+			Perl_Player_Pet_Update_Portrait();
+		end
+		return;
 	elseif (event == "VARIABLES_LOADED") or (event == "PLAYER_ENTERING_WORLD") then
 		Perl_Player_Pet_Initialize();
 		Perl_Player_Pet_Set_Window_Layout();		-- Warlocks don't need the happiness frame
@@ -159,6 +168,8 @@ function Perl_Player_Pet_Initialize_Frame_Color()
 	Perl_Player_Pet_BuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Player_Pet_DebuffFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Player_Pet_DebuffFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Player_Pet_PortraitFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Player_Pet_PortraitFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 
 	Perl_Player_Pet_HealthBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Player_Pet_ManaBarText:SetTextColor(1, 1, 1, 1);
@@ -172,6 +183,7 @@ function Perl_Player_Pet_Update_Once()
 	if (UnitExists("pet")) then
 		Perl_Player_Pet_NameBarText:SetText(UnitName("pet"));		-- Set name
 		Perl_Player_Pet_LevelBarText:SetText(UnitLevel("pet"));		-- Set Level
+		Perl_Player_Pet_Update_Portrait();				-- Set the pet's portrait
 		Perl_Player_Pet_Set_Scale();					-- Set the scale
 		Perl_Player_Pet_Set_Transparency();				-- Set transparency
 		Perl_Player_Pet_Update_Health();				-- Set health
@@ -197,7 +209,7 @@ function Perl_Player_Pet_Update_Health()
 	Perl_Player_Pet_HealthBar:SetMinMaxValues(0, pethealthmax);
 	Perl_Player_Pet_HealthBar:SetValue(pethealth);
 
-	if (colorhealth == 1) then
+	if (PCUF_COLORHEALTH == 1) then
 		local playerpethealthpercent = floor(pethealth/pethealthmax*100+0.5);
 		if ((playerpethealthpercent <= 100) and (playerpethealthpercent > 75)) then
 			Perl_Player_Pet_HealthBar:SetStatusBarColor(0, 0.8, 0);
@@ -324,6 +336,33 @@ function Perl_Player_Pet_Update_Experience()
 	Perl_Player_Pet_XPBarText:SetText(xptext);
 end
 
+function Perl_Player_Pet_Update_Portrait()
+	if (showportrait == 1) then
+		local level = Perl_Player_Pet_PortraitFrame:GetFrameLevel();					-- Get the frame level of the main portrait frame
+		Perl_Player_Pet_PortraitFrame:Show();								-- Show the main portrait frame
+
+		if (threedportrait == 0) then
+			SetPortraitTexture(Perl_Player_Pet_Portrait, "pet");					-- Load the correct 2d graphic
+			Perl_Player_Pet_PortraitFrame_PetModel:Hide();					-- Hide the 3d graphic
+			Perl_Player_Pet_Portrait:Show();							-- Show the 2d graphic
+		else
+			if UnitIsVisible("pet") then
+				Perl_Player_Pet_PortraitFrame_PetModel:SetUnit("pet");			-- Load the correct 3d graphic
+				Perl_Player_Pet_Portrait:Hide();						-- Hide the 2d graphic
+				Perl_Player_Pet_PortraitFrame_PetModel:Show();				-- Show the 3d graphic
+				Perl_Player_Pet_PortraitFrame_PetModel:SetCamera(0);
+			else
+				SetPortraitTexture(Perl_Player_Pet_Portrait, "pet");				-- Load the correct 2d graphic
+				Perl_Player_Pet_PortraitFrame_PetModel:Hide();				-- Hide the 3d graphic
+				Perl_Player_Pet_Portrait:Show();						-- Show the 2d graphic
+			end
+		end
+
+	else
+		Perl_Player_Pet_PortraitFrame:Hide();								-- Hide the frame and 2d/3d portion
+	end
+end
+
 function Perl_Player_Pet_Set_Window_Layout()
 	if (UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
 		Perl_Player_Pet_LevelFrame:Hide();
@@ -414,15 +453,21 @@ function Perl_Player_Pet_Set_ShowXP(newvalue)
 	Perl_Player_Pet_ShowXP();
 end
 
-function Perl_Player_Pet_Set_Progressive_Color(newvalue)
-	colorhealth = newvalue;
-	Perl_Player_Pet_UpdateVars();
-	Perl_Player_Pet_Update_Health();
-end
-
 function Perl_Player_Pet_Set_Lock(newvalue)
 	locked = newvalue;
 	Perl_Player_Pet_UpdateVars();
+end
+
+function Perl_Player_Pet_Set_Portrait(newvalue)
+	showportrait = newvalue;
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Update_Portrait();
+end
+
+function Perl_Player_Pet_Set_3D_Portrait(newvalue)
+	threedportrait = newvalue;
+	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Update_Portrait();
 end
 
 function Perl_Player_Pet_Set_Scale(number)
@@ -453,12 +498,13 @@ function Perl_Player_Pet_GetVars()
 	scale = Perl_Player_Pet_Config[UnitName("player")]["Scale"];
 	numpetbuffsshown = Perl_Player_Pet_Config[UnitName("player")]["Buffs"];
 	numpetdebuffsshown = Perl_Player_Pet_Config[UnitName("player")]["Debuffs"];
-	colorhealth = Perl_Player_Pet_Config[UnitName("player")]["ColorHealth"];
 	transparency = Perl_Player_Pet_Config[UnitName("player")]["Transparency"];
 	bufflocation = Perl_Player_Pet_Config[UnitName("player")]["BuffLocation"];
 	debufflocation = Perl_Player_Pet_Config[UnitName("player")]["DebuffLocation"];
 	buffsize = Perl_Player_Pet_Config[UnitName("player")]["BuffSize"];
 	debuffsize = Perl_Player_Pet_Config[UnitName("player")]["DebuffSize"];
+	showportrait = Perl_Player_Pet_Config[UnitName("player")]["ShowPortrait"];
+	threedportrait = Perl_Player_Pet_Config[UnitName("player")]["ThreeDPortrait"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -475,9 +521,6 @@ function Perl_Player_Pet_GetVars()
 	if (numpetdebuffsshown == nil) then
 		numpetdebuffsshown = 16;
 	end
-	if (colorhealth == nil) then
-		colorhealth = 0;
-	end
 	if (transparency == nil) then
 		transparency = 1;
 	end
@@ -493,6 +536,12 @@ function Perl_Player_Pet_GetVars()
 	if (debuffsize == nil) then
 		debuffsize = 12;
 	end
+	if (showportrait == nil) then
+		showportrait = 0;
+	end
+	if (threedportrait == nil) then
+		threedportrait = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -500,12 +549,13 @@ function Perl_Player_Pet_GetVars()
 		["scale"] = scale,
 		["numpetbuffsshown"] = numpetbuffsshown,
 		["numpetdebuffsshown"] = numpetdebuffsshown,
-		["colorhealth"] = colorhealth,
 		["transparency"] = transparency,
 		["bufflocation"] = bufflocation,
 		["debufflocation"] = debufflocation,
 		["buffsize"] = buffsize,
 		["debuffsize"] = debuffsize,
+		["showportrait"] = showportrait,
+		["threedportrait"] = threedportrait,
 	}
 	return vars;
 end
@@ -539,11 +589,6 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			else
 				numpetdebuffsshown = nil;
 			end
-			if (vartable["Global Settings"]["ColorHealth"] ~= nil) then
-				colorhealth = vartable["Global Settings"]["ColorHealth"];
-			else
-				colorhealth = nil;
-			end
 			if (vartable["Global Settings"]["Transparency"] ~= nil) then
 				transparency = vartable["Global Settings"]["Transparency"];
 			else
@@ -569,6 +614,16 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			else
 				debuffsize = nil;
 			end
+			if (vartable["Global Settings"]["ShowPortrait"] ~= nil) then
+				showportrait = vartable["Global Settings"]["ShowPortrait"];
+			else
+				showportrait = nil;
+			end
+			if (vartable["Global Settings"]["ThreeDPortrait"] ~= nil) then
+				threedportrait = vartable["Global Settings"]["ThreeDPortrait"];
+			else
+				threedportrait = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -587,9 +642,6 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		if (numpetdebuffsshown == nil) then
 			numpetdebuffsshown = 16;
 		end
-		if (colorhealth == nil) then
-			colorhealth = 0;
-		end
 		if (transparency == nil) then
 			transparency = 1;
 		end
@@ -605,11 +657,18 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		if (debuffsize == nil) then
 			debuffsize = 12;
 		end
+		if (showportrait == nil) then
+			showportrait = 0;
+		end
+		if (threedportrait == nil) then
+			threedportrait = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Pet_Reset_Buffs();		-- Reset the buff icons
 		Perl_Player_Pet_Buff_UpdateAll();	-- Repopulate the buff icons
 		Perl_Player_Pet_Update_Health();	-- Update the health in case progrssive health color was set
+		Perl_Player_Pet_Update_Portrait();
 		Perl_Player_Pet_Set_Scale();		-- Set the scale
 		Perl_Player_Pet_Set_Transparency();	-- Set the transparency
 	end
@@ -620,12 +679,13 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		["Scale"] = scale,
 		["Buffs"] = numpetbuffsshown,
 		["Debuffs"] = numpetdebuffsshown,
-		["ColorHealth"] = colorhealth,
 		["Transparency"] = transparency,
 		["BuffLocation"] = bufflocation,
 		["DebuffLocation"] = debufflocation,
 		["BuffSize"] = buffsize,
 		["DebuffSize"] = debuffsize,
+		["ShowPortrait"] = showportrait,
+		["ThreeDPortrait"] = threedportrait,
 	};
 end
 
@@ -821,15 +881,15 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "Version 0.55",
-			releaseDate = "April 9, 2006",
+			version = "Version 0.56",
+			releaseDate = "April 12, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
 			category = MYADDONS_CATEGORY_OTHERS
 		};
 		Perl_Player_Pet_myAddOns_Help = {};
-		Perl_Player_Pet_myAddOns_Help[1] = "/perlplayerpet\n/ppp\n";
+		Perl_Player_Pet_myAddOns_Help[1] = "/perl";
 		myAddOnsFrame_Register(Perl_Player_Pet_myAddOns_Details, Perl_Player_Pet_myAddOns_Help);
 	end
 end

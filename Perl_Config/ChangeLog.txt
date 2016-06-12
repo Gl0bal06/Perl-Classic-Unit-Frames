@@ -1,3 +1,14 @@
+0.56 - April 12, 2006
+ - All: Progressively colored health bars is now a global variable
+ - All: Updated myAddOns slash command information
+ - Config: Added Perl_Party_Pet support
+ - Config: Updated options available for Perl_Raid
+ - Config: Fixed a minor issue in the XML on the All page
+ - Party: Removed two events that were no longer being used
+ - Party: Fixed a bug regarding enabling pets in healer mode
+ - Party: The pet bar will now correctly color the background bar in progressive color mode
+ - Pet: Added the ability to display a portrait
+
 0.55 - April 9, 2006
  - All: Localization has been converted to global variables
  - CombatDisplay/Party/Pet/Player/Target: Removed menu initializing code from OnLoad

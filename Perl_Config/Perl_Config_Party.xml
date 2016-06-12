@@ -291,7 +291,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton7" inherits="UICheckButtonTemplate" id="7">
+			<CheckButton name="$parent_CheckButton8" inherits="UICheckButtonTemplate" id="8">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -304,28 +304,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Progressively Colored Health Bar");
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Party_Progressive_Color_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton8" inherits="UICheckButtonTemplate" id="8">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton7">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Lock Party Frame");
+						getglobal(this:GetName().."Text"):SetText("Lock Party Frames");
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_Lock_Update();

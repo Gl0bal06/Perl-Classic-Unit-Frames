@@ -4,7 +4,6 @@
 Perl_Target_Target_Config = {};
 
 -- Default Saved Variables (also set in Perl_Target_Target_GetVars)
-local colorhealth = 0;		-- progressively colored health bars are off by default
 local locked = 0;		-- unlocked by default
 local mobhealthsupport = 1;	-- mobhealth support is on by default
 local scale = 1;		-- default scale
@@ -197,7 +196,7 @@ function Perl_Target_Target_OnUpdate(arg1)
 			Perl_Target_Target_HealthBar:SetMinMaxValues(0, targettargethealthmax);
 			Perl_Target_Target_HealthBar:SetValue(targettargethealth);
 
-			if (colorhealth == 1) then
+			if (PCUF_COLORHEALTH == 1) then
 				if ((targettargethealthpercent <= 100) and (targettargethealthpercent > 75)) then
 					Perl_Target_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
 					Perl_Target_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -393,7 +392,7 @@ function Perl_Target_Target_OnUpdate(arg1)
 			Perl_Target_Target_Target_HealthBar:SetMinMaxValues(0, targettargettargethealthmax);
 			Perl_Target_Target_Target_HealthBar:SetValue(targettargettargethealth);
 
-			if (colorhealth == 1) then
+			if (PCUF_COLORHEALTH == 1) then
 				if ((targettargettargethealthpercent <= 100) and (targettargettargethealthpercent > 75)) then
 					Perl_Target_Target_Target_HealthBar:SetStatusBarColor(0, 0.8, 0);
 					Perl_Target_Target_Target_HealthBarBG:SetStatusBarColor(0, 0.8, 0, 0.25);
@@ -881,11 +880,6 @@ function Perl_Target_Target_Set_MobHealth(newvalue)
 	Perl_Target_Target_UpdateVars();
 end
 
-function Perl_Target_Target_Set_Progressive_Color(newvalue)
-	colorhealth = newvalue;
-	Perl_Target_Target_UpdateVars();
-end
-
 function Perl_Target_Target_Set_Lock(newvalue)
 	locked = newvalue;
 	Perl_Target_Target_UpdateVars();
@@ -956,7 +950,6 @@ end
 -- Saved Variable Functions --
 ------------------------------
 function Perl_Target_Target_GetVars()
-	colorhealth = Perl_Target_Target_Config[UnitName("player")]["ColorHealth"];
 	locked = Perl_Target_Target_Config[UnitName("player")]["Locked"];
 	mobhealthsupport = Perl_Target_Target_Config[UnitName("player")]["MobHealthSupport"];
 	scale = Perl_Target_Target_Config[UnitName("player")]["Scale"];
@@ -967,9 +960,6 @@ function Perl_Target_Target_GetVars()
 	alertmode = Perl_Target_Target_Config[UnitName("player")]["AlertMode"];
 	alertsize = Perl_Target_Target_Config[UnitName("player")]["AlertSize"];
 
-	if (colorhealth == nil) then
-		colorhealth = 0;
-	end
 	if (locked == nil) then
 		locked = 0;
 	end
@@ -999,7 +989,6 @@ function Perl_Target_Target_GetVars()
 	end
 
 	local vars = {
-		["colorhealth"] = colorhealth,
 		["locked"] = locked,
 		["mobhealthsupport"] = mobhealthsupport,
 		["scale"] = scale,
@@ -1017,11 +1006,6 @@ function Perl_Target_Target_UpdateVars(vartable)
 	if (vartable ~= nil) then
 		-- Sanity checks in case you use a load from an old version
 		if (vartable["Global Settings"] ~= nil) then
-			if (vartable["Global Settings"]["ColorHealth"] ~= nil) then
-				colorhealth = vartable["Global Settings"]["ColorHealth"];
-			else
-				colorhealth = nil;
-			end
 			if (vartable["Global Settings"]["Locked"] ~= nil) then
 				locked = vartable["Global Settings"]["Locked"];
 			else
@@ -1070,9 +1054,6 @@ function Perl_Target_Target_UpdateVars(vartable)
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
-		if (colorhealth == nil) then
-			colorhealth = 0;
-		end
 		if (locked == nil) then
 			locked = 0;
 		end
@@ -1107,7 +1088,6 @@ function Perl_Target_Target_UpdateVars(vartable)
 	end
 
 	Perl_Target_Target_Config[UnitName("player")] = {
-		["ColorHealth"] = colorhealth,
 		["Locked"] = locked,
 		["MobHealthSupport"] = mobhealthsupport,
 		["Scale"] = scale,
@@ -1312,15 +1292,15 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "Version 0.55",
-			releaseDate = "April 9, 2006",
+			version = "Version 0.56",
+			releaseDate = "April 12, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
 			category = MYADDONS_CATEGORY_OTHERS
 		};
 		Perl_Target_Target_myAddOns_Help = {};
-		Perl_Target_Target_myAddOns_Help[1] = "/perltargettarget\n/ptt\n";
+		Perl_Target_Target_myAddOns_Help[1] = "/perl";
 		myAddOnsFrame_Register(Perl_Target_Target_myAddOns_Details, Perl_Target_Target_myAddOns_Help);
 	end
 end

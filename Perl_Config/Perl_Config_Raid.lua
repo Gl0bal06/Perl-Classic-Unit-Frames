@@ -78,6 +78,18 @@ function Perl_Config_Raid_Set_Values()
 		Perl_Config_Raid_Frame_CheckButton11:SetChecked(nil);
 	end
 
+	if (vartable["showheaders"] == 1) then
+		Perl_Config_Raid_Frame_CheckButton13:SetChecked(1);
+	else
+		Perl_Config_Raid_Frame_CheckButton13:SetChecked(nil);
+	end
+
+	if (vartable["showmissinghealth"] == 1) then
+		Perl_Config_Raid_Frame_CheckButton14:SetChecked(1);
+	else
+		Perl_Config_Raid_Frame_CheckButton14:SetChecked(nil);
+	end
+
 	Perl_Config_Raid_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Raid_Frame_Slider1High:SetText("Big");
 	Perl_Config_Raid_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -178,6 +190,22 @@ function Perl_Config_Raid_Lock_Update()
 		Perl_Raid_Set_Lock(1);
 	else
 		Perl_Raid_Set_Lock(0);
+	end
+end
+
+function Perl_Config_Raid_Group_Headers_Update()
+	if (Perl_Config_Raid_Frame_CheckButton13:GetChecked() == 1) then
+		Perl_Raid_Set_Group_Headers(1);
+	else
+		Perl_Raid_Set_Group_Headers(0);
+	end
+end
+
+function Perl_Config_Raid_Missing_Health_Update()
+	if (Perl_Config_Raid_Frame_CheckButton14:GetChecked() == 1) then
+		Perl_Raid_Set_Missing_Health(1);
+	else
+		Perl_Raid_Set_Missing_Health(0);
 	end
 end
 

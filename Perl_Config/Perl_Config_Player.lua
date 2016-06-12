@@ -57,12 +57,6 @@ function Perl_Config_Player_Set_Values()
 		Perl_Config_Player_Frame_CheckButton6:SetChecked(nil);
 	end
 
-	if (vartable["colorhealth"] == 1) then
-		Perl_Config_Player_Frame_CheckButton7:SetChecked(1);
-	else
-		Perl_Config_Player_Frame_CheckButton7:SetChecked(nil);
-	end
-
 	if (vartable["locked"] == 1) then
 		Perl_Config_Player_Frame_CheckButton8:SetChecked(1);
 	else
@@ -150,14 +144,6 @@ function Perl_Config_Player_Raid_Update()
 		Perl_Player_Set_RaidGroupNumber(1);
 	else
 		Perl_Player_Set_RaidGroupNumber(0);
-	end
-end
-
-function Perl_Config_Player_Progressive_Color_Update()
-	if (Perl_Config_Player_Frame_CheckButton7:GetChecked() == 1) then
-		Perl_Player_Set_Progressive_Color(1);
-	else
-		Perl_Player_Set_Progressive_Color(0);
 	end
 end
 
