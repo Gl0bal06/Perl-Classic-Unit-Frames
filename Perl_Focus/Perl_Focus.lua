@@ -410,15 +410,11 @@ function Perl_Focus_Update_Once()
 		if (UnitIsPlayer("focus")) then
 			Perl_Focus_ClassNameBarText:SetText(UnitClass("focus"));
 		else
-			if (UnitIsCivilian("focus")) then
-				Perl_Focus_ClassNameBarText:SetText(PERL_LOCALIZED_CIVILIAN);
-			else
-				creatureType = UnitCreatureType("focus");
-				if (creatureType == PERL_LOCALIZED_NOTSPECIFIED) then
-					creatureType = PERL_LOCALIZED_CREATURE;
-				end
-				Perl_Focus_ClassNameBarText:SetText(creatureType);
+			creatureType = UnitCreatureType("focus");
+			if (creatureType == PERL_LOCALIZED_NOTSPECIFIED) then
+				creatureType = PERL_LOCALIZED_CREATURE;
 			end
+			Perl_Focus_ClassNameBarText:SetText(creatureType);
 		end
 	end
 	-- End: Set the Focus's class in the class frame
