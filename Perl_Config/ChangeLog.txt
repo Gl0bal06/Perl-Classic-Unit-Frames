@@ -1,3 +1,6 @@
+2.21 - July 13, 2008
+ - Focus: Fixed an error when setting a focus target with MobInfo2 or MobHealth2 installed
+
 2.20 - July 11, 2008
  - All: Implemented another possible fix for MobInfo2 support (Thanks Zek)
 

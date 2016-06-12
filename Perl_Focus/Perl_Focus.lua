@@ -597,15 +597,15 @@ function Perl_Focus_Update_Health()
 					if (framestyle == 1) then
 						Perl_Focus_HealthBarTextRight:SetText();							-- Hide this text in this frame style
 						Perl_Focus_HealthBarTextCompactPercent:SetText();						-- Hide this text in this frame style
-						Perl_Focus_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax).." | "..targethealth.."%");
+						Perl_Focus_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax).." | "..focushealth.."%");
 					elseif (framestyle == 2) then
 						if (compactmode == 0) then
 							Perl_Focus_HealthBarTextCompactPercent:SetText();					-- Hide this text in this frame style
 							if (tonumber(string.format("%d", hpMax)) > 9999) then
 								Perl_Focus_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
-								Perl_Focus_HealthBarTextRight:SetText(targethealth.."%");
+								Perl_Focus_HealthBarTextRight:SetText(focushealth.."%");
 							else
-								Perl_Focus_HealthBarText:SetText(targethealth.."%");
+								Perl_Focus_HealthBarText:SetText(focushealth.."%");
 								Perl_Focus_HealthBarTextRight:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
 							end
 							
@@ -617,7 +617,7 @@ function Perl_Focus_Update_Health()
 							else
 								Perl_Focus_HealthBarTextRight:SetText();					-- Hide this text in this frame style
 								Perl_Focus_HealthBarText:SetText(string.format("%d", hp).."/"..string.format("%d", hpMax));
-								Perl_Focus_HealthBarTextCompactPercent:SetText(targethealth.."%");
+								Perl_Focus_HealthBarTextCompactPercent:SetText(focushealth.."%");
 							end
 						end
 					end
