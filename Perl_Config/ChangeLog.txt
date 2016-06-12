@@ -1,3 +1,7 @@
+3.09 - November 22, 2009
+ - All: Updated TOC Interface version to 30300
+ - Focus/Target: Updated the Target of Target and Target of Focus frame names to disable
+
 3.08 - August 7, 2009
  - All: Updated TOC Interface version to 30200
  - Focus/Target: Changed function GetDifficultyColor to GetQuestDifficultyColor

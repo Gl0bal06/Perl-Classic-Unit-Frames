@@ -1,4 +1,4 @@
-## Interface: 30200
+## Interface: 30300
 ## Title: Perl Focus Frame
 ## Notes: Displays a movable focus frame.
 ## Dependencies: Perl_Config

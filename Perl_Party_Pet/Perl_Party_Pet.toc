@@ -1,4 +1,4 @@
-## Interface: 30200
+## Interface: 30300
 ## Title: Perl Party Pet Frames
 ## Notes: Displays movable pet frames to replace the default.
 ## Dependencies: Perl_Config, Perl_Party

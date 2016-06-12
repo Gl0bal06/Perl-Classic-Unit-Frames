@@ -1,4 +1,4 @@
-## Interface: 30200
+## Interface: 30300
 ## Title: Perl Player Pet Frame
 ## Notes: Displays a movable pet frame to replace the default.
 ## Dependencies: Perl_Config

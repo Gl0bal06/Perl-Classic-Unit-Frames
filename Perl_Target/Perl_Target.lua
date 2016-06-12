@@ -306,7 +306,7 @@ function Perl_Target_Initialize()
 	Perl_clearBlizzardFrameDisable(TargetFrame);
 	Perl_clearBlizzardFrameDisable(ComboFrame);
 	Perl_clearBlizzardFrameDisable(TargetFrameSpellBar);
-	Perl_clearBlizzardFrameDisable(TargetofTargetFrame);
+	Perl_clearBlizzardFrameDisable(TargetFrameToT);
 
 	-- Disable Blizzard's Target Cast Bar
 	--TargetFrameSpellBar:UnregisterEvent("CVAR_UPDATE");

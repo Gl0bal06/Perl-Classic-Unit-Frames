@@ -1,4 +1,4 @@
-## Interface: 30200
+## Interface: 30300
 ## Title: Perl Config Options Frame
 ## Notes: Options menu for Perl Classic Unit Frames (LoadOnDemand).
 ## Dependencies: Perl_Config

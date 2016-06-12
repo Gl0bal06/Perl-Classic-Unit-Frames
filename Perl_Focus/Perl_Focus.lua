@@ -275,7 +275,7 @@ function Perl_Focus_Initialize()
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(FocusFrame);
 	Perl_clearBlizzardFrameDisable(FocusFrameSpellBar);
-	Perl_clearBlizzardFrameDisable(TargetofFocusFrame);
+	Perl_clearBlizzardFrameDisable(FocusFrameToT);
 
 	-- MyAddOns Support
 	Perl_Focus_myAddOns_Support();
