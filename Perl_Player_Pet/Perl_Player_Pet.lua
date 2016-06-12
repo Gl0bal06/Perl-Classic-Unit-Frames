@@ -600,18 +600,56 @@ end
 
 function Perl_Player_Pet_UpdateVars(vartable)
 	if (vartable ~= nil) then
-		-- Set the new values
-		locked = vartable["Global Settings"]["Locked"];
-		showxp = vartable["Global Settings"]["ShowXP"];
-		scale = vartable["Global Settings"]["Scale"];
-		numpetbuffsshown = vartable["Global Settings"]["Buffs"];
-		numpetdebuffsshown = vartable["Global Settings"]["Debuffs"];
-		colorhealth = vartable["Global Settings"]["ColorHealth"];
-		transparency = vartable["Global Settings"]["Transparency"];
-		bufflocation = vartable["Global Settings"]["BuffLocation"];
-		debufflocation = vartable["Global Settings"]["DebuffLocation"];
+		-- Sanity checks in case you use a load from an old version
+		if (vartable["Global Settings"] ~= nil) then
+			if (vartable["Global Settings"]["Locked"] ~= nil) then
+				locked = vartable["Global Settings"]["Locked"];
+			else
+				locked = nil;
+			end
+			if (vartable["Global Settings"]["ShowXP"] ~= nil) then
+				showxp = vartable["Global Settings"]["ShowXP"];
+			else
+				showxp = nil;
+			end
+			if (vartable["Global Settings"]["Scale"] ~= nil) then
+				scale = vartable["Global Settings"]["Scale"];
+			else
+				scale = nil;
+			end
+			if (vartable["Global Settings"]["Buffs"] ~= nil) then
+				numpetbuffsshown = vartable["Global Settings"]["Buffs"];
+			else
+				numpetbuffsshown = nil;
+			end
+			if (vartable["Global Settings"]["Debuffs"] ~= nil) then
+				numpetdebuffsshown = vartable["Global Settings"]["Debuffs"];
+			else
+				numpetdebuffsshown = nil;
+			end
+			if (vartable["Global Settings"]["ColorHealth"] ~= nil) then
+				colorhealth = vartable["Global Settings"]["ColorHealth"];
+			else
+				colorhealth = nil;
+			end
+			if (vartable["Global Settings"]["Transparency"] ~= nil) then
+				transparency = vartable["Global Settings"]["Transparency"];
+			else
+				transparency = nil;
+			end
+			if (vartable["Global Settings"]["BuffLocation"] ~= nil) then
+				bufflocation = vartable["Global Settings"]["BuffLocation"];
+			else
+				bufflocation = nil;
+			end
+			if (vartable["Global Settings"]["DebuffLocation"] ~= nil) then
+				debufflocation = vartable["Global Settings"]["DebuffLocation"];
+			else
+				debufflocation = nil;
+			end
+		end
 
-		-- Sanity checks in case you use a load from an old version, same defaults as above
+		-- Set the new values if any new values were found, same defaults as above
 		if (locked == nil) then
 			locked = 0;
 		end
@@ -816,8 +854,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.35",
-			releaseDate = "January 24, 2006",
+			version = "v0.36",
+			releaseDate = "January 25, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

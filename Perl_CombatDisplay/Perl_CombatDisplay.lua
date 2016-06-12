@@ -668,18 +668,56 @@ end
 
 function Perl_CombatDisplay_UpdateVars(vartable)
 	if (vartable ~= nil) then
-		-- Set the new values
-		state = vartable["Global Settings"]["State"];
-		locked = vartable["Global Settings"]["Locked"];
-		healthpersist = vartable["Global Settings"]["HealthPersist"];
-		manapersist = vartable["Global Settings"]["ManaPersist"];
-		scale = vartable["Global Settings"]["Scale"];
-		colorhealth = vartable["Global Settings"]["ColorHealth"];
-		transparency = vartable["Global Settings"]["Transparency"];
-		showtarget = vartable["Global Settings"]["ShowTarget"];
-		mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
+		-- Sanity checks in case you use a load from an old version
+		if (vartable["Global Settings"] ~= nil) then
+			if (vartable["Global Settings"]["State"] ~= nil) then
+				state = vartable["Global Settings"]["State"];
+			else
+				state = nil;
+			end
+			if (vartable["Global Settings"]["Locked"] ~= nil) then
+				locked = vartable["Global Settings"]["Locked"];
+			else
+				locked = nil;
+			end
+			if (vartable["Global Settings"]["HealthPersist"] ~= nil) then
+				healthpersist = vartable["Global Settings"]["HealthPersist"];
+			else
+				healthpersist = nil;
+			end
+			if (vartable["Global Settings"]["ManaPersist"] ~= nil) then
+				manapersist = vartable["Global Settings"]["ManaPersist"];
+			else
+				manapersist = nil;
+			end
+			if (vartable["Global Settings"]["Scale"] ~= nil) then
+				scale = vartable["Global Settings"]["Scale"];
+			else
+				scale = nil;
+			end
+			if (vartable["Global Settings"]["ColorHealth"] ~= nil) then
+				colorhealth = vartable["Global Settings"]["ColorHealth"];
+			else
+				colorhealth = nil;
+			end
+			if (vartable["Global Settings"]["Transparency"] ~= nil) then
+				transparency = vartable["Global Settings"]["Transparency"];
+			else
+				transparency = nil;
+			end
+			if (vartable["Global Settings"]["ShowTarget"] ~= nil) then
+				showtarget = vartable["Global Settings"]["ShowTarget"];
+			else
+				showtarget = nil;
+			end
+			if (vartable["Global Settings"]["MobHealthSupport"] ~= nil) then
+				mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
+			else
+				mobhealthsupport = nil;
+			end
+		end
 
-		-- Sanity checks in case you use a load from an old version, same defaults as above
+		-- Set the new values if any new values were found, same defaults as above
 		if (state == nil) then
 			state = 3;
 		end
@@ -830,8 +868,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.35",
-			releaseDate = "January 24, 2006",
+			version = "v0.36",
+			releaseDate = "January 25, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -863,16 +863,46 @@ end
 
 function Perl_Target_Target_UpdateVars(vartable)
 	if (vartable ~= nil) then
-		-- Set the new values
-		colorhealth = vartable["Global Settings"]["ColorHealth"];
-		locked = vartable["Global Settings"]["Locked"];
-		mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
-		scale = vartable["Global Settings"]["Scale"];
-		totsupport = vartable["Global Settings"]["ToTSupport"];
-		tototsupport = vartable["Global Settings"]["ToToTSupport"];
-		transparency = vartable["Global Settings"]["Transparency"];
+		-- Sanity checks in case you use a load from an old version
+		if (vartable["Global Settings"] ~= nil) then
+			if (vartable["Global Settings"]["ColorHealth"] ~= nil) then
+				colorhealth = vartable["Global Settings"]["ColorHealth"];
+			else
+				colorhealth = nil;
+			end
+			if (vartable["Global Settings"]["Locked"] ~= nil) then
+				locked = vartable["Global Settings"]["Locked"];
+			else
+				locked = nil;
+			end
+			if (vartable["Global Settings"]["MobHealthSupport"] ~= nil) then
+				mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
+			else
+				mobhealthsupport = nil;
+			end
+			if (vartable["Global Settings"]["Scale"] ~= nil) then
+				scale = vartable["Global Settings"]["Scale"];
+			else
+				scale = nil;
+			end
+			if (vartable["Global Settings"]["ToTSupport"] ~= nil) then
+				totsupport = vartable["Global Settings"]["ToTSupport"];
+			else
+				totsupport = nil;
+			end
+			if (vartable["Global Settings"]["ToToTSupport"] ~= nil) then
+				tototsupport = vartable["Global Settings"]["ToToTSupport"];
+			else
+				tototsupport = nil;
+			end
+			if (vartable["Global Settings"]["Transparency"] ~= nil) then
+				transparency = vartable["Global Settings"]["Transparency"];
+			else
+				transparency = nil;
+			end
+		end
 
-		-- Sanity checks in case you use a load from an old version, same defaults as above
+		-- Set the new values if any new values were found, same defaults as above
 		if (colorhealth == nil) then
 			colorhealth = 0;
 		end
@@ -1046,8 +1076,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.35",
-			releaseDate = "January 24, 2006",
+			version = "v0.36",
+			releaseDate = "January 25, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -81,6 +81,10 @@ function Perl_Config_Target_Set_Values()
 	Perl_Config_Target_Frame_Slider4Low:SetText("0");
 	Perl_Config_Target_Frame_Slider4High:SetText("100");
 	Perl_Config_Target_Frame_Slider4:SetValue(vartable["transparency"]*100);
+
+	Perl_Config_Target_Frame_Slider5Low:SetText("Small");
+	Perl_Config_Target_Frame_Slider5High:SetText("Big");
+	Perl_Config_Target_Frame_Slider5:SetValue(floor(vartable["buffdebuffscale"]*100+0.5));
 end
 
 function Perl_Config_Target_Set_Buffs(value)
@@ -174,6 +178,17 @@ function Perl_Config_Target_Set_Scale(value)
 		else
 			Perl_Config_Target_Frame_CheckButton9:SetChecked(nil);
 		end
+	end
+end
+
+function Perl_Config_Target_Set_BuffDebuff_Scale(value)
+	if (Perl_Target_Frame) then	-- this check is to prevent errors if you aren't using Target
+		if (value == nil) then
+			value = floor(UIParent:GetScale()*100+0.5);
+			Perl_Config_Target_Frame_Slider5Text:SetText(value);
+			Perl_Config_Target_Frame_Slider5:SetValue(value);
+		end
+		Perl_Target_Set_BuffDebuff_Scale(value);
 	end
 end
 

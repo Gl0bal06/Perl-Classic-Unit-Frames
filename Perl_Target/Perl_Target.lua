@@ -16,6 +16,7 @@ local scale = 1;		-- default scale
 local colorhealth = 0;		-- progressively colored health bars are off by default
 local showpvprank = 0;		-- hide the pvp rank by default
 local transparency = 1;		-- transparency for frames
+local buffdebuffscale = 1;	-- default scale for buffs and debuffs
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -841,10 +842,21 @@ function Perl_Target_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
 		scale = (number / 100);					-- convert the user input to a wow acceptable value
-		--DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Target Display is now scaled to |cffffffff"..floor(scale * 100 + 0.5).."%|cffffff00.");	-- only display if the user gave us a number
 	end
 	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
 	Perl_Target_Frame:SetScale(unsavedscale);
+	Perl_Target_Set_BuffDebuff_Scale(buffdebuffscale*100);				-- maintain the buff/debuff scale
+	Perl_Target_UpdateVars();
+end
+
+function Perl_Target_Set_BuffDebuff_Scale(number)
+	local unsavedscale;
+	if (number ~= nil) then
+		buffdebuffscale = (number / 100);				-- convert the user input to a wow acceptable value
+	end
+	unsavedscale = 1 - UIParent:GetEffectiveScale() + buffdebuffscale;	-- run it through the scaling formula introduced in 1.9
+	Perl_Target_BuffFrame:SetScale(buffdebuffscale);
+	Perl_Target_DebuffFrame:SetScale(buffdebuffscale);
 	Perl_Target_UpdateVars();
 end
 
@@ -1048,6 +1060,7 @@ function Perl_Target_GetVars()
 	colorhealth = Perl_Target_Config[UnitName("player")]["ColorHealth"];
 	showpvprank = Perl_Target_Config[UnitName("player")]["ShowPvPRank"];
 	transparency = Perl_Target_Config[UnitName("player")]["Transparency"];
+	buffdebuffscale = Perl_Target_Config[UnitName("player")]["BuffDebuffScale"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1089,6 +1102,9 @@ function Perl_Target_GetVars()
 	if (transparency == nil) then
 		transparency = 1;
 	end
+	if (buffdebuffscale == nil) then
+		buffdebuffscale = 1;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1103,27 +1119,83 @@ function Perl_Target_GetVars()
 		["colorhealth"] = colorhealth,
 		["showpvprank"] = showpvprank,
 		["transparency"] = transparency,
+		["buffdebuffscale"] = buffdebuffscale,
 	}
 	return vars;
 end
 
 function Perl_Target_UpdateVars(vartable)
 	if (vartable ~= nil) then
-		-- Set the new values
-		locked = vartable["Global Settings"]["Locked"];
-		showcp = vartable["Global Settings"]["ComboPoints"];
-		showclassicon = vartable["Global Settings"]["ClassIcon"];
-		showclassframe = vartable["Global Settings"]["ClassFrame"];
-		showpvpicon = vartable["Global Settings"]["PvPIcon"];
-		numbuffsshown = vartable["Global Settings"]["Buffs"];
-		numdebuffsshown = vartable["Global Settings"]["Debuffs"];
-		mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
-		scale = vartable["Global Settings"]["Scale"];
-		colorhealth = vartable["Global Settings"]["ColorHealth"];
-		showpvprank = vartable["Global Settings"]["ShowPvPRank"];
-		transparency = vartable["Global Settings"]["Transparency"];
+		-- Sanity checks in case you use a load from an old version
+		if (vartable["Global Settings"] ~= nil) then
+			if (vartable["Global Settings"]["Locked"] ~= nil) then
+				locked = vartable["Global Settings"]["Locked"];
+			else
+				locked = nil;
+			end
+			if (vartable["Global Settings"]["ComboPoints"] ~= nil) then
+				showcp = vartable["Global Settings"]["ComboPoints"];
+			else
+				showcp = nil;
+			end
+			if (vartable["Global Settings"]["ClassIcon"] ~= nil) then
+				showclassicon = vartable["Global Settings"]["ClassIcon"];
+			else
+				showclassicon = nil;
+			end
+			if (vartable["Global Settings"]["ClassFrame"] ~= nil) then
+				showclassframe = vartable["Global Settings"]["ClassFrame"];
+			else
+				showclassframe = nil;
+			end
+			if (vartable["Global Settings"]["PvPIcon"] ~= nil) then
+				showpvpicon = vartable["Global Settings"]["PvPIcon"];
+			else
+				showpvpicon = nil;
+			end
+			if (vartable["Global Settings"]["Buffs"] ~= nil) then
+				numbuffsshown = vartable["Global Settings"]["Buffs"];
+			else
+				numbuffsshown = nil;
+			end
+			if (vartable["Global Settings"]["Debuffs"] ~= nil) then
+				numdebuffsshown = vartable["Global Settings"]["Debuffs"];
+			else
+				numdebuffsshown = nil;
+			end
+			if (vartable["Global Settings"]["MobHealthSupport"] ~= nil) then
+				mobhealthsupport = vartable["Global Settings"]["MobHealthSupport"];
+			else
+				mobhealthsupport = nil;
+			end
+			if (vartable["Global Settings"]["Scale"] ~= nil) then
+				scale = vartable["Global Settings"]["Scale"];
+			else
+				scale = nil;
+			end
+			if (vartable["Global Settings"]["ColorHealth"] ~= nil) then
+				colorhealth = vartable["Global Settings"]["ColorHealth"];
+			else
+				colorhealth = nil;
+			end
+			if (vartable["Global Settings"]["ShowPvPRank"] ~= nil) then
+				showpvprank = vartable["Global Settings"]["ShowPvPRank"];
+			else
+				showpvprank = nil;
+			end
+			if (vartable["Global Settings"]["Transparency"] ~= nil) then
+				transparency = vartable["Global Settings"]["Transparency"];
+			else
+				transparency = nil;
+			end
+			if (vartable["Global Settings"]["BuffDebuffScale"] ~= nil) then
+				buffdebuffscale = vartable["Global Settings"]["BuffDebuffScale"];
+			else
+				buffdebuffscale = nil;
+			end
+		end
 
-		-- Sanity checks in case you use a load from an old version, same defaults as above
+		-- Set the new values if any new values were found, same defaults as above
 		if (locked == nil) then
 			locked = 0;
 		end
@@ -1145,10 +1217,6 @@ function Perl_Target_UpdateVars(vartable)
 		if (numdebuffsshown == nil) then
 			numdebuffsshown = 16;
 		end
-		local tempnumbuffsshown = tonumber(numbuffsshown);
-		if (tempnumbuffsshown > 16) then
-			numbuffsshown = 16;
-		end
 		if (mobhealthsupport == nil) then
 			mobhealthsupport = 1;
 		end
@@ -1163,6 +1231,9 @@ function Perl_Target_UpdateVars(vartable)
 		end
 		if (transparency == nil) then
 			transparency = 1;
+		end
+		if (buffdebuffscale == nil) then
+			buffdebuffscale = 1;
 		end
 
 		-- Call any code we need to activate them
@@ -1183,6 +1254,7 @@ function Perl_Target_UpdateVars(vartable)
 		["ColorHealth"] = colorhealth,
 		["ShowPvPRank"] = showpvprank,
 		["Transparency"] = transparency,
+		["BuffDebuffScale"] = buffdebuffscale,
 	};
 end
 
@@ -1392,8 +1464,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.35",
-			releaseDate = "January 24, 2006",
+			version = "v0.36",
+			releaseDate = "January 25, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

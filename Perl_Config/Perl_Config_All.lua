@@ -120,6 +120,7 @@ function Perl_Config_All_Set_Scale(value)
 
 	if (Perl_Target_Frame) then
 		Perl_Target_Set_Scale(value);
+		Perl_Target_Set_BuffDebuff_Scale(value);
 	end
 
 	if (Perl_Target_Target_Script_Frame) then

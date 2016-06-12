@@ -76,6 +76,16 @@
 					</Anchors>
 				</FontString>
 
+				<FontString name="$parent_Buff_Scaling_Text" inherits="GameFontNormal" text="Buff/Debuff Scaling (100 is default)">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="200" y="-90"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
 				<FontString name="$parent_Transparency_Text" inherits="GameFontNormal" text="Transparency">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
@@ -380,6 +390,25 @@
 					<OnValueChanged>
 						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
 						Perl_Config_Target_Set_Transparency(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
+				</Scripts>
+			</Slider>
+
+			<Slider name="$parent_Slider5" inherits="OptionsSliderTemplate" minValue="1" maxValue="149" valueStep="1">
+				<Size>
+					<AbsDimension x="200" y="15"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Buff_Scaling_Text">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Config_Target_Set_BuffDebuff_Scale(getglobal(this:GetName()):GetValue());
 					</OnValueChanged>
 				</Scripts>
 			</Slider>

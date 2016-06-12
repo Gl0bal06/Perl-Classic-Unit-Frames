@@ -508,6 +508,7 @@ function Perl_Config_Global_Save_Settings()
 			["ColorHealth"] = vartable["colorhealth"],
 			["ShowPvPRank"] = vartable["showpvprank"],
 			["Transparency"] = vartable["transparency"],
+			["BuffDebuffScale"] = vartable["buffdebuffscale"],
 		};
 	end
 
@@ -596,13 +597,31 @@ end
 
 function Perl_Config_UpdateVars(vartable)
 	if (vartable ~= nil) then
-		-- Set the new values
-		texture = vartable["Global Settings"]["Texture"];
-		showminimapbutton = vartable["Global Settings"]["ShowMiniMapButton"];
-		minimapbuttonpos = vartable["Global Settings"]["MiniMapButtonPos"];
-		transparentbackground = vartable["Global Settings"]["TransparentBackground"];
+		-- Sanity checks in case you use a load from an old version
+		if (vartable["Global Settings"] ~= nil) then
+			if (vartable["Global Settings"]["Texture"] ~= nil) then
+				texture = vartable["Global Settings"]["Texture"];
+			else
+				texture = nil;
+			end
+			if (vartable["Global Settings"]["ShowMiniMapButton"] ~= nil) then
+				showminimapbutton = vartable["Global Settings"]["ShowMiniMapButton"];
+			else
+				showminimapbutton = nil;
+			end
+			if (vartable["Global Settings"]["MiniMapButtonPos"] ~= nil) then
+				minimapbuttonpos = vartable["Global Settings"]["MiniMapButtonPos"];
+			else
+				minimapbuttonpos = nil;
+			end
+			if (vartable["Global Settings"]["TransparentBackground"] ~= nil) then
+				transparentbackground = vartable["Global Settings"]["TransparentBackground"];
+			else
+				transparentbackground = nil;
+			end
+		end
 
-		-- Sanity checks in case you use a load from an old version, same defaults as above
+		-- Set the new values if any new values were found, same defaults as above
 		if (texture == nil) then
 			texture = 0;
 		end
@@ -693,8 +712,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "v0.35",
-			releaseDate = "January 24, 2006",
+			version = "v0.36",
+			releaseDate = "January 25, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -1490,21 +1490,71 @@ end
 
 function Perl_Party_UpdateVars(vartable)
 	if (vartable ~= nil) then
-		-- Set the new values
-		locked = vartable["Global Settings"]["Locked"];
-		compactmode = vartable["Global Settings"]["CompactMode"];
-		partyhidden = vartable["Global Settings"]["PartyHidden"];
-		partyspacing = vartable["Global Settings"]["PartySpacing"];
-		scale = vartable["Global Settings"]["Scale"];
-		showpets = vartable["Global Settings"]["ShowPets"];
-		colorhealth = vartable["Global Settings"]["ColorHealth"];
-		healermode = vartable["Global Settings"]["HealerMode"];
-		transparency = vartable["Global Settings"]["Transparency"];
-		bufflocation = vartable["Global Settings"]["BuffLocation"];
-		debufflocation = vartable["Global Settings"]["DebuffLocation"];
-		verticalalign = vartable["Global Settings"]["VerticalAlign"];
+		-- Sanity checks in case you use a load from an old version
+		if (vartable["Global Settings"] ~= nil) then
+			if (vartable["Global Settings"]["Locked"] ~= nil) then
+				locked = vartable["Global Settings"]["Locked"];
+			else
+				locked = nil;
+			end
+			if (vartable["Global Settings"]["CompactMode"] ~= nil) then
+				compactmode = vartable["Global Settings"]["CompactMode"];
+			else
+				compactmode = nil;
+			end
+			if (vartable["Global Settings"]["PartyHidden"] ~= nil) then
+				partyhidden = vartable["Global Settings"]["PartyHidden"];
+			else
+				partyhidden = nil;
+			end
+			if (vartable["Global Settings"]["PartySpacing"] ~= nil) then
+				partyspacing = vartable["Global Settings"]["PartySpacing"];
+			else
+				partyspacing = nil;
+			end
+			if (vartable["Global Settings"]["Scale"] ~= nil) then
+				scale = vartable["Global Settings"]["Scale"];
+			else
+				scale = nil;
+			end
+			if (vartable["Global Settings"]["ShowPets"] ~= nil) then
+				showpets = vartable["Global Settings"]["ShowPets"];
+			else
+				showpets = nil;
+			end
+			if (vartable["Global Settings"]["ColorHealth"] ~= nil) then
+				colorhealth = vartable["Global Settings"]["ColorHealth"];
+			else
+				colorhealth = nil;
+			end
+			if (vartable["Global Settings"]["HealerMode"] ~= nil) then
+				healermode = vartable["Global Settings"]["HealerMode"];
+			else
+				healermode = nil;
+			end
+			if (vartable["Global Settings"]["Transparency"] ~= nil) then
+				transparency = vartable["Global Settings"]["Transparency"];
+			else
+				transparency = nil;
+			end
+			if (vartable["Global Settings"]["BuffLocation"] ~= nil) then
+				bufflocation = vartable["Global Settings"]["BuffLocation"];
+			else
+				bufflocation = nil;
+			end
+			if (vartable["Global Settings"]["DebuffLocation"] ~= nil) then
+				debufflocation = vartable["Global Settings"]["DebuffLocation"];
+			else
+				debufflocation = nil;
+			end
+			if (vartable["Global Settings"]["VerticalAlign"] ~= nil) then
+				verticalalign = vartable["Global Settings"]["VerticalAlign"];
+			else
+				verticalalign = nil;
+			end
+		end
 
-		-- Sanity checks in case you use a load from an old version, same defaults as above
+		-- Set the new values if any new values were found, same defaults as above
 		if (locked == nil) then
 			locked = 0;
 		end
@@ -1769,8 +1819,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.35",
-			releaseDate = "January 24, 2006",
+			version = "v0.36",
+			releaseDate = "January 25, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
