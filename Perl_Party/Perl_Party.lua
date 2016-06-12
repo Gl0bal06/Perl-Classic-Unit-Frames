@@ -77,8 +77,8 @@ local partyhealth, partyhealthmax, partyhealthpercent, partymana, partymanamax, 
 function Perl_Party_Script_OnLoad(self)
 	-- Events
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
+	self:RegisterEvent("PLAYER_LOGIN");
 	self:RegisterEvent("RAID_ROSTER_UPDATE");
-	self:RegisterEvent("VARIABLES_LOADED");
 
 	-- Scripts
 	self:SetScript("OnEvent", Perl_Party_Script_OnEvent);
@@ -149,7 +149,6 @@ function Perl_Party_OnLoad(self)
 
 	-- WoW 2.0 Secure API Stuff
 	self:SetAttribute("unit", self.unit);
-	RegisterUnitWatch(self);
 end
 
 
@@ -167,12 +166,12 @@ function Perl_Party_Script_OnEvent()
 	end
 end
 
-function Perl_Party_Script_Events:VARIABLES_LOADED()
+function Perl_Party_Script_Events:PLAYER_LOGIN()
 	if (Initialized) then
 		Perl_Party_Check_Hidden();		-- Are we running a hidden mode?
 	end
 end
-Perl_Party_Events.PLAYER_ENTERING_WORLD = Perl_Party_Events.VARIABLES_LOADED;
+Perl_Party_Events.PLAYER_ENTERING_WORLD = Perl_Party_Events.PLAYER_LOGIN;
 
 function Perl_Party_Script_Events:RAID_ROSTER_UPDATE()
 	Perl_Party_Check_Hidden();
@@ -357,6 +356,9 @@ function Perl_Party_Initialize()
 	if (IFrameManager) then
 		Perl_Party_IFrameManager();
 	end
+
+	-- WoW 2.0 Secure API Stuff
+	Perl_Party_Register_All()
 
 	Initialized = 1;
 	Perl_Party_MembersUpdate(Perl_Party_MemberFrame1);

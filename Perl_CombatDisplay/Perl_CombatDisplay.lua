@@ -58,6 +58,7 @@ local playerhealth, playerhealthmax, playermana, playermanamax, playerpower, pla
 function Perl_CombatDisplay_OnLoad()
 	-- Events
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_LOGIN");
 	this:RegisterEvent("PLAYER_REGEN_DISABLED");
 	this:RegisterEvent("PLAYER_REGEN_ENABLED");
 	this:RegisterEvent("PLAYER_TARGET_CHANGED");
@@ -74,7 +75,6 @@ function Perl_CombatDisplay_OnLoad()
 	this:RegisterEvent("UNIT_MAXRAGE");
 	this:RegisterEvent("UNIT_PET");
 	this:RegisterEvent("UNIT_RAGE");
-	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_CombatDisplay_OnEvent);
@@ -97,7 +97,6 @@ function Perl_CombatDisplay_Target_OnLoad()
 
 	-- WoW 2.0 Secure API Stuff
 	this:SetAttribute("unit", "target");
-	RegisterUnitWatch(this);
 end
 
 
@@ -249,7 +248,7 @@ function Perl_CombatDisplay_Events:UNIT_PET()
 	Perl_CombatDisplay_CheckForPets();
 end
 
-function Perl_CombatDisplay_Events:VARIABLES_LOADED()
+function Perl_CombatDisplay_Events:PLAYER_LOGIN()
 	local powertype = UnitPowerType("player");
 	InCombat = 0;
 	IsAggroed = 0;
@@ -275,7 +274,7 @@ function Perl_CombatDisplay_Events:VARIABLES_LOADED()
 
 	Perl_CombatDisplay_Initialize();
 end
-Perl_CombatDisplay_Events.PLAYER_ENTERING_WORLD = Perl_CombatDisplay_Events.VARIABLES_LOADED;
+Perl_CombatDisplay_Events.PLAYER_ENTERING_WORLD = Perl_CombatDisplay_Events.PLAYER_LOGIN;
 
 
 -------------------------------
@@ -318,6 +317,9 @@ function Perl_CombatDisplay_Initialize()
 	if (IFrameManager) then
 		Perl_CombatDisplay_IFrameManager();
 	end
+
+	-- WoW 2.0 Secure API Stuff
+	RegisterUnitWatch(Perl_CombatDisplay_Target_Frame);
 
 	Initialized = 1;
 end

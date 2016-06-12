@@ -59,6 +59,7 @@ function Perl_Focus_OnLoad()
 	this:RegisterEvent("PARTY_MEMBER_ENABLE");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_LOGIN");
 	this:RegisterEvent("PLAYER_FOCUS_CHANGED");
 	this:RegisterEvent("RAID_TARGET_UPDATE");
 	this:RegisterEvent("UNIT_AURA");
@@ -81,7 +82,6 @@ function Perl_Focus_OnLoad()
 	this:RegisterEvent("UNIT_FACTION");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("UNIT_SPELLMISS");
-	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Focus_OnEvent);
@@ -104,7 +104,6 @@ function Perl_Focus_OnLoad()
 
 	-- WoW 2.0 Secure API Stuff
 	this:SetAttribute("unit", "focus");
-	RegisterUnitWatch(this);
 end
 
 
@@ -210,10 +209,10 @@ function Perl_Focus_Events:UNIT_DISPLAYPOWER()
 	end
 end
 
-function Perl_Focus_Events:VARIABLES_LOADED()
+function Perl_Focus_Events:PLAYER_LOGIN()
 	Perl_Focus_Initialize();
 end
-Perl_Focus_Events.PLAYER_ENTERING_WORLD = Perl_Focus_Events.VARIABLES_LOADED;
+Perl_Focus_Events.PLAYER_ENTERING_WORLD = Perl_Focus_Events.PLAYER_LOGIN;
 
 
 -------------------------------
@@ -252,6 +251,9 @@ function Perl_Focus_Initialize()
 	if (IFrameManager) then
 		Perl_Focus_IFrameManager();
 	end
+
+	-- WoW 2.0 Secure API Stuff
+	RegisterUnitWatch(Perl_Focus_Frame);
 
 	-- Set the initialization flag
 	Initialized = 1;

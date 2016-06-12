@@ -53,8 +53,8 @@ function Perl_Party_Pet_Script_OnLoad()
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	this:RegisterEvent("PLAYER_ALIVE");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_LOGIN");
 	this:RegisterEvent("RAID_ROSTER_UPDATE");
-	this:RegisterEvent("VARIABLES_LOADED");
 	this:RegisterEvent("UNIT_PET");
 
 	-- Scripts
@@ -143,10 +143,10 @@ function Perl_Party_Pet_Events:UNIT_NAME_UPDATE()
 	end
 end
 
-function Perl_Party_Pet_Events:VARIABLES_LOADED()
+function Perl_Party_Pet_Events:PLAYER_LOGIN()
 	Perl_Party_Pet_Initialize();
 end
-Perl_Party_Pet_Events.PLAYER_ENTERING_WORLD = Perl_Party_Pet_Events.VARIABLES_LOADED;
+Perl_Party_Pet_Events.PLAYER_ENTERING_WORLD = Perl_Party_Pet_Events.PLAYER_LOGIN;
 
 
 -------------------------------

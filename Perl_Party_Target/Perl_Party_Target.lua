@@ -52,8 +52,8 @@ local r, g, b, currentunit, partytargetname, partytargethealth, partytargethealt
 function Perl_Party_Target_Script_OnLoad()
 	-- Events
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_LOGIN");
 	this:RegisterEvent("RAID_ROSTER_UPDATE");
-	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Party_Target_Script_OnEvent);
@@ -102,10 +102,10 @@ function Perl_Party_Target_Events:RAID_ROSTER_UPDATE()
 	Perl_Party_Target_Check_Hidden();
 end
 
-function Perl_Party_Target_Events:VARIABLES_LOADED()
+function Perl_Party_Target_Events:PLAYER_LOGIN()
 	Perl_Party_Target_Initialize();
 end
-Perl_Party_Target_Events.PLAYER_ENTERING_WORLD = Perl_Party_Target_Events.VARIABLES_LOADED;
+Perl_Party_Target_Events.PLAYER_ENTERING_WORLD = Perl_Party_Target_Events.PLAYER_LOGIN;
 
 
 -------------------------------

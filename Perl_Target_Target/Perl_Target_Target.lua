@@ -62,9 +62,9 @@ local r, g, b, reaction, mobhealththreenumerics, englishclass;
 function Perl_Target_Target_OnLoad()
 	-- Events
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_LOGIN");
 	this:RegisterEvent("PLAYER_REGEN_ENABLED");
 	this:RegisterEvent("PLAYER_TARGET_CHANGED");
-	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Target_Target_OnEvent);
@@ -106,10 +106,10 @@ function Perl_Target_Target_Events:PLAYER_TARGET_CHANGED()
 end
 Perl_Target_Target_Events.PLAYER_REGEN_ENABLED = Perl_Target_Target_Events.PLAYER_TARGET_CHANGED;
 
-function Perl_Target_Target_Events:VARIABLES_LOADED()
+function Perl_Target_Target_Events:PLAYER_LOGIN()
 	Perl_Target_Target_Initialize();
 end
-Perl_Target_Target_Events.PLAYER_ENTERING_WORLD = Perl_Target_Target_Events.VARIABLES_LOADED;
+Perl_Target_Target_Events.PLAYER_ENTERING_WORLD = Perl_Target_Target_Events.PLAYER_LOGIN;
 
 
 -------------------------------

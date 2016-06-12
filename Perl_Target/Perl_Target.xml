@@ -48,6 +48,17 @@
 				</FontString>
 			</Layer>
 		</Layers>
+		<Frames>
+			<Cooldown name="$parentCooldown" inherits="CooldownFrameTemplate" reverse="true" hidden="true">
+				<Anchors>
+					<Anchor point="CENTER">
+						<Offset>
+							<AbsDimension x="0" y="-1"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</Cooldown>
+		</Frames>
 		<Scripts>
 			<OnEnter>
 				Perl_Target_SetBuffTooltip();

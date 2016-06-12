@@ -89,7 +89,7 @@ end
 -- Event/Update Handlers --
 ---------------------------
 function Perl_ArcaneBar_Loaded_Frame_OnEvent()
-	if (event == "VARIABLES_LOADED" or event == "PLAYER_ENTERING_WORLD") then
+	if (event == "PLAYER_LOGIN" or event == "PLAYER_ENTERING_WORLD") then
 		Perl_ArcaneBar_Initialize();
 	end
 end

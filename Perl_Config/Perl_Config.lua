@@ -93,9 +93,9 @@ PCUF_CLASSPOSBOTTOM = {
 function Perl_Config_OnLoad()
 	-- Events
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_LOGIN");
 	this:RegisterEvent("PLAYER_REGEN_DISABLED");
 	this:RegisterEvent("PLAYER_REGEN_ENABLED");
-	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Config_OnEvent);
@@ -136,10 +136,10 @@ function Perl_Config_Events:PLAYER_REGEN_ENABLED()
 	end
 end
 
-function Perl_Config_Events:VARIABLES_LOADED()
+function Perl_Config_Events:PLAYER_LOGIN()
 	Perl_Config_Initialize();
 end
-Perl_Config_Events.PLAYER_ENTERING_WORLD = Perl_Config_Events.VARIABLES_LOADED;
+Perl_Config_Events.PLAYER_ENTERING_WORLD = Perl_Config_Events.PLAYER_LOGIN;
 
 function Perl_Config_Events:ADDON_ACTION_BLOCKED()
 	if (PCUF_SHOW_DEBUG_EVENTS == 1) then
@@ -1374,6 +1374,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShowGuildName"] = vartable["showguildname"],
 			["EliteRareGraphic"] = vartable["eliteraregraphic"],
 			["DisplayCurableDebuff"] = vartable["displaycurabledebuff"],
+			["DisplayBuffTimers"] = vartable["displaybufftimers"],
 		};
 	end
 

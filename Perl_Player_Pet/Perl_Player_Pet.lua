@@ -43,6 +43,7 @@ function Perl_Player_Pet_OnLoad()
 
 	-- Events
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_LOGIN");
 	this:RegisterEvent("PLAYER_PET_CHANGED");
 	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_COMBAT");
@@ -61,7 +62,6 @@ function Perl_Player_Pet_OnLoad()
 	this:RegisterEvent("UNIT_PET_EXPERIENCE");
 	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	this:RegisterEvent("UNIT_SPELLMISS");
-	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Player_Pet_OnEvent);
@@ -78,7 +78,6 @@ function Perl_Player_Pet_OnLoad()
 
 	-- WoW 2.0 Secure API Stuff
 	this:SetAttribute("unit", "pet");
-	RegisterUnitWatch(this);
 end
 
 
@@ -179,10 +178,10 @@ function Perl_Player_Pet_Events:UNIT_PORTRAIT_UPDATE()
 end
 Perl_Player_Pet_Events.UNIT_MODEL_CHANGED = Perl_Player_Pet_Events.UNIT_PORTRAIT_UPDATE;
 
-function Perl_Player_Pet_Events:VARIABLES_LOADED()
+function Perl_Player_Pet_Events:PLAYER_LOGIN()
 	Perl_Player_Pet_Initialize();
 end
-Perl_Player_Pet_Events.PLAYER_ENTERING_WORLD = Perl_Player_Pet_Events.VARIABLES_LOADED;
+Perl_Player_Pet_Events.PLAYER_ENTERING_WORLD = Perl_Player_Pet_Events.PLAYER_LOGIN;
 
 
 -------------------------------
@@ -219,6 +218,9 @@ function Perl_Player_Pet_Initialize()
 	if (IFrameManager) then
 		Perl_Player_Pet_IFrameManager();
 	end
+
+	-- WoW 2.0 Secure API Stuff
+	RegisterUnitWatch(Perl_Player_Pet_Frame);
 
 	Initialized = 1;
 end
@@ -386,7 +388,7 @@ function Perl_Player_Pet_Update_Mana()
 		Perl_Player_Pet_ManaBar:SetValue(petmana);
 	end
 
-	if (UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
+	if (UnitClass("player") == PERL_LOCALIZED_WARLOCK or UnitClass("player") == PERL_LOCALIZED_MAGE) then
 		Perl_Player_Pet_ManaBarText:SetText(petmana.."/"..petmanamax);
 	else
 		Perl_Player_Pet_ManaBarText:SetText(petmana);
@@ -487,7 +489,7 @@ function Perl_Player_Pet_Portrait_Combat_Text()
 end
 
 function Perl_Player_Pet_Set_Window_Layout()
-	if (UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
+	if (UnitClass("player") == PERL_LOCALIZED_WARLOCK or UnitClass("player") == PERL_LOCALIZED_MAGE) then
 		if (compactmode == 0) then
 			Perl_Player_Pet_LevelFrame:Hide();
 			Perl_Player_Pet_StatsFrame:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "BOTTOMLEFT", 0, 5);

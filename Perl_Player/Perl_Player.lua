@@ -63,6 +63,7 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("PARTY_LOOT_METHOD_CHANGED");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
 	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+	this:RegisterEvent("PLAYER_LOGIN");
 	this:RegisterEvent("PLAYER_REGEN_DISABLED");
 	this:RegisterEvent("PLAYER_REGEN_ENABLED");
 	this:RegisterEvent("PLAYER_UPDATE_RESTING");
@@ -86,7 +87,6 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("UNIT_SPELLMISS");
 	this:RegisterEvent("UPDATE_FACTION");
-	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Player_OnEvent);
@@ -228,10 +228,10 @@ function Perl_Player_Events:UNIT_PORTRAIT_UPDATE()
 end
 Perl_Player_Events.UNIT_MODEL_CHANGED = Perl_Player_Events.UNIT_PORTRAIT_UPDATE;
 
-function Perl_Player_Events:VARIABLES_LOADED()
+function Perl_Player_Events:PLAYER_LOGIN()
 	Perl_Player_Initialize();
 end
-Perl_Player_Events.PLAYER_ENTERING_WORLD = Perl_Player_Events.VARIABLES_LOADED;
+Perl_Player_Events.PLAYER_ENTERING_WORLD = Perl_Player_Events.PLAYER_LOGIN;
 
 
 -------------------------------

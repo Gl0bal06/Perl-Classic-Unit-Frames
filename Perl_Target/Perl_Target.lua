@@ -37,6 +37,7 @@ local invertbuffs = 0;		-- buffs and debuffs are below the target frame by defau
 local showguildname = 0;	-- guild names are hidden by default
 local eliteraregraphic = 0;	-- the blizzard elite/rare graphic is off by default
 local displaycurabledebuff = 0;	-- display all debuffs by default
+local displaybufftimers = 1;	-- buff/debuff timers are on by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -60,6 +61,7 @@ function Perl_Target_OnLoad()
 
 	-- Events
 	this:RegisterEvent("PARTY_LEADER_CHANGED");
+	this:RegisterEvent("PLAYER_LOGIN");
 	this:RegisterEvent("PARTY_MEMBER_DISABLE");
 	this:RegisterEvent("PARTY_MEMBER_ENABLE");
 	this:RegisterEvent("PARTY_MEMBERS_CHANGED");
@@ -87,7 +89,6 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("UNIT_FACTION");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("UNIT_SPELLMISS");
-	this:RegisterEvent("VARIABLES_LOADED");
 
 	-- Scripts
 	this:SetScript("OnEvent", Perl_Target_OnEvent);
@@ -112,7 +113,6 @@ function Perl_Target_OnLoad()
 
 	-- WoW 2.0 Secure API Stuff
 	this:SetAttribute("unit", "target");
-	RegisterUnitWatch(this);
 end
 
 
@@ -223,10 +223,10 @@ function Perl_Target_Events:UNIT_DISPLAYPOWER()
 	end
 end
 
-function Perl_Target_Events:VARIABLES_LOADED()
+function Perl_Target_Events:PLAYER_LOGIN()
 	Perl_Target_Initialize();
 end
-Perl_Target_Events.PLAYER_ENTERING_WORLD = Perl_Target_Events.VARIABLES_LOADED;
+Perl_Target_Events.PLAYER_ENTERING_WORLD = Perl_Target_Events.PLAYER_LOGIN;
 
 
 -------------------------------
@@ -268,6 +268,9 @@ function Perl_Target_Initialize()
 	if (IFrameManager) then
 		Perl_Target_IFrameManager();
 	end
+
+	-- WoW 2.0 Secure API Stuff
+	RegisterUnitWatch(Perl_Target_Frame);
 
 	-- Set the initialization flag
 	Initialized = 1;
@@ -1201,9 +1204,7 @@ function Perl_Target_Frame_Set_Level()
 		Perl_Target_RareEliteBarText:SetTextColor(1, 0, 0);
 		Perl_Target_EliteRareGraphic:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Elite");
 		targetclassificationframetext = PERL_LOCALIZED_TARGET_BOSS;
-	end
-
-	if (targetclassification == "rareelite") then
+	elseif (targetclassification == "rareelite") then
 		Perl_Target_EliteRareGraphic:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Rare-Elite");
 		targetclassificationframetext = PERL_LOCALIZED_TARGET_RAREELITE;
 		targetlevel = targetlevel.."r+";
@@ -1622,6 +1623,15 @@ function Perl_Target_Set_Class_Buffs(newvalue)
 	Perl_Target_Buff_UpdateAll();		-- Repopulate the buff icons
 end
 
+function Perl_Target_Set_Buff_Timers(newvalue)
+	if (newvalue ~= nil) then
+		displaybufftimers = newvalue;
+	end
+	Perl_Target_UpdateVars();		-- Save the new setting
+	Perl_Target_Reset_Buffs();		-- Reset the buff icons
+	Perl_Target_Buff_UpdateAll();		-- Repopulate the buff icons
+end
+
 function Perl_Target_Set_Class_Debuffs(newvalue)
 	if (newvalue ~= nil) then
 		displaycurabledebuff = newvalue;
@@ -1925,6 +1935,7 @@ function Perl_Target_GetVars(name, updateflag)
 	showguildname = Perl_Target_Config[name]["ShowGuildName"];
 	eliteraregraphic = Perl_Target_Config[name]["EliteRareGraphic"];
 	displaycurabledebuff = Perl_Target_Config[name]["DisplayCurableDebuff"];
+	displaybufftimers = Perl_Target_Config[name]["DisplayBuffTimers"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -2022,6 +2033,9 @@ function Perl_Target_GetVars(name, updateflag)
 	if (displaycurabledebuff == nil) then
 		displaycurabledebuff = 0;
 	end
+	if (displaybufftimers == nil) then
+		displaybufftimers = 1;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -2072,6 +2086,7 @@ function Perl_Target_GetVars(name, updateflag)
 		["showguildname"] = showguildname,
 		["eliteraregraphic"] = eliteraregraphic,
 		["displaycurabledebuff"] = displaycurabledebuff,
+		["displaybufftimers"] = displaybufftimers,
 	}
 	return vars;
 end
@@ -2240,6 +2255,11 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				displaycurabledebuff = nil;
 			end
+			if (vartable["Global Settings"]["DisplayBuffTimers"] ~= nil) then
+				displaybufftimers = vartable["Global Settings"]["DisplayBuffTimers"];
+			else
+				displaybufftimers = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2339,6 +2359,9 @@ function Perl_Target_UpdateVars(vartable)
 		if (displaycurabledebuff == nil) then
 			displaycurabledebuff = 0;
 		end
+		if (displaybufftimers == nil) then
+			displaybufftimers = 1;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();		-- Reset the buff icons
@@ -2389,6 +2412,7 @@ function Perl_Target_UpdateVars(vartable)
 		["ShowGuildName"] = showguildname,
 		["EliteRareGraphic"] = eliteraregraphic,
 		["DisplayCurableDebuff"] = displaycurabledebuff,
+		["DisplayBuffTimers"] = displaybufftimers,
 	};
 end
 
@@ -2403,11 +2427,11 @@ function Perl_Target_Buff_UpdateAll()
 			Perl_Target_Buff_UpdateCPMeter();
 		end
 
-		local button, buffCount, buffTexture, buffApplications, color, debuffType;				-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		local button, buffCount, buffTexture, buffApplications, color, debuffType, duration, timeLeft, cooldown, startCooldownTime;	-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
 
 		local numBuffs = 0;											-- Buff counter for correct layout
 		for buffnum=1,numbuffsshown do										-- Start main buff loop
-			_, _, buffTexture, buffApplications = UnitBuff("target", buffnum, displaycastablebuffs);	-- Get the texture and buff stacking information if any
+			_, _, buffTexture, buffApplications, duration, timeLeft = UnitBuff("target", buffnum, displaycastablebuffs);	-- Get the texture and buff stacking information if any
 			button = getglobal("Perl_Target_Buff"..buffnum);						-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -2419,6 +2443,22 @@ function Perl_Target_Buff_UpdateAll()
 				else
 					buffCount:Hide();								-- Hide the text if equal to 0
 				end
+				if (displaybufftimers == 1) then
+					cooldown = getglobal(button:GetName().."Cooldown");					-- Handle cooldowns
+					if (duration) then
+						if (duration > 0) then
+							startCooldownTime = GetTime() - (duration - timeLeft);
+							CooldownFrame_SetTimer(cooldown, startCooldownTime, duration, 1);
+							cooldown:Show();
+						else
+							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+							cooldown:Hide();
+						end
+					else
+						CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+						cooldown:Hide();
+					end
+				end
 				numBuffs = numBuffs + 1;								-- Increment the buff counter
 				button:Show();										-- Show the final buff icon
 			else
@@ -2428,7 +2468,7 @@ function Perl_Target_Buff_UpdateAll()
 
 		local numDebuffs = 0;											-- Debuff counter for correct layout
 		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
-			_, _, buffTexture, buffApplications, debuffType = UnitDebuff("target", debuffnum, displaycurabledebuff);	-- Get the texture and debuff stacking information if any
+			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft = UnitDebuff("target", debuffnum, displaycurabledebuff);	-- Get the texture and debuff stacking information if any
 			button = getglobal("Perl_Target_Debuff"..debuffnum);						-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);				-- Set the texture
@@ -2445,6 +2485,22 @@ function Perl_Target_Buff_UpdateAll()
 					buffCount:Show();								-- Show the text
 				else
 					buffCount:Hide();								-- Hide the text if equal to 0
+				end
+				if (displaybufftimers == 1) then
+					cooldown = getglobal(button:GetName().."Cooldown");					-- Handle cooldowns
+					if (duration) then
+						if (duration > 0) then
+							startCooldownTime = GetTime()-(duration-timeLeft);
+							CooldownFrame_SetTimer(cooldown, startCooldownTime, duration, 1);
+							cooldown:Show();
+						else
+							CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+							cooldown:Hide();
+						end
+					else
+						CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+						cooldown:Hide();
+					end
 				end
 				numDebuffs = numDebuffs + 1;								-- Increment the debuff counter
 				button:Show();										-- Show the final debuff icon
@@ -2687,14 +2743,20 @@ function Perl_Target_Buff_GetApplications(debuffname)
 end
 
 function Perl_Target_Reset_Buffs()
-	local button;
+	local button, cooldown;
 	for buffnum=1,20 do
 		button = getglobal("Perl_Target_Buff"..buffnum);
 		button:Hide();
+		cooldown = getglobal(button:GetName().."Cooldown");
+		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+		cooldown:Hide();
 	end
 	for debuffnum=1,40 do
 		button = getglobal("Perl_Target_Debuff"..debuffnum);
 		button:Hide();
+		cooldown = getglobal(button:GetName().."Cooldown");
+		CooldownFrame_SetTimer(cooldown, 0, 0, 0);
+		cooldown:Hide();
 	end
 end
 
