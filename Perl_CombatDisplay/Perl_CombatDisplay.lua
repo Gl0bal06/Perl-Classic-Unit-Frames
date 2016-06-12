@@ -318,9 +318,6 @@ function Perl_CombatDisplay_Initialize()
 		Perl_CombatDisplay_IFrameManager();
 	end
 
-	-- WoW 2.0 Secure API Stuff
-	RegisterUnitWatch(Perl_CombatDisplay_Target_Frame);
-
 	Initialized = 1;
 end
 

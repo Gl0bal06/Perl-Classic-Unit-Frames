@@ -1,3 +1,7 @@
+2.07a - June 3, 2007
+ - CombatDisplay: Fixed an issue with the target frame appearing when disabled
+ - Config: Updated Korean translations (Thanks gygabyte)
+
 2.07 - June 3, 2007
  - All: Switched from the VARIABLES_LOADED event to PLAYER_LOGIN
  - CombatDisplay/Focus/Party/Pet/Target: Fixed a source of API taint introduced in 2.1
