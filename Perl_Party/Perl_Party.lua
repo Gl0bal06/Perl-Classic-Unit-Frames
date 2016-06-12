@@ -22,6 +22,8 @@ local displaycastablebuffs = 0;	-- display all buffs by default
 local threedportrait = 0;	-- 3d portraits are off by default
 local buffsize = 16;		-- default buff size is 16
 local debuffsize = 16;		-- default debuff size is 16
+local numbuffsshown = 16;	-- buff row is 16 long
+local numdebuffsshown = 16;	-- debuff row is 16 long
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -1548,6 +1550,24 @@ function Perl_Party_Set_Debuff_Size(newvalue)
 	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
 end
 
+function Perl_Party_Set_Buffs(newvalue)
+	if (newvalue ~= nil) then
+		numbuffsshown = newvalue;
+	end
+	Perl_Party_UpdateVars();
+	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
+	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+end
+
+function Perl_Party_Set_Debuffs(newvalue)
+	if (newvalue ~= nil) then
+		numdebuffsshown = newvalue;
+	end
+	Perl_Party_UpdateVars();
+	Perl_Party_Reset_Buffs();		-- Reset the buff icons and set size
+	Perl_Party_Update_Buffs();		-- Repopulate the buff icons
+end
+
 function Perl_Party_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1595,6 +1615,8 @@ function Perl_Party_GetVars()
 	threedportrait = Perl_Party_Config[UnitName("player")]["ThreeDPortrait"];
 	buffsize = Perl_Party_Config[UnitName("player")]["BuffSize"];
 	debuffsize = Perl_Party_Config[UnitName("player")]["DebuffSize"];
+	numbuffsshown = Perl_Party_Config[UnitName("player")]["Buffs"];
+	numdebuffsshown = Perl_Party_Config[UnitName("player")]["Debuffs"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1650,6 +1672,12 @@ function Perl_Party_GetVars()
 	if (debuffsize == nil) then
 		debuffsize = 16;
 	end
+	if (numbuffsshown == nil) then
+		numbuffsshown = 16;
+	end
+	if (numdebuffsshown == nil) then
+		numdebuffsshown = 16;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1670,6 +1698,8 @@ function Perl_Party_GetVars()
 		["threedportrait"] = threedportrait,
 		["buffsize"] = buffsize,
 		["debuffsize"] = debuffsize,
+		["numbuffsshown"] = numbuffsshown,
+		["numdebuffsshown"] = numdebuffsshown,
 	}
 	return vars;
 end
@@ -1768,6 +1798,16 @@ function Perl_Party_UpdateVars(vartable)
 			else
 				debuffsize = nil;
 			end
+			if (vartable["Global Settings"]["Buffs"] ~= nil) then
+				numbuffsshown = vartable["Global Settings"]["Buffs"];
+			else
+				numbuffsshown = nil;
+			end
+			if (vartable["Global Settings"]["Debuffs"] ~= nil) then
+				numdebuffsshown = vartable["Global Settings"]["Debuffs"];
+			else
+				numdebuffsshown = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1825,6 +1865,12 @@ function Perl_Party_UpdateVars(vartable)
 		if (debuffsize == nil) then
 			debuffsize = 16;
 		end
+		if (numbuffsshown == nil) then
+			numbuffsshown = 16;
+		end
+		if (numdebuffsshown == nil) then
+			numdebuffsshown = 16;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Party_Set_Space();				-- This probably isn't needed, but one extra call for this won't matter
@@ -1857,6 +1903,8 @@ function Perl_Party_UpdateVars(vartable)
 		["ThreeDPortrait"] = threedportrait,
 		["BuffSize"] = buffsize,
 		["DebuffSize"] = debuffsize,
+		["Buffs"] = numbuffsshown,
+		["Debuffs"] = numdebuffsshown,
 	};
 end
 
@@ -1876,7 +1924,7 @@ function Perl_Party_Buff_UpdateAll(partymember)
 	
 	if (UnitName(partyid)) then
 		local buffCount, buffTexture, buffApplications;
-		for buffnum=1,16 do
+		for buffnum=1,numbuffsshown do
 			buffTexture, buffApplications = UnitBuff(partyid, buffnum, displaycastablebuffs);
 			local button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff"..buffnum);
 			local icon = getglobal(button:GetName().."Icon");
@@ -1899,7 +1947,7 @@ function Perl_Party_Buff_UpdateAll(partymember)
 		end
 
 		local debuffCount, debuffTexture, debuffApplications;
-		for buffnum=1,16 do
+		for buffnum=1,numdebuffsshown do
 			debuffTexture, debuffApplications = UnitDebuff(partyid, buffnum, displaycastablebuffs);
 			local button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..buffnum);
 			local icon = getglobal(button:GetName().."Icon");
@@ -2033,7 +2081,7 @@ function Perl_Party_MouseClick(button)
 		if (not string.find(GetMouseFocus():GetName(), "Name")) then
 			CastParty_OnClickByUnit(button, "party"..id);
 		end
-	elseif (Genesis_data and PCUF_CASTPARTYSUPPORT == 1) then
+	elseif (Genesis_MouseHeal and PCUF_CASTPARTYSUPPORT == 1 and (IsControlKeyDown() or IsShiftKeyDown())) then
 		if (not string.find(GetMouseFocus():GetName(), "Name")) then
 			Genesis_MouseHeal("party"..id, button);
 		end
@@ -2069,7 +2117,7 @@ function Perl_Party_MouseUp(button)
 	end
 
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_data) and PCUF_CASTPARTYSUPPORT == 1) then
+		if ((CastPartyConfig or Genesis_MouseHeal) and PCUF_CASTPARTYSUPPORT == 1) then
 			if (not (IsAltKeyDown() or IsControlKeyDown() or IsShiftKeyDown()) and string.find(GetMouseFocus():GetName(), "Name")) then		-- if alt, ctrl, or shift ARE NOT held AND we are clicking the name frame, show the menu
 				ToggleDropDownMenu(1, nil, getglobal("Perl_Party_MemberFrame"..id.."_DropDown"), "Perl_Party_MemberFrame"..id, 0, 0);
 			end
@@ -2094,7 +2142,7 @@ function Perl_Party_Pet_MouseClick(button)
 		if (not string.find(GetMouseFocus():GetName(), "Name")) then
 			CastParty_OnClickByUnit(button, "partypet"..id);
 		end
-	elseif (Genesis_data and PCUF_CASTPARTYSUPPORT == 1) then
+	elseif (Genesis_MouseHeal and PCUF_CASTPARTYSUPPORT == 1 and (IsControlKeyDown() or IsShiftKeyDown())) then
 		if (not string.find(GetMouseFocus():GetName(), "Name")) then
 			Genesis_MouseHeal("partypet"..id, button);
 		end
@@ -2142,8 +2190,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.59",
-			releaseDate = "April 22, 2006",
+			version = "Version 0.60",
+			releaseDate = "April 28, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -14,24 +14,6 @@
 				</Offset>
 			</Anchor>
 		</Anchors>
-		<!--
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<TileSize>
-				<AbsValue val="32"/>
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="32"/>
-			</EdgeSize>
-			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11"/>
-			</BackgroundInsets>
-		</Backdrop>
-		
-		<Scripts>
-			<OnLoad>
-				Perl_Config_Party_Set_Values();
-			</OnLoad>
-		</Scripts>-->
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="Perl_Config_Party_Header" file="Interface\DialogFrame\UI-DialogBox-Header">
@@ -70,7 +52,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-30"/>
+								<AbsDimension x="200" y="-30"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -80,17 +62,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="20" y="-120"/>
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-
-				<FontString name="$parent_Misc2_Text" inherits="GameFontNormal" text=" ">
-					<Anchors>
-						<Anchor point="LEFT" relativePoint="TOPLEFT">
-							<Offset>
-								<AbsDimension x="230" y="-120"/>
+								<AbsDimension x="20" y="-30"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -141,6 +113,26 @@
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
 								<AbsDimension x="400" y="-270"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Buff_Text" inherits="GameFontNormal" text="# of Buffs">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="200" y="-150"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+
+				<FontString name="$parent_Debuff_Text" inherits="GameFontNormal" text="# of Debuffs">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="TOPLEFT">
+							<Offset>
+								<AbsDimension x="200" y="-210"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -275,9 +267,9 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton4">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton11">
 						<Offset>
-							<AbsDimension x="0" y="-40"/>
+							<AbsDimension x="-20" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -291,12 +283,138 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton8" inherits="UICheckButtonTemplate" id="8">
+			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton5">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Party Pets");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Pets_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton6">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Vertical Party Frames");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_VerticalAlign_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton12" inherits="UICheckButtonTemplate" id="12">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Display Portrait Frames");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Portrait_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton15" inherits="UICheckButtonTemplate" id="15">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton12">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("3D Portrait Frame");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_3D_Portrait_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton13" inherits="UICheckButtonTemplate" id="13">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton15">
+						<Offset>
+							<AbsDimension x="-20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Display F Keys");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_FKeys_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton14" inherits="UICheckButtonTemplate" id="14">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton13">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Class Buffs/Debuffs");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Class_Buffs_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton8" inherits="UICheckButtonTemplate" id="8">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton14">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>
@@ -466,131 +584,43 @@
 				</Scripts>
 			</Slider>
 
-			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
+			<Slider name="$parent_Slider8" inherits="OptionsSliderTemplate" minValue="0" maxValue="16" valueStep="1">
 				<Size>
-					<AbsDimension x="20" y="20"/>
+					<AbsDimension x="150" y="15"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent_Misc2_Text">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Buff_Text">
 						<Offset>
-							<AbsDimension x="20" y="-20"/>
+							<AbsDimension x="20" y="-25"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Party Pets");
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Party_Pets_Update();
-					</OnClick>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Config_Party_Set_Buffs(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
 				</Scripts>
-			</CheckButton>
+			</Slider>
 
-			<CheckButton name="$parent_CheckButton10" inherits="UICheckButtonTemplate" id="10">
+			<Slider name="$parent_Slider9" inherits="OptionsSliderTemplate" minValue="0" maxValue="16" valueStep="1">
 				<Size>
-					<AbsDimension x="20" y="20"/>
+					<AbsDimension x="150" y="15"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton6">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Debuff_Text">
 						<Offset>
-							<AbsDimension x="0" y="-20"/>
+							<AbsDimension x="20" y="-25"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Vertical Party Frames");
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Party_VerticalAlign_Update();
-					</OnClick>
+					<OnValueChanged>
+						getglobal(this:GetName().."Text"):SetText(getglobal(this:GetName()):GetValue());
+						Perl_Party_Set_Debuffs(getglobal(this:GetName()):GetValue());
+					</OnValueChanged>
 				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton12" inherits="UICheckButtonTemplate" id="12">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Display Portrait Frames");
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Party_Portrait_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton15" inherits="UICheckButtonTemplate" id="15">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton12">
-						<Offset>
-							<AbsDimension x="20" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("3D Portrait Frame");
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Party_3D_Portrait_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton13" inherits="UICheckButtonTemplate" id="13">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton15">
-						<Offset>
-							<AbsDimension x="-20" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Display F Keys");
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Party_FKeys_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton14" inherits="UICheckButtonTemplate" id="14">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton13">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("Class Buffs/Debuffs");
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Party_Class_Buffs_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
+			</Slider>
 		</Frames>
 
 	</Frame>

@@ -1,3 +1,9 @@
+0.60 - April 28, 2006
+ - All: Updated Genesis support as per author's request
+ - Config: Rearranged party options
+ - Config: Changed some incorrect comments
+ - Party: Can now display 0 to 16 buffs and debuffs
+
 0.59 - April 22, 2006
  - CombatDisplay: Added the ability to toggle right click menu functionality
  - Party: Removed some safety code regarding pet health

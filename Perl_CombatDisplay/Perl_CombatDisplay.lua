@@ -1049,7 +1049,7 @@ end
 function Perl_CombatDisplay_MouseClick(button)
 	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
 		CastParty_OnClickByUnit(button, "player");
-	elseif (Genesis_data and PCUF_CASTPARTYSUPPORT == 1) then
+	elseif (Genesis_MouseHeal and PCUF_CASTPARTYSUPPORT == 1 and (IsControlKeyDown() or IsShiftKeyDown())) then
 		Genesis_MouseHeal("player", button);
 	else
 		if (SpellIsTargeting() and button == "RightButton") then
@@ -1120,7 +1120,7 @@ end
 function Perl_CombatDisplay_Target_MouseClick(button)
 	if (CastPartyConfig and PCUF_CASTPARTYSUPPORT == 1) then
 		CastParty_OnClickByUnit(button, "target");
-	elseif (Genesis_data and PCUF_CASTPARTYSUPPORT == 1) then
+	elseif (Genesis_MouseHeal and PCUF_CASTPARTYSUPPORT == 1 and (IsControlKeyDown() or IsShiftKeyDown())) then
 		Genesis_MouseHeal("target", button);
 	else
 		if (SpellIsTargeting() and button == "RightButton") then
@@ -1148,7 +1148,7 @@ end
 
 function Perl_CombatDisplay_Target_MouseUp(button)
 	if (button == "RightButton") then
-		if ((CastPartyConfig or Genesis_data) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
+		if ((CastPartyConfig or Genesis_MouseHeal) and PCUF_CASTPARTYSUPPORT == 1) then				-- cant open the menu from combatdisplay if castparty or genesis is installed
 			-- Do nothing
 		else
 			if (rightclickmenu == 1) then
@@ -1171,8 +1171,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.59",
-			releaseDate = "April 22, 2006",
+			version = "Version 0.60",
+			releaseDate = "April 28, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

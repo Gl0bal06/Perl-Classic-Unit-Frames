@@ -627,6 +627,8 @@ function Perl_Config_Global_Save_Settings()
 			["ThreeDPortrait"] = vartable["threedportrait"],
 			["BuffSize"] = vartable["buffsize"],
 			["DebuffSize"] = vartable["debuffsize"],
+			["Buffs"] = vartable["numbuffsshown"],
+			["Debuffs"] = vartable["numdebuffsshown"],
 		};
 	end
 
@@ -1099,8 +1101,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.59",
-			releaseDate = "April 22, 2006",
+			version = "Version 0.60",
+			releaseDate = "April 28, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

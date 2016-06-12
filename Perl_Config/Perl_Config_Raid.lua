@@ -242,7 +242,7 @@ function Perl_Config_Raid_Set_Scale(value)
 end
 
 function Perl_Config_Raid_Set_Transparency(value)
-	if (Perl_Raid_Frame) then	-- this check is to prevent errors if you aren't using Player
+	if (Perl_Raid_Frame) then	-- this check is to prevent errors if you aren't using Raid
 		Perl_Raid_Set_Transparency(value);
 	end
 end

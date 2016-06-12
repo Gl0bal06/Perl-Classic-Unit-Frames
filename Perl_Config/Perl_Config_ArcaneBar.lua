@@ -60,7 +60,7 @@ function Perl_Config_ArcaneBar_Hide_Original_Update()
 end
 
 function Perl_Config_ArcaneBar_Set_Transparency(value)
-	if (Perl_ArcaneBar_Frame_Loaded_Frame) then	-- this check is to prevent errors if you aren't using Player
+	if (Perl_ArcaneBar_Frame_Loaded_Frame) then	-- this check is to prevent errors if you aren't using ArcaneBar
 		Perl_ArcaneBar_Set_Transparency(value);
 	end
 end

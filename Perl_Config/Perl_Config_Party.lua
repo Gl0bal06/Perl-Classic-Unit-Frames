@@ -123,34 +123,42 @@ function Perl_Config_Party_Set_Values()
 	Perl_Config_Party_Frame_Slider7Low:SetText("1");
 	Perl_Config_Party_Frame_Slider7High:SetText("50");
 	Perl_Config_Party_Frame_Slider7:SetValue(vartable["debuffsize"]);
+
+	Perl_Config_Party_Frame_Slider8Low:SetText("0");
+	Perl_Config_Party_Frame_Slider8High:SetText("16");
+	Perl_Config_Party_Frame_Slider8:SetValue(vartable["numbuffsshown"]);
+
+	Perl_Config_Party_Frame_Slider9Low:SetText("0");
+	Perl_Config_Party_Frame_Slider9High:SetText("16");
+	Perl_Config_Party_Frame_Slider9:SetValue(vartable["numdebuffsshown"]);
 end
 
 function Perl_Config_Party_Set_Space(value)
-	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Party
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Space(value);
 	end
 end
 
 function Perl_Config_Party_Set_Buff_Location(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Buff_Location(value);
 	end
 end
 
 function Perl_Config_Party_Set_Debuff_Location(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Debuff_Location(value);
 	end
 end
 
 function Perl_Config_Party_Set_Buff_Size(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Buff_Size(value);
 	end
 end
 
 function Perl_Config_Party_Set_Debuff_Size(value)
-	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Debuff_Size(value);
 	end
 end
@@ -248,8 +256,20 @@ function Perl_Config_Party_3D_Portrait_Update()
 	end
 end
 
+function Perl_Config_Party_Set_Buffs(value)
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
+		Perl_Party_Set_Buffs(value);
+	end
+end
+
+function Perl_Config_Party_Set_Debuffs(value)
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
+		Perl_Party_Set_Debuffs(value);
+	end
+end
+
 function Perl_Config_Party_Set_Scale(value)
-	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Party
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
 		if (value == nil) then
 			value = floor(UIParent:GetScale()*100+0.5);
 			Perl_Config_Party_Frame_Slider1Text:SetText(value);
@@ -267,7 +287,7 @@ function Perl_Config_Party_Set_Scale(value)
 end
 
 function Perl_Config_Party_Set_Transparency(value)
-	if (Perl_Party_Frame) then	-- this check is to prevent errors if you aren't using Player
+	if (Perl_Party_Frame) then		-- this check is to prevent errors if you aren't using Party
 		Perl_Party_Set_Transparency(value);
 	end
 end

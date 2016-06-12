@@ -319,7 +319,7 @@ function Perl_Config_Target_Set_BuffDebuff_Scale(value)
 end
 
 function Perl_Config_Target_Set_Transparency(value)
-	if (Perl_Target_Frame) then	-- this check is to prevent errors if you aren't using Player
+	if (Perl_Target_Frame) then	-- this check is to prevent errors if you aren't using Target
 		Perl_Target_Set_Transparency(value);
 	end
 end

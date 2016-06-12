@@ -177,7 +177,7 @@ function Perl_Config_Target_Target_Set_Scale(value)
 end
 
 function Perl_Config_Target_Target_Set_Transparency(value)
-	if (Perl_Target_Target_Script_Frame) then	-- this check is to prevent errors if you aren't using Player
+	if (Perl_Target_Target_Script_Frame) then	-- this check is to prevent errors if you aren't using Target_Target
 		Perl_Target_Target_Set_Transparency(value);
 	end
 end

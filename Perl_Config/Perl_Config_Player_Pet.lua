@@ -176,7 +176,7 @@ function Perl_Config_Player_Pet_Set_Scale(value)
 end
 
 function Perl_Config_Player_Pet_Set_Transparency(value)
-	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player
+	if (Perl_Player_Pet_Frame) then		-- this check is to prevent errors if you aren't using Player_Pet
 		Perl_Player_Pet_Set_Transparency(value);
 	end
 end
