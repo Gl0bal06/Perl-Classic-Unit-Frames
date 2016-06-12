@@ -1,3 +1,9 @@
+3.01 Beta 6 - August 23, 2008
+ - All: Added siege weapon support to the right click menus
+ - Focus: Added the Blizzard Focus and Target of Focus frames to the disable list
+ - Pet: The power bar is now the correct color for siege weapons
+ - Target: Added the Blizzard Target of Target frame to the disable list
+
 3.01 Beta 5 - August 23, 2008
  - CombatDisplay/Target: Fixed the error regarding the GetComboPoints() function
 

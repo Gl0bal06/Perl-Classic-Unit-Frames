@@ -1605,6 +1605,8 @@ function Perl_CombatDisplayTargetDropDown_Initialize()
 		local id = nil;
 		if (UnitIsUnit("target", "player")) then
 			menu = "SELF";
+		elseif (UnitIsUnit("target", "vehicle")) then
+			menu = "VEHICLE";
 		elseif (UnitIsUnit("target", "pet")) then
 			menu = "PET";
 		elseif (UnitIsPlayer("target")) then

@@ -1859,6 +1859,8 @@ function Perl_TargetTargetDropDown_Initialize()
 	local id = nil;
 	if (UnitIsUnit("targettarget", "player")) then
 		menu = "SELF";
+	elseif (UnitIsUnit("targettarget", "vehicle")) then
+		menu = "VEHICLE";
 	elseif (UnitIsUnit("targettarget", "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer("targettarget")) then
@@ -1914,6 +1916,8 @@ function Perl_TargetTargetTargetDropDown_Initialize()
 	local id = nil;
 	if (UnitIsUnit("targettargettarget", "player")) then
 		menu = "SELF";
+	elseif (UnitIsUnit("targettargettarget", "vehicle")) then
+		menu = "VEHICLE";
 	elseif (UnitIsUnit("targettargettarget", "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer("targettargettarget")) then

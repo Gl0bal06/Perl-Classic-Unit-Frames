@@ -1140,6 +1140,8 @@ function Perl_Party_Target1DropDown_Initialize()
 
 	if (UnitIsUnit(currentunit, "player")) then
 		menu = "SELF";
+	elseif (UnitIsUnit(currentunit, "vehicle")) then
+		menu = "VEHICLE";
 	elseif (UnitIsUnit(currentunit, "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer(currentunit)) then
@@ -1168,6 +1170,8 @@ function Perl_Party_Target2DropDown_Initialize()
 
 	if (UnitIsUnit(currentunit, "player")) then
 		menu = "SELF";
+	elseif (UnitIsUnit(currentunit, "vehicle")) then
+		menu = "VEHICLE";
 	elseif (UnitIsUnit(currentunit, "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer(currentunit)) then
@@ -1197,6 +1201,8 @@ function Perl_Party_Target3DropDown_Initialize()
 
 	if (UnitIsUnit(currentunit, "player")) then
 		menu = "SELF";
+	elseif (UnitIsUnit(currentunit, "vehicle")) then
+		menu = "VEHICLE";
 	elseif (UnitIsUnit(currentunit, "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer(currentunit)) then
@@ -1226,6 +1232,8 @@ function Perl_Party_Target4DropDown_Initialize()
 
 	if (UnitIsUnit(currentunit, "player")) then
 		menu = "SELF";
+	elseif (UnitIsUnit(currentunit, "vehicle")) then
+		menu = "VEHICLE";
 	elseif (UnitIsUnit(currentunit, "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer(currentunit)) then
@@ -1255,6 +1263,8 @@ function Perl_Party_Target5DropDown_Initialize()
 
 	if (UnitIsUnit(currentunit, "player")) then
 		menu = "SELF";
+	elseif (UnitIsUnit(currentunit, "vehicle")) then
+		menu = "VEHICLE";
 	elseif (UnitIsUnit(currentunit, "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer(currentunit)) then

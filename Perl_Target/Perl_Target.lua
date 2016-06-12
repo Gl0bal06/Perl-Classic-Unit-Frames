@@ -300,6 +300,7 @@ function Perl_Target_Initialize()
 	Perl_clearBlizzardFrameDisable(TargetFrame);
 	Perl_clearBlizzardFrameDisable(ComboFrame);
 	Perl_clearBlizzardFrameDisable(TargetFrameSpellBar);
+	Perl_clearBlizzardFrameDisable(TargetofTargetFrame);
 
 	-- Disable Blizzard's Target Cast Bar
 	--TargetFrameSpellBar:UnregisterEvent("CVAR_UPDATE");
@@ -2471,6 +2472,8 @@ function Perl_TargetDropDown_Initialize()
 	local id = nil;
 	if (UnitIsUnit("target", "player")) then
 		menu = "SELF";
+	elseif (UnitIsUnit("target", "vehicle")) then
+		menu = "VEHICLE";
 	elseif (UnitIsUnit("target", "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer("target")) then

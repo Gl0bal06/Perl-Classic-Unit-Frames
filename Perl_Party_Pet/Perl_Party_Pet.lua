@@ -350,6 +350,9 @@ function Perl_Party_Pet_Update_Mana_Bar(unit)
 	elseif (partypetpower == 3) then
 		getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBar"):SetStatusBarColor(1, 1, 0, 1);
 		getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBarBG"):SetStatusBarColor(1, 1, 0, 0.25);
+	elseif (partypetpower == 6) then
+		getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBar"):SetStatusBarColor(0, 0.82, 1, 1);
+		getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBarBG"):SetStatusBarColor(0, 0.82, 1, 0.25);
 	else
 		getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBar"):SetStatusBarColor(0, 0, 1, 1);
 		getglobal("Perl_Party_Pet"..id.."_StatsFrame_ManaBarBG"):SetStatusBarColor(0, 0, 1, 0.25);

@@ -271,6 +271,11 @@ function Perl_Focus_Initialize()
 	Perl_Focus_NameFrame_CPMeter:SetMinMaxValues(0, 5);	-- REMOVE THIS LATER
 	Perl_Focus_NameFrame_CPMeter:SetValue(0);		-- REMOVE THIS LATER
 
+	-- Unregister and Hide the Blizzard frames
+	Perl_clearBlizzardFrameDisable(FocusFrame);
+	Perl_clearBlizzardFrameDisable(FocusFrameSpellBar);
+	Perl_clearBlizzardFrameDisable(TargetofFocusFrame);
+
 	-- MyAddOns Support
 	Perl_Focus_myAddOns_Support();
 

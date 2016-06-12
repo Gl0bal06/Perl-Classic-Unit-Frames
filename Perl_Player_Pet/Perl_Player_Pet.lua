@@ -419,9 +419,18 @@ function Perl_Player_Pet_Update_Mana_Bar()
 	if (UnitPowerType("pet") == 0) then
 		Perl_Player_Pet_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
+	elseif (UnitPowerType("pet") == 1) then
+		Perl_Player_Pet_ManaBar:SetStatusBarColor(1, 0, 0, 1);
+		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
 	elseif (UnitPowerType("pet") == 2) then
 		Perl_Player_Pet_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
 		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+	elseif (UnitPowerType("pet") == 3) then
+		Perl_Player_Pet_ManaBar:SetStatusBarColor(1, 1, 0, 1);
+		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+	elseif (UnitPowerType("pet") == 6) then
+		Perl_Player_Pet_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
+		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
 	end
 end
 
@@ -1774,7 +1783,11 @@ function Perl_Player_Pet_DropDown_OnLoad(self)
 end
 
 function Perl_Player_Pet_DropDown_Initialize()
-	UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, "PET", "pet");
+	if (UnitIsUnit("pet", "vehicle")) then
+		UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, "VEHICLE", "vehicle");
+	else
+		UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, "PET", "pet");
+	end
 end
 
 function Perl_Player_Pet_DragStart(button)
@@ -1809,6 +1822,8 @@ function Perl_Player_Pet_Target_DropDown_Initialize()
 	local id = nil;
 	if (UnitIsUnit("pettarget", "player")) then
 		menu = "SELF";
+	elseif (UnitIsUnit("pettarget", "vehicle")) then
+		menu = "VEHICLE";
 	elseif (UnitIsUnit("pettarget", "pet")) then
 		menu = "PET";
 	elseif (UnitIsPlayer("pettarget")) then
