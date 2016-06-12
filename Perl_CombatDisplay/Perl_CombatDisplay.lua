@@ -294,7 +294,7 @@ function Perl_CombatDisplay_Update_Health()
 	local playerhealth = UnitHealth("player");
 	local playerhealthmax = UnitHealthMax("player");
 
-	if (playerhealth < 0) then			-- This prevents negative health
+	if (UnitIsDead("player")) then				-- This prevents negative health
 		playerhealth = 0;
 	end
 
@@ -327,8 +327,13 @@ function Perl_CombatDisplay_Update_Mana()
 	local playermana = UnitMana("player");
 	local playermanamax = UnitManaMax("player");
 
+	if (UnitIsDead("player")) then				-- This prevents negative mana
+		playermana = 0;
+	end
+
 	Perl_CombatDisplay_ManaBar:SetMinMaxValues(0, playermanamax);
 	Perl_CombatDisplay_ManaBar:SetValue(playermana);
+
 	if (UnitPowerType("player") == 1) then
 		Perl_CombatDisplay_ManaBarText:SetText(playermana);
 	else
@@ -395,7 +400,7 @@ function Perl_CombatDisplay_Target_Update_Health()
 	local targethealth = UnitHealth("target");
 	local targethealthmax = UnitHealthMax("target");
 
-	if (targethealth < 0) then			-- This prevents negative health
+	if (UnitIsDead("target")) then				-- This prevents negative health
 		targethealth = 0;
 	end
 
@@ -484,8 +489,13 @@ function Perl_CombatDisplay_Target_Update_Mana()
 	local targetmanamax = UnitManaMax("target");
 	local targetpowertype = UnitPowerType("target");
 
+	if (UnitIsDead("target")) then				-- This prevents negative mana
+		targetmana = 0;
+	end
+
 	Perl_CombatDisplay_Target_ManaBar:SetMinMaxValues(0, targetmanamax);
 	Perl_CombatDisplay_Target_ManaBar:SetValue(targetmana);
+
 	if (targetpowertype == 1 or targetpowertype == 2) then
 		Perl_CombatDisplay_Target_ManaBarText:SetText(targetmana);
 	else
@@ -871,8 +881,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "v0.42",
-			releaseDate = "February 14, 2006",
+			version = "v0.43",
+			releaseDate = "February 16, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

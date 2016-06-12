@@ -33,6 +33,14 @@ local Perl_Party_ClassPosBottom = {};
 ----------------------
 -- Loading Function --
 ----------------------
+function Perl_Party_Script_OnLoad()
+	this:RegisterEvent("PLAYER_ENTERING_WORLD");
+
+	if (DEFAULT_CHAT_FRAME) then
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Perl Classic: Party loaded successfully.");
+	end
+end
+
 function Perl_Party_OnLoad()
 	-- Events
 	this:RegisterEvent("ADDON_LOADED"); 
@@ -68,6 +76,17 @@ end
 -------------------
 -- Event Handler --
 -------------------
+function Perl_Party_Script_OnEvent(event)				-- All this just to ensure party frames are hidden/shown on zoning
+	if (event == "PLAYER_ENTERING_WORLD") then
+		if (Initialized) then
+			Perl_Target_Set_Hidden();			-- Are we running a hidden mode?
+		end
+		return;
+	else
+		return;
+	end
+end
+
 function Perl_Party_OnEvent(event)
 	if (event == "UNIT_HEALTH") then
 		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
@@ -126,7 +145,7 @@ function Perl_Party_OnEvent(event)
 		return;
 	elseif (event == "PLAYER_ENTERING_WORLD" or event == "VARIABLES_LOADED") then
 		Perl_Party_Initialize();
-		Perl_Party_Check_Raid_Hidden();			-- Are we running a hidden mode?
+		Perl_Target_Set_Hidden();			-- Are we running a hidden mode?
 		return;
 	elseif (event == "ADDON_LOADED") then
 		if (arg1 == "Perl_Party") then
@@ -178,6 +197,7 @@ function Perl_Party_Initialize()
 		ManaBar:UnregisterAllEvents();
 	end
 
+	Initialized = 1;
 	Perl_Party_MembersUpdate();
 end
 
@@ -251,8 +271,9 @@ function Perl_Party_Update_Health()
 	local partyhealthmax = UnitHealthMax(partyid);
 	local partyhealthpercent = floor(partyhealth/partyhealthmax*100+0.5);
 
-	if (partyhealth < 0) then			-- This prevents negative health
+	if (UnitIsDead(partyid)) then				-- This prevents negative health
 		partyhealth = 0;
+		partyhealthpercent = 0;
 	end
 
 	getglobal(this:GetName().."_StatsFrame_HealthBar"):SetMinMaxValues(0, partyhealthmax);
@@ -325,6 +346,11 @@ function Perl_Party_Update_Mana()
 	local partymanamax = UnitManaMax(partyid);
 	local partymanapercent = floor(partymana/partymanamax*100+0.5);
 
+	if (UnitIsDead(partyid)) then				-- This prevents negative mana
+		partymana = 0;
+		partymanapercent = 0;
+	end
+
 	getglobal(this:GetName().."_StatsFrame_ManaBar"):SetMinMaxValues(0, partymanamax);
 	getglobal(this:GetName().."_StatsFrame_ManaBar"):SetValue(partymana);
 
@@ -391,6 +417,39 @@ function Perl_Party_Update_Pet()
 			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):Show();
 			getglobal(this:GetName().."_StatsFrame_PetHealthBarBG"):Show();
 			getglobal(this:GetName().."_StatsFrame"):SetHeight(54);
+
+			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetMinMaxValues(0, 1);		-- Set health to zero in order to keep the bars sane
+			getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetValue(0);			-- Info should be updated automatically anyway
+			if (colorhealth == 1) then
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(1, 0, 0);
+			else
+				getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetStatusBarColor(0, 0.8, 0);
+			end
+			if (compactmode == 0) then
+				if (healermode == 1) then
+					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-0");
+					if (tonumber(mouseoverpethealthflag) == tonumber(id)) then
+						getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0/0");
+					else
+						getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
+					end
+				else
+					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("0/0");
+					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0%");
+				end
+			else
+				if (healermode == 1) then
+					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText("-0");
+					if (tonumber(mouseoverpethealthflag) == tonumber(id)) then
+						getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0/0");
+					else
+						getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText();
+					end
+				else
+					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarText"):SetText();
+					getglobal(this:GetName().."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText("0/0");
+				end
+			end											-- End waste of code to keep it sane
 
 			if (verticalalign == 1) then
 				local idspace = id + 1;
@@ -470,6 +529,11 @@ function Perl_Party_Update_Pet_Health()
 		local partypethealth = UnitHealth("partypet"..id);
 		local partypethealthmax = UnitHealthMax("partypet"..id);
 		local partypethealthpercent = floor(partypethealth/partypethealthmax*100+0.5);
+
+		if (UnitIsDead("partypet"..id)) then				-- This prevents negative health
+			partypethealth = 0;
+			partypethealthpercent = 0;
+		end
 
 		getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetMinMaxValues(0, partypethealthmax);
 		getglobal(this:GetName().."_StatsFrame_PetHealthBar"):SetValue(partypethealth);
@@ -637,6 +701,11 @@ function Perl_Party_HealthShow()
 		local partyid = "party"..id;
 		local partyhealth = UnitHealth(partyid);
 		local partyhealthmax = UnitHealthMax(partyid);
+
+		if (UnitIsDead(partyid)) then				-- This prevents negative health
+			partyhealth = 0;
+		end
+
 		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_HealthBar_HealthBarTextPercent"):SetText(partyhealth.."/"..partyhealthmax);
 		mouseoverhealthflag = id;
 	end
@@ -664,6 +733,11 @@ function Perl_Party_ManaShow()
 		local partyid = "party"..id;
 		local partymana = UnitMana(partyid);
 		local partymanamax = UnitManaMax(partyid);
+
+		if (UnitIsDead(partyid)) then				-- This prevents negative mana
+			partymana = 0;
+		end
+
 		if (UnitPowerType(partyid) == 1) then
 			getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_ManaBar_ManaBarTextPercent"):SetText(partymana);
 		else
@@ -693,8 +767,13 @@ function Perl_Party_Pet_HealthShow()
 			id = string.sub(name, 23, 23);
 		end
 		local partyid = "partypet"..id;
-		local partypethealth = UnitHealth("partypet"..id);
-		local partypethealthmax = UnitHealthMax("partypet"..id);
+		local partypethealth = UnitHealth(partyid);
+		local partypethealthmax = UnitHealthMax(partyid);
+
+		if (UnitIsDead(partyid)) then				-- This prevents negative health
+			partypethealth = 0;
+		end
+
 		getglobal("Perl_Party_MemberFrame"..id.."_StatsFrame_PetHealthBar_PetHealthBarTextPercent"):SetText(partypethealth.."/"..partypethealthmax);
 		mouseoverpethealthflag = id;
 	end
@@ -898,8 +977,10 @@ function Perl_Party_Set_Space(number)
 end
 
 function Perl_Target_Set_Hidden(newvalue)
-	partyhidden = newvalue;
-	Perl_Party_UpdateVars();
+	if (newvalue ~= nil) then
+		partyhidden = newvalue;
+		Perl_Party_UpdateVars();
+	end
 
 	if (partyhidden == 1) then		-- copied from below sort of, delete below when slash commands are removed
 		Perl_Party_MemberFrame1:Hide();
@@ -1497,8 +1578,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "v0.42",
-			releaseDate = "February 14, 2006",
+			version = "v0.43",
+			releaseDate = "February 16, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

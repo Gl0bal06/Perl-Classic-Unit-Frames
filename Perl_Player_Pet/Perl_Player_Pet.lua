@@ -169,8 +169,8 @@ function Perl_Player_Pet_Update_Once()
 		Perl_Player_Pet_Update_Mana_Bar();				-- Set the type of mana
 		Perl_Player_PetFrame_SetHappiness();				-- Set Happiness
 		Perl_Player_Pet_Buff_UpdateAll();				-- Set buff frame
-		Perl_Player_Pet_Frame:Show();
-		Perl_Player_Pet_ShowXP();
+		Perl_Player_Pet_Frame:Show();					-- Display the pet frame
+		Perl_Player_Pet_ShowXP();					-- Are we showing the xp bar?
 	else
 		Perl_Player_Pet_Frame:Hide();
 	end
@@ -180,7 +180,7 @@ function Perl_Player_Pet_Update_Health()
 	local pethealth = UnitHealth("pet");
 	local pethealthmax = UnitHealthMax("pet");
 
-	if (pethealth < 0) then			-- This prevents negative health
+	if (UnitIsDead("pet")) then				-- This prevents negative health
 		pethealth = 0;
 	end
 
@@ -217,6 +217,10 @@ end
 function Perl_Player_Pet_Update_Mana()
 	local petmana = UnitMana("pet");
 	local petmanamax = UnitManaMax("pet");
+
+	if (UnitIsDead("pet")) then				-- This prevents negative mana
+		petmana = 0;
+	end
 
 	Perl_Player_Pet_ManaBar:SetMinMaxValues(0, petmanamax);
 	Perl_Player_Pet_ManaBar:SetValue(petmana);
@@ -689,8 +693,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.42",
-			releaseDate = "February 14, 2006",
+			version = "v0.43",
+			releaseDate = "February 16, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

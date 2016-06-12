@@ -1,3 +1,10 @@
+0.43 - February 16, 2006
+ - All: Changed negative health detection to something more effective
+ - Party: Added code to prevent pet health from looking weird
+ - Party: Should now correctly retain their hidden or shown status when zoning
+ - Player: Portrait will correctly display when logging in
+ - Target: Portrait will update without retargeting
+
 0.42 - February 14, 2006
  - CombatDisplay: Fixed a minor text bug regarding mobhealth support
  - Config: Added a Reset Frame Position button

@@ -168,6 +168,11 @@ function Perl_Target_Target_OnUpdate(arg1)
 			local targettargethealthmax = UnitHealthMax("targettarget");
 			local targettargethealthpercent = floor(targettargethealth/targettargethealthmax*100+0.5);
 
+			if (UnitIsDead("targettarget")) then				-- This prevents negative health
+				targettargethealth = 0;
+				targettargethealthpercent = 0;
+			end
+
 			Perl_Target_Target_HealthBar:SetMinMaxValues(0, targettargethealthmax);
 			Perl_Target_Target_HealthBar:SetValue(targettargethealth);
 
@@ -200,6 +205,10 @@ function Perl_Target_Target_OnUpdate(arg1)
 			-- Begin: Update the mana bar
 			local targettargetmana = UnitMana("targettarget");
 			local targettargetmanamax = UnitManaMax("targettarget");
+
+			if (UnitIsDead("targettarget")) then				-- This prevents negative mana
+				targettargetmana = 0;
+			end
 
 			Perl_Target_Target_ManaBar:SetMinMaxValues(0, targettargetmanamax);
 			Perl_Target_Target_ManaBar:SetValue(targettargetmana);
@@ -317,6 +326,11 @@ function Perl_Target_Target_OnUpdate(arg1)
 			local targettargettargethealthmax = UnitHealthMax("targettargettarget");
 			local targettargettargethealthpercent = floor(targettargettargethealth/targettargettargethealthmax*100+0.5);
 
+			if (UnitIsDead("targettargettarget")) then				-- This prevents negative health
+				targettargettargethealth = 0;
+				targettargettargethealthpercent = 0;
+			end
+
 			Perl_Target_Target_Target_HealthBar:SetMinMaxValues(0, targettargettargethealthmax);
 			Perl_Target_Target_Target_HealthBar:SetValue(targettargettargethealth);
 
@@ -349,6 +363,10 @@ function Perl_Target_Target_OnUpdate(arg1)
 			-- Begin: Update the mana bar
 			local targettargettargetmana = UnitMana("targettargettarget");
 			local targettargettargetmanamax = UnitManaMax("targettargettarget");
+
+			if (UnitIsDead("targettargettarget")) then				-- This prevents negative mana
+				targettargettargetmana = 0;
+			end
 
 			Perl_Target_Target_Target_ManaBar:SetMinMaxValues(0, targettargettargetmanamax);
 			Perl_Target_Target_Target_ManaBar:SetValue(targettargettargetmana);
@@ -415,8 +433,9 @@ function Perl_Target_Target_HealthShow()
 	local targettargethealth = UnitHealth("targettarget");
 	local targettargethealthmax = UnitHealthMax("targettarget");
 
-	if (targettargethealth < 0) then			-- This prevents negative health
+	if (UnitIsDead("targettarget")) then				-- This prevents negative health
 		targettargethealth = 0;
+		targettargethealthpercent = 0;
 	end
 
 	if (targettargethealthmax == 100) then
@@ -481,6 +500,11 @@ end
 
 function Perl_Target_Target_HealthHide()
 	local targettargethealthpercent = floor(UnitHealth("targettarget")/UnitHealthMax("targettarget")*100+0.5);
+
+	if (UnitIsDead("targettarget")) then				-- This prevents negative health
+		targettargethealthpercent = 0;
+	end
+
 	Perl_Target_Target_HealthBarText:SetText(targettargethealthpercent.."%");
 	mouseovertargettargethealthflag = 0;
 end
@@ -488,6 +512,11 @@ end
 function Perl_Target_Target_ManaShow()
 	local targettargetmana = UnitMana("targettarget");
 	local targettargetmanamax = UnitManaMax("targettarget");
+
+	if (UnitIsDead("targettarget")) then				-- This prevents negative mana
+		targettargetmana = 0;
+	end
+
 	if (UnitPowerType("targettarget") == 1) then
 		Perl_Target_Target_ManaBarText:SetText(targettargetmana);
 	else
@@ -508,8 +537,9 @@ function Perl_Target_Target_Target_HealthShow()
 	local targettargettargethealth = UnitHealth("targettargettarget");
 	local targettargettargethealthmax = UnitHealthMax("targettargettarget");
 
-	if (targettargettargethealth < 0) then			-- This prevents negative health
+	if (UnitIsDead("targettargettarget")) then				-- This prevents negative health
 		targettargettargethealth = 0;
+		targettargettargethealthpercent = 0;
 	end
 
 	if (targettargettargethealthmax == 100) then
@@ -574,6 +604,11 @@ end
 
 function Perl_Target_Target_Target_HealthHide()
 	local targettargettargethealthpercent = floor(UnitHealth("targettargettarget")/UnitHealthMax("targettargettarget")*100+0.5);
+
+	if (UnitIsDead("targettargettarget")) then				-- This prevents negative health
+		targettargettargethealthpercent = 0;
+	end
+
 	Perl_Target_Target_Target_HealthBarText:SetText(targettargettargethealthpercent.."%");
 	mouseovertargettargettargethealthflag = 0;
 end
@@ -581,6 +616,11 @@ end
 function Perl_Target_Target_Target_ManaShow()
 	local targettargettargetmana = UnitMana("targettargettarget");
 	local targettargettargetmanamax = UnitManaMax("targettargettarget");
+
+	if (UnitIsDead("targettargettarget")) then				-- This prevents negative mana
+		targettargettargetmana = 0;
+	end
+
 	if (UnitPowerType("targettargettarget") == 1) then
 		Perl_Target_Target_Target_ManaBarText:SetText(targettargettargetmana);
 	else
@@ -908,8 +948,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "v0.42",
-			releaseDate = "February 14, 2006",
+			version = "v0.43",
+			releaseDate = "February 16, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

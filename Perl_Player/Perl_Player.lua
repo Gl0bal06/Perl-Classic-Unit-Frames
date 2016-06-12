@@ -49,6 +49,7 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_LEVEL");
 	this:RegisterEvent("UNIT_MANA");
+	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("UNIT_SPELLMISS");
@@ -116,6 +117,11 @@ function Perl_Player_OnEvent(event)
 		return;
 	elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
 		Perl_Player_Update_Loot_Method();
+		return;
+	elseif (event == "UNIT_PORTRAIT_UPDATE") then
+		if (arg1 == "player") then
+			Perl_Player_Update_Portrait();
+		end
 		return;
 	elseif (event == "VARIABLES_LOADED") or (event=="PLAYER_ENTERING_WORLD") then
 		Perl_Player_Initialize();
@@ -213,8 +219,9 @@ function Perl_Player_Update_Health()
 	local playerhealthmax = UnitHealthMax("player");
 	local playerhealthpercent = floor(playerhealth/playerhealthmax*100+0.5);
 
-	if (playerhealth < 0) then				-- This prevents negative health
+	if (UnitIsDead("player")) then				-- This prevents negative health
 		playerhealth = 0;
+		playerhealthpercent = 0;
 	end
 
 	Perl_Player_HealthBar:SetMinMaxValues(0, playerhealthmax);
@@ -270,6 +277,11 @@ function Perl_Player_Update_Mana()
 	local playermana = UnitMana("player");
 	local playermanamax = UnitManaMax("player");
 	local playermanapercent = floor(playermana/playermanamax*100+0.5);
+
+	if (UnitIsDead("player")) then				-- This prevents negative mana
+		playermana = 0;
+		playermanapercent = 0;
+	end
 
 	Perl_Player_ManaBar:SetMinMaxValues(0, playermanamax);
 	Perl_Player_ManaBar:SetValue(playermana);
@@ -504,6 +516,11 @@ function Perl_Player_HealthShow()
 	if (healermode == 1) then
 		local playerhealth = UnitHealth("player");
 		local playerhealthmax = UnitHealthMax("player");
+
+		if (UnitIsDead("player")) then				-- This prevents negative health
+			playerhealth = 0;
+		end
+
 		Perl_Player_HealthBarTextPercent:SetText(playerhealth.."/"..playerhealthmax);
 		mouseoverhealthflag = 1;
 	end
@@ -520,6 +537,11 @@ function Perl_Player_ManaShow()
 	if (healermode == 1) then
 		local playermana = UnitMana("player");
 		local playermanamax = UnitManaMax("player");
+
+		if (UnitIsDead("player")) then				-- This prevents negative mana
+			playermana = 0;
+		end
+
 		if (UnitPowerType("player") == 1) then
 			Perl_Player_ManaBarTextPercent:SetText(playermana);
 		else
@@ -884,10 +906,6 @@ function Perl_PlayerDropDown_Initialize()
 	UnitPopup_ShowMenu(Perl_Player_DropDown, "SELF", "player");
 end
 
-function test()
-	getglobal(Perl_Config_Frame):Show();
-end
-
 function Perl_Player_MouseUp(button)
 	if (SpellIsTargeting() and button == "RightButton") then
 		SpellStopTargeting();
@@ -987,8 +1005,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.42",
-			releaseDate = "February 14, 2006",
+			version = "v0.43",
+			releaseDate = "February 16, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

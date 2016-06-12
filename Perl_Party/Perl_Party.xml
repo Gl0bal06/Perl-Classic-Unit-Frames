@@ -3,6 +3,18 @@
 	<Script file="Perl_Party.lua"/>
 
 
+	<Frame name="Perl_Party_Script_Frame" movable="true" parent="UIParent" hidden="false" enableMouse="true">
+		<Scripts>
+			<OnEvent>
+				Perl_Party_Script_OnEvent(event);
+			</OnEvent>
+			<OnLoad>
+				Perl_Party_Script_OnLoad();
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+
 	<!-- Virtual buffs template -->
 	<Button name="Perl_Party_BuffTemplate" virtual="true">
 		<Size>

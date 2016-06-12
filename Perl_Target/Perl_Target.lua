@@ -55,6 +55,7 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_LEVEL");
 	this:RegisterEvent("UNIT_MANA");
+	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("UNIT_SPELLMISS");
@@ -112,6 +113,11 @@ function Perl_Target_OnEvent(event)
 	elseif (event == "UNIT_PVP_UPDATE") then
 		Perl_Target_Update_Text_Color();		-- Is the character PvP flagged?
 		Perl_Target_Update_PvP_Status_Icon();		-- Set pvp status icon
+		return;
+	elseif (event == "UNIT_PORTRAIT_UPDATE") then
+		if (arg1 == "target") then
+			Perl_Target_Update_Portrait();
+		end
 		return;
 	elseif (event == "UNIT_LEVEL") then
 		if (arg1 == "target") then
@@ -239,8 +245,9 @@ function Perl_Target_Update_Health()
 	local targethealthmax = UnitHealthMax("target");
 	local targethealthpercent = floor(targethealth/targethealthmax*100+0.5);
 
-	if (targethealth < 0) then			-- This prevents negative health
+	if (UnitIsDead("target")) then				-- This prevents negative health
 		targethealth = 0;
+		targethealthpercent = 0;
 	end
 
 	Perl_Target_HealthBar:SetMinMaxValues(0, targethealthmax);
@@ -338,6 +345,10 @@ function Perl_Target_Update_Mana()
 	local targetmana = UnitMana("target");
 	local targetmanamax = UnitManaMax("target");
 	local targetpower = UnitPowerType("target");
+
+	if (UnitIsDead("target")) then				-- This prevents negative mana
+		targetmana = 0;
+	end
 
 	Perl_Target_ManaBar:SetMinMaxValues(0, targetmanamax);
 	Perl_Target_ManaBar:SetValue(targetmana);
@@ -1203,8 +1214,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.42",
-			releaseDate = "February 14, 2006",
+			version = "v0.43",
+			releaseDate = "February 16, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
