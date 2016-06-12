@@ -1,3 +1,6 @@
+2.12b - November 16, 2007
+ - Config: Fixed an error when performing a global save
+
 2.12a - November 13, 2007
  - Focus: Removed civilian checks since the function call was removed in 2.3
 

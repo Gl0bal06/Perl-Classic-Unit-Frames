@@ -1259,7 +1259,7 @@ function Perl_Config_Global_Save_Settings()
 			["BuffDebuffScale"] = vartable["buffdebuffscale"],
 			["XPosition"] = floor(Perl_Target_Frame:GetLeft() + 0.5),
 			["YPosition"] = floor(Perl_Target_Frame:GetTop() - (UIParent:GetTop() / Perl_Target_Frame:GetScale()) + 0.5),
-			["ShowPortrait"] = vartablqe["showportrait"],
+			["ShowPortrait"] = vartable["showportrait"],
 			["ThreeDPortrait"] = vartable["threedportrait"],
 			["PortraitCombatText"] = vartable["portraitcombattext"],
 			["ShowRareEliteFrame"] = vartable["showrareeliteframe"],
