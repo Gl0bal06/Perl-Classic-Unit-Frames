@@ -406,6 +406,10 @@ function Perl_Player_XPBar_Display(state)
 		Perl_Player_XPRestBar:Show();
 		Perl_Player_Update_Experience();
 	elseif (state == 2) then
+		Perl_Player_StatsFrame:SetHeight(54);
+		Perl_Player_XPBar:Show();
+		Perl_Player_XPBarBG:Show();
+		Perl_Player_XPRestBar:Show();
 		local rankNumber, rankName, rankProgress;
 		rankNumber = UnitPVPRank("player")
 		if (rankNumber < 1) then
@@ -539,7 +543,7 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "v0.09",
+			version = "v0.10",
 			releaseDate = "October 22, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",

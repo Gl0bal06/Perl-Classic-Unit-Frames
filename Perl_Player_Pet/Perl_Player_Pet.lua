@@ -404,7 +404,7 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "v0.09",
+			version = "v0.10",
 			releaseDate = "October 22, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",

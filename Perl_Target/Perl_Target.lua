@@ -10,8 +10,9 @@ local Perl_Target_State = 1;	-- enabled by default
 local locked = 0;		-- unlocked by default
 local showcp = 1;		-- combo points displayed by default
 local showclassicon = 1;	-- show the class icon
-local numbuffsshown = 20	-- buff row is 20 long
-local numdebuffsshown = 16	-- debuff row is 16 long
+local numbuffsshown = 20;	-- buff row is 20 long
+local numdebuffsshown = 16;	-- debuff row is 16 long
+local mobhealthsupport = 1;	-- mobhealth support is on by default
 local BlizzardTargetFrame_Update = TargetFrame_Update;	-- backup the original target function in case we toggle the mod off
 
 -- Variables for position of the class icon texture.
@@ -176,6 +177,8 @@ function Perl_Target_SlashHandler(msg)
 		Perl_Target_ToggleCP();
 	elseif (string.find(msg, "class")) then
 		Perl_Target_ToggleClass();
+	elseif (string.find(msg, "mobhealth")) then
+		Perl_Target_ToggleMobHealth();
 	elseif (string.find(msg, "status")) then
 		Perl_Target_Status();
 	elseif (string.find(msg, "toggle")) then
@@ -300,53 +303,60 @@ function Perl_Target_Update_Health()
 
 	if (targethealthmax == 100) then
 		-- Begin Mobhealth support
-		if (MobHealthFrame) then
-			MobHealthFrame:Hide();
+		if (mobhealthsupport == 1) then
+			if (MobHealthFrame) then
+				MobHealthFrame:Hide();
 
-			local index;
-			if UnitIsPlayer("target") then
-				index = UnitName("target");
-			else
-				index = UnitName("target")..":"..UnitLevel("target");
-			end
-
-			if ((MobHealthDB and MobHealthDB[index]) or (MobHealthPlayerDB and MobHealthPlayerDB[index])) then
-				local s, e;
-				local pts;
-				local pct;
-
-				if MobHealthDB[index] then
-					if (type(MobHealthDB[index]) ~= "string") then
-						Perl_Target_HealthBarText:SetText(targethealth.."%");
-					end
-					s, e, pts, pct = string.find(MobHealthDB[index], "^(%d+)/(%d+)$");
+				local index;
+				if UnitIsPlayer("target") then
+					index = UnitName("target");
 				else
-					if (type(MobHealthPlayerDB[index]) ~= "string") then
-						Perl_Target_HealthBarText:SetText(targethealth.."%");
-					end
-					s, e, pts, pct = string.find(MobHealthPlayerDB[index], "^(%d+)/(%d+)$");
+					index = UnitName("target")..":"..UnitLevel("target");
 				end
 
-				if (pts and pct) then
-					pts = pts + 0;
-					pct = pct + 0;
-					if (pct ~= 0) then
-						pointsPerPct = pts / pct;
+				if ((MobHealthDB and MobHealthDB[index]) or (MobHealthPlayerDB and MobHealthPlayerDB[index])) then
+					local s, e;
+					local pts;
+					local pct;
+
+					if MobHealthDB[index] then
+						if (type(MobHealthDB[index]) ~= "string") then
+							Perl_Target_HealthBarText:SetText(targethealth.."%");
+						end
+						s, e, pts, pct = string.find(MobHealthDB[index], "^(%d+)/(%d+)$");
 					else
-						pointsPerPct = 0;
+						if (type(MobHealthPlayerDB[index]) ~= "string") then
+							Perl_Target_HealthBarText:SetText(targethealth.."%");
+						end
+						s, e, pts, pct = string.find(MobHealthPlayerDB[index], "^(%d+)/(%d+)$");
 					end
-				end
 
-				local currentPct = UnitHealth("target");
-				if (pointsPerPct > 0) then
-					Perl_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5).." | "..targethealth.."%");	-- Stored unit info from the DB
+					if (pts and pct) then
+						pts = pts + 0;
+						pct = pct + 0;
+						if (pct ~= 0) then
+							pointsPerPct = pts / pct;
+						else
+							pointsPerPct = 0;
+						end
+					end
+
+					local currentPct = UnitHealth("target");
+					if (pointsPerPct > 0) then
+						Perl_Target_HealthBarText:SetText(string.format("%d", (currentPct * pointsPerPct) + 0.5).."/"..string.format("%d", (100 * pointsPerPct) + 0.5).." | "..targethealth.."%");	-- Stored unit info from the DB
+					end
+				else
+					Perl_Target_HealthBarText:SetText(targethealth.."%");	-- Unit not in MobHealth DB
 				end
+			-- End MobHealth Support
 			else
-				Perl_Target_HealthBarText:SetText(targethealth.."%");	-- Unit not in MobHealth DB
+				Perl_Target_HealthBarText:SetText(targethealth.."%");	-- MobHealth isn't installed
 			end
-		-- End MobHealth Support
-		else
-			Perl_Target_HealthBarText:SetText(targethealth.."%");	-- MobHealth isn't installed
+		else	-- mobhealthsupport == 0
+			if (MobHealthFrame) then
+				MobHealthFrame:Show();
+			end
+			Perl_Target_HealthBarText:SetText(targethealth.."%");	-- MobHealth support is disabled
 		end
 	else
 		Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);	-- Self/Party/Raid member
@@ -575,6 +585,7 @@ function Perl_Target_ToggleClass()
 		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame Class Icon is now |cffffffffShown|cffffff00.");
 	end
 	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
 end
 
 function Perl_Target_Set_Buffs(newbuffnumber)
@@ -591,6 +602,18 @@ function Perl_Target_Set_Debuffs(newdebuffnumber)
 	Perl_Target_Reset_Buffs();	-- Reset the buff icons
 	Perl_Target_Buff_UpdateAll();	-- Repopulate the buff icons
 	DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame is displaying |cffffffff"..numbuffsshown.."|cffffff00 debuffs.");
+end
+
+function Perl_Target_ToggleMobHealth()
+	if (mobhealthsupport == 1) then
+		mobhealthsupport = 0;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame MobHealth support is now |cffffffffDisabled|cffffff00.");
+	else
+		mobhealthsupport = 1;
+		DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Target Frame MobHealth support is now |cffffffffEnabled|cffffff00.");
+	end
+	Perl_Target_UpdateVars();
+	Perl_Target_Update_Once();
 end
 
 function Perl_Target_Status()
@@ -647,6 +670,9 @@ function Perl_Target_GetVars()
 	end
 	if (numdebuffsshown == nil) then
 		numdebuffsshown = 16;
+	end
+	if (mobhealthsupport == nil) then
+		mobhealthsupport = 1;
 	end
 end
 
@@ -832,7 +858,7 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "v0.09",
+			version = "v0.10",
 			releaseDate = "October 22, 2005",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
