@@ -63,7 +63,7 @@
 					</Anchors>
 				</FontString>
 
-				<FontString name="$parent_Version_Text" inherits="GameFontNormal" text="Version 0.68">
+				<FontString name="$parent_Version_Text" inherits="GameFontNormal" text="Version 0.69">
 					<Anchors>
 						<Anchor point="TOPRIGHT">
 							<Offset>

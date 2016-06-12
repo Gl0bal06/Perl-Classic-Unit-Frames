@@ -26,6 +26,7 @@ local numbuffsshown = 16;	-- buff row is 16 long
 local numdebuffsshown = 16;	-- debuff row is 16 long
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local shortbars = 1;		-- Health/Power/Experience bars are all normal length
+local hideclasslevelframe = 0;	-- Showing the class icon and level frame by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -66,6 +67,7 @@ function Perl_Party_OnLoad()
 	this:RegisterEvent("UNIT_AURA");
 	this:RegisterEvent("UNIT_DISPLAYPOWER");
 	this:RegisterEvent("UNIT_ENERGY");
+	this:RegisterEvent("UNIT_FACTION");
 	this:RegisterEvent("UNIT_HEALTH");
 	this:RegisterEvent("UNIT_LEVEL");
 	this:RegisterEvent("UNIT_MANA");
@@ -77,7 +79,7 @@ function Perl_Party_OnLoad()
 	this:RegisterEvent("UNIT_NAME_UPDATE");
 	this:RegisterEvent("UNIT_PET");
 	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	this:RegisterEvent("UNIT_FACTION");
+	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("VARIABLES_LOADED");
 
@@ -124,7 +126,7 @@ function Perl_Party_OnEvent(event)
 			Perl_Party_Update_Mana();		-- Update the power info immediately
 		end
 		return;
-	elseif (event == "UNIT_FACTION") then
+	elseif (event == "UNIT_FACTION" or event == "UNIT_PVP_UPDATE") then
 		if ((arg1 == "party1") or (arg1 == "party2") or (arg1 == "party3") or (arg1 == "party4")) then
 			Perl_Party_Update_PvP_Status();		-- Is the character PvP flagged?
 		end
@@ -878,23 +880,23 @@ function Perl_Party_Update_PvP_Status()				-- Modeled after 1.9 code
 	end
 
 	if (classcolorednames == 1) then
-		if UnitClass(partyid) == PERL_LOCALIZED_WARRIOR then
+		if (UnitClass(partyid) == PERL_LOCALIZED_WARRIOR) then
 			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.78, 0.61, 0.43);
-		elseif UnitClass(partyid) == PERL_LOCALIZED_MAGE then
+		elseif (UnitClass(partyid) == PERL_LOCALIZED_MAGE) then
 			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.41, 0.8, 0.94);
-		elseif UnitClass(partyid) == PERL_LOCALIZED_ROGUE then
+		elseif (UnitClass(partyid) == PERL_LOCALIZED_ROGUE) then
 			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(1, 0.96, 0.41);
-		elseif UnitClass(partyid) == PERL_LOCALIZED_DRUID then
+		elseif (UnitClass(partyid) == PERL_LOCALIZED_DRUID) then
 			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(1, 0.49, 0.04);
-		elseif UnitClass(partyid) == PERL_LOCALIZED_HUNTER then
+		elseif (UnitClass(partyid) == PERL_LOCALIZED_HUNTER) then
 			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.67, 0.83, 0.45);
-		elseif UnitClass(partyid) == PERL_LOCALIZED_SHAMAN then
+		elseif (UnitClass(partyid) == PERL_LOCALIZED_SHAMAN) then
 			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.96, 0.55, 0.73);
-		elseif UnitClass(partyid) == PERL_LOCALIZED_PRIEST then
+		elseif (UnitClass(partyid) == PERL_LOCALIZED_PRIEST) then
 			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(1, 1, 1);
-		elseif UnitClass(partyid) == PERL_LOCALIZED_WARLOCK then
+		elseif (UnitClass(partyid) == PERL_LOCALIZED_WARLOCK) then
 			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.58, 0.51, 0.79);
-		elseif UnitClass(partyid) == PERL_LOCALIZED_PALADIN then
+		elseif (UnitClass(partyid) == PERL_LOCALIZED_PALADIN) then
 			getglobal(this:GetName().."_NameFrame_NameBarText"):SetTextColor(0.96, 0.55, 0.73);
 		end
 	end
@@ -1652,6 +1654,33 @@ function Perl_Party_Set_Compact(newvalue)
 		end
 	end
 
+	if (hideclasslevelframe == 1) then
+		for num=1,4 do
+			getglobal("Perl_Party_MemberFrame"..num.."_LevelFrame"):Hide();
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):SetPoint("TOPLEFT", getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"), "BOTTOMLEFT", 0, 5);
+
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):GetWidth() + 30);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_CastClickOverlay"):GetWidth() + 30);
+			
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar"):GetWidth() + 30);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBarBG"):GetWidth() + 30);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_HealthBar_CastClickOverlay"):GetWidth() + 30);
+			
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar"):GetWidth() + 30);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBarBG"):GetWidth() + 30);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_ManaBar_CastClickOverlay"):GetWidth() + 30);
+			
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar"):GetWidth() + 30);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBarBG"):GetWidth() + 30);
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):SetWidth(getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame_PetHealthBar_CastClickOverlay"):GetWidth() + 30);
+		end
+	else
+		for num=1,4 do
+			getglobal("Perl_Party_MemberFrame"..num.."_LevelFrame"):Show();
+			getglobal("Perl_Party_MemberFrame"..num.."_StatsFrame"):SetPoint("TOPLEFT", getglobal("Perl_Party_MemberFrame"..num.."_NameFrame"), "BOTTOMLEFT", 30, 5);
+		end
+	end
+
 	Perl_Party_Update_Health_Mana();
 	Perl_Party_Update_Buffs();
 end
@@ -1866,6 +1895,16 @@ function Perl_Party_Set_Class_Colored_Names(newvalue)
 	Perl_Party_Force_Update();
 end
 
+function Perl_Party_Set_Hide_Class_Level_Frame(newvalue)
+	hideclasslevelframe = newvalue;
+	Perl_Party_UpdateVars();
+	Perl_Party_Set_Compact();
+	Perl_Party_Buff_Position_Update(1);
+	Perl_Party_Buff_Position_Update(2);
+	Perl_Party_Buff_Position_Update(3);
+	Perl_Party_Buff_Position_Update(4);
+end
+
 function Perl_Party_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1876,7 +1915,6 @@ function Perl_Party_Set_Scale(number)
 	Perl_Party_MemberFrame2:SetScale(unsavedscale);
 	Perl_Party_MemberFrame3:SetScale(unsavedscale);
 	Perl_Party_MemberFrame4:SetScale(unsavedscale);
-	Perl_Party_Frame:SetScale(unsavedscale);	--IFrameManager tweak, shouldn't affect anything else
 	Perl_Party_UpdateVars();
 end
 
@@ -1918,6 +1956,7 @@ function Perl_Party_GetVars()
 	numdebuffsshown = Perl_Party_Config[UnitName("player")]["Debuffs"];
 	classcolorednames = Perl_Party_Config[UnitName("player")]["ClassColoredNames"];
 	shortbars = Perl_Party_Config[UnitName("player")]["ShortBars"];
+	hideclasslevelframe = Perl_Party_Config[UnitName("player")]["HideClassLevelFrame"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1985,6 +2024,9 @@ function Perl_Party_GetVars()
 	if (shortbars == nil) then
 		shortbars = 0;
 	end
+	if (hideclasslevelframe == nil) then
+		hideclasslevelframe = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -2009,6 +2051,7 @@ function Perl_Party_GetVars()
 		["numdebuffsshown"] = numdebuffsshown,
 		["classcolorednames"] = classcolorednames,
 		["shortbars"] = shortbars,
+		["hideclasslevelframe"] = hideclasslevelframe,
 	}
 	return vars;
 end
@@ -2127,6 +2170,11 @@ function Perl_Party_UpdateVars(vartable)
 			else
 				shortbars = nil;
 			end
+			if (vartable["Global Settings"]["HideClassLevelFrame"] ~= nil) then
+				hideclasslevelframe = vartable["Global Settings"]["HideClassLevelFrame"];
+			else
+				hideclasslevelframe = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2196,6 +2244,9 @@ function Perl_Party_UpdateVars(vartable)
 		if (shortbars == nil) then
 			shortbars = 0;
 		end
+		if (hideclasslevelframe == nil) then
+			hideclasslevelframe = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Party_Set_Space();				-- This probably isn't needed, but one extra call for this won't matter
@@ -2238,6 +2289,7 @@ function Perl_Party_UpdateVars(vartable)
 		["Debuffs"] = numdebuffsshown,
 		["ClassColoredNames"] = classcolorednames,
 		["ShortBars"] = shortbars,
+		["HideClassLevelFrame"] = hideclasslevelframe,
 	};
 end
 
@@ -2316,9 +2368,17 @@ function Perl_Party_Buff_Position_Update(id)
 	elseif (bufflocation == 3) then
 		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -23);
 	elseif (bufflocation == 4) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, 0);
+		if (hideclasslevelframe == 0) then
+			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, 0);
+		else
+			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, 0);
+		end
 	elseif (bufflocation == 5) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, -20);
+		if (hideclasslevelframe == 0) then
+			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, -20);
+		else
+			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Buff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, -20);
+		end
 	end
 
 	if (debufflocation == 1) then
@@ -2328,9 +2388,17 @@ function Perl_Party_Buff_Position_Update(id)
 	elseif (debufflocation == 3) then
 		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "TOPRIGHT", 0, -23);
 	elseif (debufflocation == 4) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, 0);
+		if (hideclasslevelframe == 0) then
+			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, 0);
+		else
+			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, 0);
+		end
 	elseif (debufflocation == 5) then
-		getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, -20);
+		if (hideclasslevelframe == 0) then
+			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", -27, -20);
+		else
+			getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff1"):SetPoint("TOPLEFT", "Perl_Party_MemberFrame"..id.."_StatsFrame", "BOTTOMLEFT", 3, -20);
+		end
 	end
 end
 
@@ -2348,6 +2416,7 @@ function Perl_Party_Reset_Buffs()
 			debuff:SetHeight(buffsize);
 			debuff:SetWidth(buffsize);
 			button:Hide();
+			debuff:Hide();
 		end
 		for buffnum=1,16 do
 			button = getglobal("Perl_Party_MemberFrame"..id.."_BuffFrame_Debuff"..buffnum);
@@ -2360,6 +2429,7 @@ function Perl_Party_Reset_Buffs()
 			debuff:SetHeight(debuffsize);
 			debuff:SetWidth(debuffsize);
 			button:Hide();
+			debuff:Hide();
 		end
 	end
 end
@@ -2565,8 +2635,8 @@ function Perl_Party_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Party_myAddOns_Details = {
 			name = "Perl_Party",
-			version = "Version 0.68",
-			releaseDate = "May 30, 2006",
+			version = "Version 0.69",
+			releaseDate = "June 1, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

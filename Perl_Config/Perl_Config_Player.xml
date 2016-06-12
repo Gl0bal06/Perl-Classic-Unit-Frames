@@ -271,12 +271,54 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
+			<CheckButton name="$parent_CheckButton18" inherits="UICheckButtonTemplate" id="18">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton5">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Class Colored Name");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Class_Colored_Names_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton19" inherits="UICheckButtonTemplate" id="19">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton18">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Hide Class Icon Frame");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Hide_Class_Level_Frame_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton6" inherits="UICheckButtonTemplate" id="6">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton19">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>

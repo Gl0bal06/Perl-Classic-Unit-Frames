@@ -13,8 +13,11 @@ local transparency = 1;		-- transparency for frames
 local alertsound = 0;		-- audible alert disabled by default
 local alertmode = 0;		-- DPS, Tank, Healer modes
 local alertsize = 0;		-- Variable which controls the size of the text
-local showtotbuffs = 0;		-- ToT buffs/debuffs are off by default
-local showtototbuffs = 0;	-- ToToT buffs/debuffs are off by default
+local showtotbuffs = 0;		-- ToT buffs are off by default
+local showtototbuffs = 0;	-- ToToT buffs are off by default
+local hidepowerbars = 0;	-- Power bars are shown by default
+local showtotdebuffs = 0;	-- ToT debuffs are off by default
+local showtototdebuffs = 0;	-- ToToT debuffs are off by default
 
 -- Default Local Variables
 local Initialized = nil;				-- waiting to be initialized
@@ -125,18 +128,30 @@ function Perl_Target_Target_IFrameManager(initflag)
 		end
 	end
 	function iface:getBorder(frame)
+		local bottom = 0;
+		local left = 0;
+		local right = 0;
+		local top = 0;
 		if (frame == Perl_Target_Target_Frame) then
 			if (showtotbuffs == 1) then
-				return 0, 0, 88, 0;
+				bottom = 88;
 			else
-				return 0, 0, 38, 0;
+				bottom = 38;
 			end
+			if (hidepowerbars == 1) then
+				bottom = bottom - 12;
+			end
+			return top, right, bottom, left;
 		else
 			if (showtototbuffs == 1) then
-				return 0, 0, 88, 0;
+				bottom = 88;
 			else
-				return 0, 0, 38, 0;
+				bottom = 38;
 			end
+			if (hidepowerbars == 1) then
+				bottom = bottom - 12;
+			end
+			return top, right, bottom, left;
 		end
 	end
 	if (initflag) then
@@ -280,140 +295,83 @@ function Perl_Target_Target_OnUpdate(arg1)
 			end
 			-- End: Update the health bar
 
-			-- Begin: Update the mana bar
-			targettargetmana = UnitMana("targettarget");
-			targettargetmanamax = UnitManaMax("targettarget");
+			if (hidepowerbars == 0) then
+				-- Begin: Update the mana bar
+				targettargetmana = UnitMana("targettarget");
+				targettargetmanamax = UnitManaMax("targettarget");
 
-			if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative mana
-				targettargetmana = 0;
-			end
-
-			Perl_Target_Target_ManaBar:SetMinMaxValues(0, targettargetmanamax);
-			Perl_Target_Target_ManaBar:SetValue(targettargetmana);
-
-			if (mouseovertargettargetmanaflag == 1) then
-				if (UnitPowerType("targettarget") == 1 or UnitPowerType("targettarget") == 2) then
-					Perl_Target_Target_ManaBarText:SetText(targettargetmana);
-				else
-					Perl_Target_Target_ManaBarText:SetText(targettargetmana.."/"..targettargetmanamax);
+				if (UnitIsDead("targettarget") or UnitIsGhost("targettarget")) then				-- This prevents negative mana
+					targettargetmana = 0;
 				end
+
+				Perl_Target_Target_ManaBar:SetMinMaxValues(0, targettargetmanamax);
+				Perl_Target_Target_ManaBar:SetValue(targettargetmana);
+
+				if (mouseovertargettargetmanaflag == 1) then
+					if (UnitPowerType("targettarget") == 1 or UnitPowerType("targettarget") == 2) then
+						Perl_Target_Target_ManaBarText:SetText(targettargetmana);
+					else
+						Perl_Target_Target_ManaBarText:SetText(targettargetmana.."/"..targettargetmanamax);
+					end
+				else
+					Perl_Target_Target_ManaBarText:Hide();
+				end
+				-- End: Update the mana bar
+
+				-- Begin: Update the mana bar color
+				targettargetpower = UnitPowerType("targettarget");
+
+				-- Set mana bar color
+				if (UnitManaMax("targettarget") == 0) then
+					Perl_Target_Target_ManaBar:Hide();
+					Perl_Target_Target_ManaBarBG:Hide();
+					Perl_Target_Target_ManaBar_CastClickOverlay:Hide();
+					Perl_Target_Target_StatsFrame:SetHeight(30);
+					Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
+				elseif (targettargetpower == 1) then
+					Perl_Target_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
+					Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+					Perl_Target_Target_ManaBar:Show();
+					Perl_Target_Target_ManaBarBG:Show();
+					Perl_Target_Target_ManaBar_CastClickOverlay:Show();
+					Perl_Target_Target_StatsFrame:SetHeight(42);
+					Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
+				elseif (targettargetpower == 2) then
+					Perl_Target_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
+					Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+					Perl_Target_Target_ManaBar:Show();
+					Perl_Target_Target_ManaBarBG:Show();
+					Perl_Target_Target_ManaBar_CastClickOverlay:Show();
+					Perl_Target_Target_StatsFrame:SetHeight(42);
+					Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
+				elseif (targettargetpower == 3) then
+					Perl_Target_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
+					Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+					Perl_Target_Target_ManaBar:Show();
+					Perl_Target_Target_ManaBarBG:Show();
+					Perl_Target_Target_ManaBar_CastClickOverlay:Show();
+					Perl_Target_Target_StatsFrame:SetHeight(42);
+					Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
+				else
+					Perl_Target_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
+					Perl_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
+					Perl_Target_Target_ManaBar:Show();
+					Perl_Target_Target_ManaBarBG:Show();
+					Perl_Target_Target_ManaBar_CastClickOverlay:Show();
+					Perl_Target_Target_StatsFrame:SetHeight(42);
+					Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
+				end
+				-- End: Update the mana bar color
 			else
-				Perl_Target_Target_ManaBarText:Hide();
-			end
-			-- End: Update the mana bar
-
-			-- Begin: Update the mana bar color
-			targettargetpower = UnitPowerType("targettarget");
-
-			-- Set mana bar color
-			if (UnitManaMax("targettarget") == 0) then
 				Perl_Target_Target_ManaBar:Hide();
 				Perl_Target_Target_ManaBarBG:Hide();
 				Perl_Target_Target_ManaBar_CastClickOverlay:Hide();
 				Perl_Target_Target_StatsFrame:SetHeight(30);
 				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
-			elseif (targettargetpower == 1) then
-				Perl_Target_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-				Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-				Perl_Target_Target_ManaBar:Show();
-				Perl_Target_Target_ManaBarBG:Show();
-				Perl_Target_Target_ManaBar_CastClickOverlay:Show();
-				Perl_Target_Target_StatsFrame:SetHeight(42);
-				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
-			elseif (targettargetpower == 2) then
-				Perl_Target_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-				Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-				Perl_Target_Target_ManaBar:Show();
-				Perl_Target_Target_ManaBarBG:Show();
-				Perl_Target_Target_ManaBar_CastClickOverlay:Show();
-				Perl_Target_Target_StatsFrame:SetHeight(42);
-				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
-			elseif (targettargetpower == 3) then
-				Perl_Target_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-				Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-				Perl_Target_Target_ManaBar:Show();
-				Perl_Target_Target_ManaBarBG:Show();
-				Perl_Target_Target_ManaBar_CastClickOverlay:Show();
-				Perl_Target_Target_StatsFrame:SetHeight(42);
-				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
-			else
-				Perl_Target_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
-				Perl_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-				Perl_Target_Target_ManaBar:Show();
-				Perl_Target_Target_ManaBarBG:Show();
-				Perl_Target_Target_ManaBar_CastClickOverlay:Show();
-				Perl_Target_Target_StatsFrame:SetHeight(42);
-				Perl_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 			end
-			-- End: Update the mana bar color
 
 			-- Begin: Update buffs and debuffs
-			if (showtotbuffs == 1) then
-				local numBuffs = 0;									-- Buff counter for correct layout
-				local button, buffCount, buffTexture, buffApplications;					-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
-				for buffnum=1,16 do									-- Start main buff loop
-					buffTexture, buffApplications = UnitBuff("targettarget", buffnum);		-- Get the texture and buff stacking information if any
-					button = getglobal("Perl_Target_Target_BuffFrame_Buff"..buffnum);		-- Create the main icon for the buff
-					if (buffTexture) then								-- If there is a valid texture, proceed with buff icon creation
-						getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
-						getglobal(button:GetName().."DebuffBorder"):Hide();			-- Hide the debuff border
-						buffCount = getglobal(button:GetName().."Count");			-- Declare the buff counting text variable
-						if (buffApplications > 1) then
-							buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
-							buffCount:Show();						-- Show the text
-						else
-							buffCount:Hide();						-- Hide the text if equal to 0
-						end
-						numBuffs = numBuffs + 1;						-- Increment the buff counter
-						button:Show();								-- Show the final buff icon
-					else
-						button:Hide();								-- Hide the icon since there isn't a buff in this position
-					end
-				end											-- End main buff loop
-
-				local numDebuffs = 0;									-- Debuff counter for correct layout
-				for debuffnum=1,16 do									-- Start main debuff loop
-					buffTexture, buffApplications = UnitDebuff("targettarget", debuffnum);		-- Get the texture and debuff stacking information if any
-					button = getglobal("Perl_Target_Target_BuffFrame_Debuff"..debuffnum);		-- Create the main icon for the debuff
-					if (buffTexture) then								-- If there is a valid texture, proceed with debuff icon creation
-						getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
-						getglobal(button:GetName().."DebuffBorder"):Show();			-- Show the debuff border
-						buffCount = getglobal(button:GetName().."Count");			-- Declare the debuff counting text variable
-						if (buffApplications > 1) then
-							buffCount:SetText(debuffApplications);				-- Set the text to the number of applications if greater than 0
-							buffCount:Show();						-- Show the text
-						else
-							buffCount:Hide();						-- Hide the text if equal to 0
-						end
-						numDebuffs = numDebuffs + 1;						-- Increment the debuff counter
-						button:Show();								-- Show the final debuff icon
-					else
-						button:Hide();								-- Hide the icon since there isn't a debuff in this position
-					end
-				end											-- End main debuff loop
-
-				if (UnitIsFriend("player", "targettarget")) then					-- Position the buffs according to friendly or enemy status
-					if (numBuffs > 8) then
-						Perl_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
-						Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_BuffFrame_Buff9", "BOTTOMLEFT", 0, -1);
-					else
-						Perl_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
-						Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_BuffFrame_Buff1", "BOTTOMLEFT", 0, -1);
-					end
-				else
-					if (numDebuffs > 8) then
-						Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
-						Perl_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_BuffFrame_Debuff9", "BOTTOMLEFT", 0, -1);
-					else
-						Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
-						Perl_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_BuffFrame_Debuff1", "BOTTOMLEFT", 0, -1);
-					end
-				end
-
-				Perl_Target_Target_BuffFrame:Show();							-- Show the final buff/debuff frame
-			else
-				Perl_Target_Target_BuffFrame:Hide();							-- Hide the buff/debuff frame since it's disabled
-			end
+			Perl_Target_Target_Target_Update_Buffs();			-- Apparently too many nested if's make lua cry, slow function call MUST be done here to avoid errors.
 			-- End: Update buffs and debuffs
 		else
 			Perl_Target_Target_Frame:Hide();			-- Hide the frame
@@ -557,145 +515,258 @@ function Perl_Target_Target_OnUpdate(arg1)
 			end
 			-- End: Update the health bar
 
-			-- Begin: Update the mana bar
-			targettargettargetmana = UnitMana("targettargettarget");
-			targettargettargetmanamax = UnitManaMax("targettargettarget");
+			if (hidepowerbars == 0) then
+				-- Begin: Update the mana bar
+				targettargettargetmana = UnitMana("targettargettarget");
+				targettargettargetmanamax = UnitManaMax("targettargettarget");
 
-			if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative mana
-				targettargettargetmana = 0;
-			end
-
-			Perl_Target_Target_Target_ManaBar:SetMinMaxValues(0, targettargettargetmanamax);
-			Perl_Target_Target_Target_ManaBar:SetValue(targettargettargetmana);
-
-			if (mouseovertargettargettargetmanaflag == 1) then
-				if (UnitPowerType("targettargettarget") == 1 or UnitPowerType("targettargettarget") == 2) then
-					Perl_Target_Target_Target_ManaBarText:SetText(targettargettargetmana);
-				else
-					Perl_Target_Target_Target_ManaBarText:SetText(targettargettargetmana.."/"..targettargettargetmanamax);
+				if (UnitIsDead("targettargettarget") or UnitIsGhost("targettargettarget")) then				-- This prevents negative mana
+					targettargettargetmana = 0;
 				end
+
+				Perl_Target_Target_Target_ManaBar:SetMinMaxValues(0, targettargettargetmanamax);
+				Perl_Target_Target_Target_ManaBar:SetValue(targettargettargetmana);
+
+				if (mouseovertargettargettargetmanaflag == 1) then
+					if (UnitPowerType("targettargettarget") == 1 or UnitPowerType("targettargettarget") == 2) then
+						Perl_Target_Target_Target_ManaBarText:SetText(targettargettargetmana);
+					else
+						Perl_Target_Target_Target_ManaBarText:SetText(targettargettargetmana.."/"..targettargettargetmanamax);
+					end
+				else
+					Perl_Target_Target_Target_ManaBarText:Hide();
+				end
+				-- End: Update the mana bar
+
+				-- Begin: Update the mana bar color
+				targettargettargetpower = UnitPowerType("targettargettarget");
+
+				-- Set mana bar color
+				if (UnitManaMax("targettargettarget") == 0) then
+					Perl_Target_Target_Target_ManaBar:Hide();
+					Perl_Target_Target_Target_ManaBarBG:Hide();
+					Perl_Target_Target_Target_ManaBar_CastClickOverlay:Hide();
+					Perl_Target_Target_Target_StatsFrame:SetHeight(30);
+					Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
+				elseif (targettargettargetpower == 1) then
+					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
+					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
+					Perl_Target_Target_Target_ManaBar:Show();
+					Perl_Target_Target_Target_ManaBarBG:Show();
+					Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
+					Perl_Target_Target_Target_StatsFrame:SetHeight(42);
+					Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
+				elseif (targettargettargetpower == 2) then
+					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
+					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
+					Perl_Target_Target_Target_ManaBar:Show();
+					Perl_Target_Target_Target_ManaBarBG:Show();
+					Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
+					Perl_Target_Target_Target_StatsFrame:SetHeight(42);
+					Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
+				elseif (targettargettargetpower == 3) then
+					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
+					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+					Perl_Target_Target_Target_ManaBar:Show();
+					Perl_Target_Target_Target_ManaBarBG:Show();
+					Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
+					Perl_Target_Target_Target_StatsFrame:SetHeight(42);
+					Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
+				else
+					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
+					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
+					Perl_Target_Target_Target_ManaBar:Show();
+					Perl_Target_Target_Target_ManaBarBG:Show();
+					Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
+					Perl_Target_Target_Target_StatsFrame:SetHeight(42);
+					Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
+				end
+				-- End: Update the mana bar color
 			else
-				Perl_Target_Target_Target_ManaBarText:Hide();
-			end
-			-- End: Update the mana bar
-
-			-- Begin: Update the mana bar color
-			targettargettargetpower = UnitPowerType("targettargettarget");
-
-			-- Set mana bar color
-			if (UnitManaMax("targettargettarget") == 0) then
 				Perl_Target_Target_Target_ManaBar:Hide();
 				Perl_Target_Target_Target_ManaBarBG:Hide();
 				Perl_Target_Target_Target_ManaBar_CastClickOverlay:Hide();
 				Perl_Target_Target_Target_StatsFrame:SetHeight(30);
 				Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(30);
-			elseif (targettargettargetpower == 1) then
-				Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-				Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-				Perl_Target_Target_Target_ManaBar:Show();
-				Perl_Target_Target_Target_ManaBarBG:Show();
-				Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
-				Perl_Target_Target_Target_StatsFrame:SetHeight(42);
-				Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
-			elseif (targettargettargetpower == 2) then
-				Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-				Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-				Perl_Target_Target_Target_ManaBar:Show();
-				Perl_Target_Target_Target_ManaBarBG:Show();
-				Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
-				Perl_Target_Target_Target_StatsFrame:SetHeight(42);
-				Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
-			elseif (targettargettargetpower == 3) then
-				Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-				Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-				Perl_Target_Target_Target_ManaBar:Show();
-				Perl_Target_Target_Target_ManaBarBG:Show();
-				Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
-				Perl_Target_Target_Target_StatsFrame:SetHeight(42);
-				Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
-			else
-				Perl_Target_Target_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
-				Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-				Perl_Target_Target_Target_ManaBar:Show();
-				Perl_Target_Target_Target_ManaBarBG:Show();
-				Perl_Target_Target_Target_ManaBar_CastClickOverlay:Show();
-				Perl_Target_Target_Target_StatsFrame:SetHeight(42);
-				Perl_Target_Target_Target_StatsFrame_CastClickOverlay:SetHeight(42);
 			end
-			-- End: Update the mana bar color
 
 			-- Begin: Update buffs and debuffs
-			if (showtototbuffs == 1) then
-				local numBuffs = 0;									-- Buff counter for correct layout
-				local button, buffCount, buffTexture, buffApplications;					-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
-				for buffnum=1,16 do
-					buffTexture, buffApplications = UnitBuff("targettargettarget", buffnum);	-- Get the texture and buff stacking information if any
-					button = getglobal("Perl_Target_Target_Target_BuffFrame_Buff"..buffnum);	-- Create the main icon for the buff
-					if (buffTexture) then
-						getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
-						getglobal(button:GetName().."DebuffBorder"):Hide();			-- Hide the debuff border
-						buffCount = getglobal(button:GetName().."Count");			-- Declare the buff counting text variable
-						if (buffApplications > 1) then
-							buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
-							buffCount:Show();						-- Show the text
-						else
-							buffCount:Hide();						-- Hide the text if equal to 0
-						end
-						numBuffs = numBuffs + 1;						-- Increment the buff counter
-						button:Show();								-- Show the final buff icon
-					else
-						button:Hide();								-- Hide the icon since there isn't a buff in this position
-					end
-				end
-
-				local numDebuffs = 0;									-- Debuff counter for correct layout
-				for debuffnum=1,16 do
-					buffTexture, buffApplications = UnitDebuff("targettargettarget", debuffnum);	-- Get the texture and debuff stacking information if any
-					button = getglobal("Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum);	-- Create the main icon for the debuff
-					if (buffTexture) then
-						getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
-						getglobal(button:GetName().."DebuffBorder"):Show();			-- Show the debuff border
-						buffCount = getglobal(button:GetName().."Count");			-- Declare the debuff counting text variable
-						if (buffApplications > 1) then
-							buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
-							buffCount:Show();						-- Show the text
-						else
-							buffCount:Hide();						-- Hide the text if equal to 0
-						end
-						numDebuffs = numDebuffs + 1;						-- Increment the debuff counter
-						button:Show();								-- Show the final debuff icon
-					else
-						button:Hide();								-- Hide the icon since there isn't a debuff in this position
-					end
-				end
-
-				if (UnitIsFriend("player", "targettargettarget")) then					-- Position the buffs according to friendly or enemy status
-					if (numBuffs > 8) then
-						Perl_Target_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
-						Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_BuffFrame_Buff9", "BOTTOMLEFT", 0, -1);
-					else
-						Perl_Target_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
-						Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_BuffFrame_Buff1", "BOTTOMLEFT", 0, -1);
-					end
-				else
-					if (numDebuffs > 8) then
-						Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
-						Perl_Target_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_BuffFrame_Debuff9", "BOTTOMLEFT", 0, -1);
-					else
-						Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
-						Perl_Target_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_BuffFrame_Debuff1", "BOTTOMLEFT", 0, -1);
-					end
-				end
-
-				Perl_Target_Target_Target_BuffFrame:Show();							-- Show the final buff/debuff frame
-			else
-				Perl_Target_Target_Target_BuffFrame:Hide();							-- Hide the buff/debuff frame since it's disabled
-			end
+			Perl_Target_Target_Update_Buffs();			-- Apparently too many nested if's make lua cry, slow function call MUST be done here to avoid errors.
 			-- End: Update buffs and debuffs
 		else
 			Perl_Target_Target_Target_Frame:Hide();			-- Hide the frame
 		end
 
+	end
+end
+
+function Perl_Target_Target_Update_Buffs()
+	local numBuffs = 0;										-- Buff counter for correct layout
+	if (showtotbuffs == 1) then
+		local button, buffCount, buffTexture, buffApplications;					-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		for buffnum=1,16 do									-- Start main buff loop
+			buffTexture, buffApplications = UnitBuff("targettarget", buffnum);		-- Get the texture and buff stacking information if any
+			button = getglobal("Perl_Target_Target_BuffFrame_Buff"..buffnum);		-- Create the main icon for the buff
+			if (buffTexture) then								-- If there is a valid texture, proceed with buff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Hide();			-- Hide the debuff border
+				buffCount = getglobal(button:GetName().."Count");			-- Declare the buff counting text variable
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
+					buffCount:Show();						-- Show the text
+				else
+					buffCount:Hide();						-- Hide the text if equal to 0
+				end
+				numBuffs = numBuffs + 1;						-- Increment the buff counter
+				button:Show();								-- Show the final buff icon
+			else
+				button:Hide();								-- Hide the icon since there isn't a buff in this position
+			end
+		end											-- End main buff loop
+	else
+		numBuffs = 0;										-- ToT Buffs are disabled
+	end
+
+	local numDebuffs = 0;										-- Debuff counter for correct layout
+	if (showtotdebuffs == 1) then
+		for debuffnum=1,16 do									-- Start main debuff loop
+			buffTexture, buffApplications = UnitDebuff("targettarget", debuffnum);		-- Get the texture and debuff stacking information if any
+			button = getglobal("Perl_Target_Target_BuffFrame_Debuff"..debuffnum);		-- Create the main icon for the debuff
+			if (buffTexture) then								-- If there is a valid texture, proceed with debuff icon creation
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Show();			-- Show the debuff border
+				buffCount = getglobal(button:GetName().."Count");			-- Declare the debuff counting text variable
+				if (buffApplications > 1) then
+					buffCount:SetText(debuffApplications);				-- Set the text to the number of applications if greater than 0
+					buffCount:Show();						-- Show the text
+				else
+					buffCount:Hide();						-- Hide the text if equal to 0
+				end
+				numDebuffs = numDebuffs + 1;						-- Increment the debuff counter
+				button:Show();								-- Show the final debuff icon
+			else
+				button:Hide();								-- Hide the icon since there isn't a debuff in this position
+			end
+		end											-- End main debuff loop
+	else
+		numDebuffs = 0;										-- ToT Debuffs are disabled
+	end
+
+	if (UnitIsFriend("player", "targettarget")) then						-- Position the buffs according to friendly or enemy status
+		if (numBuffs < 9) then
+			if (showtotbuffs == 0) then
+				Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
+			else
+				Perl_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
+				Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_BuffFrame_Buff1", "BOTTOMLEFT", 0, -1);
+			end
+		else
+			Perl_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
+			Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_BuffFrame_Buff9", "BOTTOMLEFT", 0, -1);
+		end
+	else
+		if (numDebuffs < 9) then
+			if (showtotdebuffs == 0) then
+				Perl_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
+			else
+				Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
+				Perl_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_BuffFrame_Debuff1", "BOTTOMLEFT", 0, -1);
+			end
+		else
+			Perl_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
+			Perl_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_BuffFrame_Debuff9", "BOTTOMLEFT", 0, -1);
+		end
+	end
+
+	if (showtotbuffs == 1 or showtotdebuffs == 1) then
+		Perl_Target_Target_BuffFrame:Show();							-- Show the final buff/debuff frame
+	else
+		Perl_Target_Target_BuffFrame:Hide();							-- Hide the buff/debuff frame since it's disabled
+	end
+end
+
+function Perl_Target_Target_Target_Update_Buffs()
+	local numBuffs = 0;										-- Buff counter for correct layout
+	if (showtototbuffs == 1) then
+		local button, buffCount, buffTexture, buffApplications;					-- Variables for both buffs and debuffs (yes, I'm using buff names for debuffs, wanna fight about it?)
+		for buffnum=1,16 do
+			buffTexture, buffApplications = UnitBuff("targettargettarget", buffnum);	-- Get the texture and buff stacking information if any
+			button = getglobal("Perl_Target_Target_Target_BuffFrame_Buff"..buffnum);	-- Create the main icon for the buff
+			if (buffTexture) then
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Hide();			-- Hide the debuff border
+				buffCount = getglobal(button:GetName().."Count");			-- Declare the buff counting text variable
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
+					buffCount:Show();						-- Show the text
+				else
+					buffCount:Hide();						-- Hide the text if equal to 0
+				end
+				numBuffs = numBuffs + 1;						-- Increment the buff counter
+				button:Show();								-- Show the final buff icon
+			else
+				button:Hide();								-- Hide the icon since there isn't a buff in this position
+			end
+		end
+	else
+		numBuffs = 0;										-- ToToT Buffs are disabled
+	end
+
+	local numDebuffs = 0;										-- Debuff counter for correct layout
+	if (showtototdebuffs == 1) then
+		for debuffnum=1,16 do
+			buffTexture, buffApplications = UnitDebuff("targettargettarget", debuffnum);	-- Get the texture and debuff stacking information if any
+			button = getglobal("Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum);	-- Create the main icon for the debuff
+			if (buffTexture) then
+				getglobal(button:GetName().."Icon"):SetTexture(buffTexture);		-- Set the texture
+				getglobal(button:GetName().."DebuffBorder"):Show();			-- Show the debuff border
+				buffCount = getglobal(button:GetName().."Count");			-- Declare the debuff counting text variable
+				if (buffApplications > 1) then
+					buffCount:SetText(buffApplications);				-- Set the text to the number of applications if greater than 0
+					buffCount:Show();						-- Show the text
+				else
+					buffCount:Hide();						-- Hide the text if equal to 0
+				end
+				numDebuffs = numDebuffs + 1;						-- Increment the debuff counter
+				button:Show();								-- Show the final debuff icon
+			else
+				button:Hide();								-- Hide the icon since there isn't a debuff in this position
+			end
+		end
+	else
+		numBuffs = 0;										-- ToToT Debuffs are disabled
+	end
+
+	if (UnitIsFriend("player", "targettargettarget")) then					-- Position the buffs according to friendly or enemy status
+		if (numBuffs < 9) then
+			if (showtototbuffs == 0) then
+				Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
+			else
+				Perl_Target_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
+				Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_BuffFrame_Buff1", "BOTTOMLEFT", 0, -1);
+			end
+		else
+			Perl_Target_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
+			Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_BuffFrame_Buff9", "BOTTOMLEFT", 0, -1);
+		end
+	else
+		if (numDebuffs < 9) then
+			if (showtotdebuffs == 0) then
+				Perl_Target_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
+			else
+				Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
+				Perl_Target_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_BuffFrame_Debuff1", "BOTTOMLEFT", 0, -1);
+			end
+		else
+			Perl_Target_Target_Target_BuffFrame_Debuff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_StatsFrame", "BOTTOMLEFT", 3, 1);
+			Perl_Target_Target_Target_BuffFrame_Buff1:SetPoint("TOPLEFT", "Perl_Target_Target_Target_BuffFrame_Debuff9", "BOTTOMLEFT", 0, -1);
+		end
+	end
+
+	if (showtototbuffs == 1 or showtototdebuffs == 1) then
+		Perl_Target_Target_Target_BuffFrame:Show();							-- Show the final buff/debuff frame
+	else
+		Perl_Target_Target_Target_BuffFrame:Hide();							-- Hide the buff/debuff frame since it's disabled
 	end
 end
 
@@ -838,6 +909,38 @@ end
 function Perl_Target_Target_Play_Sound()
 	if (alertsound == 1) then
 		PlaySoundFile("Sound\\Spells\\PVPFlagTakenHorde.wav");
+	end
+end
+
+function Perl_Target_Target_Reset_Buffs()
+	local button, debuff;
+	for buffnum=1,16 do
+		button = getglobal("Perl_Target_Target_BuffFrame_Buff"..buffnum);
+		debuff = getglobal(button:GetName().."DebuffBorder");
+		button:Hide();
+		debuff:Hide();
+	end
+	for debuffnum=1,16 do
+		button = getglobal("Perl_Target_Target_BuffFrame_Debuff"..debuffnum);
+		debuff = getglobal(button:GetName().."DebuffBorder");
+		button:Hide();
+		debuff:Hide();
+	end
+end
+
+function Perl_Target_Target_Target_Reset_Buffs()
+	local button, debuff;
+	for buffnum=1,16 do
+		button = getglobal("Perl_Target_Target_Target_BuffFrame_Buff"..buffnum);
+		debuff = getglobal(button:GetName().."DebuffBorder");
+		button:Hide();
+		debuff:Hide();
+	end
+	for debuffnum=1,16 do
+		button = getglobal("Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum);
+		debuff = getglobal(button:GetName().."DebuffBorder");
+		button:Hide();
+		debuff:Hide();
 	end
 end
 
@@ -1095,10 +1198,29 @@ end
 function Perl_Target_Target_Set_Buffs(newvalue)
 	showtotbuffs = newvalue;
 	Perl_Target_Target_UpdateVars();
+	Perl_Target_Target_Reset_Buffs();
+end
+
+function Perl_Target_Target_Set_Debuffs(newvalue)
+	showtotdebuffs = newvalue;
+	Perl_Target_Target_UpdateVars();
+	Perl_Target_Target_Reset_Buffs();
 end
 
 function Perl_Target_Target_Target_Set_Buffs(newvalue)
 	showtototbuffs = newvalue;
+	Perl_Target_Target_UpdateVars();
+	Perl_Target_Target_Target_Reset_Buffs();
+end
+
+function Perl_Target_Target_Target_Set_Debuffs(newvalue)
+	showtototdebuffs = newvalue;
+	Perl_Target_Target_UpdateVars();
+	Perl_Target_Target_Target_Reset_Buffs();
+end
+
+function Perl_Target_Target_Set_Hide_Power_Bars(newvalue)
+	hidepowerbars = newvalue;
 	Perl_Target_Target_UpdateVars();
 end
 
@@ -1178,6 +1300,9 @@ function Perl_Target_Target_GetVars()
 	alertsize = Perl_Target_Target_Config[UnitName("player")]["AlertSize"];
 	showtotbuffs = Perl_Target_Target_Config[UnitName("player")]["ShowToTBuffs"];
 	showtototbuffs = Perl_Target_Target_Config[UnitName("player")]["ShowToToTBuffs"];
+	hidepowerbars = Perl_Target_Target_Config[UnitName("player")]["HidePowerBars"];
+	showtotdebuffs = Perl_Target_Target_Config[UnitName("player")]["ShowToTDebuffs"];
+	showtototdebuffs = Perl_Target_Target_Config[UnitName("player")]["ShowToToTDebuffs"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1212,6 +1337,15 @@ function Perl_Target_Target_GetVars()
 	if (showtototbuffs == nil) then
 		showtototbuffs = 0;
 	end
+	if (hidepowerbars == nil) then
+		hidepowerbars = 0;
+	end
+	if (showtotdebuffs == nil) then
+		showtotdebuffs = 0;
+	end
+	if (showtototdebuffs == nil) then
+		showtototdebuffs = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1225,6 +1359,9 @@ function Perl_Target_Target_GetVars()
 		["alertsize"] = alertsize,
 		["showtotbuffs"] = showtotbuffs,
 		["showtototbuffs"] = showtototbuffs,
+		["hidepowerbars"] = hidepowerbars,
+		["showtotdebuffs"] = showtotdebuffs,
+		["showtototdebuffs"] = showtototdebuffs,
 	}
 	return vars;
 end
@@ -1288,6 +1425,21 @@ function Perl_Target_Target_UpdateVars(vartable)
 			else
 				showtototbuffs = nil;
 			end
+			if (vartable["Global Settings"]["HidePowerBars"] ~= nil) then
+				hidepowerbars = vartable["Global Settings"]["HidePowerBars"];
+			else
+				hidepowerbars = nil;
+			end
+			if (vartable["Global Settings"]["ShowToTDebuffs"] ~= nil) then
+				showtotdebuffs = vartable["Global Settings"]["ShowToTDebuffs"];
+			else
+				showtotdebuffs = nil;
+			end
+			if (vartable["Global Settings"]["ShowToToTDebuffs"] ~= nil) then
+				showtototdebuffs = vartable["Global Settings"]["ShowToToTDebuffs"];
+			else
+				showtototdebuffs = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1324,6 +1476,15 @@ function Perl_Target_Target_UpdateVars(vartable)
 		if (showtototbuffs == nil) then
 			showtototbuffs = 0;
 		end
+		if (hidepowerbars == nil) then
+			hidepowerbars = 0;
+		end
+		if (showtotdebuffs == nil) then
+			showtotdebuffs = 0;
+		end
+		if (showtototdebuffs == nil) then
+			showtototdebuffs = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Target_Set_Scale();
@@ -1348,6 +1509,9 @@ function Perl_Target_Target_UpdateVars(vartable)
 		["AlertSize"] = alertsize,
 		["ShowToTBuffs"] = showtotbuffs,
 		["ShowToToTBuffs"] = showtototbuffs,
+		["HidePowerBars"] = hidepowerbars,
+		["ShowToTDebuffs"] = showtotdebuffs,
+		["ShowToToTDebuffs"] = showtototdebuffs,
 	};
 end
 
@@ -1649,8 +1813,8 @@ function Perl_Target_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_Target_myAddOns_Details = {
 			name = "Perl_Target_Target",
-			version = "Version 0.68",
-			releaseDate = "May 30, 2006",
+			version = "Version 0.69",
+			releaseDate = "June 1, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

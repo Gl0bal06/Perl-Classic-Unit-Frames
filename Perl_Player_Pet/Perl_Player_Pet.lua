@@ -10,8 +10,8 @@ local scale = 1;			-- default scale
 local numpetbuffsshown = 16;		-- buff row is 16 long
 local numpetdebuffsshown = 16;		-- debuff row is 16 long
 local transparency = 1;			-- transparency for frames
-local bufflocation = 1;			-- default buff location
-local debufflocation = 2;		-- default debuff location
+local bufflocation = 2;			-- default buff location
+local debufflocation = 3;		-- default debuff location
 local buffsize = 12;			-- default buff size is 12
 local debuffsize = 12;			-- default debuff size is 12
 local showportrait = 0;			-- portrait is hidden by default
@@ -588,10 +588,10 @@ function Perl_Player_Pet_GetVars()
 		transparency = 1;
 	end
 	if (bufflocation == nil) then
-		bufflocation = 1;
+		bufflocation = 2;
 	end
 	if (debufflocation == nil) then
-		debufflocation = 2;
+		debufflocation = 3;
 	end
 	if (buffsize == nil) then
 		buffsize = 12;
@@ -718,10 +718,10 @@ function Perl_Player_Pet_UpdateVars(vartable)
 			transparency = 1;
 		end
 		if (bufflocation == nil) then
-			bufflocation = 1;
+			bufflocation = 2;
 		end
 		if (debufflocation == nil) then
-			debufflocation = 2;
+			debufflocation = 3;
 		end
 		if (buffsize == nil) then
 			buffsize = 12;
@@ -821,10 +821,12 @@ end
 
 function Perl_Player_Pet_Buff_Position_Update()
 	if (bufflocation == 1) then
-		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
+		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "TOPRIGHT", 0, -3);
 	elseif (bufflocation == 2) then
-		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
+		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
 	elseif (bufflocation == 3) then
+		Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
+	elseif (bufflocation == 4) then
 		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
 			Perl_Player_Pet_Buff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 0);
 		else
@@ -839,10 +841,12 @@ function Perl_Player_Pet_Buff_Position_Update()
 	end
 
 	if (debufflocation == 1) then
-		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
+		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "TOPRIGHT", 0, -3);
 	elseif (debufflocation == 2) then
-		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
+		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);
 	elseif (debufflocation == 3) then
+		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -20);
+	elseif (debufflocation == 4) then
 		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
 			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 0);
 		else
@@ -850,7 +854,7 @@ function Perl_Player_Pet_Buff_Position_Update()
 		end
 	else
 		if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
-			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, 15);
+			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "BOTTOMLEFT", -20, -15);
 		else
 			Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_LevelFrame", "BOTTOMLEFT", 5, -15);
 		end
@@ -988,8 +992,8 @@ function Perl_Player_Pet_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_Player_Pet_myAddOns_Details = {
 			name = "Perl_Player_Pet",
-			version = "Version 0.68",
-			releaseDate = "May 30, 2006",
+			version = "Version 0.69",
+			releaseDate = "June 1, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

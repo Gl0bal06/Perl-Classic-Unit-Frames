@@ -632,6 +632,7 @@ function Perl_Config_Global_Save_Settings()
 			["Debuffs"] = vartable["numdebuffsshown"],
 			["ClassColoredNames"] = vartable["classcolorednames"],
 			["ShortBars"] = vartable["shortbars"],
+			["HideClassLevelFrame"] = vartable["hideclasslevelframe"],
 		};
 	end
 
@@ -680,6 +681,8 @@ function Perl_Config_Global_Save_Settings()
 			["ShowDruidBar"] = vartable["showdruidbar"],
 			["FiveSecSupport"] = vartable["fivesecsupport"],
 			["ShortBars"] = vartable["shortbars"],
+			["ClassColoredNames"] = vartable["classcolorednames"],
+			["HideClassLevelFrame"] = vartable["hideclasslevelframe"],
 		};
 	end
 
@@ -804,6 +807,9 @@ function Perl_Config_Global_Save_Settings()
 			["AlertSize"] = vartable["alertsize"],
 			["ShowToTBuffs"] = vartable["showtotbuffs"],
 			["ShowToToTBuffs"] = vartable["showtototbuffs"],
+			["HidePowerBars"] = vartable["hidepowerbars"],
+			["ShowToTDebuffs"] = vartable["showtotdebuffs"],
+			["ShowToToTDebuffs"] = vartable["showtototdebuffs"],
 		};
 	end
 end
@@ -1238,9 +1244,9 @@ function Perl_Config_Button_Tooltip()
 	GameTooltip:AddLine(" ");
 
 	if (unlockedflag == 1) then
-		GameTooltip:AddLine("Right clicking will lock all frames");
+		GameTooltip:AddLine("Right clicking will LOCK all frames");
 	else
-		GameTooltip:AddLine("Right clicking will unlock all frames");
+		GameTooltip:AddLine("Right clicking will UNLOCK all frames");
 	end
 
 	GameTooltip:Show();
@@ -1283,8 +1289,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.68",
-			releaseDate = "May 30, 2006",
+			version = "Version 0.69",
+			releaseDate = "June 1, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

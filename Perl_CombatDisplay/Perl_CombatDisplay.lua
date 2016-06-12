@@ -1362,8 +1362,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.68",
-			releaseDate = "May 30, 2006",
+			version = "Version 0.69",
+			releaseDate = "June 1, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

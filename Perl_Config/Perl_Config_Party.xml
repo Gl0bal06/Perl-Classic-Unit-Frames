@@ -122,7 +122,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="200" y="-150"/>
+								<AbsDimension x="200" y="-170"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -132,7 +132,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="200" y="-210"/>
+								<AbsDimension x="200" y="-230"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -227,7 +227,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton3">
 						<Offset>
-							<AbsDimension x="0" y="-40"/>
+							<AbsDimension x="0" y="-30"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -237,6 +237,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Party_VerticalAlign_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton18" inherits="UICheckButtonTemplate" id="18">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton10">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Hide Class Icon Frame");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Party_Hide_Class_Level_Frame_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

@@ -18,6 +18,8 @@ local portraitcombattext = 0;	-- Combat text is disabled by default on the portr
 local showdruidbar = 0;		-- Druid Bar support is enabled by default
 local fivesecsupport = 0;	-- FiveSec support is disabled by default
 local shortbars = 0;		-- Health/Power/Experience bars are all normal length
+local classcolorednames = 0;	-- names are colored based on pvp status by default
+local hideclasslevelframe = 0;	-- Showing the class icon and level frame by default
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -66,6 +68,7 @@ function Perl_Player_OnLoad()
 	this:RegisterEvent("UNIT_MAXRAGE");
 	this:RegisterEvent("UNIT_MODEL_CHANGED");
 	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("UNIT_SPELLMISS");
 	this:RegisterEvent("UPDATE_FACTION");
@@ -132,7 +135,7 @@ function Perl_Player_OnEvent(event)
 			Perl_Player_Update_Reputation();	-- Set faction info
 		end
 		return;
-	elseif (event == "UNIT_FACTION") then
+	elseif (event == "UNIT_FACTION" or event == "UNIT_PVP_UPDATE") then
 		Perl_Player_Update_PvP_Status();		-- Is the character PvP flagged?
 		return;
 	elseif (event == "UNIT_LEVEL") then
@@ -731,6 +734,28 @@ function Perl_Player_Update_PvP_Status()
 		Perl_Player_NameBarText:SetTextColor(0.5,0.5,1);
 		Perl_Player_PVPStatus:Hide();
 	end
+
+	if (classcolorednames == 1) then
+		if (UnitClass("player") == PERL_LOCALIZED_WARRIOR) then
+			Perl_Player_NameBarText:SetTextColor(0.78, 0.61, 0.43);
+		elseif (UnitClass("player") == PERL_LOCALIZED_MAGE) then
+			Perl_Player_NameBarText:SetTextColor(0.41, 0.8, 0.94);
+		elseif (UnitClass("player") == PERL_LOCALIZED_ROGUE) then
+			Perl_Player_NameBarText:SetTextColor(1, 0.96, 0.41);
+		elseif (UnitClass("player") == PERL_LOCALIZED_DRUID) then
+			Perl_Player_NameBarText:SetTextColor(1, 0.49, 0.04);
+		elseif (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+			Perl_Player_NameBarText:SetTextColor(0.67, 0.83, 0.45);
+		elseif (UnitClass("player") == PERL_LOCALIZED_SHAMAN) then
+			Perl_Player_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+		elseif (UnitClass("player") == PERL_LOCALIZED_PRIEST) then
+			Perl_Player_NameBarText:SetTextColor(1, 1, 1);
+		elseif (UnitClass("player") == PERL_LOCALIZED_WARLOCK) then
+			Perl_Player_NameBarText:SetTextColor(0.58, 0.51, 0.79);
+		elseif (UnitClass("player") == PERL_LOCALIZED_PALADIN) then
+			Perl_Player_NameBarText:SetTextColor(0.96, 0.55, 0.73);
+		end
+	end
 end
 
 function Perl_Player_Set_CompactMode()
@@ -805,6 +830,33 @@ function Perl_Player_Set_CompactMode()
 		Perl_Player_DruidBar:SetWidth(150);
 		Perl_Player_DruidBarBG:SetWidth(150);
 		Perl_Player_DruidBar_CastClickOverlay:SetWidth(150);
+	end
+
+	if (hideclasslevelframe == 1) then
+		Perl_Player_LevelFrame:Hide();
+		Perl_Player_StatsFrame:SetPoint("TOPLEFT", Perl_Player_NameFrame, "BOTTOMLEFT", 0, 5);
+		Perl_Player_StatsFrame:SetWidth(Perl_Player_StatsFrame:GetWidth() + 30);
+		Perl_Player_StatsFrame_CastClickOverlay:SetWidth(Perl_Player_StatsFrame_CastClickOverlay:GetWidth() + 30);
+		
+		Perl_Player_HealthBar:SetWidth(Perl_Player_HealthBar:GetWidth() + 30);
+		Perl_Player_HealthBarBG:SetWidth(Perl_Player_HealthBarBG:GetWidth() + 30);
+		Perl_Player_HealthBar_CastClickOverlay:SetWidth(Perl_Player_HealthBar_CastClickOverlay:GetWidth() + 30);
+		
+		Perl_Player_ManaBar:SetWidth(Perl_Player_ManaBar:GetWidth() + 30);
+		Perl_Player_ManaBarBG:SetWidth(Perl_Player_ManaBarBG:GetWidth() + 30);
+		Perl_Player_ManaBar_CastClickOverlay:SetWidth(Perl_Player_ManaBar_CastClickOverlay:GetWidth() + 30);
+		
+		Perl_Player_DruidBar:SetWidth(Perl_Player_DruidBar:GetWidth() + 30);
+		Perl_Player_DruidBarBG:SetWidth(Perl_Player_DruidBarBG:GetWidth() + 30);
+		Perl_Player_DruidBar_CastClickOverlay:SetWidth(Perl_Player_DruidBar_CastClickOverlay:GetWidth() + 30);
+
+		Perl_Player_XPBar:SetWidth(Perl_Player_XPBar:GetWidth() + 30);
+		Perl_Player_XPRestBar:SetWidth(Perl_Player_XPRestBar:GetWidth() + 30);
+		Perl_Player_XPBarBG:SetWidth(Perl_Player_XPBarBG:GetWidth() + 30);
+		Perl_Player_XPBar_CastClickOverlay:SetWidth(Perl_Player_XPBar_CastClickOverlay:GetWidth() + 30);
+	else
+		Perl_Player_LevelFrame:Show();
+		Perl_Player_StatsFrame:SetPoint("TOPLEFT", Perl_Player_NameFrame, "BOTTOMLEFT", 30, 5);
 	end
 
 	Perl_Player_Update_Health();
@@ -1133,6 +1185,19 @@ function Perl_Player_Set_FiveSec(newvalue)
 	Perl_Player_Update_Mana();
 end
 
+function Perl_Player_Set_Class_Colored_Names(newvalue)
+	classcolorednames = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Update_PvP_Status();
+end
+
+function Perl_Player_Set_Hide_Class_Level_Frame(newvalue)
+	hideclasslevelframe = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Set_Text_Positions();
+	Perl_Player_Set_CompactMode();
+end
+
 function Perl_Player_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
@@ -1170,6 +1235,8 @@ function Perl_Player_GetVars()
 	showdruidbar = Perl_Player_Config[UnitName("player")]["ShowDruidBar"];
 	fivesecsupport = Perl_Player_Config[UnitName("player")]["FiveSecSupport"];
 	shortbars = Perl_Player_Config[UnitName("player")]["ShortBars"];
+	classcolorednames = Perl_Player_Config[UnitName("player")]["ClassColoredNames"];
+	hideclasslevelframe = Perl_Player_Config[UnitName("player")]["HideClassLevelFrame"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1213,6 +1280,12 @@ function Perl_Player_GetVars()
 	if (shortbars == nil) then
 		shortbars = 0;
 	end
+	if (classcolorednames == nil) then
+		classcolorednames = 0;
+	end
+	if (hideclasslevelframe == nil) then
+		hideclasslevelframe = 0;
+	end
 
 	local vars = {
 		["locked"] = locked,
@@ -1229,6 +1302,8 @@ function Perl_Player_GetVars()
 		["showdruidbar"] = showdruidbar,
 		["fivesecsupport"] = fivesecsupport,
 		["shortbars"] = shortbars,
+		["classcolorednames"] =classcolorednames,
+		["hideclasslevelframe"] =hideclasslevelframe,
 	}
 	return vars;
 end
@@ -1307,6 +1382,16 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				shortbars = nil;
 			end
+			if (vartable["Global Settings"]["ClassColoredNames"] ~= nil) then
+				classcolorednames = vartable["Global Settings"]["ClassColoredNames"];
+			else
+				classcolorednames = nil;
+			end
+			if (vartable["Global Settings"]["HideClassLevelFrame"] ~= nil) then
+				hideclasslevelframe = vartable["Global Settings"]["HideClassLevelFrame"];
+			else
+				hideclasslevelframe = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1352,6 +1437,12 @@ function Perl_Player_UpdateVars(vartable)
 		if (shortbars == nil) then
 			shortbars = 0;
 		end
+		if (classcolorednames == nil) then
+			classcolorednames = 0;
+		end
+		if (hideclasslevelframe == nil) then
+			hideclasslevelframe = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_XPBar_Display(xpbarstate);
@@ -1387,6 +1478,8 @@ function Perl_Player_UpdateVars(vartable)
 		["ShowDruidBar"] = showdruidbar,
 		["FiveSecSupport"] = fivesecsupport,
 		["ShortBars"] = shortbars,
+		["ClassColoredNames"] = classcolorednames,
+		["HideClassLevelFrame"] = hideclasslevelframe,
 	};
 end
 
@@ -1580,8 +1673,8 @@ function Perl_Player_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Player_myAddOns_Details = {
 			name = "Perl_Player",
-			version = "Version 0.68",
-			releaseDate = "May 30, 2006",
+			version = "Version 0.69",
+			releaseDate = "June 1, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

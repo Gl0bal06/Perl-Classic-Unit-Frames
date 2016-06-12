@@ -47,11 +47,11 @@ function Perl_Config_Player_Pet_Set_Values()
 	Perl_Config_Player_Pet_Frame_Slider4:SetValue(vartable["transparency"]*100);
 
 	Perl_Config_Player_Pet_Frame_Slider5Low:SetText("1");
-	Perl_Config_Player_Pet_Frame_Slider5High:SetText("4");
+	Perl_Config_Player_Pet_Frame_Slider5High:SetText("5");
 	Perl_Config_Player_Pet_Frame_Slider5:SetValue(vartable["bufflocation"]);
 
 	Perl_Config_Player_Pet_Frame_Slider6Low:SetText("1");
-	Perl_Config_Player_Pet_Frame_Slider6High:SetText("4");
+	Perl_Config_Player_Pet_Frame_Slider6High:SetText("5");
 	Perl_Config_Player_Pet_Frame_Slider6:SetValue(vartable["debufflocation"]);
 
 	Perl_Config_Player_Pet_Frame_Slider7Low:SetText("1");

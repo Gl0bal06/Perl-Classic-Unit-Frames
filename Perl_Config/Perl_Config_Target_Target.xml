@@ -164,44 +164,23 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton14" inherits="UICheckButtonTemplate" id="14">
+			<CheckButton name="$parent_CheckButton16" inherits="UICheckButtonTemplate" id="16">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton7">
 						<Offset>
-							<AbsDimension x="0" y="-20"/>
+							<AbsDimension  x="0" y="-20"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("ToT Buffs/Debuffs");
+						getglobal(this:GetName().."Text"):SetText("Hide Power Bars");
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Target_Target_Buff_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton15" inherits="UICheckButtonTemplate" id="15">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton14">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText("ToToT Buffs/Debuffs");
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Target_Target_Target_Buff_Update();
+						Perl_Config_Target_Target_Hide_Power_Bars_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
@@ -211,7 +190,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton15">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton16">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>
@@ -244,6 +223,90 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Target_Lock_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton14" inherits="UICheckButtonTemplate" id="14">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc_Text">
+						<Offset>
+							<AbsDimension x="200" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Show ToT Buffs");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Buff_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton17" inherits="UICheckButtonTemplate" id="17">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton14">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Show ToT Debuffs");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Debuff_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton15" inherits="UICheckButtonTemplate" id="15">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton17">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Show ToToT Buffs");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Target_Buff_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton18" inherits="UICheckButtonTemplate" id="18">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton15">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("Show ToToT Debuffs");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Target_Target_Debuff_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

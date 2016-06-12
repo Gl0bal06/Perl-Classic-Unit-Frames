@@ -106,6 +106,12 @@ function Perl_Config_Party_Set_Values()
 		Perl_Config_Party_Frame_CheckButton17:SetChecked(nil);
 	end
 
+	if (vartable["hideclasslevelframe"] == 1) then
+		Perl_Config_Party_Frame_CheckButton18:SetChecked(1);
+	else
+		Perl_Config_Party_Frame_CheckButton18:SetChecked(nil);
+	end
+
 	Perl_Config_Party_Frame_Slider1Low:SetText("Small");
 	Perl_Config_Party_Frame_Slider1High:SetText("Big");
 	Perl_Config_Party_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -281,6 +287,14 @@ function Perl_Config_Party_Class_Colored_Names_Update()
 		Perl_Party_Set_Class_Colored_Names(1);
 	else
 		Perl_Party_Set_Class_Colored_Names(0);
+	end
+end
+
+function Perl_Config_Party_Hide_Class_Level_Frame_Update()
+	if (Perl_Config_Party_Frame_CheckButton18:GetChecked() == 1) then
+		Perl_Party_Set_Hide_Class_Level_Frame(1);
+	else
+		Perl_Party_Set_Hide_Class_Level_Frame(0);
 	end
 end
 

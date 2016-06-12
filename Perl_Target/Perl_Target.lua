@@ -73,6 +73,7 @@ function Perl_Target_OnLoad()
 	this:RegisterEvent("UNIT_MAXMANA");
 	this:RegisterEvent("UNIT_MAXRAGE");
 	this:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+	this:RegisterEvent("UNIT_PVP_UPDATE");
 	this:RegisterEvent("UNIT_FACTION");
 	this:RegisterEvent("UNIT_RAGE");
 	this:RegisterEvent("UNIT_SPELLMISS");
@@ -137,7 +138,7 @@ function Perl_Target_OnEvent(event)
 			CombatFeedback_OnSpellMissEvent(arg2);
 		end
 		return;
-	elseif (event == "UNIT_FACTION") then
+	elseif (event == "UNIT_FACTION" or event == "UNIT_PVP_UPDATE") then
 		Perl_Target_Update_Text_Color();		-- Is the character PvP flagged?
 		Perl_Target_Update_PvP_Status_Icon();		-- Set pvp status icon
 		return;
@@ -888,15 +889,17 @@ function Perl_Target_Frame_Set_Level()
 	Perl_Target_LevelBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
 	Perl_Target_RareEliteBarText:SetVertexColor(targetlevelcolor.r, targetlevelcolor.g, targetlevelcolor.b);
 
-	if ((targetclassification == "worldboss") or (targetlevel < 0)) then
+	if (targetlevel < 0) then
 		Perl_Target_LevelBarText:SetTextColor(1, 0, 0);
 		if (UnitIsPlayer("target")) then
 			targetclassificationframetext = nil;
-		else
-			Perl_Target_RareEliteBarText:SetTextColor(1, 0, 0);
-			targetclassificationframetext = "Boss";
 		end
 		targetlevel = "??";
+	end
+
+	if (targetclassification == "worldboss") then
+		Perl_Target_RareEliteBarText:SetTextColor(1, 0, 0);
+		targetclassificationframetext = "Boss";
 	end
 
 	if (targetclassification == "rareelite") then
@@ -2026,8 +2029,8 @@ function Perl_Target_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Target_myAddOns_Details = {
 			name = "Perl_Target",
-			version = "Version 0.68",
-			releaseDate = "May 30, 2006",
+			version = "Version 0.69",
+			releaseDate = "June 1, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",
