@@ -192,7 +192,7 @@ function Perl_Player_Pet_Initialize()
 	-- Check if we loaded the mod already.
 	if (Initialized) then
 		Perl_Player_Pet_Update_Once();
-		Perl_Player_Pet_Set_Scale();		-- Set the scale
+		Perl_Player_Pet_Set_Scale_Actual();	-- Set the scale
 		Perl_Player_Pet_Set_Transparency();	-- Set transparency
 		return;
 	end
@@ -720,18 +720,25 @@ function Perl_Player_Pet_Set_Portrait_Combat_Text(newvalue)
 end
 
 function Perl_Player_Pet_Set_Scale(number)
-	local unsavedscale;
 	if (number ~= nil) then
-		scale = (number / 100);					-- convert the user input to a wow acceptable value
+		scale = (number / 100);						-- convert the user input to a wow acceptable value
 	end
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_Player_Pet_Frame:SetScale(unsavedscale);
 	Perl_Player_Pet_UpdateVars();
+	Perl_Player_Pet_Set_Scale_Actual();
+end
+
+function Perl_Player_Pet_Set_Scale_Actual()
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_Player_Pet_Set_Scale_Actual);
+	else
+		local unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+		Perl_Player_Pet_Frame:SetScale(unsavedscale);
+	end
 end
 
 function Perl_Player_Pet_Set_Transparency(number)
 	if (number ~= nil) then
-		transparency = (number / 100);				-- convert the user input to a wow acceptable value
+		transparency = (number / 100);					-- convert the user input to a wow acceptable value
 	end
 	Perl_Player_Pet_Frame:SetAlpha(transparency);
 	Perl_Player_Pet_UpdateVars();
@@ -819,7 +826,7 @@ function Perl_Player_Pet_GetVars(name, updateflag)
 		Perl_Player_Pet_Update_Portrait();
 		Perl_Player_Pet_Portrait_Combat_Text();
 		Perl_Player_Pet_Set_Window_Layout();
-		Perl_Player_Pet_Set_Scale();		-- Set the scale
+		Perl_Player_Pet_Set_Scale_Actual();	-- Set the scale
 		Perl_Player_Pet_Set_Transparency();	-- Set the transparency
 		return;
 	end
@@ -979,7 +986,7 @@ function Perl_Player_Pet_UpdateVars(vartable)
 		Perl_Player_Pet_Update_Portrait();
 		Perl_Player_Pet_Portrait_Combat_Text();
 		Perl_Player_Pet_Set_Window_Layout();
-		Perl_Player_Pet_Set_Scale();		-- Set the scale
+		Perl_Player_Pet_Set_Scale_Actual();	-- Set the scale
 		Perl_Player_Pet_Set_Transparency();	-- Set the transparency
 	end
 
@@ -1104,7 +1111,27 @@ function Perl_Player_Pet_Buff_Position_Update()
 	end
 
 	Perl_Player_Pet_Debuff1:ClearAllPoints();
-	if (debufflocation == 3) then
+	if (debufflocation == 1) then
+		if (hidename == 0) then
+			Perl_Player_Pet_Debuff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_NameFrame", "TOPLEFT", 5, 15);
+		else
+			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+				Perl_Player_Pet_Debuff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_LevelFrame", "TOPLEFT", 5, 15);
+			else
+				Perl_Player_Pet_Debuff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_StatsFrame", "TOPLEFT", 5, 15);
+			end
+		end
+	elseif (debufflocation == 2) then
+		if (hidename == 0) then
+			Perl_Player_Pet_Debuff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_NameFrame", "TOPLEFT", 5, 0);
+		else
+			if (UnitClass("player") == PERL_LOCALIZED_HUNTER) then
+				Perl_Player_Pet_Debuff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_LevelFrame", "TOPLEFT", 5, 0);
+			else
+				Perl_Player_Pet_Debuff1:SetPoint("BOTTOMLEFT", "Perl_Player_Pet_StatsFrame", "TOPLEFT", 5, 0);
+			end
+		end
+	elseif (debufflocation == 3) then
 		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_NameFrame", "TOPRIGHT", 0, -3);
 	elseif (debufflocation == 4) then
 		Perl_Player_Pet_Debuff1:SetPoint("TOPLEFT", "Perl_Player_Pet_StatsFrame", "TOPRIGHT", 0, -5);

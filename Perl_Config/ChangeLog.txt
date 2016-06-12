@@ -1,3 +1,16 @@
+2.03 - January 9, 2007
+ - All: Updated TOC Interface version to 20003
+ - All: Fixed an issue regarding scaling when zoning in combat
+ - CombatDisplay: Fixed error when zoning in combat (frame still does not hide correctly)
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - Config/Focus/Player/Target: Updated Perl_ArcaneBar support
+ - Config/Party: Changed how frames are disabled slightly
+ - Pet: Debuffs now correctly show in positions 1 and 2
+ - Player: Can now display your raid group number in the name frame
+ - Player: Added support for Fizzwidget FactionFriend
+ - Target: Added guild name support
+ - Target: Class frame now extends to fill the gap in the most compact form
+
 2.02c - December 21, 2006
  - Focus: Rare elite targets correctly show the not available text now
 

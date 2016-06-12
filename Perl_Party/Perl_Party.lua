@@ -111,8 +111,8 @@ function Perl_Party_OnLoad()
 	this:SetScript("OnEvent", Perl_Party_OnEvent);
 
 	-- Forcefully Hide Blizzard Party Frame
-	HidePartyFrame();
-	ShowPartyFrame = HidePartyFrame;	-- This is to fix the annoyance 1.9 introduced
+	--HidePartyFrame();
+	--ShowPartyFrame = HidePartyFrame;	-- This is to fix the annoyance 1.9 introduced
 
 	-- WoW 2.0 Secure API Stuff
 	this:SetAttribute("unit", "party"..this:GetID());
@@ -251,7 +251,7 @@ Perl_Party_Events.PLAYER_ENTERING_WORLD = Perl_Party_Events.VARIABLES_LOADED;
 function Perl_Party_Initialize()
 	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
-		Perl_Party_Set_Scale();			-- Set the frame scale
+		Perl_Party_Set_Scale_Actual();		-- Set the frame scale
 		Perl_Party_Set_Transparency();		-- Set the frame transparency
 		Perl_Party_Force_Update()		-- Attempt to forcefully update information
 		Perl_Party_Set_Pets();			-- Also not called
@@ -280,6 +280,16 @@ function Perl_Party_Initialize()
 	Perl_clearBlizzardFrameDisable(PartyMemberFrame3PetFrame);
 	Perl_clearBlizzardFrameDisable(PartyMemberFrame4);
 	Perl_clearBlizzardFrameDisable(PartyMemberFrame4PetFrame);
+
+	hooksecurefunc("ShowPartyFrame",		-- Thanks Zek
+		function()
+			if (not InCombatLockdown()) then
+				for i = 1,4 do
+					getglobal("PartyMemberFrame"..i):Hide();
+				end
+			end
+		end
+	);
 
 	-- Set the ID of the frame
 	for num = 1, 4 do
@@ -1926,7 +1936,15 @@ function Perl_Party_Set_Scale(number)
 		scale = (number / 100);
 	end
 	Perl_Party_UpdateVars();
-	Perl_Party_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
+	Perl_Party_Set_Scale_Actual();
+end
+
+function Perl_Party_Set_Scale_Actual()
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_Party_Set_Scale_Actual);
+	else
+		Perl_Party_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
+	end
 end
 
 function Perl_Party_Set_Transparency(number)
@@ -2067,7 +2085,7 @@ function Perl_Party_GetVars(name, updateflag)
 		Perl_Party_Reset_Buffs();		-- Reset the buff icons and set sizes
 		Perl_Party_Update_Buffs();		-- Repopulate the buff icons
 		Perl_Party_Frame_Style();
-		Perl_Party_Set_Scale();
+		Perl_Party_Set_Scale_Actual();
 		Perl_Party_Set_Transparency();
 		return;
 	end
@@ -2327,7 +2345,7 @@ function Perl_Party_UpdateVars(vartable)
 		Perl_Party_Reset_Buffs();		-- Reset the buff icons and set sizes
 		Perl_Party_Update_Buffs();		-- Repopulate the buff icons
 		Perl_Party_Frame_Style();
-		Perl_Party_Set_Scale();
+		Perl_Party_Set_Scale_Actual();
 		Perl_Party_Set_Transparency();
 	end
 

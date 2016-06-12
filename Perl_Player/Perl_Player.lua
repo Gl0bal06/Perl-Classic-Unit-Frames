@@ -26,6 +26,7 @@ local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
 local hiddeninraid = 0;		-- player frame is shown in a raid by default
 local showpvpicon = 1;		-- show the pvp icon
 local showbarvalues = 0;	-- healer mode will have the bar values hidden by default
+local showraidgroupinname = 0;	-- raid number is not shown in the name by default
 
 -- Default Local Variables
 local InCombat = 0;		-- used to track if the player is in combat and if the icon should be displayed
@@ -218,7 +219,7 @@ function Perl_Player_Initialize()
 	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
 		InCombat = 0;				-- You can't be fighting if you're zoning, and no event is sent, force it to no combat.
-		Perl_Player_Set_Scale();		-- Set the scale
+		Perl_Player_Set_Scale_Actual();		-- Set the scale
 		Perl_Player_Set_Transparency();		-- Set the transparency
 		Perl_Player_Update_Once();		-- Set all the correct information
 		return;
@@ -781,32 +782,47 @@ function Perl_Player_Update_Combat_Status(event)
 	end
 end
 
-function Perl_Player_Update_Raid_Group_Number()		-- taken from 1.8
+function Perl_Player_Update_Raid_Group_Number()
+	local numRaidMembers = GetNumRaidMembers();
+
 	if (InCombatLockdown()) then
 		Perl_Config_Queue_Add(Perl_Player_Update_Raid_Group_Number);
 	else
 		if (showraidgroup == 1) then
-			Perl_Player_RaidGroupNumberFrame:Hide();
-			local name, rank, subgroup;
-			if (GetNumRaidMembers() == 0) then
+			if (numRaidMembers == 0) then
 				Perl_Player_RaidGroupNumberFrame:Hide();
-				Perl_Player_MasterIcon:Hide();				-- This was added to correctly hide the master loot icon after leaving a party/raid
-				return;
-			end
-			local numRaidMembers = GetNumRaidMembers();
-			for i=1,40 do
-				if (i <= numRaidMembers) then
-					name, rank, subgroup = GetRaidRosterInfo(i);
-					-- Set the player's group number indicator
-					if (name == UnitName("player")) then
-						Perl_Player_RaidGroupNumberBarText:SetText(PERL_LOCALIZED_PLAYER_GROUP..subgroup);
-						Perl_Player_RaidGroupNumberFrame:Show();
-						return;
-					end
-				end
+				Perl_Player_MasterIcon:Hide();		-- This was added to correctly hide the master loot icon after leaving a party/raid
+			else
+				Perl_Player_RaidGroupNumberFrame:Show();
 			end
 		else
 			Perl_Player_RaidGroupNumberFrame:Hide();
+		end
+	end
+
+	if (showraidgroupinname == 0) then
+		Perl_Player_NameBarText:SetText(UnitName("player"));
+		if (showraidgroup == 0) then
+			return;
+		end
+	end
+
+	if (numRaidMembers == 0) then
+		return;
+	end
+
+	local name, rank, subgroup;
+	for i=1,40 do				-- taken from 1.8
+		if (i <= numRaidMembers) then
+			name, rank, subgroup = GetRaidRosterInfo(i);
+			-- Set the player's group number indicator
+			if (name == UnitName("player")) then
+				Perl_Player_RaidGroupNumberBarText:SetText(PERL_LOCALIZED_PLAYER_GROUP..subgroup);
+				if (showraidgroupinname == 1) then
+					Perl_Player_NameBarText:SetText(UnitName("player")..":"..subgroup);
+				end
+				return;
+			end
 		end
 	end
 end
@@ -1289,21 +1305,21 @@ function Perl_Player_Frame_Style()
 		Perl_Player_Update_Mana();
 
 		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
-			Perl_ArcaneBarFrame:SetPoint("TOPLEFT", "Perl_Player_NameFrame", "TOPLEFT", 5, -5);
-			Perl_ArcaneBar_CastTime:ClearAllPoints();
-			if (Perl_ArcaneBar_Config[UnitName("player")]["LeftTimer"] == 0) then
-				Perl_ArcaneBar_CastTime:SetPoint("LEFT", "Perl_Player_NameFrame", "RIGHT", 0, 0);
+			Perl_ArcaneBar_player:SetPoint("TOPLEFT", "Perl_Player_NameFrame", "TOPLEFT", 5, -5);
+			Perl_ArcaneBar_player_CastTime:ClearAllPoints();
+			if (Perl_ArcaneBar_Config[UnitName("player")]["PlayerLeftTimer"] == 0) then
+				Perl_ArcaneBar_player_CastTime:SetPoint("LEFT", "Perl_Player_NameFrame", "RIGHT", 0, 0);
 			else
-				if (Perl_Player_PortraitFrame:IsVisible()) then
-					Perl_ArcaneBar_CastTime:SetPoint("RIGHT", "Perl_Player_PortraitFrame", "LEFT", 0, 0);
+				if (showportrait == 1) then
+					Perl_ArcaneBar_player_CastTime:SetPoint("RIGHT", "Perl_Player_PortraitFrame", "LEFT", 0, 0);
 				else
-					Perl_ArcaneBar_CastTime:SetPoint("RIGHT", "Perl_Player_NameFrame", "LEFT", 0, 0);
+					Perl_ArcaneBar_player_CastTime:SetPoint("RIGHT", "Perl_Player_NameFrame", "LEFT", 0, 0);
 				end
 			end
 
-			Perl_ArcaneBarFrame:SetWidth(Perl_Player_NameFrame:GetWidth() - 10);
-			Perl_ArcaneBar:SetWidth(Perl_Player_NameFrame:GetWidth() - 10);
-			Perl_ArcaneBarFlash:SetWidth(Perl_Player_NameFrame:GetWidth() + 5);
+			Perl_ArcaneBar_player:SetWidth(Perl_Player_NameFrame:GetWidth() - 10);
+			Perl_ArcaneBar_player_Flash:SetWidth(Perl_Player_NameFrame:GetWidth() + 5);
+			Perl_ArcaneBar_Set_Spark_Width(Perl_Player_NameFrame:GetWidth(), nil, nil);
 		end
 	end
 end
@@ -1445,17 +1461,31 @@ function Perl_Player_Set_Show_Bar_Values(newvalue)
 	Perl_Player_Update_Mana();
 end
 
+function Perl_Player_Set_Show_Raid_Group_In_Name(newvalue)
+	showraidgroupinname = newvalue;
+	Perl_Player_UpdateVars();
+	Perl_Player_Update_Raid_Group_Number();
+end
+
 function Perl_Player_Set_Scale(number)
 	if (number ~= nil) then
-		scale = (number / 100);						-- convert the user input to a wow acceptable value
+		scale = (number / 100);							-- convert the user input to a wow acceptable value
 	end
 	Perl_Player_UpdateVars();
-	Perl_Player_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
+	Perl_Player_Set_Scale_Actual();
+end
+
+function Perl_Player_Set_Scale_Actual()
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_Player_Set_Scale_Actual);
+	else
+		Perl_Player_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
+	end
 end
 
 function Perl_Player_Set_Transparency(number)
 	if (number ~= nil) then
-		transparency = (number / 100);					-- convert the user input to a wow acceptable value
+		transparency = (number / 100);						-- convert the user input to a wow acceptable value
 	end
 	Perl_Player_UpdateVars();
 	Perl_Player_Frame:SetAlpha(transparency);
@@ -1491,6 +1521,7 @@ function Perl_Player_GetVars(name, updateflag)
 	hiddeninraid = Perl_Player_Config[name]["HiddenInRaid"];
 	showpvpicon = Perl_Player_Config[name]["ShowPvPIcon"];
 	showbarvalues = Perl_Player_Config[name]["ShowBarValues"];
+	showraidgroupinname = Perl_Player_Config[name]["ShowRaidGroupInName"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -1555,6 +1586,9 @@ function Perl_Player_GetVars(name, updateflag)
 	if (showbarvalues == nil) then
 		showbarvalues = 0;
 	end
+	if (showraidgroupinname == nil) then
+		showraidgroupinname = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -1562,7 +1596,7 @@ function Perl_Player_GetVars(name, updateflag)
 
 		-- Call any code we need to activate them
 		Perl_Player_Update_Once();
-		Perl_Player_Set_Scale();
+		Perl_Player_Set_Scale_Actual();
 		Perl_Player_Set_Transparency();
 		return;
 	end
@@ -1589,6 +1623,7 @@ function Perl_Player_GetVars(name, updateflag)
 		["hiddeninraid"] = hiddeninraid,
 		["showpvpicon"] = showpvpicon,
 		["showbarvalues"] = showbarvalues,
+		["showraidgroupinname"] = showraidgroupinname,
 	}
 	return vars;
 end
@@ -1702,6 +1737,11 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				showbarvalues = nil;
 			end
+			if (vartable["Global Settings"]["ShowRaidGroupInName"] ~= nil) then
+				showraidgroupinname = vartable["Global Settings"]["ShowRaidGroupInName"];
+			else
+				showraidgroupinname = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1768,10 +1808,13 @@ function Perl_Player_UpdateVars(vartable)
 		if (showbarvalues == nil) then
 			showbarvalues = 0;
 		end
+		if (showraidgroupinname == nil) then
+			showraidgroupinname = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Player_Update_Once();
-		Perl_Player_Set_Scale();
+		Perl_Player_Set_Scale_Actual();
 		Perl_Player_Set_Transparency();
 	end
 
@@ -1802,6 +1845,7 @@ function Perl_Player_UpdateVars(vartable)
 		["HiddenInRaid"] = hiddeninraid,
 		["ShowPvPIcon"] = showpvpicon,
 		["ShowBarValues"] = showbarvalues,
+		["ShowRaidGroupInName"] = showraidgroupinname,
 	};
 end
 
@@ -1913,7 +1957,12 @@ function Perl_Player_XPTooltip()
 			value = value - min;
 			max = max - min;
 			min = 0;
-			GameTooltip:SetText(name, 255/255, 209/255, 0/255);
+			if (FFF_HandlerFrame) then
+				FFF_ReputationTick_Tooltip();
+				GameTooltip:AddLine(" ", 255/255, 255/255, 255/255);
+			else
+				GameTooltip:SetText(name, 255/255, 209/255, 0/255);
+			end
 			if (GetLocale() == "koKR") then
 				GameTooltip:AddLine(Perl_Player_Get_Reaction_Name(reaction).."의 "..floor(value/max*100+0.5).."%", 255/255, 209/255, 0/255);
 			elseif (GetLocale() == "zhCN") then

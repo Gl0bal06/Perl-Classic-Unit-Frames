@@ -116,7 +116,7 @@ Perl_Target_Target_Events.PLAYER_ENTERING_WORLD = Perl_Target_Target_Events.VARI
 -------------------------------
 function Perl_Target_Target_Initialize()
 	if (Initialized) then
-		Perl_Target_Target_Set_Scale();		-- Set the scale
+		Perl_Target_Target_Set_Scale_Actual();		-- Set the scale
 		Perl_Target_Target_Set_Transparency();	-- Set the transparency
 		return;
 	end
@@ -1626,19 +1626,26 @@ function Perl_Target_Target_Set_Show_Friendly_Health(newvalue)
 end
 
 function Perl_Target_Target_Set_Scale(number)
-	local unsavedscale;
 	if (number ~= nil) then
-		scale = (number / 100);					-- convert the user input to a wow acceptable value
+		scale = (number / 100);						-- convert the user input to a wow acceptable value
 	end
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_Target_Target_Frame:SetScale(unsavedscale);
-	Perl_Target_Target_Target_Frame:SetScale(unsavedscale);
 	Perl_Target_Target_UpdateVars();
+	Perl_Target_Target_Set_Scale_Actual();
+end
+
+function Perl_Target_Target_Set_Scale_Actual()
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_Target_Target_Set_Scale_Actual);
+	else
+		local unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+		Perl_Target_Target_Frame:SetScale(unsavedscale);
+		Perl_Target_Target_Target_Frame:SetScale(unsavedscale);
+	end
 end
 
 function Perl_Target_Target_Set_Transparency(number)
 	if (number ~= nil) then
-		transparency = (number / 100);				-- convert the user input to a wow acceptable value
+		transparency = (number / 100);					-- convert the user input to a wow acceptable value
 	end
 	Perl_Target_Target_Frame:SetAlpha(transparency);
 	Perl_Target_Target_Target_Frame:SetAlpha(transparency);
@@ -1769,7 +1776,7 @@ function Perl_Target_Target_GetVars(name, updateflag)
 
 		-- Call any code we need to activate them
 		Perl_Target_Target_Frame_Style();
-		Perl_Target_Target_Set_Scale();
+		Perl_Target_Target_Set_Scale_Actual();
 		Perl_Target_Target_Set_Transparency();
 		return;
 	end
@@ -1942,7 +1949,7 @@ function Perl_Target_Target_UpdateVars(vartable)
 
 		-- Call any code we need to activate them
 		Perl_Target_Target_Frame_Style();
-		Perl_Target_Target_Set_Scale();
+		Perl_Target_Target_Set_Scale_Actual();
 		Perl_Target_Target_Set_Transparency();
 	end
 

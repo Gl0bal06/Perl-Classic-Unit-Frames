@@ -34,6 +34,7 @@ local displaycastablebuffs = 0;	-- display all buffs by default
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local showmanadeficit = 0;	-- Mana deficit in healer mode is off by default
 local invertbuffs = 0;		-- buffs and debuffs are below the target frame by default
+local showguildname = 0;	-- guild names are hidden by default
 
 -- Default Local Variables
 local Initialized = nil;	-- waiting to be initialized
@@ -45,7 +46,7 @@ local Perl_Target_ManaBar_Fade_Color = 1;		-- the color fading interval
 local Perl_Target_ManaBar_Fade_Time_Elapsed = 0;	-- set the update timer to 0
 
 -- Local variables to save memory
-local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, englishclass, creatureType, r, g, b, namelengthrestrictor, mobhealththreenumerics;
+local targethealth, targethealthmax, targethealthpercent, targetmana, targetmanamax, targetmanapercent, targetpower, targetname, targetlevel, targetlevelcolor, targetclassification, targetclassificationframetext, englishclass, creatureType, r, g, b, namelengthrestrictor, mobhealththreenumerics, guildName, guildnameallowedwidth;
 
 
 ----------------------
@@ -100,7 +101,7 @@ function Perl_Target_OnLoad()
 	Perl_Target_PortraitFrame_CastClickOverlay:SetFrameLevel(Perl_Target_PortraitFrame:GetFrameLevel() + 2);
 	Perl_Target_PortraitTextFrame:SetFrameLevel(Perl_Target_PortraitFrame:GetFrameLevel() + 1);
 	Perl_Target_ClassNameFrame_CastClickOverlay:SetFrameLevel(Perl_Target_ClassNameFrame:GetFrameLevel() + 1);
-	Perl_Target_CivilianFrame_CastClickOverlay:SetFrameLevel(Perl_Target_CivilianFrame:GetFrameLevel() + 1);
+	Perl_Target_GuildFrame_CastClickOverlay:SetFrameLevel(Perl_Target_GuildFrame:GetFrameLevel() + 1);
 	Perl_Target_CPFrame_CastClickOverlay:SetFrameLevel(Perl_Target_CPFrame:GetFrameLevel() + 1);
 	Perl_Target_StatsFrame_CastClickOverlay:SetFrameLevel(Perl_Target_StatsFrame:GetFrameLevel() + 1);
 	Perl_Target_RaidIconFrame:SetFrameLevel(Perl_Target_PortraitFrame_CastClickOverlay:GetFrameLevel() - 1);
@@ -232,7 +233,7 @@ Perl_Target_Events.PLAYER_ENTERING_WORLD = Perl_Target_Events.VARIABLES_LOADED;
 function Perl_Target_Initialize()
 	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
-		Perl_Target_Set_Scale();		-- Set the scale
+		Perl_Target_Set_Scale_Actual();		-- Set the scale
 		Perl_Target_Set_Transparency();		-- Set the transparency
 		return;
 	end
@@ -252,6 +253,11 @@ function Perl_Target_Initialize()
 	-- Unregister and Hide the Blizzard frames
 	Perl_clearBlizzardFrameDisable(TargetFrame);
 	Perl_clearBlizzardFrameDisable(ComboFrame);
+	Perl_clearBlizzardFrameDisable(TargetFrameSpellBar);
+
+	-- Disable Blizzard's Target Cast Bar
+	--TargetFrameSpellBar:UnregisterEvent("CVAR_UPDATE");
+	--TargetFrameSpellBar:UnregisterEvent("PLAYER_TARGET_CHANGED");
 
 	-- MyAddOns Support
 	Perl_Target_myAddOns_Support();
@@ -349,8 +355,8 @@ function Perl_Target_Initialize_Frame_Color()
 	Perl_Target_NameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Target_ClassNameFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Target_ClassNameFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
-	Perl_Target_CivilianFrame:SetBackdropColor(1, 1, 1, 1);
-	Perl_Target_CivilianFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	Perl_Target_GuildFrame:SetBackdropColor(0, 0, 0, 1);
+	Perl_Target_GuildFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Target_LevelFrame:SetBackdropColor(0, 0, 0, 1);
 	Perl_Target_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 	Perl_Target_BuffFrame:SetBackdropColor(0, 0, 0, 1);
@@ -367,6 +373,7 @@ function Perl_Target_Initialize_Frame_Color()
 	Perl_Target_HealthBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Target_ManaBarText:SetTextColor(1, 1, 1, 1);
 	Perl_Target_ClassNameBarText:SetTextColor(1, 1, 1);
+	Perl_Target_GuildBarText:SetTextColor(1, 1, 1, 1);
 end
 
 
@@ -440,6 +447,24 @@ function Perl_Target_Update_Once()
 		end
 	end
 	-- End: Set the pvp rank icon
+
+	-- Begin: Set the guild name
+	if (showguildname == 1) then
+		if (UnitIsPlayer("target") and UnitIsVisible("target")) then
+			guildName = GetGuildInfo("target");
+			if (guildName == nil) then
+				guildName = PERL_LOCALIZED_TARGET_UNGUILDED;
+			else
+				if (strlen(guildName) > (guildnameallowedwidth + 1)) then
+					guildName = strsub(guildName, 1, guildnameallowedwidth).."...";
+				end
+			end
+		else
+			guildName = PERL_LOCALIZED_TARGET_NA;
+		end
+		Perl_Target_GuildBarText:SetText(guildName);
+	end
+	-- End: Set the guild name
 end
 
 function Perl_Target_Update_Health()
@@ -1066,7 +1091,7 @@ function Perl_Target_Update_Name()
 	end
 
 	Perl_Target_NameBarText:SetText(targetname);
-end
+end	
 
 function Perl_Target_Update_Text_Color()
 	if (classcolorednames == 1) then
@@ -1151,156 +1176,6 @@ function Perl_Target_Update_Text_Color()
 		end
 		
 	end
-
-
-
-
-
-
---	if (classcolorednames == 0) then
---		if (UnitPlayerControlled("target")) then					-- is it a player
---			if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
---				-- Hostile players are red
---				if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
---					r = 0.5;
---					g = 0.5;
---					b = 1.0;
---				else								-- enemy is pvp enabled
---					r = 1.0;
---					g = 0.0;
---					b = 0.0;
---				end
---			elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
---				-- Players we can attack but which are not hostile are yellow
---				r = 1.0;
---				g = 1.0;
---				b = 0.0;
---			elseif (UnitIsPVP("target") and not UnitIsPVPSanctuary("target") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
---				-- Players we can assist but are PvP flagged are green
---				r = 0.0;
---				g = 1.0;
---				b = 0.0;
---			else									-- friendly non pvp enabled character
---				-- All other players are blue (the usual state on the "blue" server)
---				r = 0.5;
---				g = 0.5;
---				b = 1.0;
---			end
---			Perl_Target_NameBarText:SetTextColor(r, g, b);
---		elseif (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
---			Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
---		else
---			if (UnitIsVisible("target")) then
---				local reaction = UnitReaction("target", "player");
---				if (reaction) then
---					r = UnitReactionColor[reaction].r;
---					g = UnitReactionColor[reaction].g;
---					b = UnitReactionColor[reaction].b;
---					Perl_Target_NameBarText:SetTextColor(r, g, b);
---				else
---					Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
---				end
---			else
---				if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
---					-- Hostile players are red
---					if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
---						r = 0.5;
---						g = 0.5;
---						b = 1.0;
---					else								-- enemy is pvp enabled
---						r = 1.0;
---						g = 0.0;
---						b = 0.0;
---					end
---				elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
---					-- Players we can attack but which are not hostile are yellow
---					r = 1.0;
---					g = 1.0;
---					b = 0.0;
---				elseif (UnitIsPVP("target") and not UnitIsPVPSanctuary("target") and not UnitIsPVPSanctuary("player")) then	-- friendly pvp enabled character
---					-- Players we can assist but are PvP flagged are green
---					r = 0.0;
---					g = 1.0;
---					b = 0.0;
---				else									-- friendly non pvp enabled character
---					-- All other players are blue (the usual state on the "blue" server)
---					r = 0.5;
---					g = 0.5;
---					b = 1.0;
---				end
---				Perl_Target_NameBarText:SetTextColor(r, g, b);
---			end
---			
---		end
---	else
---		if (UnitIsPlayer("target")) then
---			if (UnitClass("target") == PERL_LOCALIZED_WARRIOR) then
---				Perl_Target_NameBarText:SetTextColor(0.78, 0.61, 0.43);
---			elseif (UnitClass("target") == PERL_LOCALIZED_MAGE) then
---				Perl_Target_NameBarText:SetTextColor(0.41, 0.8, 0.94);
---			elseif (UnitClass("target") == PERL_LOCALIZED_ROGUE) then
---				Perl_Target_NameBarText:SetTextColor(1, 0.96, 0.41);
---			elseif (UnitClass("target") == PERL_LOCALIZED_DRUID) then
---				Perl_Target_NameBarText:SetTextColor(1, 0.49, 0.04);
---			elseif (UnitClass("target") == PERL_LOCALIZED_HUNTER) then
---				Perl_Target_NameBarText:SetTextColor(0.67, 0.83, 0.45);
---			elseif (UnitClass("target") == PERL_LOCALIZED_SHAMAN) then
---				Perl_Target_NameBarText:SetTextColor(0, 0.86, 0.73);
---			elseif (UnitClass("target") == PERL_LOCALIZED_PRIEST) then
---				Perl_Target_NameBarText:SetTextColor(1, 1, 1);
---			elseif (UnitClass("target") == PERL_LOCALIZED_WARLOCK) then
---				Perl_Target_NameBarText:SetTextColor(0.58, 0.51, 0.79);
---			elseif (UnitClass("target") == PERL_LOCALIZED_PALADIN) then
---				Perl_Target_NameBarText:SetTextColor(0.96, 0.55, 0.73);
---			end
---		else
---			if (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
---				Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 0.5);			-- not our tap
---			else
---				if (UnitIsVisible("target")) then
---					local reaction = UnitReaction("target", "player");
---					if (reaction) then
---						r = UnitReactionColor[reaction].r;
---						g = UnitReactionColor[reaction].g;
---						b = UnitReactionColor[reaction].b;
---						Perl_Target_NameBarText:SetTextColor(r, g, b);
---					else
---						Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 1.0);
---					end
---				else
---					if (UnitCanAttack("target", "player")) then				-- are we in an enemy controlled zone
---						-- Hostile players are red
---						if (not UnitCanAttack("player", "target")) then			-- enemy is not pvp enabled
---							r = 0.5;
---							g = 0.5;
---							b = 1.0;
---						else								-- enemy is pvp enabled
---							r = 1.0;
---							g = 0.0;
---							b = 0.0;
---						end
---					elseif (UnitCanAttack("player", "target")) then				-- enemy in a zone controlled by friendlies or when we're a ghost
---						-- Players we can attack but which are not hostile are yellow
---						r = 1.0;
---						g = 1.0;
---						b = 0.0;
---					elseif (UnitIsPVP("target")) then					-- friendly pvp enabled character
---						-- Players we can assist but are PvP flagged are green
---						r = 0.0;
---						g = 1.0;
---						b = 0.0;
---					else									-- friendly non pvp enabled character
---						-- All other players are blue (the usual state on the "blue" server)
---						r = 0.5;
---						g = 0.5;
---						b = 1.0;
---					end
---					Perl_Target_NameBarText:SetTextColor(r, g, b);
---				end
---				
---			end
---		end
---	end
 end
 
 function Perl_Target_Frame_Set_Level()
@@ -1362,7 +1237,7 @@ function Perl_Target_Update_Portrait()
 		if (threedportrait == 0) then
 			SetPortraitTexture(Perl_Target_Portrait, "target");			-- Load the correct 2d graphic
 		else
-			if UnitIsVisible("target") then
+			if (UnitIsVisible("target")) then
 				Perl_Target_PortraitFrame_TargetModel:SetUnit("target");	-- Load the correct 3d graphic
 				Perl_Target_PortraitFrame_TargetModel:SetCamera(0);
 				Perl_Target_Portrait:Hide();					-- Hide the 2d graphic
@@ -1400,179 +1275,223 @@ function Perl_Target_Frame_Style()
 end
 
 function Perl_Target_Main_Style()
-	Perl_Target_RareEliteFrame:ClearAllPoints();
-	Perl_Target_RareEliteFrame:SetPoint("BOTTOMLEFT", "Perl_Target_LevelFrame", "TOPLEFT", 0, -4);
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_Target_Main_Style);
+	else
+		Perl_Target_GuildFrame:ClearAllPoints();
+		Perl_Target_GuildFrame:SetPoint("TOPLEFT", "Perl_Target_ClassNameFrame", "TOPRIGHT", -5, 0);
 
-	if (framestyle == 1) then
-		Perl_Target_HealthBar:SetWidth(200);
-		Perl_Target_HealthBarFadeBar:SetWidth(200);
-		Perl_Target_HealthBarBG:SetWidth(200);
-		Perl_Target_ManaBar:SetWidth(200);
-		Perl_Target_ManaBarFadeBar:SetWidth(200);
-		Perl_Target_ManaBarBG:SetWidth(200);
-		Perl_Target_HealthBar:SetPoint("TOP", "Perl_Target_StatsFrame", "TOP", 0, -10);
-		Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
+		if (framestyle == 1) then
+			Perl_Target_HealthBar:SetWidth(200);
+			Perl_Target_HealthBarFadeBar:SetWidth(200);
+			Perl_Target_HealthBarBG:SetWidth(200);
+			Perl_Target_ManaBar:SetWidth(200);
+			Perl_Target_ManaBarFadeBar:SetWidth(200);
+			Perl_Target_ManaBarBG:SetWidth(200);
+			Perl_Target_HealthBar:SetPoint("TOP", "Perl_Target_StatsFrame", "TOP", 0, -10);
+			Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
 
-		Perl_Target_CivilianFrame:SetWidth(95);
-		Perl_Target_ClassNameFrame:SetWidth(90);
-		Perl_Target_LevelFrame:SetWidth(46);
-		Perl_Target_Name:SetWidth(180);
-		Perl_Target_NameFrame:SetWidth(180);
-		Perl_Target_RareEliteFrame:SetWidth(46);
-		Perl_Target_StatsFrame:SetWidth(221);
-
-		Perl_Target_NameFrame_CPMeter:SetWidth(170);
-
-		Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(95);
-		Perl_Target_NameFrame_CastClickOverlay:SetWidth(180);
-		Perl_Target_StatsFrame_CastClickOverlay:SetWidth(221);
-	elseif (framestyle == 2) then
-		Perl_Target_HealthBar:SetWidth(150);
-		Perl_Target_HealthBarFadeBar:SetWidth(150);
-		Perl_Target_HealthBarBG:SetWidth(150);
-		Perl_Target_ManaBar:SetWidth(150);
-		Perl_Target_ManaBarFadeBar:SetWidth(150);
-		Perl_Target_ManaBarBG:SetWidth(150);
-		Perl_Target_HealthBar:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "TOPLEFT", 10, -10);
-		Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
-
-		if (compactmode == 0) then
-			Perl_Target_CivilianFrame:SetWidth(114);
+			Perl_Target_GuildFrame:SetWidth(136);
 			Perl_Target_ClassNameFrame:SetWidth(90);
 			Perl_Target_LevelFrame:SetWidth(46);
-			Perl_Target_Name:SetWidth(199);
-			Perl_Target_NameFrame:SetWidth(199);
+			Perl_Target_Name:SetWidth(180);
+			Perl_Target_NameFrame:SetWidth(180);
 			Perl_Target_RareEliteFrame:SetWidth(46);
-			Perl_Target_StatsFrame:SetWidth(240);
+			Perl_Target_StatsFrame:SetWidth(221);
 
-			Perl_Target_NameFrame_CPMeter:SetWidth(189);
+			Perl_Target_NameFrame_CPMeter:SetWidth(170);
+		elseif (framestyle == 2) then
+			Perl_Target_HealthBar:SetWidth(150);
+			Perl_Target_HealthBarFadeBar:SetWidth(150);
+			Perl_Target_HealthBarBG:SetWidth(150);
+			Perl_Target_ManaBar:SetWidth(150);
+			Perl_Target_ManaBarFadeBar:SetWidth(150);
+			Perl_Target_ManaBarBG:SetWidth(150);
+			Perl_Target_HealthBar:SetPoint("TOPLEFT", "Perl_Target_StatsFrame", "TOPLEFT", 10, -10);
+			Perl_Target_ManaBar:SetPoint("TOP", "Perl_Target_HealthBar", "BOTTOM", 0, -2);
 
-			Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(114);
-			Perl_Target_NameFrame_CastClickOverlay:SetWidth(199);
-			Perl_Target_StatsFrame_CastClickOverlay:SetWidth(240);
-		else
-			if (shortbars == 0) then
-				if (compactpercent == 0) then
-					Perl_Target_CivilianFrame:SetWidth(85);
-					Perl_Target_ClassNameFrame:SetWidth(90);
-					Perl_Target_LevelFrame:SetWidth(46);
-					Perl_Target_Name:SetWidth(129);
-					Perl_Target_NameFrame:SetWidth(129);
-					Perl_Target_RareEliteFrame:SetWidth(46);
-					Perl_Target_StatsFrame:SetWidth(170);
+			if (compactmode == 0) then
+				Perl_Target_GuildFrame:SetWidth(155);
+				Perl_Target_ClassNameFrame:SetWidth(90);
+				Perl_Target_LevelFrame:SetWidth(46);
+				Perl_Target_Name:SetWidth(199);
+				Perl_Target_NameFrame:SetWidth(199);
+				Perl_Target_RareEliteFrame:SetWidth(46);
+				Perl_Target_StatsFrame:SetWidth(240);
 
-					Perl_Target_NameFrame_CPMeter:SetWidth(119);
-
-					Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(85);
-					Perl_Target_NameFrame_CastClickOverlay:SetWidth(129);
-					Perl_Target_StatsFrame_CastClickOverlay:SetWidth(170);
-				else
-					Perl_Target_CivilianFrame:SetWidth(79);
-					Perl_Target_ClassNameFrame:SetWidth(90);
-					Perl_Target_LevelFrame:SetWidth(46);
-					Perl_Target_Name:SetWidth(164);
-					Perl_Target_NameFrame:SetWidth(164);
-					Perl_Target_RareEliteFrame:SetWidth(46);
-					Perl_Target_StatsFrame:SetWidth(205);
-
-					Perl_Target_NameFrame_CPMeter:SetWidth(154);
-
-					Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(79);
-					Perl_Target_NameFrame_CastClickOverlay:SetWidth(164);
-					Perl_Target_StatsFrame_CastClickOverlay:SetWidth(205);
-				end
+				Perl_Target_NameFrame_CPMeter:SetWidth(189);
 			else
-				Perl_Target_HealthBar:SetWidth(115);
-				Perl_Target_HealthBarFadeBar:SetWidth(115);
-				Perl_Target_HealthBarBG:SetWidth(115);
-				Perl_Target_ManaBar:SetWidth(115);
-				Perl_Target_ManaBarFadeBar:SetWidth(115);
-				Perl_Target_ManaBarBG:SetWidth(115);
+				if (shortbars == 0) then
+					if (compactpercent == 0) then
+						Perl_Target_GuildFrame:SetWidth(85);
+						Perl_Target_ClassNameFrame:SetWidth(90);
+						Perl_Target_LevelFrame:SetWidth(46);
+						Perl_Target_Name:SetWidth(129);
+						Perl_Target_NameFrame:SetWidth(129);
+						Perl_Target_RareEliteFrame:SetWidth(46);
+						Perl_Target_StatsFrame:SetWidth(170);
 
-				if (compactpercent == 0) then				-- civilian probably needs resizing
-					Perl_Target_CivilianFrame:SetWidth(79);
-					Perl_Target_ClassNameFrame:SetWidth(90);
-					Perl_Target_LevelFrame:SetWidth(46);
-					Perl_Target_Name:SetWidth(94);
-					Perl_Target_NameFrame:SetWidth(94);
-					Perl_Target_RareEliteFrame:SetWidth(46);
-					Perl_Target_StatsFrame:SetWidth(135);
+						Perl_Target_NameFrame_CPMeter:SetWidth(119);
+					else
+						Perl_Target_GuildFrame:SetWidth(120);
+						Perl_Target_ClassNameFrame:SetWidth(90);
+						Perl_Target_LevelFrame:SetWidth(46);
+						Perl_Target_Name:SetWidth(164);
+						Perl_Target_NameFrame:SetWidth(164);
+						Perl_Target_RareEliteFrame:SetWidth(46);
+						Perl_Target_StatsFrame:SetWidth(205);
 
-					Perl_Target_NameFrame_CPMeter:SetWidth(84);
-
-					Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(79);
-					Perl_Target_NameFrame_CastClickOverlay:SetWidth(94);
-					Perl_Target_StatsFrame_CastClickOverlay:SetWidth(135);
+						Perl_Target_NameFrame_CPMeter:SetWidth(154);
+					end
 				else
-					Perl_Target_CivilianFrame:SetWidth(79);
-					Perl_Target_ClassNameFrame:SetWidth(90);
-					Perl_Target_LevelFrame:SetWidth(46);
-					Perl_Target_Name:SetWidth(129);
-					Perl_Target_NameFrame:SetWidth(129);
-					Perl_Target_RareEliteFrame:SetWidth(46);
-					Perl_Target_StatsFrame:SetWidth(170);
+					Perl_Target_HealthBar:SetWidth(115);
+					Perl_Target_HealthBarFadeBar:SetWidth(115);
+					Perl_Target_HealthBarBG:SetWidth(115);
+					Perl_Target_ManaBar:SetWidth(115);
+					Perl_Target_ManaBarFadeBar:SetWidth(115);
+					Perl_Target_ManaBarBG:SetWidth(115);
 
-					Perl_Target_NameFrame_CPMeter:SetWidth(119);
+					if (compactpercent == 0) then
+						Perl_Target_GuildFrame:SetWidth(46);
+						Perl_Target_ClassNameFrame:SetWidth(94);
+						Perl_Target_LevelFrame:SetWidth(46);
+						Perl_Target_Name:SetWidth(94);
+						Perl_Target_NameFrame:SetWidth(94);
+						Perl_Target_RareEliteFrame:SetWidth(46);
+						Perl_Target_StatsFrame:SetWidth(135);
 
-					Perl_Target_CivilianFrame_CastClickOverlay:SetWidth(79);
-					Perl_Target_NameFrame_CastClickOverlay:SetWidth(129);
-					Perl_Target_StatsFrame_CastClickOverlay:SetWidth(170);
+						Perl_Target_NameFrame_CPMeter:SetWidth(84);
+
+						if (showguildname == 1 and showrareeliteframe == 1) then
+							Perl_Target_GuildFrame:ClearAllPoints();
+							Perl_Target_GuildFrame:SetPoint("BOTTOMLEFT", "Perl_Target_ClassNameFrame", "TOPLEFT", 0, -5);
+							Perl_Target_GuildFrame:SetWidth(135);
+						end
+					else
+						Perl_Target_GuildFrame:SetWidth(85);
+						Perl_Target_ClassNameFrame:SetWidth(90);
+						Perl_Target_LevelFrame:SetWidth(46);
+						Perl_Target_Name:SetWidth(129);
+						Perl_Target_NameFrame:SetWidth(129);
+						Perl_Target_RareEliteFrame:SetWidth(46);
+						Perl_Target_StatsFrame:SetWidth(170);
+
+						Perl_Target_NameFrame_CPMeter:SetWidth(119);
+					end
 				end
 			end
 		end
-	end
 
-	if (showcp == 1) then				-- Are we showing the combo point frame?
-		Perl_Target_CPFrame:Show();
-	else
-		Perl_Target_CPFrame:Hide();
-	end
+		Perl_Target_ClassNameFrame_CastClickOverlay:SetWidth(Perl_Target_ClassNameFrame:GetWidth());
+		Perl_Target_GuildFrame_CastClickOverlay:SetWidth(Perl_Target_GuildFrame:GetWidth());
+		Perl_Target_NameFrame_CastClickOverlay:SetWidth(Perl_Target_NameFrame:GetWidth());
+		Perl_Target_StatsFrame_CastClickOverlay:SetWidth(Perl_Target_StatsFrame:GetWidth());
 
-	if (showportrait == 1) then
-		Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 0, 0);			-- Position the Combat Text correctly on the portrait
-		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -4, -31);		-- Reposition the combo point frame
-		Perl_Target_PortraitFrame:Show();									-- Show the main portrait frame
-
-		if (threedportrait == 0) then
-			Perl_Target_PortraitFrame_TargetModel:Hide();							-- Hide the 3d graphic
-			Perl_Target_Portrait:Show();									-- Show the 2d graphic
-		end
-	else
-		if (showcp == 1) then
-			Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 25, 0);	-- Position the Combat Text to the right of the combo point frame
+		if (showcp == 1) then				-- Are we showing the combo point frame?
+			Perl_Target_CPFrame:Show();
 		else
-			Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 0, 0);		-- Position the Combat Text correctly on the portrait
+			Perl_Target_CPFrame:Hide();
 		end
-		Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -4, 0);			-- Reposition the combo point frame
-		Perl_Target_PortraitFrame:Hide();									-- Hide the frame and 2d/3d portion
-	end
 
-	if (showrareeliteframe == 1) then		-- Are we showing the Rare/Elite frame?
-		Perl_Target_RareEliteFrame:Show();
-	else
-		Perl_Target_RareEliteFrame:Hide();
-	end
+		if (showportrait == 1) then
+			Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 0, 0);			-- Position the Combat Text correctly on the portrait
+			Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_PortraitFrame, "TOPRIGHT", -4, -31);		-- Reposition the combo point frame
+			Perl_Target_PortraitFrame:Show();									-- Show the main portrait frame
 
-	if (showclassframe == 1) then
-		Perl_Target_ClassNameFrame:Show();
-		Perl_Target_CivilianFrame:Hide();	-- Hide is normally Show here, but we are changing what this frame does later to guild names
-	else
-		Perl_Target_ClassNameFrame:Hide();
-		Perl_Target_CivilianFrame:Hide();
-	end
+			if (threedportrait == 0) then
+				Perl_Target_PortraitFrame_TargetModel:Hide();							-- Hide the 3d graphic
+				Perl_Target_Portrait:Show();									-- Show the 2d graphic
+			end
+		else
+			if (showcp == 1) then
+				Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 25, 0);	-- Position the Combat Text to the right of the combo point frame
+			else
+				Perl_Target_HitIndicator:SetPoint("CENTER", Perl_Target_PortraitFrame, "CENTER", 0, 0);		-- Position the Combat Text correctly on the portrait
+			end
+			Perl_Target_CPFrame:SetPoint("TOPLEFT", Perl_Target_StatsFrame, "TOPRIGHT", -4, 0);			-- Reposition the combo point frame
+			Perl_Target_PortraitFrame:Hide();									-- Hide the frame and 2d/3d portion
+		end
 
-	if (showclassicon == 0) then			-- Are we showing the class icon?
-		Perl_Target_ClassTexture:Hide();
-	end
+		if (showrareeliteframe == 1) then		-- Are we showing the Rare/Elite frame?
+			Perl_Target_RareEliteFrame:Show();
+		else
+			Perl_Target_RareEliteFrame:Hide();
+		end
 
-	if (showpvprank == 0) then			-- Are we showing the PvP Rank Icon?
-		Perl_Target_PVPRank:Hide();
-	end
+		if (showclassframe == 1) then
+			Perl_Target_ClassNameFrame:Show();
+			Perl_Target_GuildFrame:Hide();	-- Hide is normally Show here, but we are changing what this frame does later to guild names
+		else
+			Perl_Target_ClassNameFrame:Hide();
+			Perl_Target_GuildFrame:Hide();
+		end
 
-	if (portraitcombattext == 1) then		-- Are we showing combat text?
-		Perl_Target_PortraitTextFrame:Show();
-	else
-		Perl_Target_PortraitTextFrame:Hide();
+		if (showclassicon == 0) then			-- Are we showing the class icon?
+			Perl_Target_ClassTexture:Hide();
+		end
+
+		if (showpvprank == 0) then			-- Are we showing the PvP Rank Icon?
+			Perl_Target_PVPRank:Hide();
+		end
+
+		if (portraitcombattext == 1) then		-- Are we showing combat text?
+			Perl_Target_PortraitTextFrame:Show();
+		else
+			Perl_Target_PortraitTextFrame:Hide();
+		end
+
+		if (showguildname == 1) then
+			if (showrareeliteframe == 1) then
+				if (not (framestyle == 2 and compactmode == 1 and shortbars == 1 and compactpercent == 0)) then
+					Perl_Target_GuildFrame:SetWidth(Perl_Target_GuildFrame:GetWidth() - 41);
+					Perl_Target_GuildFrame_CastClickOverlay:SetWidth(Perl_Target_GuildFrame:GetWidth());
+				end
+			end
+
+			if (framestyle == 1) then
+				guildnameallowedwidth = 16;
+			elseif (framestyle == 2) then
+				if (compactmode == 0) then
+					guildnameallowedwidth = 18;
+				else
+					if (compactpercent == 0) then
+						if (shortbars == 0) then
+							guildnameallowedwidth = 8;
+						else
+							guildnameallowedwidth = 2;
+						end
+					else
+						if (shortbars == 0) then
+							guildnameallowedwidth = 13;
+						else
+							guildnameallowedwidth = 9;
+						end
+					end
+				end
+			end
+
+			Perl_Target_GuildFrame:Show();
+		else
+			Perl_Target_GuildFrame:Hide();
+		end
+
+		if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+			Perl_ArcaneBar_target:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 5, -5);
+			Perl_ArcaneBar_target_CastTime:ClearAllPoints();
+			if (Perl_ArcaneBar_Config[UnitName("player")]["TargetLeftTimer"] == 0) then
+				Perl_ArcaneBar_target_CastTime:SetPoint("LEFT", "Perl_Target_LevelFrame", "RIGHT", 0, 0);
+			else
+				if (showportrait == 1) then
+					Perl_ArcaneBar_target_CastTime:SetPoint("RIGHT", "Perl_Target_PortraitFrame", "LEFT", 0, 0);
+				else
+					Perl_ArcaneBar_target_CastTime:SetPoint("RIGHT", "Perl_Target_NameFrame", "LEFT", 0, 0);
+				end
+			end
+
+			Perl_ArcaneBar_target:SetWidth(Perl_Target_NameFrame:GetWidth() - 10);
+			Perl_ArcaneBar_target_Flash:SetWidth(Perl_Target_NameFrame:GetWidth() + 5);
+			Perl_ArcaneBar_Set_Spark_Width(nil, Perl_Target_NameFrame:GetWidth(), nil);
+		end
 	end
 end
 
@@ -1873,15 +1792,30 @@ function Perl_Target_Set_Mana_Deficit(newvalue)
 	end
 end
 
-function Perl_Target_Set_Scale(number)
-	local unsavedscale;
-	if (number ~= nil) then
-		scale = (number / 100);						-- convert the user input to a wow acceptable value
-	end
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;		-- run it through the scaling formula introduced in 1.9
-	Perl_Target_Frame:SetScale(unsavedscale);
-	Perl_Target_Set_BuffDebuff_Scale(buffdebuffscale*100);			-- maintain the buff/debuff scale
+function Perl_Target_Set_Show_Guild_Name(newvalue)
+	showguildname = newvalue;
 	Perl_Target_UpdateVars();		-- Save the new setting
+	Perl_Target_Frame_Style();		-- Apply any showing/hiding of frames and enabling/disabling of events
+	if (UnitExists("target")) then
+		Perl_Target_Update_Once();	-- Update the target frame information if appropriate
+	end
+end
+
+function Perl_Target_Set_Scale(number)
+	if (number ~= nil) then
+		scale = (number / 100);		-- convert the user input to a wow acceptable value
+	end
+	Perl_Target_UpdateVars();		-- Save the new setting
+	Perl_Target_Set_Scale_Actual();
+end
+
+function Perl_Target_Set_Scale_Actual()
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_Target_Set_Scale_Actual);
+	else
+		Perl_Target_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
+		Perl_Target_Set_BuffDebuff_Scale(buffdebuffscale*100);		-- maintain the buff/debuff scale
+	end
 end
 
 function Perl_Target_Set_BuffDebuff_Scale(number)
@@ -1941,6 +1875,7 @@ function Perl_Target_GetVars(name, updateflag)
 	classcolorednames = Perl_Target_Config[name]["ClassColoredNames"];
 	showmanadeficit = Perl_Target_Config[name]["ShowManaDeficit"];
 	invertbuffs = Perl_Target_Config[name]["InvertBuffs"];
+	showguildname = Perl_Target_Config[name]["ShowGuildName"];
 
 	if (locked == nil) then
 		locked = 0;
@@ -2029,6 +1964,9 @@ function Perl_Target_GetVars(name, updateflag)
 	if (invertbuffs == nil) then
 		invertbuffs = 0;
 	end
+	if (showguildname == nil) then
+		showguildname = 0;
+	end
 
 	if (updateflag == 1) then
 		-- Save the new values
@@ -2038,7 +1976,7 @@ function Perl_Target_GetVars(name, updateflag)
 		Perl_Target_Reset_Buffs();		-- Reset the buff icons
 		Perl_Target_Frame_Style();		-- Reposition the frames
 		Perl_Target_Buff_Debuff_Background();	-- Hide/Show the background frame
-		Perl_Target_Set_Scale();		-- Set the scale
+		Perl_Target_Set_Scale_Actual();		-- Set the scale
 		Perl_Target_Set_Transparency();		-- Set the transparency
 		if (UnitExists("target")) then
 			Perl_Target_Update_Once();
@@ -2076,6 +2014,7 @@ function Perl_Target_GetVars(name, updateflag)
 		["classcolorednames"] = classcolorednames,
 		["showmanadeficit"] = showmanadeficit,
 		["invertbuffs"] = invertbuffs,
+		["showguildname"] = showguildname,
 	}
 	return vars;
 end
@@ -2229,6 +2168,11 @@ function Perl_Target_UpdateVars(vartable)
 			else
 				invertbuffs = nil;
 			end
+			if (vartable["Global Settings"]["ShowGuildName"] ~= nil) then
+				showguildname = vartable["Global Settings"]["ShowGuildName"];
+			else
+				showguildname = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -2319,12 +2263,15 @@ function Perl_Target_UpdateVars(vartable)
 		if (invertbuffs == nil) then
 			invertbuffs = 0;
 		end
+		if (showguildname == nil) then
+			showguildname = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_Target_Reset_Buffs();		-- Reset the buff icons
 		Perl_Target_Frame_Style();		-- Reposition the frames
 		Perl_Target_Buff_Debuff_Background();	-- Hide/Show the background frame
-		Perl_Target_Set_Scale();		-- Set the scale
+		Perl_Target_Set_Scale_Actual();		-- Set the scale
 		Perl_Target_Set_Transparency();		-- Set the transparency
 		if (UnitExists("target")) then
 			Perl_Target_Update_Once();
@@ -2366,6 +2313,7 @@ function Perl_Target_UpdateVars(vartable)
 		["ClassColoredNames"] = classcolorednames,
 		["ShowManaDeficit"] = showmanadeficit,
 		["InvertBuffs"] = invertbuffs,
+		["ShowGuildName"] = showguildname,
 	};
 end
 

@@ -552,19 +552,19 @@
 
 
 			<!-- Target Civilian Frame -->
-			<Frame name="Perl_Target_CivilianFrame">
+			<Frame name="Perl_Target_GuildFrame">
 				<Size>
-					<AbsDimension x="95" y="24"/> <!-- 135 -->
+					<AbsDimension x="95" y="24"/> 
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Target_NameFrame">
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_ClassNameFrame">
 						<Offset>
-							<AbsDimension x="85" y="20"/>
+							<AbsDimension x="-5" y="0"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
 				<Frames>
-					<Button name="Perl_Target_CivilianFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
+					<Button name="Perl_Target_GuildFrame_CastClickOverlay" inherits="SecureUnitButtonTemplate">
 						<Size>
 							<AbsDimension x="95" y="24"/>
 						</Size>
@@ -590,7 +590,7 @@
 						</Scripts>
 					</Button>
 				</Frames>
-				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_White" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+				<Backdrop bgFile="Interface\AddOns\Perl_Config\Perl_Black" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 					<EdgeSize>
 						<AbsValue val="16"/>
 					</EdgeSize>
@@ -604,7 +604,7 @@
 				<Layers>
 					<Layer level="OVERLAY">
 						<!-- Class Text -->
-						<Fontstring name="Perl_Target_CivilianBarText" inherits="GameFontNormal" text="Error!">
+						<Fontstring name="Perl_Target_GuildBarText" inherits="GameFontNormal" text="Error!">
 							<Anchors>
 								<Anchor point="TOP">
 									<Offset>
@@ -624,9 +624,9 @@
 					<AbsDimension x="46" y="24"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="Perl_Target_CivilianFrame">
+					<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" relativeTo="Perl_Target_LevelFrame">
 						<Offset>
-							<AbsDimension x="-5" y="0"/>
+							<AbsDimension x="0" y="-4"/>
 						</Offset>
 					</Anchor>
 				</Anchors>

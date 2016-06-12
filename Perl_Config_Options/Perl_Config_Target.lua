@@ -164,6 +164,12 @@ function Perl_Config_Target_Set_Values()
 		Perl_Config_Target_Frame_CheckButton26:SetChecked(nil);
 	end
 
+	if (vartable["showguildname"] == 1) then
+		Perl_Config_Target_Frame_CheckButton27:SetChecked(1);
+	else
+		Perl_Config_Target_Frame_CheckButton27:SetChecked(nil);
+	end
+
 	Perl_Config_Target_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
 	Perl_Config_Target_Frame_Slider1High:SetText(PERL_LOCALIZED_CONFIG_BIG);
 	Perl_Config_Target_Frame_Slider1:SetValue(floor(vartable["scale"]*100+0.5));
@@ -384,6 +390,14 @@ function Perl_Config_Target_Invert_Buffs_Update()
 		Perl_Target_Set_Invert_Buffs(1);
 	else
 		Perl_Target_Set_Invert_Buffs(0);
+	end
+end
+
+function Perl_Config_Target_Show_Guild_Name_Update()
+	if (Perl_Config_Target_Frame_CheckButton27:GetChecked() == 1) then
+		Perl_Target_Set_Show_Guild_Name(1);
+	else
+		Perl_Target_Set_Show_Guild_Name(0);
 	end
 end
 

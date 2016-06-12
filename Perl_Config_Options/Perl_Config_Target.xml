@@ -197,7 +197,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_CLASS_CIVILIAN_FRAMES);
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_CLASS_FRAME);
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Class_Frame_Update();
@@ -737,6 +737,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_Target_Invert_Buffs_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton27" inherits="UICheckButtonTemplate" id="27">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton26">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_TARGET_GUILD_FRAME);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Target_Show_Guild_Name_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

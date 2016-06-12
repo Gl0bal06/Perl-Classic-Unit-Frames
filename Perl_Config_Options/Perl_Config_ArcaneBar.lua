@@ -12,16 +12,76 @@ end
 function Perl_Config_ArcaneBar_Set_Values()
 	local vartable = Perl_ArcaneBar_GetVars();
 
-	if (vartable["enabled"] == 1) then
+	if (vartable["playerenabled"] == 1) then
 		Perl_Config_ArcaneBar_Frame_CheckButton1:SetChecked(1);
 	else
 		Perl_Config_ArcaneBar_Frame_CheckButton1:SetChecked(nil);
 	end
 
-	if (vartable["showtimer"] == 1) then
+	if (vartable["playershowtimer"] == 1) then
 		Perl_Config_ArcaneBar_Frame_CheckButton2:SetChecked(1);
 	else
 		Perl_Config_ArcaneBar_Frame_CheckButton2:SetChecked(nil);
+	end
+
+	if (vartable["playerlefttimer"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton5:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton5:SetChecked(nil);
+	end
+
+	if (vartable["playernamereplace"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton4:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton4:SetChecked(nil);
+	end
+
+	if (vartable["targetenabled"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton6:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton6:SetChecked(nil);
+	end
+
+	if (vartable["targetshowtimer"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton7:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton7:SetChecked(nil);
+	end
+
+	if (vartable["targetlefttimer"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton8:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton8:SetChecked(nil);
+	end
+
+	if (vartable["targetnamereplace"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton9:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton9:SetChecked(nil);
+	end
+
+	if (vartable["focusenabled"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton10:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton10:SetChecked(nil);
+	end
+
+	if (vartable["focusshowtimer"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton11:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton11:SetChecked(nil);
+	end
+
+	if (vartable["focuslefttimer"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton12:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton12:SetChecked(nil);
+	end
+
+	if (vartable["focusnamereplace"] == 1) then
+		Perl_Config_ArcaneBar_Frame_CheckButton13:SetChecked(1);
+	else
+		Perl_Config_ArcaneBar_Frame_CheckButton13:SetChecked(nil);
 	end
 
 	if (vartable["hideoriginal"] == 1) then
@@ -30,60 +90,112 @@ function Perl_Config_ArcaneBar_Set_Values()
 		Perl_Config_ArcaneBar_Frame_CheckButton3:SetChecked(nil);
 	end
 
-	if (vartable["namereplace"] == 1) then
-		Perl_Config_ArcaneBar_Frame_CheckButton4:SetChecked(1);
-	else
-		Perl_Config_ArcaneBar_Frame_CheckButton4:SetChecked(nil);
-	end
-
-	if (vartable["lefttimer"] == 1) then
-		Perl_Config_ArcaneBar_Frame_CheckButton5:SetChecked(1);
-	else
-		Perl_Config_ArcaneBar_Frame_CheckButton5:SetChecked(nil);
-	end
-
 	Perl_Config_ArcaneBar_Frame_Slider1Low:SetText("0");
 	Perl_Config_ArcaneBar_Frame_Slider1High:SetText("100");
 	Perl_Config_ArcaneBar_Frame_Slider1:SetValue(vartable["transparency"]*100);
 end
 
-function Perl_Config_ArcaneBar_Enabled_Update()
+function Perl_Config_ArcaneBar_Player_Enabled_Update()
 	if (Perl_Config_ArcaneBar_Frame_CheckButton1:GetChecked() == 1) then
-		Perl_ArcaneBar_Set_Enabled(1);
+		Perl_ArcaneBar_Set_Player_Enabled(1);
 	else
-		Perl_ArcaneBar_Set_Enabled(0);
+		Perl_ArcaneBar_Set_Player_Enabled(0);
 	end
 end
 
-function Perl_Config_ArcaneBar_Show_Timer_Update()
+function Perl_Config_ArcaneBar_Player_Show_Timer_Update()
 	if (Perl_Config_ArcaneBar_Frame_CheckButton2:GetChecked() == 1) then
-		Perl_ArcaneBar_Set_Timer(1);
+		Perl_ArcaneBar_Set_Player_Show_Timer(1);
 	else
-		Perl_ArcaneBar_Set_Timer(0);
+		Perl_ArcaneBar_Set_Player_Show_Timer(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Player_Left_Timer_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton5:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Player_Left_Timer(1);
+	else
+		Perl_ArcaneBar_Set_Player_Left_Timer(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Player_Name_Replace_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton4:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Player_Name_Replace(1);
+	else
+		Perl_ArcaneBar_Set_Player_Name_Replace(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Target_Enabled_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton6:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Target_Enabled(1);
+	else
+		Perl_ArcaneBar_Set_Target_Enabled(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Target_Show_Timer_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton7:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Target_Show_Timer(1);
+	else
+		Perl_ArcaneBar_Set_Target_Show_Timer(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Target_Left_Timer_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton8:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Target_Left_Timer(1);
+	else
+		Perl_ArcaneBar_Set_Target_Left_Timer(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Target_Name_Replace_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton9:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Target_Name_Replace(1);
+	else
+		Perl_ArcaneBar_Set_Target_Name_Replace(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Focus_Enabled_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton10:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Focus_Enabled(1);
+	else
+		Perl_ArcaneBar_Set_Focus_Enabled(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Focus_Show_Timer_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton11:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Focus_Show_Timer(1);
+	else
+		Perl_ArcaneBar_Set_Focus_Show_Timer(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Focus_Left_Timer_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton12:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Focus_Left_Timer(1);
+	else
+		Perl_ArcaneBar_Set_Focus_Left_Timer(0);
+	end
+end
+
+function Perl_Config_ArcaneBar_Focus_Name_Replace_Update()
+	if (Perl_Config_ArcaneBar_Frame_CheckButton13:GetChecked() == 1) then
+		Perl_ArcaneBar_Set_Focus_Name_Replace(1);
+	else
+		Perl_ArcaneBar_Set_Focus_Name_Replace(0);
 	end
 end
 
 function Perl_Config_ArcaneBar_Hide_Original_Update()
 	if (Perl_Config_ArcaneBar_Frame_CheckButton3:GetChecked() == 1) then
-		Perl_ArcaneBar_Set_Hide(1);
+		Perl_ArcaneBar_Set_Hide_Original(1);
 	else
-		Perl_ArcaneBar_Set_Hide(0);
-	end
-end
-
-function Perl_Config_ArcaneBar_Name_Replace_Update()
-	if (Perl_Config_ArcaneBar_Frame_CheckButton4:GetChecked() == 1) then
-		Perl_ArcaneBar_Set_Name_Replace(1);
-	else
-		Perl_ArcaneBar_Set_Name_Replace(0);
-	end
-end
-
-function Perl_Config_ArcaneBar_Left_Timer_Update()
-	if (Perl_Config_ArcaneBar_Frame_CheckButton5:GetChecked() == 1) then
-		Perl_ArcaneBar_Set_Left_Timer(1);
-	else
-		Perl_ArcaneBar_Set_Left_Timer(0);
+		Perl_ArcaneBar_Set_Hide_Original(0);
 	end
 end
 

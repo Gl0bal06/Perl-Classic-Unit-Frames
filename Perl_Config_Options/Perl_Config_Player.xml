@@ -545,7 +545,7 @@
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton16">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton14">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>
@@ -603,12 +603,33 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton22" inherits="UICheckButtonTemplate" id="22">
+			<CheckButton name="$parent_CheckButton25" inherits="UICheckButtonTemplate" id="25">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton6">
+						<Offset>
+							<AbsDimension x="0" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText(PERL_LOCALIZED_CONFIG_PLAYER_RAID_GROUP_IN_NAME);
+					</OnLoad>
+					<OnClick>
+						Perl_Config_Player_Show_Raid_Group_In_Name_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton22" inherits="UICheckButtonTemplate" id="22">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton25">
 						<Offset>
 							<AbsDimension x="0" y="-20"/>
 						</Offset>

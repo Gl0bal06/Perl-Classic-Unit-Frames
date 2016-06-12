@@ -222,7 +222,7 @@ Perl_Focus_Events.PLAYER_ENTERING_WORLD = Perl_Focus_Events.VARIABLES_LOADED;
 function Perl_Focus_Initialize()
 	-- Code to be run after zoning or logging in goes here
 	if (Initialized) then
-		Perl_Focus_Set_Scale();		-- Set the scale
+		Perl_Focus_Set_Scale_Actual();		-- Set the scale
 		Perl_Focus_Set_Transparency();		-- Set the transparency
 		if (UnitExists("focus")) then
 			Perl_Focus_Update_Once();
@@ -1350,6 +1350,24 @@ function Perl_Focus_Main_Style()
 	else
 		Perl_Focus_PortraitTextFrame:Hide();
 	end
+
+	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+		Perl_ArcaneBar_focus:SetPoint("TOPLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 5, -5);
+		Perl_ArcaneBar_focus_CastTime:ClearAllPoints();
+		if (Perl_ArcaneBar_Config[UnitName("player")]["FocusLeftTimer"] == 0) then
+			Perl_ArcaneBar_focus_CastTime:SetPoint("LEFT", "Perl_Focus_LevelFrame", "RIGHT", 0, 0);
+		else
+			if (showportrait == 1) then
+				Perl_ArcaneBar_focus_CastTime:SetPoint("RIGHT", "Perl_Focus_PortraitFrame", "LEFT", 0, 0);
+			else
+				Perl_ArcaneBar_focus_CastTime:SetPoint("RIGHT", "Perl_Focus_NameFrame", "LEFT", 0, 0);
+			end
+		end
+
+		Perl_ArcaneBar_focus:SetWidth(Perl_Target_NameFrame:GetWidth() - 10);
+		Perl_ArcaneBar_focus_Flash:SetWidth(Perl_Target_NameFrame:GetWidth() + 5);
+		Perl_ArcaneBar_Set_Spark_Width(nil, nil, Perl_Focus_NameFrame:GetWidth());
+	end
 end
 
 function Perl_Focus_Text_Positions()
@@ -1643,12 +1661,19 @@ end
 function Perl_Focus_Set_Scale(number)
 	local unsavedscale;
 	if (number ~= nil) then
-		scale = (number / 100);						-- convert the user input to a wow acceptable value
+		scale = (number / 100);		-- convert the user input to a wow acceptable value
 	end
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;		-- run it through the scaling formula introduced in 1.9
-	Perl_Focus_Frame:SetScale(unsavedscale);
-	Perl_Focus_Set_BuffDebuff_Scale(buffdebuffscale*100);			-- maintain the buff/debuff scale
 	Perl_Focus_UpdateVars();		-- Save the new setting
+	Perl_Focus_Set_Scale_Actual();
+end
+
+function Perl_Focus_Set_Scale_Actual()
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_Focus_Set_Scale_Actual);
+	else
+		Perl_Focus_Frame:SetScale(1 - UIParent:GetEffectiveScale() + scale);	-- run it through the scaling formula introduced in 1.9
+		Perl_Focus_Set_BuffDebuff_Scale(buffdebuffscale*100);			-- maintain the buff/debuff scale
+	end
 end
 
 function Perl_Focus_Set_BuffDebuff_Scale(number)
@@ -1801,7 +1826,7 @@ function Perl_Focus_GetVars(name, updateflag)
 		Perl_Focus_Reset_Buffs();		-- Reset the buff icons
 		Perl_Focus_Frame_Style();		-- Reposition the frames
 		Perl_Focus_Buff_Debuff_Background();	-- Hide/Show the background frame
-		Perl_Focus_Set_Scale();		-- Set the scale
+		Perl_Focus_Set_Scale_Actual();		-- Set the scale
 		Perl_Focus_Set_Transparency();		-- Set the transparency
 		if (UnitExists("focus")) then
 			Perl_Focus_Update_Once();
@@ -2078,7 +2103,7 @@ function Perl_Focus_UpdateVars(vartable)
 		Perl_Focus_Reset_Buffs();		-- Reset the buff icons
 		Perl_Focus_Frame_Style();		-- Reposition the frames
 		Perl_Focus_Buff_Debuff_Background();	-- Hide/Show the background frame
-		Perl_Focus_Set_Scale();		-- Set the scale
+		Perl_Focus_Set_Scale_Actual();		-- Set the scale
 		Perl_Focus_Set_Transparency();		-- Set the transparency
 		if (UnitExists("focus")) then
 			Perl_Focus_Update_Once();

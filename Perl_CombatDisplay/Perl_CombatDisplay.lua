@@ -202,9 +202,11 @@ end
 function Perl_CombatDisplay_Events:PLAYER_REGEN_DISABLED()
 	IsAggroed = 1;
 	if (state == 3) then
-		Perl_CombatDisplay_Frame:Show();				-- Show the player frame if needed
-		if (showtarget == 1) then
-			RegisterUnitWatch(Perl_CombatDisplay_Target_Frame);	-- Register the target frame to show/hide on its own
+		if (not InCombatLockdown()) then		-- REMOVE THIS CHECK WHEN YOU CAN
+			Perl_CombatDisplay_Frame:Show();				-- Show the player frame if needed
+			if (showtarget == 1) then
+				RegisterUnitWatch(Perl_CombatDisplay_Target_Frame);	-- Register the target frame to show/hide on its own
+			end
 		end
 
 		Perl_CombatDisplay_UpdateDisplay();
@@ -298,7 +300,7 @@ function Perl_CombatDisplay_Initialize()
 		Perl_CombatDisplay_Update_Health();	-- make sure we dont display 0/0 on load
 		Perl_CombatDisplay_Update_Mana();	-- make sure we dont display 0/0 on load
 		Perl_CombatDisplay_UpdateDisplay();	-- what mode are we in?
-		Perl_CombatDisplay_Set_Scale();		-- set the correct scale
+		Perl_CombatDisplay_Set_Scale_Actual();	-- set the correct scale
 		Perl_CombatDisplay_Set_Transparency();	-- set the transparency
 		Perl_CombatDisplay_CheckForPets();	-- do we have a pet out?
 		return;
@@ -397,9 +399,13 @@ function Perl_CombatDisplay_UpdateDisplay()
 		elseif (healthpersist == 1 and healthfull == 0) then
 			-- Do nothing
 		else
-			Perl_CombatDisplay_Frame:Hide();
-			UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
-			Perl_CombatDisplay_Target_Frame:Hide();
+			if (InCombatLockdown()) then						-- remove this line when zoning issue is fixed
+				Perl_Config_Queue_Add(Perl_CombatDisplay_UpdateDisplay);	-- remove this line when zoning issue is fixed
+			else									-- remove this line when zoning issue is fixed
+				Perl_CombatDisplay_Frame:Hide();
+				UnregisterUnitWatch(Perl_CombatDisplay_Target_Frame);
+				Perl_CombatDisplay_Target_Frame:Hide();
+			end									-- remove this line when zoning issue is fixed
 			return;
 		end
 		Perl_CombatDisplay_Target_UpdateAll();
@@ -1275,14 +1281,21 @@ function Perl_CombatDisplay_Set_ComboPoint_Bars(newvalue)
 end
 
 function Perl_CombatDisplay_Set_Scale(number)
-	local unsavedscale;
 	if (number ~= nil) then
 		scale = (number / 100);					-- convert the user input to a wow acceptable value
 	end
-	unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
-	Perl_CombatDisplay_Frame:SetScale(unsavedscale);
-	Perl_CombatDisplay_Target_Frame:SetScale(unsavedscale);
 	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_Set_Scale_Actual();
+end
+
+function Perl_CombatDisplay_Set_Scale_Actual()
+	if (InCombatLockdown()) then
+		Perl_Config_Queue_Add(Perl_CombatDisplay_Set_Scale_Actual);
+	else
+		local unsavedscale = 1 - UIParent:GetEffectiveScale() + scale;	-- run it through the scaling formula introduced in 1.9
+		Perl_CombatDisplay_Frame:SetScale(unsavedscale);
+		Perl_CombatDisplay_Target_Frame:SetScale(unsavedscale);
+	end
 end
 
 function Perl_CombatDisplay_Set_Transparency(number)
@@ -1369,7 +1382,7 @@ function Perl_CombatDisplay_GetVars(name, updateflag)
 		Perl_CombatDisplay_Set_Target(showtarget)
 		Perl_CombatDisplay_Target_Update_Health();
 		Perl_CombatDisplay_Update_Mana();
-		Perl_CombatDisplay_Set_Scale()
+		Perl_CombatDisplay_Set_Scale_Actual()
 		Perl_CombatDisplay_Set_Transparency()
 		Perl_CombatDisplay_UpdateDisplay();
 		return;
@@ -1518,7 +1531,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		Perl_CombatDisplay_Set_Target(showtarget)
 		Perl_CombatDisplay_Target_Update_Health();
 		Perl_CombatDisplay_Update_Mana();
-		Perl_CombatDisplay_Set_Scale()
+		Perl_CombatDisplay_Set_Scale_Actual()
 		Perl_CombatDisplay_Set_Transparency()
 		Perl_CombatDisplay_UpdateDisplay();
 	end

@@ -347,7 +347,9 @@ function Perl_Config_Set_Texture(newvalue)
 	end
 
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
-		Perl_ArcaneBarTex:SetTexture(texturename);
+		Perl_ArcaneBar_playerTex:SetTexture(texturename);
+		Perl_ArcaneBar_targetTex:SetTexture(texturename);
+		Perl_ArcaneBar_focusTex:SetTexture(texturename);
 	end
 
 	if (Perl_CombatDisplay_Frame) then
@@ -622,7 +624,7 @@ function Perl_Config_Set_Background(newvalue)
 --		end
 
 		if (Perl_Target_Frame) then
-			Perl_Target_CivilianFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_GuildFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_ClassNameFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_CPFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_LevelFrame:SetBackdrop({bgFile = "Interface\\Tooltips\\UI-Tooltip-Background", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
@@ -711,7 +713,7 @@ function Perl_Config_Set_Background(newvalue)
 --		end
 
 		if (Perl_Target_Frame) then
-			Perl_Target_CivilianFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_White", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
+			Perl_Target_GuildFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_ClassNameFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_CPFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
 			Perl_Target_LevelFrame:SetBackdrop({bgFile = "Interface\\AddOns\\Perl_Config\\Perl_Black", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", tile = true, tileSize = 16, edgeSize = 16, insets = { left = 5, right = 5, top = 5, bottom = 5 }});
@@ -993,12 +995,20 @@ function Perl_Config_Global_Save_Settings()
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 		local vartable = Perl_ArcaneBar_GetVars();
 		Perl_Config_Global_ArcaneBar_Config["Global Settings"] = {
-			["Enabled"] = vartable["enabled"],
+			["PlayerEnabled"] = vartable["playerenabled"],
+			["TargetEnabled"] = vartable["targetenabled"],
+			["FocusEnabled"] = vartable["focusenabled"],
+			["PlayerShowTimer"] = vartable["playershowtimer"],
+			["TargetShowTimer"] = vartable["targetshowtimer"],
+			["FocusShowTimer"] = vartable["focusshowtimer"],
+			["PlayerLeftTimer"] = vartable["playerlefttimer"],
+			["TargetLeftTimer"] = vartable["targetlefttimer"],
+			["FocusLeftTimer"] = vartable["focuslefttimer"],
+			["PlayerNameReplace"] = vartable["playernamereplace"],
+			["TargetNameReplace"] = vartable["targetnamereplace"],
+			["FocusNameReplace"] = vartable["focusnamereplace"],
 			["HideOriginal"] = vartable["hideoriginal"],
-			["ShowTimer"] = vartable["showtimer"],
 			["Transparency"] = vartable["transparency"],
-			["NameReplace"] = vartable["namereplace"],
-			["LeftTimer"] = vartable["lefttimer"],
 		};
 	end
 
@@ -1187,6 +1197,7 @@ function Perl_Config_Global_Save_Settings()
 			["HiddenInRaid"] = vartable["hiddeninraid"],
 			["ShowPvPIcon"] = vartable["showpvpicon"],
 			["ShowBarValues"] = vartable["showbarvalues"],
+			["ShowRaidGroupInName"] = vartable["showraidgroupinname"],
 		};
 	end
 
@@ -1309,6 +1320,7 @@ function Perl_Config_Global_Save_Settings()
 			["ClassColoredNames"] = vartable["classcolorednames"],
 			["ShowManaDeficit"] = vartable["showmanadeficit"],
 			["InvertBuffs"] = vartable["invertbuffs"],
+			["ShowGuildName"] = vartable["showguildname"],
 		};
 	end
 
@@ -2013,7 +2025,11 @@ function Perl_clearBlizzardFrameDisable(frameObject)
 	frameObject:SetScript("OnEvent", nil);
 	frameObject:SetScript("OnShow", nil);
 	frameObject:SetScript("OnUpdate", nil);
-	frameObject:Hide();
+	if (not InCombatLockdown()) then
+		frameObject:ClearAllPoints();
+		frameObject:SetPoint("TOPLEFT", UIParent, "BOTTOMRIGHT", 1000, -1000);
+		frameObject:Hide();
+	end
 end
 
 
