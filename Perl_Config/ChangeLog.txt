@@ -1,3 +1,7 @@
+0.64 - May 6, 2006
+ - All: Updated TOC files to reflect currently supported mods
+ - CombatDisplay: Added FiveSec support
+
 0.63 - May 5, 2006
  - All: Optimized the start up and run once code
  - Party/Pet/Player/Target: Adopted clearBlizzard's style for unregistering frames (Thanks Shag)

@@ -2,6 +2,6 @@
 ## Title: Perl Combat Display
 ## Notes: Displays a movable bar that displays health, rage/energy/mana, and combo points.
 ## Dependencies: Perl_Config
-## OptionalDeps: CastPartyCore, DruidBar, Genesis, MobHealth, myAddOns
+## OptionalDeps: AceHeal, CastPartyCore, DruidBar, Genesis, MobHealth, myAddOns, TNE_FiveSec
 ## SavedVariables: Perl_CombatDisplay_Config
 Perl_CombatDisplay.xml

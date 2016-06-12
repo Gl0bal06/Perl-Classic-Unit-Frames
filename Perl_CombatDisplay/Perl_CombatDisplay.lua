@@ -15,6 +15,7 @@ local mobhealthsupport = 1;	-- mobhealth is enabled by default
 local showdruidbar = 1;		-- Druid Bar support is enabled by default
 local showpetbars = 0;		-- Pet info is hidden by default
 local rightclickmenu = 0;	-- The ability to open a menu from CombatDisplay is disabled by default
+local fivesecsupport = 0;	-- FiveSec support is disabled by default
 
 -- Default Local Variables
 local IsAggroed = 0;
@@ -477,6 +478,22 @@ function Perl_CombatDisplay_Update_Mana()
 			Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(66);
 		end
 	end
+
+	if (fivesecsupport == 1) then
+		if (REGENERATING_MANA ~= nil) then				-- Is FiveSec installed?
+			if (UnitPowerType("player") > 0) then			-- If we aren't in mana mode, bail out
+				-- Do nothing
+			else
+				if (REGENERATING_MANA == false) then		-- If we aren't in regen mode, color light blue
+					Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0.7, 1, 1);
+					Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0.7, 1, 0.25);
+				else						-- Then we must be in regen mode, color bar normally
+					Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0, 1, 1);
+					Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
+				end
+			end
+		end
+	end
 end
 
 function Perl_CombatDisplay_Update_Combo_Points()
@@ -846,6 +863,13 @@ function Perl_CombatDisplay_Set_DruidBar(newvalue)
 	Perl_CombatDisplay_Update_Mana();
 end
 
+function Perl_CombatDisplay_Set_FiveSec(newvalue)
+	fivesecsupport = newvalue;
+	Perl_CombatDisplay_UpdateVars();
+	Perl_CombatDisplay_UpdateBars();
+	Perl_CombatDisplay_Update_Mana();
+end
+
 function Perl_CombatDisplay_Set_PetBars(newvalue)
 	showpetbars = newvalue;
 	Perl_CombatDisplay_UpdateVars();
@@ -893,6 +917,7 @@ function Perl_CombatDisplay_GetVars()
 	showdruidbar = Perl_CombatDisplay_Config[UnitName("player")]["ShowDruidBar"];
 	showpetbars = Perl_CombatDisplay_Config[UnitName("player")]["ShowPetBars"];
 	rightclickmenu = Perl_CombatDisplay_Config[UnitName("player")]["RightClickMenu"];
+	fivesecsupport = Perl_CombatDisplay_Config[UnitName("player")]["FiveSecSupport"];
 
 	if (state == nil) then
 		state = 3;
@@ -927,6 +952,9 @@ function Perl_CombatDisplay_GetVars()
 	if (rightclickmenu == nil) then
 		rightclickmenu = 0;
 	end
+	if (fivesecsupport == nil) then
+		fivesecsupport = 0;
+	end
 
 	local vars = {
 		["state"] = state,
@@ -940,6 +968,7 @@ function Perl_CombatDisplay_GetVars()
 		["showdruidbar"] = showdruidbar,
 		["showpetbars"] = showpetbars,
 		["rightclickmenu"] = rightclickmenu,
+		["fivesecsupport"] = fivesecsupport,
 	}
 	return vars;
 end
@@ -1003,6 +1032,11 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			else
 				rightclickmenu = nil;
 			end
+			if (vartable["Global Settings"]["FiveSecSupport"] ~= nil) then
+				fivesecsupport = vartable["Global Settings"]["FiveSecSupport"];
+			else
+				fivesecsupport = nil;
+			end
 		end
 
 		-- Set the new values if any new values were found, same defaults as above
@@ -1039,10 +1073,14 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		if (rightclickmenu == nil) then
 			rightclickmenu = 0;
 		end
+		if (fivesecsupport == nil) then
+			fivesecsupport = 0;
+		end
 
 		-- Call any code we need to activate them
 		Perl_CombatDisplay_Set_Target(showtarget)
 		Perl_CombatDisplay_Target_Update_Health();
+		Perl_CombatDisplay_Update_Mana();
 		Perl_CombatDisplay_Set_Scale()
 		Perl_CombatDisplay_Set_Transparency()
 		Perl_CombatDisplay_UpdateDisplay();
@@ -1060,6 +1098,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		["ShowDruidBar"] = showdruidbar,
 		["ShowPetBars"] = showpetbars,
 		["RightClickMenu"] = rightclickmenu,
+		["FiveSecSupport"] = fivesecsupport,
 	};
 end
 
@@ -1234,8 +1273,8 @@ function Perl_CombatDisplay_myAddOns_Support()
 	if(myAddOnsFrame_Register) then
 		local Perl_CombatDisplay_myAddOns_Details = {
 			name = "Perl_CombatDisplay",
-			version = "Version 0.63",
-			releaseDate = "May 5, 2006",
+			version = "Version 0.64",
+			releaseDate = "May 6, 2006",
 			author = "Perl; Maintained by Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

@@ -2,6 +2,6 @@
 ## Title: Perl Player Pet Frame
 ## Notes: Displays a movable pet frame to replace the default.
 ## Dependencies: Perl_Config
-## OptionalDeps: CastPartyCore, Genesis, myAddOns
+## OptionalDeps: AceHeal, CastPartyCore, Genesis, myAddOns
 ## SavedVariables: Perl_Player_Pet_Config
 Perl_Player_Pet.xml

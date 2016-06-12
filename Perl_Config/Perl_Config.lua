@@ -589,6 +589,7 @@ function Perl_Config_Global_Save_Settings()
 			["ShowDruidBar"] = vartable["showdruidbar"],
 			["ShowPetBars"] = vartable["showpetbars"],
 			["RightClickMenu"] = vartable["rightclickmenu"],
+			["FiveSecSupport"] = vartable["fivesecsupport"],
 		};
 	end
 
@@ -1121,8 +1122,8 @@ function Perl_Config_myAddOns_Support()
 	if (myAddOnsFrame_Register) then
 		local Perl_Config_myAddOns_Details = {
 			name = "Perl_Config",
-			version = "Version 0.63",
-			releaseDate = "May 5, 2006",
+			version = "Version 0.64",
+			releaseDate = "May 6, 2006",
 			author = "Global",
 			email = "global@g-ball.com",
 			website = "http://www.curse-gaming.com/mod.php?addid=2257",

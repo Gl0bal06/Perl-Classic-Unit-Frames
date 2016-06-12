@@ -72,7 +72,7 @@
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="TOPLEFT">
 							<Offset>
-								<AbsDimension x="220" y="-210"/>
+								<AbsDimension x="240" y="-210"/>
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -430,6 +430,27 @@
 					</OnLoad>
 					<OnClick>
 						Perl_Config_CombatDisplay_MobHealth_Update();
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parent_CheckButton15" inherits="UICheckButtonTemplate" id="15">
+				<Size>
+					<AbsDimension x="20" y="20"/>
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_Misc2_Text">
+						<Offset>
+							<AbsDimension x="20" y="-20"/>
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						getglobal(this:GetName().."Text"):SetText("FiveSec Support");
+					</OnLoad>
+					<OnClick>
+						Perl_Config_CombatDisplay_FiveSec_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>
