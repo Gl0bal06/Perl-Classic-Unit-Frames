@@ -1979,51 +1979,15 @@ end
 --------------------
 -- Target of Target Start
 function Perl_TargetTarget_CastClickOverlay_OnLoad(self)
-	local showmenu = function()
-		ToggleDropDownMenu(1, nil, Perl_Target_Target_DropDown, "Perl_Target_Target_NameFrame", 40, 0);
-	end
-	SecureUnitButton_OnLoad(self, "targettarget", showmenu);
-
 	self:SetAttribute("unit", "targettarget");
+	self:SetAttribute("*type1", "target")
+	self:SetAttribute("*type2", "togglemenu")
+	self:SetAttribute("type2", "togglemenu")
+
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
 	ClickCastFrames[self] = true;
-end
-
-function Perl_TargetTargetDropDown_OnLoad(self)
-	UIDropDownMenu_Initialize(self, Perl_TargetTargetDropDown_Initialize, "MENU");
-end
-
-function Perl_TargetTargetDropDown_Initialize()
-	local menu, name;
-	local id = nil;
-	if (UnitIsUnit("targettarget", "player")) then
-		menu = "SELF";
-	elseif (UnitIsUnit("targettarget", "vehicle")) then
-		menu = "VEHICLE";
-	elseif (UnitIsUnit("targettarget", "pet")) then
-		menu = "PET";
-	elseif (UnitIsOtherPlayersPet("targettarget")) then
-		SetPendingReportTarget("targettarget");
-		menu = "OTHERPET";
-	elseif (UnitIsPlayer("targettarget")) then
-		id = UnitInRaid("targettarget");
-		if (id) then
-			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id);
-		elseif (UnitInParty("targettarget")) then
-			menu = "PARTY";
-		else
-			menu = "PLAYER";
-		end
-	else
-		menu = "TARGET";
-		name = RAID_TARGET_ICON;
-	end
-	if (menu) then
-		UnitPopup_ShowMenu(Perl_Target_Target_DropDown, menu, "targettarget", name, id);
-	end
 end
 
 function Perl_Target_Target_DragStart(button)
@@ -2040,51 +2004,15 @@ end
 
 -- Target of Target of Target Start
 function Perl_TargetTargetTarget_CastClickOverlay_OnLoad(self)
-	local showmenu = function()
-		ToggleDropDownMenu(1, nil, Perl_Target_Target_Target_DropDown, "Perl_Target_Target_Target_NameFrame", 40, 0);
-	end
-	SecureUnitButton_OnLoad(self, "targettargettarget", showmenu);
-
 	self:SetAttribute("unit", "targettargettarget");
+	self:SetAttribute("*type1", "target");
+	self:SetAttribute("*type2", "togglemenu");
+	self:SetAttribute("type2", "togglemenu");
+
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
 	ClickCastFrames[self] = true;
-end
-
-function Perl_TargetTargetTargetDropDown_OnLoad(self)
-	UIDropDownMenu_Initialize(self, Perl_TargetTargetTargetDropDown_Initialize, "MENU");
-end
-
-function Perl_TargetTargetTargetDropDown_Initialize()
-	local menu, name;
-	local id = nil;
-	if (UnitIsUnit("targettargettarget", "player")) then
-		menu = "SELF";
-	elseif (UnitIsUnit("targettargettarget", "vehicle")) then
-		menu = "VEHICLE";
-	elseif (UnitIsUnit("targettargettarget", "pet")) then
-		menu = "PET";
-	elseif (UnitIsOtherPlayersPet("targettargettarget")) then
-		SetPendingReportTarget("targettargettarget");
-		menu = "OTHERPET";
-	elseif (UnitIsPlayer("targettargettarget")) then
-		id = UnitInRaid("targettargettarget");
-		if (id) then
-			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id);
-		elseif (UnitInParty("targettargettarget")) then
-			menu = "PARTY";
-		else
-			menu = "PLAYER";
-		end
-	else
-		menu = "TARGET";
-		name = RAID_TARGET_ICON;
-	end
-	if (menu) then
-		UnitPopup_ShowMenu(Perl_Target_Target_Target_DropDown, menu, "targettargettarget", name, id);
-	end
 end
 
 function Perl_Target_Target_Target_DragStart(button)

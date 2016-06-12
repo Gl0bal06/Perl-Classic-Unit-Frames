@@ -132,26 +132,6 @@
 			</OnLoad>
 		</Scripts>
 		<Frames>
-			<!-- Frame for the drop down menu. -->
-			<Frame name="Perl_Target_Target_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
-				<Size>
-					<AbsDimension x="10" y="10"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOP">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						Perl_TargetTargetDropDown_OnLoad(self);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-
-
 			<!-- Target Name -->
 			<Frame name="Perl_Target_Target_NameFrame">
 				<Size>
@@ -847,25 +827,6 @@
 			</OnLoad>
 		</Scripts>
 		<Frames>
-			<!-- Frame for the drop down menu. -->
-			<Frame name="Perl_Target_Target_Target_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
-				<Size>
-					<AbsDimension x="10" y="10"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOP">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						Perl_TargetTargetTargetDropDown_OnLoad(self);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-
 			<!-- Target Name -->
 			<Frame name="Perl_Target_Target_Target_NameFrame">
 				<Size>

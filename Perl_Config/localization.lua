@@ -1,7 +1,7 @@
 --if (GetLocale() == "enUS") then	-- Bypassing this allows us to at least give other languages English since they aren't fully translated
 	-- Generic Globals that do NOT need localizing
-	PERL_LOCALIZED_VERSION_NUMBER = "5.07";
-	PERL_LOCALIZED_DATE = "June 6, 2013";
+	PERL_LOCALIZED_VERSION_NUMBER = "5.08";
+	PERL_LOCALIZED_DATE = "February 23, 2014";
 	PERL_LOCALIZED_BUFF_NONE = "none";
 
 	-- Title and Version

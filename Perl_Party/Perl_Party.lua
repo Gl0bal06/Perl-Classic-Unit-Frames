@@ -2685,25 +2685,15 @@ end
 -- Click Handlers --
 --------------------
 function Perl_Party_CastClickOverlay_OnLoad(self)
-	local showmenu = function()
-		ToggleDropDownMenu(1, nil, _G["Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID().."_DropDown"], "Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID(), 0, 0);
-	end
-	SecureUnitButton_OnLoad(self, "party"..self:GetParent():GetParent():GetID(), showmenu);
-
 	self:SetAttribute("unit", "party"..self:GetParent():GetParent():GetID());
+	self:SetAttribute("*type1", "target");
+	self:SetAttribute("*type2", "togglemenu");
+	self:SetAttribute("type2", "togglemenu");
+
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
 	ClickCastFrames[self] = true;
-end
-
-function Perl_PartyDropDown_OnLoad(self)
-	UIDropDownMenu_Initialize(self, Perl_PartyDropDown_Initialize, "MENU");
-end
-
-function Perl_PartyDropDown_Initialize(self)
-	local dropdown = UIDROPDOWNMENU_OPEN_MENU or self;
-	UnitPopup_ShowMenu(dropdown, "PARTY", "party"..dropdown:GetParent():GetID());
 end
 
 function Perl_Party_DragStart(button)
@@ -2718,12 +2708,11 @@ function Perl_Party_DragStop()
 end
 
 function Perl_Party_Pet_CastClickOverlay_OnLoad(self)
-	local showmenu = function()
-		ToggleDropDownMenu(1, nil, _G["Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID().."_DropDown"], "Perl_Party_MemberFrame"..self:GetParent():GetParent():GetID(), 0, 0);
-	end
-	SecureUnitButton_OnLoad(self, "partypet"..self:GetParent():GetParent():GetID(), showmenu);
-
 	self:SetAttribute("unit", "partypet"..self:GetParent():GetParent():GetID());
+	self:SetAttribute("*type1", "target");
+	self:SetAttribute("*type2", "togglemenu");
+	self:SetAttribute("type2", "togglemenu");
+
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end

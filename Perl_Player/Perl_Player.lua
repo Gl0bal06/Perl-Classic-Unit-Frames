@@ -2285,24 +2285,15 @@ end
 -- Click Handlers --
 --------------------
 function Perl_Player_CastClickOverlay_OnLoad(self)
-	local showmenu = function()
-		ToggleDropDownMenu(1, nil, Perl_Player_DropDown, "Perl_Player_NameFrame", 40, 0);
-	end
-	SecureUnitButton_OnLoad(self, "player", showmenu);
-
 	self:SetAttribute("unit", "player");
+	self:SetAttribute("*type1", "target");
+	self:SetAttribute("*type2", "togglemenu");
+	self:SetAttribute("type2", "togglemenu");
+
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
 	ClickCastFrames[self] = true;
-end
-
-function Perl_PlayerDropDown_OnLoad(self)
-	UIDropDownMenu_Initialize(self, Perl_PlayerDropDown_Initialize, "MENU");
-end
-
-function Perl_PlayerDropDown_Initialize()
-	UnitPopup_ShowMenu(Perl_Player_DropDown, "SELF", "player");
 end
 
 function Perl_Player_DragStart(button)

@@ -1,3 +1,7 @@
+5.08 - February 23, 2014
+ - All: Updated TOC Interface version to 50400
+ - All: Fixed taint issues relating to right click menus
+
 5.07 - June 6, 2013
  - All: Updated TOC Interface version to 50300
  - Party: Role icons now appear on top of the PvP status icons

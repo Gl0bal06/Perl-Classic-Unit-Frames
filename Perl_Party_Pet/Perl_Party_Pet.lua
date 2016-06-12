@@ -1426,9 +1426,11 @@ end
 -- Click Handlers --
 --------------------
 function Perl_Party_Pet_CastClickOverlay_OnLoad(self)
-	SecureUnitButton_OnLoad(self, "partypet"..self:GetParent():GetParent():GetID(), nil);
-
 	self:SetAttribute("unit", "partypet"..self:GetParent():GetParent():GetID());
+	self:SetAttribute("*type1", "target");
+	self:SetAttribute("*type2", "togglemenu");
+	self:SetAttribute("type2", "togglemenu");
+
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end

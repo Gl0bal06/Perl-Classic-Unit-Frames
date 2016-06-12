@@ -1,4 +1,4 @@
-## Interface: 50300
+## Interface: 50400
 ## Title: Perl Config Frame
 ## Notes: Displays a configuration menu for Perl Classic Unit Frames.
 ## Dependencies: 

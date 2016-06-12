@@ -2242,51 +2242,15 @@ end
 -- Click Handlers --
 --------------------
 function Perl_Focus_CastClickOverlay_OnLoad(self)
-	local showmenu = function()
-		ToggleDropDownMenu(1, nil, Perl_Focus_DropDown, "Perl_Focus_NameFrame", 40, 0);
-	end
-	SecureUnitButton_OnLoad(self, "focus", showmenu);
-
 	self:SetAttribute("unit", "focus");
+	self:SetAttribute("*type1", "target");
+	self:SetAttribute("*type2", "togglemenu");
+	self:SetAttribute("type2", "togglemenu");
+
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
 	ClickCastFrames[self] = true;
-end
-
-function Perl_FocusDropDown_OnLoad(self)
-	UIDropDownMenu_Initialize(self, Perl_FocusDropDown_Initialize, "MENU");
-end
-
-function Perl_FocusDropDown_Initialize()
-	local menu, name;
-	local id = nil;
-	if (UnitIsUnit("focus", "player")) then
-		menu = "SELF";
-	elseif (UnitIsUnit("focus", "vehicle")) then
-		menu = "VEHICLE";
-	elseif (UnitIsUnit("focus", "pet")) then
-		menu = "PET";
-	elseif (UnitIsOtherPlayersPet("focus")) then
-		SetPendingReportTarget("focus");
-		menu = "OTHERPET";
-	elseif (UnitIsPlayer("focus")) then
-		id = UnitInRaid("focus");
-		if (id) then
-			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id);
-		elseif (UnitInParty("focus")) then
-			menu = "PARTY";
-		else
-			menu = "PLAYER";
-		end
-	else
-		menu = "TARGET";
-		name = RAID_TARGET_ICON;
-	end
-	if (menu) then
-		UnitPopup_ShowMenu(Perl_Focus_DropDown, menu, "focus", name, id);
-	end
 end
 
 function Perl_Focus_DragStart(button)

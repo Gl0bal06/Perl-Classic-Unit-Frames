@@ -367,26 +367,6 @@
 				Perl_Party_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
-		<Frames>
-			<!-- Frame for the drop down menu. -->
-			<Frame name="$parent_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
-				<Size>
-					<AbsDimension x="10" y="10"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOP">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						Perl_Party_Target1DropDown_OnLoad(self);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-		</Frames>
 	</Frame>
 
 	<Frame name="Perl_Party_Target2" inherits="Perl_Party_Target_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="2">
@@ -403,26 +383,6 @@
 				Perl_Party_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
-		<Frames>
-			<!-- Frame for the drop down menu. -->
-			<Frame name="$parent_DropDown" inherits="UIDropDownMenuTemplate" id="2" hidden="true">
-				<Size>
-					<AbsDimension x="10" y="10"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOP">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						Perl_Party_Target2DropDown_OnLoad(self);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-		</Frames>
 	</Frame>
 
 	<Frame name="Perl_Party_Target3" inherits="Perl_Party_Target_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="3">
@@ -439,26 +399,6 @@
 				Perl_Party_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
-		<Frames>
-			<!-- Frame for the drop down menu. -->
-			<Frame name="$parent_DropDown" inherits="UIDropDownMenuTemplate" id="3" hidden="true">
-				<Size>
-					<AbsDimension x="10" y="10"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOP">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						Perl_Party_Target3DropDown_OnLoad(self);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-		</Frames>
 	</Frame>
 
 	<Frame name="Perl_Party_Target4" inherits="Perl_Party_Target_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="4">
@@ -475,26 +415,6 @@
 				Perl_Party_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
-		<Frames>
-			<!-- Frame for the drop down menu. -->
-			<Frame name="$parent_DropDown" inherits="UIDropDownMenuTemplate" id="4" hidden="true">
-				<Size>
-					<AbsDimension x="10" y="10"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOP">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						Perl_Party_Target4DropDown_OnLoad(self);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-		</Frames>
 	</Frame>
 
 	<Frame name="Perl_Party_Target5" inherits="Perl_Party_Target_FrameTemplate" parent="UIParent" hidden="true" movable="true" id="5">
@@ -511,26 +431,6 @@
 				Perl_Party_Target_OnLoad(self);
 			</OnLoad>
 		</Scripts>
-		<Frames>
-			<!-- Frame for the drop down menu. -->
-			<Frame name="$parent_DropDown" inherits="UIDropDownMenuTemplate" id="5" hidden="true">
-				<Size>
-					<AbsDimension x="10" y="10"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOP">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						Perl_Party_Target5DropDown_OnLoad(self);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-		</Frames>
 	</Frame>
 
 

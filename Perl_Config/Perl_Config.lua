@@ -2833,3 +2833,7 @@ function Perl_clearBlizzardFrameDisable(frameObject)
 		frameObject:Hide();
 	end
 end
+
+function Perl_clearBlizzardFocusFrameDisable()
+	Perl_clearBlizzardFrameDisable(FocusFrame);
+end

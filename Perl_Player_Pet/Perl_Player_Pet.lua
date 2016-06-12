@@ -1906,28 +1906,15 @@ end
 -- Click Handlers --
 --------------------
 function Perl_Player_Pet_CastClickOverlay_OnLoad(self)
-	local showmenu = function()
-		ToggleDropDownMenu(1, nil, Perl_Player_Pet_DropDown, "Perl_Player_Pet_NameFrame", 40, 0);
-	end
-	SecureUnitButton_OnLoad(self, "pet", showmenu);
-
 	self:SetAttribute("unit", "pet");
+	self:SetAttribute("*type1", "target");
+	self:SetAttribute("*type2", "togglemenu");
+	self:SetAttribute("type2", "togglemenu");
+
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
 	ClickCastFrames[self] = true;
-end
-
-function Perl_Player_Pet_DropDown_OnLoad(self)
-	UIDropDownMenu_Initialize(self, Perl_Player_Pet_DropDown_Initialize, "MENU");
-end
-
-function Perl_Player_Pet_DropDown_Initialize()
-	if (UnitIsUnit("pet", "vehicle")) then
-		UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, "VEHICLE", "vehicle");
-	else
-		UnitPopup_ShowMenu(Perl_Player_Pet_DropDown, "PET", "pet");
-	end
 end
 
 function Perl_Player_Pet_DragStart(button)
@@ -1942,51 +1929,15 @@ function Perl_Player_Pet_DragStop()
 end
 
 function Perl_Player_Pet_Target_CastClickOverlay_OnLoad(self)
-	local showmenu = function()
-		ToggleDropDownMenu(1, nil, Perl_Player_Pet_Target_DropDown, "Perl_Player_Pet_Target_NameFrame", 40, 0);
-	end
-	SecureUnitButton_OnLoad(self, "pettarget", showmenu);
-
 	self:SetAttribute("unit", "pettarget");
+	self:SetAttribute("*type1", "target");
+	self:SetAttribute("*type2", "togglemenu");
+	self:SetAttribute("type2", "togglemenu");
+
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
 	ClickCastFrames[self] = true;
-end
-
-function Perl_Player_Pet_Target_DropDown_OnLoad(self)
-	UIDropDownMenu_Initialize(self, Perl_Player_Pet_Target_DropDown_Initialize, "MENU");
-end
-
-function Perl_Player_Pet_Target_DropDown_Initialize()
-	local menu, name;
-	local id = nil;
-	if (UnitIsUnit("pettarget", "player")) then
-		menu = "SELF";
-	elseif (UnitIsUnit("pettarget", "vehicle")) then
-		menu = "VEHICLE";
-	elseif (UnitIsUnit("pettarget", "pet")) then
-		menu = "PET";
-	elseif (UnitIsOtherPlayersPet("pettarget")) then
-		SetPendingReportTarget("pettarget");
-		menu = "OTHERPET";
-	elseif (UnitIsPlayer("pettarget")) then
-		id = UnitInRaid("pettarget");
-		if (id) then
-			menu = "RAID_PLAYER";
-			name = GetRaidRosterInfo(id);
-		elseif (UnitInParty("pettarget")) then
-			menu = "PARTY";
-		else
-			menu = "PLAYER";
-		end
-	else
-		menu = "TARGET";
-		name = RAID_TARGET_ICON;
-	end
-	if (menu) then
-		UnitPopup_ShowMenu(Perl_Player_Pet_Target_DropDown, menu, "pettarget", name, id);
-	end
 end
 
 function Perl_Player_Pet_Target_DragStart(button)

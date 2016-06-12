@@ -24,26 +24,6 @@
 		</Scripts>
 
 		<Frames>
-			<!-- Frame for the drop down menu. -->
-			<Frame name="Perl_CombatDisplay_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
-				<Size>
-					<AbsDimension x="10" y="10"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOP">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						Perl_CombatDisplayDropDown_OnLoad(self);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-
-
 			<!-- Frame to display Mana/Energy/Rage/CPs. -->
 			<Frame name="Perl_CombatDisplay_ManaFrame">
 				<Size>
@@ -471,25 +451,6 @@
 		</Scripts>
 
 		<Frames>
-			<!-- Frame for the drop down menu. -->
-			<Frame name="Perl_CombatDisplay_Target_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
-				<Size>
-					<AbsDimension x="10" y="10"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOP">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						Perl_CombatDisplayTargetDropDown_OnLoad(self);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-
 			<!-- Frame to display Mana/Energy/Rage/CPs. -->
 			<Frame name="Perl_CombatDisplay_Target_ManaFrame">
 				<Size>

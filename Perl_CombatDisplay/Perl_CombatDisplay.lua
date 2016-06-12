@@ -1661,26 +1661,15 @@ end
 -- Click Handler --
 -------------------
 function Perl_CombatDisplay_CastClickOverlay_OnLoad(self)
-	local showmenu = function()
-		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_DropDown, "Perl_CombatDisplay_Frame", 40, 0);
-	end
-	SecureUnitButton_OnLoad(self, "player", showmenu);
-
 	self:SetAttribute("unit", "player");
+	self:SetAttribute("*type1", "target");
+	self:SetAttribute("*type2", "togglemenu");
+	self:SetAttribute("type2", "togglemenu");
+
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end
 	ClickCastFrames[self] = true;
-end
-
-function Perl_CombatDisplayDropDown_OnLoad(self)
-	UIDropDownMenu_Initialize(self, Perl_CombatDisplayDropDown_Initialize, "MENU");
-end
-
-function Perl_CombatDisplayDropDown_Initialize()
-	if (rightclickmenu == 1) then
-		UnitPopup_ShowMenu(Perl_CombatDisplay_DropDown, "SELF", "player");
-	end
 end
 
 function Perl_CombatDisplay_DragStart(button)
@@ -1694,51 +1683,12 @@ function Perl_CombatDisplay_DragStop()
 	Perl_CombatDisplay_Set_Frame_Position();
 end
 
-
-function Perl_CombatDisplayTargetDropDown_OnLoad(self)
-	UIDropDownMenu_Initialize(self, Perl_CombatDisplayTargetDropDown_Initialize, "MENU");
-end
-
-function Perl_CombatDisplayTargetDropDown_Initialize()
-	if (rightclickmenu == 1) then
-		local menu, name;
-		local id = nil;
-		if (UnitIsUnit("target", "player")) then
-			menu = "SELF";
-		elseif (UnitIsUnit("target", "vehicle")) then
-			menu = "VEHICLE";
-		elseif (UnitIsUnit("target", "pet")) then
-			menu = "PET";
-		elseif (UnitIsOtherPlayersPet("target")) then
-			SetPendingReportTarget("target");
-			menu = "OTHERPET";
-		elseif (UnitIsPlayer("target")) then
-			id = UnitInRaid("target");
-			if (id) then
-				menu = "RAID_PLAYER";
-				name = GetRaidRosterInfo(id);
-			elseif (UnitInParty("target")) then
-				menu = "PARTY";
-			else
-				menu = "PLAYER";
-			end
-		else
-			menu = "TARGET";
-			name = RAID_TARGET_ICON;
-		end
-		if (menu) then
-			UnitPopup_ShowMenu(Perl_CombatDisplay_Target_DropDown, menu, "target", name, id);
-		end
-	end
-end
-
 function Perl_CombatDisplay_Target_CastClickOverlay_OnLoad(self)
-	local showmenu = function()
-		ToggleDropDownMenu(1, nil, Perl_CombatDisplay_Target_DropDown, "Perl_CombatDisplay_Target_Frame", 40, 0);
-	end
-	SecureUnitButton_OnLoad(self, "target", showmenu);
-
 	self:SetAttribute("unit", "target");
+	self:SetAttribute("*type1", "target");
+	self:SetAttribute("*type2", "togglemenu");
+	self:SetAttribute("type2", "togglemenu");
+
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end

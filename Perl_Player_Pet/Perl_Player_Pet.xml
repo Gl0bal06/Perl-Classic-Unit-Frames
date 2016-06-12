@@ -81,26 +81,6 @@
 		</Scripts>
 
 		<Frames>
-			<!-- Frame for the drop down menu. -->
-			<Frame name="Perl_Player_Pet_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
-				<Size>
-					<AbsDimension x="10" y="10"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOP">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						Perl_Player_Pet_DropDown_OnLoad(self);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-
-
 			<!-- Target Name -->
 			<Frame name="Perl_Player_Pet_NameFrame">
 				<Size>
@@ -977,26 +957,6 @@
 		</Scripts>
 
 		<Frames>
-			<!-- Frame for the drop down menu. -->
-			<Frame name="Perl_Player_Pet_Target_DropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="true">
-				<Size>
-					<AbsDimension x="10" y="10"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOP">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						Perl_Player_Pet_Target_DropDown_OnLoad(self);
-					</OnLoad>
-				</Scripts>
-			</Frame>
-
-
 			<!-- Target Name -->
 			<Frame name="Perl_Player_Pet_Target_NameFrame">
 				<Size>
