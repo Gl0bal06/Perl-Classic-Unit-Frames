@@ -51,6 +51,8 @@ if (GetLocale() == "koKR") then
 	PERL_LOCALIZED_PLAYER_NO_REPUTATION = "선택된 평판이 없습니다.";
 	PERL_LOCALIZED_PLAYER_SELECT_REPUTATION = "평판을 선택하세요";
 	PERL_LOCALIZED_PLAYER_UNRANKED = "당신은 계급|1이;가; 없습니다.";
+	PERL_LOCALIZED_PLAYER_STEALTH = "은신";
+	PERL_LOCALIZED_PLAYER_PROWL = "숨기";
 
 	-- Perl Target Strings
 	PERL_LOCALIZED_TARGET_BOSS = "우두머리";

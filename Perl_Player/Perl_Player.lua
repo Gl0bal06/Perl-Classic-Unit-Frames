@@ -789,9 +789,11 @@ function Perl_Player_Update_Combat_Status(event)
 		InCombat = 1;
 		Perl_Player_ActivityStatus:SetTexCoord(0.5, 1.0, 0.0, 0.5);
 		Perl_Player_ActivityStatus:Show();
+		Perl_Player_EnergyTicker:SetAlpha(1);
 	elseif (event == "PLAYER_REGEN_ENABLED") then
 		InCombat = 0;
 		Perl_Player_ActivityStatus:Hide();
+		Perl_Player_EnergyTicker:SetAlpha(0);
 	elseif (IsResting()) then
 		if (InCombat == 1) then
 			return;
@@ -1954,6 +1956,22 @@ function Perl_Player_BuffUpdateAll()
 		Perl_Player_LevelFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 		Perl_Player_PortraitFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
 		Perl_Player_StatsFrame:SetBackdropBorderColor(0.5, 0.5, 0.5, 1);
+	end
+
+	if (showenergyticker == 1) then
+		if (not InCombatLockdown()) then
+			local buffName;
+			for buffnum=1, 20 do
+				buffName, _, _, _ = UnitBuff("player", buffnum, 0);
+				if (buffName == PERL_LOCALIZED_PLAYER_STEALTH or buffName == PERL_LOCALIZED_PLAYER_PROWL) then
+					Perl_Player_EnergyTicker:SetAlpha(1);
+					return;
+				end
+			end
+			Perl_Player_EnergyTicker:SetAlpha(0);
+		else
+			Perl_Player_EnergyTicker:SetAlpha(1);
+		end
 	end
 end
 

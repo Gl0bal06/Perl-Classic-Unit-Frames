@@ -132,12 +132,24 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1)
 
 		if (self.namereplace == 1) then
 			if (self.nameframewidth > 199) then
-				if (strlen(text) > (25)) then
-					text = strsub(text, 1, 24).."...";
+				if (GetLocale() == "koKR") then
+					if (strlen(text) > (40)) then
+						text = strsub(text, 1, 39).."...";
+					end
+				else
+					if (strlen(text) > (25)) then
+						text = strsub(text, 1, 24).."...";
+					end
 				end
 			else
-				if (strlen(text) > (20)) then
-					text = strsub(text, 1, 19).."...";
+				if (GetLocale() == "koKR") then
+					if (strlen(text) > (36)) then
+						text = strsub(text, 1, 35).."...";
+					end
+				else
+					if (strlen(text) > (20)) then
+						text = strsub(text, 1, 19).."...";
+					end
 				end
 			end
 			if (self.nameframetext == nil) then

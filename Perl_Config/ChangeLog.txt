@@ -1,3 +1,10 @@
+2.06 - May 22, 2007
+ - All: Updated TOC Interface version to 20100
+ - ArcaneBar: Spell names are truncated correctly for Korean translations
+ - Config: Updated Korean translations (Thanks gygabyte)
+ - PartyTarget: Can now correctly target the focus target
+ - Player: Energy ticker should only appear when stealthed or in combat
+
 2.05 - April 9, 2007
  - ArcaneBar: Added a sanity check for the line 207 error
  - ArcaneBar: Focus, Party, and Target are no longer dependencies

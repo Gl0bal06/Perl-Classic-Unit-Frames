@@ -1159,7 +1159,12 @@ function Perl_Party_Target_CastClickOverlay_OnLoad()
 	end
 	SecureUnitButton_OnLoad(this, "party"..this:GetParent():GetParent():GetID().."target", showmenu);
 
-	this:SetAttribute("unit", "party"..this:GetParent():GetParent():GetID().."target");
+	if (this:GetParent():GetParent():GetID() == 5) then
+		this:SetAttribute("unit", "focustarget");
+	else
+		this:SetAttribute("unit", "party"..this:GetParent():GetParent():GetID().."target");
+	end
+	
 	if (not ClickCastFrames) then
 		ClickCastFrames = {};
 	end

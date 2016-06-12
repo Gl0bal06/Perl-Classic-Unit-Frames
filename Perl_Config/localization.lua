@@ -1,7 +1,7 @@
 --if (GetLocale() == "enUS") then	-- Bypassing this allows us to at least give other languages English since they aren't fully translated
 	-- Generic Globals that do NOT need localizing
-	PERL_LOCALIZED_VERSION_NUMBER = "2.05";
-	PERL_LOCALIZED_DATE = "April 9, 2006";
+	PERL_LOCALIZED_VERSION_NUMBER = "2.06";
+	PERL_LOCALIZED_DATE = "May 22, 2006";
 	PERL_LOCALIZED_BUFF_NONE = "none";
 
 	-- Title and Version
@@ -60,6 +60,8 @@
 	PERL_LOCALIZED_PLAYER_NO_REPUTATION = "There is no reputation being tracked.";
 	PERL_LOCALIZED_PLAYER_SELECT_REPUTATION = "Select a Reputation";
 	PERL_LOCALIZED_PLAYER_UNRANKED = "You are Unranked.";
+	PERL_LOCALIZED_PLAYER_STEALTH = "Stealth";
+	PERL_LOCALIZED_PLAYER_PROWL = "Prowl";
 
 	-- Perl Target Strings
 	PERL_LOCALIZED_TARGET_BOSS = "Boss";
