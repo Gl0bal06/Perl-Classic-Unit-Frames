@@ -900,7 +900,7 @@ end
 
 function Perl_Target_Frame_Set_Level()
 	targetlevel = UnitLevel("target");			-- Get and store the level of the target
-	targetlevelcolor = GetDifficultyColor(targetlevel);	-- Get the "con color" of the target
+	targetlevelcolor = GetQuestDifficultyColor(targetlevel);-- Get the "con color" of the target
 	targetclassification = UnitClassification("target");	-- Get the type of character the target is (rare, elite, worldboss)
 	targetclassificationframetext = nil;			-- Variable set to nil so we can easily track if target is a player or not elite
 

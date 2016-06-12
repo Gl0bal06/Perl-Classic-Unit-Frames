@@ -1,3 +1,7 @@
+3.08 - August 7, 2009
+ - All: Updated TOC Interface version to 30200
+ - Focus/Target: Changed function GetDifficultyColor to GetQuestDifficultyColor
+
 3.07 - April 20, 2009
  - All: Can now filter debuffs for only those that you cast
  - All: Curable Debuffs Only once again functions as intended

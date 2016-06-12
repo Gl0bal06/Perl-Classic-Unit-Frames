@@ -768,7 +768,7 @@ end
 
 function Perl_Focus_Frame_Set_Level()
 	focuslevel = UnitLevel("focus");			-- Get and store the level of the Focus
-	focuslevelcolor = GetDifficultyColor(focuslevel);	-- Get the "con color" of the Focus
+	focuslevelcolor = GetQuestDifficultyColor(focuslevel);	-- Get the "con color" of the Focus
 	focusclassification = UnitClassification("focus");	-- Get the type of character the Focus is (rare, elite, worldboss)
 	focusclassificationframetext = nil;			-- Variable set to nil so we can easily track if Focus is a player or not elite
 

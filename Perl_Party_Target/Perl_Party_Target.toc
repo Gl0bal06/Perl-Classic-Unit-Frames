@@ -1,4 +1,4 @@
-## Interface: 30100
+## Interface: 30200
 ## Title: Perl Party Target Frames
 ## Notes: Displays a movable frame to show party member targets.
 ## Dependencies: Perl_Config, Perl_Focus, Perl_Party
