@@ -510,7 +510,7 @@ function Perl_Focus_Update_Mana()
 			Perl_Focus_ManaBarText:SetText(focusmana.."/"..focusmanamax);
 		end
 	elseif (framestyle == 2) then
-		if (targetmanamax > 0) then
+		if (focusmanamax > 0) then
 			focusmanapercent = floor(focusmana/focusmanamax*100+0.5);
 		else
 			focusmanapercent = 0;

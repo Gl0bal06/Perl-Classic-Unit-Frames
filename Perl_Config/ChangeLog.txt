@@ -1,3 +1,8 @@
+5.01 Beta 4 - July 2, 2012
+ - Focus: Fixed a variable name causing a dividing by zero error
+ - Party: Added some sanity checks for dividing by zero
+ - Party: Updated to use UnitIsGroupLeader function
+
 5.01 Beta 3 - July 1, 2012
  - CombatDisplay/Focus: Added some sanity checks for dividing by zero
  - Target: Percents on NPCs with no power bar will properly display zero

@@ -704,7 +704,11 @@ function Perl_Party_Update_Pet_Health(self)
 	if (UnitIsConnected(self.unit) and UnitExists(self.unitpet)) then
 		partypethealth = UnitHealth(self.unitpet);
 		partypethealthmax = UnitHealthMax(self.unitpet);
-		partypethealthpercent = floor(partypethealth/partypethealthmax*100+0.5);
+		if (partypethealthmax > 0) then
+			partypethealthpercent = floor(partypethealth/partypethealthmax*100+0.5);
+		else
+			partypethealthpercent = 0;
+		end
 
 		if (UnitIsDead(self.unitpet) or UnitIsGhost(self.unitpet)) then	-- This prevents negative health
 			partypethealth = 0;
@@ -895,7 +899,7 @@ function Perl_Party_Update_Level(self)
 end
 
 function Perl_Party_Update_Leader(self)
-	if (GetPartyLeaderIndex() == self.id) then
+	if (UnitIsGroupLeader("party"..self.id)) then
 		self.leaderIcon:Show();
 	else
 		self.leaderIcon:Hide();
