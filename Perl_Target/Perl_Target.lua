@@ -1376,12 +1376,6 @@ function Perl_Target_Main_Style()
 		Perl_Target_ClassNameBarText:SetHeight(Perl_Target_ClassNameFrame:GetHeight() - 10);
 		Perl_Target_ClassNameBarText:SetNonSpaceWrap(false);
 
-		if (Perl_Target_Target_Script_Frame) then
-			Perl_Target_Target_Frame:SetUserPlaced(1);
-			Perl_Target_Target_Target_Frame:SetUserPlaced(1);
-			Perl_Target_Target_Set_Frame_Position();		-- Update the ToT frame position
-		end
-
 		if (Initialized) then
 			Perl_Target_ArcaneBar_Support();
 		end

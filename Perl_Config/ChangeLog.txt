@@ -1,3 +1,6 @@
+5.05 - March 2, 2013
+ - Target: Reverted ToT positions will save properly now when changing Target options change
+
 5.04 - February 28, 2013
  - All: Updated TOC Interface version to 50100
  - ArcaneBar: Updated OnEvent code for Cataclysm
