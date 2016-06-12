@@ -1,3 +1,7 @@
+6.03 - May 28, 2016
+ - All: Updated TOC Interface version to 60200
+ - ArcaneBar: Cast bar is now grey when an uninterruptible spell is being cast
+
 6.02 - November 22, 2014
  - All: Changed more instances of 1/nil to true/false
  - CombatDisplay: The Click Through Frames option now function correctly

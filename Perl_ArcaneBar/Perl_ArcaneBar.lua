@@ -40,7 +40,8 @@ local Perl_ArcaneBar_Colors = {	-- color table
 	main = {r = 1.0, g = 0.7, b = 0.0},
 	channel = {r = 0.0, g = 1.0, b = 0.0},
 	success = {r = 0.0, g = 1.0, b = 0.0},
-	failure = {r = 1.0, g = 0.0, b = 0.0}
+	failure = {r = 1.0, g = 0.0, b = 0.0},
+	notInterruptible = {r = 0.5, g = 0.5, b = 0.5}
 }
 
 
@@ -49,6 +50,7 @@ local Perl_ArcaneBar_Colors = {	-- color table
 ----------------------
 function Perl_ArcaneBar_OnLoad(self)
 	self.unit = string.sub(self:GetName(), 16);
+	self.barBorderShield = _G[self:GetName().."_BorderShield"];
 	self.barFlash = _G[self:GetName().."_Flash"];
 	self.barSpark = _G[self:GetName().."Spark"];
 	self.castTimeText = _G[self:GetName().."_CastTime"];
@@ -122,7 +124,7 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 
 	if (event == "UNIT_SPELLCAST_START") then
 		local _;
-		local text, _, _, _, startTime, endTime, _ = UnitCastingInfo(arg1);
+		local text, _, _, _, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(arg1);
 
 		self:SetStatusBarColor(Perl_ArcaneBar_Colors.main.r, Perl_ArcaneBar_Colors.main.g, Perl_ArcaneBar_Colors.main.b, transparency);
 		self.barSpark:Show();
@@ -130,6 +132,10 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 		self.maxValue = endTime / 1000;
 		self:SetMinMaxValues(self.startTime, self.maxValue);
 		self:SetValue(self.startTime);
+
+		if (notInterruptible) then
+			self:SetStatusBarColor(Perl_ArcaneBar_Colors.notInterruptible.r, Perl_ArcaneBar_Colors.notInterruptible.g, Perl_ArcaneBar_Colors.notInterruptible.b, transparency);
+		end
 
 		if (self.namereplace == 1) then
 			if (self.nameframetext == nil) then
@@ -238,7 +244,7 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 	elseif (event == "UNIT_SPELLCAST_FAILED") then
 		if (self:IsShown() and not self.channeling) then
 			local _;
-			local text, _, _, _, startTime, endTime, _ = UnitCastingInfo(arg1);
+			local text, _, _, _, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(arg1);
 			if (text == arg2) then
 				self:SetValue(self.maxValue);
 				self:SetStatusBarColor(Perl_ArcaneBar_Colors.failure.r, Perl_ArcaneBar_Colors.failure.g, Perl_ArcaneBar_Colors.failure.b, transparency);
@@ -252,7 +258,7 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 	elseif (event == "UNIT_SPELLCAST_DELAYED") then
 		if(self:IsShown()) then
 			local _;
-			local _, _, _, _, startTime, endTime, _ = UnitCastingInfo(arg1);
+			local _, _, _, _, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(arg1);
 
 			if (endTime ~= nil) then
 				self.delaySum = self.delaySum + (endTime - self.maxValue * 1000);
@@ -276,6 +282,10 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 			self.maxValue = self.startTime;
 			self:SetMinMaxValues(self.startTime, self.endTime);
 			self:SetValue(self.endTime);
+
+			if (notInterruptible) then
+				self:SetStatusBarColor(Perl_ArcaneBar_Colors.notInterruptible.r, Perl_ArcaneBar_Colors.notInterruptible.g, Perl_ArcaneBar_Colors.notInterruptible.b, transparency);
+			end
 
 			self:SetAlpha(0.8);
 			self.holdTime = 0;
@@ -528,6 +538,9 @@ function Perl_ArcaneBar_OnUpdate(self)
 		if (status == self.maxValue) then
 			self:SetValue(status);
 			self:SetStatusBarColor(0.0, 1.0, 0.0);
+			if (notInterruptible) then
+				self:SetStatusBarColor(Perl_ArcaneBar_Colors.notInterruptible.r, Perl_ArcaneBar_Colors.notInterruptible.g, Perl_ArcaneBar_Colors.notInterruptible.b);
+			end
 			self.barSpark:Hide();
 			self.barFlash:SetAlpha(0.0);
 			self.barFlash:Show();
@@ -577,6 +590,9 @@ function Perl_ArcaneBar_OnUpdate(self)
 		end
 		if (time == self.endTime) then
 			self:SetStatusBarColor(0.0, 1.0, 0.0);
+			if (notInterruptible) then
+				self:SetStatusBarColor(Perl_ArcaneBar_Colors.notInterruptible.r, Perl_ArcaneBar_Colors.notInterruptible.g, Perl_ArcaneBar_Colors.notInterruptible.b);
+			end
 			self.barSpark:Hide();
 			self.barFlash:SetAlpha(0.0);
 			self.barFlash:Show();
