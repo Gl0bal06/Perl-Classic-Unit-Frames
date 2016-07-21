@@ -1,3 +1,6 @@
+7.01 Beta 2 - May 30, 2016
+ - Add changes from version 6.04
+
 7.01 Beta 1 - May 28, 2016
  - All: Updated TOC Interface version to 70000
  - All: Added support for Demon Hunters
@@ -6,7 +9,10 @@
  - Player: Updated the frame names for the Monk and Paladin class frames
  - Player: The experience bar now maxes out at Level 110
 
-6.03 - May ??, 2016
+6.04 - May 30, 2016
+ - ArcaneBar: Cast bar is now grey when an uninterruptible channeled spell is being cast
+
+6.03 - May 28, 2016
  - All: Updated TOC Interface version to 60200
  - ArcaneBar: Cast bar is now grey when an uninterruptible spell is being cast
 
