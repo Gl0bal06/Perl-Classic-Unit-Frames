@@ -1,7 +1,4 @@
-7.01 Beta 2 - May 30, 2016
- - Add changes from version 6.04
-
-7.01 Beta 1 - May 28, 2016
+7.01 - July 19, 2016
  - All: Updated TOC Interface version to 70000
  - All: Added support for Demon Hunters
  - All: Standardized power bar colors
