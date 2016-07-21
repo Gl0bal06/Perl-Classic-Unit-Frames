@@ -72,7 +72,7 @@ function Perl_Party_Script_OnLoad(self)
 	self:RegisterEvent("PLAYER_LOGIN");
 
 	-- Scripts
-	self:SetScript("OnEvent", 
+	self:SetScript("OnEvent",
 		function(self, event, ...)
 			Perl_Party_Script_Events[event](self, ...);
 		end
@@ -144,7 +144,7 @@ function Perl_Party_OnLoad(self)
 	self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
-	self:SetScript("OnEvent", 
+	self:SetScript("OnEvent",
 		function(self, event, ...)
 			Perl_Party_Events[event](self, ...);
 		end
@@ -687,22 +687,8 @@ end
 function Perl_Party_Update_Mana_Bar(self)
 	local partypower = UnitPowerType(self.unit);
 
-	if (partypower == 0) then	-- Mana
-		self.manaBar:SetStatusBarColor(0, 0, 1, 1);
-		self.manaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-	elseif (partypower == 1) then	-- Energy
-		self.manaBar:SetStatusBarColor(1, 0, 0, 1);
-		self.manaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-	elseif (partypower == 2) then	-- Focus
-		self.manaBar:SetStatusBarColor(1, 0.5, 0, 1);
-		self.manaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-	elseif (partypower == 3) then	-- Rage
-		self.manaBar:SetStatusBarColor(1, 1, 0, 1);
-		self.manaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-	elseif (partypower == 6) then	-- Runic
-		self.manaBar:SetStatusBarColor(0, 0.82, 1, 1);
-		self.manaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
-	end
+	self.manaBar:SetStatusBarColor(PERL_POWER_TYPE_COLORS[partypower].r, PERL_POWER_TYPE_COLORS[partypower].g, PERL_POWER_TYPE_COLORS[partypower].b, 1);
+	self.manaBarBG:SetStatusBarColor(PERL_POWER_TYPE_COLORS[partypower].r, PERL_POWER_TYPE_COLORS[partypower].g, PERL_POWER_TYPE_COLORS[partypower].b, 0.25);
 end
 
 function Perl_Party_Update_Pet_Health(self)

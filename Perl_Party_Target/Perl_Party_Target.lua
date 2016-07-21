@@ -60,7 +60,7 @@ function Perl_Party_Target_Script_OnLoad(self)
 	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 
 	-- Scripts
-	self:SetScript("OnEvent", 
+	self:SetScript("OnEvent",
 		function(self, event, ...)
 			Perl_Party_Target_Events[event](self, ...);
 		end
@@ -233,7 +233,7 @@ function Perl_Party_Target_Work(self)
 			b = 1.0;
 		end
 		self.nameText:SetTextColor(r, g, b);
-	elseif (UnitIsTapped(self.unit) and not UnitIsTappedByPlayer(self.unit)) then
+	elseif (not UnitPlayerControlled(self.unit) and UnitIsTapDenied(self.unit)) then
 		self.nameText:SetTextColor(0.5,0.5,0.5);				-- not our tap
 	else
 		if (UnitIsVisible(self.unit)) then
@@ -354,18 +354,9 @@ function Perl_Party_Target_Work(self)
 		if (UnitPowerMax(self.unit) == 0) then
 			self.manaBar:SetStatusBarColor(0, 0, 0, 0);
 			self.manaBarBG:SetStatusBarColor(0, 0, 0, 0);
-		elseif (partytargetpower == 1) then
-			self.manaBar:SetStatusBarColor(1, 0, 0, 1);
-			self.manaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-		elseif (partytargetpower == 2) then
-			self.manaBar:SetStatusBarColor(1, 0.5, 0, 1);
-			self.manaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-		elseif (partytargetpower == 3) then
-			self.manaBar:SetStatusBarColor(1, 1, 0, 1);
-			self.manaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-		elseif (partytargetpower == 6) then
-			self.manaBar:SetStatusBarColor(0, 0.82, 1, 1);
-			self.manaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
+		elseif (partytargetpower) then
+			self.manaBar:SetStatusBarColor(PERL_POWER_TYPE_COLORS[partytargetpower].r, PERL_POWER_TYPE_COLORS[partytargetpower].g, PERL_POWER_TYPE_COLORS[partytargetpower].b, 1);
+			self.manaBarBG:SetStatusBarColor(PERL_POWER_TYPE_COLORS[partytargetpower].r, PERL_POWER_TYPE_COLORS[partytargetpower].g, PERL_POWER_TYPE_COLORS[partytargetpower].b, 0.25);
 		else
 			self.manaBar:SetStatusBarColor(0, 0, 1, 1);
 			self.manaBarBG:SetStatusBarColor(0, 0, 1, 0.25);

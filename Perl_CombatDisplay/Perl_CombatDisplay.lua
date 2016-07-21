@@ -71,7 +71,7 @@ function Perl_CombatDisplay_OnLoad(self)
 	self:RegisterEvent("UNIT_POWER");
 
 	-- Scripts
-	self:SetScript("OnEvent", 
+	self:SetScript("OnEvent",
 		function(self, event, ...)
 			Perl_CombatDisplay_Events[event](self, ...);
 		end
@@ -604,34 +604,15 @@ function Perl_CombatDisplay_Update_Combo_Points()
 end
 
 function Perl_CombatDisplay_UpdateBars()
-	playerpower = UnitPowerType("player");
+	local _;
+	playerpower, _ = UnitPowerType("player");
 
 	-- Set power type specific events and colors.
-	if (playerpower == 0) then		-- mana
-		Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0, 1, 1);
-		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-		-- Hide CP Bar
-		return;
-	elseif (playerpower == 1) then	-- rage
-		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-		-- Hide CP Bar
-		return;
-	elseif (playerpower == 2) then	-- focus
-		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-		-- Hide CP Bar
-		return;
-	elseif (playerpower == 3) then	-- energy
-		Perl_CombatDisplay_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
+	Perl_CombatDisplay_ManaBar:SetStatusBarColor(PERL_POWER_TYPE_COLORS[playerpower].r, PERL_POWER_TYPE_COLORS[playerpower].g, PERL_POWER_TYPE_COLORS[playerpower].b, 1);
+	Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(PERL_POWER_TYPE_COLORS[playerpower].r, PERL_POWER_TYPE_COLORS[playerpower].g, PERL_POWER_TYPE_COLORS[playerpower].b, 0.25);
+
+	if (playerpower == 3) then	-- energy
 		Perl_CombatDisplay_Update_Combo_Points();	-- Setup CP Bar
-		return;
-	elseif (playerpower == 6) then	-- runic
-		Perl_CombatDisplay_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
-		Perl_CombatDisplay_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
-		-- Hide CP Bar
-		return;
 	end
 end
 
@@ -651,14 +632,12 @@ function Perl_CombatDisplay_CheckForPets()
 end
 
 function Perl_CombatDisplay_Update_PetManaBarColor()
+	local _;
+	petpower, _ = UnitPowerType("pet");
+
 	-- Set mana bar color
-	if (UnitPowerType("pet") == 0) then		-- mana
-		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(0, 0, 1, 1);
-		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-	elseif (UnitPowerType("pet") == 2) then	-- focus
-		Perl_CombatDisplay_PetManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-		Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-	end
+	Perl_CombatDisplay_PetManaBar:SetStatusBarColor(PERL_POWER_TYPE_COLORS[petpower].r, PERL_POWER_TYPE_COLORS[petpower].g, PERL_POWER_TYPE_COLORS[petpower].b, 1);
+	Perl_CombatDisplay_PetManaBarBG:SetStatusBarColor(PERL_POWER_TYPE_COLORS[petpower].r, PERL_POWER_TYPE_COLORS[petpower].g, PERL_POWER_TYPE_COLORS[petpower].b, 0.25);
 end
 
 function Perl_CombatDisplay_Update_PetHealth()
@@ -947,34 +926,21 @@ function Perl_CombatDisplay_Target_OnUpdate_ManaBar(self, elapsed)
 end
 
 function Perl_CombatDisplay_Target_UpdateBars()
+	local _;
 	targetmanamax = UnitPowerMax("target");
-	targetpowertype = UnitPowerType("target");
+	targetpowertype, _ = UnitPowerType("target");
 
 	-- Set power type specific events and colors.
 	if (targetmanamax == 0) then
 		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(0, 0, 0, 1);
 		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(0, 0, 0, 0.25);
 		Perl_CombatDisplay_Target_ManaBarText:SetText();
-	elseif (targetpowertype == 0) then	-- mana
+	elseif (targetpowertype) then
+		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(PERL_POWER_TYPE_COLORS[targetpowertype].r, PERL_POWER_TYPE_COLORS[targetpowertype].g, PERL_POWER_TYPE_COLORS[targetpowertype].b, 1);
+		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(PERL_POWER_TYPE_COLORS[targetpowertype].r, PERL_POWER_TYPE_COLORS[targetpowertype].g, PERL_POWER_TYPE_COLORS[targetpowertype].b, 0.25);
+	else
 		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-		return;
-	elseif (targetpowertype == 1) then	-- rage
-		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-		return;
-	elseif (targetpowertype == 2) then	-- focus
-		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-		return;
-	elseif (targetpowertype == 3) then	-- energy
-		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-		return;
-	elseif (targetpowertype == 6) then	-- runic
-		Perl_CombatDisplay_Target_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
-		Perl_CombatDisplay_Target_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
-		return;
 	end
 end
 
@@ -1516,7 +1482,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 			else
 				clickthrough = nil;
 			end
-			
+
 			if (vartable["Global Settings"]["XPositionCD"] ~= nil) then
 				xpositioncd = vartable["Global Settings"]["XPositionCD"];
 			else
@@ -1587,7 +1553,7 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		end
 		if (xpositioncdt == nil) then
 			xpositioncdt = 0;
-		end 
+		end
 		if (ypositioncdt == nil) then
 			ypositioncdt = 350;
 		end

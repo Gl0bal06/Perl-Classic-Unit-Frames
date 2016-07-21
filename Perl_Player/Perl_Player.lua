@@ -97,7 +97,7 @@ function Perl_Player_OnLoad(self)
 	self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
-	self:SetScript("OnEvent", 
+	self:SetScript("OnEvent",
 		function(self, event, ...)
 			Perl_Player_Events[event](self, ...);
 		end
@@ -120,10 +120,10 @@ function Perl_Player_OnLoad(self)
 
 	TotemFrame:SetParent(Perl_Player_Frame);
 	RuneFrame:SetParent(Perl_Player_Frame);
-	PaladinPowerBar:SetParent(Perl_Player_Frame);
+	PaladinPowerBarFrame:SetParent(Perl_Player_Frame);
 	WarlockPowerFrame:SetParent(Perl_Player_Frame);
 	EclipseBarFrame:SetParent(Perl_Player_Frame);
-	MonkHarmonyBar:SetParent(Perl_Player_Frame);
+	MonkHarmonyBarFrame:SetParent(Perl_Player_Frame);
 	PriestBarFrame:SetParent(Perl_Player_Frame);
 end
 
@@ -725,25 +725,12 @@ function Perl_Player_OnUpdate_ManaBar(self, elapsed)
 end
 
 function Perl_Player_Update_Mana_Bar()
-	playerpower = UnitPowerType("player");
+	local _;
+	playerpower, _ = UnitPowerType("player");
 
 	-- Set mana bar color
-	if (playerpower == 0) then		-- mana
-		Perl_Player_ManaBar:SetStatusBarColor(0, 0, 1, 1);
-		Perl_Player_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-	elseif (playerpower == 1) then	-- rage
-		Perl_Player_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-		Perl_Player_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-	elseif (playerpower == 2) then	-- focus
-		Perl_Player_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-		Perl_Player_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-	elseif (playerpower == 3) then	-- energy
-		Perl_Player_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-		Perl_Player_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-	elseif (playerpower == 6) then	-- runic
-		Perl_Player_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
-		Perl_Player_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
-	end
+	Perl_Player_ManaBar:SetStatusBarColor(PERL_POWER_TYPE_COLORS[playerpower].r, PERL_POWER_TYPE_COLORS[playerpower].g, PERL_POWER_TYPE_COLORS[playerpower].b, 1);
+	Perl_Player_ManaBarBG:SetStatusBarColor(PERL_POWER_TYPE_COLORS[playerpower].r, PERL_POWER_TYPE_COLORS[playerpower].g, PERL_POWER_TYPE_COLORS[playerpower].b, 0.25);
 
 	Perl_Player_FiveSecondRule:Hide();									-- reset the five second rule ticker
 	fivesecondrulelastmana = 0;
@@ -754,7 +741,7 @@ function Perl_Player_Update_Experience()
 	Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 	Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 
-	if (UnitLevel("player") ~= 100) then
+	if (UnitLevel("player") ~= 110) then
 		-- XP Bar stuff
 		local playerxp = UnitXP("player");
 		local playerxpmax = UnitXPMax("player");
@@ -782,9 +769,9 @@ function Perl_Player_Update_Experience()
 		Perl_Player_XPBar:SetValue(1);
 		Perl_Player_XPRestBar:SetValue(1);
 
-		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_LEVEL_ONEHUNDRED);
+		Perl_Player_XPBarText:SetText(PERL_LOCALIZED_PLAYER_LEVEL_ONEHUNDREDTEN);
 	end
-	
+
 end
 
 function Perl_Player_Update_Reputation()
@@ -1349,17 +1336,17 @@ function Perl_Player_Frame_Style()
 			Perl_Player_StatsFrame:SetPoint("TOPLEFT", Perl_Player_NameFrame, "BOTTOMLEFT", 0, 2);
 			Perl_Player_StatsFrame:SetWidth(Perl_Player_StatsFrame:GetWidth() + 32);
 			Perl_Player_StatsFrame_CastClickOverlay:SetWidth(Perl_Player_StatsFrame_CastClickOverlay:GetWidth() + 30);
-			
+
 			Perl_Player_HealthBar:SetWidth(Perl_Player_HealthBar:GetWidth() + 30);
 			Perl_Player_HealthBarFadeBar:SetWidth(Perl_Player_HealthBarFadeBar:GetWidth() + 30);
 			Perl_Player_HealthBarBG:SetWidth(Perl_Player_HealthBarBG:GetWidth() + 30);
 			Perl_Player_HealthBar_CastClickOverlay:SetWidth(Perl_Player_HealthBar_CastClickOverlay:GetWidth() + 30);
-			
+
 			Perl_Player_ManaBar:SetWidth(Perl_Player_ManaBar:GetWidth() + 30);
 			Perl_Player_ManaBarFadeBar:SetWidth(Perl_Player_ManaBarFadeBar:GetWidth() + 30);
 			Perl_Player_ManaBarBG:SetWidth(Perl_Player_ManaBarBG:GetWidth() + 30);
 			Perl_Player_ManaBar_CastClickOverlay:SetWidth(Perl_Player_ManaBar_CastClickOverlay:GetWidth() + 30);
-			
+
 			Perl_Player_DruidBar:SetWidth(Perl_Player_DruidBar:GetWidth() + 30);
 			--Perl_Player_DruidBarFadeBar:SetWidth(Perl_Player_DruidBarFadeBar:GetWidth() + 30);
 			Perl_Player_DruidBarBG:SetWidth(Perl_Player_DruidBarBG:GetWidth() + 30);
@@ -1466,9 +1453,9 @@ function Perl_Player_Frame_Style()
 
 		-- Hi-jack the Blizzard Paladin power bar
 		if (paladinpowerbar == 1) then
-			PaladinPowerBar:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 15, 8);
+			PaladinPowerBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 15, 8);
 		else
-			PaladinPowerBar:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+			PaladinPowerBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
 		-- Hi-jack the Blizzard Warlock shard bar frame
@@ -1488,12 +1475,12 @@ function Perl_Player_Frame_Style()
 		-- Hi-jack the Blizzard Monk harmony bar frame
 		if (harmonybarframe == 1) then
 			if (compactmode == 1 and shortbars == 1) then
-				MonkHarmonyBar:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 67, 14);
+				MonkHarmonyBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 67, 14);
 			else
-				MonkHarmonyBar:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 82, 14);
+				MonkHarmonyBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 82, 14);
 			end
 		else
-			MonkHarmonyBar:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+			MonkHarmonyBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
 		-- Hi-jack the Blizzard Priest bar frame
@@ -2316,7 +2303,7 @@ function Perl_Player_XPTooltip(self)
 	GameTooltip_SetDefaultAnchor(GameTooltip, self);
 	if (xpbarstate == 1) then
 		local playerlevel = UnitLevel("player");		-- Player's next level
-		if (playerlevel < 100) then
+		if (playerlevel < 110) then
 			playerxp = UnitXP("player");				-- Player's current XP
 			playerxpmax = UnitXPMax("player");			-- Experience for the current level
 			local playerxprest = GetXPExhaustion();		-- Amount of bonus xp we have
@@ -2341,7 +2328,7 @@ function Perl_Player_XPTooltip(self)
 		else
 			GameTooltip:SetText(PERL_LOCALIZED_PLAYER_NOMORE_EXPERIENCE, 255/255, 209/255, 0/255);
 		end
-		
+
 	elseif (xpbarstate == 2) then
 		local rankNumber, rankName, rankProgress;		-- Some variables
 		rankNumber = UnitPVPRank("player")

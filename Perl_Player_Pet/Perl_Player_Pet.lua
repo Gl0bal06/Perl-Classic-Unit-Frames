@@ -76,7 +76,7 @@ function Perl_Player_Pet_OnLoad(self)
 	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 
 	-- Scripts
-	self:SetScript("OnEvent", 
+	self:SetScript("OnEvent",
 		function(self, event, ...)
 			Perl_Player_Pet_Events[event](self, ...);
 		end
@@ -139,7 +139,7 @@ function Perl_Player_Pet_Events:UNIT_POWER(arg1, arg2)
 		else
 			Perl_Player_PetFrame_SetHappiness();				-- Update pet happiness icon
 		end
-		
+
 	end
 end
 Perl_Player_Pet_Events.UNIT_MAXPOWER = Perl_Player_Pet_Events.UNIT_POWER;
@@ -410,22 +410,16 @@ function Perl_Player_Pet_Update_Mana()
 end
 
 function Perl_Player_Pet_Update_Mana_Bar()
+	local _;
+	petpower, _ = UnitPowerType("pet");
+
 	-- Set mana bar color
 	if (UnitPowerType("pet") == 0) then
 		Perl_Player_Pet_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
-	elseif (UnitPowerType("pet") == 1) then
-		Perl_Player_Pet_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-	elseif (UnitPowerType("pet") == 2) then
-		Perl_Player_Pet_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-	elseif (UnitPowerType("pet") == 3) then
-		Perl_Player_Pet_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-	elseif (UnitPowerType("pet") == 6) then
-		Perl_Player_Pet_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
-		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
+	elseif (petpower) then
+		Perl_Player_Pet_ManaBar:SetStatusBarColor(PERL_POWER_TYPE_COLORS[petpower].r, PERL_POWER_TYPE_COLORS[petpower].g, PERL_POWER_TYPE_COLORS[petpower].b, 1);
+		Perl_Player_Pet_ManaBarBG:SetStatusBarColor(PERL_POWER_TYPE_COLORS[petpower].r, PERL_POWER_TYPE_COLORS[petpower].g, PERL_POWER_TYPE_COLORS[petpower].b, 0.25);
 	end
 end
 
@@ -702,7 +696,7 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 					b = 1.0;
 				end
 				Perl_Player_Pet_Target_NameBarText:SetTextColor(r, g, b);
-			elseif (UnitIsTapped("pettarget") and not UnitIsTappedByPlayer("pettarget")) then
+			elseif (not UnitPlayerControlled("pettarget") and UnitIsTapDenied("pettarget")) then
 				Perl_Player_Pet_Target_NameBarText:SetTextColor(0.5,0.5,0.5);	-- not our tap
 			else
 				if (UnitIsVisible("pettarget")) then
@@ -853,21 +847,13 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 
 			-- Begin: Update the mana bar color
 			pettargetpower = UnitPowerType("pettarget");
+
 			if (UnitPowerMax("pettarget") == 0) then
 				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(0, 0, 0, 1);
 				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(0, 0, 0, 0.25);
-			elseif (pettargetpower == 1) then
-				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-			elseif (pettargetpower == 2) then
-				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-			elseif (pettargetpower == 3) then
-				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-			elseif (pettargetpower == 6) then
-				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
-				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
+			elseif (pettargetpower) then
+				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(PERL_POWER_TYPE_COLORS[pettargetpower].r, PERL_POWER_TYPE_COLORS[pettargetpower].g, PERL_POWER_TYPE_COLORS[pettargetpower].b, 1);
+				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(PERL_POWER_TYPE_COLORS[pettargetpower].r, PERL_POWER_TYPE_COLORS[pettargetpower].g, PERL_POWER_TYPE_COLORS[pettargetpower].b, 0.25);
 			else
 				Perl_Player_Pet_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 				Perl_Player_Pet_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);

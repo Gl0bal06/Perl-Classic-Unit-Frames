@@ -70,7 +70,7 @@ function Perl_Target_Target_OnLoad(self)
 	self:RegisterEvent("PLAYER_TARGET_CHANGED");
 
 	-- Scripts
-	self:SetScript("OnEvent", 
+	self:SetScript("OnEvent",
 		function(self, event, ...)
 			Perl_Target_Target_Events[event](self, ...);
 		end
@@ -203,7 +203,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 					b = 1.0;
 				end
 				Perl_Target_Target_NameBarText:SetTextColor(r, g, b);
-			elseif (UnitIsTapped("targettarget") and not UnitIsTappedByPlayer("targettarget")) then
+			elseif (not UnitPlayerControlled("targettarget") and UnitIsTapDenied("targettarget")) then
 				Perl_Target_Target_NameBarText:SetTextColor(0.5,0.5,0.5);	-- not our tap
 			else
 				if (UnitIsVisible("targettarget")) then
@@ -360,18 +360,9 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 				if (UnitPowerMax("targettarget") == 0) then
 					Perl_Target_Target_ManaBar:SetStatusBarColor(0, 0, 0, 1);
 					Perl_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 0, 0.25);
-				elseif (targettargetpower == 1) then
-					Perl_Target_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-					Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-				elseif (targettargetpower == 2) then
-					Perl_Target_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-					Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-				elseif (targettargetpower == 3) then
-					Perl_Target_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-					Perl_Target_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-				elseif (targettargetpower == 6) then
-					Perl_Target_Target_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
-					Perl_Target_Target_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
+				elseif (targettargetpower) then
+					Perl_Target_Target_ManaBar:SetStatusBarColor(PERL_POWER_TYPE_COLORS[targettargetpower].r, PERL_POWER_TYPE_COLORS[targettargetpower].g, PERL_POWER_TYPE_COLORS[targettargetpower].b, 1);
+					Perl_Target_Target_ManaBarBG:SetStatusBarColor(PERL_POWER_TYPE_COLORS[targettargetpower].r, PERL_POWER_TYPE_COLORS[targettargetpower].g, PERL_POWER_TYPE_COLORS[targettargetpower].b, 0.25);
 				else
 					Perl_Target_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 					Perl_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);
@@ -449,7 +440,7 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 					b = 1.0;
 				end
 				Perl_Target_Target_Target_NameBarText:SetTextColor(r, g, b);
-			elseif (UnitIsTapped("targettargettarget") and not UnitIsTappedByPlayer("targettargettarget")) then
+			elseif (not UnitPlayerControlled("targettargettarget") and UnitIsTapDenied("targettargettarget")) then
 				Perl_Target_Target_Target_NameBarText:SetTextColor(0.5,0.5,0.5);	-- not our tap
 			else
 				if (UnitIsVisible("targettargettarget")) then
@@ -607,18 +598,9 @@ function Perl_Target_Target_OnUpdate(self, elapsed)
 				if (UnitPowerMax("targettargettarget") == 0) then
 					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(0, 0, 0, 1);
 					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 0, 0.25);
-				elseif (targettargettargetpower == 1) then
-					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-				elseif (targettargettargetpower == 2) then
-					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-				elseif (targettargettargetpower == 3) then
-					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-				elseif (targettargettargetpower == 6) then
-					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
-					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
+				elseif (targettargettargetpower) then
+					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(PERL_POWER_TYPE_COLORS[targettargettargetpower].r, PERL_POWER_TYPE_COLORS[targettargettargetpower].g, PERL_POWER_TYPE_COLORS[targettargettargetpower].b, 1);
+					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(PERL_POWER_TYPE_COLORS[targettargettargetpower].r, PERL_POWER_TYPE_COLORS[targettargettargetpower].g, PERL_POWER_TYPE_COLORS[targettargettargetpower].b, 0.25);
 				else
 					Perl_Target_Target_Target_ManaBar:SetStatusBarColor(0, 0, 1, 1);
 					Perl_Target_Target_Target_ManaBarBG:SetStatusBarColor(0, 0, 1, 0.25);

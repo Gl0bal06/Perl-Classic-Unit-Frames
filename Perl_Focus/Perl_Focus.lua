@@ -81,7 +81,7 @@ function Perl_Focus_OnLoad(self)
 	self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
-	self:SetScript("OnEvent", 
+	self:SetScript("OnEvent",
 		function(self, event, ...)
 			Perl_Focus_Events[event](self, ...);
 		end
@@ -435,7 +435,7 @@ function Perl_Focus_Update_Health()
 				Perl_Focus_HealthBarText:SetText(focushealth.."/"..focushealthmax);
 				Perl_Focus_HealthBarTextRight:SetText("-"..focushealthmax - focushealth);
 			end
-			
+
 		else
 			if (compactpercent == 0) then
 				if (healermode == 0) then
@@ -596,24 +596,9 @@ function Perl_Focus_Update_Mana_Bar()
 	if (UnitPowerMax("focus") == 0) then
 		Perl_Focus_ManaBar:Hide();
 		Perl_Focus_ManaBarBG:Hide();
-	elseif (focuspower == 1) then
-		Perl_Focus_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-		Perl_Focus_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-		Perl_Focus_ManaBar:Show();
-		Perl_Focus_ManaBarBG:Show();
-	elseif (focuspower == 2) then
-		Perl_Focus_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-		Perl_Focus_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-		Perl_Focus_ManaBar:Show();
-		Perl_Focus_ManaBarBG:Show();
-	elseif (focuspower == 3) then
-		Perl_Focus_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-		Perl_Focus_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-		Perl_Focus_ManaBar:Show();
-		Perl_Focus_ManaBarBG:Show();
-	elseif (focuspower == 6) then
-		Perl_Focus_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
-		Perl_Focus_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
+	elseif (focuspower) then
+		Perl_Focus_ManaBar:SetStatusBarColor(PERL_POWER_TYPE_COLORS[focuspower].r, PERL_POWER_TYPE_COLORS[focuspower].g, PERL_POWER_TYPE_COLORS[focuspower].b, 1);
+		Perl_Focus_ManaBarBG:SetStatusBarColor(PERL_POWER_TYPE_COLORS[focuspower].r, PERL_POWER_TYPE_COLORS[focuspower].g, PERL_POWER_TYPE_COLORS[focuspower].b, 0.25);
 		Perl_Focus_ManaBar:Show();
 		Perl_Focus_ManaBarBG:Show();
 	else
@@ -707,7 +692,7 @@ function Perl_Focus_Update_Text_Color()
 			b = 1.0;
 		end
 		Perl_Focus_NameBarText:SetTextColor(r, g, b);
-	elseif (UnitIsTapped("focus") and not UnitIsTappedByPlayer("focus")) then
+	elseif (not UnitPlayerControlled("focus") and UnitIsTapDenied("focus")) then
 		Perl_Focus_NameBarText:SetTextColor(0.5, 0.5, 0.5);		-- not our tap
 	else
 		if (UnitIsVisible("focus")) then
@@ -1416,7 +1401,7 @@ function Perl_Focus_GetVars(index, updateflag)
 	locked = Perl_Focus_Config[index]["Locked"];
 	showclassicon = Perl_Focus_Config[index]["ClassIcon"];
 	showclassframe = Perl_Focus_Config[index]["ClassFrame"];
-	showpvpicon = Perl_Focus_Config[index]["PvPIcon"]; 
+	showpvpicon = Perl_Focus_Config[index]["PvPIcon"];
 	numbuffsshown = Perl_Focus_Config[index]["Buffs"];
 	numdebuffsshown = Perl_Focus_Config[index]["Debuffs"];
 	scale = Perl_Focus_Config[index]["Scale"];

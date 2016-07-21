@@ -59,7 +59,7 @@ function Perl_Config_OnLoad(self)
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
 
 	-- Scripts
-	self:SetScript("OnEvent", 
+	self:SetScript("OnEvent",
 		function(self, event, ...)
 			Perl_Config_Events[event](self, ...);
 		end
@@ -647,7 +647,7 @@ function Perl_Config_PositioningMode_Disable()
 		Perl_Player_Pet_Frame:SetAttribute("unit", "pet");
 		Perl_Player_Pet_Target_Frame:SetAttribute("unit", "pettarget");
 		Perl_Player_Pet_Update_Once();
-		
+
 	end
 
 	if (Perl_Target_Frame) then
@@ -2744,17 +2744,18 @@ end
 -- Localizing some Blizzard Arrays --
 -------------------------------------
 PERL_CLASS_ICON_TCOORDS = {
-	["WARRIOR"]	= {0, 0.25, 0, 0.25},
-	["MAGE"]	= {0.25, 0.49609375, 0, 0.25},
-	["ROGUE"]	= {0.49609375, 0.7421875, 0, 0.25},
-	["DRUID"]	= {0.7421875, 0.98828125, 0, 0.25},
-	["HUNTER"]	= {0, 0.25, 0.25, 0.5},
-	["SHAMAN"]	= {0.25, 0.49609375, 0.25, 0.5},
-	["PRIEST"]	= {0.49609375, 0.7421875, 0.25, 0.5},
-	["WARLOCK"]	= {0.7421875, 0.98828125, 0.25, 0.5},
-	["PALADIN"]	= {0, 0.25, 0.5, 0.75},
-	["DEATHKNIGHT"]	= {0.25, 0.49609375, 0.5, 0.75},
-	["MONK"]	= {0.49609375, 0.7421875, 0.5, 0.75},
+	["WARRIOR"]		= {0, 0.25, 0, 0.25},
+	["MAGE"]		= {0.25, 0.49609375, 0, 0.25},
+	["ROGUE"]		= {0.49609375, 0.7421875, 0, 0.25},
+	["DRUID"]		= {0.7421875, 0.98828125, 0, 0.25},
+	["HUNTER"]		= {0, 0.25, 0.25, 0.5},
+	["SHAMAN"]	 	= {0.25, 0.49609375, 0.25, 0.5},
+	["PRIEST"]		= {0.49609375, 0.7421875, 0.25, 0.5},
+	["WARLOCK"]		= {0.7421875, 0.98828125, 0.25, 0.5},
+	["PALADIN"]		= {0, 0.25, 0.5, 0.75},
+	["DEATHKNIGHT"]	= {0.25, .5, 0.5, .75},
+	["MONK"]		= {0.5, 0.73828125, 0.5, .75},
+	["DEMONHUNTER"]	= {0.7421875, 0.98828125, 0.5, 0.75},
 };
 
 PERL_FACTION_BAR_COLORS = {
@@ -2770,17 +2771,52 @@ PERL_FACTION_BAR_COLORS = {
 
 PERL_RAID_CLASS_COLORS = {
 	["HUNTER"] = { r = 0.67, g = 0.83, b = 0.45, colorStr = "ffabd473" },
-	["WARLOCK"] = { r = 0.58, g = 0.51, b = 0.79, colorStr = "ff9482c9" },
+	["WARLOCK"] = { r = 0.53, g = 0.53, b = 0.93, colorStr = "ff8788ee" },
 	["PRIEST"] = { r = 1.0, g = 1.0, b = 1.0, colorStr = "ffffffff" },
 	["PALADIN"] = { r = 0.96, g = 0.55, b = 0.73, colorStr = "fff58cba" },
-	["MAGE"] = { r = 0.41, g = 0.8, b = 0.94, colorStr = "ff69ccf0" },
+	["MAGE"] = { r = 0.25, g = 0.78, b = 0.92, colorStr = "ff3fc7eb" },
 	["ROGUE"] = { r = 1.0, g = 0.96, b = 0.41, colorStr = "fffff569" },
 	["DRUID"] = { r = 1.0, g = 0.49, b = 0.04, colorStr = "ffff7d0a" },
 	["SHAMAN"] = { r = 0.0, g = 0.44, b = 0.87, colorStr = "ff0070de" },
 	["WARRIOR"] = { r = 0.78, g = 0.61, b = 0.43, colorStr = "ffc79c6e" },
 	["DEATHKNIGHT"] = { r = 0.77, g = 0.12 , b = 0.23, colorStr = "ffc41f3b" },
 	["MONK"] = { r = 0.0, g = 1.00 , b = 0.59, colorStr = "ff00ff96" },
+	["DEMONHUNTER"] = { r = 0.64, g = 0.19, b = 0.79, colorStr = "ffa330c9" },
 };
+
+PERL_POWER_TYPE_COLORS = {
+	["MANA"] = { r = 0.00, g = 0.00, b = 1.00 },
+	["RAGE"] = { r = 1.00, g = 0.00, b = 0.00 },
+	["FOCUS"] = { r = 1.00, g = 0.50, b = 0.25 },
+	["ENERGY"] = { r = 1.00, g = 1.00, b = 0.00 },
+	["COMBO_POINTS"] = { r = 1.00, g = 0.96, b = 0.41 },
+	["RUNES"] = { r = 0.50, g = 0.50, b = 0.50 },
+	["RUNIC_POWER"] = { r = 0.00, g = 0.82, b = 1.00 },
+	["SOUL_SHARDS"] = { r = 0.50, g = 0.32, b = 0.55 },
+	["LUNAR_POWER"] = { r = 0.30, g = 0.52, b = 0.90 },
+	["HOLY_POWER"] = { r = 0.95, g = 0.90, b = 0.60 },
+	["MAELSTROM"] = { r = 0.00, g = 0.50, b = 1.00 },
+	["INSANITY"] = { r = 0.40, g = 0, b = 0.80 },
+	["CHI"] = { r = 0.71, g = 1.0, b = 0.92 },
+	["ARCANE_CHARGES"] = { r = 0.1, g = 0.1, b = 0.98 },
+	["FURY"] = { r = 0.788, g = 0.259, b = 0.992 },
+	["PAIN"] = { r = 1, g = 0, b = 0 },
+}
+
+PERL_POWER_TYPE_COLORS[0] = PERL_POWER_TYPE_COLORS["MANA"];
+PERL_POWER_TYPE_COLORS[1] = PERL_POWER_TYPE_COLORS["RAGE"];
+PERL_POWER_TYPE_COLORS[2] = PERL_POWER_TYPE_COLORS["FOCUS"];
+PERL_POWER_TYPE_COLORS[3] = PERL_POWER_TYPE_COLORS["ENERGY"];
+PERL_POWER_TYPE_COLORS[4] = PERL_POWER_TYPE_COLORS["CHI"];
+PERL_POWER_TYPE_COLORS[5] = PERL_POWER_TYPE_COLORS["RUNES"];
+PERL_POWER_TYPE_COLORS[6] = PERL_POWER_TYPE_COLORS["RUNIC_POWER"];
+PERL_POWER_TYPE_COLORS[7] = PERL_POWER_TYPE_COLORS["SOUL_SHARDS"];
+PERL_POWER_TYPE_COLORS[8] = PERL_POWER_TYPE_COLORS["LUNAR_POWER"];
+PERL_POWER_TYPE_COLORS[9] = PERL_POWER_TYPE_COLORS["HOLY_POWER"];
+PERL_POWER_TYPE_COLORS[11] = PERL_POWER_TYPE_COLORS["MAELSTROM"];
+PERL_POWER_TYPE_COLORS[13] = PERL_POWER_TYPE_COLORS["INSANITY"];
+PERL_POWER_TYPE_COLORS[17] = PERL_POWER_TYPE_COLORS["FURY"];
+PERL_POWER_TYPE_COLORS[18] = PERL_POWER_TYPE_COLORS["PAIN"];
 
 PerlDebuffTypeColor = { };
 PerlDebuffTypeColor["none"]	= { r = 0.80, g = 0, b = 0 };

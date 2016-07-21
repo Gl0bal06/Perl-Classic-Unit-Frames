@@ -90,7 +90,7 @@ function Perl_Target_OnLoad(self)
 	self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
-	self:SetScript("OnEvent", 
+	self:SetScript("OnEvent",
 		function(self, event, ...)
 			Perl_Target_Events[event](self, ...);
 		end
@@ -498,7 +498,7 @@ function Perl_Target_Update_Health()
 				Perl_Target_HealthBarText:SetText(targethealth.."/"..targethealthmax);
 				Perl_Target_HealthBarTextRight:SetText("-"..targethealthmax - targethealth);
 			end
-			
+
 		else
 			if (compactpercent == 0) then
 				if (healermode == 0) then
@@ -712,24 +712,9 @@ function Perl_Target_Update_Mana_Bar()
 	if (UnitPowerMax("target") == 0) then
 		Perl_Target_ManaBar:Hide();
 		Perl_Target_ManaBarBG:Hide();
-	elseif (targetpower == 1) then
-		Perl_Target_ManaBar:SetStatusBarColor(1, 0, 0, 1);
-		Perl_Target_ManaBarBG:SetStatusBarColor(1, 0, 0, 0.25);
-		Perl_Target_ManaBar:Show();
-		Perl_Target_ManaBarBG:Show();
-	elseif (targetpower == 2) then
-		Perl_Target_ManaBar:SetStatusBarColor(1, 0.5, 0, 1);
-		Perl_Target_ManaBarBG:SetStatusBarColor(1, 0.5, 0, 0.25);
-		Perl_Target_ManaBar:Show();
-		Perl_Target_ManaBarBG:Show();
-	elseif (targetpower == 3) then
-		Perl_Target_ManaBar:SetStatusBarColor(1, 1, 0, 1);
-		Perl_Target_ManaBarBG:SetStatusBarColor(1, 1, 0, 0.25);
-		Perl_Target_ManaBar:Show();
-		Perl_Target_ManaBarBG:Show();
-	elseif (targetpower == 6) then
-		Perl_Target_ManaBar:SetStatusBarColor(0, 0.82, 1, 1);
-		Perl_Target_ManaBarBG:SetStatusBarColor(0, 0.82, 1, 0.25);
+	elseif (targetpower) then
+		Perl_Target_ManaBar:SetStatusBarColor(PERL_POWER_TYPE_COLORS[targetpower].r, PERL_POWER_TYPE_COLORS[targetpower].g, PERL_POWER_TYPE_COLORS[targetpower].b, 1);
+		Perl_Target_ManaBarBG:SetStatusBarColor(PERL_POWER_TYPE_COLORS[targetpower].r, PERL_POWER_TYPE_COLORS[targetpower].g, PERL_POWER_TYPE_COLORS[targetpower].b, 0.25);
 		Perl_Target_ManaBar:Show();
 		Perl_Target_ManaBarBG:Show();
 	else
@@ -771,7 +756,7 @@ function Perl_Target_Update_Combo_Points()
 			Perl_Target_NameFrame_CPMeter:SetValue(combopoints);
 			if (combopoints == 5) then
 				Perl_Target_NameFrame_CPMeter:Show();
-				
+
 			elseif (combopoints == 4) then
 				Perl_Target_NameFrame_CPMeter:Show();
 			elseif (combopoints == 3) then
@@ -831,7 +816,7 @@ function Perl_Target_Update_Name()
 		end
 	end
 	Perl_Target_NameBarText:SetText(UnitName("target"));
-end	
+end
 
 function Perl_Target_Update_Text_Color()
 	if (classcolorednames == 1) then
@@ -872,7 +857,7 @@ function Perl_Target_Update_Text_Color()
 			b = 1.0;
 		end
 		Perl_Target_NameBarText:SetTextColor(r, g, b);
-	elseif (UnitIsTapped("target") and not UnitIsTappedByPlayer("target")) then
+	elseif (not UnitPlayerControlled("target") and UnitIsTapDenied("target")) then
 		Perl_Target_NameBarText:SetTextColor(0.5, 0.5, 0.5);				-- not our tap
 	else
 		if (UnitIsVisible("target")) then
@@ -915,7 +900,7 @@ function Perl_Target_Update_Text_Color()
 			end
 			Perl_Target_NameBarText:SetTextColor(r, g, b);
 		end
-		
+
 	end
 end
 
@@ -1058,7 +1043,7 @@ function Perl_Target_Update_Threat()
 			Perl_Target_RareEliteBarText:SetText(PERL_LOCALIZED_TARGET_NA);
 		end
 	end
-	
+
 end
 
 function Perl_Target_Buff_Debuff_Background()
@@ -1803,7 +1788,7 @@ function Perl_Target_GetVars(index, updateflag)
 	showcp = Perl_Target_Config[index]["ComboPoints"];
 	showclassicon = Perl_Target_Config[index]["ClassIcon"];
 	showclassframe = Perl_Target_Config[index]["ClassFrame"];
-	showpvpicon = Perl_Target_Config[index]["PvPIcon"]; 
+	showpvpicon = Perl_Target_Config[index]["PvPIcon"];
 	numbuffsshown = Perl_Target_Config[index]["Buffs"];
 	numdebuffsshown = Perl_Target_Config[index]["Debuffs"];
 	scale = Perl_Target_Config[index]["Scale"];
