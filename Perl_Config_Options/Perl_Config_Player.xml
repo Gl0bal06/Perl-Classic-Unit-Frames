@@ -624,7 +624,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parent_CheckButton28" inherits="UICheckButtonTemplate" id="28">
+			<!-- <CheckButton name="$parent_CheckButton28" inherits="UICheckButtonTemplate" id="28">
 				<Size>
 					<AbsDimension x="20" y="20"/>
 				</Size>
@@ -664,7 +664,7 @@
 						Perl_Config_Player_Show_Rune_Frame_Update();
 					</OnClick>
 				</Scripts>
-			</CheckButton>
+			</CheckButton> -->
 
 			<CheckButton name="$parent_CheckButton30" inherits="UICheckButtonTemplate" id="30">
 				<Size>
@@ -700,94 +700,10 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_PALADIN_POWER_BAR);
+						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_CLASS_RESOURCE_FRAME);
 					</OnLoad>
 					<OnClick>
-						Perl_Config_Player_Show_Paladin_Power_Bar_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton32" inherits="UICheckButtonTemplate" id="32">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton31">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_SHARD_BAR_FRAME);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Player_Show_Shard_Bar_Frame_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton33" inherits="UICheckButtonTemplate" id="33">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton32">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_ECLIPSE_BAR_FRAME);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Player_Show_Eclipse_Bar_Frame_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton34" inherits="UICheckButtonTemplate" id="34">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton33">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_HARMONY_BAR_FRAME);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Player_Show_Harmony_Bar_Frame_Update();
-					</OnClick>
-				</Scripts>
-			</CheckButton>
-
-			<CheckButton name="$parent_CheckButton35" inherits="UICheckButtonTemplate" id="35">
-				<Size>
-					<AbsDimension x="20" y="20"/>
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent_CheckButton34">
-						<Offset>
-							<AbsDimension x="0" y="-20"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnLoad>
-						_G[self:GetName().."Text"]:SetText(PERL_LOCALIZED_CONFIG_PLAYER_PRIEST_BAR_FRAME);
-					</OnLoad>
-					<OnClick>
-						Perl_Config_Player_Show_Priest_Bar_Frame_Update();
+						Perl_Config_Player_Show_Class_Resource_Frame_Update();
 					</OnClick>
 				</Scripts>
 			</CheckButton>

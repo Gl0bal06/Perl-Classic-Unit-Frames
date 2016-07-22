@@ -147,17 +147,17 @@ function Perl_Config_Player_Set_Values()
 		Perl_Config_Player_Frame_CheckButton27:SetChecked(false);
 	end
 
-	if (vartable["totemtimers"] == 1) then
-		Perl_Config_Player_Frame_CheckButton28:SetChecked(true);
-	else
-		Perl_Config_Player_Frame_CheckButton28:SetChecked(false);
-	end
+	-- if (vartable["totemtimers"] == 1) then
+	-- 	Perl_Config_Player_Frame_CheckButton28:SetChecked(true);
+	-- else
+	-- 	Perl_Config_Player_Frame_CheckButton28:SetChecked(false);
+	-- end
 
-	if (vartable["runeframe"] == 1) then
-		Perl_Config_Player_Frame_CheckButton29:SetChecked(true);
-	else
-		Perl_Config_Player_Frame_CheckButton29:SetChecked(false);
-	end
+	-- if (vartable["runeframe"] == 1) then
+	-- 	Perl_Config_Player_Frame_CheckButton29:SetChecked(true);
+	-- else
+	-- 	Perl_Config_Player_Frame_CheckButton29:SetChecked(false);
+	-- end
 
 	if (vartable["pvptimer"] == 1) then
 		Perl_Config_Player_Frame_CheckButton30:SetChecked(true);
@@ -165,34 +165,10 @@ function Perl_Config_Player_Set_Values()
 		Perl_Config_Player_Frame_CheckButton30:SetChecked(false);
 	end
 
-	if (vartable["paladinpowerbar"] == 1) then
+	if (vartable["classresourceframe"] == 1) then
 		Perl_Config_Player_Frame_CheckButton31:SetChecked(true);
 	else
 		Perl_Config_Player_Frame_CheckButton31:SetChecked(false);
-	end
-
-	if (vartable["shardbarframe"] == 1) then
-		Perl_Config_Player_Frame_CheckButton32:SetChecked(true);
-	else
-		Perl_Config_Player_Frame_CheckButton32:SetChecked(false);
-	end
-
-	if (vartable["eclipsebarframe"] == 1) then
-		Perl_Config_Player_Frame_CheckButton33:SetChecked(true);
-	else
-		Perl_Config_Player_Frame_CheckButton33:SetChecked(false);
-	end
-
-	if (vartable["harmonybarframe"] == 1) then
-		Perl_Config_Player_Frame_CheckButton34:SetChecked(true);
-	else
-		Perl_Config_Player_Frame_CheckButton34:SetChecked(false);
-	end
-
-	if (vartable["priestbarframe"] == 1) then
-		Perl_Config_Player_Frame_CheckButton35:SetChecked(true);
-	else
-		Perl_Config_Player_Frame_CheckButton35:SetChecked(false);
 	end
 
 	Perl_Config_Player_Frame_Slider1Low:SetText(PERL_LOCALIZED_CONFIG_SMALL);
@@ -369,21 +345,21 @@ function Perl_Config_Player_Show_Five_second_Rule_Update()
 	end
 end
 
-function Perl_Config_Player_Show_Totem_Timers_Update()
-	if (Perl_Config_Player_Frame_CheckButton28:GetChecked() == true) then
-		Perl_Player_Set_Show_Totem_Timers(1);
-	else
-		Perl_Player_Set_Show_Totem_Timers(0);
-	end
-end
+-- function Perl_Config_Player_Show_Totem_Timers_Update()
+-- 	if (Perl_Config_Player_Frame_CheckButton28:GetChecked() == true) then
+-- 		Perl_Player_Set_Show_Totem_Timers(1);
+-- 	else
+-- 		Perl_Player_Set_Show_Totem_Timers(0);
+-- 	end
+-- end
 
-function Perl_Config_Player_Show_Rune_Frame_Update()
-	if (Perl_Config_Player_Frame_CheckButton29:GetChecked() == true) then
-		Perl_Player_Set_Show_Rune_Frame(1);
-	else
-		Perl_Player_Set_Show_Rune_Frame(0);
-	end
-end
+-- function Perl_Config_Player_Show_Rune_Frame_Update()
+-- 	if (Perl_Config_Player_Frame_CheckButton29:GetChecked() == true) then
+-- 		Perl_Player_Set_Show_Rune_Frame(1);
+-- 	else
+-- 		Perl_Player_Set_Show_Rune_Frame(0);
+-- 	end
+-- end
 
 function Perl_Config_Player_Show_PvP_Timer_Update()
 	if (Perl_Config_Player_Frame_CheckButton30:GetChecked() == true) then
@@ -393,43 +369,11 @@ function Perl_Config_Player_Show_PvP_Timer_Update()
 	end
 end
 
-function Perl_Config_Player_Show_Paladin_Power_Bar_Update()
+function Perl_Config_Player_Show_Class_Resource_Frame_Update()
 	if (Perl_Config_Player_Frame_CheckButton31:GetChecked() == true) then
-		Perl_Player_Set_Show_Paladin_Power_Bar(1);
+		Perl_Player_Set_Show_Class_Resource_Frame(1);
 	else
-		Perl_Player_Set_Show_Paladin_Power_Bar(0);
-	end
-end
-
-function Perl_Config_Player_Show_Shard_Bar_Frame_Update()
-	if (Perl_Config_Player_Frame_CheckButton32:GetChecked() == true) then
-		Perl_Player_Set_Show_Shard_Bar_Frame(1);
-	else
-		Perl_Player_Set_Show_Shard_Bar_Frame(0);
-	end
-end
-
-function Perl_Config_Player_Show_Eclipse_Bar_Frame_Update()
-	if (Perl_Config_Player_Frame_CheckButton33:GetChecked() == true) then
-		Perl_Player_Set_Show_Eclipse_Bar_Frame(1);
-	else
-		Perl_Player_Set_Show_Eclipse_Bar_Frame(0);
-	end
-end
-
-function Perl_Config_Player_Show_Harmony_Bar_Frame_Update()
-	if (Perl_Config_Player_Frame_CheckButton34:GetChecked() == true) then
-		Perl_Player_Set_Show_Harmony_Bar_Frame(1);
-	else
-		Perl_Player_Set_Show_Harmony_Bar_Frame(0);
-	end
-end
-
-function Perl_Config_Player_Show_Priest_Bar_Frame_Update()
-	if (Perl_Config_Player_Frame_CheckButton35:GetChecked() == true) then
-		Perl_Player_Set_Show_Priest_Bar_Frame(1);
-	else
-		Perl_Player_Set_Show_Priest_Bar_Frame(0);
+		Perl_Player_Set_Show_Class_Resource_Frame(0);
 	end
 end
 

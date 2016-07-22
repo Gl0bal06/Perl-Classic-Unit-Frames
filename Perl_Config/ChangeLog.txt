@@ -1,3 +1,16 @@
+7.02 - July 21, 2016
+ - CombatDisplay/Player: Shamans can now see their mana bar by enabling the Druid Bar option
+ - CombatDisplay/Player: Combo points correctly display
+ - Config: Corrected some color values for power bars
+ - Config: Removed some unused localizations
+ - Player: Added support for the Mage Arcane Charges frame
+ - Player: Converted all class resource frames to a new option
+ - Player: Removed all options for individual class resource frames
+ - Player: The Druid Bar option is now enabled by default
+ - Player: Adjusted the Death Knight Rune frame positioning
+ - Player: Adjusted the Paladin Power Bar frame positioning
+ - Player: Adjusted the Warlock Shard Bar frame positioning
+
 7.01 - July 19, 2016
  - All: Updated TOC Interface version to 70000
  - All: Added support for Demon Hunters

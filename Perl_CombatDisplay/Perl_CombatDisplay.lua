@@ -12,7 +12,7 @@ local locked = 0;						-- unlocked by default
 local scale = 1.0;						-- default scale
 local transparency = 1;					-- transparency for the frame
 local showtarget = 0;					-- target frame is disabled by default
-local showdruidbar = 0;					-- Druid Bar support is enabled by default
+local showdruidbar = 0;					-- Druid Bar support is disabled by default
 local showpetbars = 0;					-- Pet info is hidden by default
 local rightclickmenu = 0;				-- The ability to open a menu from CombatDisplay is disabled by default
 local displaypercents = 0;				-- percents are off by default
@@ -69,6 +69,7 @@ function Perl_CombatDisplay_OnLoad(self)
 	self:RegisterEvent("UNIT_MAXPOWER");
 	self:RegisterEvent("UNIT_PET");
 	self:RegisterEvent("UNIT_POWER");
+	self:RegisterEvent("UNIT_POWER_FREQUENT");
 
 	-- Scripts
 	self:SetScript("OnEvent",
@@ -179,9 +180,14 @@ function Perl_CombatDisplay_Events:UNIT_POWER(arg1)
 				Perl_CombatDisplay_Update_PetMana();
 			end
 		end
+	elseif (powertype == 4) then	-- combo points
+		if (arg1 == "player" or arg1 == "vehicle") then
+			Perl_CombatDisplay_Update_Combo_Points();
+		end
 	end
 end
 Perl_CombatDisplay_Events.UNIT_MAXPOWER = Perl_CombatDisplay_Events.UNIT_POWER;
+Perl_CombatDisplay_Events.UNIT_POWER_FREQUENT = Perl_CombatDisplay_Events.UNIT_POWER;
 
 function Perl_CombatDisplay_Events:PLAYER_TARGET_CHANGED()
 	Perl_CombatDisplay_UpdateDisplay();
@@ -479,7 +485,7 @@ function Perl_CombatDisplay_Update_Mana()
 
 	if (showdruidbar == 1) then
 		_, englishclass = UnitClass("player");
-		if (englishclass == "DRUID" or englishclass == "MONK") then
+		if (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN") then
 			if (playerpower > 0) then
 				playerdruidbarmana = UnitPower("player", 0);
 				playerdruidbarmanamax = UnitPowerMax("player", 0);
@@ -580,7 +586,7 @@ function Perl_CombatDisplay_Update_Combo_Points()
 	if (showcp == 1) then
 		local combopoints = GetComboPoints("vehicle","target");				-- How many Combo Points does the player have in their vehicle?
 		if (combopoints == 0) then
-			combopoints = GetComboPoints("player");							-- We aren't in a vehicle, get regular combo points
+			combopoints = UnitPower("player", 4);							-- We aren't in a vehicle, get regular combo points
 		end
 
 		if (PCUF_FADEBARS == 1) then
@@ -1111,7 +1117,7 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_Target_Frame:Hide();
 	end
 
-	if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK")) then
+	if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN")) then
 		Perl_CombatDisplay_ManaFrame:SetHeight(Perl_CombatDisplay_ManaFrame:GetHeight() + 12);
 		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 12);
 		Perl_CombatDisplay_DruidBar:Show();
@@ -1131,7 +1137,7 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_CPBar:Show();
 		Perl_CombatDisplay_CPBarBG:Show();
 		Perl_CombatDisplay_CPBar:SetMinMaxValues(0, 5);
-		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK")) then
+		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN")) then
 			Perl_CombatDisplay_CPBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_DruidBar", "BOTTOMLEFT", 0, -2);
 		else
 			Perl_CombatDisplay_CPBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_ManaBar", "BOTTOMLEFT", 0, -2);
@@ -1148,9 +1154,9 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_PetHealthBarBG:Show();
 		Perl_CombatDisplay_PetManaBar:Show();
 		Perl_CombatDisplay_PetManaBarBG:Show();
-		if (showdruidbar == 1 and showcp == 0 and (englishclass == "DRUID" or englishclass == "MONK")) then
+		if (showdruidbar == 1 and showcp == 0 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN")) then
 			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_DruidBar", "BOTTOMLEFT", 0, -2);
-		elseif (showdruidbar == 1 and showcp == 1 and (englishclass == "DRUID" or englishclass == "MONK")) then
+		elseif (showdruidbar == 1 and showcp == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN")) then
 			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_CPBar", "BOTTOMLEFT", 0, -2);
 		elseif (showcp == 1) then
 			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_CPBar", "BOTTOMLEFT", 0, -2);

@@ -464,14 +464,8 @@ function Perl_Config_Migrate_Vars_Old_To_New(addon)		-- Do not add new variable 
 				["ShowBarValues"] = Perl_Player_Config[name]["ShowBarValues"],
 				["ShowRaidGroupInName"] = Perl_Player_Config[name]["ShowRaidGroupInName"],
 				["FiveSecondRule"] = Perl_Player_Config[name]["FiveSecondRule"],
-				["TotemTimers"] = Perl_Player_Config[name]["TotemTimers"],
-				["RuneFrame"] = Perl_Player_Config[name]["RuneFrame"],
 				["PvPTimer"] = Perl_Player_Config[name]["PvPTimer"],
-				["PaladinPowerBar"] = Perl_Player_Config[name]["PaladinPowerBar"],
-				["ShardBarFrame"] = Perl_Player_Config[name]["ShardBarFrame"],
-				["EclipseBarFrame"] = Perl_Player_Config[name]["EclipseBarFrame"],
-				["HarmonyBarFrame"] = Perl_Player_Config[name]["HarmonyBarFrame"],
-				["PriestBarFrame"] = Perl_Player_Config[name]["PriestBarFrame"],
+				["ClassResourceFrame"] = Perl_Player_Config[name]["ClassResourceFrame"],
 			};
 		end
 	end
@@ -1886,14 +1880,8 @@ function Perl_Config_Global_Save_Settings()
 			["ShowBarValues"] = vartable["showbarvalues"],
 			["ShowRaidGroupInName"] = vartable["showraidgroupinname"],
 			["FiveSecondRule"] = vartable["fivesecondrule"],
-			["TotemTimers"] = vartable["totemtimers"],
-			["RuneFrame"] = vartable["runeframe"],
 			["PvPTimer"] = vartable["pvptimer"],
-			["PaladinPowerBar"] = vartable["paladinpowerbar"],
-			["ShardBarFrame"] = vartable["shardbarframe"],
-			["EclipseBarFrame"] = vartable["eclipsebarframe"],
-			["HarmonyBarFrame"] = vartable["harmonybarframe"],
-			["PriestBarFrame"] = vartable["priestbarframe"],
+			["ClassResourceFrame"] = vartable["classresourceframe"],
 			["XPosition"] = vartable["xposition"],
 			["YPosition"] = vartable["yposition"],
 		};
@@ -2795,9 +2783,10 @@ PERL_POWER_TYPE_COLORS = {
 	["SOUL_SHARDS"] = { r = 0.50, g = 0.32, b = 0.55 },
 	["LUNAR_POWER"] = { r = 0.30, g = 0.52, b = 0.90 },
 	["HOLY_POWER"] = { r = 0.95, g = 0.90, b = 0.60 },
+	["ALTERNATE_POWER"] = {r = 0.815, g = 0.941, b = 1},
 	["MAELSTROM"] = { r = 0.00, g = 0.50, b = 1.00 },
-	["INSANITY"] = { r = 0.40, g = 0, b = 0.80 },
 	["CHI"] = { r = 0.71, g = 1.0, b = 0.92 },
+	["INSANITY"] = { r = 0.40, g = 0, b = 0.80 },
 	["ARCANE_CHARGES"] = { r = 0.1, g = 0.1, b = 0.98 },
 	["FURY"] = { r = 0.788, g = 0.259, b = 0.992 },
 	["PAIN"] = { r = 1, g = 0, b = 0 },
@@ -2807,14 +2796,17 @@ PERL_POWER_TYPE_COLORS[0] = PERL_POWER_TYPE_COLORS["MANA"];
 PERL_POWER_TYPE_COLORS[1] = PERL_POWER_TYPE_COLORS["RAGE"];
 PERL_POWER_TYPE_COLORS[2] = PERL_POWER_TYPE_COLORS["FOCUS"];
 PERL_POWER_TYPE_COLORS[3] = PERL_POWER_TYPE_COLORS["ENERGY"];
-PERL_POWER_TYPE_COLORS[4] = PERL_POWER_TYPE_COLORS["CHI"];
+PERL_POWER_TYPE_COLORS[4] = PERL_POWER_TYPE_COLORS["COMBO_POINTS"];
 PERL_POWER_TYPE_COLORS[5] = PERL_POWER_TYPE_COLORS["RUNES"];
 PERL_POWER_TYPE_COLORS[6] = PERL_POWER_TYPE_COLORS["RUNIC_POWER"];
 PERL_POWER_TYPE_COLORS[7] = PERL_POWER_TYPE_COLORS["SOUL_SHARDS"];
 PERL_POWER_TYPE_COLORS[8] = PERL_POWER_TYPE_COLORS["LUNAR_POWER"];
 PERL_POWER_TYPE_COLORS[9] = PERL_POWER_TYPE_COLORS["HOLY_POWER"];
+PERL_POWER_TYPE_COLORS[10] = PERL_POWER_TYPE_COLORS["ALTERNATE_POWER"];
 PERL_POWER_TYPE_COLORS[11] = PERL_POWER_TYPE_COLORS["MAELSTROM"];
+PERL_POWER_TYPE_COLORS[12] = PERL_POWER_TYPE_COLORS["CHI"];
 PERL_POWER_TYPE_COLORS[13] = PERL_POWER_TYPE_COLORS["INSANITY"];
+PERL_POWER_TYPE_COLORS[16] = PERL_POWER_TYPE_COLORS["ARCANE_CHARGES"];
 PERL_POWER_TYPE_COLORS[17] = PERL_POWER_TYPE_COLORS["FURY"];
 PERL_POWER_TYPE_COLORS[18] = PERL_POWER_TYPE_COLORS["PAIN"];
 

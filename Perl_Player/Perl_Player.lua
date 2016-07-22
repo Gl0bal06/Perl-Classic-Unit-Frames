@@ -17,7 +17,7 @@ local showportrait = 0;			-- portrait is hidden by default
 local compactpercent = 0;		-- percents are not shown in compact mode by default
 local threedportrait = 0;		-- 3d portraits are off by default
 local portraitcombattext = 0;	-- Combat text is disabled by default on the portrait frame
-local showdruidbar = 0;			-- Druid Bar support is enabled by default
+local showdruidbar = 1;			-- Druid Bar support is enabled by default
 local shortbars = 0;			-- Health/Power/Experience bars are all normal length
 local classcolorednames = 0;	-- names are colored based on pvp status by default
 local hideclasslevelframe = 0;	-- Showing the class icon and level frame by default
@@ -27,14 +27,8 @@ local showpvpicon = 1;			-- show the pvp icon
 local showbarvalues = 0;		-- healer mode will have the bar values hidden by default
 local showraidgroupinname = 0;	-- raid number is not shown in the name by default
 local fivesecondrule = 0;		-- five second rule is off by default
-local totemtimers = 1;			-- totem timers is on by default
-local runeframe = 1;			-- rune frame is on by default
 local pvptimer = 0;				-- pvp timer is hidden by default
-local paladinpowerbar = 1;		-- paladin power bar is on by default
-local shardbarframe = 1;		-- warlock shard bar frame is on by default
-local eclipsebarframe = 1;		-- druid eclipse bar frame is on by default
-local harmonybarframe = 1;		-- monk harmony bar frame is on by default
-local priestbarframe = 1;		-- priest orb bar frame is on by default
+local classresourceframe = 1;	-- the class resource frame is enabled by default
 local xposition = -2;			-- default x position
 local yposition = -43;			-- default y position
 
@@ -125,6 +119,7 @@ function Perl_Player_OnLoad(self)
 	EclipseBarFrame:SetParent(Perl_Player_Frame);
 	MonkHarmonyBarFrame:SetParent(Perl_Player_Frame);
 	PriestBarFrame:SetParent(Perl_Player_Frame);
+	MageArcaneChargesFrame:SetParent(Perl_Player_Frame);
 end
 
 
@@ -497,7 +492,7 @@ function Perl_Player_Update_Mana()
 	if (showdruidbar == 1) then
 		local _;
 		_, englishclass = UnitClass("player");
-		if (englishclass == "DRUID" or englishclass == "MONK") then								-- Are we a Druid?
+		if (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN") then								-- Are we a Druid?
 			if (UnitPowerType("player") > 0) then						-- Are we in a manaless form?
 				playerdruidbarmana = UnitPower("player", 0);
 				playerdruidbarmanamax = UnitPowerMax("player", 0);
@@ -1224,7 +1219,7 @@ function Perl_Player_Frame_Style()
 		-- Begin: Set the druid bar and tweak the experience bar if needed
 		local _;
 		_, englishclass = UnitClass("player");
-		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK")) then
+		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN")) then
 			Perl_Player_DruidBar:Show();
 			Perl_Player_DruidBarBG:Show();
 			Perl_Player_DruidBar_CastClickOverlay:Show();
@@ -1437,43 +1432,55 @@ function Perl_Player_Frame_Style()
 		Perl_Player_Update_Health();
 		Perl_Player_Update_Mana();
 
-		-- Hi-jack the Blizzard Shaman totem frame
-		if (totemtimers == 1) then
+		-- Hi-jack the Blizzard Shaman totem frame (Doesn't appear to be used as of 7.0.3)
+		if (classresourceframe == 1) then
 			TotemFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 0);
 		else
 			TotemFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
 		-- Hi-jack the Blizzard Death Knigth rune frame
-		if (runeframe == 1) then
-			RuneFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 20, -2);
+		if (classresourceframe == 1) then
+			if (compactmode == 1 and shortbars == 1) then
+				RuneFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 5, -2);
+			else
+				RuneFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 20, -2);
+			end
 		else
 			RuneFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
 		-- Hi-jack the Blizzard Paladin power bar
-		if (paladinpowerbar == 1) then
-			PaladinPowerBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 15, 8);
+		if (classresourceframe == 1) then
+			if (compactmode == 1 and shortbars == 1) then
+				PaladinPowerBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 8);
+			else
+				PaladinPowerBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 15, 8);
+			end
 		else
 			PaladinPowerBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
 		-- Hi-jack the Blizzard Warlock shard bar frame
-		if (shardbarframe == 1) then
-			WarlockPowerFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 28, 0);
+		if (classresourceframe == 1) then
+			if (compactmode == 1 and shortbars == 1) then
+				WarlockPowerFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 11, 0);
+			else
+				WarlockPowerFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 28, 0);
+			end
 		else
 			WarlockPowerFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
-		-- Hi-jack the Blizzard Druid eclipse bar frame
-		if (eclipsebarframe == 1) then
+		-- Hi-jack the Blizzard Druid eclipse bar frame (Doesn't appear to be used as of 7.0.3)
+		if (classresourceframe == 1) then
 			EclipseBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 14, 3);
 		else
 			EclipseBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
 		-- Hi-jack the Blizzard Monk harmony bar frame
-		if (harmonybarframe == 1) then
+		if (classresourceframe == 1) then
 			if (compactmode == 1 and shortbars == 1) then
 				MonkHarmonyBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 67, 14);
 			else
@@ -1483,8 +1490,8 @@ function Perl_Player_Frame_Style()
 			MonkHarmonyBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
-		-- Hi-jack the Blizzard Priest bar frame
-		if (priestbarframe == 1) then
+		-- Hi-jack the Blizzard Priest bar frame (Doesn't appear to be used as of 7.0.3)
+		if (classresourceframe == 1) then
 			if (compactmode == 1 and shortbars == 1) then
 				PriestBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", -10, 2);
 			else
@@ -1493,6 +1500,19 @@ function Perl_Player_Frame_Style()
 		else
 			PriestBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
+
+		-- Hi-jack the Blizzard Mage bar frame
+		if (classresourceframe == 1) then
+			if (compactmode == 1 and shortbars == 1) then
+				MageArcaneChargesFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 5, 2);
+			else
+				MageArcaneChargesFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 21, 2);
+			end
+		else
+			MageArcaneChargesFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+		end
+
+
 
 		-- Update the five second rule
 		Perl_Player_FiveSecondRule:SetWidth(Perl_Player_ManaBar:GetWidth());
@@ -1667,50 +1687,14 @@ function Perl_Player_Set_Show_Five_second_Rule(newvalue)
 	Perl_Player_Frame_Style();
 end
 
-function Perl_Player_Set_Show_Totem_Timers(newvalue)
-	totemtimers = newvalue;
-	Perl_Player_UpdateVars();
-	Perl_Player_Frame_Style();
-end
-
-function Perl_Player_Set_Show_Rune_Frame(newvalue)
-	runeframe = newvalue;
-	Perl_Player_UpdateVars();
-	Perl_Player_Frame_Style();
-end
-
 function Perl_Player_Set_Show_PvP_Timer(newvalue)
 	pvptimer = newvalue;
 	Perl_Player_UpdateVars();
 	Perl_Player_Update_PvP_Timer();
 end
 
-function Perl_Player_Set_Show_Paladin_Power_Bar(newvalue)
-	paladinpowerbar = newvalue;
-	Perl_Player_UpdateVars();
-	Perl_Player_Frame_Style();
-end
-
-function Perl_Player_Set_Show_Shard_Bar_Frame(newvalue)
-	shardbarframe = newvalue;
-	Perl_Player_UpdateVars();
-	Perl_Player_Frame_Style();
-end
-
-function Perl_Player_Set_Show_Eclipse_Bar_Frame(newvalue)
-	eclipsebarframe = newvalue;
-	Perl_Player_UpdateVars();
-	Perl_Player_Frame_Style();
-end
-
-function Perl_Player_Set_Show_Harmony_Bar_Frame(newvalue)
-	harmonybarframe = newvalue;
-	Perl_Player_UpdateVars();
-	Perl_Player_Frame_Style();
-end
-
-function Perl_Player_Set_Show_Priest_Bar_Frame(newvalue)
-	priestbarframe = newvalue;
+function Perl_Player_Set_Show_Class_Resource_Frame(newvalue)
+	classresourceframe = newvalue;
 	Perl_Player_UpdateVars();
 	Perl_Player_Frame_Style();
 end
@@ -1778,14 +1762,8 @@ function Perl_Player_GetVars(index, updateflag)
 	showbarvalues = Perl_Player_Config[index]["ShowBarValues"];
 	showraidgroupinname = Perl_Player_Config[index]["ShowRaidGroupInName"];
 	fivesecondrule = Perl_Player_Config[index]["FiveSecondRule"];
-	totemtimers = Perl_Player_Config[index]["TotemTimers"];
-	runeframe = Perl_Player_Config[index]["RuneFrame"];
 	pvptimer = Perl_Player_Config[index]["PvPTimer"];
-	paladinpowerbar = Perl_Player_Config[index]["PaladinPowerBar"];
-	shardbarframe = Perl_Player_Config[index]["ShardBarFrame"];
-	eclipsebarframe = Perl_Player_Config[index]["EclipseBarFrame"];
-	harmonybarframe = Perl_Player_Config[index]["HarmonyBarFrame"];
-	priestbarframe = Perl_Player_Config[index]["PriestBarFrame"];
+	classresourceframe = Perl_Player_Config[index]["ClassResourceFrame"];
 	xposition = Perl_Player_Config[index]["XPosition"];
 	yposition = Perl_Player_Config[index]["YPosition"];
 
@@ -1823,7 +1801,7 @@ function Perl_Player_GetVars(index, updateflag)
 		portraitcombattext = 0;
 	end
 	if (showdruidbar == nil) then
-		showdruidbar = 0;
+		showdruidbar = 1;
 	end
 	if (shortbars == nil) then
 		shortbars = 0;
@@ -1852,29 +1830,11 @@ function Perl_Player_GetVars(index, updateflag)
 	if (fivesecondrule == nil) then
 		fivesecondrule = 0;
 	end
-	if (totemtimers == nil) then
-		totemtimers = 1;
-	end
-	if (runeframe == nil) then
-		runeframe = 1;
-	end
 	if (pvptimer == nil) then
 		pvptimer = 0;
 	end
-	if (paladinpowerbar == nil) then
-		paladinpowerbar = 1;
-	end
-	if (shardbarframe == nil) then
-		shardbarframe = 1;
-	end
-	if (eclipsebarframe == nil) then
-		eclipsebarframe = 1;
-	end
-	if (harmonybarframe == nil) then
-		harmonybarframe = 1;
-	end
-	if (priestbarframe == nil) then
-		priestbarframe = 1;
+	if (classresourceframe == nil) then
+		classresourceframe = 1;
 	end
 	if (xposition == nil) then
 		xposition = -2;
@@ -1917,14 +1877,8 @@ function Perl_Player_GetVars(index, updateflag)
 		["showbarvalues"] = showbarvalues,
 		["showraidgroupinname"] = showraidgroupinname,
 		["fivesecondrule"] = fivesecondrule,
-		["totemtimers"] = totemtimers,
-		["runeframe"] = runeframe,
 		["pvptimer"] = pvptimer,
-		["paladinpowerbar"] = paladinpowerbar,
-		["shardbarframe"] = shardbarframe,
-		["eclipsebarframe"] = eclipsebarframe,
-		["harmonybarframe"] = harmonybarframe,
-		["priestbarframe"] = priestbarframe,
+		["classresourceframe"] = classresourceframe,
 		["xposition"] = xposition,
 		["yposition"] = yposition,
 	}
@@ -2040,45 +1994,15 @@ function Perl_Player_UpdateVars(vartable)
 			else
 				fivesecondrule = nil;
 			end
-			if (vartable["Global Settings"]["TotemTimers"] ~= nil) then
-				totemtimers = vartable["Global Settings"]["TotemTimers"];
-			else
-				totemtimers = nil;
-			end
-			if (vartable["Global Settings"]["RuneFrame"] ~= nil) then
-				runeframe = vartable["Global Settings"]["RuneFrame"];
-			else
-				runeframe = nil;
-			end
 			if (vartable["Global Settings"]["PvPTimer"] ~= nil) then
 				pvptimer = vartable["Global Settings"]["PvPTimer"];
 			else
 				pvptimer = nil;
 			end
-			if (vartable["Global Settings"]["PaladinPowerBar"] ~= nil) then
-				paladinpowerbar = vartable["Global Settings"]["PaladinPowerBar"];
+			if (vartable["Global Settings"]["ClassResourceFrame"] ~= nil) then
+				classresourceframe = vartable["Global Settings"]["ClassResourceFrame"];
 			else
-				paladinpowerbar = nil;
-			end
-			if (vartable["Global Settings"]["ShardBarFrame"] ~= nil) then
-				shardbarframe = vartable["Global Settings"]["ShardBarFrame"];
-			else
-				shardbarframe = nil;
-			end
-			if (vartable["Global Settings"]["EclipseBarFrame"] ~= nil) then
-				eclipsebarframe = vartable["Global Settings"]["EclipseBarFrame"];
-			else
-				eclipsebarframe = nil;
-			end
-			if (vartable["Global Settings"]["HarmonyBarFrame"] ~= nil) then
-				harmonybarframe = vartable["Global Settings"]["HarmonyBarFrame"];
-			else
-				harmonybarframe = nil;
-			end
-			if (vartable["Global Settings"]["PriestBarFrame"] ~= nil) then
-				priestbarframe = vartable["Global Settings"]["PriestBarFrame"];
-			else
-				priestbarframe = nil;
+				classresourceframe = nil;
 			end
 			if (vartable["Global Settings"]["XPosition"] ~= nil) then
 				xposition = vartable["Global Settings"]["XPosition"];
@@ -2127,7 +2051,7 @@ function Perl_Player_UpdateVars(vartable)
 			portraitcombattext = 0;
 		end
 		if (showdruidbar == nil) then
-			showdruidbar = 0;
+			showdruidbar = 1;
 		end
 		if (shortbars == nil) then
 			shortbars = 0;
@@ -2156,29 +2080,11 @@ function Perl_Player_UpdateVars(vartable)
 		if (fivesecondrule == nil) then
 			fivesecondrule = 0;
 		end
-		if (totemtimers == nil) then
-			totemtimers = 1;
-		end
-		if (runeframe == nil) then
-			runeframe = 1;
-		end
 		if (pvptimer == nil) then
 			pvptimer = 0;
 		end
-		if (paladinpowerbar == nil) then
-			paladinpowerbar = 1;
-		end
-		if (shardbarframe == nil) then
-			shardbarframe = 1;
-		end
-		if (eclipsebarframe == nil) then
-			eclipsebarframe = 1;
-		end
-		if (harmonybarframe == nil) then
-			harmonybarframe = 1;
-		end
-		if (priestbarframe == nil) then
-			priestbarframe = 1;
+		if (classresourceframe == nil) then
+			classresourceframe = 1;
 		end
 		if (xposition == nil) then
 			xposition = -2;
@@ -2216,14 +2122,8 @@ function Perl_Player_UpdateVars(vartable)
 		["ShowBarValues"] = showbarvalues,
 		["ShowRaidGroupInName"] = showraidgroupinname,
 		["FiveSecondRule"] = fivesecondrule,
-		["TotemTimers"] = totemtimers,
-		["RuneFrame"] = runeframe,
 		["PvPTimer"] = pvptimer,
-		["PaladinPowerBar"] = paladinpowerbar,
-		["ShardBarFrame"] = shardbarframe,
-		["EclipseBarFrame"] = eclipsebarframe,
-		["HarmonyBarFrame"] = harmonybarframe,
-		["PriestBarFrame"] = priestbarframe,
+		["ClassResourceFrame"] = classresourceframe,
 		["XPosition"] = xposition,
 		["YPosition"] = yposition,
 	};

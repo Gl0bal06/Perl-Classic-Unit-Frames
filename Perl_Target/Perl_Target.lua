@@ -82,6 +82,7 @@ function Perl_Target_OnLoad(self)
 	self:RegisterEvent("UNIT_NAME_UPDATE");
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	self:RegisterEvent("UNIT_POWER");
+	self:RegisterEvent("UNIT_POWER_FREQUENT");
 	self:RegisterEvent("UNIT_PVP_UPDATE");
 	self:RegisterEvent("UNIT_FACTION");
 	self:RegisterEvent("UNIT_SPELLMISS");
@@ -148,9 +149,12 @@ Perl_Target_Events.UNIT_MAXHEALTH = Perl_Target_Events.UNIT_HEALTH;
 function Perl_Target_Events:UNIT_POWER(arg1)
 	if (arg1 == "target") then
 		Perl_Target_Update_Mana();			-- Update energy/focus/mana/rage/runicpower values
+	elseif (arg1 == "player" or arg1 == "vehicle") then
+		Perl_Target_Update_Combo_Points();	-- How many combo points are we at?
 	end
 end
 Perl_Target_Events.UNIT_MAXPOWER = Perl_Target_Events.UNIT_POWER;
+Perl_Target_Events.UNIT_POWER_FREQUENT = Perl_Target_Events.UNIT_POWER;
 
 function Perl_Target_Events:UNIT_AURA(arg1)
 	if (arg1 == "target") then
@@ -731,7 +735,7 @@ function Perl_Target_Update_Combo_Points()
 	if (playerclass == "ROGUE" or playerclass == "DRUID" or CanExitVehicle()) then	-- Noticed in 2.1.3 that this is being called for warriors also...huh?
 		local combopoints = GetComboPoints("vehicle","target");						-- How many Combo Points does the player have in their vehicle?
 		if (combopoints == 0) then
-			combopoints = GetComboPoints("player");									-- We aren't in a vehicle, get regular combo points
+			combopoints = UnitPower("player", 4);									-- We aren't in a vehicle, get regular combo points
 		end
 
 		if (showcp == 1) then
