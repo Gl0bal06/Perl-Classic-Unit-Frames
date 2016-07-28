@@ -125,19 +125,19 @@ function Perl_Config_CombatDisplay_Mode_Update()
 	end
 end
 
-function Perl_Config_CombatDisplay_Health_Persistance_Update()
+function Perl_Config_CombatDisplay_Health_Persistence_Update()
 	if (Perl_Config_CombatDisplay_Frame_CheckButton5:GetChecked() == true) then
-		Perl_CombatDisplay_Set_Health_Persistance(1);
+		Perl_CombatDisplay_Set_Health_Persistence(1);
 	else
-		Perl_CombatDisplay_Set_Health_Persistance(0);
+		Perl_CombatDisplay_Set_Health_Persistence(0);
 	end
 end
 
-function Perl_Config_CombatDisplay_Mana_Persistance_Update()
+function Perl_Config_CombatDisplay_Mana_Persistence_Update()
 	if (Perl_Config_CombatDisplay_Frame_CheckButton6:GetChecked() == true) then
-		Perl_CombatDisplay_Set_Mana_Persistance(1);
+		Perl_CombatDisplay_Set_Mana_Persistence(1);
 	else
-		Perl_CombatDisplay_Set_Mana_Persistance(0);
+		Perl_CombatDisplay_Set_Mana_Persistence(0);
 	end
 end
 

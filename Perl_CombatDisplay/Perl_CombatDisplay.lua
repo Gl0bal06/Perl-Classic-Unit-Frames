@@ -128,7 +128,7 @@ Perl_CombatDisplay_Events.UNIT_MAXHEALTH = Perl_CombatDisplay_Events.UNIT_HEALTH
 
 function Perl_CombatDisplay_Events:UNIT_POWER(arg1)
 	local _;
-	local powertype, _ = UnitPowerType("arg1");
+	local powertype, _ = UnitPowerType(arg1);
 
 	if (powertype == 0) then -- mana
 		if (arg1 == "player") then
@@ -180,10 +180,10 @@ function Perl_CombatDisplay_Events:UNIT_POWER(arg1)
 				Perl_CombatDisplay_Update_PetMana();
 			end
 		end
-	elseif (powertype == 4) then	-- combo points
-		if (arg1 == "player" or arg1 == "vehicle") then
-			Perl_CombatDisplay_Update_Combo_Points();
-		end
+	end
+
+	if (arg1 == "player" or arg1 == "vehicle") then
+		Perl_CombatDisplay_Update_Combo_Points();
 	end
 end
 Perl_CombatDisplay_Events.UNIT_MAXPOWER = Perl_CombatDisplay_Events.UNIT_POWER;
@@ -485,7 +485,7 @@ function Perl_CombatDisplay_Update_Mana()
 
 	if (showdruidbar == 1) then
 		_, englishclass = UnitClass("player");
-		if (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN") then
+		if (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "PRIEST" or englishclass == "SHAMAN") then
 			if (playerpower > 0) then
 				playerdruidbarmana = UnitPower("player", 0);
 				playerdruidbarmanamax = UnitPowerMax("player", 0);
@@ -1117,7 +1117,7 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_Target_Frame:Hide();
 	end
 
-	if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN")) then
+	if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "PRIEST" or englishclass == "SHAMAN")) then
 		Perl_CombatDisplay_ManaFrame:SetHeight(Perl_CombatDisplay_ManaFrame:GetHeight() + 12);
 		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 12);
 		Perl_CombatDisplay_DruidBar:Show();
@@ -1137,7 +1137,7 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_CPBar:Show();
 		Perl_CombatDisplay_CPBarBG:Show();
 		Perl_CombatDisplay_CPBar:SetMinMaxValues(0, 5);
-		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN")) then
+		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "PRIEST" or englishclass == "SHAMAN")) then
 			Perl_CombatDisplay_CPBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_DruidBar", "BOTTOMLEFT", 0, -2);
 		else
 			Perl_CombatDisplay_CPBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_ManaBar", "BOTTOMLEFT", 0, -2);
@@ -1154,9 +1154,9 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_PetHealthBarBG:Show();
 		Perl_CombatDisplay_PetManaBar:Show();
 		Perl_CombatDisplay_PetManaBarBG:Show();
-		if (showdruidbar == 1 and showcp == 0 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN")) then
+		if (showdruidbar == 1 and showcp == 0 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "PRIEST" or englishclass == "SHAMAN")) then
 			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_DruidBar", "BOTTOMLEFT", 0, -2);
-		elseif (showdruidbar == 1 and showcp == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN")) then
+		elseif (showdruidbar == 1 and showcp == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "PRIEST" or englishclass == "SHAMAN")) then
 			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_CPBar", "BOTTOMLEFT", 0, -2);
 		elseif (showcp == 1) then
 			Perl_CombatDisplay_PetHealthBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_CPBar", "BOTTOMLEFT", 0, -2);
@@ -1207,13 +1207,13 @@ function Perl_CombatDisplay_Set_State(newvalue)
 	Perl_CombatDisplay_Frame_Style();
 end
 
-function Perl_CombatDisplay_Set_Health_Persistance(newvalue)
+function Perl_CombatDisplay_Set_Health_Persistence(newvalue)
 	healthpersist = newvalue;
 	Perl_CombatDisplay_UpdateVars();
 	Perl_CombatDisplay_Frame_Style();
 end
 
-function Perl_CombatDisplay_Set_Mana_Persistance(newvalue)
+function Perl_CombatDisplay_Set_Mana_Persistence(newvalue)
 	manapersist = newvalue;
 	Perl_CombatDisplay_UpdateVars();
 	Perl_CombatDisplay_Frame_Style();

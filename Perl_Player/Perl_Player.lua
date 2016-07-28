@@ -492,7 +492,7 @@ function Perl_Player_Update_Mana()
 	if (showdruidbar == 1) then
 		local _;
 		_, englishclass = UnitClass("player");
-		if (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN") then								-- Are we a Druid?
+		if (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "PRIEST" or englishclass == "SHAMAN") then								-- Are we a Druid?
 			if (UnitPowerType("player") > 0) then						-- Are we in a manaless form?
 				playerdruidbarmana = UnitPower("player", 0);
 				playerdruidbarmanamax = UnitPowerMax("player", 0);
@@ -1219,7 +1219,7 @@ function Perl_Player_Frame_Style()
 		-- Begin: Set the druid bar and tweak the experience bar if needed
 		local _;
 		_, englishclass = UnitClass("player");
-		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "SHAMAN")) then
+		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "PRIEST" or englishclass == "SHAMAN")) then
 			Perl_Player_DruidBar:Show();
 			Perl_Player_DruidBarBG:Show();
 			Perl_Player_DruidBar_CastClickOverlay:Show();

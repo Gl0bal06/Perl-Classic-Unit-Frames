@@ -1,3 +1,9 @@
+7.03 - July 27, 2016
+ - CombatDisplay: Combo points correctly display
+ - CombatDisplay: Fixed an issue with the Mana Persistence option
+ - CombatDisplay/Player: Priests can now see their mana bar by enabling the Druid Bar option
+ - Config: Fixed a spelling mistake
+
 7.02 - July 21, 2016
  - CombatDisplay/Player: Shamans can now see their mana bar by enabling the Druid Bar option
  - CombatDisplay/Player: Combo points correctly display
