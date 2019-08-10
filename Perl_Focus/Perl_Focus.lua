@@ -230,6 +230,7 @@ function Perl_Focus_Initialize()
 	if (Initialized) then
 		Perl_Focus_Set_Scale_Actual();	-- Set the scale
 		Perl_Focus_Set_Transparency();	-- Set the transparency
+		Perl_Focus_Frame:ClearAllPoints();
 		Perl_Focus_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		if (UnitExists("focus")) then
 			Perl_Focus_Update_Once();
@@ -1032,6 +1033,7 @@ end
 
 function Perl_Focus_ArcaneBar_Support()
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+		Perl_ArcaneBar_focus:ClearAllPoints();
 		Perl_ArcaneBar_focus:SetPoint("TOPLEFT", "Perl_Focus_NameFrame", "TOPLEFT", 5, -5);
 		Perl_ArcaneBar_focus_CastTime:ClearAllPoints();
 		if (Perl_ArcaneBar_Config[GetRealmName("player").."-"..UnitName("player")]["FocusLeftTimer"] == 0) then

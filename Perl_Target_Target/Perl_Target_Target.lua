@@ -115,6 +115,8 @@ function Perl_Target_Target_Initialize()
 	if (Initialized) then
 		Perl_Target_Target_Set_Scale_Actual();	-- Set the scale
 		Perl_Target_Target_Set_Transparency();	-- Set the transparency
+		Perl_Target_Target_Frame:ClearAllPoints();
+		Perl_Target_Target_Target_Frame:ClearAllPoints();
 		Perl_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiontot, ypositiontot);
 		Perl_Target_Target_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiontotot, ypositiontotot);
 		return;

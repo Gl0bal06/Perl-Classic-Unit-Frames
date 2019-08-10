@@ -1,4 +1,4 @@
-## Interface: 80100
+## Interface: 80200
 ## Title: Perl Config Frame
 ## Notes: Displays a configuration menu for Perl Classic Unit Frames.
 ## Dependencies:

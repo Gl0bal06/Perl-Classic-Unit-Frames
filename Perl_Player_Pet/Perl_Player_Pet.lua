@@ -230,6 +230,8 @@ function Perl_Player_Pet_Initialize()
 		Perl_Player_Pet_Update_Once();
 		Perl_Player_Pet_Set_Scale_Actual();	-- Set the scale
 		Perl_Player_Pet_Set_Transparency();	-- Set transparency
+		Perl_Player_Pet_Frame:ClearAllPoints();
+		Perl_Player_Pet_Target_Frame:ClearAllPoints();
 		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);			-- Position the frame
 		Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiont, ypositiont);	-- Position the frame
 		return;

@@ -155,6 +155,10 @@ function Perl_Party_Pet_Initialize()
 		Perl_Party_Pet_Set_Scale_Actual();		-- Set the frame scale
 		Perl_Party_Pet_Set_Transparency();		-- Set the frame transparency
 		Perl_Party_Pet_Update();				-- Refresh the info
+		Perl_Party_Pet1:ClearAllPoints();
+		Perl_Party_Pet2:ClearAllPoints();
+		Perl_Party_Pet3:ClearAllPoints();
+		Perl_Party_Pet4:ClearAllPoints();
 		Perl_Party_Pet1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition1, yposition1);
 		Perl_Party_Pet2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition2, yposition2);
 		Perl_Party_Pet3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition3, yposition3);

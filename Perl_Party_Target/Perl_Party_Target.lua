@@ -113,6 +113,11 @@ function Perl_Party_Target_Initialize()
 	if (Initialized) then
 		Perl_Party_Target_Set_Scale_Actual();	-- Set the frame scale
 		Perl_Party_Target_Set_Transparency();	-- Set the frame transparency
+		Perl_Party_Target1:ClearAllPoints();
+		Perl_Party_Target2:ClearAllPoints();
+		Perl_Party_Target3:ClearAllPoints();
+		Perl_Party_Target4:ClearAllPoints();
+		Perl_Party_Target5:ClearAllPoints();
 		Perl_Party_Target1:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition1, yposition1);
 		Perl_Party_Target2:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition2, yposition2);
 		Perl_Party_Target3:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition3, yposition3);

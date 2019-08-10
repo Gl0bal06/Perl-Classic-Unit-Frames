@@ -1,4 +1,4 @@
-## Interface: 80100
+## Interface: 80200
 ## Title: Perl Player Frame
 ## Notes: Displays a movable player frame to replace the default.
 ## Dependencies: Perl_Config

@@ -284,6 +284,7 @@ function Perl_Party_Initialize()
 		Perl_Party_Force_Update()			-- Attempt to forcefully update information
 		Perl_Party_Update_Health_Mana();	-- You know the drill
 		Perl_Party_Check_Hidden();			-- Are we running a hidden mode?
+		Perl_Party_Frame:ClearAllPoints();
 		Perl_Party_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		return;
 	end
@@ -1635,6 +1636,7 @@ end
 function Perl_Party_ArcaneBar_Support()
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
 		for id=1,4 do
+			_G["Perl_ArcaneBar_party"..id]:ClearAllPoints();
 			_G["Perl_ArcaneBar_party"..id]:SetPoint("TOPLEFT", _G["Perl_Party_MemberFrame"..id.."_NameFrame"], "TOPLEFT", 5, -5);
 			_G["Perl_ArcaneBar_party"..id.."_CastTime"]:ClearAllPoints();
 			_G["Perl_ArcaneBar_party"..id.."_CastTime"]:SetPoint("LEFT", _G["Perl_Party_MemberFrame"..id.."_NameFrame"], "RIGHT", 0, 0);

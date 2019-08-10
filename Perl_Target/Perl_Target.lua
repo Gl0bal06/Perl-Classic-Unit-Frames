@@ -256,6 +256,7 @@ function Perl_Target_Initialize()
 	if (Initialized) then
 		Perl_Target_Set_Scale_Actual();		-- Set the scale
 		Perl_Target_Set_Transparency();		-- Set the transparency
+		Perl_Target_Frame:ClearAllPoints();
 		Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		return;
 	end
@@ -1394,6 +1395,7 @@ end
 
 function Perl_Target_ArcaneBar_Support()
 	if (Perl_ArcaneBar_Frame_Loaded_Frame) then
+		Perl_ArcaneBar_target:ClearAllPoints();
 		Perl_ArcaneBar_target:SetPoint("TOPLEFT", "Perl_Target_NameFrame", "TOPLEFT", 5, -5);
 		Perl_ArcaneBar_target_CastTime:ClearAllPoints();
 		if (Perl_ArcaneBar_Config[GetRealmName("player").."-"..UnitName("player")]["TargetLeftTimer"] == 0) then
