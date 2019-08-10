@@ -113,7 +113,7 @@ function Perl_Player_OnLoad(self)
 	Perl_Player_ManaBarFadeBar:SetFrameLevel(Perl_Player_ManaBar:GetFrameLevel() - 1);
 	--Perl_Player_DruidBarFadeBar:SetFrameLevel(Perl_Player_DruidBar:GetFrameLevel() - 1);
 
-	TotemFrame:SetParent(Perl_Player_Frame);
+	--TotemFrame:SetParent(Perl_Player_Frame);
 	RuneFrame:SetParent(Perl_Player_Frame);
 	PaladinPowerBarFrame:SetParent(Perl_Player_Frame);
 	WarlockPowerFrame:SetParent(Perl_Player_Frame);

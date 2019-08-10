@@ -1403,6 +1403,8 @@ function Perl_CombatDisplay_GetVars(index, updateflag)
 		Perl_CombatDisplay_Update_Mana();
 		Perl_CombatDisplay_Set_Scale_Actual();
 		Perl_CombatDisplay_Set_Transparency();
+		Perl_CombatDisplay_Frame:ClearAllPoints();
+		Perl_CombatDisplay_Target_Frame:ClearAllPoints();
 		Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositioncd, ypositioncd);			-- Position the frame
 		Perl_CombatDisplay_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositioncdt, ypositioncdt);	-- Position the frame
 		Perl_CombatDisplay_UpdateDisplay();
@@ -1582,6 +1584,8 @@ function Perl_CombatDisplay_UpdateVars(vartable)
 		Perl_CombatDisplay_Update_Mana();
 		Perl_CombatDisplay_Set_Scale_Actual();
 		Perl_CombatDisplay_Set_Transparency();
+		Perl_CombatDisplay_Frame:ClearAllPoints();
+		Perl_CombatDisplay_Target_Frame:ClearAllPoints();
 		Perl_CombatDisplay_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositioncd, ypositioncd);			-- Position the frame
 		Perl_CombatDisplay_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositioncdt, ypositioncdt);	-- Position the frame
 		Perl_CombatDisplay_UpdateDisplay();
