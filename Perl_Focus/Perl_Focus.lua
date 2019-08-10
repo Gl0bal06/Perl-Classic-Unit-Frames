@@ -343,11 +343,11 @@ function Perl_Focus_Update_Once()
 		-- End: Set the Focus's class in the class frame
 
 		-- Begin: Voice Chat Icon already in progress?
-		if (UnitIsTalking(UnitName("focus"))) then
-			Perl_Focus_VoiceChatIconFrame:Show();
-		else
+		--if (UnitIsTalking(UnitName("focus"))) then
+			--Perl_Focus_VoiceChatIconFrame:Show();
+		--else
 			Perl_Focus_VoiceChatIconFrame:Hide();
-		end
+		--end
 		-- End: Voice Chat Icon already in progress?
 	end
 end
