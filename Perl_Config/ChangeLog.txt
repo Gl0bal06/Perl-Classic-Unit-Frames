@@ -1,3 +1,9 @@
+8.02 - July 25, 2018
+ - CombatDisplay: Combo point text properly displays max combo points
+ - CombatDisplay: Fixed an issue where the DruidBar was not updating if a Legion power type was the primary power type
+ - Target: Combo points in name frame now properly support more than five combo points
+ - Target: Combo point text color now properly supports more than five combo points
+
 8.01 - July 18, 2018
  - All: Updated TOC Interface version to 80000
  - ArcaneBar: Fixed UnitChannelInfo function calls

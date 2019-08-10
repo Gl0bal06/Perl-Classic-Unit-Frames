@@ -735,44 +735,54 @@ function Perl_Target_Update_Combo_Points()
 	local _, playerclass = UnitClass("player");
 	if (playerclass == "ROGUE" or playerclass == "DRUID" or CanExitVehicle()) then	-- Noticed in 2.1.3 that this is being called for warriors also...huh?
 		local combopoints = GetComboPoints("vehicle","target");						-- How many Combo Points does the player have in their vehicle?
+		local combopointsmax = 5;
 		if (combopoints == 0) then
 			combopoints = UnitPower("player", 4);									-- We aren't in a vehicle, get regular combo points
+			combopointsmax = UnitPowerMax("player", 4);
 		end
 
 		if (showcp == 1) then
 			Perl_Target_CPText:SetText(combopoints);
-			if (combopoints == 5) then
-				Perl_Target_CPText:SetTextColor(1, 0, 0);	-- red text
-			elseif (combopoints == 4) then
-				Perl_Target_CPText:SetTextColor(1, 0.5, 0);	-- orange text
-			elseif (combopoints == 3) then
-				Perl_Target_CPText:SetTextColor(1, 1, 0);	-- yellow text
-			elseif (combopoints == 2) then
-				Perl_Target_CPText:SetTextColor(0.5, 1, 0);	-- yellow-green text
-			elseif (combopoints == 1) then
-				Perl_Target_CPText:SetTextColor(0, 1, 0);	-- green text
-			else
-				Perl_Target_CPText:SetTextColor(0, 0.5, 0);	-- dark green text
-			end
+
+			Perl_Target_CPText:SetTextColor(combopoints/combopointsmax, 1-combopoints/combopointsmax, 0);
+
+			-- if (combopoints == 5) then
+			-- 	Perl_Target_CPText:SetTextColor(1, 0, 0);	-- red text
+			-- elseif (combopoints == 4) then
+			-- 	Perl_Target_CPText:SetTextColor(1, 0.5, 0);	-- orange text
+			-- elseif (combopoints == 3) then
+			-- 	Perl_Target_CPText:SetTextColor(1, 1, 0);	-- yellow text
+			-- elseif (combopoints == 2) then
+			-- 	Perl_Target_CPText:SetTextColor(0.5, 1, 0);	-- yellow-green text
+			-- elseif (combopoints == 1) then
+			-- 	Perl_Target_CPText:SetTextColor(0, 1, 0);	-- green text
+			-- else
+			-- 	Perl_Target_CPText:SetTextColor(0, 0.5, 0);	-- dark green text
+			-- end
 		end
 
 		if (nameframecombopoints == 1) then											-- this isn't nested since you can have both combo point styles on at the same time
-			Perl_Target_NameFrame_CPMeter:SetMinMaxValues(0, 5);
+			Perl_Target_NameFrame_CPMeter:SetMinMaxValues(0, combopointsmax);
 			Perl_Target_NameFrame_CPMeter:SetValue(combopoints);
-			if (combopoints == 5) then
-				Perl_Target_NameFrame_CPMeter:Show();
-
-			elseif (combopoints == 4) then
-				Perl_Target_NameFrame_CPMeter:Show();
-			elseif (combopoints == 3) then
-				Perl_Target_NameFrame_CPMeter:Show();
-			elseif (combopoints == 2) then
-				Perl_Target_NameFrame_CPMeter:Show();
-			elseif (combopoints == 1) then
+			if (combopoints > 0) then
 				Perl_Target_NameFrame_CPMeter:Show();
 			else
 				Perl_Target_NameFrame_CPMeter:Hide();
 			end
+
+			-- if (combopoints == 5) then
+			-- 	Perl_Target_NameFrame_CPMeter:Show();
+			-- elseif (combopoints == 4) then
+			-- 	Perl_Target_NameFrame_CPMeter:Show();
+			-- elseif (combopoints == 3) then
+			-- 	Perl_Target_NameFrame_CPMeter:Show();
+			-- elseif (combopoints == 2) then
+			-- 	Perl_Target_NameFrame_CPMeter:Show();
+			-- elseif (combopoints == 1) then
+			-- 	Perl_Target_NameFrame_CPMeter:Show();
+			-- else
+			-- 	Perl_Target_NameFrame_CPMeter:Hide();
+			-- end
 		else
 			Perl_Target_NameFrame_CPMeter:Hide();
 		end

@@ -60,6 +60,7 @@ function Perl_CombatDisplay_OnLoad(self)
 	self:RegisterEvent("PLAYER_LOGIN");
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
+	self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
 	self:RegisterEvent("PLAYER_TARGET_CHANGED");
 	self:RegisterEvent("UNIT_AURA");
 	--self:RegisterEvent("UNIT_COMBO_POINTS");
@@ -130,7 +131,7 @@ function Perl_CombatDisplay_Events:UNIT_POWER_UPDATE(arg1)
 	local _;
 	local powertype, _ = UnitPowerType(arg1);
 
-	if (powertype == 0) then -- mana
+	if (powertype == 0 or powertype == 2 or powertype == 3 ) then -- mana, focus, energy
 		if (arg1 == "player") then
 			if (UnitPower("player") == UnitPowerMax("player")) then
 				manafull = 1;
@@ -148,7 +149,7 @@ function Perl_CombatDisplay_Events:UNIT_POWER_UPDATE(arg1)
 				Perl_CombatDisplay_Update_PetMana();
 			end
 		end
-	elseif (powertype == 1 or powertype == 6) then	-- rage or runic power
+	elseif (powertype == 1 or powertype == 6 or powertype == 8 or powertype == 11 or powertype == 17 or powertype == 18) then	-- rage, runic power, lunar, maelstrom, fury, pain
 		if (arg1 == "player") then
 			if (UnitPower("player") == 0) then
 				manafull = 1;
@@ -162,24 +163,24 @@ function Perl_CombatDisplay_Events:UNIT_POWER_UPDATE(arg1)
 		elseif (arg1 == "target") then
 			Perl_CombatDisplay_Target_Update_Mana();
 		end
-	elseif (powertype == 2 or powertype == 3) then	-- energy
-		if (arg1 == "player") then
-			if (UnitPower("player") == UnitPowerMax("player")) then
-				manafull = 1;
-				if (manapersist == 1) then
-					Perl_CombatDisplay_UpdateDisplay();
-				end
-			else
-				manafull = 0;
-			end
-			Perl_CombatDisplay_Update_Mana();
-		elseif (arg1 == "target") then
-			Perl_CombatDisplay_Target_Update_Mana();
-		elseif (arg1 == "pet") then
-			if (showpetbars == 1) then
-				Perl_CombatDisplay_Update_PetMana();
-			end
-		end
+	-- elseif (powertype == 2 or powertype == 3) then	-- energy
+	-- 	if (arg1 == "player") then
+	-- 		if (UnitPower("player") == UnitPowerMax("player")) then
+	-- 			manafull = 1;
+	-- 			if (manapersist == 1) then
+	-- 				Perl_CombatDisplay_UpdateDisplay();
+	-- 			end
+	-- 		else
+	-- 			manafull = 0;
+	-- 		end
+	-- 		Perl_CombatDisplay_Update_Mana();
+	-- 	elseif (arg1 == "target") then
+	-- 		Perl_CombatDisplay_Target_Update_Mana();
+	-- 	elseif (arg1 == "pet") then
+	-- 		if (showpetbars == 1) then
+	-- 			Perl_CombatDisplay_Update_PetMana();
+	-- 		end
+	-- 	end
 	end
 
 	if (arg1 == "player" or arg1 == "vehicle") then
@@ -219,6 +220,11 @@ function Perl_CombatDisplay_Events:PLAYER_REGEN_DISABLED()
 
 		Perl_CombatDisplay_UpdateDisplay();
 	end
+end
+
+function Perl_CombatDisplay_Events:PLAYER_SPECIALIZATION_CHANGED()
+	Perl_CombatDisplay_CPBar:SetMinMaxValues(0, UnitPowerMax("player", 4));
+	Perl_CombatDisplay_Update_Combo_Points();
 end
 
 function Perl_CombatDisplay_Events:UNIT_DISPLAYPOWER(arg1)
@@ -586,13 +592,15 @@ end
 function Perl_CombatDisplay_Update_Combo_Points()
 	if (showcp == 1) then
 		local combopoints = GetComboPoints("vehicle","target");				-- How many Combo Points does the player have in their vehicle?
+		local combopointsmax = 5;
 		if (combopoints == 0) then
 			combopoints = UnitPower("player", 4);							-- We aren't in a vehicle, get regular combo points
+			combopointsmax = UnitPowerMax("player", 4);
 		end
 
 		if (PCUF_FADEBARS == 1) then
 			if (combopoints < Perl_CombatDisplay_CPBar:GetValue() or (PCUF_INVERTBARVALUES == 1 and combopoints > Perl_CombatDisplay_CPBar:GetValue())) then
-				Perl_CombatDisplay_CPBarFadeBar:SetMinMaxValues(0, 5);
+				Perl_CombatDisplay_CPBarFadeBar:SetMinMaxValues(0, combopointsmax);
 				Perl_CombatDisplay_CPBarFadeBar:SetValue(Perl_CombatDisplay_CPBar:GetValue());
 				Perl_CombatDisplay_CPBarFadeBar:Show();
 				Perl_CombatDisplay_CPBar_Fade_Color = 1;
@@ -601,7 +609,7 @@ function Perl_CombatDisplay_Update_Combo_Points()
 			end
 		end
 
-		Perl_CombatDisplay_CPBarText:SetText(combopoints..'/5');
+		Perl_CombatDisplay_CPBarText:SetText(combopoints..'/'..combopointsmax);
 		if (PCUF_INVERTBARVALUES == 1) then
 			Perl_CombatDisplay_CPBar:SetValue(5 - combopoints);
 		else
@@ -1138,7 +1146,7 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 12);
 		Perl_CombatDisplay_CPBar:Show();
 		Perl_CombatDisplay_CPBarBG:Show();
-		Perl_CombatDisplay_CPBar:SetMinMaxValues(0, 5);
+		Perl_CombatDisplay_CPBar:SetMinMaxValues(0, UnitPowerMax("player", 4));
 		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "PRIEST" or englishclass == "SHAMAN")) then
 			Perl_CombatDisplay_CPBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_DruidBar", "BOTTOMLEFT", 0, -2);
 		else
