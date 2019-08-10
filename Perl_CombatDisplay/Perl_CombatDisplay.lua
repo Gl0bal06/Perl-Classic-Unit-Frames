@@ -551,7 +551,8 @@ function Perl_CombatDisplay_OnUpdate_ManaBar(self, elapsed)
 	if (self.TimeSinceLastUpdate > Perl_CombatDisplay_ManaBar_Time_Update_Rate) then
 		self.TimeSinceLastUpdate = 0;
 
-		playeronupdatemana = UnitPower("player", UnitPowerType("player"));
+		--playeronupdatemana = UnitPower("player", UnitPowerType("player"));
+		playeronupdatemana = UnitPower("player");
 
 		if (PCUF_FADEBARS == 1) then
 			if (playeronupdatemana < Perl_CombatDisplay_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and playeronupdatemana > Perl_CombatDisplay_Frame.lastMana)) then
@@ -900,7 +901,8 @@ function Perl_CombatDisplay_Target_OnUpdate_ManaBar(self, elapsed)
 	if (self.TimeSinceLastUpdate > Perl_CombatDisplay_Target_ManaBar_Time_Update_Rate) then
 		self.TimeSinceLastUpdate = 0;
 
-		targetonupdatemana = UnitPower("target", UnitPowerType("target"));
+		--targetonupdatemana = UnitPower("target", UnitPowerType("target"));
+		targetonupdatemana = UnitPower("target");
 
 		if (PCUF_FADEBARS == 1) then
 			if (targetonupdatemana < Perl_CombatDisplay_Target_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and targetonupdatemana > Perl_CombatDisplay_Target_Frame.lastMana)) then

@@ -1128,11 +1128,11 @@ function Perl_Party_Update_Portrait(self)
 end
 
 function Perl_Party_VoiceChat(self)
-	if (UnitIsTalking(self.unit)) then
-		self.voiceChat:Show();
-	else
+	--if (UnitIsTalking(self.unit)) then
+		--self.voiceChat:Show();
+	--else
 		self.voiceChat:Hide();
-	end
+	--end
 end
 
 function Perl_Party_Update_Health_Mana()
