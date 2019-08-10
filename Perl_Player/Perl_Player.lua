@@ -82,13 +82,13 @@ function Perl_Player_OnLoad(self)
 	self:RegisterEvent("UNIT_MAXPOWER");
 	self:RegisterEvent("UNIT_MODEL_CHANGED");
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	self:RegisterEvent("UNIT_POWER");
-	self:RegisterEvent("UNIT_PVP_UPDATE");
-	self:RegisterEvent("UNIT_SPELLMISS");
+	self:RegisterEvent("UNIT_POWER_UPDATE");
+	--self:RegisterEvent("UNIT_PVP_UPDATE");
+	--self:RegisterEvent("UNIT_SPELLMISS");
 	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 	self:RegisterEvent("UPDATE_FACTION");
-	self:RegisterEvent("VOICE_START");
-	self:RegisterEvent("VOICE_STOP");
+	--self:RegisterEvent("VOICE_START");
+	--self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
 	self:SetScript("OnEvent",
@@ -133,12 +133,12 @@ function Perl_Player_Events:UNIT_HEALTH(arg1)
 end
 Perl_Player_Events.UNIT_MAXHEALTH = Perl_Player_Events.UNIT_HEALTH;
 
-function Perl_Player_Events:UNIT_POWER(arg1)
+function Perl_Player_Events:UNIT_POWER_UPDATE(arg1)
 	if (arg1 == "player") then
 		Perl_Player_Update_Mana();			-- Update mana values
 	end
 end
-Perl_Player_Events.UNIT_MAXPOWER = Perl_Player_Events.UNIT_POWER;
+Perl_Player_Events.UNIT_MAXPOWER = Perl_Player_Events.UNIT_POWER_UPDATE;
 
 function Perl_Player_Events:UNIT_DISPLAYPOWER(arg1)
 	if (arg1 == "player") then
@@ -159,11 +159,11 @@ function Perl_Player_Events:UNIT_COMBAT(arg1, arg2, arg3, arg4, arg5)
 	end
 end
 
-function Perl_Player_Events:UNIT_SPELLMISS(arg1, arg2)
-	if (arg1 == "player") then
-		CombatFeedback_OnSpellMissEvent(arg2);
-	end
-end
+-- function Perl_Player_Events:UNIT_SPELLMISS(arg1, arg2)
+-- 	if (arg1 == "player") then
+-- 		CombatFeedback_OnSpellMissEvent(arg2);
+-- 	end
+-- end
 
 function Perl_Player_Events:PLAYER_REGEN_DISABLED()
 	Perl_Player_Update_Combat_Status("PLAYER_REGEN_DISABLED");	-- Are we fighting, resting, or none?
@@ -192,7 +192,7 @@ end
 function Perl_Player_Events:UNIT_FACTION()
 	Perl_Player_Update_PvP_Status();		-- Is the character PvP flagged?
 end
-Perl_Player_Events.UNIT_PVP_UPDATE = Perl_Player_Events.UNIT_FACTION;
+--Perl_Player_Events.UNIT_PVP_UPDATE = Perl_Player_Events.UNIT_FACTION;
 
 
 function Perl_Player_Events:UNIT_LEVEL(arg1)
@@ -226,17 +226,17 @@ function Perl_Player_Events:UNIT_PORTRAIT_UPDATE(arg1)
 end
 Perl_Player_Events.UNIT_MODEL_CHANGED = Perl_Player_Events.UNIT_PORTRAIT_UPDATE;
 
-function Perl_Player_Events:VOICE_START(arg1)
-	if (arg1 == "player") then
-		Perl_Player_VoiceChatIconFrame:Show();
-	end
-end
+-- function Perl_Player_Events:VOICE_START(arg1)
+-- 	if (arg1 == "player") then
+-- 		Perl_Player_VoiceChatIconFrame:Show();
+-- 	end
+-- end
 
-function Perl_Player_Events:VOICE_STOP(arg1)
-	if (arg1 == "player") then
-		Perl_Player_VoiceChatIconFrame:Hide();
-	end
-end
+-- function Perl_Player_Events:VOICE_STOP(arg1)
+-- 	if (arg1 == "player") then
+-- 		Perl_Player_VoiceChatIconFrame:Hide();
+-- 	end
+-- end
 
 function Perl_Player_Events:UNIT_THREAT_SITUATION_UPDATE(arg1)
 	if (arg1 == "player") then
@@ -737,7 +737,7 @@ function Perl_Player_Update_Experience()
 	Perl_Player_XPRestBar:SetStatusBarColor(0, 0.6, 0.6, 0.5);
 	Perl_Player_XPBarBG:SetStatusBarColor(0, 0.6, 0.6, 0.25);
 
-	if (UnitLevel("player") ~= 110) then
+	if (UnitLevel("player") ~= 120) then
 		-- XP Bar stuff
 		local playerxp = UnitXP("player");
 		local playerxpmax = UnitXPMax("player");
@@ -2139,8 +2139,8 @@ function Perl_Player_BuffUpdateAll()
 	local curableDebuffFound = 0;
 	local _;
 
-	for debuffnum=1,20 do													-- Start main debuff loop
-		_, _, _, _, debuffType, _, _ = UnitDebuff("player", debuffnum, 1);	-- Get the texture and debuff stacking information if any
+	for debuffnum=1,20 do												-- Start main debuff loop
+		_, _, _, debuffType, _, _ = UnitDebuff("player", debuffnum, 1);	-- Get the texture and debuff stacking information if any
 			if (debuffType) then
 				if (PCUF_COLORFRAMEDEBUFF == 1) then
 					if (curableDebuffFound == 0) then
@@ -2204,7 +2204,7 @@ function Perl_Player_XPTooltip(self)
 	GameTooltip_SetDefaultAnchor(GameTooltip, self);
 	if (xpbarstate == 1) then
 		local playerlevel = UnitLevel("player");		-- Player's next level
-		if (playerlevel < 110) then
+		if (playerlevel < 120) then
 			playerxp = UnitXP("player");				-- Player's current XP
 			playerxpmax = UnitXPMax("player");			-- Experience for the current level
 			local playerxprest = GetXPExhaustion();		-- Amount of bonus xp we have

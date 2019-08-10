@@ -1,3 +1,19 @@
+8.01 - July 18, 2018
+ - All: Updated TOC Interface version to 80000
+ - ArcaneBar: Fixed UnitChannelInfo function calls
+ - CombatDisplay/Focus/Party/PartyPet/PartyTarget/Pet/Player/Target/ToT: Fixed UnitDebuff function calls
+ - CombatDisplay/Focus/Party/PartyPet/Pet/Player/Target: Changed UNIT_POWER events to UNIT_POWER_UPDATE
+ - CombatDisplay/Target: Removed UNIT_COMBO_POINTS event calls
+ - Focus/Party/PartyPet/Pet/Target/ToT: Fixed UnitAura function calls
+ - Focus/Party/PartyPet/Pet/Target/ToT: Fixed UnitBuff function calls
+ - Focus/Party/Player/Target: Removed UNIT_PVP_UPDATE event calls
+ - Focus/Party/Player/Target: Removed VOICE_START event calls
+ - Focus/Party/Player/Target: Removed VOICE_STOP event calls
+ - Focus/Pet/Player/Target: Removed UNIT_SPELLMISS event calls
+ - Focus/Target: Removed UNIT_DYNAMIC_FLAGS event calls
+ - Pet: Removed PLAYER_PET_CHANGED event calls
+ - Player: The experience bar now maxes out at Level 120
+
 7.04 - June 18, 2017
  - All: Updated TOC Interface version to 70200
  - CombatDisplay/Player/Target: Changed a few instances of UnitPower

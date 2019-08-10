@@ -653,7 +653,7 @@ function Perl_Target_Target_Update_Buffs()
 			else
 				targettargetbufffilter = "HELPFUL RAID";
 			end
-			_, _, buffTexture, buffApplications = UnitAura("targettarget", buffnum, targettargetbufffilter);	-- Get the texture and buff stacking information if any
+			_, buffTexture, buffApplications = UnitAura("targettarget", buffnum, targettargetbufffilter);	-- Get the texture and buff stacking information if any
 			button = _G["Perl_Target_Target_BuffFrame_Buff"..buffnum];			-- Create the main icon for the buff
 			if (buffTexture) then												-- If there is a valid texture, proceed with buff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);			-- Set the texture
@@ -679,7 +679,7 @@ function Perl_Target_Target_Update_Buffs()
 	if (showtotdebuffs == 1) then
 		for debuffnum=1,16 do													-- Start main debuff loop
 			Perl_Target_Target_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
-			_, _, buffTexture, buffApplications, debuffType = UnitAura("targettarget", debuffnum, targettargetdebufffilter);	-- Get the texture and debuff stacking information if any
+			_, buffTexture, buffApplications, debuffType = UnitAura("targettarget", debuffnum, targettargetdebufffilter);	-- Get the texture and debuff stacking information if any
 			button = _G["Perl_Target_Target_BuffFrame_Debuff"..debuffnum];		-- Create the main icon for the debuff
 			if (buffTexture) then												-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);			-- Set the texture
@@ -769,7 +769,7 @@ function Perl_Target_Target_Target_Update_Buffs()
 			else
 				targettargettargetbufffilter = "HELPFUL RAID";
 			end
-			_, _, buffTexture, buffApplications = UnitAura("targettargettarget", buffnum, targettargettargetbufffilter);	-- Get the texture and buff stacking information if any
+			_, buffTexture, buffApplications = UnitAura("targettargettarget", buffnum, targettargettargetbufffilter);	-- Get the texture and buff stacking information if any
 			button = _G["Perl_Target_Target_Target_BuffFrame_Buff"..buffnum];	-- Create the main icon for the buff
 			if (buffTexture) then
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);			-- Set the texture
@@ -795,7 +795,7 @@ function Perl_Target_Target_Target_Update_Buffs()
 	if (showtototdebuffs == 1) then
 		for debuffnum=1,16 do
 			Perl_Target_Target_Target_Debuff_Set_Filter();						-- Are we targeting a friend or enemy and which filter do we need to apply?
-			_, _, buffTexture, buffApplications, debuffType = UnitAura("targettargettarget", debuffnum, targettargettargetdebufffilter);	-- Get the texture and debuff stacking information if any
+			_, buffTexture, buffApplications, debuffType = UnitAura("targettargettarget", debuffnum, targettargettargetdebufffilter);	-- Get the texture and debuff stacking information if any
 			button = _G["Perl_Target_Target_Target_BuffFrame_Debuff"..debuffnum];	-- Create the main icon for the debuff
 			if (buffTexture) then
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);			-- Set the texture

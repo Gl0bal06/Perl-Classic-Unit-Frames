@@ -65,20 +65,20 @@ function Perl_Focus_OnLoad(self)
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_COMBAT");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
-	self:RegisterEvent("UNIT_DYNAMIC_FLAGS");
+	--self:RegisterEvent("UNIT_DYNAMIC_FLAGS");
 	self:RegisterEvent("UNIT_HEALTH");
 	self:RegisterEvent("UNIT_LEVEL");
 	self:RegisterEvent("UNIT_MAXHEALTH");
 	self:RegisterEvent("UNIT_MAXPOWER");
 	self:RegisterEvent("UNIT_NAME_UPDATE");
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	self:RegisterEvent("UNIT_POWER");
-	self:RegisterEvent("UNIT_PVP_UPDATE");
+	self:RegisterEvent("UNIT_POWER_UPDATE");
+	--self:RegisterEvent("UNIT_PVP_UPDATE");
 	self:RegisterEvent("UNIT_FACTION");
-	self:RegisterEvent("UNIT_SPELLMISS");
+	--self:RegisterEvent("UNIT_SPELLMISS");
 	self:RegisterEvent("UNIT_THREAT_LIST_UPDATE");
-	self:RegisterEvent("VOICE_START");
-	self:RegisterEvent("VOICE_STOP");
+	--self:RegisterEvent("VOICE_START");
+	--self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
 	self:SetScript("OnEvent",
@@ -130,12 +130,12 @@ end
 Perl_Focus_Events.UNIT_MAXHEALTH = Perl_Focus_Events.UNIT_HEALTH;
 
 
-function Perl_Focus_Events:UNIT_POWER(arg1)
+function Perl_Focus_Events:UNIT_POWER_UPDATE(arg1)
 	if (arg1 == "focus") then
 		Perl_Focus_Update_Mana();		-- Update energy/mana/rage values
 	end
 end
-Perl_Focus_Events.UNIT_MAXPOWER = Perl_Focus_Events.UNIT_POWER;
+Perl_Focus_Events.UNIT_MAXPOWER = Perl_Focus_Events.UNIT_POWER_UPDATE;
 
 function Perl_Focus_Events:UNIT_AURA(arg1)
 	if (arg1 == "focus") then
@@ -143,11 +143,11 @@ function Perl_Focus_Events:UNIT_AURA(arg1)
 	end
 end
 
-function Perl_Focus_Events:UNIT_DYNAMIC_FLAGS(arg1)
-	if (arg1 == "focus") then
-		Perl_Focus_Update_Text_Color();	-- Has the Focus been tapped by someone else?
-	end
-end
+-- function Perl_Focus_Events:UNIT_DYNAMIC_FLAGS(arg1)
+-- 	if (arg1 == "focus") then
+-- 		Perl_Focus_Update_Text_Color();	-- Has the Focus been tapped by someone else?
+-- 	end
+-- end
 
 function Perl_Focus_Events:UNIT_COMBAT(arg1, arg2, arg3, arg4, arg5)
 	if (arg1 == "focus") then
@@ -155,11 +155,11 @@ function Perl_Focus_Events:UNIT_COMBAT(arg1, arg2, arg3, arg4, arg5)
 	end
 end
 
-function Perl_Focus_Events:UNIT_SPELLMISS(arg1, arg2)
-	if (arg1 == "focus") then
-		CombatFeedback_OnSpellMissEvent(arg2);
-	end
-end
+-- function Perl_Focus_Events:UNIT_SPELLMISS(arg1, arg2)
+-- 	if (arg1 == "focus") then
+-- 		CombatFeedback_OnSpellMissEvent(arg2);
+-- 	end
+-- end
 
 function Perl_Focus_Events:UNIT_NAME_UPDATE(arg1)
 	if (arg1 == "focus") then
@@ -172,7 +172,7 @@ function Perl_Focus_Events:UNIT_FACTION()
 	Perl_Focus_Update_Text_Color();		-- Is the character PvP flagged?
 	Perl_Focus_Update_PvP_Status_Icon();	-- Set pvp status icon
 end
-Perl_Focus_Events.UNIT_PVP_UPDATE = Perl_Focus_Events.UNIT_FACTION;
+--Perl_Focus_Events.UNIT_PVP_UPDATE = Perl_Focus_Events.UNIT_FACTION;
 
 function Perl_Focus_Events:UNIT_PORTRAIT_UPDATE(arg1)
 	if (arg1 == "focus") then
@@ -197,17 +197,17 @@ function Perl_Focus_Events:UNIT_DISPLAYPOWER(arg1)
 	end
 end
 
-function Perl_Focus_Events:VOICE_START(arg1)
-	if (arg1 == "focus") then
-		Perl_Focus_VoiceChatIconFrame:Show(arg1);
-	end
-end
+-- function Perl_Focus_Events:VOICE_START(arg1)
+-- 	if (arg1 == "focus") then
+-- 		Perl_Focus_VoiceChatIconFrame:Show(arg1);
+-- 	end
+-- end
 
-function Perl_Focus_Events:VOICE_STOP(arg1)
-	if (arg1 == "focus") then
-		Perl_Focus_VoiceChatIconFrame:Hide();
-	end
-end
+-- function Perl_Focus_Events:VOICE_STOP(arg1)
+-- 	if (arg1 == "focus") then
+-- 		Perl_Focus_VoiceChatIconFrame:Hide();
+-- 	end
+-- end
 
 function Perl_Focus_Events:UNIT_THREAT_LIST_UPDATE(arg1)
 	if (arg1 == "focus") then
@@ -464,14 +464,14 @@ function Perl_Focus_Update_Health()
 			_, englishclass = UnitClass("focus");
 			if (englishclass == "HUNTER") then							-- If the dead is a hunter, check for Feign Death
 				local buffnum = 1;
-				local _, _, buffTexture = UnitBuff("focus", buffnum);
+				local _, buffTexture = UnitBuff("focus", buffnum);
 				while (buffTexture) do
 					if (buffTexture == "Interface\\Icons\\Ability_Rogue_FeignDeath") then
 						Perl_Focus_HealthBarText:SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
 						break;
 					end
 					buffnum = buffnum + 1;
-					_, _, buffTexture = UnitBuff("focus", buffnum);
+					_, buffTexture = UnitBuff("focus", buffnum);
 				end
 			end
 		end
@@ -1889,7 +1889,7 @@ function Perl_Focus_Buff_UpdateAll()
 			else
 				bufffilter = "HELPFUL RAID";
 			end
-			_, _, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura("focus", buffnum, bufffilter);	-- Get the texture and buff stacking information if any
+			_, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura("focus", buffnum, bufffilter);	-- Get the texture and buff stacking information if any
 			button = _G["Perl_Focus_Buff"..buffnum];					-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);	-- Set the texture
@@ -1926,7 +1926,7 @@ function Perl_Focus_Buff_UpdateAll()
 		local numDebuffs = 0;											-- Debuff counter for correct layout
 		for debuffnum=1,numdebuffsshown do								-- Start main debuff loop
 			Perl_Focus_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
-			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura("focus", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
+			_, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura("focus", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
 			button = _G["Perl_Focus_Debuff"..debuffnum];				-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);	-- Set the texture
@@ -2184,7 +2184,7 @@ function Perl_Focus_Buff_GetApplications(debuffname)
 		Perl_Focus_Tooltip:SetOwner(Perl_Focus_Frame, "ANCHOR_BOTTOMRIGHT");
 		Perl_Focus_Tooltip:SetUnitDebuff("focus", i);
 		if (Perl_Focus_TooltipTextLeft1:GetText() == debuffname) then
-			_, _, _, debuffApplications = UnitDebuff("focus", i);
+			_, _, debuffApplications = UnitDebuff("focus", i);
 			Perl_Focus_Tooltip:Hide();
 			return debuffApplications;
 		end

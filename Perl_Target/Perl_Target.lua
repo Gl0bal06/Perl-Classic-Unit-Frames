@@ -72,23 +72,23 @@ function Perl_Target_OnLoad(self)
 	self:RegisterEvent("RAID_TARGET_UPDATE");
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_COMBAT");
-	self:RegisterEvent("UNIT_COMBO_POINTS");
+	--self:RegisterEvent("UNIT_COMBO_POINTS");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
-	self:RegisterEvent("UNIT_DYNAMIC_FLAGS");
+	--self:RegisterEvent("UNIT_DYNAMIC_FLAGS");
 	self:RegisterEvent("UNIT_HEALTH");
 	self:RegisterEvent("UNIT_LEVEL");
 	self:RegisterEvent("UNIT_MAXHEALTH");
 	self:RegisterEvent("UNIT_MAXPOWER");
 	self:RegisterEvent("UNIT_NAME_UPDATE");
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	self:RegisterEvent("UNIT_POWER");
 	self:RegisterEvent("UNIT_POWER_FREQUENT");
-	self:RegisterEvent("UNIT_PVP_UPDATE");
+	self:RegisterEvent("UNIT_POWER_UPDATE");
+	--self:RegisterEvent("UNIT_PVP_UPDATE");
 	self:RegisterEvent("UNIT_FACTION");
-	self:RegisterEvent("UNIT_SPELLMISS");
+	--self:RegisterEvent("UNIT_SPELLMISS");
 	self:RegisterEvent("UNIT_THREAT_LIST_UPDATE");
-	self:RegisterEvent("VOICE_START");
-	self:RegisterEvent("VOICE_STOP");
+	--self:RegisterEvent("VOICE_START");
+	--self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
 	self:SetScript("OnEvent",
@@ -146,15 +146,15 @@ function Perl_Target_Events:UNIT_HEALTH(arg1)
 end
 Perl_Target_Events.UNIT_MAXHEALTH = Perl_Target_Events.UNIT_HEALTH;
 
-function Perl_Target_Events:UNIT_POWER(arg1)
+function Perl_Target_Events:UNIT_POWER_UPDATE(arg1)
 	if (arg1 == "target") then
 		Perl_Target_Update_Mana();			-- Update energy/focus/mana/rage/runicpower values
 	elseif (arg1 == "player" or arg1 == "vehicle") then
 		Perl_Target_Update_Combo_Points();	-- How many combo points are we at?
 	end
 end
-Perl_Target_Events.UNIT_MAXPOWER = Perl_Target_Events.UNIT_POWER;
-Perl_Target_Events.UNIT_POWER_FREQUENT = Perl_Target_Events.UNIT_POWER;
+Perl_Target_Events.UNIT_MAXPOWER = Perl_Target_Events.UNIT_POWER_UPDATE;
+Perl_Target_Events.UNIT_POWER_FREQUENT = Perl_Target_Events.UNIT_POWER_UPDATE;
 
 function Perl_Target_Events:UNIT_AURA(arg1)
 	if (arg1 == "target") then
@@ -162,11 +162,11 @@ function Perl_Target_Events:UNIT_AURA(arg1)
 	end
 end
 
-function Perl_Target_Events:UNIT_DYNAMIC_FLAGS(arg1)
-	if (arg1 == "target") then
-		Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
-	end
-end
+-- function Perl_Target_Events:UNIT_DYNAMIC_FLAGS(arg1)
+-- 	if (arg1 == "target") then
+-- 		Perl_Target_Update_Text_Color();	-- Has the target been tapped by someone else?
+-- 	end
+-- end
 
 function Perl_Target_Events:UNIT_COMBAT(arg1, arg2, arg3, arg4, arg5)
 	if (arg1 == "target") then
@@ -174,11 +174,11 @@ function Perl_Target_Events:UNIT_COMBAT(arg1, arg2, arg3, arg4, arg5)
 	end
 end
 
-function Perl_Target_Events:UNIT_SPELLMISS(arg1, arg2)
-	if (arg1 == "target") then
-		CombatFeedback_OnSpellMissEvent(arg2);
-	end
-end
+-- function Perl_Target_Events:UNIT_SPELLMISS(arg1, arg2)
+-- 	if (arg1 == "target") then
+-- 		CombatFeedback_OnSpellMissEvent(arg2);
+-- 	end
+-- end
 
 function Perl_Target_Events:UNIT_NAME_UPDATE(arg1)
 	if (arg1 == "target") then
@@ -191,7 +191,7 @@ function Perl_Target_Events:UNIT_FACTION()
 	Perl_Target_Update_Text_Color();		-- Is the character PvP flagged?
 	Perl_Target_Update_PvP_Status_Icon();	-- Set pvp status icon
 end
-Perl_Target_Events.UNIT_PVP_UPDATE = Perl_Target_Events.UNIT_FACTION;
+--Perl_Target_Events.UNIT_PVP_UPDATE = Perl_Target_Events.UNIT_FACTION;
 
 function Perl_Target_Events:UNIT_PORTRAIT_UPDATE(arg1)
 	if (arg1 == "target") then
@@ -199,11 +199,11 @@ function Perl_Target_Events:UNIT_PORTRAIT_UPDATE(arg1)
 	end
 end
 
-function Perl_Target_Events:UNIT_COMBO_POINTS(arg1)
-	if (arg1 == "player" or arg1 == "vehicle") then
-		Perl_Target_Update_Combo_Points();	-- How many combo points are we at?
-	end
-end
+-- function Perl_Target_Events:UNIT_COMBO_POINTS(arg1)
+-- 	if (arg1 == "player" or arg1 == "vehicle") then
+-- 		Perl_Target_Update_Combo_Points();	-- How many combo points are we at?
+-- 	end
+-- end
 
 function Perl_Target_Events:RAID_TARGET_UPDATE()
 	Perl_Target_UpdateRaidTargetIcon();
@@ -222,17 +222,17 @@ function Perl_Target_Events:UNIT_DISPLAYPOWER(arg1)
 	end
 end
 
-function Perl_Target_Events:VOICE_START(arg1)
-	if (arg1 == "target") then
-		Perl_Target_VoiceChatIconFrame:Show();
-	end
-end
+-- function Perl_Target_Events:VOICE_START(arg1)
+-- 	if (arg1 == "target") then
+-- 		Perl_Target_VoiceChatIconFrame:Show();
+-- 	end
+-- end
 
-function Perl_Target_Events:VOICE_STOP(arg1)
-	if (arg1 == "target") then
-		Perl_Target_VoiceChatIconFrame:Hide();
-	end
-end
+-- function Perl_Target_Events:VOICE_STOP(arg1)
+-- 	if (arg1 == "target") then
+-- 		Perl_Target_VoiceChatIconFrame:Hide();
+-- 	end
+-- end
 
 function Perl_Target_Events:UNIT_THREAT_LIST_UPDATE(arg1)
 	if (arg1 == "target") then
@@ -531,14 +531,14 @@ function Perl_Target_Update_Health()
 			_, englishclass = UnitClass("target");
 			if (englishclass == "HUNTER") then									-- If the dead is a hunter, check for Feign Death
 				local buffnum = 1;
-				local _, _, buffTexture = UnitBuff("target", buffnum);
+				local _, buffTexture = UnitBuff("target", buffnum);
 				while (buffTexture) do
 					if (buffTexture == "Interface\\Icons\\Ability_Rogue_FeignDeath") then
 						Perl_Target_HealthBarText:SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
 						break;
 					end
 					buffnum = buffnum + 1;
-					_, _, buffTexture = UnitBuff("target", buffnum);
+					_, buffTexture = UnitBuff("target", buffnum);
 				end
 			end
 		end
@@ -2349,7 +2349,7 @@ function Perl_Target_Buff_UpdateAll()
 			else
 				bufffilter = "HELPFUL RAID";
 			end
-			_, _, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura("target", buffnum, bufffilter);	-- Get the texture and buff stacking information if any
+			_, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura("target", buffnum, bufffilter);	-- Get the texture and buff stacking information if any
 			button = _G["Perl_Target_Buff"..buffnum];						-- Create the main icon for the buff
 			if (buffTexture) then											-- If there is a valid texture, proceed with buff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);		-- Set the texture
@@ -2386,7 +2386,7 @@ function Perl_Target_Buff_UpdateAll()
 		local numDebuffs = 0;												-- Debuff counter for correct layout
 		for debuffnum=1,numdebuffsshown do									-- Start main debuff loop
 			Perl_Target_Debuff_Set_Filter();								-- Are we targeting a friend or enemy and which filter do we need to apply?
-			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura("target", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
+			_, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura("target", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
 			button = _G["Perl_Target_Debuff"..debuffnum];					-- Create the main icon for the debuff
 			if (buffTexture) then											-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);		-- Set the texture
@@ -2654,7 +2654,7 @@ function Perl_Target_Buff_GetApplications(debuffname)
 	local _;
 
 	while UnitDebuff("target", i) do
-		name, _, _, debuffApplications, _, _, _ = UnitDebuff("target", i);
+		name, _, debuffApplications, _, _, _ = UnitDebuff("target", i);
 		if (name == debuffname) then
 			return debuffApplications;
 		end

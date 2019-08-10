@@ -58,7 +58,7 @@ function Perl_Player_Pet_OnLoad(self)
 	-- Events
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
-	self:RegisterEvent("PLAYER_PET_CHANGED");
+	--self:RegisterEvent("PLAYER_PET_CHANGED");
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_COMBAT");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
@@ -71,8 +71,8 @@ function Perl_Player_Pet_OnLoad(self)
 	self:RegisterEvent("UNIT_PET");
 	self:RegisterEvent("UNIT_PET_EXPERIENCE");
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	self:RegisterEvent("UNIT_POWER");
-	self:RegisterEvent("UNIT_SPELLMISS");
+	self:RegisterEvent("UNIT_POWER_UPDATE");
+	--self:RegisterEvent("UNIT_SPELLMISS");
 	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 
 	-- Scripts
@@ -132,7 +132,7 @@ function Perl_Player_Pet_Events:UNIT_HEALTH(arg1)
 end
 Perl_Player_Pet_Events.UNIT_MAXHEALTH = Perl_Player_Pet_Events.UNIT_HEALTH;
 
-function Perl_Player_Pet_Events:UNIT_POWER(arg1, arg2)
+function Perl_Player_Pet_Events:UNIT_POWER_UPDATE(arg1, arg2)
 	if (arg1 == "pet") then
 		if (arg2 ~= "HAPPINESS") then
 			Perl_Player_Pet_Update_Mana();						-- Update energy/mana/rage values
@@ -142,7 +142,7 @@ function Perl_Player_Pet_Events:UNIT_POWER(arg1, arg2)
 
 	end
 end
-Perl_Player_Pet_Events.UNIT_MAXPOWER = Perl_Player_Pet_Events.UNIT_POWER;
+Perl_Player_Pet_Events.UNIT_MAXPOWER = Perl_Player_Pet_Events.UNIT_POWER_UPDATE;
 
 function Perl_Player_Pet_Events:UNIT_COMBAT(arg1)
 	if (arg1 == "pet") then
@@ -150,11 +150,11 @@ function Perl_Player_Pet_Events:UNIT_COMBAT(arg1)
 	end
 end
 
-function Perl_Player_Pet_Events:UNIT_SPELLMISS(arg1)
-	if (arg1 == "pet") then
-		CombatFeedback_OnSpellMissEvent(arg2);
-	end
-end
+-- function Perl_Player_Pet_Events:UNIT_SPELLMISS(arg1)
+-- 	if (arg1 == "pet") then
+-- 		CombatFeedback_OnSpellMissEvent(arg2);
+-- 	end
+-- end
 
 function Perl_Player_Pet_Events:UNIT_NAME_UPDATE(arg1)
 	if (arg1 == "pet") then
@@ -189,9 +189,9 @@ function Perl_Player_Pet_Events:UNIT_DISPLAYPOWER(arg1)
 	end
 end
 
-function Perl_Player_Pet_Events:PLAYER_PET_CHANGED()
-	Perl_Player_Pet_Update_Once();
-end
+-- function Perl_Player_Pet_Events:PLAYER_PET_CHANGED()
+-- 	Perl_Player_Pet_Update_Once();
+-- end
 
 function Perl_Player_Pet_Events:UNIT_PET(arg1)
 	if (arg1 == "player") then
@@ -875,7 +875,7 @@ function Perl_Player_Pet_Target_OnUpdate(self, elapsed)
 			if (PCUF_COLORFRAMEDEBUFF == 1) then
 				local debuffType;
 				local _;
-				_, _, _, _, debuffType = UnitDebuff("pettarget", 1, 1);
+				_, _, _, debuffType = UnitDebuff("pettarget", 1, 1);
 				if (debuffType) then
 					local color = PerlDebuffTypeColor[debuffType];
 					Perl_Player_Pet_Target_NameFrame:SetBackdropBorderColor(color.r, color.g, color.b, 1);
@@ -1689,7 +1689,7 @@ function Perl_Player_Pet_Buff_UpdateAll()
 			else
 				bufffilter = "HELPFUL RAID";
 			end
-			_, _, buffTexture, buffApplications = UnitAura("pet", buffnum, bufffilter);	-- Get the texture and buff stacking information if any
+			_, buffTexture, buffApplications = UnitAura("pet", buffnum, bufffilter);	-- Get the texture and buff stacking information if any
 			button = _G["Perl_Player_Pet_Buff"..buffnum];							-- Create the main icon for the buff
 			if (buffTexture) then													-- If there is a valid texture, proceed with buff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture
@@ -1713,7 +1713,7 @@ function Perl_Player_Pet_Buff_UpdateAll()
 			else
 				debufffilter = "HARMFUL";
 			end
-			_, _, buffTexture, buffApplications, debuffType = UnitAura("pet", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
+			_, buffTexture, buffApplications, debuffType = UnitAura("pet", debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
 			button = _G["Perl_Player_Pet_Debuff"..debuffnum];						-- Create the main icon for the debuff
 			if (buffTexture) then													-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);				-- Set the texture

@@ -460,7 +460,7 @@ function Perl_Party_Target_Update_Buffs(self)
 	local _;
 
 	for debuffnum=1,40 do													-- Start main debuff loop
-		_, _, _, _, debuffType, _, _ = UnitDebuff(self.unit, debuffnum, 1);	-- Get the texture and debuff stacking information if any
+		_, _, _, debuffType, _, _ = UnitDebuff(self.unit, debuffnum, 1);	-- Get the texture and debuff stacking information if any
 		if (debuffType) then
 			if (PCUF_COLORFRAMEDEBUFF == 1) then
 				if (curableDebuffFound == 0) then

@@ -78,12 +78,12 @@ function Perl_Party_Pet_Events:UNIT_HEALTH(arg1)
 end
 Perl_Party_Pet_Events.UNIT_MAXHEALTH = Perl_Party_Pet_Events.UNIT_HEALTH;
 
-function Perl_Party_Pet_Events:UNIT_POWER(arg1)
+function Perl_Party_Pet_Events:UNIT_POWER_UPDATE(arg1)
 	if ((arg1 == "partypet1") or (arg1 == "partypet2") or (arg1 == "partypet3") or (arg1 == "partypet4")) then
 		Perl_Party_Pet_Update_Mana(arg1);
 	end
 end
-Perl_Party_Pet_Events.UNIT_MAXPOWER = Perl_Party_Pet_Events.UNIT_POWER;
+Perl_Party_Pet_Events.UNIT_MAXPOWER = Perl_Party_Pet_Events.UNIT_POWER_UPDATE;
 
 function Perl_Party_Pet_Events:UNIT_AURA(arg1)
 	if ((arg1 == "partypet1") or (arg1 == "partypet2") or (arg1 == "partypet3") or (arg1 == "partypet4")) then
@@ -601,7 +601,7 @@ function Perl_Party_Pet_Disable_All()
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_MODEL_CHANGED");
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_NAME_UPDATE");
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
-	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_POWER");
+	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_POWER_UPDATE");
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 
 	UnregisterUnitWatch(Perl_Party_Pet1);
@@ -624,7 +624,7 @@ function Perl_Party_Pet_Enable_All()
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_MODEL_CHANGED");
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_NAME_UPDATE");
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_POWER");
+	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_POWER_UPDATE");
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 
 	RegisterUnitWatch(Perl_Party_Pet1);
@@ -1235,7 +1235,7 @@ function Perl_Party_Pet_Buff_UpdateAll(unit)
 			else
 				bufffilter = "HELPFUL RAID";
 			end
-			_, _, buffTexture, buffApplications = UnitAura(unit, buffnum, bufffilter);	-- Get the texture and buff stacking information if any
+			_, buffTexture, buffApplications = UnitAura(unit, buffnum, bufffilter);	-- Get the texture and buff stacking information if any
 			button = _G["Perl_Party_Pet"..id.."_BuffFrame_Buff"..buffnum];				-- Create the main icon for the buff
 			if (buffTexture) then														-- If there is a valid texture, proceed with buff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);					-- Set the texture
@@ -1258,7 +1258,7 @@ function Perl_Party_Pet_Buff_UpdateAll(unit)
 			else
 				debufffilter = "HARMFUL";
 			end
-			_, _, buffTexture, buffApplications, debuffType = UnitAura(unit, debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
+			_, buffTexture, buffApplications, debuffType = UnitAura(unit, debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
 			button = _G["Perl_Party_Pet"..id.."_BuffFrame_DeBuff"..debuffnum];			-- Create the main icon for the debuff
 			if (buffTexture) then														-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);					-- Set the texture

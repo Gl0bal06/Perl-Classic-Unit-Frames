@@ -137,11 +137,11 @@ function Perl_Party_OnLoad(self)
 	self:RegisterEvent("UNIT_NAME_UPDATE");
 	self:RegisterEvent("UNIT_PET");
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
-	self:RegisterEvent("UNIT_POWER");
-	self:RegisterEvent("UNIT_PVP_UPDATE");
+	self:RegisterEvent("UNIT_POWER_UPDATE");
+	--self:RegisterEvent("UNIT_PVP_UPDATE");
 	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
-	self:RegisterEvent("VOICE_START");
-	self:RegisterEvent("VOICE_STOP");
+	--self:RegisterEvent("VOICE_START");
+	--self:RegisterEvent("VOICE_STOP");
 
 	-- Scripts
 	self:SetScript("OnEvent",
@@ -181,12 +181,12 @@ function Perl_Party_Events:UNIT_HEALTH(arg1)
 end
 Perl_Party_Events.UNIT_MAXHEALTH = Perl_Party_Events.UNIT_HEALTH;
 
-function Perl_Party_Events:UNIT_POWER(arg1)
+function Perl_Party_Events:UNIT_POWER_UPDATE(arg1)
 	if (arg1 == self.unit) then
 		Perl_Party_Update_Mana(self);
 	end
 end
-Perl_Party_Events.UNIT_MAXPOWER = Perl_Party_Events.UNIT_POWER;
+Perl_Party_Events.UNIT_MAXPOWER = Perl_Party_Events.UNIT_POWER_UPDATE;
 
 function Perl_Party_Events:UNIT_AURA(arg1)
 	if (arg1 == self.unit) then
@@ -206,7 +206,7 @@ function Perl_Party_Events:UNIT_FACTION(arg1)
 		Perl_Party_Update_PvP_Status(self);	-- Is the character PvP flagged?
 	end
 end
-Perl_Party_Events.UNIT_PVP_UPDATE = Perl_Party_Events.UNIT_FACTION;
+--Perl_Party_Events.UNIT_PVP_UPDATE = Perl_Party_Events.UNIT_FACTION;
 
 function Perl_Party_Events:UNIT_NAME_UPDATE(arg1)
 	if (arg1 == self.unit) then
@@ -249,17 +249,17 @@ function Perl_Party_Events:PLAYER_ALIVE()
 	Perl_Party_Check_Hidden();				-- Are we running a hidden mode? (Hopefully the last check we need to add for this)
 end
 
-function Perl_Party_Events:VOICE_START(arg1)
-	if (arg1 == self.unit) then
-		self.voiceChat:Show();
-	end
-end
+-- function Perl_Party_Events:VOICE_START(arg1)
+-- 	if (arg1 == self.unit) then
+-- 		self.voiceChat:Show();
+-- 	end
+-- end
 
-function Perl_Party_Events:VOICE_STOP(arg1)
-	if (arg1 == self.unit) then
-		self.voiceChat:Hide();
-	end
-end
+-- function Perl_Party_Events:VOICE_STOP(arg1)
+-- 	if (arg1 == self.unit) then
+-- 		self.voiceChat:Hide();
+-- 	end
+-- end
 
 function Perl_Party_Events:UNIT_THREAT_SITUATION_UPDATE(arg1)
 	if (arg1 == self.unit) then
@@ -519,7 +519,7 @@ function Perl_Party_Update_Health(self)
 		if (englishclass == "HUNTER") then						-- If the dead is a hunter, check for Feign Death
 			local buffnum = 1;
 			local currentlyfd = 0;
-			local _, _, buffTexture = UnitBuff(self.unit, buffnum);
+			local _, buffTexture = UnitBuff(self.unit, buffnum);
 			while (buffTexture) do
 				if (buffTexture == "Interface\\Icons\\Ability_Rogue_FeignDeath") then
 					if (compactmode == 0) then
@@ -531,7 +531,7 @@ function Perl_Party_Update_Health(self)
 					break;
 				end
 				buffnum = buffnum + 1;
-				_, _, buffTexture = UnitBuff(self.unit, buffnum);
+				_, buffTexture = UnitBuff(self.unit, buffnum);
 			end
 			if (currentlyfd == 0) then							-- If the hunter is not Feign Death, then lol
 				if (compactmode == 0) then
@@ -1023,7 +1023,7 @@ function Perl_Party_HealthHide(self)
 					if (englishclass == "HUNTER") then
 						local buffnum = 1;
 						local currentlyfd = 0;
-						local _, _, buffTexture = UnitBuff(self.unit, buffnum);
+						local _, buffTexture = UnitBuff(self.unit, buffnum);
 						while (buffTexture) do
 							if (buffTexture == "Interface\\Icons\\Ability_Rogue_FeignDeath") then
 								self.healthBarTextPercent:SetText(PERL_LOCALIZED_STATUS_FEIGNDEATH);
@@ -1031,7 +1031,7 @@ function Perl_Party_HealthHide(self)
 								break;
 							end
 							buffnum = buffnum + 1;
-							_, _, buffTexture = UnitBuff(self.unit, buffnum);
+							_, buffTexture = UnitBuff(self.unit, buffnum);
 						end
 						if (currentlyfd == 0) then
 							self.healthBarTextPercent:SetText(PERL_LOCALIZED_STATUS_DEAD);
@@ -2403,7 +2403,7 @@ function Perl_Party_Buff_UpdateAll(self)
 			else
 				bufffilter = "HELPFUL RAID";
 			end
-			_, _, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura(self.unit, buffnum, bufffilter);	-- Get the texture and buff stacking information if any
+			_, buffTexture, buffApplications, _, duration, timeLeft, _, _ = UnitAura(self.unit, buffnum, bufffilter);	-- Get the texture and buff stacking information if any
 			button = _G["Perl_Party_MemberFrame"..self.id.."_BuffFrame_Buff"..buffnum];	-- Create the main icon for the buff
 			if (buffTexture) then										-- If there is a valid texture, proceed with buff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);	-- Set the texture
@@ -2442,7 +2442,7 @@ function Perl_Party_Buff_UpdateAll(self)
 			else
 				debufffilter = "HARMFUL";
 			end
-			_, _, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura(self.unit, debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
+			_, buffTexture, buffApplications, debuffType, duration, timeLeft, _, _ = UnitAura(self.unit, debuffnum, debufffilter);	-- Get the texture and debuff stacking information if any
 			button = _G["Perl_Party_MemberFrame"..self.id.."_BuffFrame_Debuff"..debuffnum];	-- Create the main icon for the debuff
 			if (buffTexture) then										-- If there is a valid texture, proceed with debuff icon creation
 				_G[button:GetName().."Icon"]:SetTexture(buffTexture);	-- Set the texture
@@ -2503,7 +2503,7 @@ function Perl_Party_Buff_UpdateAll(self)
 			_, englishclass = UnitClass(self.unit);
 			if (englishclass == "HUNTER") then	-- If the dead is a hunter, check for Feign Death
 				local buffnum = 1;
-				_, _, buffTexture = UnitBuff(self.unit, buffnum);
+				_, buffTexture = UnitBuff(self.unit, buffnum);
 				while (buffTexture) do
 					if (buffTexture == "Interface\\Icons\\Ability_Rogue_FeignDeath") then
 						if (compactmode == 0) then
@@ -2514,7 +2514,7 @@ function Perl_Party_Buff_UpdateAll(self)
 						break;
 					end
 					buffnum = buffnum + 1;
-					_, _, buffTexture = UnitBuff(self.unit, buffnum);
+					_, buffTexture = UnitBuff(self.unit, buffnum);
 				end
 			end
 		end

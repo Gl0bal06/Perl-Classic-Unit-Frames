@@ -62,13 +62,13 @@ function Perl_CombatDisplay_OnLoad(self)
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
 	self:RegisterEvent("PLAYER_TARGET_CHANGED");
 	self:RegisterEvent("UNIT_AURA");
-	self:RegisterEvent("UNIT_COMBO_POINTS");
+	--self:RegisterEvent("UNIT_COMBO_POINTS");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
 	self:RegisterEvent("UNIT_HEALTH");
 	self:RegisterEvent("UNIT_MAXHEALTH");
 	self:RegisterEvent("UNIT_MAXPOWER");
 	self:RegisterEvent("UNIT_PET");
-	self:RegisterEvent("UNIT_POWER");
+	self:RegisterEvent("UNIT_POWER_UPDATE");
 	self:RegisterEvent("UNIT_POWER_FREQUENT");
 
 	-- Scripts
@@ -126,7 +126,7 @@ function Perl_CombatDisplay_Events:UNIT_HEALTH(arg1)
 end
 Perl_CombatDisplay_Events.UNIT_MAXHEALTH = Perl_CombatDisplay_Events.UNIT_HEALTH;
 
-function Perl_CombatDisplay_Events:UNIT_POWER(arg1)
+function Perl_CombatDisplay_Events:UNIT_POWER_UPDATE(arg1)
 	local _;
 	local powertype, _ = UnitPowerType(arg1);
 
@@ -186,19 +186,19 @@ function Perl_CombatDisplay_Events:UNIT_POWER(arg1)
 		Perl_CombatDisplay_Update_Combo_Points();
 	end
 end
-Perl_CombatDisplay_Events.UNIT_MAXPOWER = Perl_CombatDisplay_Events.UNIT_POWER;
-Perl_CombatDisplay_Events.UNIT_POWER_FREQUENT = Perl_CombatDisplay_Events.UNIT_POWER;
+Perl_CombatDisplay_Events.UNIT_MAXPOWER = Perl_CombatDisplay_Events.UNIT_POWER_UPDATE;
+Perl_CombatDisplay_Events.UNIT_POWER_FREQUENT = Perl_CombatDisplay_Events.UNIT_POWER_UPDATE;
 
 function Perl_CombatDisplay_Events:PLAYER_TARGET_CHANGED()
 	Perl_CombatDisplay_UpdateDisplay();
 	Perl_CombatDisplay_Update_Combo_Points();
 end
 
-function Perl_CombatDisplay_Events:UNIT_COMBO_POINTS(arg1)
-	if (arg1 == "player" or arg1 == "vehicle") then
-		Perl_CombatDisplay_Update_Combo_Points();
-	end
-end
+-- function Perl_CombatDisplay_Events:UNIT_COMBO_POINTS(arg1)
+-- 	if (arg1 == "player" or arg1 == "vehicle") then
+-- 		Perl_CombatDisplay_Update_Combo_Points();
+-- 	end
+-- end
 
 function Perl_CombatDisplay_Events:PLAYER_REGEN_ENABLED()
 	IsAggroed = 0;
@@ -1607,8 +1607,8 @@ function Perl_CombatDisplay_Buff_UpdateAll(unit, frame)
 	local debuffType;
 	local curableDebuffFound = 0;
 
-	for debuffnum=1,40 do												-- Start main debuff loop
-		_, _, _, _, debuffType, _, _ = UnitDebuff(unit, debuffnum, 1);	-- Get the texture and debuff stacking information if any
+	for debuffnum=1,40 do											-- Start main debuff loop
+		_, _, _, debuffType, _, _ = UnitDebuff(unit, debuffnum, 1);	-- Get the texture and debuff stacking information if any
 		if (PCUF_COLORFRAMEDEBUFF == 1) then
 			if (curableDebuffFound == 0) then
 				if (UnitIsFriend("player", unit)) then
