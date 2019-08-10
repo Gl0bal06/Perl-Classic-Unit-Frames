@@ -1,9 +1,3 @@
-7.04 - June 18, 2017
- - All: Updated TOC Interface version to 70200
- - CombatDisplay/Player/Target: Changed a few instances of UnitPower
- - Player: Removed references to EclipseBarFrame
- - Focus/Party/Target: Removed references to UnitIsTalking
-
 7.03 - July 27, 2016
  - CombatDisplay: Combo points correctly display
  - CombatDisplay: Fixed an issue with the Mana Persistence option

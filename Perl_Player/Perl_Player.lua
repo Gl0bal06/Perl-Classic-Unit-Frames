@@ -116,7 +116,7 @@ function Perl_Player_OnLoad(self)
 	RuneFrame:SetParent(Perl_Player_Frame);
 	PaladinPowerBarFrame:SetParent(Perl_Player_Frame);
 	WarlockPowerFrame:SetParent(Perl_Player_Frame);
-	--EclipseBarFrame:SetParent(Perl_Player_Frame);
+	EclipseBarFrame:SetParent(Perl_Player_Frame);
 	MonkHarmonyBarFrame:SetParent(Perl_Player_Frame);
 	PriestBarFrame:SetParent(Perl_Player_Frame);
 	MageArcaneChargesFrame:SetParent(Perl_Player_Frame);
@@ -688,8 +688,7 @@ function Perl_Player_OnUpdate_ManaBar(self, elapsed)
 	if (self.TimeSinceLastUpdate > Perl_Player_ManaBar_Time_Update_Rate) then
 		self.TimeSinceLastUpdate = 0;
 
-		--playeronupdatemana = UnitPower("player", UnitPowerType("player"));
-		playeronupdatemana = UnitPower("player");
+		playeronupdatemana = UnitPower("player", UnitPowerType("player"));
 
 		if (PCUF_FADEBARS == 1) then
 			if (playeronupdatemana < Perl_Player_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and playeronupdatemana > Perl_Player_Frame.lastMana)) then
@@ -1474,11 +1473,11 @@ function Perl_Player_Frame_Style()
 		end
 
 		-- Hi-jack the Blizzard Druid eclipse bar frame (Doesn't appear to be used as of 7.0.3)
-		-- if (classresourceframe == 1) then
-		-- 	EclipseBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 14, 3);
-		-- else
-		-- 	EclipseBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
-		-- end
+		if (classresourceframe == 1) then
+			EclipseBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 14, 3);
+		else
+			EclipseBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+		end
 
 		-- Hi-jack the Blizzard Monk harmony bar frame
 		if (classresourceframe == 1) then

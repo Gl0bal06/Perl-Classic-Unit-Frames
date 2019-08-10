@@ -402,11 +402,11 @@ function Perl_Target_Update_Once()
 		-- End: Set the guild name
 
 		-- Begin: Voice Chat Icon already in progress?
-		--if (UnitIsTalking(UnitName("target"))) then
-			--Perl_Target_VoiceChatIconFrame:Show();
-		--else
+		if (UnitIsTalking(UnitName("target"))) then
+			Perl_Target_VoiceChatIconFrame:Show();
+		else
 			Perl_Target_VoiceChatIconFrame:Hide();
-		--end
+		end
 		-- End: Voice Chat Icon already in progress?
 
 		-- Begin: Is the target a quest npc?
@@ -677,8 +677,7 @@ function Perl_Target_OnUpdate_ManaBar(self, elapsed)
 	if (self.TimeSinceLastUpdate > Perl_Target_ManaBar_Time_Update_Rate) then
 		self.TimeSinceLastUpdate = 0;
 
-		--targetonupdatemana = UnitPower("target", UnitPowerType("target"));
-		targetonupdatemana = UnitPower("target");
+		targetonupdatemana = UnitPower("target", UnitPowerType("target"));
 
 		if (PCUF_FADEBARS == 1) then
 			if (targetonupdatemana < Perl_Target_Frame.lastMana or (PCUF_INVERTBARVALUES == 1 and targetonupdatemana > Perl_Target_Frame.lastMana)) then
