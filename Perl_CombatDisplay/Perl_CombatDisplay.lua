@@ -66,6 +66,7 @@ function Perl_CombatDisplay_OnLoad(self)
 	--self:RegisterEvent("UNIT_COMBO_POINTS");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
 	self:RegisterEvent("UNIT_HEALTH");
+	self:RegisterEvent("UNIT_HEALTH_FREQUENT");
 	self:RegisterEvent("UNIT_MAXHEALTH");
 	self:RegisterEvent("UNIT_MAXPOWER");
 	self:RegisterEvent("UNIT_PET");
@@ -125,6 +126,7 @@ function Perl_CombatDisplay_Events:UNIT_HEALTH(arg1)
 		end
 	end
 end
+Perl_CombatDisplay_Events.UNIT_HEALTH_FREQUENT = Perl_CombatDisplay_Events.UNIT_HEALTH;
 Perl_CombatDisplay_Events.UNIT_MAXHEALTH = Perl_CombatDisplay_Events.UNIT_HEALTH;
 
 function Perl_CombatDisplay_Events:UNIT_POWER_UPDATE(arg1)

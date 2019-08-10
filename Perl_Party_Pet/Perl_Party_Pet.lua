@@ -76,6 +76,7 @@ function Perl_Party_Pet_Events:UNIT_HEALTH(arg1)
 		Perl_Party_Pet_Update_Health(arg1);
 	end
 end
+Perl_Party_Pet_Events.UNIT_HEALTH_FREQUENT = Perl_Party_Pet_Events.UNIT_HEALTH;
 Perl_Party_Pet_Events.UNIT_MAXHEALTH = Perl_Party_Pet_Events.UNIT_HEALTH;
 
 function Perl_Party_Pet_Events:UNIT_POWER_UPDATE(arg1)
@@ -595,6 +596,7 @@ function Perl_Party_Pet_Disable_All()
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_AURA");
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_DISPLAYPOWER");
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_HEALTH");
+	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_HEALTH_FREQUENT");
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_LEVEL");
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_MAXHEALTH");
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_MAXPOWER");
@@ -618,6 +620,7 @@ function Perl_Party_Pet_Enable_All()
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_AURA");
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_DISPLAYPOWER");
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_HEALTH");
+	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_HEALTH_FREQUENT");
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_LEVEL");
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_MAXHEALTH");
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_MAXPOWER");

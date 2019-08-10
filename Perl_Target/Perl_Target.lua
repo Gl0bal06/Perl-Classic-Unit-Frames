@@ -76,6 +76,7 @@ function Perl_Target_OnLoad(self)
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
 	--self:RegisterEvent("UNIT_DYNAMIC_FLAGS");
 	self:RegisterEvent("UNIT_HEALTH");
+	self:RegisterEvent("UNIT_HEALTH_FREQUENT");
 	self:RegisterEvent("UNIT_LEVEL");
 	self:RegisterEvent("UNIT_MAXHEALTH");
 	self:RegisterEvent("UNIT_MAXPOWER");
@@ -144,6 +145,7 @@ function Perl_Target_Events:UNIT_HEALTH(arg1)
 		Perl_Target_Update_Health();		-- Update health values
 	end
 end
+Perl_Target_Events.UNIT_HEALTH_FREQUENT = Perl_Target_Events.UNIT_HEALTH;
 Perl_Target_Events.UNIT_MAXHEALTH = Perl_Target_Events.UNIT_HEALTH;
 
 function Perl_Target_Events:UNIT_POWER_UPDATE(arg1)

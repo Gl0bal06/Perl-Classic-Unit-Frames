@@ -63,6 +63,7 @@ function Perl_Player_Pet_OnLoad(self)
 	self:RegisterEvent("UNIT_COMBAT");
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
 	self:RegisterEvent("UNIT_HEALTH");
+	self:RegisterEvent("UNIT_HEALTH_FREQUENT");
 	self:RegisterEvent("UNIT_LEVEL");
 	self:RegisterEvent("UNIT_MAXHEALTH");
 	self:RegisterEvent("UNIT_MAXPOWER");
@@ -130,6 +131,7 @@ function Perl_Player_Pet_Events:UNIT_HEALTH(arg1)
 		Perl_Player_Pet_Update_Health();						-- Update health values
 	end
 end
+Perl_Player_Pet_Events.UNIT_HEALTH_FREQUENT = Perl_Player_Pet_Events.UNIT_HEALTH;
 Perl_Player_Pet_Events.UNIT_MAXHEALTH = Perl_Player_Pet_Events.UNIT_HEALTH;
 
 function Perl_Player_Pet_Events:UNIT_POWER_UPDATE(arg1, arg2)

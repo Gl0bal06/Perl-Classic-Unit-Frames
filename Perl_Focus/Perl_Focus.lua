@@ -67,6 +67,7 @@ function Perl_Focus_OnLoad(self)
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
 	--self:RegisterEvent("UNIT_DYNAMIC_FLAGS");
 	self:RegisterEvent("UNIT_HEALTH");
+	self:RegisterEvent("UNIT_HEALTH_FREQUENT");
 	self:RegisterEvent("UNIT_LEVEL");
 	self:RegisterEvent("UNIT_MAXHEALTH");
 	self:RegisterEvent("UNIT_MAXPOWER");
@@ -127,8 +128,8 @@ function Perl_Focus_Events:UNIT_HEALTH(arg1)
 		Perl_Focus_Update_Health();		-- Update health values
 	end
 end
+Perl_Focus_Events.UNIT_HEALTH_FREQUENT = Perl_Focus_Events.UNIT_HEALTH;
 Perl_Focus_Events.UNIT_MAXHEALTH = Perl_Focus_Events.UNIT_HEALTH;
-
 
 function Perl_Focus_Events:UNIT_POWER_UPDATE(arg1)
 	if (arg1 == "focus") then

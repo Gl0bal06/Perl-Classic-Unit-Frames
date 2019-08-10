@@ -1,3 +1,9 @@
+8.03 - May 3, 2019
+ - All: Updated TOC Interface version to 80100
+ - Config: Updated Demon Hunter Pain power color
+ - Config: Removed colorStr from class color array
+ - CombatDisplay/Focus/Party/PartyPet/Pet/Player/Target: Added UNIT_HEALTH_FREQUENT event calls
+
 8.02 - July 25, 2018
  - CombatDisplay: Combo point text properly displays max combo points
  - CombatDisplay: Fixed an issue where the DruidBar was not updating if a Legion power type was the primary power type

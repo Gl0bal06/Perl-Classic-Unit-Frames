@@ -130,6 +130,7 @@ function Perl_Party_OnLoad(self)
 	self:RegisterEvent("UNIT_DISPLAYPOWER");
 	self:RegisterEvent("UNIT_FACTION");
 	self:RegisterEvent("UNIT_HEALTH");
+	self:RegisterEvent("UNIT_HEALTH_FREQUENT");
 	self:RegisterEvent("UNIT_LEVEL");
 	self:RegisterEvent("UNIT_MAXHEALTH");
 	self:RegisterEvent("UNIT_MAXPOWER");
@@ -169,7 +170,6 @@ function Perl_Party_Script_Events:GROUP_ROSTER_UPDATE()
 	Perl_Party_Check_Hidden();
 end
 
-
 function Perl_Party_Events:UNIT_HEALTH(arg1)
 	if (arg1 == self.unit) then
 		Perl_Party_Update_Health(self);
@@ -179,6 +179,7 @@ function Perl_Party_Events:UNIT_HEALTH(arg1)
 		end
 	end
 end
+Perl_Party_Events.UNIT_HEALTH_FREQUENT = Perl_Party_Events.UNIT_HEALTH;
 Perl_Party_Events.UNIT_MAXHEALTH = Perl_Party_Events.UNIT_HEALTH;
 
 function Perl_Party_Events:UNIT_POWER_UPDATE(arg1)
