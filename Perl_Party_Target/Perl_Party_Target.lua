@@ -13,7 +13,11 @@ local hidepowerbars = 0;				-- Power bars are shown by default
 local classcolorednames = 0;			-- names are colored based on pvp status by default
 local enabled = 1;						-- mod is shown by default
 local partyhiddeninraid = 0;			-- party target is not hidden in raids by default
-local enabledfocus = 1;					-- focus target is on by default
+if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+	local enabledfocus = 1;					-- focus target is on by default
+else
+	local enabledfocus = 0;					-- focus target is off by default for classic
+end
 local focushiddeninraid = 0;			-- focus target is not hidden in raids by default
 local xposition1 = 298;					-- target 1 default x position
 local yposition1 = -214;				-- target 1 default y position
@@ -838,7 +842,11 @@ function Perl_Party_Target_Set_Enabled(newvalue)
 end
 
 function Perl_Party_Target_Set_Enabled_Focus(newvalue)
-	enabledfocus = newvalue;
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		enabledfocus = newvalue;
+	else
+		enabledfocus = 0
+	end
 	Perl_Party_Target_UpdateVars();
 	Perl_Party_Target_Frame_Style();
 end
@@ -982,7 +990,11 @@ function Perl_Party_Target_GetVars(index, updateflag)
 		partyhiddeninraid = 0;
 	end
 	if (enabledfocus == nil) then
-		enabledfocus = 1;
+		if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+			enabledfocus = 1;
+		else
+			enabledfocus = 0;
+		end
 	end
 	if (focushiddeninraid == nil) then
 		focushiddeninraid = 0;
@@ -1191,7 +1203,11 @@ function Perl_Party_Target_UpdateVars(vartable)
 			partyhiddeninraid = 0;
 		end
 		if (enabledfocus == nil) then
-			enabledfocus = 1;
+			if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+				enabledfocus = 1;
+			else
+				enabledfocus = 0;
+			end
 		end
 		if (focushiddeninraid == nil) then
 			focushiddeninraid = 0;

@@ -140,7 +140,6 @@ function Perl_Party_OnLoad(self)
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	self:RegisterEvent("UNIT_POWER_UPDATE");
 	--self:RegisterEvent("UNIT_PVP_UPDATE");
-	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 	--self:RegisterEvent("VOICE_START");
 	--self:RegisterEvent("VOICE_STOP");
 
@@ -289,6 +288,13 @@ function Perl_Party_Initialize()
 		return;
 	end
 
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		Perl_Party_MemberFrame1:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
+		Perl_Party_MemberFrame2:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
+		Perl_Party_MemberFrame3:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
+		Perl_Party_MemberFrame4:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
+	end
+
 	-- Check if a previous exists, if not, enable by default.
 	Perl_Config_Migrate_Vars_Old_To_New("Party");
 	if (type(Perl_Party_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
@@ -389,7 +395,9 @@ function Perl_Party_MembersUpdate(self)
 		Perl_Party_Update_Pet_Health(self);
 		Perl_Party_Update_Leader(self);
 		Perl_Party_Update_Loot_Method(self);
-		Perl_Party_Update_Role(self);
+		if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+			Perl_Party_Update_Role(self);
+		end
 		Perl_Party_Update_Portrait(self);
 		Perl_Party_Buff_UpdateAll(self);
 		Perl_Party_VoiceChat(self);
@@ -933,16 +941,20 @@ function Perl_Party_Update_Role(self)
 end
 
 function Perl_Party_Update_Threat(self)
-	local status = UnitThreatSituation(self.unit);
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		local status = UnitThreatSituation(self.unit);
 
-	if (status == nil) then
-		self.threatIcon:Hide();
-		return;
-	end
+		if (status == nil) then
+			self.threatIcon:Hide();
+			return;
+		end
 
-	if (status > 0 and PCUF_THREATICON == 1) then
-		self.threatIcon:SetVertexColor(GetThreatStatusColor(status));
-		self.threatIcon:Show();
+		if (status > 0 and PCUF_THREATICON == 1) then
+			self.threatIcon:SetVertexColor(GetThreatStatusColor(status));
+			self.threatIcon:Show();
+		else
+			self.threatIcon:Hide();
+		end
 	else
 		self.threatIcon:Hide();
 	end

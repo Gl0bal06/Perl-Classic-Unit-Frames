@@ -36,7 +36,11 @@ local showguildname = 0;			-- guild names are hidden by default
 local eliteraregraphic = 0;			-- the blizzard elite/rare graphic is off by default
 local displaycurabledebuff = 0;		-- display all debuffs by default
 local displaybufftimers = 1;		-- buff/debuff timers are on by default
-local displaynumbericthreat = 1;	-- threat is displayed numerically by default
+if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+	local displaynumbericthreat = 1;	-- threat is displayed numerically by default
+else
+	local displaynumbericthreat = 0;	-- threat is NOT displayed numerically by default for classic
+end
 local displayonlymydebuffs = 0;		-- display all debuffs by default
 local xposition = 298;				-- default x position
 local yposition = -43;				-- default y position
@@ -87,7 +91,6 @@ function Perl_Target_OnLoad(self)
 	--self:RegisterEvent("UNIT_PVP_UPDATE");
 	self:RegisterEvent("UNIT_FACTION");
 	--self:RegisterEvent("UNIT_SPELLMISS");
-	self:RegisterEvent("UNIT_THREAT_LIST_UPDATE");
 	--self:RegisterEvent("VOICE_START");
 	--self:RegisterEvent("VOICE_STOP");
 
@@ -149,10 +152,15 @@ Perl_Target_Events.UNIT_HEALTH_FREQUENT = Perl_Target_Events.UNIT_HEALTH;
 Perl_Target_Events.UNIT_MAXHEALTH = Perl_Target_Events.UNIT_HEALTH;
 
 function Perl_Target_Events:UNIT_POWER_UPDATE(arg1)
-	if (arg1 == "target") then
-		Perl_Target_Update_Mana();			-- Update energy/focus/mana/rage/runicpower values
-	elseif (arg1 == "player" or arg1 == "vehicle") then
-		Perl_Target_Update_Combo_Points();	-- How many combo points are we at?
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		if (arg1 == "target") then
+			Perl_Target_Update_Mana();			-- Update energy/focus/mana/rage/runicpower values
+		elseif (arg1 == "player" or arg1 == "vehicle") then
+			Perl_Target_Update_Combo_Points();	-- How many combo points are we at?
+		end
+	else
+		Perl_Target_Update_Mana();
+		Perl_Target_Update_Combo_Points();
 	end
 end
 Perl_Target_Events.UNIT_MAXPOWER = Perl_Target_Events.UNIT_POWER_UPDATE;
@@ -261,6 +269,10 @@ function Perl_Target_Initialize()
 		return;
 	end
 
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		Perl_Target_Frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE");
+	end
+
 	-- Check if a previous exists, if not, enable by default.
 	Perl_Config_Migrate_Vars_Old_To_New("Target");
 	if (type(Perl_Target_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
@@ -361,7 +373,9 @@ function Perl_Target_Update_Once()
 		Perl_Target_Update_Text_Color();		-- Has the target been tapped by someone else?
 		Perl_Target_Update_Leader();			-- Is the target the party/raid leader?
 		Perl_Target_Update_Loot_Method();		-- Is the target the loot master?
-		Perl_Target_Update_Threat();			-- Update the threat icon if needed
+		if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+			Perl_Target_Update_Threat();			-- Update the threat icon if needed
+		end
 
 		-- Begin: Draw the class icon?
 		if (showclassicon == 1) then
@@ -413,8 +427,12 @@ function Perl_Target_Update_Once()
 		-- End: Voice Chat Icon already in progress?
 
 		-- Begin: Is the target a quest npc?
-		if (UnitIsQuestBoss("target")) then
-			Perl_Target_QuestIcon:Show();
+		if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+			if (UnitIsQuestBoss("target")) then
+				Perl_Target_QuestIcon:Show();
+			else
+				Perl_Target_QuestIcon:Hide();
+			end
 		else
 			Perl_Target_QuestIcon:Hide();
 		end
@@ -737,11 +755,17 @@ function Perl_Target_Update_Combo_Points()
 	local _;
 	local _, playerclass = UnitClass("player");
 	if (playerclass == "ROGUE" or playerclass == "DRUID" or CanExitVehicle()) then	-- Noticed in 2.1.3 that this is being called for warriors also...huh?
-		local combopoints = GetComboPoints("vehicle","target");						-- How many Combo Points does the player have in their vehicle?
-		local combopointsmax = 5;
-		if (combopoints == 0) then
-			combopoints = UnitPower("player", 4);									-- We aren't in a vehicle, get regular combo points
-			combopointsmax = UnitPowerMax("player", 4);
+		local combopoints, combopointsmax;
+		if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+			combopoints = GetComboPoints("vehicle","target");						-- How many Combo Points does the player have in their vehicle?
+			combopointsmax = 5;
+			if (combopoints == 0) then
+				combopoints = UnitPower("player", 4);									-- We aren't in a vehicle, get regular combo points
+				combopointsmax = UnitPowerMax("player", 4);
+			end
+		else
+			combopoints = GetComboPoints("player","target");
+			combopointsmax = 5;
 		end
 
 		if (showcp == 1) then
@@ -1741,7 +1765,11 @@ function Perl_Target_Set_Elite_Rare_Graphic(newvalue)
 end
 
 function Perl_Target_Set_Display_Numeric_Threat(newvalue)
-	displaynumbericthreat = newvalue;
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		displaynumbericthreat = newvalue;
+	else
+		displaynumbericthreat = 0
+	end
 	Perl_Target_UpdateVars();		-- Save the new setting
 	Perl_Target_Frame_Style();		-- Apply any showing/hiding of frames and enabling/disabling of events
 	if (UnitExists("target")) then
@@ -1933,7 +1961,11 @@ function Perl_Target_GetVars(index, updateflag)
 		displaybufftimers = 1;
 	end
 	if (displaynumbericthreat == nil) then
-		displaynumbericthreat = 1;
+		if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+			displaynumbericthreat = 1;
+		else
+			displaynumbericthreat = 0;
+		end
 	end
 	if (displayonlymydebuffs == nil) then
 		displayonlymydebuffs = 0;
@@ -2278,7 +2310,11 @@ function Perl_Target_UpdateVars(vartable)
 			displaybufftimers = 1;
 		end
 		if (displaynumbericthreat == nil) then
-			displaynumbericthreat = 1;
+			if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+				displaynumbericthreat = 1;
+			else
+				displaynumbericthreat = 0;
+			end
 		end
 		if (displayonlymydebuffs == nil) then
 			displayonlymydebuffs = 0;

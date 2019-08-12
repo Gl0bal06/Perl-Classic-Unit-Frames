@@ -60,7 +60,6 @@ function Perl_CombatDisplay_OnLoad(self)
 	self:RegisterEvent("PLAYER_LOGIN");
 	self:RegisterEvent("PLAYER_REGEN_DISABLED");
 	self:RegisterEvent("PLAYER_REGEN_ENABLED");
-	self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
 	self:RegisterEvent("PLAYER_TARGET_CHANGED");
 	self:RegisterEvent("UNIT_AURA");
 	--self:RegisterEvent("UNIT_COMBO_POINTS");
@@ -307,6 +306,10 @@ function Perl_CombatDisplay_Initialize()
 		Perl_CombatDisplay_CheckForPets();		-- do we have a pet out?
 		Perl_CombatDisplay_Update_Combo_Points();
 		return;
+	end
+
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		Perl_CombatDisplay_Frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED");
 	end
 
 	-- Check if a previous exists, if not, enable by default.

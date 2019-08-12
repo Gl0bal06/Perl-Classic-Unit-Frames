@@ -608,7 +608,9 @@ function Perl_Party_Pet_Disable_All()
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_NAME_UPDATE");
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_PORTRAIT_UPDATE");
 	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_POWER_UPDATE");
-	Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_THREAT_SITUATION_UPDATE");
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		Perl_Party_Pet_Script_Frame:UnregisterEvent("UNIT_THREAT_SITUATION_UPDATE");
+	end
 
 	UnregisterUnitWatch(Perl_Party_Pet1);
 	UnregisterUnitWatch(Perl_Party_Pet2);
@@ -632,7 +634,9 @@ function Perl_Party_Pet_Enable_All()
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_NAME_UPDATE");
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_POWER_UPDATE");
-	Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		Perl_Party_Pet_Script_Frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
+	end
 
 	RegisterUnitWatch(Perl_Party_Pet1);
 	RegisterUnitWatch(Perl_Party_Pet2);

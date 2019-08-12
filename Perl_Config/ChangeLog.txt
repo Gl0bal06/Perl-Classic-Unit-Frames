@@ -1,3 +1,6 @@
+8.06 - August 10, 2019
+ - All: Added support for WoW Classic
+
 8.05 - August 10, 2019
  - CombatDisplay: Fixed various SetPoint errors
  - Player: Removed more TotemFrame code

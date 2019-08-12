@@ -60,7 +60,6 @@ function Perl_Focus_OnLoad(self)
 	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	self:RegisterEvent("PLAYER_LOGIN");
-	self:RegisterEvent("PLAYER_FOCUS_CHANGED");
 	self:RegisterEvent("RAID_TARGET_UPDATE");
 	self:RegisterEvent("UNIT_AURA");
 	self:RegisterEvent("UNIT_COMBAT");
@@ -77,7 +76,6 @@ function Perl_Focus_OnLoad(self)
 	--self:RegisterEvent("UNIT_PVP_UPDATE");
 	self:RegisterEvent("UNIT_FACTION");
 	--self:RegisterEvent("UNIT_SPELLMISS");
-	self:RegisterEvent("UNIT_THREAT_LIST_UPDATE");
 	--self:RegisterEvent("VOICE_START");
 	--self:RegisterEvent("VOICE_STOP");
 
@@ -238,6 +236,11 @@ function Perl_Focus_Initialize()
 		return;
 	end
 
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		Perl_Focus_Frame:RegisterEvent("PLAYER_FOCUS_CHANGED");
+		Perl_Focus_Frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE");
+	end
+
 	-- Check if a previous exists, if not, enable by default.
 	Perl_Config_Migrate_Vars_Old_To_New("Focus");
 	if (type(Perl_Focus_Config[GetRealmName("player").."-"..UnitName("player")]) == "table") then
@@ -256,9 +259,11 @@ function Perl_Focus_Initialize()
 	Perl_Focus_NameFrame_CPMeter:SetValue(0);			-- REMOVE THIS LATER
 
 	-- Unregister and Hide the Blizzard frames
-	Perl_clearBlizzardFrameDisable(FocusFrame);
-	Perl_clearBlizzardFrameDisable(FocusFrameSpellBar);
-	Perl_clearBlizzardFrameDisable(FocusFrameToT);
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		Perl_clearBlizzardFrameDisable(FocusFrame);
+		Perl_clearBlizzardFrameDisable(FocusFrameSpellBar);
+		Perl_clearBlizzardFrameDisable(FocusFrameToT);
+	end
 
 	-- IFrameManager Support (Deprecated)
 	Perl_Focus_Frame:SetUserPlaced(true);

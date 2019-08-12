@@ -99,15 +99,28 @@ end
 function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 	if (event == "PLAYER_TARGET_CHANGED" or event == "PLAYER_FOCUS_CHANGED") then
 		self.unitname = UnitName(self.unit);
-		if (UnitChannelInfo(self.unit)) then
-			event = "UNIT_SPELLCAST_CHANNEL_START";
-		elseif (UnitCastingInfo(self.unit)) then
-			event = "UNIT_SPELLCAST_START";
+		if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+			if (UnitChannelInfo(self.unit)) then
+				event = "UNIT_SPELLCAST_CHANNEL_START";
+			elseif (UnitCastingInfo(self.unit)) then
+				event = "UNIT_SPELLCAST_START";
+			else
+				self.casting = nil;
+				self.channeling = nil;
+				self:Hide();
+				return;
+			end
 		else
-			self.casting = nil;
-			self.channeling = nil;
-			self:Hide();
-			return;
+			if (ChannelInfo(self.unit)) then
+				event = "UNIT_SPELLCAST_CHANNEL_START";
+			elseif (CastingInfo(self.unit)) then
+				event = "UNIT_SPELLCAST_START";
+			else
+				self.casting = nil;
+				self.channeling = nil;
+				self:Hide();
+				return;
+			end
 		end
 		arg1 = self.unit;
 	end
@@ -124,7 +137,13 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 
 	if (event == "UNIT_SPELLCAST_START") then
 		local _;
-		local text, _, _, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(arg1);
+		local text, _, _, startTime, endTime, _, _, notInterruptible;
+
+		if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+			text, _, _, startTime, endTime, _, _, notInterruptible = UnitCastingInfo(arg1);
+		else
+			text, _, _, startTime, endTime, _, _, notInterruptible = CastingInfo(arg1);
+		end
 
 		self:SetStatusBarColor(Perl_ArcaneBar_Colors.main.r, Perl_ArcaneBar_Colors.main.g, Perl_ArcaneBar_Colors.main.b, transparency);
 		self.barSpark:Show();
@@ -244,7 +263,12 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 	elseif (event == "UNIT_SPELLCAST_FAILED") then
 		if (self:IsShown() and not self.channeling) then
 			local _;
-			local text, _, _, startTime, endTime, _, _, _ = UnitCastingInfo(arg1);
+			local text, _, _, startTime, endTime, _, _, _;
+			if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+				text, _, _, startTime, endTime, _, _, _ = UnitCastingInfo(arg1);
+			else
+				text, _, _, startTime, endTime, _, _, _ = CastingInfo(arg1);
+			end
 			if (text == arg2) then
 				self:SetValue(self.maxValue);
 				self:SetStatusBarColor(Perl_ArcaneBar_Colors.failure.r, Perl_ArcaneBar_Colors.failure.g, Perl_ArcaneBar_Colors.failure.b, transparency);
@@ -258,7 +282,12 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 	elseif (event == "UNIT_SPELLCAST_DELAYED") then
 		if(self:IsShown()) then
 			local _;
-			local _, _, _, startTime, endTime, _, _, _ = UnitCastingInfo(arg1);
+			local _, _, _, startTime, endTime, _, _, _;
+			if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+				_, _, _, startTime, endTime, _, _, _ = UnitCastingInfo(arg1);
+			else
+				_, _, _, startTime, endTime, _, _, _ = CastingInfo(arg1);
+			end
 
 			if (endTime ~= nil) then
 				self.delaySum = self.delaySum + (endTime - self.maxValue * 1000);
@@ -270,7 +299,12 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 		end
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_START") then
 		local _;
-		local text, _, _, startTime, endTime, _, notInterruptible = UnitChannelInfo(arg1);
+		local text, _, _, startTime, endTime, _, notInterruptible;
+		if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+			text, _, _, startTime, endTime, _, notInterruptible = UnitChannelInfo(arg1);
+		else
+			text, _, _, startTime, endTime, _, notInterruptible = ChannelInfo(arg1);
+		end
 
 		if (startTime ~= nil) then
 			self:SetStatusBarColor(Perl_ArcaneBar_Colors.channel.r, Perl_ArcaneBar_Colors.channel.g, Perl_ArcaneBar_Colors.channel.b, transparency);
@@ -334,7 +368,12 @@ function Perl_ArcaneBar_OnEvent(self, event, arg1, arg2)
 	elseif (event == "UNIT_SPELLCAST_CHANNEL_UPDATE") then
 		if (self:IsShown()) then
 			local _;
-			local _, _, _, startTime, endTime, _ = UnitChannelInfo(arg1);
+			local _, _, _, startTime, endTime, _;
+			if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+				_, _, _, startTime, endTime, _ = UnitChannelInfo(arg1);
+			else
+				_, _, _, startTime, endTime, _ = ChannelInfo(arg1);
+			end
 
 			self.delaySum = self.delaySum + (endTime - self.maxValue * 1000);
 			self.startTime = startTime / 1000;
@@ -400,6 +439,7 @@ function Perl_ArcaneBar_Initialize()
 		Perl_Target_Name:SetFrameLevel(Perl_Target_NameFrame:GetFrameLevel() + 2);
 	end
 	if (Perl_Focus_Frame) then
+		Perl_ArcaneBar_focus:SetPoint("TOPLEFT", "Perl_Focus_NameFrame", 4, -5);
 		Perl_ArcaneBar_focus:SetParent(Perl_Focus_Frame);
 		Perl_ArcaneBar_focus:SetFrameLevel(Perl_Focus_NameFrame:GetFrameLevel() + 1);
 		Perl_Focus_Name:SetFrameLevel(Perl_Focus_NameFrame:GetFrameLevel() + 2);
@@ -465,7 +505,7 @@ function Perl_ArcaneBar_Register(frame, register)
 
 		if (frame == Perl_ArcaneBar_target) then
 			frame:RegisterEvent("PLAYER_TARGET_CHANGED");
-		elseif (frame == Perl_ArcaneBar_focus) then
+		elseif (frame == Perl_ArcaneBar_focus and PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
 			frame:RegisterEvent("PLAYER_FOCUS_CHANGED");
 		end
 
@@ -484,7 +524,7 @@ function Perl_ArcaneBar_Register(frame, register)
 
 		if (frame == Perl_ArcaneBar_target) then
 			frame:UnregisterEvent("PLAYER_TARGET_CHANGED");
-		elseif (frame == Perl_ArcaneBar_focus) then
+		elseif (frame == Perl_ArcaneBar_focus and PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
 			frame:UnregisterEvent("PLAYER_FOCUS_CHANGED");
 		end
 

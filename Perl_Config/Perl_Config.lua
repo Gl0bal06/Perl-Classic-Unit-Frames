@@ -1,6 +1,14 @@
 ---------------
 -- Variables --
 ---------------
+local _, _, _, tocversion = GetBuildInfo()
+--DEFAULT_CHAT_FRAME:AddMessage(tocversion);
+if (tocversion < 80200) then
+	PCUF_ENABLE_CLASSIC_SUPPORT = 1;
+else
+	PCUF_ENABLE_CLASSIC_SUPPORT = 0;
+end
+
 PCUF_SHOW_DEBUG_EVENTS = 0;			-- event hijack and forbidden action monitor
 Perl_Config_Config = {};
 Perl_Config_Profiles = {};

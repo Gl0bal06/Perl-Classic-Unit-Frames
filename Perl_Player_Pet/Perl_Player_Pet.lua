@@ -74,7 +74,6 @@ function Perl_Player_Pet_OnLoad(self)
 	self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
 	self:RegisterEvent("UNIT_POWER_UPDATE");
 	--self:RegisterEvent("UNIT_SPELLMISS");
-	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 
 	-- Scripts
 	self:SetScript("OnEvent",
@@ -235,6 +234,10 @@ function Perl_Player_Pet_Initialize()
 		Perl_Player_Pet_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);			-- Position the frame
 		Perl_Player_Pet_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xpositiont, ypositiont);	-- Position the frame
 		return;
+	end
+
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		Perl_Player_Pet_Frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 	end
 
 	-- Check if a previous exists, if not, enable by default.

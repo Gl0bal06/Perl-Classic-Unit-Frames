@@ -92,7 +92,7 @@
 
 	<StatusBar name="Perl_ArcaneBar_focus" inherits="Perl_ArcaneBar_Template" hidden="true">
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="Perl_Focus_NameFrame">
+			<Anchor point="TOPLEFT">
 				<Offset>
 					<AbsDimension x="4" y="-5"/>
 				</Offset>

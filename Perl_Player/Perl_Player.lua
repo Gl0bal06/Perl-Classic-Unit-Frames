@@ -86,7 +86,6 @@ function Perl_Player_OnLoad(self)
 	self:RegisterEvent("UNIT_POWER_UPDATE");
 	--self:RegisterEvent("UNIT_PVP_UPDATE");
 	--self:RegisterEvent("UNIT_SPELLMISS");
-	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 	self:RegisterEvent("UPDATE_FACTION");
 	--self:RegisterEvent("VOICE_START");
 	--self:RegisterEvent("VOICE_STOP");
@@ -113,14 +112,16 @@ function Perl_Player_OnLoad(self)
 	Perl_Player_ManaBarFadeBar:SetFrameLevel(Perl_Player_ManaBar:GetFrameLevel() - 1);
 	--Perl_Player_DruidBarFadeBar:SetFrameLevel(Perl_Player_DruidBar:GetFrameLevel() - 1);
 
-	--TotemFrame:SetParent(Perl_Player_Frame);
-	RuneFrame:SetParent(Perl_Player_Frame);
-	PaladinPowerBarFrame:SetParent(Perl_Player_Frame);
-	WarlockPowerFrame:SetParent(Perl_Player_Frame);
-	--EclipseBarFrame:SetParent(Perl_Player_Frame);
-	MonkHarmonyBarFrame:SetParent(Perl_Player_Frame);
-	PriestBarFrame:SetParent(Perl_Player_Frame);
-	MageArcaneChargesFrame:SetParent(Perl_Player_Frame);
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		--TotemFrame:SetParent(Perl_Player_Frame);
+		RuneFrame:SetParent(Perl_Player_Frame);
+		PaladinPowerBarFrame:SetParent(Perl_Player_Frame);
+		WarlockPowerFrame:SetParent(Perl_Player_Frame);
+		--EclipseBarFrame:SetParent(Perl_Player_Frame);
+		MonkHarmonyBarFrame:SetParent(Perl_Player_Frame);
+		PriestBarFrame:SetParent(Perl_Player_Frame);
+		MageArcaneChargesFrame:SetParent(Perl_Player_Frame);
+	end
 end
 
 
@@ -270,6 +271,10 @@ function Perl_Player_Initialize()
 		Perl_Player_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		Perl_Player_Update_Once();			-- Set all the correct information
 		return;
+	end
+
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		Perl_Player_Frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
 	end
 
 	-- Check if a previous exists, if not, enable by default.
@@ -913,16 +918,20 @@ function Perl_Player_Update_Loot_Method()
 end
 
 function Perl_Player_Update_Role()
-	local role = UnitGroupRolesAssigned("player");
-	if(role == "TANK") then
-		Perl_Player_RoleIcon:SetTexCoord(0, 19/64, 22/64, 41/64);
-		Perl_Player_RoleIcon:Show();
-	elseif(role == "HEALER") then
-		Perl_Player_RoleIcon:SetTexCoord(20/64, 39/64, 1/64, 20/64);
-		Perl_Player_RoleIcon:Show();
-	elseif(role == "DAMAGER") then
-		Perl_Player_RoleIcon:SetTexCoord(20/64, 39/64, 22/64, 41/64);
-		Perl_Player_RoleIcon:Show();
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		local role = UnitGroupRolesAssigned("player");
+		if(role == "TANK") then
+			Perl_Player_RoleIcon:SetTexCoord(0, 19/64, 22/64, 41/64);
+			Perl_Player_RoleIcon:Show();
+		elseif(role == "HEALER") then
+			Perl_Player_RoleIcon:SetTexCoord(20/64, 39/64, 1/64, 20/64);
+			Perl_Player_RoleIcon:Show();
+		elseif(role == "DAMAGER") then
+			Perl_Player_RoleIcon:SetTexCoord(20/64, 39/64, 22/64, 41/64);
+			Perl_Player_RoleIcon:Show();
+		else
+			Perl_Player_RoleIcon:Hide();
+		end
 	else
 		Perl_Player_RoleIcon:Hide();
 	end
@@ -962,16 +971,20 @@ function Perl_Player_Update_PvP_Status()
 end
 
 function Perl_Player_Update_Threat()
-	local status = UnitThreatSituation("player");
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		local status = UnitThreatSituation("player");
 
-	if (status == nil) then
-		Perl_Player_ThreatIndicator:Hide();
-		return;
-	end
+		if (status == nil) then
+			Perl_Player_ThreatIndicator:Hide();
+			return;
+		end
 
-	if (status > 0 and PCUF_THREATICON == 1) then
-		Perl_Player_ThreatIndicator:SetVertexColor(GetThreatStatusColor(status));
-		Perl_Player_ThreatIndicator:Show();
+		if (status > 0 and PCUF_THREATICON == 1) then
+			Perl_Player_ThreatIndicator:SetVertexColor(GetThreatStatusColor(status));
+			Perl_Player_ThreatIndicator:Show();
+		else
+			Perl_Player_ThreatIndicator:Hide();
+		end
 	else
 		Perl_Player_ThreatIndicator:Hide();
 	end
@@ -1436,92 +1449,94 @@ function Perl_Player_Frame_Style()
 		Perl_Player_Update_Health();
 		Perl_Player_Update_Mana();
 
-		-- Hi-jack the Blizzard Shaman totem frame (Doesn't appear to be used as of 7.0.3)
-		-- TotemFrame:ClearAllPoints();
-		-- if (classresourceframe == 1) then
-		-- 	TotemFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 0);
-		-- else
-		-- 	TotemFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
-		-- end
+		if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+			-- Hi-jack the Blizzard Shaman totem frame (Doesn't appear to be used as of 7.0.3)
+			-- TotemFrame:ClearAllPoints();
+			-- if (classresourceframe == 1) then
+			-- 	TotemFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 0);
+			-- else
+			-- 	TotemFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+			-- end
 
-		-- Hi-jack the Blizzard Death Knigth rune frame
-		RuneFrame:ClearAllPoints();
-		if (classresourceframe == 1) then
-			if (compactmode == 1 and shortbars == 1) then
-				RuneFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 5, -2);
+			-- Hi-jack the Blizzard Death Knigth rune frame
+			RuneFrame:ClearAllPoints();
+			if (classresourceframe == 1) then
+				if (compactmode == 1 and shortbars == 1) then
+					RuneFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 5, -2);
+				else
+					RuneFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 20, -2);
+				end
 			else
-				RuneFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 20, -2);
+				RuneFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 			end
-		else
-			RuneFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
-		end
 
-		-- Hi-jack the Blizzard Paladin power bar
-		PaladinPowerBarFrame:ClearAllPoints();
-		if (classresourceframe == 1) then
-			if (compactmode == 1 and shortbars == 1) then
-				PaladinPowerBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 8);
+			-- Hi-jack the Blizzard Paladin power bar
+			PaladinPowerBarFrame:ClearAllPoints();
+			if (classresourceframe == 1) then
+				if (compactmode == 1 and shortbars == 1) then
+					PaladinPowerBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 0, 8);
+				else
+					PaladinPowerBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 15, 8);
+				end
 			else
-				PaladinPowerBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 15, 8);
+				PaladinPowerBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 			end
-		else
-			PaladinPowerBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
-		end
 
-		-- Hi-jack the Blizzard Warlock shard bar frame
-		WarlockPowerFrame:ClearAllPoints();
-		if (classresourceframe == 1) then
-			if (compactmode == 1 and shortbars == 1) then
-				WarlockPowerFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 11, 0);
+			-- Hi-jack the Blizzard Warlock shard bar frame
+			WarlockPowerFrame:ClearAllPoints();
+			if (classresourceframe == 1) then
+				if (compactmode == 1 and shortbars == 1) then
+					WarlockPowerFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 11, 0);
+				else
+					WarlockPowerFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 28, 0);
+				end
 			else
-				WarlockPowerFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 28, 0);
+				WarlockPowerFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 			end
-		else
-			WarlockPowerFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
-		end
 
-		-- Hi-jack the Blizzard Druid eclipse bar frame (Doesn't appear to be used as of 7.0.3)
-		-- EclipseBarFrame:ClearAllPoints();
-		-- if (classresourceframe == 1) then
-		-- 	EclipseBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 14, 3);
-		-- else
-		-- 	EclipseBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
-		-- end
+			-- Hi-jack the Blizzard Druid eclipse bar frame (Doesn't appear to be used as of 7.0.3)
+			-- EclipseBarFrame:ClearAllPoints();
+			-- if (classresourceframe == 1) then
+			-- 	EclipseBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 14, 3);
+			-- else
+			-- 	EclipseBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
+			-- end
 
-		-- Hi-jack the Blizzard Monk harmony bar frame
-		MonkHarmonyBarFrame:ClearAllPoints();
-		if (classresourceframe == 1) then
-			if (compactmode == 1 and shortbars == 1) then
-				MonkHarmonyBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 67, 14);
+			-- Hi-jack the Blizzard Monk harmony bar frame
+			MonkHarmonyBarFrame:ClearAllPoints();
+			if (classresourceframe == 1) then
+				if (compactmode == 1 and shortbars == 1) then
+					MonkHarmonyBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 67, 14);
+				else
+					MonkHarmonyBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 82, 14);
+				end
 			else
-				MonkHarmonyBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 82, 14);
+				MonkHarmonyBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 			end
-		else
-			MonkHarmonyBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
-		end
 
-		-- Hi-jack the Blizzard Priest bar frame (Doesn't appear to be used as of 7.0.3)
-		PriestBarFrame:ClearAllPoints();
-		if (classresourceframe == 1) then
-			if (compactmode == 1 and shortbars == 1) then
-				PriestBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", -10, 2);
+			-- Hi-jack the Blizzard Priest bar frame (Doesn't appear to be used as of 7.0.3)
+			PriestBarFrame:ClearAllPoints();
+			if (classresourceframe == 1) then
+				if (compactmode == 1 and shortbars == 1) then
+					PriestBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", -10, 2);
+				else
+					PriestBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 5, 2);
+				end
 			else
-				PriestBarFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 5, 2);
+				PriestBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 			end
-		else
-			PriestBarFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
-		end
 
-		-- Hi-jack the Blizzard Mage bar frame
-		MageArcaneChargesFrame:ClearAllPoints();
-		if (classresourceframe == 1) then
-			if (compactmode == 1 and shortbars == 1) then
-				MageArcaneChargesFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 5, 2);
+			-- Hi-jack the Blizzard Mage bar frame
+			MageArcaneChargesFrame:ClearAllPoints();
+			if (classresourceframe == 1) then
+				if (compactmode == 1 and shortbars == 1) then
+					MageArcaneChargesFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 5, 2);
+				else
+					MageArcaneChargesFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 21, 2);
+				end
 			else
-				MageArcaneChargesFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 21, 2);
+				MageArcaneChargesFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 			end
-		else
-			MageArcaneChargesFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);
 		end
 
 
