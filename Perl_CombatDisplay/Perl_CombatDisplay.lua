@@ -598,9 +598,15 @@ function Perl_CombatDisplay_Update_Combo_Points()
 	if (showcp == 1) then
 		local combopoints = GetComboPoints("vehicle","target");				-- How many Combo Points does the player have in their vehicle?
 		local combopointsmax = 5;
-		if (combopoints == 0) then
-			combopoints = UnitPower("player", 4);							-- We aren't in a vehicle, get regular combo points
-			combopointsmax = UnitPowerMax("player", 4);
+		if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+			if (combopoints == 0) then
+				combopoints = UnitPower("player", 4);							-- We aren't in a vehicle, get regular combo points
+				combopointsmax = UnitPowerMax("player", 4);
+			end
+		else
+			if (combopoints == 0) then
+				combopoints = GetComboPoints("player","target");
+			end
 		end
 
 		if (PCUF_FADEBARS == 1) then
@@ -1151,7 +1157,11 @@ function Perl_CombatDisplay_Frame_Style()
 		Perl_CombatDisplay_ManaFrame_CastClickOverlay:SetHeight(Perl_CombatDisplay_ManaFrame_CastClickOverlay:GetHeight() + 12);
 		Perl_CombatDisplay_CPBar:Show();
 		Perl_CombatDisplay_CPBarBG:Show();
-		Perl_CombatDisplay_CPBar:SetMinMaxValues(0, UnitPowerMax("player", 4));
+		if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+			Perl_CombatDisplay_CPBar:SetMinMaxValues(0, UnitPowerMax("player", 4));
+		else
+			Perl_CombatDisplay_CPBar:SetMinMaxValues(0, 5);
+		end
 		if (showdruidbar == 1 and (englishclass == "DRUID" or englishclass == "MONK" or englishclass == "PRIEST" or englishclass == "SHAMAN")) then
 			Perl_CombatDisplay_CPBar:SetPoint("TOPLEFT", "Perl_CombatDisplay_DruidBar", "BOTTOMLEFT", 0, -2);
 		else
