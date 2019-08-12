@@ -36,11 +36,7 @@ local showguildname = 0;			-- guild names are hidden by default
 local eliteraregraphic = 0;			-- the blizzard elite/rare graphic is off by default
 local displaycurabledebuff = 0;		-- display all debuffs by default
 local displaybufftimers = 1;		-- buff/debuff timers are on by default
-if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
-	local displaynumbericthreat = 1;	-- threat is displayed numerically by default
-else
-	local displaynumbericthreat = 0;	-- threat is NOT displayed numerically by default for classic
-end
+local displaynumbericthreat = 1;	-- threat is displayed numerically by default
 local displayonlymydebuffs = 0;		-- display all debuffs by default
 local xposition = 298;				-- default x position
 local yposition = -43;				-- default y position
@@ -267,6 +263,10 @@ function Perl_Target_Initialize()
 		Perl_Target_Frame:ClearAllPoints();
 		Perl_Target_Frame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition, yposition);	-- Position the frame
 		return;
+	end
+
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 1) then
+		local displaynumbericthreat = 0;	-- threat is NOT displayed numerically by default for classic
 	end
 
 	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
@@ -754,19 +754,14 @@ end
 function Perl_Target_Update_Combo_Points()
 	local _;
 	local _, playerclass = UnitClass("player");
+	local combopoints, combopointsmax;
 	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
 		if (playerclass == "ROGUE" or playerclass == "DRUID" or CanExitVehicle()) then	-- Noticed in 2.1.3 that this is being called for warriors also...huh?
-			local combopoints, combopointsmax;
-			if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
-				combopoints = GetComboPoints("vehicle","target");						-- How many Combo Points does the player have in their vehicle?
-				combopointsmax = 5;
-				if (combopoints == 0) then
-					combopoints = UnitPower("player", 4);									-- We aren't in a vehicle, get regular combo points
-					combopointsmax = UnitPowerMax("player", 4);
-				end
-			else
-				combopoints = GetComboPoints("player","target");
-				combopointsmax = 5;
+			combopoints = GetComboPoints("vehicle","target");						-- How many Combo Points does the player have in their vehicle?
+			combopointsmax = 5;
+			if (combopoints == 0) then
+				combopoints = UnitPower("player", 4);									-- We aren't in a vehicle, get regular combo points
+				combopointsmax = UnitPowerMax("player", 4);
 			end
 
 			if (showcp == 1) then
@@ -816,14 +811,13 @@ function Perl_Target_Update_Combo_Points()
 		end
 	else
 		if (playerclass == "ROGUE" or playerclass == "DRUID") then	-- Noticed in 2.1.3 that this is being called for warriors also...huh?
-			local combopoints, combopointsmax;
 			combopoints = GetComboPoints("player","target");
 			combopointsmax = 5;
 			if (showcp == 1) then
 				Perl_Target_CPText:SetText(combopoints);
 				Perl_Target_CPText:SetTextColor(combopoints/combopointsmax, 1-combopoints/combopointsmax, 0);
 			end
-	
+
 			if (nameframecombopoints == 1) then											-- this isn't nested since you can have both combo point styles on at the same time
 				Perl_Target_NameFrame_CPMeter:SetMinMaxValues(0, combopointsmax);
 				Perl_Target_NameFrame_CPMeter:SetValue(combopoints);

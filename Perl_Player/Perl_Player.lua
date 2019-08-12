@@ -111,17 +111,6 @@ function Perl_Player_OnLoad(self)
 	Perl_Player_HealthBarFadeBar:SetFrameLevel(Perl_Player_HealthBar:GetFrameLevel() - 1);
 	Perl_Player_ManaBarFadeBar:SetFrameLevel(Perl_Player_ManaBar:GetFrameLevel() - 1);
 	--Perl_Player_DruidBarFadeBar:SetFrameLevel(Perl_Player_DruidBar:GetFrameLevel() - 1);
-
-	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
-		--TotemFrame:SetParent(Perl_Player_Frame);
-		RuneFrame:SetParent(Perl_Player_Frame);
-		PaladinPowerBarFrame:SetParent(Perl_Player_Frame);
-		WarlockPowerFrame:SetParent(Perl_Player_Frame);
-		--EclipseBarFrame:SetParent(Perl_Player_Frame);
-		MonkHarmonyBarFrame:SetParent(Perl_Player_Frame);
-		PriestBarFrame:SetParent(Perl_Player_Frame);
-		MageArcaneChargesFrame:SetParent(Perl_Player_Frame);
-	end
 end
 
 
@@ -275,6 +264,17 @@ function Perl_Player_Initialize()
 
 	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
 		Perl_Player_Frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
+	end
+
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
+		--TotemFrame:SetParent(Perl_Player_Frame);
+		RuneFrame:SetParent(Perl_Player_Frame);
+		PaladinPowerBarFrame:SetParent(Perl_Player_Frame);
+		WarlockPowerFrame:SetParent(Perl_Player_Frame);
+		--EclipseBarFrame:SetParent(Perl_Player_Frame);
+		MonkHarmonyBarFrame:SetParent(Perl_Player_Frame);
+		PriestBarFrame:SetParent(Perl_Player_Frame);
+		MageArcaneChargesFrame:SetParent(Perl_Player_Frame);
 	end
 
 	-- Check if a previous exists, if not, enable by default.
@@ -1486,9 +1486,9 @@ function Perl_Player_Frame_Style()
 			WarlockPowerFrame:ClearAllPoints();
 			if (classresourceframe == 1) then
 				if (compactmode == 1 and shortbars == 1) then
-					WarlockPowerFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 11, 0);
+					WarlockPowerFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 11, 3);
 				else
-					WarlockPowerFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 28, 0);
+					WarlockPowerFrame:SetPoint("TOPLEFT", Perl_Player_StatsFrame, "BOTTOMLEFT", 28, 3);
 				end
 			else
 				WarlockPowerFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", -10000, -10000);

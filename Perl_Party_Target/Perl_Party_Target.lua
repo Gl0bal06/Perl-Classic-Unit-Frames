@@ -13,11 +13,7 @@ local hidepowerbars = 0;				-- Power bars are shown by default
 local classcolorednames = 0;			-- names are colored based on pvp status by default
 local enabled = 1;						-- mod is shown by default
 local partyhiddeninraid = 0;			-- party target is not hidden in raids by default
-if (PCUF_ENABLE_CLASSIC_SUPPORT == 0) then
-	local enabledfocus = 1;					-- focus target is on by default
-else
-	local enabledfocus = 0;					-- focus target is off by default for classic
-end
+local enabledfocus = 1;					-- focus target is on by default
 local focushiddeninraid = 0;			-- focus target is not hidden in raids by default
 local xposition1 = 298;					-- target 1 default x position
 local yposition1 = -214;				-- target 1 default y position
@@ -129,6 +125,10 @@ function Perl_Party_Target_Initialize()
 		Perl_Party_Target5:SetPoint("TOPLEFT", UIParent, "TOPLEFT", xposition5, yposition5);
 		Perl_Party_Target_Check_Hidden();		-- Hide the frames if in a raid
 		return;
+	end
+
+	if (PCUF_ENABLE_CLASSIC_SUPPORT == 1) then
+		enabledfocus = 0;						-- focus target is off by default for classic
 	end
 
 	-- Check if a previous exists, if not, enable by default.

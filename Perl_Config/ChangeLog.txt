@@ -1,3 +1,8 @@
+8.08 - August 11, 2019
+ - PartyTarget/Target: Fixed an incorrect default value being set for new characters
+ - Player: Fixed class resource frames not appearing
+ - Target: Cleaned up some combo point code from a previous classic workaround
+
 8.07 - August 11, 2019
  - CombatDisplay: Classic: Fixed Combo Point bar functionality
  - Target: Classic: Fixed CanExitVehicle calls
